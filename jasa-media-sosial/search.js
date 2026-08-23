@@ -1,6 +1,0 @@
-(()=>{const q=document.querySelector("#q"),f=document.querySelector("#form"),out=document.querySelector("#results"),count=document.querySelector("#count");let idx=[];
-const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-function score(x,t){t=t.toLowerCase();let s=0;const a=(x.title||"").toLowerCase(),b=(x.description||"").toLowerCase(),c=(x.content||"").toLowerCase();if(a.includes(t))s+=120;if(b.includes(t))s+=50;if(c.includes(t))s+=10;return s}
-function show(t){t=t.trim();if(!t){count.textContent="";out.innerHTML="";return}const r=idx.map(x=>({x,s:score(x,t)})).filter(x=>x.s).sort((a,b)=>b.s-a.s);count.textContent=`${r.length} hasil ditemukan`;out.innerHTML=r.length?r.map(({x})=>`<article class="card"><h2><a href="${esc(x.url)}">${esc(x.title)}</a></h2><p>${esc(x.description)}</p><div class="url">${esc(x.url)}</div></article>`).join(""):'<div class="empty">Tidak ada hasil yang cocok.</div>'}
-fetch("/jasa-media-sosial/search-index.json").then(r=>r.json()).then(d=>{idx=d;q.value=new URLSearchParams(location.search).get("q")||"";show(q.value)}).catch(()=>out.innerHTML='<div class="empty">Indeks pencarian tidak dapat dimuat.</div>');
-f.addEventListener("submit",e=>{e.preventDefault();const t=q.value.trim();history.replaceState(null,"",t?`?q=${encodeURIComponent(t)}`:"search.html");show(t)})})();
