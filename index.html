@@ -126,23 +126,41 @@
 
   <footer class="footer"><div class="container footer-grid"><div><a class="brand" href="#beranda"><span class="brand-mark"><img src="/images/logo.png" alt="Logo" class="logo"></span><span><strong>SRILEX <b>BUDITRA</b></strong><small>FULL STACK DEVELOPER</small></span></a><p>Membangun solusi digital modern, efisien, dan berdampak untuk Anda.</p></div><div><h4>Navigasi</h4><a href="#beranda">Beranda</a><a href="#tentang">Tentang Saya</a><a href="#layanan">Layanan</a><a href="#portfolio">Portfolio</a></div><div><h4>Lainnya</h4><a href="#harga">Paket &amp; Harga</a><a href="#faq">FAQ</a><a href="#kontak">Kontak</a></div><div><h4>Kontak</h4><p>📞 WhatsApp: +6282136238350 </p><p>✉ srilexbuditra@gmail.com</p><p>📍 Bengkulu, Indonesia</p></div></div><div class="copyright">© 2026 Srilex Buditra. All Rights Reserved. | Full Stack. Full Solution. Full Impact.</div></footer>
   <script src="script.js"></script>
-  <script>
-  // Fungsi untuk memutar audio
-  function putarOtomatis() {
-    const audio = document.getElementById('bgMusik');
-    audio.play().catch(error => {
-      console.log("Pemutaran tertunda oleh browser:", error);
+
+  <!-- Elemen Audio Tetap Ada -->
+<audio id="musikOtomatis" loop>
+  <source src="/musik/westlife-solida.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+  const audio = document.getElementById('musikOtomatis');
+
+  // Fungsi untuk memicu pemutaran musik
+  function jalankanAudio() {
+    audio.play().then(() => {
+      // Jika berhasil diputar, hapus semua pendengar event agar tidak memicu pengulangan musik
+      hapusEventPemicu();
+    }).catch(error => {
+      // Mencegah error merah di console jika browser masih memblokir
+      console.log("Menunggu interaksi pengguna yang lebih valid...", error);
     });
   }
 
-  // Jalankan fungsi begitu ada interaksi klik/sentuhan pertama di web
-  document.addEventListener('click', putarOtomatis, { once: true });
-  document.addEventListener('touchstart', putarOtomatis, { once: true });
+  function hapusEventPemicu() {
+    document.removeEventListener('mousemove', jalankanAudio);
+    document.removeEventListener('scroll', jalankanAudio);
+    document.removeEventListener('keydown', jalankanAudio);
+    document.removeEventListener('touchstart', jalankanAudio);
+    document.removeEventListener('click', jalankanAudio);
+  }
+
+  // Daftarkan aksi-aksi alami pengunjung tanpa perlu klik tombol khusus
+  document.addEventListener('mousemove', jalankanAudio, { passive: true });
+  document.addEventListener('scroll', jalankanAudio, { passive: true });
+  document.addEventListener('keydown', jalankanAudio, { passive: true });
+  document.addEventListener('touchstart', jalankanAudio, { passive: true });
+  document.addEventListener('click', jalankanAudio, { passive: true });
 </script>
-  <audio autoplay loop>
-  <source src="/musik/westlife-solida.mp3" type="audio/mpeg">
-  Browser Anda tidak mendukung elemen audio.
-</audio>
-</audio>
+
 </body>
 </html>
