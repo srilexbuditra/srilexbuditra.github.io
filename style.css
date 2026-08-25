@@ -398,6 +398,9 @@ a {
 .project-visual.school {
   background: #f7f9fc;
 }
+.project-visual.school {
+  background: radial-gradient(circle, #55d96b, #0b4964 65%, #031626);
+}
 .project-visual.pos {
   background: radial-gradient(circle, #55d96b, #0b4964 65%, #031626);
 }
