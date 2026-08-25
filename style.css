@@ -404,6 +404,9 @@ a {
 .project-visual.admin {
   background: radial-gradient(circle, #48b5ff, #0b4964 65%, #031626);
 }
+.project-visual.school {
+  background: radial-gradient(circle, #48b5ff, #0b4964 65%, #031626);
+}
 .project > div:last-child {
   padding: 18px;
 }
