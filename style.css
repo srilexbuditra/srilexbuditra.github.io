@@ -891,7 +891,7 @@ textarea:focus {
     transform: scale(1.12);
   }
   .project:hover .project-visual img {
-    transform: scale(1.15);
+    transform: scale(1.12);
   }
   .project > div:last-child {
     padding: 17px 14px;
