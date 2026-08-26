@@ -24,7 +24,7 @@ Website portfolio + formulir estimasi harga yang dibuat mengikuti desain dark na
 
 ## Fitur
 - SEO on-page: canonical, metadata sosial, robots, sitemap, structured data JSON-LD.
-- Trust & credibility: scope transparan, komunikasi langsung, handover, dan penghapusan testimonial generik yang tidak terverifikasi.
+- Trust & credibility: scope transparan, komunikasi langsung, handover.
 - Portfolio case study: challenge, approach, outcome yang lebih hati-hati dan tidak mengarang angka.
 - CTA: fokus pada konsultasi dan project.
 - Heading & semantic HTML: H1 utama, section H2, kartu H3, skip-link dan navigasi berlabel.
