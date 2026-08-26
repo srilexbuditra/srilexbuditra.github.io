@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="description" content="Portfolio aplikasi POS modern — dashboard, transaksi, produk, stok, laporan, dan screenshot aplikasi.">
+<title>POSPro — Portfolio Aplikasi Point of Sale</title>
+<style>
+:root{--bg:#07101e;--bg2:#0b1627;--card:#0e1b2d;--card2:#122238;--line:#20324b;--text:#f6f8fc;--muted:#9aabc1;--blue:#2878ff;--cyan:#5bc8ff;--green:#42d392;--shadow:0 24px 70px #0007}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:radial-gradient(circle at 80% -10%,#173a73 0,#07101e 35%);color:var(--text);line-height:1.6}a{text-decoration:none;color:inherit}button{font:inherit;cursor:pointer}
+.shell{display:flex;min-height:100vh}.sidebar{position:fixed;width:250px;top:0;bottom:0;background:#06101ddd;border-right:1px solid var(--line);padding:24px 15px;z-index:20;backdrop-filter:blur(16px)}.brand{display:flex;gap:12px;align-items:center;padding:5px 10px 30px}.brandmark{width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,#2878ff,#7b42ff);display:grid;place-items:center;font-size:22px;box-shadow:0 12px 30px #2878ff55}.brand b{font-size:17px}.brand small{display:block;color:var(--muted);font-size:10px}.navlabel{font-size:10px;color:#647890;text-transform:uppercase;letter-spacing:.15em;padding:12px}.nav a{display:flex;gap:12px;align-items:center;color:#92a4bb;padding:11px 12px;border-radius:10px;font-size:13px;margin:3px 0}.nav a:hover,.nav a.active{background:#142a47;color:#fff}.sidebottom{position:absolute;bottom:18px;left:25px;right:25px;color:#60728b;font-size:10px}.main{margin-left:250px;width:calc(100% - 250px)}.top{height:70px;border-bottom:1px solid var(--line);background:#07101ed9;backdrop-filter:blur(16px);display:flex;align-items:center;justify-content:space-between;padding:0 35px;position:sticky;top:0;z-index:15}.crumb{font-size:12px;color:var(--muted)}.crumb b{color:#fff}.topright{display:flex;gap:10px;align-items:center}.icon{border:1px solid var(--line);background:#0c1828;color:#fff;border-radius:9px;width:38px;height:38px}.avatar{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#1d4ed8,#9333ea);font-size:11px;font-weight:800}.hamb{display:none;background:none;border:0;color:#fff;font-size:23px}.wrap{max-width:1400px;margin:auto;padding:34px}
+.hero{display:grid;grid-template-columns:1fr 1.08fr;gap:30px;align-items:center;min-height:600px}.eyebrow{display:inline-flex;align-items:center;gap:8px;background:#12335c;color:#7dc7ff;border:1px solid #20518c;border-radius:99px;padding:7px 11px;font-size:11px;font-weight:700}.dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 12px var(--green)}h1{font-size:clamp(38px,5vw,68px);line-height:1.03;letter-spacing:-.055em;margin:22px 0 18px}.grad{background:linear-gradient(100deg,#fff,#66bfff,#8b7cff);-webkit-background-clip:text;color:transparent}.hero p{font-size:16px;color:var(--muted);max-width:590px}.actions{display:flex;gap:11px;flex-wrap:wrap;margin:25px 0}.btn{padding:12px 17px;border-radius:10px;border:1px solid var(--line);background:#0d1a2b;color:#fff;font-weight:750;font-size:12px}.primary{background:linear-gradient(135deg,#2878ff,#5a52ff);border:0;box-shadow:0 12px 28px #2878ff33}.btn:hover{transform:translateY(-2px)}.chips{display:flex;flex-wrap:wrap;gap:7px}.chip{font-size:10px;padding:6px 9px;border-radius:7px;background:#0c1b2f;border:1px solid var(--line);color:#8ea5c0}
+.hero-shot{position:relative}.shot-frame{padding:9px;border:1px solid #2a4668;background:#091525;border-radius:18px;box-shadow:var(--shadow);transform:perspective(1200px) rotateY(-3deg)}.shot-frame img{display:block;width:100%;border-radius:12px}.float-card{position:absolute;bottom:-18px;left:-20px;background:#0d1d31;border:1px solid #294766;border-radius:13px;padding:12px 15px;box-shadow:var(--shadow);font-size:11px}.float-card b{font-size:19px;display:block}.green{color:var(--green)}
+.section{padding:72px 0 0}.sectionhead{display:flex;justify-content:space-between;align-items:end;margin-bottom:20px}.sectionhead h2{font-size:28px;margin:0;letter-spacing:-.03em}.sectionhead p{font-size:12px;color:var(--muted);margin:5px 0}.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:13px}.stat,.feature,.info,.timeline,.techbox{background:linear-gradient(145deg,#0e1b2d,#0b1727);border:1px solid var(--line);border-radius:15px;box-shadow:0 10px 35px #0002}.stat{padding:18px}.stat small{color:var(--muted);font-size:11px}.stat b{font-size:27px;display:block;margin:7px 0}.stat span{font-size:10px;color:var(--green)}
+.features{display:grid;grid-template-columns:repeat(4,1fr);gap:13px}.feature{padding:18px}.featureicon{width:40px;height:40px;border-radius:11px;background:#122e57;color:#63b8ff;display:grid;place-items:center;font-size:18px}.feature h3{font-size:13px;margin:12px 0 5px}.feature p{font-size:10px;color:var(--muted);margin:0}
+.gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.gallery figure{margin:0;background:#0b1727;border:1px solid var(--line);border-radius:14px;overflow:hidden;cursor:pointer}.gallery img{width:100%;display:block;aspect-ratio:16/9;object-fit:cover;transition:.25s}.gallery figure:hover img{transform:scale(1.025)}figcaption{padding:12px;font-size:12px;font-weight:700}figcaption small{display:block;color:var(--muted);font-weight:400;margin-top:2px}
+.two{display:grid;grid-template-columns:1.1fr .9fr;gap:15px}.info{padding:22px}.info h3{font-size:17px;margin:0 0 8px}.info p{color:var(--muted);font-size:12px}.rows{margin-top:15px}.row{display:flex;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--line);font-size:11px}.row span{color:var(--muted)}.tech{display:flex;gap:8px;flex-wrap:wrap;margin-top:15px}.tech span{background:#0a1625;border:1px solid var(--line);padding:8px 10px;border-radius:8px;font-size:10px}
+.timeline{padding:22px;display:grid;grid-template-columns:repeat(5,1fr);gap:0}.step{position:relative;text-align:center;padding:0 9px}.step:not(:last-child):after{content:"";position:absolute;top:18px;left:60%;right:-40%;height:1px;background:#294461}.stepnum{position:relative;z-index:2;width:36px;height:36px;margin:auto;border-radius:50%;display:grid;place-items:center;background:#102a4a;border:1px solid #3977bd;color:#6dc3ff;font-size:10px;font-weight:800}.step h4{font-size:11px;margin:10px 0 3px}.step p{font-size:9px;color:var(--muted)}
+.cta{margin:72px 0 20px;border-radius:18px;padding:32px;background:linear-gradient(120deg,#172c7b,#24205f 50%,#172b67);border:1px solid #3a58a3;display:flex;justify-content:space-between;align-items:center;gap:20px}.cta h2{margin:0;font-size:25px}.cta p{margin:4px 0 0;color:#c1cbe1;font-size:12px}.footer{text-align:center;color:#5d7088;font-size:10px;padding:20px 0 35px}
+.modal{position:fixed;inset:0;background:#000b;backdrop-filter:blur(8px);z-index:50;display:none;align-items:center;justify-content:center;padding:18px}.modal.open{display:flex}.modalbox{width:min(1100px,100%);max-height:92vh;overflow:auto;background:#0b1727;border:1px solid #2a4564;border-radius:17px}.modalhead{padding:14px 18px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between}.close{background:#111f31;border:1px solid var(--line);color:#fff;border-radius:8px;width:34px;height:34px}.modalbody{padding:18px}.modalbody img{width:100%;border-radius:10px}.notice{padding:10px 12px;border:1px solid #334966;background:#0b1b2e;color:#9eb0c8;border-radius:9px;font-size:10px;margin-bottom:12px}
+.mobile-nav{display:none}
+@media(max-width:1100px){.hero{grid-template-columns:1fr}.features{grid-template-columns:repeat(2,1fr)}.grid4{grid-template-columns:repeat(2,1fr)}.gallery{grid-template-columns:repeat(2,1fr)}.two{grid-template-columns:1fr}}
+@media(max-width:760px){.sidebar{transform:translateX(-100%);transition:.25s}.sidebar.open{transform:translateX(0)}.main{margin-left:0;width:100%}.hamb{display:block}.top{padding:0 16px}.wrap{padding:22px 15px}.timeline{grid-template-columns:1fr;gap:18px}.step:not(:last-child):after{display:none}.features,.gallery,.grid4{grid-template-columns:1fr}.hero{min-height:auto;padding:30px 0}.hero-shot{margin-top:18px}.shot-frame{transform:none}.float-card{left:8px}.topright .avatar{display:none}}
+</style>
+</head>
+<body>
+<div class="shell">
+<aside class="sidebar" id="side">
+  <div class="brand"><div class="brandmark">🛒</div><div><b>POSPro</b><small>Point of Sale System</small></div></div>
+  <div class="navlabel">Portfolio</div>
+  <nav class="nav">
+    <a class="active" href="#home">⌂ <span>Beranda</span></a><a href="#overview">◈ <span>Proyek</span></a><a href="#features">✦ <span>Fitur</span></a><a href="#screenshots">▣ <span>Screenshot</span></a><a href="#technology">⌘ <span>Teknologi</span></a><a href="#stats">◫ <span>Statistik</span></a><a href="#timeline">◷ <span>Timeline</span></a><a href="#about">◎ <span>Tentang Saya</span></a><a href="#contact">✉ <span>Kontak</span></a>
+  </nav>
+  <div class="sidebottom">© 2026 Srilex Buditra<br>Portfolio Demo</div>
+</aside>
+<main class="main">
+<header class="top"><div><button class="hamb" id="hamb">☰</button><span class="crumb"><b>Portfolio</b> / Aplikasi POS</span></div><div class="topright"><button class="icon" id="demo">↗</button><div class="avatar">SB</div></div></header>
+<div class="wrap">
+<section class="hero" id="home">
+ <div><span class="eyebrow"><i class="dot"></i> Completed Project · 2026</span>
+ <h1>Aplikasi POS <span class="grad">(Point of Sale)<br>Modern & Profesional</span></h1>
+ <p>Sistem kasir berbasis web yang lengkap untuk mengelola penjualan, stok, pelanggan, dan laporan keuangan secara real-time.</p>
+ <div class="actions"><button class="btn primary" id="detail">◉ Lihat Detail Proyek</button><a class="btn" href="#screenshots">Lihat Screenshot</a></div>
+ <div class="chips"><span class="chip">✓ Completed</span><span class="chip">● Web Application</span><span class="chip">▣ 2026</span></div></div>
+ <div class="hero-shot"><div class="shot-frame"><img src="assets-pos-dashboard.png" alt="Preview portfolio aplikasi POS"></div><div class="float-card"><span>Performance</span><b>+28.6%</b><span class="green">↑ Sales growth</span></div></div>
+</section>
+
+<section class="section" id="stats"><div class="sectionhead"><div><h2>Statistik Proyek</h2><p>Ringkasan skala aplikasi POS.</p></div></div><div class="grid4">
+<div class="stat"><small>Fitur Lengkap</small><b>25+</b><span>Core features</span></div><div class="stat"><small>Modul Utama</small><b>8</b><span>Integrated modules</span></div><div class="stat"><small>Responsive</small><b>100%</b><span>Desktop · Tablet · Mobile</span></div><div class="stat"><small>Sistem</small><b>1</b><span>Terintegrasi</span></div>
+</div></section>
+
+<section class="section" id="features"><div class="sectionhead"><div><h2>Fitur Utama Aplikasi POS</h2><p>Solusi lengkap untuk kebutuhan operasional bisnis.</p></div></div><div class="features">
+<div class="feature"><div class="featureicon">🧾</div><h3>Kasir & Transaksi</h3><p>Proses penjualan cepat dan mudah dengan antarmuka yang intuitif.</p></div>
+<div class="feature"><div class="featureicon">📦</div><h3>Manajemen Produk</h3><p>Kelola produk, kategori, harga, barcode, dan informasi produk.</p></div>
+<div class="feature"><div class="featureicon">📊</div><h3>Manajemen Stok</h3><p>Pantau stok real-time, barang masuk, keluar, dan stok minimum.</p></div>
+<div class="feature"><div class="featureicon">👥</div><h3>Pelanggan & Supplier</h3><p>Kelola data pelanggan, supplier, dan riwayat pembelian.</p></div>
+<div class="feature"><div class="featureicon">📈</div><h3>Laporan Penjualan</h3><p>Laporan detail, laba rugi, dan analisis bisnis.</p></div>
+<div class="feature"><div class="featureicon">🖨</div><h3>Cetak Struk</h3><p>Cetak struk thermal otomatis dengan format yang dapat disesuaikan.</p></div>
+<div class="feature"><div class="featureicon">🔐</div><h3>Manajemen Pengguna</h3><p>Atur hak akses pengguna dengan sistem role fleksibel.</p></div>
+<div class="feature"><div class="featureicon">🛡</div><h3>Backup & Keamanan</h3><p>Backup data dan pengamanan akses untuk menjaga data bisnis.</p></div>
+</div></section>
+
+<section class="section" id="screenshots"><div class="sectionhead"><div><h2>Screenshot Aplikasi</h2><p>Beberapa tampilan antarmuka POS dalam konsep portfolio.</p></div></div>
+<div class="notice">Catatan: gambar di bawah adalah <b>mockup/demo visual yang dibuat untuk portofolio</b>, bukan screenshot dari software pihak ketiga. Anda dapat menggantinya dengan screenshot aplikasi POS asli milik Anda.</div>
+<div class="gallery">
+<figure data-title="Dashboard Utama"><img src="assets-pos-dashboard.png" alt="Dashboard POS"><figcaption>Dashboard Utama<small>Ringkasan penjualan & statistik</small></figcaption></figure>
+<figure data-title="Kasir & Transaksi"><img src="assets-pos-dashboard.png" alt="Kasir dan transaksi"><figcaption>Kasir / Transaksi<small>Alur transaksi penjualan</small></figcaption></figure>
+<figure data-title="Manajemen Produk"><img src="assets-pos-dashboard.png" alt="Manajemen produk"><figcaption>Manajemen Produk<small>Katalog dan kategori produk</small></figcaption></figure>
+<figure data-title="Manajemen Stok"><img src="assets-pos-dashboard.png" alt="Manajemen stok"><figcaption>Manajemen Stok<small>Monitoring stok</small></figcaption></figure>
+<figure data-title="Laporan Penjualan"><img src="assets-pos-dashboard.png" alt="Laporan penjualan"><figcaption>Laporan Penjualan<small>Grafik dan laporan bisnis</small></figcaption></figure>
+<figure data-title="Manajemen Pengguna"><img src="assets-pos-dashboard.png" alt="Manajemen pengguna"><figcaption>Manajemen Pengguna<small>Role dan hak akses</small></figcaption></figure>
+</div></section>
+
+<section class="section" id="overview"><div class="sectionhead"><div><h2>Project Overview</h2><p>Informasi lengkap proyek portfolio.</p></div></div><div class="two">
+<div class="info"><h3>POSPro — Point of Sale System</h3><p>Aplikasi POS dirancang untuk membantu bisnis retail, restoran, dan berbagai jenis usaha dalam mengelola operasional penjualan secara efisien dan terintegrasi.</p><p>Desain menggunakan pendekatan dashboard modern agar pengguna dapat memahami informasi penting dengan cepat.</p></div>
+<div class="info"><div class="row"><span>Nama Proyek</span><b>Aplikasi POS</b></div><div class="row"><span>Kategori</span><b>Web Application / POS</b></div><div class="row"><span>Tahun</span><b>2026</b></div><div class="row"><span>Status</span><b class="green">Completed</b></div><div class="row"><span>Responsive</span><b>Yes</b></div></div>
+</div></section>
+
+<section class="section" id="technology"><div class="sectionhead"><div><h2>Teknologi yang Digunakan</h2><p>Stack contoh yang bisa disesuaikan dengan proyek asli.</p></div></div><div class="techbox" style="padding:20px"><div class="tech"><span>HTML5</span><span>CSS3</span><span>JavaScript</span><span>Bootstrap 5</span><span>PHP 8</span><span>MySQL</span><span>jQuery</span><span>Chart.js</span></div></div></section>
+
+<section class="section" id="timeline"><div class="sectionhead"><div><h2>Timeline Pengembangan</h2><p>Proses pengembangan aplikasi POS.</p></div></div><div class="timeline">
+<div class="step"><div class="stepnum">01</div><h4>Analisis</h4><p>Analisis kebutuhan dan perencanaan sistem.</p></div><div class="step"><div class="stepnum">02</div><h4>Desain UI/UX</h4><p>Perancangan antarmuka dan pengalaman pengguna.</p></div><div class="step"><div class="stepnum">03</div><h4>Development</h4><p>Pengembangan sistem dan fitur aplikasi.</p></div><div class="step"><div class="stepnum">04</div><h4>Testing</h4><p>Pengujian sistem dan perbaikan.</p></div><div class="step"><div class="stepnum">05</div><h4>Deployment</h4><p>Deploy ke server dan training pengguna.</p></div>
+</div></section>
+
+<section class="section" id="about"><div class="two"><div class="info"><h3>Tentang Proyek</h3><p>Halaman ini dapat Anda gunakan sebagai studi kasus untuk menunjukkan kemampuan dalam membangun sistem administrasi, dashboard, aplikasi kasir, dan solusi digital untuk bisnis.</p></div><div class="info"><h3>Project Highlights</h3><div class="row"><span>UI Design</span><b>Modern Dashboard</b></div><div class="row"><span>UX</span><b>Simple & Fast</b></div><div class="row"><span>Architecture</span><b>Modular</b></div></div></div></section>
+
+<section class="cta" id="contact"><div><h2>Tertarik dengan pengembangan aplikasi POS?</h2><p>Mari berdiskusi tentang kebutuhan bisnis dan sistem yang ingin Anda bangun.</p></div><button class="btn primary" id="contactBtn">◉ Hubungi Saya</button></section>
+<div class="footer">© 2026 Srilex Buditra · POS Portfolio · Semua data pada demo ini dapat Anda ganti.</div>
+</div></main></div>
+
+<div class="modal" id="modal"><div class="modalbox"><div class="modalhead"><b id="mtitle">Detail Project POS</b><button class="close" id="close">×</button></div><div class="modalbody"><div class="notice">Ini adalah preview portofolio. Untuk versi produksi, ganti aset mockup dengan screenshot aplikasi POS asli milik Anda.</div><img src="assets-pos-dashboard.png" alt="Preview aplikasi POS"><div class="actions"><a class="btn primary" href="#screenshots" id="modalGallery">Lihat Galeri</a><button class="btn" id="modalContact">Hubungi Saya</button></div></div></div></div>
+<script>
+const side=document.getElementById('side'),modal=document.getElementById('modal');
+document.getElementById('hamb').onclick=()=>side.classList.toggle('open');
+document.getElementById('detail').onclick=()=>modal.classList.add('open');
+document.getElementById('close').onclick=()=>modal.classList.remove('open');
+modal.onclick=e=>{if(e.target===modal)modal.classList.remove('open')};
+document.querySelectorAll('.gallery figure').forEach(f=>f.onclick=()=>{modal.classList.add('open');document.getElementById('mtitle').textContent=f.dataset.title});
+document.getElementById('demo').onclick=()=>window.scrollTo({top:document.getElementById('screenshots').offsetTop-80,behavior:'smooth'});
+document.getElementById('contactBtn').onclick=()=>alert('Silakan ganti tombol ini dengan link WhatsApp, email, atau halaman kontak Anda.');
+document.getElementById('modalContact').onclick=()=>alert('Silakan ganti tombol ini dengan link kontak Anda.');
+document.getElementById('modalGallery').onclick=()=>modal.classList.remove('open');
+document.querySelectorAll('.nav a').forEach(a=>a.onclick=()=>side.classList.remove('open'));
+</script>
+</body>
+</html>
