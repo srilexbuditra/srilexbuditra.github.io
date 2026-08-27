@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/">
+  <ShortName>Srilex Buditra</ShortName>
+  <Description>Pencarian website Srilex Buditra — portfolio, layanan, proyek, dan halaman terkait Full Stack Developer Bengkulu.</Description>
+  <InputEncoding>UTF-8</InputEncoding>
+  <OutputEncoding>UTF-8</OutputEncoding>
+  <Language>id-ID</Language>
+  <Developer>Srilex Buditra</Developer>
+  <LongName>Srilex Buditra Website Search</LongName>
+  <Tags>Srilex Buditra Full Stack Developer Bengkulu portfolio website web development</Tags>
+  <Image height="32" width="32" type="image/png">https://srilexbuditra.work/images/favicon-32x32.png</Image>
+  <Url type="text/html" method="get" template="https://srilexbuditra.work/?q={searchTerms}"/>
+</OpenSearchDescription>
