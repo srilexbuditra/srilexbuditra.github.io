@@ -191,7 +191,7 @@ a {
   background: var(--green);
   box-shadow: 0 0 12px var(--green);
   /* Menambahkan animasi kedap-kedip */
-  animation: blink 1.5s infinite ease-in-out; 
+  animation: blink 0.8s infinite ease-in-out; 
 }
 
 /* Mengatur efek memudar dan mengecil */
