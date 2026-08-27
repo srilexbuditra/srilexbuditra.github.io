@@ -188,21 +188,20 @@ a {
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: var(--green);
-  box-shadow: 0 0 12px var(--green);
-  /* Menambahkan animasi kedap-kedip */
-  animation: blink 0.8s infinite ease-in-out; 
+  /* Hapus background dan box-shadow bawaan di sini agar tidak bertabrakan dengan animasi */
+  animation: blink-two-colors 1.2s infinite ease-in-out; 
 }
 
-/* Mengatur efek memudar dan mengecil */
-@keyframes blink {
+@keyframes blink-two-colors {
+  /* Warna Pertama (Hijau) */
   0%, 100% {
-    opacity: 1;
-    transform: scale(1);
+    background: var(--green);
+    box-shadow: 0 0 12px var(--green);
   }
+  /* Warna Kedua (Contoh: Merah / Silakan ganti sesuai kebutuhan) */
   50% {
-    opacity: 0.3;
-    transform: scale(0.8);
+    background: #ff0000; /* Ganti dengan var(--red) jika ada */
+    box-shadow: 0 0 12px #ff0000;
   }
 }
 .hero-kicker {
