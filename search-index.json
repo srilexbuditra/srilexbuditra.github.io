@@ -1,0 +1,86 @@
+[
+  {
+    "title": "Website Company Profile",
+    "description": "Profil bisnis profesional, cepat dan terpercaya.",
+    "url": "/#layanan",
+    "content": "website company profile profil bisnis jasa website bengkulku"
+  },
+  {
+    "title": "Web Application",
+    "description": "Aplikasi web modern dan interaktif sesuai kebutuhan.",
+    "url": "/#layanan",
+    "content": "web application aplikasi web custom react next js"
+  },
+  {
+    "title": "REST API / Backend",
+    "description": "Backend dan API yang terstruktur untuk integrasi sistem.",
+    "url": "/#layanan",
+    "content": "rest api backend node express integrasi"
+  },
+  {
+    "title": "Sistem Informasi Custom",
+    "description": "Solusi digital sesuai proses bisnis organisasi.",
+    "url": "/#layanan",
+    "content": "sistem informasi custom administrasi bisnis"
+  },
+  {
+    "title": "Database Development",
+    "description": "Desain struktur data, relasi dan optimasi database.",
+    "url": "/#layanan",
+    "content": "database postgresql mysql mongodb"
+  },
+  {
+    "title": "Deployment & Cloud",
+    "description": "Hosting, VPS dan cloud service untuk peluncuran aplikasi.",
+    "url": "/#layanan",
+    "content": "deployment cloud vps nginx docker"
+  },
+  {
+    "title": "Website Sekolah",
+    "description": "Contoh project website sekolah modern dan responsif.",
+    "url": "/#portfolio",
+    "content": "website sekolah pendidikan informasi"
+  },
+  {
+    "title": "Aplikasi POS",
+    "description": "Sistem kasir dan inventori berbasis web.",
+    "url": "/#portfolio",
+    "content": "pos kasir inventori retail"
+  },
+  {
+    "title": "Sistem Administrasi",
+    "description": "Dashboard administrasi untuk pengelolaan data.",
+    "url": "/#portfolio",
+    "content": "administrasi dashboard sistem data"
+  },
+  {
+    "title": "Paket & Harga",
+    "description": "Pilihan paket Starter, Professional, Business dan Custom.",
+    "url": "/#harga",
+    "content": "harga website paket biaya jasa"
+  },
+  {
+    "title": "Hitung Estimasi Project",
+    "description": "Perkirakan kebutuhan dan biaya awal project.",
+    "url": "/#estimasi",
+    "content": "estimasi harga project biaya"
+  },
+  {
+    "title": "Technical SEO",
+    "description": "Fondasi SEO teknis untuk struktur website profesional.",
+    "url": "/#faq",
+    "content": "seo technical seo schema sitemap robots"
+  },
+  {
+    "title": "FAQ",
+    "description": "Jawaban atas pertanyaan umum seputar project dan layanan.",
+    "url": "/#faq",
+    "content": "faq pertanyaan custom fitur source code hosting"
+  },
+  {
+    "title": "Srilex Buditra",
+    "description": "Full Stack Developer Bengkulu untuk website dan solusi digital.",
+    "url": "/#tentang",
+    "content": "full stack developer bengkulu srilex buditra"
+  }
+]
