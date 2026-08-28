@@ -1,0 +1,54 @@
+name: Repository Quality Check
+
+on:
+  push:
+    branches: ["main", "master"]
+  pull_request:
+    branches: ["main", "master"]
+
+permissions:
+  contents: read
+
+jobs:
+  basic-checks:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check for accidental environment files
+        shell: bash
+        run: |
+          if find . -type f \( -name ".env" -o -name ".env.local" -o -name ".env.production" \) -print -quit | grep -q .; then
+            echo "Sensitive environment file detected."
+            exit 1
+          fi
+
+      - name: Check for common private-key files
+        shell: bash
+        run: |
+          if find . -type f \( -name "*.pem" -o -name "*.key" -o -name "*.p12" -o -name "*.pfx" \) -print -quit | grep -q .; then
+            echo "Potential private key or certificate detected."
+            exit 1
+          fi
+
+      - name: Check required repository files
+        shell: bash
+        run: |
+          test -f README.md
+          test -f LICENSE.md
+          test -f SECURITY.md
+          test -f PRIVACY.md
+          test -f TERMS.md
+          test -f ACCESSIBILITY.md
+          test -f .gitignore
+          echo "Required repository files found."
+
+      - name: Scan tracked text for obvious placeholder secrets
+        shell: bash
+        run: |
+          if grep -RInE --exclude-dir=.git --include='*.js' --include='*.html' --include='*.json' --include='*.yml' --include='*.yaml' '(OPENAI_API_KEY|PRIVATE_KEY|GITHUB_TOKEN)[[:space:]]*=[[:space:]]*[^[:space:]]+' .; then
+            echo "Review possible secret-like assignment above."
+            exit 1
+          fi
+          echo "Basic checks completed."
