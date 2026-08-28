@@ -79,7 +79,7 @@ Performa SEO tetap bergantung pada kualitas konten, indexing mesin pencari, back
 
 Informasi mengenai pelaporan kerentanan dan kebijakan keamanan tersedia pada:
 
-**[security.md](security.md)**
+**[SECURITY.md](SECURITY.md)**
 
 Mohon jangan mempublikasikan kerentanan keamanan sebelum memberikan waktu yang wajar untuk evaluasi dan perbaikan.
 
@@ -89,7 +89,7 @@ Source code, desain, branding, dan materi tertentu dalam repository ini dilindun
 
 Silakan baca:
 
-**[license.md](license.md)**
+**[LICENSE.md](LICENSE.md)**
 
 Repository publik tidak berarti seluruh isi proyek bebas digunakan ulang, disalin, atau didistribusikan tanpa izin.
 
