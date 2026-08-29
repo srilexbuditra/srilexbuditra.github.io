@@ -56,7 +56,7 @@ Project ini menggunakan teknologi frontend statis, termasuk:
 ├── NOTICE.md                         # Pemberitahuan aset/lisensi pihak ketiga
 ├── ACCESSIBILITY.md                  # Komitmen aksesibilitas
 ├── PUBLIC_REPOSITORY_AUDIT.md        # Komitmen aksesibilitas
-└── CNAME                   # Konfigurasi custom domain
+└── CNAME                             # Konfigurasi custom domain
 ```
 
 ## 🚀 Menjalankan Secara Lokal
