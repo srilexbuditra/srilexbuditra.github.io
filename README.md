@@ -37,20 +37,25 @@ Project ini menggunakan teknologi frontend statis, termasuk:
 
 ```text
 .
-├── index.html              # Halaman utama
-├── 404.html                # Halaman ketika konten tidak ditemukan
-├── search.html             # Halaman pencarian
-├── style.css               # Styling utama
-├── script.js               # Interaksi utama
-├── tts.js                  # Fitur Text-to-Speech
-├── search.js               # Logika pencarian
-├── search-enhancer.js      # Penyempurnaan pencarian
-├── search-index.json       # Index data pencarian
-├── sitemap.xml             # Sitemap untuk mesin pencari
-├── robots.txt              # Instruksi crawler
-├── opensearch.xml          # Konfigurasi OpenSearch
-├── security.md             # Kebijakan keamanan
-├── license.md              # Ketentuan lisensi
+├── index.html                        # Halaman utama
+├── 404.html                          # Halaman ketika konten tidak ditemukan
+├── search.html                       # Halaman pencarian
+├── style.css                         # Styling utama
+├── script.js                         # Interaksi utama
+├── tts.js                            # Fitur Text-to-Speech
+├── search.js                         # Logika pencarian
+├── search-enhancer.js                # Penyempurnaan pencarian
+├── search-index.json                 # Index data pencarian
+├── sitemap.xml                       # Sitemap untuk mesin pencari
+├── robots.txt                        # Instruksi crawler
+├── opensearch.xml                    # Konfigurasi OpenSearch
+├── LICENSE.md                        # Ketentuan lisensi
+├── SECURITY.md                       # Kebijakan keamanan
+├── PRIVACY.md                        # Kebijakan privasi
+├── TERMS.md                          # Ketentuan lAYANAN
+├── NOTICE.md                         # Pemberitahuan aset/lisensi pihak ketiga
+├── ACCESSIBILITY.md                  # Komitmen aksesibilitas
+├── PUBLIC_REPOSITORY_AUDIT.md        # Komitmen aksesibilitas
 └── CNAME                   # Konfigurasi custom domain
 ```
 
