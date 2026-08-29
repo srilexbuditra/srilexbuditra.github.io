@@ -1,342 +1,464 @@
 <!DOCTYPE html>
+
 <html lang="id">
-  <head>
+<head>
+    <!-- Pertahankan meta dasar dari website utama -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kebijakan Privasi | Srilex Buditra</title>
-    <meta name="description" content="Kebijakan Privasi Srilex Buditra menjelaskan bagaimana informasi dikelola, digunakan, dan dilindungi saat Anda menggunakan website dan layanan digital.">
-    <meta name="keywords" content="Kebijakan Privasi, Srilex Buditra, Full Stack Developer, Privacy Policy, Keamanan Data">
-    <meta name="author" content="Srilex Buditra">
-    <meta name="robots" content="index, follow">
-    <link rel="canonical" href="https://srilexbuditra.work/privacy.html">
-    <!-- Open Graph -->
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="Kebijakan Privasi | Srilex Buditra">
-    <meta property="og:description" content="Informasi mengenai bagaimana Srilex Buditra menangani privasi dan informasi yang berkaitan dengan website serta layanan digital.">
-    <meta property="og:url" content="https://srilexbuditra.work/privacy.html">
-    <!-- Twitter -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Kebijakan Privasi | Srilex Buditra">
-    <meta name="twitter:description" content="Pelajari bagaimana informasi dan privasi ditangani dalam website dan layanan digital Srilex Buditra.">
-    <!-- Website Style -->
-    <link rel="stylesheet" href="style.css">
-    <!-- Legal Page Style -->
-    <link rel="stylesheet" href="legal.css">
-  </head>
-  <body>
-    <!-- =========================
-       HEADER
-  ========================== -->
-    <header class="site-header">
-      <div class="container nav-container"> ``` <a href="/" class="brand" aria-label="Srilex Buditra">
-          <span class="brand-name">SRILEX BUDITRA</span>
-          <span class="brand-role">FULL STACK DEVELOPER</span>
-        </a>
-        <nav class="main-nav" aria-label="Navigasi utama">
-          <a href="/">Beranda</a>
-          <a href="/#about">Tentang</a>
-          <a href="/#skills">Keahlian</a>
-          <a href="/#services">Layanan</a>
-          <a href="/#portfolio">Portfolio</a>
-          <a href="/#pricing">Harga</a>
-          <a href="/#faq">FAQ</a>
-          <a href="/#contact">Hubungi Saya</a>
-        </nav>
-      </div> ```
-    </header>
-    <!-- =========================
-       MAIN
-  ========================== -->
-    <main class="legal-page"> ```
-      <!-- LEGAL HERO -->
-      <section class="legal-hero">
-        <div class="container legal-hero-inner">
-          <a href="/" class="back-link"> ← Kembali ke website utama </a>
-          <div class="legal-eyebrow">
-            <span class="legal-dot"></span> INFORMASI & TRANSPARANSI
-          </div>
-          <h1> Kebijakan <span>Privasi.</span>
-          </h1>
-          <p class="legal-intro"> Privasi adalah bagian dari kepercayaan. Halaman ini menjelaskan bagaimana informasi dapat diterima, digunakan, disimpan, dan dilindungi ketika Anda menggunakan website atau berkomunikasi mengenai layanan digital Srilex Buditra. </p>
-          <div class="legal-meta">
-            <div class="legal-badge"> PRIVACY </div>
-            <p> TERAKHIR DIPERBARUI <strong>29 AGUSTUS 2026</strong>
-            </p>
-          </div>
+
+```
+<title>Kebijakan Privasi | Srilex Buditra</title>
+<meta name="description" content="Kebijakan Privasi Srilex Buditra menjelaskan bagaimana informasi digunakan, dilindungi, dan dikelola saat Anda menggunakan website dan layanan digital kami.">
+
+<!-- Gunakan stylesheet utama website -->
+<link rel="stylesheet" href="style.css">
+
+<!-- Style khusus halaman legal -->
+<link rel="stylesheet" href="legal.css">
+```
+
+</head>
+
+<body>
+
+```
+<!--
+    PERTAHANKAN HEADER / NAVBAR ASLI WEBSITE ANDA DI BAGIAN INI
+-->
+<a class="skip-link" href="#konten-utama">Lewati ke konten utama</a>
+<div itemscope itemtype="https://schema.org/SearchAction" itemprop="potentialAction" itemid="https://srilexbuditra.work/#search-action" hidden>
+  <div itemprop="target" itemscope itemtype="https://schema.org/EntryPoint">
+    <meta itemprop="urlTemplate" content="https://srilexbuditra.work/search.html?q={search_term_string}">
+  </div>
+  <meta itemprop="query-input" content="required name=search_term_string">
+</div>
+<div class="top-glow"></div>
+<header class="site-header" id="beranda">
+  <div class="container nav-wrap">
+    <a class="brand" href="#beranda" aria-label="Srilex Buditra">
+      <span class="brand-mark"><img src="/images/logo.png" alt="Srilex Buditra Logo"></span>
+      <span><strong>SRILEX <b>BUDITRA</b></strong><small>FULL STACK DEVELOPER</small></span>
+    </a>
+    <button class="menu-toggle" id="menuToggle" type="button" aria-label="Buka menu" aria-expanded="false" aria-controls="mainNav">☰</button>
+    <nav id="mainNav" aria-label="Navigasi utama">
+      <a href="#beranda">Beranda</a><a href="#tentang">Tentang</a><a href="#keahlian">Keahlian</a>
+      <a href="#layanan">Layanan</a><a href="#portfolio">Portfolio</a><a href="#harga">Harga</a>
+      <a href="#faq">FAQ</a><a class="nav-cta" href="#kontak">Hubungi Saya</a>
+    </nav>
+  </div>
+</header>
+
+<section class="site-search" aria-label="Pencarian website">
+  <div class="container">
+    <form class="site-search-form" id="siteSearchForm" action="/search.html" method="get" role="search" autocomplete="off">
+      <div class="site-search-box">
+        <span class="site-search-icon" aria-hidden="true">⌕</span>
+        <input id="siteSearchInput" name="q" type="search" placeholder="Cari layanan, portfolio, teknologi, atau solusi..." aria-label="Cari di website" aria-autocomplete="list" aria-controls="siteSearchPanel" aria-expanded="false">
+        <button class="site-search-submit" type="submit" aria-label="Cari">
+          <span aria-hidden="true">Cari</span><b aria-hidden="true">↗</b>
+        </button>
+      </div>
+      <div class="site-search-panel" id="siteSearchPanel" hidden>
+        <div class="search-panel-section" id="searchAutocompleteWrap">
+          <div class="search-panel-label">Saran pencarian</div>
+          <div class="search-suggestion-list" id="siteSearchSuggestions"></div>
         </div>
-      </section>
-      <!-- LEGAL CONTENT -->
-      <section class="legal-body">
-        <div class="container legal-layout">
-          <!-- TABLE OF CONTENTS -->
-          <aside class="legal-sidebar">
-            <div class="legal-sidebar-inner">
-              <p class="toc-label"> DAFTAR ISI </p>
-              <nav class="legal-toc">
-                <a href="#information">
-                  <span>01</span> Informasi yang Kami Terima </a>
-                <a href="#usage">
-                  <span>02</span> Cara Informasi Digunakan </a>
-                <a href="#project">
-                  <span>03</span> Informasi Project & Komunikasi </a>
-                <a href="#cookies">
-                  <span>04</span> Cookie & Teknologi Serupa </a>
-                <a href="#third-party">
-                  <span>05</span> Layanan Pihak Ketiga </a>
-                <a href="#sharing">
-                  <span>06</span> Pembagian Informasi </a>
-                <a href="#storage">
-                  <span>07</span> Penyimpanan Informasi </a>
-                <a href="#security">
-                  <span>08</span> Keamanan Informasi </a>
-                <a href="#rights">
-                  <span>09</span> Hak & Pilihan Anda </a>
-                <a href="#changes">
-                  <span>10</span> Perubahan Kebijakan </a>
-                <a href="#contact">
-                  <span>11</span> Hubungi Kami </a>
-              </nav>
-            </div>
-          </aside>
-          <!-- MAIN ARTICLE -->
-          <article class="legal-content">
-            <!-- 01 -->
-            <section id="information" class="legal-section">
-              <div class="section-number">01</div>
-              <div class="section-content">
-                <p class="section-kicker"> INFORMASI </p>
-                <h2> Informasi yang Kami Terima </h2>
-                <p> Saat Anda berinteraksi dengan website atau menghubungi Srilex Buditra, kami dapat menerima informasi yang Anda berikan secara sukarela melalui formulir, email, WhatsApp, atau saluran komunikasi resmi lainnya. </p>
-                <p> Informasi tersebut dapat mencakup: </p>
-                <ul class="legal-list">
-                  <li>Nama dan informasi kontak.</li>
-                  <li>Alamat email.</li>
-                  <li>Nomor WhatsApp atau saluran komunikasi lainnya.</li>
-                  <li>Nama perusahaan atau organisasi.</li>
-                  <li>Informasi mengenai kebutuhan project.</li>
-                  <li>Detail teknis atau bisnis yang relevan untuk konsultasi.</li>
-                  <li> Informasi lain yang Anda pilih untuk disampaikan secara sukarela. </li>
-                </ul>
-                <div class="legal-callout">
-                  <strong>Prinsip Kami</strong>
-                  <p> Kami berusaha menggunakan informasi yang relevan dengan kebutuhan komunikasi, konsultasi, pengembangan project, dan layanan yang Anda minta. </p>
-                </div>
-              </div>
-            </section>
-            <!-- 02 -->
-            <section id="usage" class="legal-section">
-              <div class="section-number">02</div>
-              <div class="section-content">
-                <p class="section-kicker"> PENGGUNAAN INFORMASI </p>
-                <h2> Cara Informasi Digunakan </h2>
-                <p> Informasi digunakan untuk membantu memberikan komunikasi dan layanan yang lebih relevan dengan kebutuhan Anda. </p>
-                <ul class="legal-list">
-                  <li> Menanggapi pertanyaan dan permintaan konsultasi. </li>
-                  <li> Memahami kebutuhan project dan ruang lingkup pekerjaan. </li>
-                  <li> Menyusun komunikasi, proposal, estimasi, atau penawaran layanan. </li>
-                  <li> Mendukung proses pengembangan solusi digital. </li>
-                  <li> Meningkatkan kualitas website dan pengalaman pengguna. </li>
-                  <li> Membantu menjaga keamanan website dan mencegah penyalahgunaan. </li>
-                  <li> Memenuhi kewajiban hukum apabila diperlukan. </li>
-                </ul>
-                <div class="legal-callout">
-                  <strong>Transparansi</strong>
-                  <p> Prinsip kami sederhana: informasi digunakan untuk tujuan yang relevan dan tidak dimaksudkan untuk digunakan secara sembarangan. </p>
-                </div>
-              </div>
-            </section>
-            <!-- 03 -->
-            <section id="project" class="legal-section">
-              <div class="section-number">03</div>
-              <div class="section-content">
-                <p class="section-kicker"> PROJECT & KOMUNIKASI </p>
-                <h2> Informasi Project dan Komunikasi </h2>
-                <p> Dalam proses konsultasi atau pengembangan project, Anda mungkin memberikan informasi mengenai bisnis, organisasi, sistem, proses kerja, atau kebutuhan digital. </p>
-                <p> Informasi tersebut dapat digunakan untuk membantu: </p>
-                <ul class="legal-list">
-                  <li>Memahami tujuan project.</li>
-                  <li>Menganalisis kebutuhan fitur.</li>
-                  <li>Menentukan scope pekerjaan.</li>
-                  <li>Menyusun solusi teknis.</li>
-                  <li>Mendukung proses development dan testing.</li>
-                  <li>Membantu deployment dan handover.</li>
-                </ul>
-                <p> Detail project yang bersifat pribadi, rahasia, atau sensitif tidak dimaksudkan untuk digunakan sebagai materi publik tanpa dasar atau izin yang sesuai. </p>
-              </div>
-            </section>
-            <!-- 04 -->
-            <section id="cookies" class="legal-section">
-              <div class="section-number">04</div>
-              <div class="section-content">
-                <p class="section-kicker"> WEBSITE TECHNOLOGY </p>
-                <h2> Cookie dan Teknologi Serupa </h2>
-                <p> Website dapat menggunakan cookie atau teknologi serupa untuk mendukung fungsi website, memahami penggunaan secara umum, dan membantu meningkatkan pengalaman pengguna. </p>
-                <ul class="legal-list">
-                  <li>Menjaga fungsi tertentu tetap berjalan.</li>
-                  <li>Mengingat preferensi pengguna.</li>
-                  <li>Memahami performa halaman.</li>
-                  <li>Menganalisis penggunaan website secara umum.</li>
-                </ul>
-                <p> Anda dapat mengatur atau menonaktifkan cookie melalui pengaturan browser. Namun, beberapa fungsi website mungkin tidak bekerja secara optimal apabila cookie tertentu dinonaktifkan. </p>
-              </div>
-            </section>
-            <!-- 05 -->
-            <section id="third-party" class="legal-section">
-              <div class="section-number">05</div>
-              <div class="section-content">
-                <p class="section-kicker"> THIRD-PARTY SERVICES </p>
-                <h2> Layanan dan Platform Pihak Ketiga </h2>
-                <p> Website atau layanan digital dapat menggunakan atau terhubung dengan layanan pihak ketiga. </p>
-                <ul class="legal-list">
-                  <li>Penyedia hosting dan infrastruktur.</li>
-                  <li>Platform deployment dan cloud.</li>
-                  <li>Layanan komunikasi.</li>
-                  <li>Repositori kode.</li>
-                  <li>Layanan analitik.</li>
-                  <li>Media sosial.</li>
-                  <li>Integrasi API atau layanan digital lainnya.</li>
-                </ul>
-                <p> Setiap layanan pihak ketiga memiliki kebijakan dan sistem pengelolaan datanya masing-masing. Kami menyarankan Anda untuk memahami kebijakan privasi layanan tersebut sebelum memberikan informasi pribadi. </p>
-              </div>
-            </section>
-            <!-- 06 -->
-            <section id="sharing" class="legal-section">
-              <div class="section-number">06</div>
-              <div class="section-content">
-                <p class="section-kicker"> INFORMATION SHARING </p>
-                <h2> Pembagian Informasi </h2>
-                <p> Informasi pribadi Anda tidak dijual sebagai produk. </p>
-                <p> Informasi hanya dapat dibagikan apabila diperlukan secara wajar untuk: </p>
-                <ul class="legal-list">
-                  <li>Menyediakan layanan yang Anda minta.</li>
-                  <li> Mendukung proses operasional melalui penyedia layanan tepercaya. </li>
-                  <li> Melindungi keamanan website, pengguna, atau sistem. </li>
-                  <li> Memenuhi kewajiban hukum yang berlaku. </li>
-                  <li> Menjalankan project berdasarkan kesepakatan yang relevan. </li>
-                </ul>
-              </div>
-            </section>
-            <!-- 07 -->
-            <section id="storage" class="legal-section">
-              <div class="section-number">07</div>
-              <div class="section-content">
-                <p class="section-kicker"> DATA RETENTION </p>
-                <h2> Penyimpanan Informasi </h2>
-                <p> Informasi dapat disimpan selama masih diperlukan untuk tujuan yang relevan. </p>
-                <ul class="legal-list">
-                  <li>Menindaklanjuti komunikasi.</li>
-                  <li>Menjalankan project.</li>
-                  <li>Menyediakan dukungan.</li>
-                  <li>Menyelesaikan kebutuhan administratif.</li>
-                  <li>Membantu menjaga keamanan.</li>
-                  <li>Memenuhi kewajiban hukum.</li>
-                </ul>
-                <p> Informasi tidak dimaksudkan untuk disimpan lebih lama dari yang diperlukan secara wajar. </p>
-              </div>
-            </section>
-            <!-- 08 -->
-            <section id="security" class="legal-section">
-              <div class="section-number">08</div>
-              <div class="section-content">
-                <p class="section-kicker"> SECURITY </p>
-                <h2> Keamanan Informasi </h2>
-                <p> Langkah-langkah yang wajar diterapkan untuk membantu melindungi informasi dari akses tanpa izin, kehilangan, penyalahgunaan, atau gangguan. </p>
-                <p> Namun, penting untuk dipahami bahwa tidak ada sistem digital yang dapat menjamin keamanan 100% tanpa risiko. </p>
-                <div class="legal-callout">
-                  <strong>Keamanan adalah proses</strong>
-                  <p> Pendekatan keamanan dapat terus ditinjau dan ditingkatkan sesuai perkembangan teknologi, infrastruktur, dan kebutuhan layanan. </p>
-                </div>
-                <a href="/security.html" class="inline-link"> Pelajari pendekatan keamanan → </a>
-              </div>
-            </section>
-            <!-- 09 -->
-            <section id="rights" class="legal-section">
-              <div class="section-number">09</div>
-              <div class="section-content">
-                <p class="section-kicker"> YOUR CHOICES </p>
-                <h2> Hak dan Pilihan Anda </h2>
-                <p> Anda dapat menghubungi kami untuk meminta informasi mengenai data pribadi yang sebelumnya Anda berikan secara sukarela. </p>
-                <p> Sesuai dengan kondisi dan ketentuan yang berlaku, Anda dapat meminta: </p>
-                <ul class="legal-list">
-                  <li>Akses terhadap informasi tertentu.</li>
-                  <li>Perbaikan informasi yang tidak akurat.</li>
-                  <li>Pembaruan informasi.</li>
-                  <li>Penghapusan informasi tertentu.</li>
-                </ul>
-                <p> Setiap permintaan akan dipertimbangkan berdasarkan kebutuhan operasional, keamanan, dan kewajiban hukum yang berlaku. </p>
-              </div>
-            </section>
-            <!-- 10 -->
-            <section id="changes" class="legal-section">
-              <div class="section-number">10</div>
-              <div class="section-content">
-                <p class="section-kicker"> UPDATES </p>
-                <h2> Perubahan Kebijakan Privasi </h2>
-                <p> Kebijakan Privasi ini dapat diperbarui apabila terdapat perubahan pada website, layanan, teknologi, atau kebutuhan operasional. </p>
-                <p> Versi terbaru akan dipublikasikan pada halaman ini beserta tanggal pembaruan. </p>
-                <p> Kami menyarankan Anda untuk meninjau halaman ini secara berkala. </p>
-              </div>
-            </section>
-            <!-- 11 -->
-            <section id="contact" class="legal-section legal-contact-section">
-              <div class="section-number">11</div>
-              <div class="section-content">
-                <p class="section-kicker"> CONTACT </p>
-                <h2> Hubungi Kami </h2>
-                <p> Jika Anda memiliki pertanyaan mengenai privasi, informasi pribadi, atau penggunaan data dalam komunikasi dan layanan, silakan gunakan saluran komunikasi resmi yang tersedia di website. </p>
-                <div class="legal-quote">
-                  <p> “Solusi digital yang baik tidak hanya dibangun dengan teknologi, tetapi juga dengan kepercayaan dan transparansi.” </p>
-                </div>
-                <a href="/#kontak" class="legal-button"> Hubungi Srilex Buditra → </a>
-              </div>
-            </section>
-            <!-- LEGAL NAVIGATION -->
-            <div class="legal-navigation">
-              <a href="/terms.html">
-                <span class="legal-nav-label"> SELANJUTNYA </span>
-                <strong> Ketentuan Layanan → </strong>
-              </a>
-              <a href="/security.html">
-                <span class="legal-nav-label"> SECURITY </span>
-                <strong> Keamanan Website → </strong>
-              </a>
-            </div>
-          </article>
+        <div class="search-panel-section search-history-section">
+          <div class="search-panel-label"><span aria-hidden="true">◷</span> Riwayat pencarian <button type="button" id="clearSearchHistory">Hapus</button></div>
+          <div class="search-chip-list" id="siteSearchHistory"></div>
         </div>
-      </section> ```
-    </main>
-    <!-- =========================
-       FOOTER
-  ========================== -->
-    <footer class="site-footer"> ``` <div class="container footer-grid">
-        <div>
-          <a href="/" class="footer-brand"> SRILEX BUDITRA </a>
-          <p> Building digital solutions with code, clarity and impact. </p>
-        </div>
-        <div>
-          <h4>Legal</h4>
-          <a href="/privacy.html">Kebijakan Privasi</a>
-          <a href="/terms.html">Ketentuan Layanan</a>
-          <a href="/security.html">Keamanan</a>
-        </div>
-        <div>
-          <h4>Explore</h4>
-          <a href="/#about">Tentang</a>
-          <a href="/#skills">Keahlian</a>
-          <a href="/#services">Layanan</a>
-          <a href="/#portfolio">Portfolio</a>
-        </div>
-        <div>
-          <h4>Contact</h4>
-          <p>WhatsApp: +62 821-3623-8350</p>
-          <p> Email: <a href="mailto:info@srilexbuditra.work"> info@srilexbuditra.work </a>
-          </p>
-          <p>Bengkulu, Indonesia</p>
+        <div class="search-panel-section">
+          <div class="search-panel-label"><span aria-hidden="true">↗</span> Pencarian populer</div>
+          <div class="search-chip-list" id="siteSearchTrending"></div>
         </div>
       </div>
-      <div class="container footer-bottom">
-        <p> © 2026 Srilex Buditra. All Rights Reserved. Full Stack. Full Solution. Full Impact. </p>
-      </div> ```
-    </footer>
-  </body>
+    </form>
+  </div>
+</section>
+<main class="legal-page">
+
+    <section class="legal-hero">
+        <div class="legal-container">
+
+            <a href="/" class="legal-back">
+                ← Kembali ke website utama
+            </a>
+
+            <span class="legal-eyebrow">LEGAL & PRIVACY</span>
+
+            <h1>Kebijakan <span>Privasi</span></h1>
+
+            <p class="legal-intro">
+                Kepercayaan adalah bagian penting dari setiap hubungan digital.
+                Halaman ini menjelaskan bagaimana informasi Anda dapat digunakan,
+                dilindungi, dan dikelola ketika berinteraksi dengan
+                <strong>Srilex Buditra</strong> melalui website dan layanan yang tersedia.
+            </p>
+
+            <div class="legal-meta">
+                <span>TERAKHIR DIPERBARUI</span>
+                <strong>29 AGUSTUS 2026</strong>
+            </div>
+
+        </div>
+    </section>
+
+
+    <section class="legal-content-section">
+
+        <div class="legal-layout">
+
+            <aside class="legal-sidebar">
+
+                <div class="legal-toc">
+
+                    <span class="toc-label">DAFTAR ISI</span>
+
+                    <nav>
+                        <a href="#information">01 Informasi yang Kami Kumpulkan</a>
+                        <a href="#usage">02 Cara Informasi Digunakan</a>
+                        <a href="#cookies">03 Cookie & Teknologi Serupa</a>
+                        <a href="#third-party">04 Layanan Pihak Ketiga</a>
+                        <a href="#sharing">05 Pembagian Informasi</a>
+                        <a href="#security">06 Keamanan Informasi</a>
+                        <a href="#storage">07 Penyimpanan Data</a>
+                        <a href="#rights">08 Hak & Pilihan Anda</a>
+                        <a href="#contact">09 Hubungi Kami</a>
+                        <a href="#changes">10 Perubahan Kebijakan</a>
+                    </nav>
+
+                </div>
+
+            </aside>
+
+
+            <article class="legal-article">
+
+                <section id="information" class="legal-block">
+
+                    <div class="legal-number">01</div>
+
+                    <div>
+                        <h2>Informasi yang Kami Kumpulkan</h2>
+
+                        <p>
+                            Informasi yang dikumpulkan bergantung pada bagaimana Anda
+                            berinteraksi dengan website dan layanan yang tersedia.
+                            Kami dapat menerima informasi yang Anda berikan secara
+                            sukarela ketika menghubungi kami atau mendiskusikan
+                            kebutuhan sebuah project.
+                        </p>
+
+                        <p>
+                            Informasi tersebut dapat mencakup nama, alamat email,
+                            nomor kontak, nama perusahaan, kebutuhan project,
+                            deskripsi layanan, atau informasi lain yang secara
+                            sukarela Anda kirimkan melalui formulir atau saluran
+                            komunikasi resmi.
+                        </p>
+
+                        <div class="legal-note">
+                            <strong>Prinsip kami sederhana:</strong>
+                            kami hanya menggunakan informasi yang relevan untuk
+                            komunikasi, kebutuhan layanan, dan tujuan yang sah.
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <section id="usage" class="legal-block">
+
+                    <div class="legal-number">02</div>
+
+                    <div>
+                        <h2>Cara Informasi Digunakan</h2>
+
+                        <p>
+                            Informasi yang tersedia dapat digunakan secara wajar
+                            untuk mendukung komunikasi dan memberikan pengalaman
+                            yang lebih baik ketika Anda menggunakan website atau
+                            berkonsultasi mengenai layanan.
+                        </p>
+
+                        <ul class="legal-list">
+                            <li>Menanggapi pertanyaan dan permintaan Anda.</li>
+                            <li>Mendiskusikan kebutuhan project dan layanan profesional.</li>
+                            <li>Menyiapkan komunikasi terkait scope, proposal, atau solusi digital.</li>
+                            <li>Meningkatkan kualitas website dan pengalaman pengguna.</li>
+                            <li>Membantu melindungi website dari penyalahgunaan dan aktivitas berbahaya.</li>
+                            <li>Memenuhi kewajiban hukum apabila diperlukan.</li>
+                        </ul>
+
+                    </div>
+
+                </section>
+
+
+                <section id="cookies" class="legal-block">
+
+                    <div class="legal-number">03</div>
+
+                    <div>
+                        <h2>Cookie & Teknologi Serupa</h2>
+
+                        <p>
+                            Website dapat menggunakan cookie atau teknologi serupa
+                            untuk mendukung fungsi tertentu, memahami penggunaan
+                            website secara umum, serta membantu meningkatkan
+                            performa dan pengalaman pengguna.
+                        </p>
+
+                        <p>
+                            Anda dapat mengatur atau menghapus cookie melalui
+                            pengaturan browser. Namun, menonaktifkan cookie tertentu
+                            dapat memengaruhi fungsi atau pengalaman pada beberapa
+                            bagian website.
+                        </p>
+
+                    </div>
+
+                </section>
+
+
+                <section id="third-party" class="legal-block">
+
+                    <div class="legal-number">04</div>
+
+                    <div>
+                        <h2>Layanan Pihak Ketiga</h2>
+
+                        <p>
+                            Dalam mendukung operasional dan ekosistem digital,
+                            website dapat terhubung dengan layanan pihak ketiga,
+                            seperti penyedia hosting, infrastruktur cloud,
+                            platform komunikasi, repositori kode, layanan analitik,
+                            atau media sosial.
+                        </p>
+
+                        <p>
+                            Setiap layanan pihak ketiga memiliki kebijakan dan
+                            tanggung jawabnya sendiri. Kami menyarankan Anda untuk
+                            meninjau kebijakan privasi dari layanan tersebut sebelum
+                            memberikan informasi pribadi melalui platform mereka.
+                        </p>
+
+                    </div>
+
+                </section>
+
+
+                <section id="sharing" class="legal-block">
+
+                    <div class="legal-number">05</div>
+
+                    <div>
+                        <h2>Pembagian Informasi</h2>
+
+                        <p>
+                            Informasi pribadi Anda bukan produk untuk diperjualbelikan.
+                            Kami tidak menjual informasi pribadi kepada pihak lain.
+                        </p>
+
+                        <p>
+                            Informasi hanya dapat dibagikan apabila diperlukan secara
+                            wajar untuk menyediakan layanan yang Anda minta,
+                            menjalankan operasional website melalui penyedia layanan
+                            tepercaya, melindungi hak dan keamanan, atau memenuhi
+                            kewajiban hukum yang berlaku.
+                        </p>
+
+                    </div>
+
+                </section>
+
+
+                <section id="security" class="legal-block">
+
+                    <div class="legal-number">06</div>
+
+                    <div>
+                        <h2>Keamanan Informasi</h2>
+
+                        <p>
+                            Kami berupaya menerapkan langkah teknis dan organisasi
+                            yang wajar untuk membantu melindungi informasi dari
+                            akses tanpa izin, penyalahgunaan, perubahan, atau
+                            pengungkapan yang tidak semestinya.
+                        </p>
+
+                        <p>
+                            Namun, penting untuk dipahami bahwa tidak ada sistem
+                            digital, transmisi internet, atau penyimpanan data yang
+                            dapat dijamin sepenuhnya bebas dari risiko.
+                        </p>
+
+                        <a href="/security.html" class="legal-link">
+                            Pelajari pendekatan keamanan kami →
+                        </a>
+
+                    </div>
+
+                </section>
+
+
+                <section id="storage" class="legal-block">
+
+                    <div class="legal-number">07</div>
+
+                    <div>
+                        <h2>Penyimpanan Data</h2>
+
+                        <p>
+                            Informasi disimpan selama masih diperlukan secara wajar
+                            untuk tujuan komunikasi, penyediaan layanan, keamanan,
+                            kebutuhan operasional yang sah, penyelesaian masalah,
+                            atau pemenuhan kewajiban hukum.
+                        </p>
+
+                        <p>
+                            Ketika informasi tidak lagi diperlukan, pengelolaannya
+                            dapat disesuaikan dengan kebutuhan keamanan dan ketentuan
+                            yang berlaku.
+                        </p>
+
+                    </div>
+
+                </section>
+
+
+                <section id="rights" class="legal-block">
+
+                    <div class="legal-number">08</div>
+
+                    <div>
+                        <h2>Hak & Pilihan Anda</h2>
+
+                        <p>
+                            Sesuai dengan ketentuan hukum yang berlaku, Anda dapat
+                            menghubungi kami untuk meminta akses, perbaikan, atau
+                            penghapusan informasi pribadi yang telah Anda berikan
+                            secara sukarela.
+                        </p>
+
+                        <p>
+                            Permintaan tersebut akan ditinjau dengan mempertimbangkan
+                            kebutuhan keamanan, kewajiban penyimpanan data, dan
+                            ketentuan hukum yang relevan.
+                        </p>
+
+                    </div>
+
+                </section>
+
+
+                <section id="contact" class="legal-block">
+
+                    <div class="legal-number">09</div>
+
+                    <div>
+                        <h2>Hubungi Kami</h2>
+
+                        <p>
+                            Jika Anda memiliki pertanyaan mengenai privasi,
+                            penggunaan informasi, atau komunikasi terkait layanan,
+                            silakan gunakan saluran kontak resmi yang tersedia
+                            pada website ini.
+                        </p>
+
+                        <div class="legal-contact-card">
+
+                            <span>SRILEX BUDITRA</span>
+
+                            <h3>Let's build with clarity & trust.</h3>
+
+                            <p>
+                                Untuk pertanyaan, konsultasi, atau kebutuhan
+                                layanan digital, hubungi melalui kontak resmi.
+                            </p>
+
+                            <a href="/#kontak">
+                                Hubungi Saya →
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <section id="changes" class="legal-block">
+
+                    <div class="legal-number">10</div>
+
+                    <div>
+                        <h2>Perubahan Kebijakan Ini</h2>
+
+                        <p>
+                            Kebijakan Privasi ini dapat diperbarui dari waktu ke
+                            waktu untuk menyesuaikan perkembangan website, layanan,
+                            praktik operasional, atau ketentuan yang relevan.
+                        </p>
+
+                        <p>
+                            Setiap perubahan akan dipublikasikan pada halaman ini
+                            bersama informasi tanggal pembaruan terbaru.
+                        </p>
+
+                    </div>
+
+                </section>
+
+
+                <div class="legal-closing">
+
+                    <span>SRILEX BUDITRA</span>
+
+                    <h2>Full Stack. Full Solution. Full Impact.</h2>
+
+                    <p>
+                        Membangun solusi digital dengan perhatian pada teknologi,
+                        transparansi, dan kepercayaan.
+                    </p>
+
+                </div>
+
+            </article>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<!--
+    PERTAHANKAN FOOTER ASLI WEBSITE ANDA DI BAGIAN INI
+-->
+```
+<footer class="footer">
+  <div class="container footer-grid">
+    <div><a class="brand" href="#beranda"><span class="brand-mark"><img src="/images/logo.png" alt="Srilex Buditra Logo"></span><span><strong>SRILEX <b>BUDITRA</b></strong><small>FULL STACK DEVELOPER</small></span></a><p>Building digital solutions with code, clarity and impact.</p></div>
+    <div><h4>Explore</h4><a href="#tentang">Tentang</a><a href="#keahlian">Keahlian</a><a href="#layanan">Layanan</a><a href="#portfolio">Portfolio</a></div>
+    <div><h4>Project</h4><a href="/portfolio/website-sekolah/project-detail.html">Website Sekolah</a><a href="/portfolio/aplikasi-pos/detail.html">Aplikasi POS</a><a href="/portfolio/sistem-administrasi/detail.html">Sistem Administrasi</a><a href="#harga">Paket &amp; Harga</a><a href="#estimasi">Estimator</a><a href="#proses">Work Process</a><a href="#faq">FAQ</a><a href="#trust">Trust &amp; Transparency</a></div>
+    <div><h4>Legal</h4><a href="/privacy.html">Kebijakan Privasi</a><a href="/terms.html">Ketentuan Layanan</a><a href="/security.html">Keamanan</a></div>
+    <div><h4>Contact</h4><p>WhatsApp: +62 821-3623-8350</p><p>Email: srilexbuditra@gmail.com</p><p>Bengkulu, Indonesia</p></div>
+  </div>
+  <div class="copyright">© 2026 Srilex Buditra. All Rights Reserved. <span>Full Stack. Full Solution. Full Impact.</span></div>
+</footer>
+<script src="script.js"></script>
+<script src="/search-enhancer.js"></script>
+
+<!-- Floating Text-to-Speech accessibility control -->
+<div class="tts-fab-wrap" id="ttsFabWrap" aria-label="Kontrol pembaca halaman">
+  <button class="tts-stop" id="ttsStop" type="button" aria-label="Hentikan pembacaan" title="Hentikan"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6h12v12H6z"/></svg></button>
+  <button class="tts-fab" id="ttsFab" type="button" aria-label="Bacakan halaman" aria-pressed="false">
+    <span class="tts-fab-label" id="ttsFabLabel">Bacakan halaman</span>
+    <svg class="tts-play-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10v4h4l5 4V6l-5 4H3zm12.5 2c0-1.77-1-3.29-2.5-4.03v8.05A4.48 4.48 0 0 0 15.5 12zM13 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+  </button>
+</div>
+<script src="/tts.js"></script>
+</body>
 </html>
