@@ -8,7 +8,56 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="legal.css">
   </head>
-  <body>
+  <body><a class="skip-link" href="#konten-utama">Lewati ke konten utama</a>
+<div itemscope itemtype="https://schema.org/SearchAction" itemprop="potentialAction" itemid="https://srilexbuditra.work/#search-action" hidden>
+  <div itemprop="target" itemscope itemtype="https://schema.org/EntryPoint">
+    <meta itemprop="urlTemplate" content="https://srilexbuditra.work/search.html?q={search_term_string}">
+  </div>
+  <meta itemprop="query-input" content="required name=search_term_string">
+</div>
+<div class="top-glow"></div>
+<header class="site-header" id="beranda">
+  <div class="container nav-wrap">
+    <a class="brand" href="#beranda" aria-label="Srilex Buditra">
+      <span class="brand-mark"><img src="/images/logo.png" alt="SB Logo"></span>
+      <span><strong>SRILEX <b>BUDITRA</b></strong><small>FULL STACK DEVELOPER</small></span>
+    </a>
+    <button class="menu-toggle" id="menuToggle" type="button" aria-label="Buka menu" aria-expanded="false" aria-controls="mainNav">☰</button>
+    <nav id="mainNav" aria-label="Navigasi utama">
+      <a href="#beranda">Beranda</a><a href="#tentang">Tentang</a><a href="#keahlian">Keahlian</a>
+      <a href="#layanan">Layanan</a><a href="#portfolio">Portfolio</a><a href="#harga">Harga</a>
+      <a href="#faq">FAQ</a><a class="nav-cta" href="#kontak">Hubungi Saya</a>
+    </nav>
+  </div>
+</header>
+
+<section class="site-search" aria-label="Pencarian website">
+  <div class="container">
+    <form class="site-search-form" id="siteSearchForm" action="/search.html" method="get" role="search" autocomplete="off">
+      <div class="site-search-box">
+        <span class="site-search-icon" aria-hidden="true">⌕</span>
+        <input id="siteSearchInput" name="q" type="search" placeholder="Cari layanan, portfolio, teknologi, atau solusi..." aria-label="Cari di website" aria-autocomplete="list" aria-controls="siteSearchPanel" aria-expanded="false">
+        <button class="site-search-submit" type="submit" aria-label="Cari">
+          <span aria-hidden="true">Cari</span><b aria-hidden="true">↗</b>
+        </button>
+      </div>
+      <div class="site-search-panel" id="siteSearchPanel" hidden>
+        <div class="search-panel-section" id="searchAutocompleteWrap">
+          <div class="search-panel-label">Saran pencarian</div>
+          <div class="search-suggestion-list" id="siteSearchSuggestions"></div>
+        </div>
+        <div class="search-panel-section search-history-section">
+          <div class="search-panel-label"><span aria-hidden="true">◷</span> Riwayat pencarian <button type="button" id="clearSearchHistory">Hapus</button></div>
+          <div class="search-chip-list" id="siteSearchHistory"></div>
+        </div>
+        <div class="search-panel-section">
+          <div class="search-panel-label"><span aria-hidden="true">↗</span> Pencarian populer</div>
+          <div class="search-chip-list" id="siteSearchTrending"></div>
+        </div>
+      </div>
+    </form>
+  </div>
+</section>
     <main class="legal-page">
       <section class="legal-hero">
         <div class="legal-container">
