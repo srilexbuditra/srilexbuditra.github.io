@@ -52,10 +52,10 @@ Project ini menggunakan teknologi frontend statis, termasuk:
 ├── LICENSE.md                        # Ketentuan lisensi
 ├── SECURITY.md                       # Kebijakan keamanan
 ├── PRIVACY.md                        # Kebijakan privasi
-├── TERMS.md                          # Ketentuan lAYANAN
+├── TERMS.md                          # Ketentuan layanan
 ├── NOTICE.md                         # Pemberitahuan aset/lisensi pihak ketiga
 ├── ACCESSIBILITY.md                  # Komitmen aksesibilitas
-├── PUBLIC_REPOSITORY_AUDIT.md        # Komitmen aksesibilitas
+├── PUBLIC_REPOSITORY_AUDIT.md        # Audit repository publik
 └── CNAME                             # Konfigurasi custom domain
 ```
 
