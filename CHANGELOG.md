@@ -36,11 +36,12 @@ Semua perubahan penting pada proyek ini dicatat di dokumen ini.
 ### Security
 - Added automated checks for accidental environment files, private-key files, required documentation, and obvious secret-like assignments.
 
-## V11 — Public Repository & Privacy Audit
+## V11 - 2026-08-29
 ### Added
-- Added `PUBLIC_REPOSITORY_AUDIT.md` with a public-release privacy checklist.
-- Added a GitHub Actions workflow for common sensitive filenames and private-key markers.
+- `PUBLIC_REPOSITORY_AUDIT.md`
+-  GitHub Actions public repository audit workflows
 
 ### Security
-- Added an explicit reminder to review document and media metadata before publication.
-- Added checks focused on accidental exposure of common sensitive files.
+- Pemeriksaan nama file sensitif.
+- Pemeriksaan marker private key.
+- Checklist metadata dokumen dan aset publik.
