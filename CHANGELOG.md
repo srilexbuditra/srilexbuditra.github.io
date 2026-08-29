@@ -39,7 +39,7 @@ Semua perubahan penting pada proyek ini dicatat di dokumen ini.
 ## V11 - 2026-08-29
 ### Added
 - `PUBLIC_REPOSITORY_AUDIT.md`
--  GitHub Actions public repository audit workflows
+- GitHub Actions public repository audit workflow
 
 ### Security
 - Pemeriksaan nama file sensitif.
