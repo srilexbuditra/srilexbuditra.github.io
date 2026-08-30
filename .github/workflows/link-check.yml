@@ -86,8 +86,7 @@ jobs:
                   errors.append(url)
           if errors:
               print('Sitemap URLs without matching repository pages:')
-              print('
-'.join(errors))
+              print('\n'.join(errors))
               raise SystemExit(1)
           print('Sitemap URLs map to repository pages.')
           PY
