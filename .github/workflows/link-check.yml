@@ -1,0 +1,94 @@
+name: Link and Sitemap Integrity Check
+
+on:
+  push:
+    branches: ["main", "master"]
+  pull_request:
+    branches: ["main", "master"]
+
+permissions:
+  contents: read
+
+jobs:
+  link-integrity:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check local HTML links and assets
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from html.parser import HTMLParser
+          from pathlib import Path
+          from urllib.parse import urlsplit, unquote
+
+          ROOT = Path('.').resolve()
+          ATTRS = {'href', 'src', 'action', 'poster'}
+          SKIP_PREFIXES = ('http:', 'https:', 'mailto:', 'tel:', 'javascript:', 'data:')
+          errors = []
+
+          class Parser(HTMLParser):
+              def __init__(self):
+                  super().__init__(); self.links=[]
+              def handle_starttag(self, tag, attrs):
+                  for key, value in attrs:
+                      if key.lower() in ATTRS and value:
+                          self.links.append((key.lower(), value.strip()))
+
+          def resolve(source, value):
+              if value.startswith('/'):
+                  return ROOT / value.lstrip('/')
+              return source.parent / value
+
+          for source in ROOT.rglob('*.html'):
+              parser = Parser()
+              parser.feed(source.read_text(encoding='utf-8', errors='ignore'))
+              for attr, raw in parser.links:
+                  value = raw.split('#', 1)[0].split('?', 1)[0].strip()
+                  if not value or value.startswith('#') or value.lower().startswith(SKIP_PREFIXES):
+                      continue
+                  target = resolve(source, unquote(value))
+                  candidates = [target]
+                  if target.suffix == '':
+                      candidates += [target / 'index.html', target.with_suffix('.html')]
+                  if not any(c.exists() for c in candidates):
+                      errors.append(f'{source.relative_to(ROOT)}: {attr}="{raw}" -> missing')
+
+          if errors:
+              print('Broken local links/assets found:')
+              print('
+'.join(errors))
+              raise SystemExit(1)
+          print('All checked local HTML links and assets resolve.')
+          PY
+
+      - name: Validate sitemap URLs map to repository pages
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          from urllib.parse import urlparse
+          import xml.etree.ElementTree as ET
+
+          ROOT = Path('.').resolve()
+          tree = ET.parse('sitemap.xml')
+          ns = {'sm': 'http://www.sitemaps.org/schemas/sitemap/0.9'}
+          errors = []
+          for node in tree.findall('sm:url/sm:loc', ns):
+              url = (node.text or '').strip()
+              path = urlparse(url).path.lstrip('/')
+              target = ROOT / (path or 'index.html')
+              candidates = [target]
+              if target.suffix == '':
+                  candidates += [target / 'index.html', target.with_suffix('.html')]
+              if not any(c.exists() for c in candidates):
+                  errors.append(url)
+          if errors:
+              print('Sitemap URLs without matching repository pages:')
+              print('
+'.join(errors))
+              raise SystemExit(1)
+          print('Sitemap URLs map to repository pages.')
+          PY
