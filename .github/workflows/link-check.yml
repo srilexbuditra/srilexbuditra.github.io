@@ -58,8 +58,7 @@ jobs:
 
           if errors:
               print('Broken local links/assets found:')
-              print('
-'.join(errors))
+              print('\n'.join(errors))
               raise SystemExit(1)
           print('All checked local HTML links and assets resolve.')
           PY
