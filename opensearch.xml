@@ -8,6 +8,6 @@
   <Developer>Srilex Buditra</Developer>
   <LongName>Srilex Buditra Website Search</LongName>
   <Tags>Srilex Buditra Full Stack Developer Bengkulu portfolio website web development</Tags>
-  <Image height="32" width="32" type="image/png">https://srilexbuditra.work/images/favicon-32x32.png</Image>
+  <Image height="32" width="32" type="image/png">https://srilexbuditra.work/images/favicon-32x32.avif</Image>
   <Url type="text/html" method="get" template="https://srilexbuditra.work/search.html?q={searchTerms}"/>
 </OpenSearchDescription>

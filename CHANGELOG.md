@@ -1,3 +1,11 @@
+
+## V11.5 — SEO canonical + asset cleanup
+
+- Added a self-referencing canonical URL and index/follow robots directive to the public TJKT page.
+- Migrated large raster references to existing AVIF equivalents where available.
+- Consolidated duplicate Website Sekolah preview assets to `portfolio/website-sekolah/assets/school-preview.avif`.
+- Removed legacy duplicate PNG/AVIF preview files after reference migration.
+
 # CHANGELOG
 
 ## [V11.3] - 2026-08-31

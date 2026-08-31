@@ -1,6 +1,6 @@
   Kebijakan Privasi | Srilex Buditra                                  [Lewati ke konten utama](#konten-utama)
 
- [![Srilex Buditra Logo](/images/logo.png)**SRILEX **BUDITRA**** FULL STACK DEVELOPER](/) ☰
+ [![Srilex Buditra Logo](/images/logo.avif)**SRILEX **BUDITRA**** FULL STACK DEVELOPER](/) ☰
 
 [Beranda](/#beranda) [Tentang](/#tentang) [Keahlian](/#keahlian) [Layanan](/#layanan) [Portfolio](/#portfolio) [Harga](/#harga) [FAQ](/#faq) [Hubungi Saya](/#kontak)
 
@@ -151,7 +151,7 @@ Full Stack. Full Solution. Full Impact.
 
 Membangun solusi digital dengan perhatian pada teknologi, transparansi, dan kepercayaan.
 
- [![Srilex Buditra Logo](/images/logo.png)**SRILEX **BUDITRA**** FULL STACK DEVELOPER](/)
+ [![Srilex Buditra Logo](/images/logo.avif)**SRILEX **BUDITRA**** FULL STACK DEVELOPER](/)
 
 Building digital solutions with code, clarity and impact.
 

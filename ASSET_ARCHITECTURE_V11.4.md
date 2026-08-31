@@ -11,7 +11,7 @@ Pembersihan dilakukan secara terkontrol: aset hanya dihapus setelah referensi te
    - Salinan byte-identik yang tidak lagi diperlukan dihapus.
 
 2. **Migrasi PNG besar ke AVIF yang sudah tersedia**
-   - Legacy PNG berikut dibersihkan setelah referensi dipastikan telah bermigrasi atau tidak ada referensi aktif: `images/logo.png`, `assets/design-reference.png`, `assets/portfolio-website-sekolah.png`, `assets/portfolio-sistem-administrasi.png`, `assets/portfolio-aplikasi-pos.png`, dan `portfolio/aplikasi-pos/assets/images/portfolio-reference.png`.
+   - Legacy PNG berikut dibersihkan setelah referensi dipastikan telah bermigrasi atau tidak ada referensi aktif: `images/logo.avif`, `assets/design-reference.avif`, `assets/portfolio-website-sekolah.avif`, `assets/portfolio-sistem-administrasi.avif`, `assets/portfolio-aplikasi-pos.avif`, dan `portfolio/aplikasi-pos/assets/images/portfolio-reference.avif`.
    - Tidak ada konversi visual baru; V11.4 memanfaatkan AVIF yang sudah ada dan telah dipakai website.
 
 3. **Ketergantungan pihak ketiga**

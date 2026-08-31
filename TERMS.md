@@ -10,7 +10,7 @@
 
 ::: {#beranda .site-header}
 ::: {.container .nav-wrap}
-[[ ![Srilex Buditra Logo](/images/logo.png) ]{.brand-mark} **SRILEX
+[[ ![Srilex Buditra Logo](/images/logo.avif) ]{.brand-mark} **SRILEX
 **BUDITRA**** [FULL STACK DEVELOPER]{.small} ](/){.brand
 aria-label="Srilex Buditra"}
 
@@ -377,7 +377,7 @@ template.
 ::: {.container .footer-grid}
 <div>
 
-[[ ![Srilex Buditra Logo](/images/logo.png) ]{.brand-mark} **SRILEX
+[[ ![Srilex Buditra Logo](/images/logo.avif) ]{.brand-mark} **SRILEX
 **BUDITRA**** [FULL STACK DEVELOPER]{.small} ](/){.brand}
 
 Building digital solutions with code, clarity and impact.
