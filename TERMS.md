@@ -1,52 +1,51 @@
-# Terms of Use
+# Ketentuan Penggunaan
 
-**Last updated:** August 31, 2026
+**Terakhir diperbarui:** 31 Agustus 2026
 
-Welcome to **Srilex Buditra**. By accessing or using `srilexbuditra.work`, you agree to these Terms of Use. If you do not agree with these terms, please do not use the website.
+Selamat datang di **Srilex Buditra**. Dengan mengakses atau menggunakan `srilexbuditra.work`, Anda menyetujui Ketentuan Penggunaan ini. Jika Anda tidak menyetujui ketentuan ini, mohon jangan menggunakan situs web ini.
 
-## 1. Website Purpose
+## 1. Tujuan Situs Web
 
-This website is a personal portfolio and project showcase. It may contain information about projects, case studies, demonstrations, documentation, links, images, and other materials.
+Situs web ini merupakan portofolio pribadi dan media untuk menampilkan proyek. Isinya dapat mencakup informasi proyek, studi kasus, demonstrasi, dokumentasi, tautan, gambar, dan materi lainnya.
 
-## 2. Acceptable Use
+## 2. Penggunaan yang Diperbolehkan
 
-You agree to use this website lawfully and responsibly. You must not:
+Anda wajib menggunakan situs ini secara sah dan bertanggung jawab. Anda dilarang:
 
-- Attempt to gain unauthorized access to the website, hosting environment, or related systems.
-- Interfere with the availability, security, or normal operation of the website.
-- Use the website to distribute malicious code, spam, or unlawful content.
-- Misrepresent content from this website as your own where permission is required.
+- Mencoba memperoleh akses tanpa izin ke situs, lingkungan hosting, atau sistem terkait.
+- Mengganggu ketersediaan, keamanan, atau operasi normal situs.
+- Menggunakan situs untuk menyebarkan kode berbahaya, spam, atau konten yang melanggar hukum.
+- Mengklaim materi dari situs ini sebagai milik sendiri apabila penggunaannya memerlukan izin.
 
-## 3. Intellectual Property
+## 3. Hak Kekayaan Intelektual
 
-Unless otherwise stated, the website's original design, text, branding, graphics, source code, and project materials are protected by applicable intellectual-property laws.
+Kecuali dinyatakan lain, desain, teks, identitas visual, grafik, kode sumber, dan materi proyek asli pada situs ini dilindungi oleh ketentuan kekayaan intelektual yang berlaku.
 
-Third-party libraries, fonts, icons, images, trademarks, and other materials remain the property of their respective owners and are subject to their own licenses or terms.
+Pustaka pihak ketiga, font, ikon, gambar, merek dagang, dan materi lainnya tetap menjadi milik pemegang hak masing-masing serta tunduk pada lisensi atau ketentuan mereka.
 
-You may view and reference public portfolio content for personal or informational purposes. Reproduction, redistribution, or commercial reuse of original materials requires appropriate permission unless an applicable license expressly allows it.
+## 4. Demonstrasi Proyek
 
-## 4. Project Demonstrations
+Proyek yang ditampilkan dapat berupa demonstrasi, prototipe, studi kasus, atau proyek arsip. Fitur, tampilan, integrasi, ketersediaan, dan performa dapat berubah tanpa pemberitahuan.
 
-Portfolio projects may be demonstrations, prototypes, case studies, or archived work. Features, screenshots, integrations, availability, and performance may change without notice.
+Tampilan suatu proyek di portofolio tidak otomatis berarti bahwa proyek tersebut merupakan layanan komersial yang saat ini tersedia.
 
-A project shown on the portfolio should not automatically be interpreted as a guarantee of a currently available commercial service.
+## 5. Tautan Eksternal
 
-## 5. External Links
+Situs ini dapat menyediakan tautan menuju situs atau layanan pihak ketiga. Situs tersebut memiliki kebijakan, ketentuan, keamanan, dan praktik privasinya sendiri. Kami tidak bertanggung jawab atas isi atau ketersediaan layanan pihak ketiga.
 
-The website may contain links to third-party websites or services. Those sites are operated independently and are governed by their own policies. We are not responsible for their content, availability, security, or privacy practices.
+## 6. Ketersediaan dan Keakuratan
 
-## 6. Availability and Accuracy
+Kami berupaya menjaga situs tetap tersedia dan informasinya akurat. Namun, tidak ada jaminan bahwa situs akan selalu tersedia, bebas kesalahan, lengkap, atau selalu diperbarui.
 
-Reasonable effort is made to keep the website available and information accurate, but no guarantee is made that the website will always be uninterrupted, error-free, complete, or current.
+## 7. Penafian
 
-## 7. Disclaimer
+Situs dan kontennya disediakan sebagaimana adanya dan sebagaimana tersedia, sejauh diizinkan oleh hukum yang berlaku. Penggunaan situs merupakan tanggung jawab pengguna.
 
-The website and its content are provided on an “as is” and “as available” basis to the extent permitted by applicable law. Use of the website is at your own discretion and risk.
+## 8. Perubahan Ketentuan
 
-## 8. Changes to These Terms
+Ketentuan ini dapat diperbarui apabila situs, proyek, atau persyaratan yang berlaku mengalami perubahan. Tanggal “Terakhir diperbarui” menunjukkan revisi terbaru.
 
-These Terms of Use may be updated when the website, projects, or applicable requirements change. The “Last updated” date will indicate the latest revision.
+## 9. Kontak
 
-## 9. Contact
+Untuk pertanyaan mengenai ketentuan ini, silakan gunakan metode kontak yang tersedia di situs web.
 
-For questions regarding these terms, please use the contact method provided on the website.

@@ -1,80 +1,77 @@
-# Security Policy
+# Kebijakan Keamanan
 
-## 🔐 Kebijakan Keamanan
+**Terakhir diperbarui:** 31 Agustus 2026
 
-Keamanan website **Srilex Buditra** merupakan bagian penting dari pemeliharaan proyek. Laporan mengenai potensi kerentanan, konfigurasi yang tidak aman, atau masalah keamanan lainnya sangat dihargai.
+Keamanan merupakan bagian penting dalam pengelolaan `srilexbuditra.work` dan sumber daya proyek yang tersedia secara publik.
 
-Website resmi:
+## 1. Cakupan
 
-https://srilexbuditra.work
+Kebijakan ini mencakup situs web yang dapat diakses publik dan sumber daya proyek publik yang dikelola untuk portofolio Srilex Buditra.
 
-## 📌 Ruang Lingkup
+Kebijakan ini tidak menjamin keamanan situs, layanan, dependensi, infrastruktur hosting, atau tautan eksternal milik pihak ketiga.
 
-Kebijakan ini mencakup komponen yang terdapat dalam repository proyek, termasuk bila relevan:
+## 2. Pelaporan Kerentanan
 
-- Halaman HTML
-- CSS dan JavaScript
-- Fitur pencarian internal
-- Text-to-Speech (TTS)
-- Metadata dan structured data
-- Sitemap, robots.txt, dan OpenSearch
-- Konfigurasi deployment statis
+Jika Anda menemukan dugaan kerentanan keamanan, harap laporkan secara pribadi melalui metode kontak yang tersedia di situs.
 
-Jika terdapat layanan pihak ketiga, keamanan layanan tersebut juga dapat tunduk pada kebijakan masing-masing penyedia.
+Sertakan informasi yang cukup untuk memahami dan menguji masalah, antara lain:
 
-## 🐛 Melaporkan Kerentanan
+- Penjelasan masalah.
+- URL, file, atau komponen yang terdampak.
+- Langkah untuk mereproduksi masalah.
+- Potensi dampak keamanan.
+- Tangkapan layar atau log yang relevan jika aman untuk dibagikan.
 
-Jika Anda menemukan potensi masalah keamanan, mohon lakukan responsible disclosure:
+Mohon tidak mempublikasikan kerentanan sebelum terdapat kesempatan yang wajar untuk melakukan pemeriksaan dan perbaikan.
 
-1. Jelaskan jenis kerentanan secara singkat dan jelas.
-2. Sertakan langkah reproduksi jika memungkinkan.
-3. Jelaskan dampak potensial.
-4. Sertakan bukti teknis yang tidak membahayakan pengguna lain.
-5. Berikan waktu yang wajar untuk evaluasi sebelum mempublikasikan temuan.
+## 3. Pengujian yang Bertanggung Jawab
 
-Untuk menghubungi pemilik proyek, gunakan kanal kontak yang tersedia pada website resmi:
+Peneliti keamanan harus menghindari aktivitas yang dapat:
 
-https://srilexbuditra.work
+- Mengakses, mengubah, atau menghapus data milik orang lain.
+- Mengganggu ketersediaan layanan.
+- Memasang malware atau akses tidak sah secara permanen.
+- Melakukan rekayasa sosial, phishing, atau serangan penolakan layanan.
+- Menguji sistem pihak ketiga tanpa izin dari pemiliknya.
 
-## 🚫 Mohon Jangan
+Jika pengujian berpotensi memengaruhi layanan atau data, dapatkan izin terlebih dahulu.
 
-- Melakukan serangan DoS atau DDoS.
-- Mengakses, mengubah, atau menghapus data tanpa izin.
-- Mengganggu layanan website secara sengaja.
-- Menyebarkan eksploitasi yang dapat membahayakan pengunjung.
-- Mengumpulkan data pribadi pengguna tanpa hak.
+## 4. Proses Penanganan
 
-## 🛡️ Status Dukungan
+Laporan akan ditinjau berdasarkan tingkat keparahan, kemampuan untuk direproduksi, dampak, dan sumber daya yang tersedia. Jika memungkinkan, prosesnya meliputi:
 
-| Komponen | Status |
-|---|---|
-| Website produksi | Didukung dan dipantau |
-| Repository aktif | Didukung |
-| Versi atau salinan lama | Dukungan terbatas |
+1. Menerima dan meninjau laporan.
+2. Mereproduksi serta menilai masalah.
+3. Menerapkan perbaikan atau mitigasi.
+4. Memverifikasi perbaikan.
+5. Memberikan pembaruan yang sesuai jika diperlukan.
 
-## 🔄 Praktik Pemeliharaan
+Waktu respons tidak dijamin.
 
-Upaya peningkatan keamanan dapat mencakup:
+## 5. Praktik Keamanan
 
-- Peninjauan kode JavaScript.
-- Pengurangan dependensi yang tidak diperlukan.
-- Pemeriksaan konfigurasi deployment.
-- Penggunaan HTTPS.
-- Pemeriksaan header keamanan bila didukung oleh platform hosting.
-- Pembaruan dokumentasi keamanan.
+Praktik keamanan yang wajar dapat mencakup:
 
-## ⚠️ Catatan Penting
+- Meninjau dependensi dan konfigurasi proyek.
+- Membatasi akses yang tidak diperlukan.
+- Menggunakan HTTPS apabila didukung platform hosting.
+- Menghindari pengumpulan informasi pribadi yang tidak diperlukan.
+- Meninjau kode dan konfigurasi yang tersedia untuk publik.
+- Menerapkan pembaruan dan perbaikan keamanan jika diperlukan.
 
-Repository ini terutama berisi website frontend/statis. Namun, setiap integrasi eksternal, layanan pihak ketiga, formulir, API, atau konfigurasi hosting dapat menambah risiko keamanan dan perlu dievaluasi secara terpisah.
+## 6. Dependensi Pihak Ketiga
 
-## 🙏 Responsible Disclosure
+Pustaka sumber terbuka, framework, font, API, platform hosting, dan layanan pihak ketiga dapat memiliki risiko keamanan masing-masing. Keamanannya juga bergantung pada pengelola dan penyedia layanan tersebut.
 
-Kami menghargai penelitian keamanan yang dilakukan secara bertanggung jawab. Mohon hindari tindakan yang dapat menyebabkan kerusakan, gangguan layanan, atau pelanggaran privasi.
+## 7. Penafian
 
-Terima kasih telah membantu menjaga keamanan proyek ini.
+Tidak ada situs web yang dapat dijamin 100% aman. Kebijakan ini menjelaskan pendekatan terhadap pelaporan dan pemeliharaan keamanan, bukan jaminan keamanan atau ketersediaan tanpa gangguan.
 
----
+## 8. Pembaruan Kebijakan
 
-**Last reviewed:** 28 August 2026  
-**Project:** Srilex Buditra Professional Portfolio  
-**Website:** https://srilexbuditra.work
+Kebijakan ini dapat diperbarui apabila arsitektur proyek, lingkungan hosting, atau praktik keamanan berubah.
+
+## 9. Kontak
+
+Untuk laporan keamanan, gunakan metode kontak yang tersedia di situs dan jelaskan bahwa pesan tersebut merupakan laporan keamanan.
+

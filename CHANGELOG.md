@@ -1,97 +1,44 @@
+# Catatan Perubahan
 
-## V11.5 — SEO canonical + asset cleanup
+Semua perubahan penting pada situs web dan portofolio **Srilex Buditra** dicatat dalam dokumen ini.
 
-- Added a self-referencing canonical URL and index/follow robots directive to the public TJKT page.
-- Migrated large raster references to existing AVIF equivalents where available.
-- Consolidated duplicate Website Sekolah preview assets to `portfolio/website-sekolah/assets/school-preview.avif`.
-- Removed legacy duplicate PNG/AVIF preview files after reference migration.
+## [Belum Dirilis]
 
-# CHANGELOG
+### Direncanakan
+- Penyempurnaan responsivitas pada berbagai ukuran layar.
+- Peningkatan aksesibilitas dan performa.
+- Penyempurnaan portofolio dan studi kasus.
+- Perbaikan berkelanjutan pada pengalaman pengguna.
 
-## [V11.3] - 2026-08-31
+## [2026-08-31]
 
-### Performance
-- Audit dan optimasi aset gambar raster/SVG tanpa mengubah nama, path, atau dimensi aset.
-- Menambahkan `ASSET_OPTIMIZATION_AUDIT.md`.
+### Ditambahkan
+- Sistem fallback halaman 404 untuk beberapa jalur portfolio bertingkat.
+- Dokumentasi berbahasa Indonesia untuk Ketentuan Penggunaan, Kebijakan Privasi, dan Kebijakan Keamanan.
+- Struktur catatan perubahan yang lebih teratur.
 
+### Diubah
+- Referensi stylesheet halaman 404 menggunakan path absolut agar lebih aman pada URL bertingkat.
+- Penyusunan ulang dokumentasi agar lebih jelas dan konsisten.
+- Penjelasan mengenai layanan pihak ketiga, hak kekayaan intelektual, privasi, dan pelaporan keamanan diperjelas.
 
-## [V11.2] - 2026-08-30
+### Diperbaiki
+- Penanganan halaman yang tidak ditemukan pada beberapa subfolder portfolio.
+- Risiko stylesheet 404 tidak ditemukan ketika halaman diakses dari jalur bertingkat.
+- Konsistensi dokumentasi proyek.
 
-### Fixed
-- Memperbarui `sitemap.xml` agar hanya memuat halaman yang tersedia dan dapat diindeks.
-- Memperbaiki tautan PDF portfolio sekolah dari file lama ke `docs/dummy.pdf`.
-- Menjadikan `term.html` sebagai halaman kompatibilitas yang mengarahkan ke `terms.html` dan tidak diindeks.
-- Menghapus deklarasi `theme-color` yang duplikat pada halaman utama.
+## [2026-08-26]
 
-### Privacy
-- Menambahkan transparansi penggunaan `ipapi.co` untuk deteksi locale terbatas pada fitur TTS.
+### Ditambahkan
+- Penyempurnaan tampilan portofolio dengan nuansa premium dan sinematik.
+- Struktur presentasi proyek dan studi kasus.
+- Elemen interaktif untuk meningkatkan pengalaman visual.
 
-### Automation
-- Menambahkan `.github/workflows/link-check.yml` untuk memeriksa tautan lokal/aset dan validitas URL sitemap.
+### Diubah
+- Tata letak responsif dan presentasi visual.
+- Navigasi serta penyajian proyek portfolio.
 
-Semua perubahan penting pada website **Srilex Buditra** dicatat di file ini.
+## Catatan
 
-## [2026-08-30] — Mobile Responsive Layout V6
+Catatan perubahan akan diperbarui setiap kali terdapat fitur, perbaikan, perubahan desain, atau pembaruan dokumentasi yang signifikan.
 
-### Fixed
-- Memperbaiki masalah **horizontal overflow** pada perangkat mobile.
-- Mencegah halaman bergeser ke kanan/kiri ketika pengguna melakukan swipe satu jari.
-- Membatasi elemen halaman agar tidak melewati lebar viewport.
-- Memperbaiki perilaku grid/kartu layanan pada layar smartphone.
-- Menyesuaikan spacing dan ukuran elemen agar lebih nyaman disentuh menggunakan jari.
-- Mengurangi kemungkinan elemen seperti card, form, navigasi, dan konten lebar menyebabkan `body` melebar.
-- Memastikan scroll utama tetap fokus pada arah vertikal.
-
-### Improved
-- Tampilan kartu layanan dibuat lebih nyaman dan rapi pada mobile.
-- Radius, jarak, dan efek visual kartu disempurnakan agar terlihat lebih modern/premium.
-- Area interaksi mobile dibuat lebih aman untuk penggunaan touchscreen.
-- Responsivitas diperkuat untuk smartphone dengan viewport sempit.
-- Pinch-to-zoom tetap diperbolehkan agar aksesibilitas pengguna tidak terganggu.
-
-### Touch & Navigation
-- Menggunakan perilaku touch yang memprioritaskan **vertical scrolling**.
-- Horizontal page movement tidak lagi menjadi jalur navigasi utama pada mobile.
-- Navigasi dan komponen floating/TTS dipertahankan agar tidak mengganggu konten.
-
-### Compatibility
-- Desktop: layout tetap dipertahankan.
-- Tablet: layout responsif tetap didukung.
-- Mobile: layout difokuskan pada satu kolom dan lebar viewport.
-- Tidak menghapus fitur utama website, SEO, Schema, portfolio, estimator, navigasi, maupun TTS.
-
-## [2026-08-30] — Legal TOC Sticky V2
-
-### Fixed
-- Memperbaiki daftar isi (`.legal-sidebar`) agar tetap sticky saat artikel legal di-scroll pada laptop/desktop.
-- Menghindari `overflow-x: hidden` pada `html`/`body` yang dapat mengganggu perilaku CSS `position: sticky`.
-- Memastikan ancestor `.legal-page`, `.legal-content-section`, `.legal-layout`, dan `.legal-article` tidak menjadi scroll container pada desktop.
-- Menambahkan batas tinggi daftar isi agar tetap nyaman jika tinggi viewport desktop pendek.
-- Pada tablet/mobile, daftar isi tetap kembali ke layout normal dan tidak dipaksa sticky.
-
-### Affected Pages
-- `security.html`
-- `privacy.html`
-- `terms.html`
-- `term.html`
-
-## [2026-08-29] — Legal & Visual Refinement
-
-- Penyempurnaan halaman legal dan struktur visual website.
-- Penyesuaian tampilan agar lebih konsisten dengan identitas visual website.
-
----
-
-## Format Versi
-
-- **Fixed** — perbaikan bug atau masalah tampilan/fungsi.
-- **Improved** — peningkatan pengalaman pengguna atau performa visual.
-- **Added** — fitur baru.
-- **Changed** — perubahan perilaku atau struktur yang sudah ada.
-- **Removed** — fitur yang dihapus.
-
-## V11.6 — Audit Menengah: Asset Cleanup + Internal Links
-- Removed duplicate Website Sekolah V2 preview assets.
-- Removed `portfolio/website-sekolah/v2/assets/school-preview.png` (1.78 MB class asset).
-- Retained canonical preview at `portfolio/website-sekolah/assets/school-preview.avif`.
-- Verified internal HTML `href`/`src` references with no missing local targets.
