@@ -1,0 +1,113 @@
+{
+  "project": {
+    "name": "POS Indonesia Digital",
+    "eyebrow": "Portfolio Case Study",
+    "headline": "Satu aplikasi untuk seluruh kebutuhan layanan Pos.",
+    "description": "Konsep redesign aplikasi layanan Pos yang menyatukan pengiriman, cek ongkir, tracking, lokasi kantor, pembayaran, dan layanan digital dalam pengalaman yang lebih sederhana.",
+    "year": "2026",
+    "role": "UI/UX Design · Front-end Concept",
+    "platforms": [
+      "Android",
+      "iOS",
+      "Web"
+    ]
+  },
+  "features": [
+    [
+      "package",
+      "Kirim Paket",
+      "Buat pengiriman domestik maupun internasional dengan alur yang ringkas.",
+      "shipping.svg"
+    ],
+    [
+      "price",
+      "Cek Ongkir",
+      "Bandingkan estimasi biaya dan durasi berdasarkan asal, tujuan, dan berat.",
+      "shipping.svg"
+    ],
+    [
+      "track",
+      "Lacak Kiriman",
+      "Pantau status paket dengan timeline yang mudah dipahami.",
+      "tracking.svg"
+    ],
+    [
+      "location",
+      "Lokasi Kantor",
+      "Cari kantor Pos terdekat dan lihat detail layanan.",
+      "home.svg"
+    ],
+    [
+      "shop",
+      "Belanja di Pos",
+      "Akses produk dan layanan digital dari satu dashboard.",
+      "home.svg"
+    ],
+    [
+      "wallet",
+      "Keuangan",
+      "Sederhanakan kebutuhan pembayaran dan transaksi.",
+      "home.svg"
+    ],
+    [
+      "ppob",
+      "Pulsa & PPOB",
+      "Bayar tagihan dan kebutuhan digital secara praktis.",
+      "home.svg"
+    ],
+    [
+      "stamp",
+      "Materai",
+      "Temukan dan kelola kebutuhan materai digital.",
+      "home.svg"
+    ]
+  ],
+  "process": [
+    [
+      "01",
+      "Discover",
+      "Memetakan kebutuhan pengguna, pain point, dan layanan yang paling sering dicari."
+    ],
+    [
+      "02",
+      "Structure",
+      "Menyusun information architecture, user flow, dan prioritas konten."
+    ],
+    [
+      "03",
+      "Design",
+      "Membangun visual system, komponen UI, dan prototype interaktif."
+    ],
+    [
+      "04",
+      "Validate",
+      "Melakukan evaluasi usability dan iterasi berdasarkan temuan."
+    ]
+  ],
+  "tech": [
+    "Figma",
+    "Flutter",
+    "Dart",
+    "Firebase",
+    "REST API",
+    "Google Maps API",
+    "Git"
+  ],
+  "screens": [
+    [
+      "Dashboard",
+      "assets/images/home.svg",
+      "Ringkasan layanan utama"
+    ],
+    [
+      "Cek Ongkir",
+      "assets/images/shipping.svg",
+      "Estimasi biaya dan durasi"
+    ],
+    [
+      "Tracking",
+      "assets/images/tracking.svg",
+      "Status perjalanan paket"
+    ]
+  ]
+}
