@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<!-- Responsive -->
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<!-- Primary SEO -->
+<title>Pencarian — Srilex Buditra</title>
+<meta name="description" content="Cari layanan, portfolio, teknologi dan solusi digital di website Srilex Buditra.">
+<!-- Robots -->
+<meta name="robots" content="noindex, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+<!-- Language / Region -->
+<meta name="language" content="Indonesian">
+<meta name="geo.region" content="ID-BE">
+<meta name="geo.placename" content="Bengkulu, Indonesia">
+<!-- Canonical -->
+<link rel="canonical" href="https://srilexbuditra.work/search.html">
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Pencarian — Srilex Buditra">
+<meta property="og:description" content="Cari layanan, portfolio, teknologi dan solusi digital di website Srilex Buditra.">
+<meta property="og:url" content="https://srilexbuditra.work/search.html">
+<meta property="og:site_name" content="Srilex Buditra">
+<meta property="og:locale" content="id_ID">
+<meta property="og:image" content="https://srilexbuditra.work/assets/search.avif>
+<meta property="og:image:alt" content="Pencarian — Srilex Buditra">
+<!-- Twitter / X -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Pencarian — Srilex Buditra">
+<meta name="twitter:description" content="Cari layanan, portfolio, teknologi dan solusi digital di website Srilex Buditra.">
+<meta name="twitter:image" content="https://srilexbuditra.work/assets/search.avif">
+<!-- Favicon -->
+<link rel="icon" href="/images/favicon.ico">
+<link rel="apple-touch-icon" href="/images/apple-touch-icon.avif">
+<link rel="manifest" href="/images/site.webmanifest">
+<link rel="preload" as="image" href="/assets/profile.avif" fetchpriority="high">
+<link rel="stylesheet" href="style.css">
+<meta itemprop="inLanguage" content="id-ID">
+<link itemprop="publisher" href="https://srilexbuditra.work/#person">
+<meta itemprop="description" content="Cari layanan, portfolio, teknologi dan solusi digital di website Srilex Buditra.">
+<link rel="search" type="application/opensearchdescription+xml" title="Srilex Buditra Search" href="/opensearch.xml">
+</head>
+<body>
+<div class="top-glow"></div>
+<header class="site-header"><div class="container nav-wrap">
+<a class="brand" href="/" aria-label="Kembali ke beranda"><span class="brand-mark"><img src="/images/logo.avif" alt="SB Logo"></span><span><strong>SRILEX <b>BUDITRA</b></strong><small>FULL STACK DEVELOPER</small></span></a>
+<nav aria-label="Navigasi"><a href="/#beranda">Beranda</a><a href="/#layanan">Layanan</a><a href="/#portfolio">Portfolio</a><a href="/#faq">FAQ</a><a class="nav-cta" href="/#kontak">Hubungi Saya</a></nav>
+</div></header>
+<main class="section">
+<div class="container" style="max-width:900px">
+<div class="section-title"><span></span><div><b>WEBSITE SEARCH</b><h2>Temukan <em>yang Anda butuhkan.</em></h2></div></div>
+<p class="muted" style="margin-top:-10px;margin-bottom:24px">Cari layanan, portfolio, teknologi, harga, atau solusi digital.</p>
+<form class="site-search-form" id="searchForm" action="/search.html" method="get" role="search" autocomplete="off">
+<div class="site-search-box"><span class="site-search-icon" aria-hidden="true">⌕</span><input id="q" name="q" type="search" placeholder="Ketik kata kunci..." aria-label="Cari di website" autofocus><button class="site-search-submit" type="submit"><span>Cari</span><b>↗</b></button></div>
+<div class="site-search-panel" id="searchPanel" hidden>
+<div class="search-panel-section"><div class="search-panel-label">Saran & autocomplete</div><div class="search-suggestion-list" id="suggestions"></div></div>
+<div class="search-panel-section"><div class="search-panel-label"><span>◷</span> Riwayat pencarian <button type="button" id="clearHistory">Hapus</button></div><div class="search-chip-list" id="history"></div></div>
+<div class="search-panel-section"><div class="search-panel-label"><span>↗</span> Pencarian populer</div><div class="search-chip-list" id="trending"></div></div>
+</div></form>
+<div class="search-toolbar" aria-label="Filter kategori hasil pencarian">
+<div id="count" class="mini-label"></div>
+<div class="search-filters" id="searchFilters" role="group" aria-label="Pilih kategori hasil">
+<button type="button" class="search-filter is-active" data-category="All">Semua</button>
+<button type="button" class="search-filter" data-category="Layanan">Layanan</button>
+<button type="button" class="search-filter" data-category="Portfolio">Portfolio</button>
+<button type="button" class="search-filter" data-category="FAQ">FAQ</button>
+</div>
+</div>
+<div id="results" class="search-results" aria-live="polite"></div>
+</div></main>
+<footer class="footer"><div class="container"><div class="copyright">© 2026 Srilex Buditra. <span>Full Stack. Full Solution. Full Impact.</span></div></div></footer>
+<script src="/search.js"></script>
+
+<!-- Floating Text-to-Speech accessibility control -->
+<div class="tts-fab-wrap" id="ttsFabWrap" aria-label="Kontrol pembaca halaman">
+  <button class="tts-stop" id="ttsStop" type="button" aria-label="Hentikan pembacaan" title="Hentikan"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6h12v12H6z"/></svg></button>
+  <button class="tts-fab" id="ttsFab" type="button" aria-label="Bacakan halaman" aria-pressed="false">
+    <span class="tts-fab-label" id="ttsFabLabel">Bacakan halaman</span>
+    <svg class="tts-play-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10v4h4l5 4V6l-5 4H3zm12.5 2c0-1.77-1-3.29-2.5-4.03v8.05A4.48 4.48 0 0 0 15.5 12zM13 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+  </button>
+</div>
+<script src="/tts.js"></script>
+</body></html>
