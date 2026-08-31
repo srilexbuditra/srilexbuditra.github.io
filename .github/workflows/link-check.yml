@@ -1,0 +1,232 @@
+name: Link, Anchor and Sitemap Integrity Check
+
+on:
+  push:
+    branches: ["main", "master"]
+    paths:
+      - "**/*.html"
+      - "**/*.css"
+      - "**/*.xml"
+      - "CNAME"
+      - ".github/workflows/link-check.yml"
+  pull_request:
+    branches: ["main", "master"]
+    paths:
+      - "**/*.html"
+      - "**/*.css"
+      - "**/*.xml"
+      - "CNAME"
+      - ".github/workflows/link-check.yml"
+  workflow_dispatch:
+  schedule:
+    - cron: "23 3 * * 1"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: link-check-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  integrity:
+    name: Local links, assets and anchors
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Check local HTML links, assets and anchors
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from html.parser import HTMLParser
+          from pathlib import Path
+          from urllib.parse import unquote, urlsplit
+
+          ROOT = Path('.').resolve()
+          LINK_ATTRS = {'href', 'src', 'action', 'poster', 'data'}
+          SKIP_SCHEMES = {'http', 'https', 'mailto', 'tel', 'javascript', 'data', 'blob'}
+          errors = []
+          html_cache = {}
+
+          class Parser(HTMLParser):
+              def __init__(self):
+                  super().__init__(convert_charrefs=True)
+                  self.references = []
+                  self.anchors = set()
+
+              def handle_starttag(self, tag, attrs):
+                  attrs = dict(attrs)
+                  for key in LINK_ATTRS:
+                      value = attrs.get(key)
+                      if value:
+                          self.references.append((key, value.strip()))
+
+                  srcset = attrs.get('srcset')
+                  if srcset:
+                      for item in srcset.split(','):
+                          value = item.strip().split()[0] if item.strip() else ''
+                          if value:
+                              self.references.append(('srcset', value))
+
+                  for key in ('id', 'name'):
+                      value = attrs.get(key)
+                      if value:
+                          self.anchors.add(value)
+
+          def parse_html(path):
+              path = path.resolve()
+              if path not in html_cache:
+                  parser = Parser()
+                  parser.feed(path.read_text(encoding='utf-8', errors='replace'))
+                  parser.close()
+                  html_cache[path] = parser
+              return html_cache[path]
+
+          def candidates(source, path):
+              if path.startswith('/'):
+                  target = ROOT / path.lstrip('/')
+              else:
+                  target = source.parent / path
+              target = target.resolve()
+
+              items = [target]
+              if target.suffix == '':
+                  items.extend([target / 'index.html', target.with_suffix('.html')])
+              return items
+
+          def local_target(source, raw):
+              parts = urlsplit(raw)
+              if parts.scheme.lower() in SKIP_SCHEMES or parts.netloc:
+                  return None, None
+              path = unquote(parts.path)
+              fragment = unquote(parts.fragment)
+              if not path:
+                  return source.resolve(), fragment
+              for candidate in candidates(source, path):
+                  if candidate.exists() and candidate.is_file():
+                      return candidate.resolve(), fragment
+              return None, fragment
+
+          for source in sorted(ROOT.rglob('*.html')):
+              if any(part in {'.git', 'node_modules'} for part in source.parts):
+                  continue
+
+              parser = parse_html(source)
+              for attr, raw in parser.references:
+                  target, fragment = local_target(source, raw)
+                  rel_source = source.relative_to(ROOT)
+
+                  if target is None:
+                      parts = urlsplit(raw)
+                      if parts.scheme.lower() in SKIP_SCHEMES or parts.netloc:
+                          continue
+                      errors.append(f'{rel_source}: {attr}="{raw}" -> missing local target')
+                      continue
+
+                  if fragment and target.suffix.lower() in {'.html', '.htm'}:
+                      target_parser = parse_html(target)
+                      if fragment not in target_parser.anchors:
+                          errors.append(
+                              f'{rel_source}: {attr}="{raw}" -> missing anchor #{fragment} '
+                              f'in {target.relative_to(ROOT)}'
+                          )
+
+          if errors:
+              print('Broken local references found:')
+              print('\n'.join(f' - {error}' for error in errors))
+              raise SystemExit(1)
+
+          print('✓ All checked local HTML links, assets, srcset entries and anchors resolve.')
+          PY
+
+      - name: Validate sitemap structure and repository URLs
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          from urllib.parse import urlparse, unquote
+          import xml.etree.ElementTree as ET
+
+          ROOT = Path('.').resolve()
+          sitemap = ROOT / 'sitemap.xml'
+          cname = ROOT / 'CNAME'
+          errors = []
+
+          if not sitemap.exists():
+              raise SystemExit('sitemap.xml is missing.')
+
+          expected_host = None
+          if cname.exists():
+              expected_host = cname.read_text(encoding='utf-8').strip().lower().rstrip('.')
+
+          try:
+              tree = ET.parse(sitemap)
+          except ET.ParseError as exc:
+              raise SystemExit(f'Invalid sitemap.xml: {exc}')
+
+          ns = {'sm': 'http://www.sitemaps.org/schemas/sitemap/0.9'}
+          locations = []
+
+          for node in tree.findall('sm:url/sm:loc', ns):
+              url = (node.text or '').strip()
+              if not url:
+                  errors.append('Empty <loc> entry found in sitemap.xml')
+                  continue
+              locations.append(url)
+
+          if not locations:
+              errors.append('No sitemap URLs found.')
+
+          seen = set()
+          for url in locations:
+              if url in seen:
+                  errors.append(f'Duplicate sitemap URL: {url}')
+              seen.add(url)
+
+              parsed = urlparse(url)
+              if parsed.scheme not in {'http', 'https'} or not parsed.netloc:
+                  errors.append(f'Invalid absolute sitemap URL: {url}')
+                  continue
+              if parsed.query or parsed.fragment:
+                  errors.append(f'Sitemap URL must not contain query/fragment: {url}')
+              if expected_host and parsed.netloc.lower().rstrip('.') != expected_host:
+                  errors.append(
+                      f'Sitemap host does not match CNAME ({expected_host}): {url}'
+                  )
+
+              path = unquote(parsed.path)
+              relative = path.lstrip('/')
+              target = ROOT / (relative or 'index.html')
+              candidates = [target]
+              if target.suffix == '':
+                  candidates.extend([target / 'index.html', target.with_suffix('.html')])
+
+              if not any(candidate.exists() and candidate.is_file() for candidate in candidates):
+                  errors.append(f'Sitemap URL has no matching repository page: {url}')
+
+          if errors:
+              print('Sitemap integrity problems found:')
+              print('\n'.join(f' - {error}' for error in errors))
+              raise SystemExit(1)
+
+          print(f'✓ sitemap.xml is valid and {len(locations)} URL(s) map to repository pages.')
+          PY
+
+      - name: Workflow summary
+        if: always()
+        shell: bash
+        run: |
+          {
+            echo "## Link Check Summary"
+            echo
+            echo "- Workflow: \\`${{ github.workflow }}\\`"
+            echo "- Ref: \\`${{ github.ref_name }}\\`"
+            echo "- Commit: \\`${{ github.sha }}\\`"
+            echo "- Checks: local links, assets, srcset, HTML anchors, sitemap XML, duplicate sitemap URLs and CNAME host consistency"
+          } >> "$GITHUB_STEP_SUMMARY"
