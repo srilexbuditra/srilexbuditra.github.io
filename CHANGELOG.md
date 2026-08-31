@@ -1,3 +1,13 @@
+# V11.5.2 — Performance Implementation Synchronization Fix
+
+## [2026-09-01]
+
+### Diperbaiki
+- Menyinkronkan atribut `defer` pada script homepage dengan strategi V11.5.1.
+- Menambahkan dimensi eksplisit dan prioritas loading pada gambar hero/profile.
+- Menambahkan dimensi eksplisit pada logo yang digunakan di header dan footer.
+- Menambahkan dokumentasi `PERFORMANCE_V11.5.2.md` untuk membedakan target V11.5.1 dan implementasi aktual.
+
 ## V11.5.1 — Critical Loading & Performance Strategy
 - Added deferred loading for homepage scripts.
 - Prioritized hero/profile image and explicit intrinsic dimensions.

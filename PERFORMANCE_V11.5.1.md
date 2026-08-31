@@ -8,3 +8,6 @@
 
 ## Verification
 Before publishing, verify GitHub Actions and test Mobile/Desktop PageSpeed Insights again.
+
+## Status implementasi
+Dokumen ini mencatat target V11.5.1. Implementasi yang disinkronkan pada source aktual dicatat pada `PERFORMANCE_V11.5.2.md`.
