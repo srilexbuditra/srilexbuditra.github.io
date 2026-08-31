@@ -5,7 +5,7 @@ Website statis HTML/CSS/JavaScript yang responsif untuk GitHub Pages.
 - index.html
 - style.css
 - script.js
-- assets/portfolio-preview.png
+- assets/school-preview.avif
 
 ## Cara mengganti data
 Edit nama sekolah, statistik, judul kartu, deskripsi, tanggal, email, dan gambar pada `index.html`.
