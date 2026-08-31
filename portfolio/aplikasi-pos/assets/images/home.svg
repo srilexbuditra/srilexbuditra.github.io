@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 520">
+<rect width="280" height="520" rx="38" fill="#101722"/>
+<rect x="8" y="8" width="264" height="504" rx="32" fill="white"/>
+<rect x="8" y="8" width="264" height="68" rx="32" fill="#ff5a00"/>
+<rect x="8" y="42" width="264" height="34" fill="#ff5a00"/>
+<text x="28" y="50" font-family="Arial" font-size="12" font-weight="700" fill="white">POS INDONESIA</text>
+<circle cx="242" cy="43" r="12" fill="#ffffff30"/><text x="237" y="48" font-family="Arial" font-size="12" fill="white">⌕</text>
+<text x="28" y="96" font-family="Arial" font-size="11" fill="#7b838e">Halo, Selamat Datang!</text>
+        <rect x="18" y="112" width="244" height="118" rx="20" fill="#fff0e6"/>
+        <text x="36" y="145" font-family="Arial" font-size="14" font-weight="700" fill="#121821">Kirim Paket</text>
+        <text x="36" y="166" font-family="Arial" font-size="11" fill="#69717c">Makin mudah, aman, dan cepat.</text>
+        <rect x="36" y="184" width="108" height="27" rx="10" fill="#ff5a00"/>
+        <text x="51" y="202" font-family="Arial" font-size="10" font-weight="700" fill="white">Mulai Kirim</text>
+        <g font-family="Arial" font-size="9" font-weight="700" fill="#303743">
+          <rect x="18" y="246" width="113" height="76" rx="16" fill="white" stroke="#e9edf1"/>
+          <text x="47" y="284">Cek Ongkir</text><text x="50" y="267" font-size="22" fill="#ff5a00">⌕</text>
+          <rect x="149" y="246" width="113" height="76" rx="16" fill="white" stroke="#e9edf1"/>
+          <text x="180" y="284">Lacak Paket</text><text x="184" y="267" font-size="22" fill="#ff5a00">◎</text>
+          <rect x="18" y="334" width="113" height="76" rx="16" fill="white" stroke="#e9edf1"/>
+          <text x="44" y="372">Lokasi Kantor</text><text x="50" y="355" font-size="22" fill="#ff5a00">⌖</text>
+          <rect x="149" y="334" width="113" height="76" rx="16" fill="white" stroke="#e9edf1"/>
+          <text x="180" y="372">Keuangan</text><text x="187" y="355" font-size="22" fill="#ff5a00">Rp</text>
+        </g>
+<rect x="8" y="472" width="264" height="40" fill="white"/>
+<g font-family="Arial" font-size="8" fill="#69717c"><text x="33" y="496">Beranda</text><text x="92" y="496">Riwayat</text><text x="153" y="496">Notifikasi</text><text x="222" y="496">Akun</text></g>
+<circle cx="47" cy="483" r="4" fill="#ff5a00"/>
+</svg>
