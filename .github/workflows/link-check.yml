@@ -1,0 +1,288 @@
+name: Link, Anchor and Sitemap Integrity Check
+
+on:
+  push:
+    branches: ["main", "master"]
+    paths:
+      - "**/*.html"
+      - "**/*.css"
+      - "**/*.xml"
+      - "CNAME"
+      - ".github/workflows/link-check.yml"
+  pull_request:
+    branches: ["main", "master"]
+    paths:
+      - "**/*.html"
+      - "**/*.css"
+      - "**/*.xml"
+      - "CNAME"
+      - ".github/workflows/link-check.yml"
+  workflow_dispatch:
+  schedule:
+    - cron: "23 3 * * 1"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: link-check-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  integrity:
+    name: Local links, assets, anchors and sitemap
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Check local HTML links and assets
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from html.parser import HTMLParser
+          from pathlib import Path
+          from urllib.parse import unquote, urlsplit
+
+          ROOT = Path('.').resolve()
+          LINK_ATTRS = {'href', 'src', 'action', 'poster', 'data'}
+          SKIP_SCHEMES = {'http', 'https', 'mailto', 'tel', 'javascript', 'data', 'blob'}
+          errors = []
+          warnings = []
+          html_cache = {}
+
+          class Parser(HTMLParser):
+              def __init__(self):
+                  super().__init__(convert_charrefs=True)
+                  self.references = []
+                  self.anchors = set()
+                  self.client_routes = set()
+
+              def handle_starttag(self, tag, attrs):
+                  attrs = dict(attrs)
+                  for key in LINK_ATTRS:
+                      value = attrs.get(key)
+                      if value:
+                          self.references.append((key, value.strip()))
+
+                  srcset = attrs.get('srcset')
+                  if srcset:
+                      for item in srcset.split(','):
+                          value = item.strip().split()[0] if item.strip() else ''
+                          if value:
+                              self.references.append(('srcset', value))
+
+                  for key in ('id', 'name'):
+                      value = attrs.get(key)
+                      if value:
+                          self.anchors.add(unquote(value))
+
+                  # Support client-side hash navigation such as:
+                  # href="#dashboard" data-view="dashboard"
+                  for key in ('data-view', 'data-go'):
+                      value = attrs.get(key)
+                      if value:
+                          self.client_routes.add(unquote(value))
+
+          def parse_html(path):
+              path = path.resolve()
+              if path not in html_cache:
+                  parser = Parser()
+                  parser.feed(path.read_text(encoding='utf-8', errors='replace'))
+                  parser.close()
+                  html_cache[path] = parser
+              return html_cache[path]
+
+          def inside_root(path):
+              try:
+                  path.relative_to(ROOT)
+                  return True
+              except ValueError:
+                  return False
+
+          def candidates(source, path):
+              # GitHub Pages treats / and directory URLs as index.html.
+              if path.startswith('/'):
+                  target = ROOT / path.lstrip('/')
+              else:
+                  target = source.parent / path
+              target = target.resolve()
+
+              if not inside_root(target):
+                  return []
+
+              items = []
+              if target.is_dir() or path.endswith('/') or target.suffix == '':
+                  items.append(target / 'index.html')
+              items.append(target)
+              if target.suffix == '':
+                  items.append(target.with_suffix('.html'))
+
+              # Keep order while removing duplicates.
+              seen = set()
+              unique = []
+              for item in items:
+                  if item not in seen:
+                      seen.add(item)
+                      unique.append(item)
+              return unique
+
+          def local_target(source, raw):
+              parts = urlsplit(raw)
+              scheme = parts.scheme.lower()
+              if scheme in SKIP_SCHEMES or parts.netloc:
+                  return None, None, True
+
+              path = unquote(parts.path)
+              fragment = unquote(parts.fragment)
+
+              # Empty path means an in-page fragment or the current document.
+              if not path:
+                  return source.resolve(), fragment, False
+
+              for candidate in candidates(source, path):
+                  if candidate.exists() and candidate.is_file():
+                      return candidate.resolve(), fragment, False
+              return None, fragment, False
+
+          for source in sorted(ROOT.rglob('*.html')):
+              if any(part in {'.git', 'node_modules'} for part in source.parts):
+                  continue
+
+              parser = parse_html(source)
+              rel_source = source.relative_to(ROOT)
+
+              for attr, raw in parser.references:
+                  target, fragment, skipped = local_target(source, raw)
+                  if skipped:
+                      continue
+
+                  if target is None:
+                      errors.append(f'{rel_source}: {attr}="{raw}" -> missing local target')
+                      continue
+
+                  if fragment and target.suffix.lower() in {'.html', '.htm'}:
+                      target_parser = parse_html(target)
+                      if fragment in target_parser.anchors:
+                          continue
+
+                      # Client-side views may intentionally use hash routes instead
+                      # of matching HTML IDs. Treat these as valid application routes.
+                      if fragment in target_parser.client_routes:
+                          continue
+
+                      warnings.append(
+                          f'{rel_source}: {attr}="{raw}" -> anchor #{fragment} '
+                          f'not found in {target.relative_to(ROOT)}'
+                      )
+
+          summary = Path('/tmp/link-check-summary.txt')
+          summary.write_text(
+              f'errors={len(errors)}\nwarnings={len(warnings)}\n',
+              encoding='utf-8'
+          )
+
+          if warnings:
+              print('Anchor warnings (non-blocking):')
+              print('\n'.join(f' - {item}' for item in warnings))
+
+          if errors:
+              print('Broken local references found:')
+              print('\n'.join(f' - {item}' for item in errors))
+              raise SystemExit(1)
+
+          print(f'✓ Local links and assets passed. Anchor warnings: {len(warnings)}')
+          PY
+
+      - name: Validate sitemap structure and repository URLs
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          from urllib.parse import urlparse, unquote
+          import xml.etree.ElementTree as ET
+
+          ROOT = Path('.').resolve()
+          sitemap = ROOT / 'sitemap.xml'
+          cname = ROOT / 'CNAME'
+          errors = []
+
+          if not sitemap.exists():
+              raise SystemExit('sitemap.xml is missing.')
+
+          expected_host = None
+          if cname.exists():
+              expected_host = cname.read_text(encoding='utf-8').strip().lower().rstrip('.')
+
+          try:
+              tree = ET.parse(sitemap)
+          except ET.ParseError as exc:
+              raise SystemExit(f'Invalid sitemap.xml: {exc}')
+
+          ns = {'sm': 'http://www.sitemaps.org/schemas/sitemap/0.9'}
+          locations = []
+          for node in tree.findall('sm:url/sm:loc', ns):
+              url = (node.text or '').strip()
+              if not url:
+                  errors.append('Empty <loc> entry found in sitemap.xml')
+                  continue
+              locations.append(url)
+
+          if not locations:
+              errors.append('No sitemap URLs found.')
+
+          seen = set()
+          for url in locations:
+              if url in seen:
+                  errors.append(f'Duplicate sitemap URL: {url}')
+              seen.add(url)
+
+              parsed = urlparse(url)
+              if parsed.scheme not in {'http', 'https'} or not parsed.netloc:
+                  errors.append(f'Invalid absolute sitemap URL: {url}')
+                  continue
+
+              if parsed.query or parsed.fragment:
+                  errors.append(f'Sitemap URL must not contain query/fragment: {url}')
+
+              if expected_host and parsed.netloc.lower().rstrip('.') != expected_host:
+                  errors.append(f'Sitemap host does not match CNAME ({expected_host}): {url}')
+
+              path = unquote(parsed.path)
+              relative = path.lstrip('/')
+              target = (ROOT / relative).resolve()
+              candidates = []
+              if not relative or target.is_dir() or path.endswith('/') or target.suffix == '':
+                  candidates.append(target / 'index.html')
+              candidates.append(target)
+              if target.suffix == '':
+                  candidates.append(target.with_suffix('.html'))
+
+              if not any(candidate.exists() and candidate.is_file() for candidate in candidates):
+                  errors.append(f'Sitemap URL has no matching repository page: {url}')
+
+          if errors:
+              print('Sitemap integrity problems found:')
+              print('\n'.join(f' - {item}' for item in errors))
+              raise SystemExit(1)
+
+          print(f'✓ sitemap.xml is valid and {len(locations)} URL(s) map to repository pages.')
+          PY
+
+      - name: Workflow summary
+        if: always()
+        shell: bash
+        run: |
+          echo "## Link Check Summary" >> "$GITHUB_STEP_SUMMARY"
+          echo >> "$GITHUB_STEP_SUMMARY"
+          echo "- Workflow: \`${{ github.workflow }}\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Ref: \`${{ github.ref_name }}\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Commit: \`${{ github.sha }}\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Root URLs such as \`/\` and \`/#section\` resolve to \`index.html\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Directory URLs such as \`../\` resolve to the appropriate \`index.html\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Client-side hash routes using \`data-view\` or \`data-go\` are supported" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Missing local files remain blocking errors; ordinary missing anchors are reported as non-blocking warnings" >> "$GITHUB_STEP_SUMMARY"
