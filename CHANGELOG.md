@@ -1,3 +1,8 @@
+## V11.5.1 — Critical Loading & Performance Strategy
+- Added deferred loading for homepage scripts.
+- Prioritized hero/profile image and explicit intrinsic dimensions.
+- Added performance implementation notes.
+
 # Catatan Perubahan
 
 Semua perubahan penting pada situs web dan portofolio **Srilex Buditra** dicatat dalam dokumen ini.
