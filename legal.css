@@ -588,3 +588,65 @@
     width: calc(100% - 20px);
   }
 }
+
+/* =========================================================
+   DESKTOP STICKY TOC V4 — viewport scroll-container fix
+   The global site stylesheet sets body overflow-x:hidden.
+   On desktop that can make body an overflow container and
+   interfere with viewport-based sticky positioning.
+   clip prevents horizontal overflow without creating a
+   scroll container, while leaving vertical page scrolling
+   on the document viewport.
+   ========================================================= */
+@media (min-width: 901px) {
+  html,
+  body {
+    overflow-x: clip !important;
+    overflow-y: visible !important;
+  }
+
+  .legal-page,
+  .legal-content-section,
+  .legal-layout,
+  .legal-sidebar,
+  .legal-article {
+    overflow-x: visible !important;
+  }
+
+  .legal-layout {
+    display: grid;
+    grid-template-columns: minmax(210px, 250px) minmax(0, 1fr);
+    align-items: start;
+  }
+
+  .legal-sidebar {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    top: 94px !important;
+    align-self: start !important;
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+    width: 100% !important;
+    z-index: 20;
+  }
+
+  .legal-toc {
+    position: relative !important;
+    top: auto !important;
+    width: 100% !important;
+    max-height: calc(100vh - 114px);
+    overflow-y: auto;
+    overflow-x: hidden;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+  }
+}
+
+/* Keep the already-correct mobile behavior untouched. */
+@media (max-width: 900px) {
+  html,
+  body {
+    overflow-x: hidden;
+  }
+}
