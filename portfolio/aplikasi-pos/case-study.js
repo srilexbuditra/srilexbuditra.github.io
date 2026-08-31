@@ -1,0 +1,1 @@
+const m=document.querySelector('.menu'),n=document.querySelector('.links');if(m)m.onclick=()=>{n.classList.toggle('open');m.setAttribute('aria-expanded',n.classList.contains('open'))};document.querySelectorAll('.links a').forEach(a=>a.onclick=()=>n.classList.remove('open'));document.querySelector('.top')?.addEventListener('click',()=>scrollTo({top:0,behavior:'smooth'}));
