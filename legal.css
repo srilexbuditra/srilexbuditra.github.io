@@ -360,24 +360,22 @@
 }
 .legal-closing p { max-width: 620px; margin: 0; color: #8fa7b8; line-height: 1.8; }
 
-/* Desktop: keep the table of contents anchored while the article scrolls. */
+/* =========================================================
+   DESKTOP STICKY TOC V2 — audited
+   The sidebar remains in the document flow and sticks to the
+   viewport while the legal article continues scrolling.
+   ========================================================= */
 @media (min-width: 901px) {
-  /*
-   * Desktop/tablet landscape:
-   * Keep the Table of Contents locked to the viewport while the article
-   * scrolls. The sticky element itself must be the sidebar; the TOC remains
-   * a normal child so its own scroll is independent when it becomes taller
-   * than the viewport.
-   */
   .legal-page,
   .legal-content-section,
   .legal-layout,
   .legal-article {
     overflow: visible !important;
-    transform: none !important;
+    min-width: 0;
   }
 
   .legal-layout {
+    position: relative;
     align-items: start;
   }
 
@@ -386,23 +384,31 @@
     position: sticky !important;
     top: 94px !important;
     align-self: start !important;
+    width: 100%;
+    min-width: 0;
     height: fit-content;
-    min-height: 0;
-    z-index: 10;
+    max-height: calc(100vh - 114px);
+    overflow: visible !important;
+    z-index: 20;
   }
 
   .legal-toc {
-    position: relative;
-    top: auto;
+    position: relative !important;
+    top: auto !important;
+    width: 100%;
     max-height: calc(100vh - 114px);
     overflow-y: auto;
     overflow-x: hidden;
     overscroll-behavior: contain;
+    scrollbar-width: thin;
+  }
+
+  .legal-article {
+    width: 100%;
+    max-width: 820px;
   }
 }
 
-/* Tablet: stack the navigation above the article. */
- stack the navigation above the article. */
 @media (max-width: 900px) {
   .legal-layout {
     grid-template-columns: 1fr;
@@ -521,4 +527,64 @@
   .legal-back,
   .legal-toc a,
   .legal-link { transition: none; }
+}
+
+/* =========================================================
+   MOBILE BOUNDARY GUARD V2
+   ========================================================= */
+@media (max-width: 900px) {
+  .legal-page,
+  .legal-hero,
+  .legal-content-section,
+  .legal-container,
+  .legal-layout,
+  .legal-sidebar,
+  .legal-toc,
+  .legal-article,
+  .legal-block {
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .legal-container,
+  .legal-layout {
+    width: calc(100% - 24px);
+  }
+
+  .legal-toc,
+  .legal-toc nav {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .legal-toc a,
+  .legal-block p,
+  .legal-list li,
+  .legal-note,
+  .legal-highlight,
+  .legal-contact-card,
+  .legal-link {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    word-break: normal;
+  }
+
+  .legal-highlight,
+  .legal-contact-card,
+  .legal-note {
+    overflow: hidden;
+  }
+
+  .legal-block > div:last-child {
+    min-width: 0;
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 380px) {
+  .legal-container,
+  .legal-layout {
+    width: calc(100% - 20px);
+  }
 }
