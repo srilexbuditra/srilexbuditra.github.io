@@ -362,9 +362,23 @@
 
 /* Desktop: keep the table of contents anchored while the article scrolls. */
 @media (min-width: 901px) {
+  /*
+   * Desktop/tablet landscape:
+   * Keep the Table of Contents locked to the viewport while the article
+   * scrolls. The sticky element itself must be the sidebar; the TOC remains
+   * a normal child so its own scroll is independent when it becomes taller
+   * than the viewport.
+   */
+  .legal-page,
   .legal-content-section,
+  .legal-layout,
+  .legal-article {
+    overflow: visible !important;
+    transform: none !important;
+  }
+
   .legal-layout {
-    overflow: visible;
+    align-items: start;
   }
 
   .legal-sidebar {
@@ -372,32 +386,23 @@
     position: sticky !important;
     top: 94px !important;
     align-self: start !important;
-    height: max-content;
-    max-height: calc(100vh - 114px);
-    overflow: visible;
-  }
-
-  .legal-toc {
-    max-height: calc(100vh - 114px);
-    overflow-y: auto;
-    overscroll-behavior: contain;
+    height: fit-content;
+    min-height: 0;
+    z-index: 10;
   }
 
   .legal-toc {
     position: relative;
     top: auto;
-  }
-
-  /* Do not let any ancestor become the sticky scroll container. */
-  .legal-page,
-  .legal-content-section,
-  .legal-layout,
-  .legal-article {
-    overflow: visible !important;
+    max-height: calc(100vh - 114px);
+    overflow-y: auto;
+    overflow-x: hidden;
+    overscroll-behavior: contain;
   }
 }
 
 /* Tablet: stack the navigation above the article. */
+ stack the navigation above the article. */
 @media (max-width: 900px) {
   .legal-layout {
     grid-template-columns: 1fr;
