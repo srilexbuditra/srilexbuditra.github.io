@@ -1191,3 +1191,78 @@ html,body{max-width:100%;overflow-x:hidden}
 @supports not (zoom: 1){
   @media print{body > .print-report.print-host{width:142.857142%!important;transform:scale(.70)!important;transform-origin:top left!important}}
 }
+
+
+/* ===== V20 — A4 PORTRAIT ONE-PAGE PRINT ONLY =====
+   V17/V19 screen and Secure Document visuals remain untouched.
+   Print canvas: A4 portrait, 20mm top/bottom, adaptive side margins.
+*/
+@media print{
+  @page{size:A4 portrait;margin:20mm 12mm 20mm 12mm}
+  html,body{width:100%!important;min-width:0!important;height:auto!important;min-height:0!important;margin:0!important;padding:0!important;overflow:visible!important;background:#fff!important}
+  body > *{display:none!important}
+  body > .print-report.print-host{
+    display:block!important;visibility:visible!important;position:relative!important;
+    width:calc(100% / var(--print-zoom, .78))!important;
+    max-width:none!important;height:auto!important;min-height:0!important;max-height:none!important;
+    margin:0!important;padding:0!important;overflow:visible!important;
+    box-sizing:border-box!important;background:#fff!important;color:#17212b!important;
+    zoom:var(--print-zoom,.78)!important;transform:none!important;transform-origin:top left!important;
+  }
+  body > .print-report.print-host,body > .print-report.print-host *{box-sizing:border-box!important}
+  body > .print-report.print-host *{overflow:visible!important}
+  body > .print-report.print-host .print-report-header{grid-template-columns:52px minmax(0,1fr) auto!important;gap:10px!important;padding-bottom:7px!important}
+  body > .print-report.print-host .print-brand-mark{width:52px!important;height:52px!important}
+  body > .print-report.print-host .print-brand-mark img{width:78%!important;height:78%!important;object-fit:contain!important}
+  body > .print-report.print-host h1{font-size:20pt!important;line-height:1.02!important}
+  body > .print-report.print-host .print-kicker{font-size:6.5pt!important;letter-spacing:1.15px!important}
+  body > .print-report.print-host .print-report-header p{font-size:7pt!important;margin:2px 0 0!important}
+  body > .print-report.print-host .print-date{font-size:6.3pt!important}
+  body > .print-report.print-host .print-barcode{width:105px!important;height:32px!important}
+  body > .print-report.print-host .print-accent{height:3px!important;margin:6px 0 8px!important}
+  body > .print-report.print-host .print-total-card{padding:8px 10px!important;margin-bottom:7px!important}
+  body > .print-report.print-host .print-total-card strong{font-size:18pt!important}
+  body > .print-report.print-host .print-section-title{font-size:6.5pt!important;margin:7px 0 4px!important;padding-bottom:3px!important}
+  body > .print-report.print-host .print-info-grid,body > .print-report.print-host .print-detail-grid{gap:5px 7px!important;margin-top:4px!important}
+  body > .print-report.print-host .print-info-grid>div,body > .print-report.print-host .print-detail-grid>div{padding:5px 6px!important;min-height:0!important}
+  body > .print-report.print-host .print-info-grid span,body > .print-report.print-host .print-detail-grid span{font-size:5.2pt!important}
+  body > .print-report.print-host .print-info-grid strong,body > .print-report.print-host .print-detail-grid strong{font-size:6.5pt!important}
+  body > .print-report.print-host .print-description{margin-top:5px!important;padding:6px 7px!important}
+  body > .print-report.print-host .print-description>span{font-size:5.2pt!important}
+  body > .print-report.print-host .print-description p{font-size:6pt!important;line-height:1.25!important;margin:2px 0 0!important}
+  body > .print-report.print-host .print-consent{margin-top:5px!important;padding:6px 7px!important}
+  body > .print-report.print-host .print-consent strong{font-size:6.1pt!important}
+  body > .print-report.print-host .print-consent p{font-size:5.4pt!important;line-height:1.25!important}
+  body > .print-report.print-host .print-agreement{margin-top:5px!important;padding:6px 7px!important}
+  body > .print-report.print-host .print-agreement-title{padding-bottom:4px!important}
+  body > .print-report.print-host .print-agreement-title strong{font-size:7pt!important}
+  body > .print-report.print-host .print-agreement>p{font-size:5.7pt!important;line-height:1.25!important;margin:3px 0!important}
+  body > .print-report.print-host .print-verification{margin-top:4px!important;padding:4px!important;gap:4px!important}
+  body > .print-report.print-host .print-verification span{font-size:4.6pt!important}
+  body > .print-report.print-host .print-verification strong{font-size:5.3pt!important}
+  body > .print-report.print-host .print-signatures{grid-template-columns:1fr 1fr!important;gap:7px!important;margin-top:4px!important}
+  body > .print-report.print-host .print-signatures>div{height:86px!important;min-height:86px!important;padding:5px!important}
+  body > .print-report.print-host .print-signatures img#printProviderSignature,body > .print-report.print-host #printClientSignatureSvg{height:35px!important;min-height:35px!important;flex:0 0 35px!important;margin:3px 0!important;width:100%!important;object-fit:contain!important}
+  body > .print-report.print-host #printClientSignatureSvg path[data-signature-path]{stroke-width:1!important;vector-effect:non-scaling-stroke!important}
+  body > .print-report.print-host .print-signatures strong{font-size:6.1pt!important}
+  body > .print-report.print-host .print-signatures small{font-size:4.7pt!important}
+  body > .print-report.print-host .print-payment-section{margin-top:5px!important;padding:5px 6px!important}
+  body > .print-report.print-host .print-payment-head{padding-bottom:3px!important;gap:8px!important}
+  body > .print-report.print-host .print-payment-head span{font-size:5.1pt!important}
+  body > .print-report.print-host .print-payment-head strong{font-size:6.1pt!important}
+  body > .print-report.print-host .print-payment-head small{font-size:4.7pt!important}
+  body > .print-report.print-host .print-bank-grid{grid-template-columns:repeat(3,1fr)!important;gap:4px!important;margin-top:4px!important}
+  body > .print-report.print-host .print-bank-card{grid-template-columns:40px 1fr!important;gap:4px!important;padding:4px!important}
+  body > .print-report.print-host .print-bank-logo{height:21px!important}
+  body > .print-report.print-host .print-bank-logo img{max-width:36px!important;max-height:18px!important}
+  body > .print-report.print-host .print-bank-card b{font-size:5.5pt!important}
+  body > .print-report.print-host .print-bank-card small{font-size:4.4pt!important;line-height:1.15!important}
+  body > .print-report.print-host .print-bank-card small strong{font-size:4.9pt!important}
+  body > .print-report.print-host .print-payment-note{margin-top:4px!important;padding:3px 5px!important}
+  body > .print-report.print-host .print-payment-note strong{font-size:5.1pt!important}
+  body > .print-report.print-host .print-footer{margin-top:5px!important;padding-top:4px!important;font-size:5pt!important;line-height:1.2!important}
+  body > .print-report.print-host .print-footer strong{font-size:5.5pt!important}
+  body > .print-report.print-host .print-footer-right{font-size:5pt!important}
+  body > .print-report.print-host a{color:inherit!important;text-decoration:none!important}
+  body > .print-report.print-host *{box-shadow:none!important;text-shadow:none!important;animation:none!important;transform:none!important}
+}

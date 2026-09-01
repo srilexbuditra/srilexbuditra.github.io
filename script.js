@@ -332,6 +332,35 @@ function mountPrintReportForPrint(){
   report.classList.add('print-host');
   report.setAttribute('aria-hidden','false');
 }
+function fitPrintReportToA4Portrait(){
+  const report=$('.print-report');
+  if(!report || report.parentElement!==document.body) return;
+  // Fit only the print canvas; normal website/Secure Document layout is untouched.
+  let scale=.78;
+  report.style.setProperty('--print-zoom','1');
+  report.style.zoom='1';
+  report.style.width='100%';
+  void report.offsetHeight;
+  const mm=document.createElement('div');
+  mm.style.cssText='position:absolute;left:-99999px;top:-99999px;width:100mm;height:100mm;visibility:hidden;';
+  document.body.appendChild(mm);
+  const mmPx=mm.getBoundingClientRect().height/100;
+  mm.remove();
+  const targetHeight=257*mmPx*.965;
+  for(let i=0;i<5;i++){
+    report.style.setProperty('--print-zoom',String(scale));
+    report.style.zoom=String(scale);
+    report.style.width=(100/scale)+'%';
+    void report.offsetHeight;
+    const h=report.scrollHeight*scale;
+    if(h<=targetHeight) break;
+    scale=Math.max(.45,scale*(targetHeight/h)*.985);
+  }
+  report.style.setProperty('--print-zoom',String(scale));
+  report.style.zoom=String(scale);
+  report.style.width=(100/scale)+'%';
+}
+
 function restorePrintReportAfterPrint(){
   const report=$('.print-report');
   if(!report || !printReportParent) return;
@@ -339,6 +368,9 @@ function restorePrintReportAfterPrint(){
   report.setAttribute('aria-hidden','true');
   if(printReportNextSibling && printReportNextSibling.parentNode===printReportParent) printReportParent.insertBefore(report,printReportNextSibling);
   else printReportParent.appendChild(report);
+  report.style.removeProperty('--print-zoom');
+  report.style.removeProperty('zoom');
+  report.style.removeProperty('width');
   printReportParent=null; printReportNextSibling=null;
 }
 confirmAgreementBtn?.addEventListener('click',async()=>{
@@ -348,6 +380,7 @@ confirmAgreementBtn?.addEventListener('click',async()=>{
     await populatePrintReport();
     await prepareClientSignatureForPrint();
     mountPrintReportForPrint();
+    fitPrintReportToA4Portrait();
     // Force the browser to lay out the now top-level print document before print preview.
     void document.body.offsetHeight;
     void $('.print-report')?.getBoundingClientRect();
@@ -361,6 +394,7 @@ window.addEventListener('afterprint',restorePrintReportAfterPrint);
 
 window.addEventListener('beforeprint',()=>{
   mountPrintReportForPrint();
+  fitPrintReportToA4Portrait();
   if(isAgreementReady()){
     const pad=signaturePads.client;
     if(pad?.hasSignature) renderClientSignatureForPrint(pad.dataUrl || pad.canvas.toDataURL('image/png'));
