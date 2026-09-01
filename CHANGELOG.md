@@ -102,3 +102,9 @@ Catatan perubahan akan diperbarui setiap kali terdapat fitur, perbaikan, perubah
 - Equalized signature boxes and signature media height in the printed document.
 - Removed the mobile screen rule that could hide the mounted print report during mobile print preparation.
 - Strengthened `body > .print-report.print-host` print isolation for mobile browser print preview.
+
+## V19 — A4 One-Page Print Engine
+- Reworked only print/PDF media rules.
+- Uses A4 landscape physical page sizing and CSS zoom for one-page fitting.
+- Removes the V18 transform/overflow strategy that could push content outside A4 or hide it on mobile print preview.
+- Screen, Secure Document, consent, signatures, bank accounts, barcode, fingerprint, and normal responsive UI remain unchanged.
