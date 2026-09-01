@@ -1,3 +1,10 @@
+## V2 — Privacy Consent Responsive
+
+- Normalized checkbox appearance across Firefox, Chromium, Safari, and mobile browsers.
+- Added 44px touch target and keyboard focus treatment.
+- Prevented consent text/button overflow on narrow screens.
+- Added defensive consent checks to WhatsApp and PDF handlers.
+
 ## 2026-09-01 — Privacy Consent Gate
 - Menambahkan checkbox persetujuan Kebijakan Privasi pada panel hasil formulir estimasi.
 - Mengunci tombol **Kirim ke WhatsApp** dan **Cetak / Simpan PDF** sampai checkbox dicentang.

@@ -471,3 +471,157 @@ body {
   filter:grayscale(.35);
   pointer-events:none;
 }
+
+
+/* =========================================================
+   PRIVACY CONSENT V2 — cross-browser + touch responsive
+   Keeps one consistent checkbox appearance on Chromium,
+   Firefox, Safari and mobile browsers.
+   ========================================================= */
+.privacy-consent {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+}
+.privacy-consent-label {
+  position: relative;
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr);
+  align-items: start;
+  gap: 10px;
+  width: 100%;
+  min-height: 44px;
+  margin: 0;
+  padding: 2px 0;
+  font-size: 11px;
+  line-height: 1.55;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+.privacy-consent-label input[type="checkbox"] {
+  position: absolute;
+  inset: 0 auto auto 0;
+  width: 44px;
+  height: 44px;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+  z-index: 2;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.privacy-checkbox-box {
+  position: relative;
+  z-index: 1;
+  width: 22px;
+  height: 22px;
+  margin-top: 1px;
+  box-sizing: border-box;
+  border: 2px solid #6d8798;
+  border-radius: 5px;
+  background: #061e31;
+  display: block;
+  transition: background .16s ease, border-color .16s ease, box-shadow .16s ease, transform .12s ease;
+  pointer-events: none;
+}
+.privacy-consent-label input[type="checkbox"]:checked + .privacy-checkbox-box {
+  border-color: var(--gold);
+  background: var(--gold);
+  box-shadow: 0 0 0 3px rgba(255,181,27,.12);
+}
+.privacy-consent-label input[type="checkbox"]:checked + .privacy-checkbox-box::after {
+  content: "";
+  position: absolute;
+  left: 6px;
+  top: 2px;
+  width: 6px;
+  height: 11px;
+  border: solid #07131d;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+.privacy-consent-label input[type="checkbox"]:focus-visible + .privacy-checkbox-box {
+  outline: 3px solid rgba(34,197,238,.38);
+  outline-offset: 3px;
+}
+.privacy-consent-label > span:last-child {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.privacy-consent-note {
+  margin-left: 34px;
+  max-width: calc(100% - 34px);
+  overflow-wrap: anywhere;
+}
+.result-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  width: 100%;
+}
+.result-actions .btn {
+  min-width: 0;
+  max-width: 100%;
+  white-space: normal;
+}
+#waBtn:disabled, #pdfBtn:disabled {
+  opacity: .48;
+  cursor: not-allowed;
+  pointer-events: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+@media (max-width: 760px) {
+  .privacy-consent {
+    margin: 16px 0 12px;
+    padding: 14px;
+    border-radius: 14px;
+  }
+  .privacy-consent-label {
+    grid-template-columns: 24px minmax(0, 1fr);
+    gap: 10px;
+    min-height: 44px;
+    font-size: 11px;
+    line-height: 1.6;
+  }
+  .privacy-consent-label input[type="checkbox"] {
+    width: 44px;
+    height: 44px;
+  }
+  .privacy-checkbox-box {
+    width: 22px;
+    height: 22px;
+  }
+  .privacy-consent-note {
+    margin: 8px 0 0 34px;
+    max-width: calc(100% - 34px);
+    font-size: 9px;
+    line-height: 1.55;
+  }
+  .result-actions {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .result-actions .btn {
+    width: 100%;
+    min-height: 44px;
+  }
+}
+@media (max-width: 380px) {
+  .privacy-consent {
+    padding: 12px;
+  }
+  .privacy-consent-label {
+    font-size: 10px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .privacy-checkbox-box { transition: none; }
+}
+@media print {
+  .privacy-consent { border-color: #999; background: #fff; }
+  .privacy-consent-label { color: #111; }
+  .privacy-checkbox-box { background: #fff; border-color: #555; }
+  .privacy-consent-note { color: #555; }
+}

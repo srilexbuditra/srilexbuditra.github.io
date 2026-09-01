@@ -7,15 +7,18 @@ const waBtn = $('#waBtn');
 const pdfBtn = $('#pdfBtn');
 
 function updatePrivacyConsentState(){
-  const consented = Boolean(privacyConsentCheckbox?.checked);
+  const consented = Boolean(privacyConsentCheckbox && privacyConsentCheckbox.checked);
   [waBtn, pdfBtn].forEach(btn => {
     if(!btn) return;
     btn.disabled = !consented;
-    btn.setAttribute('aria-disabled', String(!consented));
+    btn.setAttribute('aria-disabled', consented ? 'false' : 'true');
   });
 }
 
-privacyConsentCheckbox?.addEventListener('change', updatePrivacyConsentState);
+if (privacyConsentCheckbox) {
+  privacyConsentCheckbox.addEventListener('change', updatePrivacyConsentState, false);
+  privacyConsentCheckbox.addEventListener('input', updatePrivacyConsentState, false);
+}
 updatePrivacyConsentState();
 
 const menuToggle = $('#menuToggle');
@@ -106,6 +109,7 @@ $('#estimateForm')?.addEventListener('submit', e => {
 });
 
 waBtn?.addEventListener('click', () => {
+  if (!privacyConsentCheckbox?.checked) return;
   const total = updateEstimate();
   const msg = [
     'Halo Srilex Buditra, saya tertarik konsultasi project.',
@@ -121,7 +125,10 @@ waBtn?.addEventListener('click', () => {
   ].join('\n');
   window.open('https://wa.me/6282136238350?text=' + encodeURIComponent(msg),'_blank','noopener');
 });
-pdfBtn?.addEventListener('click', () => window.print());
+pdfBtn?.addEventListener('click', () => {
+  if (!privacyConsentCheckbox?.checked) return;
+  window.print();
+});
 
 const sections = $$('main section[id], main section.hero');
 const navLinks = $$('#mainNav a[href^="#"]');

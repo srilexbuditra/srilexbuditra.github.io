@@ -49,3 +49,11 @@ Event klik untuk WhatsApp dan PDF tetap terpasang pada tombol yang sama. Karena 
 7. Hapus centang kembali.
 8. Pastikan kedua tombol langsung terkunci kembali.
 9. Uji pada desktop dan mobile untuk memastikan layout checkbox tidak keluar batas.
+
+
+## V2 Responsive Cross-Browser
+- Checkbox uses a consistent custom control instead of browser-dependent native rendering.
+- Touch target is 44px on mobile.
+- The consent text wraps safely without horizontal overflow.
+- WhatsApp/PDF actions use a one-column layout on small screens.
+- JavaScript re-checks consent inside each action handler as a defensive fallback.
