@@ -1547,3 +1547,40 @@ html,body{max-width:100%;overflow-x:hidden}
     text-align:center!important;
   }
 }
+
+/* ===== V25: in-app mobile browser print fallback ===== */
+.print-report.print-fallback{
+  display:block!important;
+  position:fixed!important;
+  inset:0!important;
+  z-index:99999!important;
+  width:100%!important;
+  max-width:100%!important;
+  height:100dvh!important;
+  overflow:auto!important;
+  background:#eef2f5!important;
+  padding:16px!important;
+  box-sizing:border-box!important;
+}
+.print-report.print-fallback:before{
+  content:'Tampilan dokumen siap dicetak / disimpan sebagai PDF';
+  display:block;
+  position:sticky;
+  top:0;
+  z-index:2;
+  padding:10px 12px;
+  margin:-16px -16px 14px;
+  background:#17384b;
+  color:#fff;
+  font:700 12px/1.4 system-ui,sans-serif;
+  text-align:center;
+}
+@media(max-width:700px){
+  .print-report.print-fallback{padding:10px!important}
+  .print-report.print-fallback:before{margin:-10px -10px 10px;font-size:11px}
+  .print-report.print-fallback .print-payment-section{margin-top:8px!important}
+}
+@media print{
+  .print-report.print-fallback{position:static!important;inset:auto!important;width:100%!important;height:auto!important;overflow:visible!important;padding:0!important;background:#fff!important}
+  .print-report.print-fallback:before{display:none!important}
+}

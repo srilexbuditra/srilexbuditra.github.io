@@ -375,7 +375,7 @@ function fitPrintReportToA4Portrait(){
 function restorePrintReportAfterPrint(){
   const report=$('.print-report');
   if(!report || !printReportParent) return;
-  report.classList.remove('print-host');
+  report.classList.remove('print-host','print-fallback');
   report.setAttribute('aria-hidden','true');
   if(printReportNextSibling && printReportNextSibling.parentNode===printReportParent) printReportParent.insertBefore(report,printReportNextSibling);
   else printReportParent.appendChild(report);
@@ -396,7 +396,22 @@ confirmAgreementBtn?.addEventListener('click',async()=>{
     void document.body.offsetHeight;
     void $('.print-report')?.getBoundingClientRect();
     closeAgreementModal();
-    requestAnimationFrame(()=>requestAnimationFrame(()=>setTimeout(()=>window.print(),180)));
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      // V25: some Android in-app browsers do not expose a working print preview.
+      // Keep the A4 report visible as a safe fallback instead of leaving a blank page.
+      let printStarted=false;
+      const onBeforePrint=()=>{printStarted=true;};
+      window.addEventListener('beforeprint',onBeforePrint,{once:true});
+      const mql=window.matchMedia ? window.matchMedia('print') : null;
+      const onMql=()=>{ if(mql && mql.matches) printStarted=true; };
+      try{mql?.addEventListener?.('change',onMql);mql?.addListener?.(onMql);}catch(_){}
+      try{window.print();}catch(_){}
+      setTimeout(()=>{
+        try{mql?.removeEventListener?.('change',onMql);mql?.removeListener?.(onMql);}catch(_){}
+        window.removeEventListener('beforeprint',onBeforePrint);
+        if(!printStarted && document.visibilityState==='visible') $('.print-report')?.classList.add('print-fallback');
+      },900);
+    }));
   }finally{
     setTimeout(()=>{confirmAgreementBtn.disabled=false;},1000);
   }
