@@ -6,12 +6,12 @@
   },
   "documents": [
     {
-      "id": "SB-EST-20260902-015201",
+      "id": "SB-EST-DEMO-001",
       "status": "Verified",
       "issued_at": "2026-09-02",
       "client_name": "Contoh Klien",
       "project": "Contoh Project",
-      "fingerprint": "A65202623D0A57E4A6285B11",
+      "fingerprint": "DEMO-VERIFICATION-ONLY",
       "note": "Data contoh. Ganti/tambahkan record ini dengan dokumen yang benar-benar diterbitkan."
     }
   ]
