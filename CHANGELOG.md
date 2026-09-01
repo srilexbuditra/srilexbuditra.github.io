@@ -1,3 +1,7 @@
+# V3 — Print/PDF Layout Fix
+- Memperbaiki clipping dan elemen fixed/sticky yang menutupi halaman saat Cetak / Simpan PDF.
+- Menambahkan reset overflow/height/position khusus print.
+
 ## V2 — Privacy Consent Responsive
 
 - Normalized checkbox appearance across Firefox, Chromium, Safari, and mobile browsers.
