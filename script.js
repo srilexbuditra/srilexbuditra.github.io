@@ -232,15 +232,40 @@ function renderCode39(text){
  [...val].forEach(ch=>{const pat=CODE39[ch]||CODE39['-']; for(let i=0;i<pat.length;i++){if(pat[i]==='1')bars.push(`<rect x="${x}" y="2" width="2" height="44"/>`);x+=2;}x+=2;});
  svg.setAttribute('viewBox',`0 0 ${x+4} 48`);svg.innerHTML=bars.join('');
 }
-function renderVerificationQr(documentRef){
+async function renderVerificationQr(documentRef){
   const img=$('#printVerifyQr');
   const link=$('#printVerifyQrLink');
-  if(!img || !documentRef) return;
+  if(!img || !documentRef) return false;
   const verifyUrl='https://srilexbuditra.work/verify/?id='+encodeURIComponent(documentRef);
-  // QR is generated from the public verification URL; no form data is embedded.
-  img.src='https://quickchart.io/qr?text='+encodeURIComponent(verifyUrl)+'&size=220&margin=2';
-  img.alt='QR verifikasi dokumen '+documentRef;
   if(link){ link.href=verifyUrl; link.setAttribute('aria-label','Buka verifikasi '+documentRef); }
+  img.alt='QR verifikasi dokumen '+documentRef;
+  img.style.display='block';
+  img.style.visibility='visible';
+
+  const sources=[
+    'https://quickchart.io/qr?text='+encodeURIComponent(verifyUrl)+'&size=240&margin=2',
+    'https://api.qrserver.com/v1/create-qr-code/?size=240x240&margin=2&data='+encodeURIComponent(verifyUrl)
+  ];
+  for(const src of sources){
+    const loaded=await new Promise(resolve=>{
+      let settled=false;
+      const finish=ok=>{if(settled)return;settled=true;clearTimeout(timer);resolve(ok)};
+      const timer=setTimeout(()=>finish(false),5000);
+      img.onload=()=>finish(true);
+      img.onerror=()=>finish(false);
+      img.src=src;
+      if(img.complete && img.naturalWidth>0) finish(true);
+    });
+    if(loaded){
+      try{if(img.decode) await img.decode();}catch(_){ }
+      void img.offsetWidth;
+      return true;
+    }
+  }
+  // Keep a visible verification fallback if an in-app browser blocks both QR services.
+  img.removeAttribute('src');
+  img.alt='QR tidak dapat dimuat. Gunakan tautan verifikasi.';
+  return false;
 }
 function renderClientSignatureForPrint(dataUrl){
   const img=$('#printClientSignature');
@@ -311,7 +336,7 @@ async function populatePrintReport(){
   const fingerprintSource=[currentDocumentRef,value('name'),value('company'),value('email'),value('whatsapp'),$('#project')?.value||'',extraText,value('description'),String(total),signaturePads.client?.dataUrl||''].join('|');
   currentFingerprint=await sha256Hex(fingerprintSource);
   renderCode39(currentDocumentRef);
-  renderVerificationQr(currentDocumentRef);
+  await renderVerificationQr(currentDocumentRef);
   text('printFingerprint',currentFingerprint ? currentFingerprint.slice(0,24) : 'Browser fingerprint unavailable');
 }
 
