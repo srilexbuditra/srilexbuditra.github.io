@@ -849,3 +849,29 @@ html,body{max-width:100%;overflow-x:hidden}
 @media print{
   .print-signatures img{display:block!important;visibility:visible!important;max-width:100%!important;height:50px!important;object-fit:contain!important;}
 }
+
+/* ===== V10: deterministic client-signature print rendering ===== */
+.print-signatures img#printClientSignature,
+.print-signatures img#printProviderSignature{
+  display:block;
+  visibility:visible;
+  opacity:1;
+  background:#fff;
+}
+@media print{
+  .print-signatures img#printClientSignature,
+  .print-signatures img#printProviderSignature{
+    display:block!important;
+    visibility:visible!important;
+    opacity:1!important;
+    width:100%!important;
+    height:50px!important;
+    max-width:100%!important;
+    object-fit:contain!important;
+    object-position:center!important;
+    background:#fff!important;
+    -webkit-print-color-adjust:exact!important;
+    print-color-adjust:exact!important;
+  }
+  .print-signatures>div{break-inside:avoid!important;page-break-inside:avoid!important;overflow:visible!important;}
+}

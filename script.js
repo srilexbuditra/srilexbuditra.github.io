@@ -16,29 +16,61 @@ let currentFingerprint = '';
 
 const signaturePads = {};
 
-// V7: only the client signs manually. The provider uses a pre-approved digital signature asset.
+// V10: robust client signature capture for desktop/mobile + print/PDF.
 function setupClientSignaturePad(id){
-  const canvas = document.getElementById(id);
+  const canvas=document.getElementById(id);
   if(!canvas) return null;
-  const ctx = canvas.getContext('2d');
-  const pad={canvas,ctx,drawing:false,hasSignature:false,lastX:0,lastY:0,dpr:1,dataUrl:''};
+  const ctx=canvas.getContext('2d',{willReadFrequently:true});
+  const pad={canvas,ctx,drawing:false,hasSignature:false,lastX:0,lastY:0,dpr:1,dataUrl:'',version:0};
+
+  const snapshot=()=>{
+    if(!pad.hasSignature) return '';
+    pad.dataUrl=canvas.toDataURL('image/png');
+    pad.version++;
+    return pad.dataUrl;
+  };
   const resize=()=>{
     const rect=canvas.getBoundingClientRect();
-    const cssW=Math.max(1, Math.round(rect.width));
-    const cssH=Math.max(1, Math.round(rect.height));
+    const cssW=Math.max(1,Math.round(rect.width));
+    const cssH=Math.max(1,Math.round(rect.height));
     const dpr=Math.min(window.devicePixelRatio||1,2);
-    const old=pad.dataUrl || (pad.hasSignature ? canvas.toDataURL('image/png') : null);
-    canvas.width=Math.round(cssW*dpr); canvas.height=Math.round(cssH*dpr);
+    const old=pad.hasSignature ? (pad.dataUrl || canvas.toDataURL('image/png')) : '';
+    canvas.width=Math.max(1,Math.round(cssW*dpr));
+    canvas.height=Math.max(1,Math.round(cssH*dpr));
     pad.dpr=dpr;
     ctx.setTransform(dpr,0,0,dpr,0,0);
-    ctx.lineCap='round'; ctx.lineJoin='round'; ctx.lineWidth=Math.max(2.2,2.6*(window.innerWidth<600?1:1)); ctx.strokeStyle='#17384b';
-    if(old){ const img=new Image(); img.onload=()=>{ctx.drawImage(img,0,0,cssW,cssH); pad.dataUrl=canvas.toDataURL('image/png');}; img.src=old; }
+    ctx.lineCap='round'; ctx.lineJoin='round';
+    ctx.lineWidth=2.6; ctx.strokeStyle='#17384b';
+    if(old){
+      const img=new Image();
+      img.onload=()=>{ctx.drawImage(img,0,0,cssW,cssH); pad.dataUrl=canvas.toDataURL('image/png');};
+      img.src=old;
+    }
   };
   const pos=e=>{const r=canvas.getBoundingClientRect();return {x:e.clientX-r.left,y:e.clientY-r.top};};
-  const start=e=>{e.preventDefault();canvas.setPointerCapture?.(e.pointerId);const q=pos(e);pad.drawing=true;pad.hasSignature=true;pad.lastX=q.x;pad.lastY=q.y;canvas.classList.add('has-ink');canvas.closest('.signature-canvas-wrap')?.classList.add('signed');updateAgreementState();};
-  const move=e=>{if(!pad.drawing)return;e.preventDefault();const q=pos(e);ctx.beginPath();ctx.moveTo(pad.lastX,pad.lastY);ctx.lineTo(q.x,q.y);ctx.stroke();pad.lastX=q.x;pad.lastY=q.y;};
-  const end=e=>{if(!pad.drawing)return;e.preventDefault();pad.drawing=false;canvas.releasePointerCapture?.(e.pointerId);pad.dataUrl=canvas.toDataURL('image/png');updateAgreementState();};
-  canvas.addEventListener('pointerdown',start); canvas.addEventListener('pointermove',move); canvas.addEventListener('pointerup',end); canvas.addEventListener('pointercancel',end); canvas.addEventListener('pointerleave',end);
+  const start=e=>{
+    e.preventDefault();
+    canvas.setPointerCapture?.(e.pointerId);
+    const q=pos(e); pad.drawing=true; pad.hasSignature=true; pad.lastX=q.x; pad.lastY=q.y;
+    ctx.beginPath(); ctx.arc(q.x,q.y,Math.max(1.4,ctx.lineWidth/2),0,Math.PI*2); ctx.fillStyle='#17384b'; ctx.fill();
+    canvas.classList.add('has-ink'); canvas.closest('.signature-canvas-wrap')?.classList.add('signed');
+    updateAgreementState();
+  };
+  const move=e=>{
+    if(!pad.drawing) return;
+    e.preventDefault();
+    const q=pos(e); ctx.beginPath(); ctx.moveTo(pad.lastX,pad.lastY); ctx.lineTo(q.x,q.y); ctx.stroke(); pad.lastX=q.x; pad.lastY=q.y;
+  };
+  const end=e=>{
+    if(!pad.drawing) return;
+    e.preventDefault(); pad.drawing=false;
+    try{canvas.releasePointerCapture?.(e.pointerId);}catch(_){ }
+    snapshot(); updateAgreementState();
+  };
+  canvas.addEventListener('pointerdown',start,{passive:false});
+  canvas.addEventListener('pointermove',move,{passive:false});
+  canvas.addEventListener('pointerup',end,{passive:false});
+  canvas.addEventListener('pointercancel',end,{passive:false});
   new ResizeObserver(resize).observe(canvas);
   window.addEventListener('resize',resize,{passive:true});
   requestAnimationFrame(resize);
@@ -237,40 +269,51 @@ async function populatePrintReport(){
   text('printFingerprint',currentFingerprint ? currentFingerprint.slice(0,24) : 'Browser fingerprint unavailable');
 }
 
-pdfBtn?.addEventListener('click', () => { if(isPrivacyReady()) openAgreementModal(); });
-confirmAgreementBtn?.addEventListener('click', async () => {
-  if(!isAgreementReady()){ updateAgreementState(); return; }
+async function prepareClientSignatureForPrint(){
+  const pad=signaturePads.client;
+  const img=$('#printClientSignature');
+  if(!pad || !img || !pad.hasSignature) return false;
+  // Freeze the current canvas pixels immediately before print.
+  const data=pad.canvas.toDataURL('image/png');
+  pad.dataUrl=data;
+  img.removeAttribute('src');
+  img.src=data;
+  img.alt='Tanda tangan digital Pihak Kedua';
+  img.style.display='block';
+  img.style.visibility='visible';
+  img.width=Math.max(1,pad.canvas.width);
+  img.height=Math.max(1,pad.canvas.height);
+  try{ if(img.decode) await img.decode(); }catch(_){ }
+  // Force a synchronous layout read so print engines see the updated image.
+  void img.offsetWidth;
+  return true;
+}
+
+pdfBtn?.addEventListener('click',()=>{ if(isPrivacyReady()) openAgreementModal(); });
+confirmAgreementBtn?.addEventListener('click',async()=>{
+  if(!isAgreementReady()){updateAgreementState();return;}
   confirmAgreementBtn.disabled=true;
   try{
-    // Freeze the client's signature before any layout/print work.
-    if(signaturePads.client){
-      signaturePads.client.dataUrl=signaturePads.client.canvas.toDataURL('image/png');
-    }
+    await prepareClientSignatureForPrint();
     await populatePrintReport();
+    await prepareClientSignatureForPrint();
     closeAgreementModal();
-    // Give the browser one frame to apply print CSS, then print after image decoding.
-    requestAnimationFrame(()=>requestAnimationFrame(()=>window.print()));
+    // Two frames + a short delay makes the data URL image available to mobile print engines.
+    requestAnimationFrame(()=>requestAnimationFrame(()=>setTimeout(()=>window.print(),120)));
   }finally{
-    setTimeout(()=>{confirmAgreementBtn.disabled=false;},800);
+    setTimeout(()=>{confirmAgreementBtn.disabled=false;},1000);
   }
 });
 
-window.addEventListener('beforeprint', () => {
+window.addEventListener('beforeprint',()=>{
   if(isAgreementReady()){
-    // Synchronous fallback: image is already populated by the confirmation handler.
-    if(signaturePads.client?.dataUrl && $('#printClientSignature')) $('#printClientSignature').src=signaturePads.client.dataUrl;
+    const pad=signaturePads.client, img=$('#printClientSignature');
+    if(pad?.hasSignature && img){
+      const data=pad.dataUrl || pad.canvas.toDataURL('image/png');
+      pad.dataUrl=data; img.src=data; img.style.display='block'; img.style.visibility='visible';
+    }
   }
 });
-
-pdfBtn?.addEventListener('click', () => { if(isPrivacyReady()) openAgreementModal(); });
-confirmAgreementBtn?.addEventListener('click', async () => {
-  if(!isAgreementReady()){ updateAgreementState(); return; }
-  await populatePrintReport();
-  closeAgreementModal();
-  setTimeout(()=>window.print(),80);
-});
-
-window.addEventListener('beforeprint', () => { if(isAgreementReady()) populatePrintReport(); });
 
 const sections = $$('main section[id], main section.hero');
 const navLinks = $$('#mainNav a[href^="#"]');
