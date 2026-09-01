@@ -75,3 +75,11 @@ Semua perubahan penting pada situs web dan portofolio **Srilex Buditra** dicatat
 
 Catatan perubahan akan diperbarui setiap kali terdapat fitur, perbaikan, perubahan desain, atau pembaruan dokumentasi yang signifikan.
 
+
+## V5 — Premium Agreement & Print Isolation
+- Print/PDF mode now isolates only the estimate document, preventing page overlays, sticky UI, or hidden sections from covering content.
+- Added a professional project-agreement summary with privacy consent, scope acknowledgement, and two signature pads (provider + client).
+- Action buttons require privacy consent, agreement acknowledgement, and both signatures.
+- Added responsive pointer-based signature input for desktop and touch devices.
+- PDF includes signature images, signer name, dates, reference number, and agreement disclaimer.
+- The signature feature is an electronic acknowledgement in the form; it does not by itself guarantee legal enforceability of a contract.

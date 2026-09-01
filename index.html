@@ -285,11 +285,42 @@
         </label>
         <small class="privacy-consent-note" id="privacyConsentNote">Persetujuan diperlukan sebelum data dapat dikirim melalui WhatsApp atau dicetak/disimpan sebagai PDF.</small>
       </div>
+      <section class="agreement-card" id="agreementCard" aria-labelledby="agreementTitle">
+        <div class="agreement-head">
+          <div><span class="mini-label">PROJECT AGREEMENT</span><h3 id="agreementTitle">Persetujuan & Tanda Tangan</h3></div>
+          <span class="agreement-status" id="agreementStatus">Belum lengkap</span>
+        </div>
+        <p class="agreement-intro">Tinjau ringkasan kerja sama berikut. Tanda tangan elektronik pada formulir ini digunakan sebagai <strong>persetujuan/konfirmasi digital</strong> atas data dan scope awal. Untuk kontrak yang mengikat secara hukum, gunakan perjanjian final yang telah disepakati kedua pihak.</p>
+        <div class="agreement-points">
+          <div><b>01</b><span>Scope awal berdasarkan formulir dan estimasi yang ditampilkan.</span></div>
+          <div><b>02</b><span>Harga, timeline, revisi, pembayaran, dan deliverables final mengikuti kesepakatan tertulis.</span></div>
+          <div><b>03</b><span>Data pribadi diproses sesuai <a href="/privacy.html" target="_blank" rel="noopener">Kebijakan Privasi</a>.</span></div>
+        </div>
+        <label class="agreement-check" for="agreementCheckbox">
+          <input id="agreementCheckbox" type="checkbox">
+          <span class="agreement-check-box" aria-hidden="true"></span>
+          <span>Saya menyatakan data yang saya isi benar dan menyetujui ringkasan kerja sama/scope awal di atas untuk diproses lebih lanjut.</span>
+        </label>
+        <div class="signature-grid">
+          <div class="signature-box">
+            <div class="signature-box-head"><div><b>Pihak Pertama</b><small>Srilex Buditra / Penyedia</small></div><span>01</span></div>
+            <canvas id="providerSignature" width="700" height="220" aria-label="Area tanda tangan Pihak Pertama"></canvas>
+            <div class="signature-meta"><strong>Srilex Buditra</strong><small id="providerDate"></small></div>
+            <button type="button" class="signature-clear" data-clear-signature="providerSignature">Hapus tanda tangan</button>
+          </div>
+          <div class="signature-box">
+            <div class="signature-box-head"><div><b>Pihak Kedua</b><small>Klien / Pemesan</small></div><span>02</span></div>
+            <canvas id="clientSignature" width="700" height="220" aria-label="Area tanda tangan Pihak Kedua"></canvas>
+            <div class="signature-meta"><strong id="clientSignerName">Nama klien</strong><small id="clientDate"></small></div>
+            <button type="button" class="signature-clear" data-clear-signature="clientSignature">Hapus tanda tangan</button>
+          </div>
+        </div>
+      </section>
       <div class="result-actions">
         <button id="waBtn" class="btn whatsapp" type="button" disabled aria-disabled="true">◉ Kirim ke WhatsApp</button>
         <button id="pdfBtn" class="btn secondary" type="button" disabled aria-disabled="true">▧ Cetak / Simpan PDF</button>
       </div>
-      <small class="result-note">*Harga final mengikuti scope, tingkat kompleksitas, timeline dan kesepakatan project.</small>
+      <small class="result-note">*Harga final mengikuti scope, tingkat kompleksitas, timeline dan kesepakatan project. Tanda tangan digital di formulir ini tidak menggantikan penandatanganan perjanjian final apabila diperlukan.</small>
 
       <div class="print-report" aria-hidden="true">
         <div class="print-report-header">
@@ -326,6 +357,14 @@
         <div class="print-consent">
           <span class="print-check">✓</span>
           <div><strong>Persetujuan Privasi</strong><p>Pengguna menyatakan telah membaca dan menyetujui Kebijakan Privasi serta memberikan persetujuan untuk memproses data yang diisi pada formulir.</p></div>
+        </div>
+        <div class="print-agreement">
+          <div class="print-agreement-title"><span>PROJECT AGREEMENT</span><strong>Persetujuan Kerja Sama & Konfirmasi Scope Awal</strong></div>
+          <p>Dokumen ini merupakan ringkasan awal berdasarkan data formulir. Para pihak mengonfirmasi bahwa data dan scope awal telah ditinjau. Ketentuan harga final, timeline, pembayaran, revisi, deliverables, dan kewajiban para pihak mengikuti perjanjian final yang disepakati.</p>
+          <div class="print-signatures">
+            <div><span>Pihak Pertama • Penyedia</span><img id="printProviderSignature" alt="Tanda tangan Pihak Pertama"><strong>Srilex Buditra</strong><small id="printProviderDate"></small></div>
+            <div><span>Pihak Kedua • Klien</span><img id="printClientSignature" alt="Tanda tangan Pihak Kedua"><strong id="printClientSigner">Nama klien</strong><small id="printClientDate"></small></div>
+          </div>
         </div>
         <div class="print-footer">
           <div><strong>SRILEX BUDITRA</strong><br>Full Stack Developer • Bengkulu, Indonesia</div>

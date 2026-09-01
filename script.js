@@ -1,25 +1,48 @@
 const $ = s => document.querySelector(s);
 const $$ = s => [...document.querySelectorAll(s)];
 
-// Privacy consent gate: action buttons remain locked until consent is given.
+// Privacy + agreement gate: action buttons remain locked until consent and both signatures are complete.
 const privacyConsentCheckbox = $('#privacyConsentCheckbox');
+const agreementCheckbox = $('#agreementCheckbox');
 const waBtn = $('#waBtn');
 const pdfBtn = $('#pdfBtn');
+const agreementStatus = $('#agreementStatus');
+const clientSignerName = $('#clientSignerName');
 
-function updatePrivacyConsentState(){
-  const consented = Boolean(privacyConsentCheckbox && privacyConsentCheckbox.checked);
-  [waBtn, pdfBtn].forEach(btn => {
-    if(!btn) return;
-    btn.disabled = !consented;
-    btn.setAttribute('aria-disabled', consented ? 'false' : 'true');
-  });
+const signaturePads = {};
+function setupSignaturePad(id){
+  const canvas = document.getElementById(id);
+  if(!canvas) return null;
+  const ctx = canvas.getContext('2d');
+  ctx.lineCap='round'; ctx.lineJoin='round'; ctx.lineWidth=3; ctx.strokeStyle='#17384b';
+  const pad={canvas,ctx,drawing:false,hasSignature:false,lastX:0,lastY:0};
+  const pos=e=>{const r=canvas.getBoundingClientRect(); const src=e.touches?.[0]||e; return {x:(src.clientX-r.left)*(canvas.width/r.width),y:(src.clientY-r.top)*(canvas.height/r.height)};};
+  const start=e=>{e.preventDefault(); const q=pos(e); pad.drawing=true; pad.hasSignature=true; pad.lastX=q.x; pad.lastY=q.y; updateAgreementState();};
+  const move=e=>{if(!pad.drawing)return; e.preventDefault(); const q=pos(e); ctx.beginPath();ctx.moveTo(pad.lastX,pad.lastY);ctx.lineTo(q.x,q.y);ctx.stroke();pad.lastX=q.x;pad.lastY=q.y;};
+  const end=e=>{if(!pad.drawing)return; e.preventDefault();pad.drawing=false;updateAgreementState();};
+  canvas.addEventListener('pointerdown',start); canvas.addEventListener('pointermove',move); canvas.addEventListener('pointerup',end); canvas.addEventListener('pointercancel',end); canvas.addEventListener('pointerleave',end);
+  return pad;
 }
+signaturePads.provider=setupSignaturePad('providerSignature');
+signaturePads.client=setupSignaturePad('clientSignature');
 
-if (privacyConsentCheckbox) {
-  privacyConsentCheckbox.addEventListener('change', updatePrivacyConsentState, false);
-  privacyConsentCheckbox.addEventListener('input', updatePrivacyConsentState, false);
+function clearSignature(key){
+  const pad=signaturePads[key]; if(!pad)return; pad.ctx.clearRect(0,0,pad.canvas.width,pad.canvas.height);pad.hasSignature=false;updateAgreementState();
 }
-updatePrivacyConsentState();
+$$('[data-clear-signature]').forEach(btn=>btn.addEventListener('click',()=>clearSignature(btn.dataset.clearSignature==='providerSignature'?'provider':'client')));
+
+function updateAgreementState(){
+  const consented=Boolean(privacyConsentCheckbox?.checked);
+  const agreed=Boolean(agreementCheckbox?.checked);
+  const signed=Boolean(signaturePads.provider?.hasSignature && signaturePads.client?.hasSignature);
+  const ready=consented && agreed && signed;
+  [waBtn,pdfBtn].forEach(btn=>{if(!btn)return;btn.disabled=!ready;btn.setAttribute('aria-disabled',ready?'false':'true');});
+  if(agreementStatus){agreementStatus.textContent=ready?'Siap diproses':!consented?'Menunggu persetujuan privasi':!agreed?'Menunggu persetujuan kerja sama':!signed?'Menunggu kedua tanda tangan':'Belum lengkap';agreementStatus.classList.toggle('complete',ready);}
+  if(clientSignerName){clientSignerName.textContent=$('#name')?.value?.trim()||'Nama klien';}
+}
+[privacyConsentCheckbox,agreementCheckbox].forEach(el=>{el?.addEventListener('change',updateAgreementState);el?.addEventListener('input',updateAgreementState);});
+$('#name')?.addEventListener('input',updateAgreementState);
+updateAgreementState();
 
 const menuToggle = $('#menuToggle');
 const nav = $('#mainNav');
@@ -109,7 +132,7 @@ $('#estimateForm')?.addEventListener('submit', e => {
 });
 
 waBtn?.addEventListener('click', () => {
-  if (!privacyConsentCheckbox?.checked) return;
+  if (!privacyConsentCheckbox?.checked || !agreementCheckbox?.checked || !signaturePads.provider?.hasSignature || !signaturePads.client?.hasSignature) return;
   const total = updateEstimate();
   const msg = [
     'Halo Srilex Buditra, saya tertarik konsultasi project.',
@@ -141,16 +164,22 @@ function populatePrintReport(){
   const now = new Date();
   text('printDate', now.toLocaleDateString('id-ID',{day:'2-digit',month:'long',year:'numeric'}));
   text('printRef', `SB-EST-${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}`);
+  const dateText=now.toLocaleDateString('id-ID',{day:'2-digit',month:'long',year:'numeric'});
+  text('printProviderDate',dateText); text('printClientDate',dateText);
+  text('printClientSigner',value('name'));
+  const providerImg=$('#printProviderSignature'), clientImg=$('#printClientSignature');
+  if(providerImg && signaturePads.provider?.hasSignature) providerImg.src=signaturePads.provider.canvas.toDataURL('image/png');
+  if(clientImg && signaturePads.client?.hasSignature) clientImg.src=signaturePads.client.canvas.toDataURL('image/png');
 }
 
 pdfBtn?.addEventListener('click', () => {
-  if (!privacyConsentCheckbox?.checked) return;
+  if (!privacyConsentCheckbox?.checked || !agreementCheckbox?.checked || !signaturePads.provider?.hasSignature || !signaturePads.client?.hasSignature) return;
   populatePrintReport();
   window.print();
 });
 
 window.addEventListener('beforeprint', () => {
-  if (privacyConsentCheckbox?.checked) populatePrintReport();
+  if (privacyConsentCheckbox?.checked && agreementCheckbox?.checked && signaturePads.provider?.hasSignature && signaturePads.client?.hasSignature) populatePrintReport();
 });
 
 const sections = $$('main section[id], main section.hero');
