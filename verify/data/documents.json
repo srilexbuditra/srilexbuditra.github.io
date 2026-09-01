@@ -1,0 +1,18 @@
+{
+  "schema_version": "1.0",
+  "issuer": {
+    "name": "Srilex Buditra",
+    "website": "https://srilexbuditra.work"
+  },
+  "documents": [
+    {
+      "id": "SB-EST-DEMO-001",
+      "status": "Verified",
+      "issued_at": "2026-09-02",
+      "client_name": "Contoh Klien",
+      "project": "Contoh Project",
+      "fingerprint": "DEMO-VERIFICATION-ONLY",
+      "note": "Data contoh. Ganti/tambahkan record ini dengan dokumen yang benar-benar diterbitkan."
+    }
+  ]
+}
