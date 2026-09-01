@@ -232,41 +232,45 @@ function renderCode39(text){
  [...val].forEach(ch=>{const pat=CODE39[ch]||CODE39['-']; for(let i=0;i<pat.length;i++){if(pat[i]==='1')bars.push(`<rect x="${x}" y="2" width="2" height="44"/>`);x+=2;}x+=2;});
  svg.setAttribute('viewBox',`0 0 ${x+4} 48`);svg.innerHTML=bars.join('');
 }
-async function renderVerificationQr(documentRef){
+function renderVerificationQr(documentRef){
   const img=$('#printVerifyQr');
   const link=$('#printVerifyQrLink');
-  if(!img || !documentRef) return false;
+  if(!img || !documentRef) return Promise.resolve(false);
   const verifyUrl='https://srilexbuditra.work/verify/?id='+encodeURIComponent(documentRef);
   if(link){ link.href=verifyUrl; link.setAttribute('aria-label','Buka verifikasi '+documentRef); }
   img.alt='QR verifikasi dokumen '+documentRef;
   img.style.display='block';
   img.style.visibility='visible';
-
+  img.width=113; img.height=113;
   const sources=[
-    'https://quickchart.io/qr?text='+encodeURIComponent(verifyUrl)+'&size=240&margin=2',
-    'https://api.qrserver.com/v1/create-qr-code/?size=240x240&margin=2&data='+encodeURIComponent(verifyUrl)
+    'https://quickchart.io/qr?text='+encodeURIComponent(verifyUrl)+'&size=360&margin=2',
+    'https://api.qrserver.com/v1/create-qr-code/?size=360x360&margin=2&data='+encodeURIComponent(verifyUrl)
   ];
-  for(const src of sources){
-    const loaded=await new Promise(resolve=>{
-      let settled=false;
-      const finish=ok=>{if(settled)return;settled=true;clearTimeout(timer);resolve(ok)};
-      const timer=setTimeout(()=>finish(false),5000);
-      img.onload=()=>finish(true);
-      img.onerror=()=>finish(false);
-      img.src=src;
-      if(img.complete && img.naturalWidth>0) finish(true);
-    });
-    if(loaded){
-      try{if(img.decode) await img.decode();}catch(_){ }
-      void img.offsetWidth;
-      return true;
+  return new Promise(async resolve=>{
+    let done=false;
+    const finish=ok=>{if(done)return;done=true;resolve(ok)};
+    for(const src of sources){
+      const ok=await new Promise(r=>{
+        let settled=false;
+        const timer=setTimeout(()=>{if(!settled){settled=true;r(false)}},6500);
+        const load=()=>{if(settled)return;settled=true;clearTimeout(timer);r(true)};
+        const fail=()=>{if(settled)return;settled=true;clearTimeout(timer);r(false)};
+        img.onload=load; img.onerror=fail; img.src=src;
+        if(img.complete && img.naturalWidth>0) load();
+      });
+      if(ok){
+        try{if(img.decode) await img.decode();}catch(_){ }
+        void img.getBoundingClientRect();
+        finish(true);
+        return;
+      }
     }
-  }
-  // Keep a visible verification fallback if an in-app browser blocks both QR services.
-  img.removeAttribute('src');
-  img.alt='QR tidak dapat dimuat. Gunakan tautan verifikasi.';
-  return false;
+    img.removeAttribute('src');
+    img.alt='QR verifikasi tidak dapat dimuat';
+    finish(false);
+  });
 }
+
 function renderClientSignatureForPrint(dataUrl){
   const img=$('#printClientSignature');
   const svg=$('#printClientSignatureSvg');

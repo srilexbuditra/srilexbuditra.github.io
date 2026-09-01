@@ -1549,19 +1549,47 @@ html,body{max-width:100%;overflow-x:hidden}
 }
 
 
-/* V28 — Verification QR directly below the final-price statement.
-   Print/PDF only; screen/Secure Document visuals remain untouched. */
-.print-verify-qr{display:grid;grid-template-columns:minmax(0,1fr) 92px;align-items:center;gap:14px;margin:7px 0 0;padding:8px 10px;border:1px solid #d8e0e5;border-radius:10px;background:linear-gradient(135deg,#f8fbfd,#ffffff);break-inside:avoid;page-break-inside:avoid}
+/* V27 — Verification QR under final estimate. Screen layout is untouched; print report only. */
+.print-verify-qr{display:grid;grid-template-columns:minmax(0,1fr) 92px;align-items:center;gap:14px;margin:8px 0 10px;padding:9px 11px;border:1px solid #d8e0e5;border-radius:10px;background:linear-gradient(135deg,#f8fbfd,#ffffff);break-inside:avoid;page-break-inside:avoid}
 .print-verify-qr-copy span{display:block;font-size:6.2pt;letter-spacing:1.2px;font-weight:950;color:#294b5f}
 .print-verify-qr-copy strong{display:block;margin-top:2px;font-size:8pt;color:#172f3e}
 .print-verify-qr-copy small{display:block;margin-top:3px;font-size:6.1pt;line-height:1.35;color:#71818e}
-.print-verify-qr-image{display:grid;place-items:center;width:92px;height:92px;padding:4px;background:#fff;border:1px solid #d8e0e5;border-radius:8px;text-decoration:none!important}
+.print-verify-qr-image{display:grid;place-items:center;width:92px;height:92px;padding:4px;background:#fff;border:1px solid #d8e0e5;border-radius:8px}
 .print-verify-qr-image img{display:block;width:82px;height:82px;object-fit:contain}
 @media print{
-  body > .print-report.print-host .print-verify-qr{grid-template-columns:minmax(0,1fr) 58px!important;gap:7px!important;margin:4px 0 0!important;padding:4px 5px!important;border-radius:6px!important}
+  body > .print-report.print-host .print-verify-qr{grid-template-columns:minmax(0,1fr) 64px!important;gap:8px!important;margin:4px 0 5px!important;padding:5px 6px!important;border-radius:6px!important}
   body > .print-report.print-host .print-verify-qr-copy span{font-size:5pt!important}
-  body > .print-report.print-host .print-verify-qr-copy strong{font-size:6.1pt!important}
-  body > .print-report.print-host .print-verify-qr-copy small{font-size:4.6pt!important;line-height:1.15!important}
-  body > .print-report.print-host .print-verify-qr-image{width:58px!important;height:58px!important;padding:2px!important;border-radius:5px!important}
-  body > .print-report.print-host .print-verify-qr-image img{width:52px!important;height:52px!important}
+  body > .print-report.print-host .print-verify-qr-copy strong{font-size:6.2pt!important}
+  body > .print-report.print-host .print-verify-qr-copy small{font-size:4.7pt!important;line-height:1.2!important}
+  body > .print-report.print-host .print-verify-qr-image{width:64px!important;height:64px!important;padding:3px!important;border-radius:5px!important}
+  body > .print-report.print-host .print-verify-qr-image img{width:58px!important;height:58px!important}
+}
+
+/* ===== V28: professional 3cm x 3cm verification QR =====
+   Print/PDF only. The screen/Secure Document UI is unchanged. */
+.print-verify-qr{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 30mm;
+  align-items:center;
+  gap:12px;
+  margin:8px 0 0;
+  padding:8px 10px;
+  border:1px solid #d8e0e5;
+  border-radius:10px;
+  background:linear-gradient(135deg,#f8fbfd,#fff);
+  break-inside:avoid;
+  page-break-inside:avoid;
+}
+.print-verify-qr-copy span{display:block;font-size:6.2pt;letter-spacing:1.2px;font-weight:950;color:#294b5f}
+.print-verify-qr-copy strong{display:block;margin-top:2px;font-size:8pt;color:#172f3e}
+.print-verify-qr-copy small{display:block;margin-top:3px;font-size:6.1pt;line-height:1.35;color:#71818e}
+.print-verify-qr-image{display:grid;place-items:center;width:30mm;height:30mm;min-width:30mm;min-height:30mm;padding:1.5mm;background:#fff;border:1px solid #d8e0e5;border-radius:2mm;text-decoration:none!important;box-sizing:border-box}
+.print-verify-qr-image img{display:block;width:27mm;height:27mm;max-width:none;max-height:none;object-fit:contain}
+@media print{
+  body > .print-report.print-host .print-verify-qr{grid-template-columns:minmax(0,1fr) 30mm!important;gap:10px!important;margin:6px 0 0!important;padding:6px 8px!important;border-radius:8px!important}
+  body > .print-report.print-host .print-verify-qr-copy span{font-size:6pt!important}
+  body > .print-report.print-host .print-verify-qr-copy strong{font-size:7.5pt!important}
+  body > .print-report.print-host .print-verify-qr-copy small{font-size:5.8pt!important;line-height:1.25!important}
+  body > .print-report.print-host .print-verify-qr-image{width:30mm!important;height:30mm!important;min-width:30mm!important;min-height:30mm!important;padding:1.5mm!important;border-radius:2mm!important}
+  body > .print-report.print-host .print-verify-qr-image img{width:27mm!important;height:27mm!important;max-width:none!important;max-height:none!important}
 }
