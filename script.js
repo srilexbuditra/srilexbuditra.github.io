@@ -232,6 +232,48 @@ function renderCode39(text){
  [...val].forEach(ch=>{const pat=CODE39[ch]||CODE39['-']; for(let i=0;i<pat.length;i++){if(pat[i]==='1')bars.push(`<rect x="${x}" y="2" width="2" height="44"/>`);x+=2;}x+=2;});
  svg.setAttribute('viewBox',`0 0 ${x+4} 48`);svg.innerHTML=bars.join('');
 }
+function renderClientSignatureForPrint(dataUrl){
+  const img=$('#printClientSignature');
+  if(!img || !dataUrl) return false;
+  // Keep a real image as fallback, but also create an inline SVG wrapper.
+  // Inline SVG is much more reliable in mobile print engines than a late-bound data URL <img>.
+  img.src=dataUrl;
+  img.style.display='block';
+  img.style.visibility='visible';
+  let svg=$('#printClientSignatureSvg');
+  if(!svg){
+    svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+    svg.id='printClientSignatureSvg';
+    svg.setAttribute('aria-label','Tanda tangan digital Pihak Kedua');
+    img.parentNode.insertBefore(svg,img);
+  }
+  const vbW=1000, vbH=320;
+  svg.setAttribute('viewBox',`0 0 ${vbW} ${vbH}`);
+  svg.setAttribute('preserveAspectRatio','xMidYMid meet');
+  svg.setAttribute('role','img');
+  svg.innerHTML='';
+  const image=document.createElementNS('http://www.w3.org/2000/svg','image');
+  image.setAttribute('x','0'); image.setAttribute('y','0');
+  image.setAttribute('width',String(vbW)); image.setAttribute('height',String(vbH));
+  image.setAttribute('preserveAspectRatio','xMidYMid meet');
+  image.setAttributeNS('http://www.w3.org/1999/xlink','href',dataUrl);
+  image.setAttribute('href',dataUrl);
+  svg.appendChild(image);
+  svg.style.display='block';
+  svg.style.visibility='visible';
+  return true;
+}
+
+async function snapshotClientSignature(){
+  const pad=signaturePads.client;
+  if(!pad || !pad.hasSignature) return '';
+  // Force a fresh PNG snapshot immediately before print. This avoids stale data after resize.
+  const data=pad.canvas.toDataURL('image/png');
+  pad.dataUrl=data;
+  pad.version++;
+  return data;
+}
+
 async function populatePrintReport(){
   const value = id => document.getElementById(id)?.value?.trim() || '-';
   const text = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = val || '-'; };
@@ -253,14 +295,12 @@ async function populatePrintReport(){
     providerImg.style.display='block';
   }
   if(clientImg && signaturePads.client){
-    // Use the persisted data URL, not the live canvas, so resizing/print rendering cannot erase it.
-    const clientData=signaturePads.client.dataUrl || signaturePads.client.canvas.toDataURL('image/png');
-    signaturePads.client.dataUrl=clientData;
-    clientImg.src=clientData;
-    clientImg.style.display='block';
-    clientImg.alt='Tanda tangan digital Pihak Kedua';
-    // Wait until the image is decoded before invoking print.
-    if(clientImg.decode){ try{ await clientImg.decode(); }catch(e){} }
+    const clientData=await snapshotClientSignature();
+    if(clientData){
+      renderClientSignatureForPrint(clientData);
+      clientImg.alt='Tanda tangan digital Pihak Kedua';
+      if(clientImg.decode){ try{ await clientImg.decode(); }catch(e){} }
+    }
   }
 
   const fingerprintSource=[currentDocumentRef,value('name'),value('company'),value('email'),value('whatsapp'),$('#project')?.value||'',extraText,value('description'),String(total),signaturePads.client?.dataUrl||''].join('|');
@@ -273,19 +313,15 @@ async function prepareClientSignatureForPrint(){
   const pad=signaturePads.client;
   const img=$('#printClientSignature');
   if(!pad || !img || !pad.hasSignature) return false;
-  // Freeze the current canvas pixels immediately before print.
-  const data=pad.canvas.toDataURL('image/png');
-  pad.dataUrl=data;
-  img.removeAttribute('src');
-  img.src=data;
-  img.alt='Tanda tangan digital Pihak Kedua';
+  const data=await snapshotClientSignature();
+  if(!data) return false;
+  renderClientSignatureForPrint(data);
   img.style.display='block';
   img.style.visibility='visible';
-  img.width=Math.max(1,pad.canvas.width);
-  img.height=Math.max(1,pad.canvas.height);
-  try{ if(img.decode) await img.decode(); }catch(_){ }
-  // Force a synchronous layout read so print engines see the updated image.
+  if(img.decode){ try{ await img.decode(); }catch(_){ } }
+  // Force layout and give the inline SVG a synchronous render opportunity.
   void img.offsetWidth;
+  void $('#printClientSignatureSvg')?.getBoundingClientRect();
   return true;
 }
 
@@ -307,10 +343,11 @@ confirmAgreementBtn?.addEventListener('click',async()=>{
 
 window.addEventListener('beforeprint',()=>{
   if(isAgreementReady()){
-    const pad=signaturePads.client, img=$('#printClientSignature');
-    if(pad?.hasSignature && img){
+    const pad=signaturePads.client;
+    if(pad?.hasSignature){
       const data=pad.dataUrl || pad.canvas.toDataURL('image/png');
-      pad.dataUrl=data; img.src=data; img.style.display='block'; img.style.visibility='visible';
+      pad.dataUrl=data;
+      renderClientSignatureForPrint(data);
     }
   }
 });

@@ -875,3 +875,35 @@ html,body{max-width:100%;overflow-x:hidden}
   }
   .print-signatures>div{break-inside:avoid!important;page-break-inside:avoid!important;overflow:visible!important;}
 }
+
+
+/* ===== V11: inline SVG signature print engine fallback ===== */
+#printClientSignatureSvg{
+  display:block;
+  width:100%;
+  height:50px;
+  max-width:100%;
+  overflow:visible;
+  background:#fff;
+}
+#printClientSignatureSvg image{display:block}
+@media print{
+  #printClientSignatureSvg{
+    display:block!important;
+    visibility:visible!important;
+    opacity:1!important;
+    width:100%!important;
+    height:50px!important;
+    max-width:100%!important;
+    overflow:visible!important;
+    background:#fff!important;
+  }
+  #printClientSignatureSvg image{
+    visibility:visible!important;
+    opacity:1!important;
+  }
+  #printClientSignature{
+    display:none!important;
+    visibility:hidden!important;
+  }
+}

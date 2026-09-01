@@ -88,3 +88,10 @@ Catatan perubahan akan diperbarui setiap kali terdapat fitur, perbaikan, perubah
 - Pihak Pertama memakai tanda tangan digital yang sudah disiapkan; tidak ada input tanda tangan Pihak Pertama di modal.
 - Signature pad Pihak Kedua diperbaiki untuk perangkat touch/mobile dengan pointer capture, DPR-aware sizing, dan ResizeObserver.
 - Modal persetujuan dioptimalkan untuk mobile dengan `100dvh`, tanpa horizontal overflow, spacing lebih ringkas, dan tombol yang lebih mudah disentuh.
+
+
+## V11 — Inline SVG Signature Print Reliability
+- Added inline SVG rendering for Pihak Kedua signature in the print document.
+- Canvas signature is snapshotted immediately before print and embedded into SVG.
+- Kept PNG image fallback while using SVG as the primary print representation.
+- Print CSS forces the signature SVG to remain visible and prevents late image rendering from hiding it.
