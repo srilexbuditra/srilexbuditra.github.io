@@ -95,3 +95,10 @@ Catatan perubahan akan diperbarui setiap kali terdapat fitur, perbaikan, perubah
 - Canvas signature is snapshotted immediately before print and embedded into SVG.
 - Kept PNG image fallback while using SVG as the primary print representation.
 - Print CSS forces the signature SVG to remain visible and prevents late image rendering from hiding it.
+
+## V14 — Responsive Print & Signature Geometry Fix
+- Matched the client signature vector stroke weight to the visual weight of the provider signature.
+- Equalized provider/client signature areas in the Secure Document modal on desktop, tablet, and mobile.
+- Equalized signature boxes and signature media height in the printed document.
+- Removed the mobile screen rule that could hide the mounted print report during mobile print preparation.
+- Strengthened `body > .print-report.print-host` print isolation for mobile browser print preview.

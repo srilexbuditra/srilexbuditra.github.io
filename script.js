@@ -253,7 +253,7 @@ function renderClientSignatureForPrint(dataUrl){
   }
   path.setAttribute('d',d.join(' '));
   // V13: match the lighter visual weight used by the provider signature.
-  path.setAttribute('fill','none'); path.setAttribute('stroke','#17384b'); path.setAttribute('stroke-width','2.6');
+  path.setAttribute('fill','none'); path.setAttribute('stroke','#17384b'); path.setAttribute('stroke-width','1');
   path.setAttribute('stroke-linecap','round'); path.setAttribute('stroke-linejoin','round');
   path.setAttribute('vector-effect','non-scaling-stroke');
   return Boolean(d.length);

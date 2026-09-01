@@ -745,7 +745,7 @@ body.modal-open{overflow:hidden}
 
 /* ===== V7: Mobile-first agreement & signature refinement ===== */
 .signature-box{min-width:0;overflow:hidden}
-.provider-signature-display{height:130px;margin:9px 0 8px;background:#fff;border:1px solid #d7e0e5;border-radius:9px;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden}
+.provider-signature-display{height:170px;margin:9px 0 8px;background:#fff;border:1px solid #d7e0e5;border-radius:9px;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden}
 .provider-signature-display img{display:block;width:92%;height:88px;object-fit:contain}
 .provider-signature-display span{font-size:7px;color:#607986;letter-spacing:.4px;text-transform:uppercase}
 .signature-canvas-wrap{position:relative;width:100%;height:170px;margin:9px 0 8px;background:#fff;border:1px dashed #6c8998;border-radius:9px;overflow:hidden}
@@ -909,10 +909,10 @@ html,body{max-width:100%;overflow-x:hidden}
 }
 /* V12: vector signature print - no raster image dependency */
 #printClientSignatureSvg{display:block;width:100%;height:50px;max-width:100%;overflow:visible;background:#fff}
-#printClientSignatureSvg path[data-signature-path]{display:block;fill:none;stroke:#17384b;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke}
+#printClientSignatureSvg path[data-signature-path]{display:block;fill:none;stroke:#17384b;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke}
 @media print{
   #printClientSignatureSvg{display:block!important;visibility:visible!important;opacity:1!important;width:100%!important;height:50px!important;max-width:100%!important;overflow:visible!important;background:#fff!important}
-  #printClientSignatureSvg path[data-signature-path]{display:block!important;visibility:visible!important;opacity:1!important;fill:none!important;stroke:#17384b!important;stroke-width:2.6!important;stroke-linecap:round!important;stroke-linejoin:round!important}
+  #printClientSignatureSvg path[data-signature-path]{display:block!important;visibility:visible!important;opacity:1!important;fill:none!important;stroke:#17384b!important;stroke-width:1!important;stroke-linecap:round!important;stroke-linejoin:round!important}
   #printClientSignature{display:none!important;visibility:hidden!important}
 }
 
@@ -948,7 +948,7 @@ html,body{max-width:100%;overflow-x:hidden}
     display:block!important;
     fill:none!important;
     stroke:#17384b!important;
-    stroke-width:2.6!important;
+    stroke-width:1!important;
     stroke-linecap:round!important;
     stroke-linejoin:round!important;
     vector-effect:non-scaling-stroke!important;
@@ -956,6 +956,59 @@ html,body{max-width:100%;overflow-x:hidden}
     visibility:visible!important;
   }
 }
-@media screen and (max-width:600px){
-  .print-report.print-host{display:none!important}
+
+/* ===== V14: equal signature geometry + mobile print host reliability ===== */
+.signature-grid{align-items:stretch}
+.provider-signature-display,.signature-canvas-wrap{height:170px;box-sizing:border-box}
+.provider-signature-display{flex:0 0 170px}
+.signature-canvas-wrap{flex:0 0 170px}
+@media(max-width:760px){
+  .provider-signature-display,.signature-canvas-wrap{height:155px!important;flex-basis:155px!important}
+}
+@media(max-width:380px){
+  .provider-signature-display,.signature-canvas-wrap{height:140px!important;flex-basis:140px!important}
+}
+@media print{
+  body > .print-report.print-host{
+    display:block!important;
+    visibility:visible!important;
+    position:static!important;
+    width:100%!important;
+    max-width:none!important;
+    margin:0!important;
+    padding:0!important;
+    overflow:visible!important;
+  }
+  body > .print-report.print-host .print-signatures{
+    display:grid!important;
+    grid-template-columns:1fr 1fr!important;
+    gap:12px!important;
+    align-items:stretch!important;
+  }
+  body > .print-report.print-host .print-signatures>div{
+    height:125px!important;
+    min-height:125px!important;
+    box-sizing:border-box!important;
+    display:flex!important;
+    flex-direction:column!important;
+    align-items:stretch!important;
+    justify-content:flex-start!important;
+    overflow:visible!important;
+  }
+  body > .print-report.print-host .print-signatures img#printProviderSignature,
+  body > .print-report.print-host #printClientSignatureSvg{
+    width:100%!important;
+    height:50px!important;
+    min-height:50px!important;
+    flex:0 0 50px!important;
+    margin:5px 0!important;
+    object-fit:contain!important;
+    object-position:center!important;
+  }
+  body > .print-report.print-host #printClientSignatureSvg path[data-signature-path]{
+    stroke-width:1!important;
+    stroke-linecap:round!important;
+    stroke-linejoin:round!important;
+    vector-effect:non-scaling-stroke!important;
+  }
 }
