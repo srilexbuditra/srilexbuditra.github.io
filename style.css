@@ -1012,3 +1012,20 @@ html,body{max-width:100%;overflow-x:hidden}
     vector-effect:non-scaling-stroke!important;
   }
 }
+
+
+/* V15 — Secure Document consent card refinement */
+.modal-agreement-check{position:relative;display:flex;align-items:center;gap:14px;margin:18px 0 14px;padding:16px 18px;border:1px solid rgba(90,110,140,.22);border-radius:16px;background:linear-gradient(135deg,rgba(255,255,255,.98),rgba(245,248,252,.96));box-shadow:0 8px 24px rgba(20,35,55,.07);cursor:pointer;transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease;}
+.modal-agreement-check:hover{transform:translateY(-1px);box-shadow:0 10px 28px rgba(20,35,55,.10);border-color:rgba(60,90,130,.34);}
+.modal-agreement-check input{position:absolute;opacity:0;width:1px;height:1px;pointer-events:none;}
+.modal-agreement-check .agreement-check-box{flex:0 0 25px;width:25px;height:25px;border:2px solid #aab5c3;border-radius:8px;background:#fff;display:grid;place-items:center;transition:.2s ease;box-shadow:inset 0 1px 2px rgba(0,0,0,.05);}
+.modal-agreement-check input:checked + .agreement-check-box{border-color:#111827;background:#111827;box-shadow:0 4px 12px rgba(17,24,39,.22);}
+.modal-agreement-check input:checked + .agreement-check-box:after{content:'✓';color:#fff;font-size:15px;font-weight:800;line-height:1;}
+.modal-agreement-check:focus-within{outline:3px solid rgba(59,130,246,.18);outline-offset:2px;}
+.agreement-check-icon{width:30px;height:30px;border-radius:10px;display:grid;place-items:center;background:#eef2f7;color:#4b5563;font-weight:800;font-size:14px;flex:0 0 30px;}
+.agreement-check-copy{display:flex;flex-direction:column;gap:4px;min-width:0;line-height:1.45;}
+.agreement-check-copy strong{font-size:13px;letter-spacing:.02em;color:#172033;}
+.agreement-check-copy span{font-size:12px;color:#5b6575;}
+@media(max-width:600px){.modal-agreement-check{align-items:flex-start;gap:10px;margin:14px 0 12px;padding:14px;border-radius:14px}.modal-agreement-check .agreement-check-box{flex-basis:24px;width:24px;height:24px}.agreement-check-icon{width:28px;height:28px;flex-basis:28px}.agreement-check-copy strong{font-size:12.5px}.agreement-check-copy span{font-size:11.5px;line-height:1.5}.agreement-modal-bottom{gap:10px}.agreement-modal-bottom .btn{width:100%;}}
+@media(max-width:380px){.modal-agreement-check{padding:12px;gap:8px}.agreement-check-icon{display:none}.agreement-check-copy span{font-size:11px;}}
+@media print{.modal-agreement-check{display:none!important;}}
