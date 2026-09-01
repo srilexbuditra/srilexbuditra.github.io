@@ -1,3 +1,10 @@
+## 2026-09-01 — Privacy Consent Gate
+- Menambahkan checkbox persetujuan Kebijakan Privasi pada panel hasil formulir estimasi.
+- Mengunci tombol **Kirim ke WhatsApp** dan **Cetak / Simpan PDF** sampai checkbox dicentang.
+- Menambahkan kontrol JavaScript untuk mengaktifkan/nonaktifkan kedua tombol secara real-time.
+- Menambahkan styling responsif dan status disabled yang jelas.
+- Menambahkan dokumentasi `PRIVACY_CONSENT_FORM.md`.
+
 # V11.5.2 — Performance Implementation Synchronization Fix
 
 ## [2026-09-01]

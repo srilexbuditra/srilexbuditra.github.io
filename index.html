@@ -277,7 +277,17 @@
       <span class="mini-label">ESTIMATE PREVIEW</span><div class="estimate-total" id="total">Rp 5.000.000</div>
       <p>Layanan: <b id="chosen">Website Company Profile</b><br>Fitur tambahan: <b id="extraText">Tidak ada</b></p>
       <div class="estimate-meter"><span></span></div>
-      <div class="result-actions"><button id="waBtn" class="btn whatsapp">◉ Kirim ke WhatsApp</button><button id="pdfBtn" class="btn secondary">▧ Cetak / Simpan PDF</button></div>
+      <div class="privacy-consent" id="privacyConsent">
+        <label class="privacy-consent-label" for="privacyConsentCheckbox">
+          <input id="privacyConsentCheckbox" type="checkbox" name="privacyConsent" value="accepted">
+          <span>Saya telah membaca dan menyetujui <a href="/privacy.html" target="_blank" rel="noopener">Kebijakan Privasi</a> serta memberikan persetujuan untuk memproses data yang saya isi pada formulir ini.</span>
+        </label>
+        <small class="privacy-consent-note">Persetujuan diperlukan sebelum data dapat dikirim melalui WhatsApp atau dicetak/disimpan sebagai PDF.</small>
+      </div>
+      <div class="result-actions">
+        <button id="waBtn" class="btn whatsapp" type="button" disabled aria-disabled="true">◉ Kirim ke WhatsApp</button>
+        <button id="pdfBtn" class="btn secondary" type="button" disabled aria-disabled="true">▧ Cetak / Simpan PDF</button>
+      </div>
       <small class="result-note">*Harga final mengikuti scope, tingkat kompleksitas, timeline dan kesepakatan project.</small>
     </div>
   </div>

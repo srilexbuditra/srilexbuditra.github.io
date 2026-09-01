@@ -429,3 +429,45 @@ body {
     bottom: max(14px, env(safe-area-inset-bottom));
   }
 }
+
+
+/* Privacy & consent gate for estimate actions */
+.privacy-consent{
+  margin:18px 0 12px;
+  padding:14px 16px;
+  border:1px solid rgba(34,197,238,.25);
+  border-radius:14px;
+  background:rgba(3,24,39,.72);
+}
+.privacy-consent-label{
+  display:flex;
+  align-items:flex-start;
+  gap:10px;
+  cursor:pointer;
+  color:var(--soft);
+  line-height:1.55;
+}
+.privacy-consent-label input{
+  flex:0 0 auto;
+  width:18px;
+  height:18px;
+  margin:2px 0 0;
+  accent-color:var(--cyan);
+}
+.privacy-consent-label a{
+  color:var(--cyan);
+  text-decoration:underline;
+}
+.privacy-consent-note{
+  display:block;
+  margin:8px 0 0 28px;
+  color:var(--muted);
+  line-height:1.45;
+}
+#waBtn:disabled,
+#pdfBtn:disabled{
+  opacity:.48;
+  cursor:not-allowed;
+  filter:grayscale(.35);
+  pointer-events:none;
+}
