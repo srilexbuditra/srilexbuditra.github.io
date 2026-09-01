@@ -6,8 +6,13 @@ const privacyConsentCheckbox = $('#privacyConsentCheckbox');
 const agreementCheckbox = $('#agreementCheckbox');
 const waBtn = $('#waBtn');
 const pdfBtn = $('#pdfBtn');
+const agreementModal = $('#agreementModal');
+const confirmAgreementBtn = $('#confirmAgreementBtn');
 const agreementStatus = $('#agreementStatus');
 const clientSignerName = $('#clientSignerName');
+const modalClientName = $('#modalClientName');
+let currentDocumentRef = '';
+let currentFingerprint = '';
 
 const signaturePads = {};
 function setupSignaturePad(id){
@@ -31,18 +36,35 @@ function clearSignature(key){
 }
 $$('[data-clear-signature]').forEach(btn=>btn.addEventListener('click',()=>clearSignature(btn.dataset.clearSignature==='providerSignature'?'provider':'client')));
 
+function isPrivacyReady(){ return Boolean(privacyConsentCheckbox?.checked); }
+function isAgreementReady(){ return isPrivacyReady() && Boolean(agreementCheckbox?.checked) && Boolean(signaturePads.provider?.hasSignature && signaturePads.client?.hasSignature); }
 function updateAgreementState(){
-  const consented=Boolean(privacyConsentCheckbox?.checked);
-  const agreed=Boolean(agreementCheckbox?.checked);
-  const signed=Boolean(signaturePads.provider?.hasSignature && signaturePads.client?.hasSignature);
-  const ready=consented && agreed && signed;
-  [waBtn,pdfBtn].forEach(btn=>{if(!btn)return;btn.disabled=!ready;btn.setAttribute('aria-disabled',ready?'false':'true');});
-  if(agreementStatus){agreementStatus.textContent=ready?'Siap diproses':!consented?'Menunggu persetujuan privasi':!agreed?'Menunggu persetujuan kerja sama':!signed?'Menunggu kedua tanda tangan':'Belum lengkap';agreementStatus.classList.toggle('complete',ready);}
-  if(clientSignerName){clientSignerName.textContent=$('#name')?.value?.trim()||'Nama klien';}
+  const ready=isAgreementReady();
+  if(waBtn){waBtn.disabled=!isPrivacyReady();waBtn.setAttribute('aria-disabled',isPrivacyReady()?'false':'true');}
+  if(pdfBtn){pdfBtn.disabled=!isPrivacyReady();pdfBtn.setAttribute('aria-disabled',isPrivacyReady()?'false':'true');}
+  if(agreementStatus){agreementStatus.textContent=ready?'Lengkap • siap dibuat':!isPrivacyReady()?'Menunggu persetujuan privasi':!agreementCheckbox?.checked?'Menunggu persetujuan kerja sama':'Menunggu kedua tanda tangan';agreementStatus.classList.toggle('complete',ready);}
+  const name=$('#name')?.value?.trim()||'Nama Pemesan';
+  if(clientSignerName) clientSignerName.textContent=name;
+  if(modalClientName) modalClientName.textContent=name;
 }
-[privacyConsentCheckbox,agreementCheckbox].forEach(el=>{el?.addEventListener('change',updateAgreementState);el?.addEventListener('input',updateAgreementState);});
+privacyConsentCheckbox?.addEventListener('change',updateAgreementState);
 $('#name')?.addEventListener('input',updateAgreementState);
+agreementCheckbox?.addEventListener('change',updateAgreementState);
 updateAgreementState();
+
+function openAgreementModal(){
+  if(!isPrivacyReady()) return;
+  updateAgreementState();
+  agreementModal?.classList.add('open'); agreementModal?.setAttribute('aria-hidden','false');
+  document.body.classList.add('modal-open');
+  setTimeout(()=>document.querySelector('#agreementModal .modal-close')?.focus(),30);
+}
+function closeAgreementModal(){
+  agreementModal?.classList.remove('open'); agreementModal?.setAttribute('aria-hidden','true');
+  document.body.classList.remove('modal-open');
+}
+$$('[data-close-agreement]').forEach(el=>el.addEventListener('click',closeAgreementModal));
+document.addEventListener('keydown',e=>{if(e.key==='Escape' && agreementModal?.classList.contains('open')) closeAgreementModal();});
 
 const menuToggle = $('#menuToggle');
 const nav = $('#mainNav');
@@ -132,7 +154,7 @@ $('#estimateForm')?.addEventListener('submit', e => {
 });
 
 waBtn?.addEventListener('click', () => {
-  if (!privacyConsentCheckbox?.checked || !agreementCheckbox?.checked || !signaturePads.provider?.hasSignature || !signaturePads.client?.hasSignature) return;
+  if (!isPrivacyReady()) return;
   const total = updateEstimate();
   const msg = [
     'Halo Srilex Buditra, saya tertarik konsultasi project.',
@@ -148,39 +170,43 @@ waBtn?.addEventListener('click', () => {
   ].join('\n');
   window.open('https://wa.me/6282136238350?text=' + encodeURIComponent(msg),'_blank','noopener');
 });
-function populatePrintReport(){
+async function sha256Hex(input){
+  if(!window.crypto?.subtle) return '';
+  const data=new TextEncoder().encode(input); const hash=await crypto.subtle.digest('SHA-256',data);
+  return [...new Uint8Array(hash)].map(b=>b.toString(16).padStart(2,'0')).join('').toUpperCase();
+}
+const CODE39={
+ '0':'101001101101','1':'110100101011','2':'101100101011','3':'110110010101','4':'101001101011','5':'110100110101','6':'101100110101','7':'101001011011','8':'110100101101','9':'101100101101','A':'110101001011','B':'101101001011','C':'110110100101','D':'101011001011','E':'110101100101','F':'101101100101','G':'101010011011','H':'110101001101','I':'101101001101','J':'101011001101','K':'110101010011','L':'101101010011','M':'110110101001','N':'101011010011','O':'110101101001','P':'101101101001','Q':'101010110011','R':'110101011001','S':'101101011001','T':'101011011001','U':'110010101011','V':'100110101011','W':'110011010101','X':'100101101011','Y':'110010110101','Z':'100110110101','-':'100101011011','.':'110010101101',' ':'100110101101','*':'100101101101','/':'100101100101','+':'100100101001','%':'101001001001','$':'100100100101'};
+function renderCode39(text){
+ const svg=$('#printBarcode'); if(!svg)return; const val=('*'+text.toUpperCase().replace(/[^0-9A-Z.\- $/+%]/g,'').slice(0,24)+'*'); let x=4, bars=[];
+ [...val].forEach(ch=>{const pat=CODE39[ch]||CODE39['-']; for(let i=0;i<pat.length;i++){if(pat[i]==='1')bars.push(`<rect x="${x}" y="2" width="2" height="44"/>`);x+=2;}x+=2;});
+ svg.setAttribute('viewBox',`0 0 ${x+4} 48`);svg.innerHTML=bars.join('');
+}
+async function populatePrintReport(){
   const value = id => document.getElementById(id)?.value?.trim() || '-';
   const text = (id, value) => { const el = document.getElementById(id); if(el) el.textContent = value || '-'; };
   const extraText = $('#extra')?.selectedOptions?.[0]?.text?.replace(/\s*\(\+.*\)/,'') || '-';
-  const total = updateEstimate();
-  text('printName', value('name'));
-  text('printCompany', value('company'));
-  text('printEmail', value('email'));
-  text('printWhatsapp', value('whatsapp'));
-  text('printProject', $('#project')?.value || '-');
-  text('printExtra', extraText);
-  text('printDescription', value('description'));
-  text('printTotal', formatIDR(total));
-  const now = new Date();
-  text('printDate', now.toLocaleDateString('id-ID',{day:'2-digit',month:'long',year:'numeric'}));
-  text('printRef', `SB-EST-${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}`);
-  const dateText=now.toLocaleDateString('id-ID',{day:'2-digit',month:'long',year:'numeric'});
-  text('printProviderDate',dateText); text('printClientDate',dateText);
-  text('printClientSigner',value('name'));
+  const total = updateEstimate(); const now = new Date();
+  currentDocumentRef=`SB-EST-${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}-${String(now.getHours()).padStart(2,'0')}${String(now.getMinutes()).padStart(2,'0')}`;
+  const fingerprintSource=[currentDocumentRef,value('name'),value('company'),value('email'),value('whatsapp'),$('#project')?.value||'',extraText,value('description'),String(total)].join('|');
+  currentFingerprint=await sha256Hex(fingerprintSource);
+  text('printName', value('name')); text('printCompany', value('company')); text('printEmail', value('email')); text('printWhatsapp', value('whatsapp')); text('printProject', $('#project')?.value || '-'); text('printExtra', extraText); text('printDescription', value('description')); text('printTotal', formatIDR(total));
+  text('printDate', now.toLocaleDateString('id-ID',{day:'2-digit',month:'long',year:'numeric'})); text('printRef', currentDocumentRef); text('printRefTop',currentDocumentRef); text('printRefVerify',currentDocumentRef);
+  const dateText=now.toLocaleDateString('id-ID',{day:'2-digit',month:'long',year:'numeric'}); text('printProviderDate',dateText); text('printClientDate',dateText); text('printClientSigner',value('name'));
   const providerImg=$('#printProviderSignature'), clientImg=$('#printClientSignature');
-  if(providerImg && signaturePads.provider?.hasSignature) providerImg.src=signaturePads.provider.canvas.toDataURL('image/png');
-  if(clientImg && signaturePads.client?.hasSignature) clientImg.src=signaturePads.client.canvas.toDataURL('image/png');
+  if(providerImg) providerImg.src=signaturePads.provider.canvas.toDataURL('image/png'); if(clientImg) clientImg.src=signaturePads.client.canvas.toDataURL('image/png');
+  renderCode39(currentDocumentRef); text('printFingerprint',currentFingerprint ? currentFingerprint.slice(0,24) : 'Browser fingerprint unavailable');
 }
 
-pdfBtn?.addEventListener('click', () => {
-  if (!privacyConsentCheckbox?.checked || !agreementCheckbox?.checked || !signaturePads.provider?.hasSignature || !signaturePads.client?.hasSignature) return;
-  populatePrintReport();
-  window.print();
+pdfBtn?.addEventListener('click', () => { if(isPrivacyReady()) openAgreementModal(); });
+confirmAgreementBtn?.addEventListener('click', async () => {
+  if(!isAgreementReady()){ updateAgreementState(); return; }
+  await populatePrintReport();
+  closeAgreementModal();
+  setTimeout(()=>window.print(),80);
 });
 
-window.addEventListener('beforeprint', () => {
-  if (privacyConsentCheckbox?.checked && agreementCheckbox?.checked && signaturePads.provider?.hasSignature && signaturePads.client?.hasSignature) populatePrintReport();
-});
+window.addEventListener('beforeprint', () => { if(isAgreementReady()) populatePrintReport(); });
 
 const sections = $$('main section[id], main section.hero');
 const navLinks = $$('#mainNav a[href^="#"]');

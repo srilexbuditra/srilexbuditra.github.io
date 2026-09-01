@@ -285,43 +285,31 @@
         </label>
         <small class="privacy-consent-note" id="privacyConsentNote">Persetujuan diperlukan sebelum data dapat dikirim melalui WhatsApp atau dicetak/disimpan sebagai PDF.</small>
       </div>
-      <section class="agreement-card" id="agreementCard" aria-labelledby="agreementTitle">
-        <div class="agreement-head">
-          <div><span class="mini-label">PROJECT AGREEMENT</span><h3 id="agreementTitle">Persetujuan & Tanda Tangan</h3></div>
-          <span class="agreement-status" id="agreementStatus">Belum lengkap</span>
-        </div>
-        <p class="agreement-intro">Tinjau ringkasan kerja sama berikut. Tanda tangan elektronik pada formulir ini digunakan sebagai <strong>persetujuan/konfirmasi digital</strong> atas data dan scope awal. Untuk kontrak yang mengikat secara hukum, gunakan perjanjian final yang telah disepakati kedua pihak.</p>
-        <div class="agreement-points">
-          <div><b>01</b><span>Scope awal berdasarkan formulir dan estimasi yang ditampilkan.</span></div>
-          <div><b>02</b><span>Harga, timeline, revisi, pembayaran, dan deliverables final mengikuti kesepakatan tertulis.</span></div>
-          <div><b>03</b><span>Data pribadi diproses sesuai <a href="/privacy.html" target="_blank" rel="noopener">Kebijakan Privasi</a>.</span></div>
-        </div>
-        <label class="agreement-check" for="agreementCheckbox">
-          <input id="agreementCheckbox" type="checkbox">
-          <span class="agreement-check-box" aria-hidden="true"></span>
-          <span>Saya menyatakan data yang saya isi benar dan menyetujui ringkasan kerja sama/scope awal di atas untuk diproses lebih lanjut.</span>
-        </label>
-        <div class="signature-grid">
-          <div class="signature-box">
-            <div class="signature-box-head"><div><b>Pihak Pertama</b><small>Srilex Buditra / Penyedia</small></div><span>01</span></div>
-            <canvas id="providerSignature" width="700" height="220" aria-label="Area tanda tangan Pihak Pertama"></canvas>
-            <div class="signature-meta"><strong>Srilex Buditra</strong><small id="providerDate"></small></div>
-            <button type="button" class="signature-clear" data-clear-signature="providerSignature">Hapus tanda tangan</button>
-          </div>
-          <div class="signature-box">
-            <div class="signature-box-head"><div><b>Pihak Kedua</b><small>Klien / Pemesan</small></div><span>02</span></div>
-            <canvas id="clientSignature" width="700" height="220" aria-label="Area tanda tangan Pihak Kedua"></canvas>
-            <div class="signature-meta"><strong id="clientSignerName">Nama klien</strong><small id="clientDate"></small></div>
-            <button type="button" class="signature-clear" data-clear-signature="clientSignature">Hapus tanda tangan</button>
-          </div>
-        </div>
-      </section>
+      <div class="agreement-hint" id="agreementHint" aria-live="polite">Persetujuan & tanda tangan akan dibuka setelah Anda memilih <b>Cetak / Simpan PDF</b>.</div>
       <div class="result-actions">
         <button id="waBtn" class="btn whatsapp" type="button" disabled aria-disabled="true">◉ Kirim ke WhatsApp</button>
         <button id="pdfBtn" class="btn secondary" type="button" disabled aria-disabled="true">▧ Cetak / Simpan PDF</button>
       </div>
       <small class="result-note">*Harga final mengikuti scope, tingkat kompleksitas, timeline dan kesepakatan project. Tanda tangan digital di formulir ini tidak menggantikan penandatanganan perjanjian final apabila diperlukan.</small>
 
+      <div class="agreement-modal" id="agreementModal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="agreementModalTitle">
+        <div class="agreement-modal-backdrop" data-close-agreement></div>
+        <div class="agreement-modal-card">
+          <div class="agreement-modal-top"><div><span class="mini-label">SECURE DOCUMENT</span><h3 id="agreementModalTitle">Persetujuan & Tanda Tangan</h3><p>Lengkapi data persetujuan berikut sebelum dokumen PDF dibuat.</p></div><button type="button" class="modal-close" data-close-agreement aria-label="Tutup">×</button></div>
+          <div class="party-grid">
+            <div class="party-card"><span class="party-number">01</span><div><small>PIHAK PERTAMA</small><strong>Srilex Buditra</strong><em>Penyedia</em></div></div>
+            <div class="party-card"><span class="party-number">02</span><div><small>PIHAK KEDUA</small><strong id="modalClientName">Nama Pemesan</strong><em>Penerima / Pemesan</em></div></div>
+          </div>
+          <div class="contract-summary"><span>RINGKASAN PERJANJIAN</span><p>Kedua pihak menyatakan bahwa data pemesanan, jenis project, scope awal, dan estimasi biaya telah ditinjau. Harga final, timeline, pembayaran, revisi, deliverables, dan ketentuan lain mengikuti kesepakatan/perjanjian final.</p></div>
+          <label class="agreement-check modal-agreement-check" for="agreementCheckbox"><input id="agreementCheckbox" type="checkbox"><span class="agreement-check-box" aria-hidden="true"></span><span>Saya menyatakan data yang saya isi benar dan menyetujui ringkasan kerja sama/scope awal untuk diproses lebih lanjut.</span></label>
+          <div class="signature-grid">
+            <div class="signature-box"><div class="signature-box-head"><div><b>Pihak Pertama</b><small>Penyedia • Srilex Buditra</small></div><span>01</span></div><canvas id="providerSignature" width="700" height="220" aria-label="Area tanda tangan Pihak Pertama"></canvas><div class="signature-meta"><strong>Srilex Buditra</strong><small id="providerDate"></small></div><button type="button" class="signature-clear" data-clear-signature="providerSignature">Hapus tanda tangan</button></div>
+            <div class="signature-box"><div class="signature-box-head"><div><b>Pihak Kedua</b><small>Penerima / Pemesan</small></div><span>02</span></div><canvas id="clientSignature" width="700" height="220" aria-label="Area tanda tangan Pihak Kedua"></canvas><div class="signature-meta"><strong id="clientSignerName">Nama Pemesan</strong><small id="clientDate"></small></div><button type="button" class="signature-clear" data-clear-signature="clientSignature">Hapus tanda tangan</button></div>
+          </div>
+          <div class="agreement-modal-bottom"><div class="secure-note"><b>🔒 Dokumen terlindungi</b><span>ID referensi & barcode dibuat otomatis untuk identifikasi dokumen.</span></div><button type="button" class="btn secondary" id="confirmAgreementBtn">✓ Konfirmasi & Buat PDF</button></div>
+          <div class="agreement-status modal-status" id="agreementStatus">Belum lengkap</div>
+        </div>
+      </div>
       <div class="print-report" aria-hidden="true">
         <div class="print-report-header">
           <div class="print-brand-mark">SB</div>
@@ -330,7 +318,7 @@
             <h1>Project Cost Estimate</h1>
             <p>Ringkasan estimasi awal kebutuhan project</p>
           </div>
-          <div class="print-date" id="printDate"></div>
+          <div class="print-date"><span id="printDate"></span><svg id="printBarcode" class="print-barcode" role="img" aria-label="Barcode identifikasi dokumen"></svg><small id="printRefTop">SB-EST</small></div>
         </div>
         <div class="print-accent"></div>
         <div class="print-total-card">
@@ -361,7 +349,7 @@
         <div class="print-agreement">
           <div class="print-agreement-title"><span>PROJECT AGREEMENT</span><strong>Persetujuan Kerja Sama & Konfirmasi Scope Awal</strong></div>
           <p>Dokumen ini merupakan ringkasan awal berdasarkan data formulir. Para pihak mengonfirmasi bahwa data dan scope awal telah ditinjau. Ketentuan harga final, timeline, pembayaran, revisi, deliverables, dan kewajiban para pihak mengikuti perjanjian final yang disepakati.</p>
-          <div class="print-signatures">
+          <div class="print-verification"><div><span>DOCUMENT ID</span><strong id="printRefVerify">SB-EST</strong></div><div><span>STATUS</span><strong>DITANDATANGANI DIGITAL</strong></div><div><span>BARCODE</span><strong>Identifikasi dokumen</strong></div><div class="fingerprint-row"><span>FINGERPRINT</span><strong id="printFingerprint">-</strong></div></div><div class="print-signatures">
             <div><span>Pihak Pertama • Penyedia</span><img id="printProviderSignature" alt="Tanda tangan Pihak Pertama"><strong>Srilex Buditra</strong><small id="printProviderDate"></small></div>
             <div><span>Pihak Kedua • Klien</span><img id="printClientSignature" alt="Tanda tangan Pihak Kedua"><strong id="printClientSigner">Nama klien</strong><small id="printClientDate"></small></div>
           </div>
