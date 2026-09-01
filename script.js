@@ -125,9 +125,32 @@ waBtn?.addEventListener('click', () => {
   ].join('\n');
   window.open('https://wa.me/6282136238350?text=' + encodeURIComponent(msg),'_blank','noopener');
 });
+function populatePrintReport(){
+  const value = id => document.getElementById(id)?.value?.trim() || '-';
+  const text = (id, value) => { const el = document.getElementById(id); if(el) el.textContent = value || '-'; };
+  const extraText = $('#extra')?.selectedOptions?.[0]?.text?.replace(/\s*\(\+.*\)/,'') || '-';
+  const total = updateEstimate();
+  text('printName', value('name'));
+  text('printCompany', value('company'));
+  text('printEmail', value('email'));
+  text('printWhatsapp', value('whatsapp'));
+  text('printProject', $('#project')?.value || '-');
+  text('printExtra', extraText);
+  text('printDescription', value('description'));
+  text('printTotal', formatIDR(total));
+  const now = new Date();
+  text('printDate', now.toLocaleDateString('id-ID',{day:'2-digit',month:'long',year:'numeric'}));
+  text('printRef', `SB-EST-${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}`);
+}
+
 pdfBtn?.addEventListener('click', () => {
   if (!privacyConsentCheckbox?.checked) return;
+  populatePrintReport();
   window.print();
+});
+
+window.addEventListener('beforeprint', () => {
+  if (privacyConsentCheckbox?.checked) populatePrintReport();
 });
 
 const sections = $$('main section[id], main section.hero');
