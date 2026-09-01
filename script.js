@@ -252,7 +252,8 @@ function renderClientSignatureForPrint(dataUrl){
     for(let i=1;i<stroke.length;i++) d.push(`L ${(stroke[i].x*1000).toFixed(2)} ${(stroke[i].y*320).toFixed(2)}`);
   }
   path.setAttribute('d',d.join(' '));
-  path.setAttribute('fill','none'); path.setAttribute('stroke','#17384b'); path.setAttribute('stroke-width','7');
+  // V13: match the lighter visual weight used by the provider signature.
+  path.setAttribute('fill','none'); path.setAttribute('stroke','#17384b'); path.setAttribute('stroke-width','2.6');
   path.setAttribute('stroke-linecap','round'); path.setAttribute('stroke-linejoin','round');
   path.setAttribute('vector-effect','non-scaling-stroke');
   return Boolean(d.length);
@@ -320,29 +321,49 @@ async function prepareClientSignatureForPrint(){
 }
 
 pdfBtn?.addEventListener('click',()=>{ if(isPrivacyReady()) openAgreementModal(); });
+let printReportParent=null;
+let printReportNextSibling=null;
+function mountPrintReportForPrint(){
+  const report=$('.print-report');
+  if(!report || report.parentElement===document.body) return;
+  printReportParent=report.parentElement;
+  printReportNextSibling=report.nextSibling;
+  document.body.appendChild(report);
+  report.classList.add('print-host');
+  report.setAttribute('aria-hidden','false');
+}
+function restorePrintReportAfterPrint(){
+  const report=$('.print-report');
+  if(!report || !printReportParent) return;
+  report.classList.remove('print-host');
+  report.setAttribute('aria-hidden','true');
+  if(printReportNextSibling && printReportNextSibling.parentNode===printReportParent) printReportParent.insertBefore(report,printReportNextSibling);
+  else printReportParent.appendChild(report);
+  printReportParent=null; printReportNextSibling=null;
+}
 confirmAgreementBtn?.addEventListener('click',async()=>{
   if(!isAgreementReady()){updateAgreementState();return;}
   confirmAgreementBtn.disabled=true;
   try{
-    await prepareClientSignatureForPrint();
     await populatePrintReport();
     await prepareClientSignatureForPrint();
+    mountPrintReportForPrint();
+    // Force the browser to lay out the now top-level print document before print preview.
+    void document.body.offsetHeight;
+    void $('.print-report')?.getBoundingClientRect();
     closeAgreementModal();
-    // Two frames + a short delay makes the data URL image available to mobile print engines.
-    requestAnimationFrame(()=>requestAnimationFrame(()=>setTimeout(()=>window.print(),120)));
+    requestAnimationFrame(()=>requestAnimationFrame(()=>setTimeout(()=>window.print(),180)));
   }finally{
     setTimeout(()=>{confirmAgreementBtn.disabled=false;},1000);
   }
 });
+window.addEventListener('afterprint',restorePrintReportAfterPrint);
 
 window.addEventListener('beforeprint',()=>{
+  mountPrintReportForPrint();
   if(isAgreementReady()){
     const pad=signaturePads.client;
-    if(pad?.hasSignature){
-      const data=pad.dataUrl || pad.canvas.toDataURL('image/png');
-      pad.dataUrl=data;
-      renderClientSignatureForPrint(data);
-    }
+    if(pad?.hasSignature) renderClientSignatureForPrint(pad.dataUrl || pad.canvas.toDataURL('image/png'));
   }
 });
 
