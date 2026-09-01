@@ -1,0 +1,11 @@
+name = "srilexbuditra-verification-api"
+main = "worker.js"
+compatibility_date = "2026-09-02"
+
+[[kv_namespaces]]
+binding = "VERIFY_DB"
+id = "REPLACE_WITH_YOUR_KV_NAMESPACE_ID"
+
+[vars]
+# Do NOT put PUBLISHER_TOKEN here. Set it as a secret:
+# wrangler secret put PUBLISHER_TOKEN
