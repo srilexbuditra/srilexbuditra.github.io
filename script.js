@@ -21,7 +21,7 @@ function setupClientSignaturePad(id){
   const canvas=document.getElementById(id);
   if(!canvas) return null;
   const ctx=canvas.getContext('2d',{willReadFrequently:true});
-  const pad={canvas,ctx,drawing:false,hasSignature:false,lastX:0,lastY:0,dpr:1,dataUrl:'',version:0};
+  const pad={canvas,ctx,drawing:false,hasSignature:false,lastX:0,lastY:0,dpr:1,dataUrl:'',version:0,strokes:[],currentStroke:null};
 
   const snapshot=()=>{
     if(!pad.hasSignature) return '';
@@ -47,11 +47,11 @@ function setupClientSignaturePad(id){
       img.src=old;
     }
   };
-  const pos=e=>{const r=canvas.getBoundingClientRect();return {x:e.clientX-r.left,y:e.clientY-r.top};};
+  const pos=e=>{const r=canvas.getBoundingClientRect(); const x=e.clientX-r.left, y=e.clientY-r.top; return {x,y,nx:Math.max(0,Math.min(1,x/Math.max(1,r.width))),ny:Math.max(0,Math.min(1,y/Math.max(1,r.height)))};};
   const start=e=>{
     e.preventDefault();
     canvas.setPointerCapture?.(e.pointerId);
-    const q=pos(e); pad.drawing=true; pad.hasSignature=true; pad.lastX=q.x; pad.lastY=q.y;
+    const q=pos(e); pad.drawing=true; pad.hasSignature=true; pad.lastX=q.x; pad.lastY=q.y; pad.currentStroke=[{x:q.nx,y:q.ny}]; pad.strokes.push(pad.currentStroke);
     ctx.beginPath(); ctx.arc(q.x,q.y,Math.max(1.4,ctx.lineWidth/2),0,Math.PI*2); ctx.fillStyle='#17384b'; ctx.fill();
     canvas.classList.add('has-ink'); canvas.closest('.signature-canvas-wrap')?.classList.add('signed');
     updateAgreementState();
@@ -59,7 +59,7 @@ function setupClientSignaturePad(id){
   const move=e=>{
     if(!pad.drawing) return;
     e.preventDefault();
-    const q=pos(e); ctx.beginPath(); ctx.moveTo(pad.lastX,pad.lastY); ctx.lineTo(q.x,q.y); ctx.stroke(); pad.lastX=q.x; pad.lastY=q.y;
+    const q=pos(e); ctx.beginPath(); ctx.moveTo(pad.lastX,pad.lastY); ctx.lineTo(q.x,q.y); ctx.stroke(); pad.lastX=q.x; pad.lastY=q.y; if(pad.currentStroke) pad.currentStroke.push({x:q.nx,y:q.ny});
   };
   const end=e=>{
     if(!pad.drawing) return;
@@ -80,7 +80,7 @@ signaturePads.client=setupClientSignaturePad('clientSignature');
 
 function clearSignature(key){
   const pad=signaturePads[key]; if(!pad)return;
-  pad.ctx.clearRect(0,0,pad.canvas.width,pad.canvas.height); pad.hasSignature=false; pad.dataUrl='';
+  pad.ctx.clearRect(0,0,pad.canvas.width,pad.canvas.height); pad.hasSignature=false; pad.dataUrl=''; pad.strokes=[]; pad.currentStroke=null;
   pad.canvas.classList.remove('has-ink'); pad.canvas.closest('.signature-canvas-wrap')?.classList.remove('signed');
   updateAgreementState();
 }
@@ -234,34 +234,28 @@ function renderCode39(text){
 }
 function renderClientSignatureForPrint(dataUrl){
   const img=$('#printClientSignature');
-  if(!img || !dataUrl) return false;
-  // Keep a real image as fallback, but also create an inline SVG wrapper.
-  // Inline SVG is much more reliable in mobile print engines than a late-bound data URL <img>.
-  img.src=dataUrl;
-  img.style.display='block';
-  img.style.visibility='visible';
-  let svg=$('#printClientSignatureSvg');
-  if(!svg){
-    svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
-    svg.id='printClientSignatureSvg';
-    svg.setAttribute('aria-label','Tanda tangan digital Pihak Kedua');
-    img.parentNode.insertBefore(svg,img);
-  }
-  const vbW=1000, vbH=320;
-  svg.setAttribute('viewBox',`0 0 ${vbW} ${vbH}`);
+  const svg=$('#printClientSignatureSvg');
+  if(!svg) return false;
+  if(img && dataUrl){ img.src=dataUrl; img.style.display='none'; }
+  svg.setAttribute('viewBox','0 0 1000 320');
   svg.setAttribute('preserveAspectRatio','xMidYMid meet');
   svg.setAttribute('role','img');
-  svg.innerHTML='';
-  const image=document.createElementNS('http://www.w3.org/2000/svg','image');
-  image.setAttribute('x','0'); image.setAttribute('y','0');
-  image.setAttribute('width',String(vbW)); image.setAttribute('height',String(vbH));
-  image.setAttribute('preserveAspectRatio','xMidYMid meet');
-  image.setAttributeNS('http://www.w3.org/1999/xlink','href',dataUrl);
-  image.setAttribute('href',dataUrl);
-  svg.appendChild(image);
-  svg.style.display='block';
-  svg.style.visibility='visible';
-  return true;
+  svg.style.display='block'; svg.style.visibility='visible'; svg.style.opacity='1';
+  let path=svg.querySelector('path[data-signature-path]');
+  if(!path){ path=document.createElementNS('http://www.w3.org/2000/svg','path'); path.setAttribute('data-signature-path','1'); svg.appendChild(path); }
+  const pad=signaturePads.client;
+  const strokes=pad?.strokes||[];
+  const d=[];
+  for(const stroke of strokes){
+    if(!stroke.length) continue;
+    d.push(`M ${(stroke[0].x*1000).toFixed(2)} ${(stroke[0].y*320).toFixed(2)}`);
+    for(let i=1;i<stroke.length;i++) d.push(`L ${(stroke[i].x*1000).toFixed(2)} ${(stroke[i].y*320).toFixed(2)}`);
+  }
+  path.setAttribute('d',d.join(' '));
+  path.setAttribute('fill','none'); path.setAttribute('stroke','#17384b'); path.setAttribute('stroke-width','7');
+  path.setAttribute('stroke-linecap','round'); path.setAttribute('stroke-linejoin','round');
+  path.setAttribute('vector-effect','non-scaling-stroke');
+  return Boolean(d.length);
 }
 
 async function snapshotClientSignature(){
