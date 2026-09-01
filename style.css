@@ -787,3 +787,39 @@ body.modal-open{overflow:hidden}
   .party-card em{font-size:7.5px}
   .signature-canvas-wrap,.provider-signature-display{height:140px}
 }
+
+/* ===== V8: mobile modal overflow + reliable client signature capture ===== */
+.agreement-modal-card,.agreement-modal-card *{min-width:0;box-sizing:border-box}
+.signature-canvas-wrap{max-width:100%;min-width:0}
+.signature-canvas-wrap canvas{max-width:100%;min-width:0}
+.party-card,.contract-summary,.agreement-check,.agreement-modal-bottom{max-width:100%;overflow-wrap:anywhere}
+@media (max-width:760px){
+  .agreement-modal{padding:0!important;align-items:stretch;overflow:hidden}
+  .agreement-modal-card{width:100vw!important;max-width:100vw!important;height:100dvh!important;max-height:100dvh!important;padding:12px 10px calc(18px + env(safe-area-inset-bottom))!important;border-radius:0!important;overflow-x:hidden!important;overflow-y:auto!important;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+  .agreement-modal-top{width:100%;position:sticky;top:0;padding:2px 0 10px!important;margin-bottom:4px;z-index:5}
+  .agreement-modal-top>div{min-width:0;flex:1}
+  .agreement-modal-top h3{font-size:18px!important;line-height:1.2;overflow-wrap:anywhere}
+  .agreement-modal-top p{max-width:none!important;font-size:8.5px!important;line-height:1.45}
+  .party-grid{display:grid!important;grid-template-columns:1fr!important;width:100%;gap:8px;margin:12px 0!important}
+  .party-card{width:100%;padding:10px!important}
+  .contract-summary{width:100%;padding:11px!important}
+  .modal-agreement-check{width:100%;margin:10px 0!important;padding:10px!important}
+  .signature-grid{width:100%;display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:9px!important}
+  .signature-box{width:100%;padding:10px!important}
+  .signature-canvas-wrap{width:100%!important;height:155px!important;margin:8px 0!important}
+  .signature-box canvas{width:100%!important;height:100%!important;display:block!important}
+  .provider-signature-display{width:100%!important;height:145px!important}
+  .provider-signature-display img{max-width:94%!important;height:88px!important}
+  .signature-meta{width:100%;gap:7px;flex-wrap:wrap}
+  .signature-meta strong,.signature-meta small{overflow-wrap:anywhere}
+  .signature-clear{width:100%;min-height:38px!important}
+  .agreement-modal-bottom{width:100%;display:flex!important;flex-direction:column!important;align-items:stretch!important;gap:9px!important}
+  .secure-note{width:100%}
+  .agreement-modal-bottom .btn{width:100%!important;min-width:0!important;max-width:100%!important;min-height:48px!important}
+}
+@media (max-width:380px){
+  .agreement-modal-card{padding-left:8px!important;padding-right:8px!important}
+  .signature-canvas-wrap{height:140px!important}
+  .provider-signature-display{height:132px!important}
+  .agreement-modal-top h3{font-size:17px!important}
+}

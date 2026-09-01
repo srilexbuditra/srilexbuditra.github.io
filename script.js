@@ -21,23 +21,23 @@ function setupClientSignaturePad(id){
   const canvas = document.getElementById(id);
   if(!canvas) return null;
   const ctx = canvas.getContext('2d');
-  const pad={canvas,ctx,drawing:false,hasSignature:false,lastX:0,lastY:0,dpr:1};
+  const pad={canvas,ctx,drawing:false,hasSignature:false,lastX:0,lastY:0,dpr:1,dataUrl:''};
   const resize=()=>{
     const rect=canvas.getBoundingClientRect();
     const cssW=Math.max(280, Math.round(rect.width));
     const cssH=Math.max(150, Math.round(rect.height));
     const dpr=Math.min(window.devicePixelRatio||1,2);
-    const old=pad.hasSignature ? canvas.toDataURL('image/png') : null;
+    const old=pad.dataUrl || (pad.hasSignature ? canvas.toDataURL('image/png') : null);
     canvas.width=Math.round(cssW*dpr); canvas.height=Math.round(cssH*dpr);
     pad.dpr=dpr;
     ctx.setTransform(dpr,0,0,dpr,0,0);
     ctx.lineCap='round'; ctx.lineJoin='round'; ctx.lineWidth=Math.max(2.2,2.6*(window.innerWidth<600?1:1)); ctx.strokeStyle='#17384b';
-    if(old){ const img=new Image(); img.onload=()=>{ctx.drawImage(img,0,0,cssW,cssH)}; img.src=old; }
+    if(old){ const img=new Image(); img.onload=()=>{ctx.drawImage(img,0,0,cssW,cssH); pad.dataUrl=canvas.toDataURL('image/png');}; img.src=old; }
   };
   const pos=e=>{const r=canvas.getBoundingClientRect();return {x:e.clientX-r.left,y:e.clientY-r.top};};
   const start=e=>{e.preventDefault();canvas.setPointerCapture?.(e.pointerId);const q=pos(e);pad.drawing=true;pad.hasSignature=true;pad.lastX=q.x;pad.lastY=q.y;canvas.classList.add('has-ink');canvas.closest('.signature-canvas-wrap')?.classList.add('signed');updateAgreementState();};
   const move=e=>{if(!pad.drawing)return;e.preventDefault();const q=pos(e);ctx.beginPath();ctx.moveTo(pad.lastX,pad.lastY);ctx.lineTo(q.x,q.y);ctx.stroke();pad.lastX=q.x;pad.lastY=q.y;};
-  const end=e=>{if(!pad.drawing)return;e.preventDefault();pad.drawing=false;canvas.releasePointerCapture?.(e.pointerId);updateAgreementState();};
+  const end=e=>{if(!pad.drawing)return;e.preventDefault();pad.drawing=false;canvas.releasePointerCapture?.(e.pointerId);pad.dataUrl=canvas.toDataURL('image/png');updateAgreementState();};
   canvas.addEventListener('pointerdown',start); canvas.addEventListener('pointermove',move); canvas.addEventListener('pointerup',end); canvas.addEventListener('pointercancel',end); canvas.addEventListener('pointerleave',end);
   new ResizeObserver(resize).observe(canvas);
   window.addEventListener('resize',resize,{passive:true});
@@ -48,7 +48,7 @@ signaturePads.client=setupClientSignaturePad('clientSignature');
 
 function clearSignature(key){
   const pad=signaturePads[key]; if(!pad)return;
-  pad.ctx.clearRect(0,0,pad.canvas.width,pad.canvas.height); pad.hasSignature=false;
+  pad.ctx.clearRect(0,0,pad.canvas.width,pad.canvas.height); pad.hasSignature=false; pad.dataUrl='';
   pad.canvas.classList.remove('has-ink'); pad.canvas.closest('.signature-canvas-wrap')?.classList.remove('signed');
   updateAgreementState();
 }
@@ -212,7 +212,13 @@ async function populatePrintReport(){
   text('printDate', now.toLocaleDateString('id-ID',{day:'2-digit',month:'long',year:'numeric'})); text('printRef', currentDocumentRef); text('printRefTop',currentDocumentRef); text('printRefVerify',currentDocumentRef);
   const dateText=now.toLocaleDateString('id-ID',{day:'2-digit',month:'long',year:'numeric'}); text('printProviderDate',dateText); text('printClientDate',dateText); text('printClientSigner',value('name'));
   const providerImg=$('#printProviderSignature'), clientImg=$('#printClientSignature');
-  if(providerImg) providerImg.src='assets/signature-provider.svg'; if(clientImg && signaturePads.client) clientImg.src=signaturePads.client.canvas.toDataURL('image/png');
+  if(providerImg) providerImg.src='assets/signature-provider.svg';
+  if(clientImg && signaturePads.client){
+    const clientData=signaturePads.client.dataUrl || signaturePads.client.canvas.toDataURL('image/png');
+    clientImg.src=clientData;
+    clientImg.style.display='block';
+    clientImg.alt='Tanda tangan digital Pihak Kedua';
+  }
   renderCode39(currentDocumentRef); text('printFingerprint',currentFingerprint ? currentFingerprint.slice(0,24) : 'Browser fingerprint unavailable');
 }
 
