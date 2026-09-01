@@ -343,6 +343,16 @@ async function populatePrintReport(){
   renderCode39(currentDocumentRef);
   await renderVerificationQr(currentDocumentRef);
   text('printFingerprint',currentFingerprint ? currentFingerprint.slice(0,24) : 'Browser fingerprint unavailable');
+  // V30: optional secure publisher API. Disabled by default on static GitHub Pages.
+  // When SB_VERIFY_API is configured, the generated document record is sent to the
+  // publisher backend; otherwise verification continues to use documents.json.
+  try{
+    const api=(window.SB_VERIFY_API||'').replace(/\/$/,'');
+    if(api){
+      const record={id:currentDocumentRef,status:'Verified',issued_at:now.toISOString().slice(0,10),client_name:value('name'),project:$('#project')?.value||'-',fingerprint:currentFingerprint||'-'};
+      fetch(api+'/documents',{method:'POST',headers:{'Content-Type':'application/json',...(window.SB_VERIFY_PUBLISHER_TOKEN?{'Authorization':'Bearer '+window.SB_VERIFY_PUBLISHER_TOKEN}:{})},body:JSON.stringify(record),keepalive:true}).catch(()=>{});
+    }
+  }catch(_){ }
 }
 
 async function prepareClientSignatureForPrint(){
