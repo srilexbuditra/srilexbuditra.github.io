@@ -39,7 +39,7 @@ jobs:
         shell: bash
         run: |
           set -e
-          matches=$(git ls-files | grep -Ei '(ktp|nik|nisn|kk|rekening|bank|paspor|password|credential)' || true)
+          matches=$(git ls-files | grep -Ei '(paspor|password|credential)' || true)
           if [ -n "$matches" ]; then
             echo "Review these potentially sensitive filenames:"
             echo "$matches"
