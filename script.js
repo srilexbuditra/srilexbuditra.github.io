@@ -24,8 +24,8 @@ function setupClientSignaturePad(id){
   const pad={canvas,ctx,drawing:false,hasSignature:false,lastX:0,lastY:0,dpr:1,dataUrl:''};
   const resize=()=>{
     const rect=canvas.getBoundingClientRect();
-    const cssW=Math.max(280, Math.round(rect.width));
-    const cssH=Math.max(150, Math.round(rect.height));
+    const cssW=Math.max(1, Math.round(rect.width));
+    const cssH=Math.max(1, Math.round(rect.height));
     const dpr=Math.min(window.devicePixelRatio||1,2);
     const old=pad.dataUrl || (pad.hasSignature ? canvas.toDataURL('image/png') : null);
     canvas.width=Math.round(cssW*dpr); canvas.height=Math.round(cssH*dpr);
@@ -202,25 +202,65 @@ function renderCode39(text){
 }
 async function populatePrintReport(){
   const value = id => document.getElementById(id)?.value?.trim() || '-';
-  const text = (id, value) => { const el = document.getElementById(id); if(el) el.textContent = value || '-'; };
+  const text = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = val || '-'; };
   const extraText = $('#extra')?.selectedOptions?.[0]?.text?.replace(/\s*\(\+.*\)/,'') || '-';
-  const total = updateEstimate(); const now = new Date();
-  currentDocumentRef=`SB-EST-${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}-${String(now.getHours()).padStart(2,'0')}${String(now.getMinutes()).padStart(2,'0')}`;
-  const fingerprintSource=[currentDocumentRef,value('name'),value('company'),value('email'),value('whatsapp'),$('#project')?.value||'',extraText,value('description'),String(total)].join('|');
-  currentFingerprint=await sha256Hex(fingerprintSource);
-  text('printName', value('name')); text('printCompany', value('company')); text('printEmail', value('email')); text('printWhatsapp', value('whatsapp')); text('printProject', $('#project')?.value || '-'); text('printExtra', extraText); text('printDescription', value('description')); text('printTotal', formatIDR(total));
-  text('printDate', now.toLocaleDateString('id-ID',{day:'2-digit',month:'long',year:'numeric'})); text('printRef', currentDocumentRef); text('printRefTop',currentDocumentRef); text('printRefVerify',currentDocumentRef);
-  const dateText=now.toLocaleDateString('id-ID',{day:'2-digit',month:'long',year:'numeric'}); text('printProviderDate',dateText); text('printClientDate',dateText); text('printClientSigner',value('name'));
+  const total = updateEstimate();
+  const now = new Date();
+  currentDocumentRef=`SB-EST-${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}-${String(now.getHours()).padStart(2,'0')}${String(now.getMinutes()).padStart(2,'0')}${String(now.getSeconds()).padStart(2,'0')}`;
+
+  text('printName', value('name')); text('printCompany', value('company')); text('printEmail', value('email')); text('printWhatsapp', value('whatsapp'));
+  text('printProject', $('#project')?.value || '-'); text('printExtra', extraText); text('printDescription', value('description')); text('printTotal', formatIDR(total));
+  text('printDate', now.toLocaleDateString('id-ID',{day:'2-digit',month:'long',year:'numeric'}));
+  text('printRef', currentDocumentRef); text('printRefTop',currentDocumentRef); text('printRefVerify',currentDocumentRef);
+  const dateText=now.toLocaleDateString('id-ID',{day:'2-digit',month:'long',year:'numeric'});
+  text('printProviderDate',dateText); text('printClientDate',dateText); text('printClientSigner',value('name'));
+
   const providerImg=$('#printProviderSignature'), clientImg=$('#printClientSignature');
-  if(providerImg) providerImg.src='assets/signature-provider.svg';
+  if(providerImg){
+    providerImg.src='assets/signature-provider.svg';
+    providerImg.style.display='block';
+  }
   if(clientImg && signaturePads.client){
+    // Use the persisted data URL, not the live canvas, so resizing/print rendering cannot erase it.
     const clientData=signaturePads.client.dataUrl || signaturePads.client.canvas.toDataURL('image/png');
+    signaturePads.client.dataUrl=clientData;
     clientImg.src=clientData;
     clientImg.style.display='block';
     clientImg.alt='Tanda tangan digital Pihak Kedua';
+    // Wait until the image is decoded before invoking print.
+    if(clientImg.decode){ try{ await clientImg.decode(); }catch(e){} }
   }
-  renderCode39(currentDocumentRef); text('printFingerprint',currentFingerprint ? currentFingerprint.slice(0,24) : 'Browser fingerprint unavailable');
+
+  const fingerprintSource=[currentDocumentRef,value('name'),value('company'),value('email'),value('whatsapp'),$('#project')?.value||'',extraText,value('description'),String(total),signaturePads.client?.dataUrl||''].join('|');
+  currentFingerprint=await sha256Hex(fingerprintSource);
+  renderCode39(currentDocumentRef);
+  text('printFingerprint',currentFingerprint ? currentFingerprint.slice(0,24) : 'Browser fingerprint unavailable');
 }
+
+pdfBtn?.addEventListener('click', () => { if(isPrivacyReady()) openAgreementModal(); });
+confirmAgreementBtn?.addEventListener('click', async () => {
+  if(!isAgreementReady()){ updateAgreementState(); return; }
+  confirmAgreementBtn.disabled=true;
+  try{
+    // Freeze the client's signature before any layout/print work.
+    if(signaturePads.client){
+      signaturePads.client.dataUrl=signaturePads.client.canvas.toDataURL('image/png');
+    }
+    await populatePrintReport();
+    closeAgreementModal();
+    // Give the browser one frame to apply print CSS, then print after image decoding.
+    requestAnimationFrame(()=>requestAnimationFrame(()=>window.print()));
+  }finally{
+    setTimeout(()=>{confirmAgreementBtn.disabled=false;},800);
+  }
+});
+
+window.addEventListener('beforeprint', () => {
+  if(isAgreementReady()){
+    // Synchronous fallback: image is already populated by the confirmation handler.
+    if(signaturePads.client?.dataUrl && $('#printClientSignature')) $('#printClientSignature').src=signaturePads.client.dataUrl;
+  }
+});
 
 pdfBtn?.addEventListener('click', () => { if(isPrivacyReady()) openAgreementModal(); });
 confirmAgreementBtn?.addEventListener('click', async () => {
