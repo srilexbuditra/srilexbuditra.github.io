@@ -1266,3 +1266,77 @@ html,body{max-width:100%;overflow-x:hidden}
   body > .print-report.print-host a{color:inherit!important;text-decoration:none!important}
   body > .print-report.print-host *{box-shadow:none!important;text-shadow:none!important;animation:none!important;transform:none!important}
 }
+
+
+/* ===== V21 — A4 PORTRAIT READABLE ONE-PAGE =====
+   Only print/PDF presentation is changed. Screen and Secure Document remain untouched.
+   Goal: readable typography while keeping the complete report inside one A4 portrait page.
+*/
+@media print{
+  @page{size:A4 portrait;margin:20mm 11mm 20mm 11mm}
+  html,body{width:100%!important;min-width:0!important;height:auto!important;margin:0!important;padding:0!important;overflow:visible!important}
+  body > .print-report.print-host{
+    width:100%!important;max-width:none!important;height:auto!important;min-height:0!important;max-height:none!important;
+    margin:0!important;padding:0!important;zoom:var(--print-zoom,1)!important;transform:none!important;transform-origin:top left!important;
+  }
+  body > .print-report.print-host *{box-sizing:border-box!important;transform:none!important}
+  body > .print-report.print-host .print-report-header{grid-template-columns:44px minmax(0,1fr) auto!important;gap:9px!important;padding-bottom:6px!important}
+  body > .print-report.print-host .print-brand-mark{width:44px!important;height:44px!important;border-radius:10px!important}
+  body > .print-report.print-host .print-brand-mark img{width:78%!important;height:78%!important;object-fit:contain!important}
+  body > .print-report.print-host .print-kicker{font-size:7pt!important;letter-spacing:1px!important}
+  body > .print-report.print-host h1{font-size:19pt!important;line-height:1.02!important}
+  body > .print-report.print-host .print-report-header p{font-size:7.5pt!important;line-height:1.2!important;margin:2px 0 0!important}
+  body > .print-report.print-host .print-date{font-size:6.8pt!important}
+  body > .print-report.print-host .print-barcode{width:92px!important;height:28px!important;margin:3px 0 1px auto!important}
+  body > .print-report.print-host .print-accent{height:2px!important;margin:5px 0 7px!important}
+  body > .print-report.print-host .print-total-card{padding:7px 9px!important;margin-bottom:6px!important;border-radius:8px!important}
+  body > .print-report.print-host .print-total-card span{font-size:6.8pt!important}
+  body > .print-report.print-host .print-total-card strong{font-size:16pt!important}
+  body > .print-report.print-host .print-total-card small{font-size:6.3pt!important}
+  body > .print-report.print-host .print-section-title{font-size:7pt!important;margin:6px 0 3px!important;padding-bottom:3px!important}
+  body > .print-report.print-host .print-info-grid,body > .print-report.print-host .print-detail-grid{gap:4px 6px!important;margin-top:3px!important}
+  body > .print-report.print-host .print-info-grid>div,body > .print-report.print-host .print-detail-grid>div{padding:4px 6px!important;min-height:0!important;border-radius:5px!important}
+  body > .print-report.print-host .print-info-grid span,body > .print-report.print-host .print-detail-grid span{font-size:6.2pt!important;margin-bottom:1px!important}
+  body > .print-report.print-host .print-info-grid strong,body > .print-report.print-host .print-detail-grid strong{font-size:7.2pt!important;line-height:1.15!important}
+  body > .print-report.print-host .print-description{margin-top:4px!important;padding:5px 6px!important;border-radius:5px!important}
+  body > .print-report.print-host .print-description>span{font-size:6.2pt!important}
+  body > .print-report.print-host .print-description p{font-size:6.8pt!important;line-height:1.2!important;margin:2px 0 0!important}
+  body > .print-report.print-host .print-consent{margin-top:4px!important;padding:5px 6px!important;gap:5px!important;border-radius:5px!important}
+  body > .print-report.print-host .print-check{width:13px!important;height:13px!important;min-width:13px!important;font-size:7px!important}
+  body > .print-report.print-host .print-consent strong{font-size:6.8pt!important}
+  body > .print-report.print-host .print-consent p{font-size:6.2pt!important;line-height:1.2!important}
+  body > .print-report.print-host .print-agreement{margin-top:4px!important;padding:5px 6px!important;border-radius:5px!important}
+  body > .print-report.print-host .print-agreement-title{padding-bottom:3px!important;gap:7px!important}
+  body > .print-report.print-host .print-agreement-title span{font-size:6pt!important}
+  body > .print-report.print-host .print-agreement-title strong{font-size:7.5pt!important}
+  body > .print-report.print-host .print-agreement>p{font-size:6.5pt!important;line-height:1.2!important;margin:3px 0!important}
+  body > .print-report.print-host .print-verification{margin-top:3px!important;padding:3px!important;gap:3px!important}
+  body > .print-report.print-host .print-verification span{font-size:5.5pt!important}
+  body > .print-report.print-host .print-verification strong{font-size:6.2pt!important}
+  body > .print-report.print-host .fingerprint-row{padding-top:2px!important}
+  body > .print-report.print-host .print-signatures{grid-template-columns:1fr 1fr!important;gap:6px!important;margin-top:3px!important;align-items:stretch!important}
+  body > .print-report.print-host .print-signatures>div{height:76px!important;min-height:76px!important;padding:4px!important;border-radius:5px!important}
+  body > .print-report.print-host .print-signatures span{font-size:5.8pt!important}
+  body > .print-report.print-host .print-signatures img#printProviderSignature,body > .print-report.print-host #printClientSignatureSvg{height:30px!important;min-height:30px!important;flex:0 0 30px!important;width:100%!important;margin:2px 0!important;object-fit:contain!important}
+  body > .print-report.print-host #printClientSignatureSvg path[data-signature-path]{stroke-width:1!important;vector-effect:non-scaling-stroke!important}
+  body > .print-report.print-host .print-signatures strong{font-size:6.8pt!important}
+  body > .print-report.print-host .print-signatures small{font-size:5.5pt!important}
+  body > .print-report.print-host .print-payment-section{margin-top:4px!important;padding:5px 6px!important;border-radius:5px!important}
+  body > .print-report.print-host .print-payment-head{padding-bottom:3px!important;gap:7px!important}
+  body > .print-report.print-host .print-payment-head span{font-size:6pt!important}
+  body > .print-report.print-host .print-payment-head strong{font-size:7pt!important}
+  body > .print-report.print-host .print-payment-head small{font-size:5.7pt!important}
+  body > .print-report.print-host .print-bank-grid{grid-template-columns:repeat(3,1fr)!important;gap:4px!important;margin-top:3px!important}
+  body > .print-report.print-host .print-bank-card{grid-template-columns:34px 1fr!important;gap:4px!important;padding:4px!important;border-radius:4px!important}
+  body > .print-report.print-host .print-bank-logo{height:20px!important}
+  body > .print-report.print-host .print-bank-logo img{max-width:32px!important;max-height:17px!important}
+  body > .print-report.print-host .print-bank-card b{font-size:6.5pt!important}
+  body > .print-report.print-host .print-bank-card small{font-size:5.4pt!important;line-height:1.15!important}
+  body > .print-report.print-host .print-bank-card small strong{font-size:5.8pt!important}
+  body > .print-report.print-host .print-payment-note{margin-top:3px!important;padding:3px 4px!important;gap:4px!important}
+  body > .print-report.print-host .print-payment-note span{width:11px!important;height:11px!important;min-width:11px!important;font-size:6px!important}
+  body > .print-report.print-host .print-payment-note strong{font-size:6pt!important;line-height:1.15!important}
+  body > .print-report.print-host .print-footer{margin-top:4px!important;padding-top:3px!important;font-size:5.8pt!important;line-height:1.15!important}
+  body > .print-report.print-host .print-footer strong{font-size:6.4pt!important}
+  body > .print-report.print-host .print-footer-right{font-size:5.8pt!important}
+}

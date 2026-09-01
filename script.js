@@ -335,30 +335,41 @@ function mountPrintReportForPrint(){
 function fitPrintReportToA4Portrait(){
   const report=$('.print-report');
   if(!report || report.parentElement!==document.body) return;
-  // Fit only the print canvas; normal website/Secure Document layout is untouched.
-  let scale=.78;
+  // V21: measure the real unscaled report, then apply only the minimum
+  // scale required to fit the printable A4 height. This preserves readability.
   report.style.setProperty('--print-zoom','1');
   report.style.zoom='1';
   report.style.width='100%';
   void report.offsetHeight;
+
   const mm=document.createElement('div');
-  mm.style.cssText='position:absolute;left:-99999px;top:-99999px;width:100mm;height:100mm;visibility:hidden;';
+  mm.style.cssText='position:absolute;left:-99999px;top:-99999px;width:100mm;height:100mm;visibility:hidden;pointer-events:none;';
   document.body.appendChild(mm);
-  const mmPx=mm.getBoundingClientRect().height/100;
+  const mmPx=mm.getBoundingClientRect().height/100 || 3.7795;
   mm.remove();
-  const targetHeight=257*mmPx*.965;
-  for(let i=0;i<5;i++){
-    report.style.setProperty('--print-zoom',String(scale));
-    report.style.zoom=String(scale);
-    report.style.width=(100/scale)+'%';
-    void report.offsetHeight;
-    const h=report.scrollHeight*scale;
-    if(h<=targetHeight) break;
-    scale=Math.max(.45,scale*(targetHeight/h)*.985);
-  }
+
+  const targetHeight=257*mmPx;
+  const rawHeight=report.getBoundingClientRect().height || report.scrollHeight;
+  let scale=Math.min(1, targetHeight/rawHeight);
+
+  // Never make the document unnecessarily tiny. If content is taller than A4,
+  // the compact V21 print rules reduce spacing first; this scale is only the
+  // final safety fit.
+  scale=Math.max(.72,Math.min(1,scale));
   report.style.setProperty('--print-zoom',String(scale));
   report.style.zoom=String(scale);
   report.style.width=(100/scale)+'%';
+  void report.offsetHeight;
+
+  // A final measurement corrects rounding differences between Chromium,
+  // Firefox and mobile print engines.
+  const finalHeight=report.getBoundingClientRect().height;
+  if(finalHeight>targetHeight){
+    const finalScale=Math.max(.70,scale*(targetHeight/finalHeight)*.995);
+    report.style.setProperty('--print-zoom',String(finalScale));
+    report.style.zoom=String(finalScale);
+    report.style.width=(100/finalScale)+'%';
+  }
 }
 
 function restorePrintReportAfterPrint(){
