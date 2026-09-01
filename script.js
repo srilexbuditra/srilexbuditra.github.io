@@ -232,6 +232,16 @@ function renderCode39(text){
  [...val].forEach(ch=>{const pat=CODE39[ch]||CODE39['-']; for(let i=0;i<pat.length;i++){if(pat[i]==='1')bars.push(`<rect x="${x}" y="2" width="2" height="44"/>`);x+=2;}x+=2;});
  svg.setAttribute('viewBox',`0 0 ${x+4} 48`);svg.innerHTML=bars.join('');
 }
+function renderVerificationQr(documentRef){
+  const img=$('#printVerifyQr');
+  const link=$('#printVerifyQrLink');
+  if(!img || !documentRef) return;
+  const verifyUrl='https://srilexbuditra.work/verify/?id='+encodeURIComponent(documentRef);
+  // QR is generated from the public verification URL; no form data is embedded.
+  img.src='https://quickchart.io/qr?text='+encodeURIComponent(verifyUrl)+'&size=220&margin=2';
+  img.alt='QR verifikasi dokumen '+documentRef;
+  if(link){ link.href=verifyUrl; link.setAttribute('aria-label','Buka verifikasi '+documentRef); }
+}
 function renderClientSignatureForPrint(dataUrl){
   const img=$('#printClientSignature');
   const svg=$('#printClientSignatureSvg');
@@ -301,6 +311,7 @@ async function populatePrintReport(){
   const fingerprintSource=[currentDocumentRef,value('name'),value('company'),value('email'),value('whatsapp'),$('#project')?.value||'',extraText,value('description'),String(total),signaturePads.client?.dataUrl||''].join('|');
   currentFingerprint=await sha256Hex(fingerprintSource);
   renderCode39(currentDocumentRef);
+  renderVerificationQr(currentDocumentRef);
   text('printFingerprint',currentFingerprint ? currentFingerprint.slice(0,24) : 'Browser fingerprint unavailable');
 }
 
