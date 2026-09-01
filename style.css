@@ -1340,3 +1340,28 @@ html,body{max-width:100%;overflow-x:hidden}
   body > .print-report.print-host .print-footer strong{font-size:6.4pt!important}
   body > .print-report.print-host .print-footer-right{font-size:5.8pt!important}
 }
+
+/* ===== V22 — PRINT SIGNATURE CAPTION ALIGNMENT =====
+   Only the Project Cost Estimate signature captions are centered.
+   Existing website/Secure Document visual layout remains untouched.
+*/
+@media print{
+  body > .print-report.print-host .print-signatures>div{
+    align-items:center!important;
+    text-align:center!important;
+  }
+  body > .print-report.print-host .print-signatures>div > span,
+  body > .print-report.print-host .print-signatures>div > strong,
+  body > .print-report.print-host .print-signatures>div > small{
+    width:100%!important;
+    display:block!important;
+    text-align:center!important;
+    margin-left:auto!important;
+    margin-right:auto!important;
+  }
+  body > .print-report.print-host .print-signatures>div > img,
+  body > .print-report.print-host .print-signatures>div > svg{
+    margin-left:auto!important;
+    margin-right:auto!important;
+  }
+}
