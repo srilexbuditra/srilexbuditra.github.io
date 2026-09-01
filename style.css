@@ -1456,12 +1456,12 @@ html,body{max-width:100%;overflow-x:hidden}
     align-items:stretch!important;
   }
   body > .print-report.print-host .print-signatures>div{
-    height:92px!important;
-    min-height:92px!important;
-    padding:7px 8px 8px!important;
+    height:105px!important;
+    min-height:105px!important;
+    padding:7px 8px 10px!important;
     display:grid!important;
-    grid-template-rows:12px 38px 14px 14px!important;
-    row-gap:2px!important;
+    grid-template-rows:13px 40px 15px 15px!important;
+    row-gap:3px!important;
     align-content:center!important;
     align-items:center!important;
     justify-items:center!important;
@@ -1529,58 +1529,21 @@ html,body{max-width:100%;overflow-x:hidden}
 
 @media print and (max-width:700px){
   body > .print-report.print-host .print-signatures>div{
-    height:92px!important;
-    min-height:92px!important;
-    padding:7px 6px 8px!important;
-    grid-template-rows:12px 36px 14px 14px!important;
-    row-gap:2px!important;
+    height:105px!important;
+    min-height:105px!important;
+    padding:7px 6px 10px!important;
+    grid-template-rows:13px 40px 15px 15px!important;
+    row-gap:3px!important;
   }
   body > .print-report.print-host .print-signatures>div > img,
   body > .print-report.print-host .print-signatures>div > svg{
-    height:36px!important;
-    min-height:36px!important;
-    max-height:36px!important;
+    height:40px!important;
+    min-height:40px!important;
+    max-height:40px!important;
   }
   body > .print-report.print-host .print-signatures>div > span,
   body > .print-report.print-host .print-signatures>div > strong,
   body > .print-report.print-host .print-signatures>div > small{
     text-align:center!important;
   }
-}
-
-/* ===== V25: in-app mobile browser print fallback ===== */
-.print-report.print-fallback{
-  display:block!important;
-  position:fixed!important;
-  inset:0!important;
-  z-index:99999!important;
-  width:100%!important;
-  max-width:100%!important;
-  height:100dvh!important;
-  overflow:auto!important;
-  background:#eef2f5!important;
-  padding:16px!important;
-  box-sizing:border-box!important;
-}
-.print-report.print-fallback:before{
-  content:'Tampilan dokumen siap dicetak / disimpan sebagai PDF';
-  display:block;
-  position:sticky;
-  top:0;
-  z-index:2;
-  padding:10px 12px;
-  margin:-16px -16px 14px;
-  background:#17384b;
-  color:#fff;
-  font:700 12px/1.4 system-ui,sans-serif;
-  text-align:center;
-}
-@media(max-width:700px){
-  .print-report.print-fallback{padding:10px!important}
-  .print-report.print-fallback:before{margin:-10px -10px 10px;font-size:11px}
-  .print-report.print-fallback .print-payment-section{margin-top:8px!important}
-}
-@media print{
-  .print-report.print-fallback{position:static!important;inset:auto!important;width:100%!important;height:auto!important;overflow:visible!important;padding:0!important;background:#fff!important}
-  .print-report.print-fallback:before{display:none!important}
 }
