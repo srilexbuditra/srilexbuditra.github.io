@@ -742,3 +742,48 @@ body {
 body.modal-open{overflow:hidden}
 .agreement-modal{position:fixed;inset:0;z-index:9999;display:none;align-items:center;justify-content:center;padding:18px}.agreement-modal.open{display:flex}.agreement-modal-backdrop{position:absolute;inset:0;background:#01080ecc;backdrop-filter:blur(9px)}.agreement-modal-card{position:relative;width:min(920px,100%);max-height:min(92vh,860px);overflow:auto;border:1px solid #2d6b88;border-radius:24px;background:linear-gradient(145deg,#062237,#03121e);box-shadow:0 35px 100px #000b, inset 0 1px #ffffff12;padding:24px;color:#e9f1f5}.agreement-modal-top{display:flex;justify-content:space-between;gap:18px;align-items:flex-start}.agreement-modal-top h3{margin:5px 0 5px;font-size:25px}.agreement-modal-top p{margin:0;color:#91a9b7;font-size:10px}.modal-close{border:1px solid #315d72;background:#071b2a;color:#cfe0e8;border-radius:12px;width:38px;height:38px;font-size:24px;line-height:1;cursor:pointer}.party-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:20px 0 12px}.party-card{display:flex;align-items:center;gap:12px;padding:14px;border:1px solid #235a76;border-radius:15px;background:#041827}.party-number{display:grid;place-items:center;width:38px;height:38px;border-radius:11px;background:#0b2d42;color:var(--gold);font-weight:950;font-size:12px}.party-card small{display:block;color:#718fa0;font-size:7px;letter-spacing:1.2px;font-weight:900}.party-card strong{display:block;font-size:13px;margin-top:3px}.party-card em{display:block;color:#9ab0bd;font-size:8px;font-style:normal;margin-top:2px}.contract-summary{padding:14px;border-radius:15px;background:#041725;border:1px solid #1e4e67}.contract-summary>span{font-size:7px;letter-spacing:1.2px;font-weight:900;color:var(--gold)}.contract-summary p{font-size:9px;line-height:1.6;color:#a8bac5;margin:6px 0 0}.modal-agreement-check{margin:12px 0!important}.agreement-modal-bottom{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-top:14px;padding-top:14px;border-top:1px solid #17455d}.secure-note{display:flex;flex-direction:column;gap:3px}.secure-note b{font-size:9px;color:#dbe8ee}.secure-note span{font-size:8px;color:#718b9a}.agreement-modal-bottom .btn{min-width:210px}.modal-status{display:inline-block;margin-top:10px}.print-barcode{display:block;width:135px;height:43px;margin:6px 0 2px auto}.print-date small{font-size:5.5pt;color:#61727d;display:block;text-align:right}.print-verification{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:8px;padding:7px;border:1px solid #dfe5e8;border-radius:7px;background:#fafbfc;break-inside:avoid;page-break-inside:avoid}.print-verification>div{min-width:0}.print-verification span{display:block;font-size:5.5pt!important;letter-spacing:.5px;font-weight:900}.print-verification strong{display:block;font-size:6.5pt!important;margin-top:2px;word-break:break-word}.fingerprint-row{grid-column:1/-1;border-top:1px solid #e4e8eb;padding-top:5px}.fingerprint-row strong{font-family:monospace;font-size:5.5pt!important;letter-spacing:.3px}
 @media(max-width:760px){.agreement-modal{padding:8px}.agreement-modal-card{padding:17px;border-radius:19px;max-height:96vh}.agreement-modal-top h3{font-size:20px}.party-grid{grid-template-columns:1fr}.signature-grid{grid-template-columns:1fr}.signature-box canvas{height:150px}.agreement-modal-bottom{flex-direction:column;align-items:stretch}.agreement-modal-bottom .btn{width:100%;min-width:0}.print-verification{grid-template-columns:1fr 1fr}.fingerprint-row{grid-column:1/-1}.print-barcode{width:112px;height:38px}}
+
+/* ===== V7: Mobile-first agreement & signature refinement ===== */
+.signature-box{min-width:0;overflow:hidden}
+.provider-signature-display{height:130px;margin:9px 0 8px;background:#fff;border:1px solid #d7e0e5;border-radius:9px;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden}
+.provider-signature-display img{display:block;width:92%;height:88px;object-fit:contain}
+.provider-signature-display span{font-size:7px;color:#607986;letter-spacing:.4px;text-transform:uppercase}
+.signature-canvas-wrap{position:relative;width:100%;height:170px;margin:9px 0 8px;background:#fff;border:1px dashed #6c8998;border-radius:9px;overflow:hidden}
+.signature-canvas-wrap canvas{position:absolute;inset:0;width:100%!important;height:100%!important;margin:0!important;border:0!important;border-radius:0!important;background:transparent!important;touch-action:none;cursor:crosshair}
+.signature-placeholder{position:absolute;inset:0;display:grid;place-items:center;pointer-events:none;color:#9aabb5;font-size:9px;letter-spacing:.2px;transition:opacity .15s}
+.signature-canvas-wrap.signed .signature-placeholder{opacity:0}
+.client-signature-box .signature-clear{display:inline-flex;align-items:center;justify-content:center;min-height:34px;padding:7px 10px;border:1px solid #315d72;border-radius:8px}
+@media(max-width:760px){
+  .agreement-modal{padding:0;align-items:stretch}
+  .agreement-modal-card{width:100%;height:100dvh;max-height:none;border-radius:0;border-left:0;border-right:0;padding:14px 13px 18px;overflow-x:hidden;overscroll-behavior:contain}
+  .agreement-modal-top{gap:10px;position:sticky;top:0;z-index:2;padding-bottom:10px;background:linear-gradient(145deg,#062237,#03121e)}
+  .agreement-modal-top h3{font-size:19px;line-height:1.2}
+  .agreement-modal-top p{font-size:9px;line-height:1.45;max-width:280px}
+  .modal-close{width:40px;height:40px;min-width:40px}
+  .party-grid{gap:8px;margin:12px 0 10px}
+  .party-card{padding:11px;gap:10px;border-radius:12px}
+  .party-number{width:32px;height:32px;min-width:32px;border-radius:9px}
+  .party-card strong{font-size:12px;overflow-wrap:anywhere}
+  .contract-summary{padding:11px;border-radius:12px}
+  .contract-summary p{font-size:8.5px;line-height:1.5}
+  .modal-agreement-check{margin:10px 0!important;padding:10px!important;font-size:9px!important}
+  .signature-grid{grid-template-columns:1fr;gap:10px}
+  .signature-box{padding:10px;border-radius:12px}
+  .signature-box-head b{font-size:10px}
+  .signature-box-head small{font-size:7.5px}
+  .signature-canvas-wrap,.provider-signature-display{height:155px}
+  .provider-signature-display img{height:92px;width:94%}
+  .signature-meta{padding-top:7px}
+  .signature-meta strong{font-size:9px}
+  .signature-meta small{font-size:7px}
+  .signature-clear{font-size:8px}
+  .agreement-modal-bottom{gap:9px;margin-top:11px;padding-top:11px}
+  .agreement-modal-bottom .btn{min-height:46px;font-size:10px}
+  .secure-note span{font-size:7.5px;line-height:1.4}
+}
+@media(max-width:380px){
+  .agreement-modal-card{padding-left:10px;padding-right:10px}
+  .agreement-modal-top h3{font-size:18px}
+  .party-card em{font-size:7.5px}
+  .signature-canvas-wrap,.provider-signature-display{height:140px}
+}

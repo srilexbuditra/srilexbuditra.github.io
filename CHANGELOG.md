@@ -83,3 +83,8 @@ Catatan perubahan akan diperbarui setiap kali terdapat fitur, perbaikan, perubah
 - Added responsive pointer-based signature input for desktop and touch devices.
 - PDF includes signature images, signer name, dates, reference number, and agreement disclaimer.
 - The signature feature is an electronic acknowledgement in the form; it does not by itself guarantee legal enforceability of a contract.
+
+## V7 — Mobile Contract Signature Refinement
+- Pihak Pertama memakai tanda tangan digital yang sudah disiapkan; tidak ada input tanda tangan Pihak Pertama di modal.
+- Signature pad Pihak Kedua diperbaiki untuk perangkat touch/mobile dengan pointer capture, DPR-aware sizing, dan ResizeObserver.
+- Modal persetujuan dioptimalkan untuk mobile dengan `100dvh`, tanpa horizontal overflow, spacing lebih ringkas, dan tombol yang lebih mudah disentuh.
