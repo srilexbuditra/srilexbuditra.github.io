@@ -233,42 +233,43 @@ function renderCode39(text){
  svg.setAttribute('viewBox',`0 0 ${x+4} 48`);svg.innerHTML=bars.join('');
 }
 function renderVerificationQr(documentRef){
-  const img=$('#printVerifyQr');
+  const svgEl=$('#printVerifyQr');
   const link=$('#printVerifyQrLink');
-  if(!img || !documentRef) return Promise.resolve(false);
+  if(!svgEl || !documentRef) return Promise.resolve(false);
   const verifyUrl='https://srilexbuditra.work/verify/?id='+encodeURIComponent(documentRef);
   if(link){ link.href=verifyUrl; link.setAttribute('aria-label','Buka verifikasi '+documentRef); }
-  img.alt='QR verifikasi dokumen '+documentRef;
-  img.style.display='block';
-  img.style.visibility='visible';
-  img.width=113; img.height=113;
-  const sources=[
-    'https://quickchart.io/qr?text='+encodeURIComponent(verifyUrl)+'&size=360&margin=2',
-    'https://api.qrserver.com/v1/create-qr-code/?size=360x360&margin=2&data='+encodeURIComponent(verifyUrl)
-  ];
-  return new Promise(async resolve=>{
-    let done=false;
-    const finish=ok=>{if(done)return;done=true;resolve(ok)};
-    for(const src of sources){
-      const ok=await new Promise(r=>{
-        let settled=false;
-        const timer=setTimeout(()=>{if(!settled){settled=true;r(false)}},6500);
-        const load=()=>{if(settled)return;settled=true;clearTimeout(timer);r(true)};
-        const fail=()=>{if(settled)return;settled=true;clearTimeout(timer);r(false)};
-        img.onload=load; img.onerror=fail; img.src=src;
-        if(img.complete && img.naturalWidth>0) load();
-      });
-      if(ok){
-        try{if(img.decode) await img.decode();}catch(_){ }
-        void img.getBoundingClientRect();
-        finish(true);
-        return;
+
+  // V29: fully local inline SVG QR. No external image/API is used, so the QR
+  // remains available in Chrome, mobile browsers, in-app browsers and print
+  // engines even when external image hosts are blocked.
+  try{
+    if(!window.LocalQRCode || !window.LocalQRErrorCorrectLevel) throw new Error('Local QR engine unavailable');
+    const qr=new window.LocalQRCode(0, window.LocalQRErrorCorrectLevel.M);
+    qr.addData(verifyUrl);
+    qr.make();
+    const count=qr.getModuleCount();
+    const quiet=4;
+    const size=count + quiet*2;
+    let rects='';
+    for(let row=0;row<count;row++){
+      for(let col=0;col<count;col++){
+        if(qr.isDark(row,col)) rects+=`<rect x="${col+quiet}" y="${row+quiet}" width="1" height="1"/>`;
       }
     }
-    img.removeAttribute('src');
-    img.alt='QR verifikasi tidak dapat dimuat';
-    finish(false);
-  });
+    svgEl.setAttribute('viewBox',`0 0 ${size} ${size}`);
+    svgEl.setAttribute('preserveAspectRatio','xMidYMid meet');
+    svgEl.setAttribute('aria-label','QR verifikasi dokumen '+documentRef);
+    svgEl.innerHTML=`<rect x="0" y="0" width="${size}" height="${size}" fill="#fff"/><g fill="#000" shape-rendering="crispEdges">${rects}</g>`;
+    svgEl.style.display='block';
+    svgEl.style.visibility='visible';
+    svgEl.style.opacity='1';
+    void svgEl.getBoundingClientRect();
+    return Promise.resolve(true);
+  }catch(err){
+    console.warn('Local QR generation failed',err);
+    svgEl.innerHTML='';
+    return Promise.resolve(false);
+  }
 }
 
 function renderClientSignatureForPrint(dataUrl){

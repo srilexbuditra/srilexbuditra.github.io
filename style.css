@@ -1555,14 +1555,14 @@ html,body{max-width:100%;overflow-x:hidden}
 .print-verify-qr-copy strong{display:block;margin-top:2px;font-size:8pt;color:#172f3e}
 .print-verify-qr-copy small{display:block;margin-top:3px;font-size:6.1pt;line-height:1.35;color:#71818e}
 .print-verify-qr-image{display:grid;place-items:center;width:92px;height:92px;padding:4px;background:#fff;border:1px solid #d8e0e5;border-radius:8px}
-.print-verify-qr-image img{display:block;width:82px;height:82px;object-fit:contain}
+.print-verify-qr-image svg{display:block;width:82px;height:82px;object-fit:contain}
 @media print{
   body > .print-report.print-host .print-verify-qr{grid-template-columns:minmax(0,1fr) 64px!important;gap:8px!important;margin:4px 0 5px!important;padding:5px 6px!important;border-radius:6px!important}
   body > .print-report.print-host .print-verify-qr-copy span{font-size:5pt!important}
   body > .print-report.print-host .print-verify-qr-copy strong{font-size:6.2pt!important}
   body > .print-report.print-host .print-verify-qr-copy small{font-size:4.7pt!important;line-height:1.2!important}
   body > .print-report.print-host .print-verify-qr-image{width:64px!important;height:64px!important;padding:3px!important;border-radius:5px!important}
-  body > .print-report.print-host .print-verify-qr-image img{width:58px!important;height:58px!important}
+  body > .print-report.print-host .print-verify-qr-image svg{width:58px!important;height:58px!important}
 }
 
 /* ===== V28: professional 3cm x 3cm verification QR =====
@@ -1584,12 +1584,12 @@ html,body{max-width:100%;overflow-x:hidden}
 .print-verify-qr-copy strong{display:block;margin-top:2px;font-size:8pt;color:#172f3e}
 .print-verify-qr-copy small{display:block;margin-top:3px;font-size:6.1pt;line-height:1.35;color:#71818e}
 .print-verify-qr-image{display:grid;place-items:center;width:30mm;height:30mm;min-width:30mm;min-height:30mm;padding:1.5mm;background:#fff;border:1px solid #d8e0e5;border-radius:2mm;text-decoration:none!important;box-sizing:border-box}
-.print-verify-qr-image img{display:block;width:27mm;height:27mm;max-width:none;max-height:none;object-fit:contain}
+.print-verify-qr-image svg{display:block;width:27mm;height:27mm;max-width:none;max-height:none;object-fit:contain}
 @media print{
   body > .print-report.print-host .print-verify-qr{grid-template-columns:minmax(0,1fr) 30mm!important;gap:10px!important;margin:6px 0 0!important;padding:6px 8px!important;border-radius:8px!important}
   body > .print-report.print-host .print-verify-qr-copy span{font-size:6pt!important}
   body > .print-report.print-host .print-verify-qr-copy strong{font-size:7.5pt!important}
   body > .print-report.print-host .print-verify-qr-copy small{font-size:5.8pt!important;line-height:1.25!important}
   body > .print-report.print-host .print-verify-qr-image{width:30mm!important;height:30mm!important;min-width:30mm!important;min-height:30mm!important;padding:1.5mm!important;border-radius:2mm!important}
-  body > .print-report.print-host .print-verify-qr-image img{width:27mm!important;height:27mm!important;max-width:none!important;max-height:none!important}
+  body > .print-report.print-host .print-verify-qr-image svg{width:27mm!important;height:27mm!important;max-width:none!important;max-height:none!important}
 }
