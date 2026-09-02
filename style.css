@@ -1752,3 +1752,60 @@ html,body{max-width:100%;overflow-x:hidden}
   body > .print-report.print-host .print-verify-qr-image{width:30mm!important;height:30mm!important;min-width:30mm!important;min-height:30mm!important;padding:1.5mm!important;border-radius:2mm!important}
   body > .print-report.print-host .print-verify-qr-image svg{width:27mm!important;height:27mm!important;max-width:none!important;max-height:none!important}
 }
+
+/* ===== FIX: prevent duplicate client signature in print/PDF ===== */
+
+#printClientSignature {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  width: 0 !important;
+  height: 0 !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  position: absolute !important;
+  pointer-events: none !important;
+}
+
+#printClientSignatureSvg {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  width: 100% !important;
+  height: 50px !important;
+  min-height: 50px !important;
+  margin: 5px 0 !important;
+}
+
+@media print {
+  body > .print-report.print-host #printClientSignature {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    width: 0 !important;
+    height: 0 !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    position: absolute !important;
+  }
+
+  body > .print-report.print-host #printClientSignatureSvg {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    width: 100% !important;
+    height: 50px !important;
+    min-height: 50px !important;
+    flex: 0 0 50px !important;
+    margin: 5px 0 !important;
+  }
+
+  body > .print-report.print-host .print-signatures {
+    grid-template-columns: 1fr 1fr !important;
+    align-items: stretch !important;
+  }
+}
