@@ -1,6 +1,26 @@
-<!doctype html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Publisher Verification Setup — Srilex Buditra</title><link rel="stylesheet" href="assets/css/verification.css"></head><body><main class="verify-shell"><div class="brand"><img src="../images/logo.avif" alt="Logo Srilex Buditra"><div><strong>SRILEX BUDITRA</strong><small>Publisher Verification Setup</small></div></div><section class="card"><div class="eyebrow">PUBLISHER SETUP</div><h1>Konfigurasi Database Verifikasi</h1><p>Halaman ini hanya untuk perangkat penerbit. API dan token disimpan di browser perangkat ini.</p><label style="display:block;margin-top:16px;font-size:11px;font-weight:800">API Endpoint<input id="api" style="display:block;width:100%;margin-top:6px;padding:11px;border:1px solid #d8e0e5;border-radius:9px" placeholder="https://verify-api.example.com"></label><label style="display:block;margin-top:12px;font-size:11px;font-weight:800">Publisher Token<input id="token" type="password" style="display:block;width:100%;margin-top:6px;padding:11px;border:1px solid #d8e0e5;border-radius:9px" placeholder="Token penerbit"></label><div class="actions"><button id="save" style="display:inline-flex;padding:10px 13px;border-radius:9px;border:1px solid #315d72;background:#17384b;color:#fff;font-size:11px;font-weight:800">Simpan Konfigurasi</button><button id="clear" style="display:inline-flex;padding:10px 13px;border-radius:9px;border:1px solid #d8e0e5;background:#fff;color:#17384b;font-size:11px;font-weight:800">Hapus</button></div><div id="msg" class="note" hidden></div><p style="margin-top:16px;font-size:11px;line-height:1.6">Setelah konfigurasi disimpan, formulir utama dapat mendaftarkan dokumen baru ke API secara otomatis saat <b>Konfirmasi &amp; Buat PDF</b>. Jangan memasukkan token admin pada kode website.</p></section><div class="footer">Private publisher setup • Srilex Buditra</div></main><script>
-const api=document.getElementById('api'),token=document.getElementById('token'),msg=document.getElementById('msg');
-api.value=localStorage.getItem('SB_VERIFY_API')||''; token.value=localStorage.getItem('SB_VERIFY_PUBLISHER_TOKEN')||'';
-document.getElementById('save').onclick=()=>{localStorage.setItem('SB_VERIFY_API',api.value.trim().replace(/\/$/,''));localStorage.setItem('SB_VERIFY_PUBLISHER_TOKEN',token.value.trim());msg.hidden=false;msg.textContent='Konfigurasi tersimpan pada perangkat penerbit ini.'};
-document.getElementById('clear').onclick=()=>{localStorage.removeItem('SB_VERIFY_API');localStorage.removeItem('SB_VERIFY_PUBLISHER_TOKEN');api.value='';token.value='';msg.hidden=false;msg.textContent='Konfigurasi lokal dihapus.'};
-</script></body></html>
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Publisher Verification Setup — Srilex Buditra</title>
+    <link rel="stylesheet" href="assets/css/verification.css">
+  </head>
+  <body>
+    <main class="verify-shell">
+      <div class="brand"><img src="../images/logo.avif" alt="Logo Srilex Buditra">
+        <div><strong>SRILEX BUDITRA</strong><small>Publisher Verification Setup</small></div>
+      </div>
+      <section class="card">
+        <div class="eyebrow">PUBLISHER SETUP</div>
+        <h1>Konfigurasi Database Verifikasi</h1>
+        <p>Halaman ini hanya untuk perangkat penerbit. API dan token disimpan di browser perangkat ini.</p><label style="display:block;margin-top:16px;font-size:11px;font-weight:800">API Endpoint<input id="api" style="display:block;width:100%;margin-top:6px;padding:11px;border:1px solid #d8e0e5;border-radius:9px" placeholder="https://verify-api.example.com"></label><label style="display:block;margin-top:12px;font-size:11px;font-weight:800">Publisher Token<input id="token" type="password" style="display:block;width:100%;margin-top:6px;padding:11px;border:1px solid #d8e0e5;border-radius:9px" placeholder="Token penerbit"></label>
+        <div class="actions"><button id="save" style="display:inline-flex;padding:10px 13px;border-radius:9px;border:1px solid #315d72;background:#17384b;color:#fff;font-size:11px;font-weight:800">Simpan Konfigurasi</button><button id="clear" style="display:inline-flex;padding:10px 13px;border-radius:9px;border:1px solid #d8e0e5;background:#fff;color:#17384b;font-size:11px;font-weight:800">Hapus</button></div>
+        <div id="msg" class="note" hidden></div>
+        <p style="margin-top:16px;font-size:11px;line-height:1.6">Setelah konfigurasi disimpan, formulir utama dapat mendaftarkan dokumen baru ke API secara otomatis saat <b>Konfirmasi &amp; Buat PDF</b>. Jangan memasukkan token admin pada kode website.</p>
+      </section>
+      <div class="footer">Private publisher setup • Srilex Buditra</div>
+    </main>
+    <script src="/verify/assets/js/publisher.js" defer></script>
+  </body>
+</html>
