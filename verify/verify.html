@@ -1,1 +1,81 @@
-<!doctype html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Verifikasi Dokumen — Srilex Buditra</title><link rel="stylesheet" href="assets/css/verification.css"><script src="../local-qrcode.js"></script><script src="config.js"></script></head><body><main class="verify-shell"><div class="brand"><img src="../images/logo.avif" alt="Logo Srilex Buditra"><div><strong>SRILEX BUDITRA</strong><small>Official Document Verification</small></div></div><section class="card"><div class="eyebrow">SECURE DOCUMENT VERIFICATION</div><h1>Verifikasi Project Cost Estimate</h1><p id="verifyMessage">Memeriksa Document ID...</p><div id="status" class="status"><span class="status-dot"></span><strong id="statusText">MEMERIKSA</strong></div><div class="grid"><div class="item"><span>Document ID</span><strong id="v-id">-</strong></div><div class="item"><span>Status</span><strong id="v-status">-</strong></div><div class="item"><span>Diterbitkan</span><strong id="v-issued">-</strong></div><div class="item"><span>Klien</span><strong id="v-client">-</strong></div><div class="item"><span>Project</span><strong id="v-project">-</strong></div><div class="item"><span>Fingerprint</span><strong id="v-fingerprint">-</strong></div></div><div id="invalidNote" class="note" hidden></div><div class="qr-box"><a id="qrLink" href="./"><img id="verifyQr" alt="QR verifikasi dokumen"></a></div><div class="actions"><a href="../">Kembali ke Website</a></div></section><div class="footer">Database verifikasi penerbit • Srilex Buditra • Bengkulu, Indonesia</div></main><script src="assets/js/verification.js"></script></body></html>
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8">
+    <!-- Responsive -->
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <!-- Theme -->
+    <meta name="theme-color" content="#0B2A4A" media="(prefers-color-scheme: light)">
+    <meta name="author" content="Srilex Buditra">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    <meta name="format-detection" content="telephone=yes">
+    <meta property="og:image:type" content="image/jpeg">
+    <meta property="og:image:width" content="1536">
+    <meta property="og:image:height" content="1024">
+    <meta name="twitter:image:alt" content="Srilex Buditra Official Document Verification — verifikasi dokumen dengan Document ID, QR Code, dan fingerprint unik.">
+    <!-- Primary SEO -->
+    <title>Verifikasi Dokumen — Srilex Buditra</title>
+    <meta property="og:description" content="Verifikasi keaslian dokumen resmi Srilex Buditra melalui Document ID, QR Code, dan fingerprint unik. Transparan, terverifikasi, dan terpercaya.">
+    <!-- Robots -->
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    <!-- Language / Region -->
+    <meta name="language" content="Indonesian">
+    <meta name="geo.region" content="ID-BE">
+    <meta name="geo.placename" content="Bengkulu, Indonesia">
+    <!-- Canonical -->
+    <link rel="canonical" itemprop="url" href="https://srilexbuditra.work/verify/verify.html">
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Official Document Verification | Srilex Buditra">
+    <meta property="og:description" content="Verifikasi keaslian dokumen resmi Srilex Buditra melalui Document ID, QR Code, dan fingerprint unik. Transparan, terverifikasi, dan terpercaya.">
+    <meta property="og:url" content="https://srilexbuditra.work/verify/verify.html">
+    <meta property="og:site_name" content="Srilex Buditra">
+    <meta property="og:locale" content="id_ID">
+    <meta property="og:image" content="https://srilexbuditra.work/verify/assets/images/verify.avif">
+    <meta property="og:image:alt" content="<meta property="og:image:alt" content="Srilex Buditra Official Document Verification — verifikasi dokumen dengan Document ID, QR Code, dan fingerprint unik.">">
+    <!-- Twitter / X -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Srilex Buditra | Full Stack Developer Bengkulu">
+    <meta name="twitter:description" content="Verifikasi keaslian dokumen resmi Srilex Buditra melalui Document ID, QR Code, dan fingerprint unik. Transparan, terverifikasi, dan terpercaya.">
+    <meta name="twitter:image" content="https://srilexbuditra.work/verify/assets/images/verify.avif">
+    <!-- Favicon -->
+    <link rel="icon" href="/images/favicon.ico">
+    <link rel="apple-touch-icon" href="/images/apple-touch-icon.avif">
+    <link rel="manifest" href="/images/site.webmanifest">
+    <link rel="preload" as="image" href="/assets/profile.avif" fetchpriority="high">
+    <link rel="stylesheet" href="style.css">
+    <meta itemprop="inLanguage" content="id-ID">
+    <link itemprop="publisher" href="https://srilexbuditra.work/#person">
+    <meta itemprop="description" content="Verifikasi keaslian dokumen resmi Srilex Buditra melalui Document ID, QR Code, dan fingerprint unik. Transparan, terverifikasi, dan terpercaya.">
+    <link rel="search" type="application/opensearchdescription+xml" title="Srilex Buditra Search" href="/opensearch.xml">
+    <link rel="stylesheet" href="assets/css/verification.css">
+    <script src="../local-qrcode.js"></script>
+    <script src="config.js"></script>
+  </head>
+  <body>
+    <main class="verify-shell">
+      <div class="brand"><img src="../images/logo.avif" alt="Logo Srilex Buditra">
+        <div><strong>SRILEX BUDITRA</strong><small>Official Document Verification</small></div>
+      </div>
+      <section class="card">
+        <div class="eyebrow">SECURE DOCUMENT VERIFICATION</div>
+        <h1>Verifikasi Project Cost Estimate</h1>
+        <p id="verifyMessage">Memeriksa Document ID...</p>
+        <div id="status" class="status"><span class="status-dot"></span><strong id="statusText">MEMERIKSA</strong></div>
+        <div class="grid">
+          <div class="item"><span>Document ID</span><strong id="v-id">-</strong></div>
+          <div class="item"><span>Status</span><strong id="v-status">-</strong></div>
+          <div class="item"><span>Diterbitkan</span><strong id="v-issued">-</strong></div>
+          <div class="item"><span>Klien</span><strong id="v-client">-</strong></div>
+          <div class="item"><span>Project</span><strong id="v-project">-</strong></div>
+          <div class="item"><span>Fingerprint</span><strong id="v-fingerprint">-</strong></div>
+        </div>
+        <div id="invalidNote" class="note" hidden></div>
+        <div class="qr-box"><a id="qrLink" href="./"><img id="verifyQr" alt="QR verifikasi dokumen"></a></div>
+        <div class="actions"><a href="../">Kembali ke Website</a></div>
+      </section>
+      <div class="footer">Database verifikasi penerbit • Srilex Buditra • Bengkulu, Indonesia</div>
+    </main>
+    <script src="assets/js/verification.js"></script>
+  </body>
+</html>
