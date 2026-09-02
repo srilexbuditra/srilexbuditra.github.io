@@ -1990,3 +1990,39 @@ html,body{max-width:100%;overflow-x:hidden}
     justify-self: center !important;
   }
 }
+
+/* ===== V30 FINAL: normalized signature stage =====
+   Give both signatures the same fixed visual stage so short/wide signatures
+   remain proportional and optically centered without changing A4 card height. */
+@media print {
+  body > .print-report.print-host .print-signatures > div {
+    grid-template-rows: 14px 60px 13px 11px !important;
+    height: 100px !important;
+    min-height: 100px !important;
+    padding: 4px 10px !important;
+  }
+
+  body > .print-report.print-host .print-signatures img#printProviderSignature,
+  body > .print-report.print-host #printClientSignatureSvg {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    box-sizing: border-box !important;
+    width: 130px !important;
+    max-width: 130px !important;
+    height: 60px !important;
+    min-height: 0 !important;
+    max-height: 60px !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+    align-self: center !important;
+    justify-self: center !important;
+    object-fit: contain !important;
+    object-position: 50% 50% !important;
+    transform-origin: 50% 50% !important;
+  }
+
+  body > .print-report.print-host #printClientSignatureSvg {
+    overflow: visible !important;
+  }
+}
