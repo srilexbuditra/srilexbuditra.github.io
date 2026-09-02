@@ -78,7 +78,17 @@
     <form class="site-search-form" id="siteSearchForm" action="/search.html" method="get" role="search" autocomplete="off">
       <div class="site-search-box">
         <span class="site-search-icon" aria-hidden="true">⌕</span>
-        <input id="siteSearchInput" name="q" type="search" placeholder="Cari layanan, portfolio, teknologi, atau solusi..." aria-label="Cari di website" aria-autocomplete="list" aria-controls="siteSearchPanel" aria-expanded="false">
+        <input
+  id="siteSearchInput"
+  name="q"
+  type="search"
+  role="combobox"
+  placeholder="Cari layanan, portfolio, teknologi, atau solusi..."
+  aria-label="Cari di website"
+  aria-autocomplete="list"
+  aria-controls="siteSearchSuggestions"
+  aria-expanded="false"
+  aria-haspopup="listbox">
         <button class="site-search-submit" type="submit" aria-label="Cari">
           <span aria-hidden="true">Cari</span><b aria-hidden="true">↗</b>
         </button>
@@ -86,7 +96,12 @@
       <div class="site-search-panel" id="siteSearchPanel" hidden>
         <div class="search-panel-section" id="searchAutocompleteWrap">
           <div class="search-panel-label">Saran pencarian</div>
-          <div class="search-suggestion-list" id="siteSearchSuggestions"></div>
+          <div
+  class="search-suggestion-list"
+  id="siteSearchSuggestions"
+  role="listbox"
+  aria-label="Saran pencarian">
+</div>
         </div>
         <div class="search-panel-section search-history-section">
           <div class="search-panel-label"><span aria-hidden="true">◷</span> Riwayat pencarian <button type="button" id="clearSearchHistory">Hapus</button></div>
