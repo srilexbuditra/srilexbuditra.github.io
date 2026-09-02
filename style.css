@@ -1898,3 +1898,74 @@ html,body{max-width:100%;overflow-x:hidden}
     line-height: 1.15 !important;
   }
 }
+
+/* ===== V28: larger, optically centered signatures in print/PDF =====
+   Final print override: both signature cards use identical geometry and the
+   signature artwork is centered horizontally and vertically inside each card. */
+@media print {
+  body > .print-report.print-host .print-signatures {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+    align-items: stretch !important;
+  }
+
+  body > .print-report.print-host .print-signatures > div {
+    box-sizing: border-box !important;
+    height: 100px !important;
+    min-height: 100px !important;
+    padding: 7px 10px !important;
+    display: grid !important;
+    grid-template-rows: 15px 48px 14px 12px !important;
+    align-items: center !important;
+    justify-items: center !important;
+    align-content: center !important;
+    text-align: center !important;
+    overflow: hidden !important;
+  }
+
+  body > .print-report.print-host .print-signatures > div > span,
+  body > .print-report.print-host .print-signatures > div > strong,
+  body > .print-report.print-host .print-signatures > div > small {
+    width: 100% !important;
+    margin: 0 !important;
+    text-align: center !important;
+    justify-self: center !important;
+    align-self: center !important;
+  }
+
+  body > .print-report.print-host .print-signatures img#printProviderSignature,
+  body > .print-report.print-host #printClientSignatureSvg {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    width: 78% !important;
+    max-width: 170px !important;
+    height: 46px !important;
+    min-height: 46px !important;
+    margin: 0 auto !important;
+    align-self: center !important;
+    justify-self: center !important;
+    object-fit: contain !important;
+    object-position: 50% 50% !important;
+    transform-origin: center center !important;
+  }
+
+  body > .print-report.print-host #printClientSignatureSvg {
+    overflow: visible !important;
+  }
+
+  body > .print-report.print-host #printClientSignature {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    width: 0 !important;
+    height: 0 !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    position: absolute !important;
+    pointer-events: none !important;
+  }
+}
