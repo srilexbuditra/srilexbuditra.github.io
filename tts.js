@@ -6,83 +6,12 @@
   var stop = document.getElementById('ttsStop');
   var label = document.getElementById('ttsFabLabel');
 
-  if (!wrap || !fab || !stop || !('speechSynthesis' in window) ||
-      !('SpeechSynthesisUtterance' in window)) {
-    if (wrap) wrap.style.display = 'none';
-    return;
-  }
-
-  /* Injected here so portfolio sub-pages keep their original visual CSS. */
-  var style = document.createElement('style');
-  style.id = 'srilex-tts-style';
-  style.textContent = `
-    .tts-fab-wrap{
-      position:fixed;left:max(14px,env(safe-area-inset-left));right:auto;
-      bottom:max(18px,env(safe-area-inset-bottom));z-index:2147483000;
-      display:flex;align-items:center;gap:8px;direction:ltr;font-family:inherit;
-    }
-    .tts-fab{
-      width:54px;height:54px;border:1px solid #ffcc45;border-radius:50%;
-      background:linear-gradient(180deg,#ffd04d,#eaa400);color:#07131c;
-      display:grid;place-items:center;cursor:pointer;
-      box-shadow:0 14px 32px #0008,0 0 0 0 #ffb51b55;
-      transition:transform .2s ease,box-shadow .2s ease,filter .2s ease;
-      position:relative;padding:0;
-    }
-    .tts-fab:hover,.tts-fab:focus-visible{
-      transform:translateY(-3px) scale(1.04);filter:brightness(1.05);
-      box-shadow:0 18px 38px #0009,0 0 0 5px #ffb51b18;outline:0;
-    }
-    .tts-fab:active{transform:translateY(0) scale(.96)}
-    .tts-fab.is-speaking{animation:ttsPulse 1.45s infinite}
-    .tts-fab svg{width:23px;height:23px;fill:currentColor}
-    .tts-fab-label{
-      position:absolute;left:calc(100% + 11px);right:auto;white-space:nowrap;
-      background:#031a2d;color:#dceaf2;border:1px solid #1c5c7b;
-      border-radius:10px;padding:8px 10px;font-size:10px;font-weight:800;
-      letter-spacing:.2px;opacity:0;pointer-events:none;transform:translateX(-6px);
-      transition:.2s;box-shadow:0 10px 25px #0007;
-    }
-    .tts-fab:hover .tts-fab-label,.tts-fab:focus-visible .tts-fab-label{
-      opacity:1;transform:translateX(0)
-    }
-    .tts-stop{
-      width:34px;height:34px;border:1px solid #245f7f;border-radius:50%;
-      background:#06243a;color:#c7dce8;display:grid;place-items:center;
-      cursor:pointer;opacity:0;transform:scale(.75);pointer-events:none;
-      transition:.2s;padding:0;
-    }
-    .tts-fab-wrap:hover .tts-stop,.tts-fab-wrap:focus-within .tts-stop,
-    .tts-fab-wrap.is-active .tts-stop{
-      opacity:1;transform:scale(1);pointer-events:auto
-    }
-    .tts-stop:hover,.tts-stop:focus-visible{border-color:#ffcc45;color:#ffcc45;outline:0}
-    .tts-stop svg{width:13px;height:13px;fill:currentColor}
-    .tts-read-highlight{
-      background:rgba(255,204,69,.34)!important;color:inherit!important;
-      border-radius:4px;box-shadow:0 0 0 2px rgba(255,204,69,.14);
-      transition:background .18s ease,box-shadow .18s ease;
-    }
-    @keyframes ttsPulse{
-      0%,100%{box-shadow:0 14px 32px #0008,0 0 0 0 #ffb51b55}
-      50%{box-shadow:0 14px 32px #0008,0 0 0 10px #ffb51b00}
-    }
-    @media(max-width:760px){
-      .tts-fab-wrap{
-        left:max(10px,env(safe-area-inset-left));
-        bottom:max(12px,env(safe-area-inset-bottom))
-      }
-      .tts-fab{width:50px;height:50px}
-      .tts-fab-label{display:none}
-      .tts-stop{opacity:1;transform:scale(1);pointer-events:auto;width:32px;height:32px}
-    }
-    @media(prefers-reduced-motion:reduce){
-      .tts-fab,.tts-stop,.tts-fab-label,.tts-read-highlight{transition:none}
-      .tts-fab.is-speaking{animation:none}
-    }
-  `;
-  document.head.appendChild(style);
-
+if (!wrap || !fab || !stop || !('speechSynthesis' in window) ||
+    !('SpeechSynthesisUtterance' in window)) {
+  if (wrap) wrap.hidden = true;
+  return;
+}
+  
   var synth = window.speechSynthesis;
   var queue = [];
   var currentIndex = -1;
