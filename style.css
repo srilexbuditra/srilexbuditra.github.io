@@ -6513,3 +6513,30 @@ body {
     position: absolute !important;
   }
 }
+/* ===== ACCESSIBILITY CONTRAST FIX ===== */
+
+.footer {
+  background: #010b14 !important;
+  color: #ffffff !important;
+}
+
+.footer p {
+  color: #dce8f1 !important;
+}
+
+.footer-grid > div > a:not(.brand) {
+  color: #dce8f1 !important;
+}
+
+.footer .brand small {
+  color: #dce8f1 !important;
+}
+
+.copyright {
+  color: #ffffff !important;
+  font-size: 11px;
+}
+
+.copyright span {
+  color: #ffffff !important;
+}
