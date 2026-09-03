@@ -3,8 +3,14 @@ const STATS_API =
 
 const apiKeyInput = document.getElementById("apiKey");
 const loadBtn = document.getElementById("loadBtn");
+const refreshBtn = document.getElementById("refreshBtn");
+const exportBtn = document.getElementById("exportBtn");
 const statusBox = document.getElementById("status");
 const dashboard = document.getElementById("dashboard");
+const updatedAt = document.getElementById("updatedAt");
+
+let lastStatsData = null;
+let selectedTrendDays = 7;
 
 const COUNTRY_NAMES = {
   ID: "🇮🇩 Indonesia",
@@ -19,7 +25,12 @@ const COUNTRY_NAMES = {
   DE: "🇩🇪 Germany",
   FR: "🇫🇷 France",
   NL: "🇳🇱 Netherlands",
-  CA: "🇨🇦 Canada"
+  CA: "🇨🇦 Canada",
+  TH: "🇹🇭 Thailand",
+  PH: "🇵🇭 Philippines",
+  VN: "🇻🇳 Vietnam",
+  KR: "🇰🇷 South Korea",
+  AE: "🇦🇪 United Arab Emirates"
 };
 
 function formatLabel(value) {
@@ -49,10 +60,32 @@ function formatReferrer(value) {
   }
 }
 
+function formatDateTime(value) {
+  if (!value) return "Unknown";
+  const normalized = String(value).includes("T")
+    ? String(value)
+    : String(value).replace(" ", "T") + "Z";
+  const date = new Date(normalized);
+  if (Number.isNaN(date.getTime())) return String(value);
+  return new Intl.DateTimeFormat("id-ID", {
+    timeZone: "Asia/Jakarta",
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false
+  }).format(date);
+}
+
+function setNumber(id, value) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = String(value ?? 0);
+}
+
 function renderList(elementId, rows, labelGetter) {
   const container = document.getElementById(elementId);
   if (!container) return;
-
   container.innerHTML = "";
 
   if (!Array.isArray(rows) || rows.length === 0) {
@@ -78,23 +111,8 @@ function renderList(elementId, rows, labelGetter) {
   });
 }
 
-
-function formatDateTime(value) {
-  if (!value) return "Unknown";
-  const normalized = String(value).includes("T")
-    ? String(value)
-    : String(value).replace(" ", "T") + "Z";
-  const date = new Date(normalized);
-  if (Number.isNaN(date.getTime())) return String(value);
-  return new Intl.DateTimeFormat("id-ID", {
-    timeZone: "Asia/Jakarta",
-    day: "2-digit", month: "short", year: "numeric",
-    hour: "2-digit", minute: "2-digit", hour12: false
-  }).format(date);
-}
-
-function renderRecentVisitors(rows) {
-  const tbody = document.getElementById("recentVisitors");
+function renderRecentVisits(rows) {
+  const tbody = document.getElementById("recentVisits");
   if (!tbody) return;
   tbody.innerHTML = "";
 
@@ -103,7 +121,7 @@ function renderRecentVisitors(rows) {
     const td = document.createElement("td");
     td.colSpan = 6;
     td.className = "recent-empty";
-    td.textContent = "Belum ada data visitor terbaru.";
+    td.textContent = "Belum ada event kunjungan V4.";
     tr.appendChild(td);
     tbody.appendChild(tr);
     return;
@@ -113,21 +131,197 @@ function renderRecentVisitors(rows) {
     const tr = document.createElement("tr");
     const code = String(row.country || "").toUpperCase();
     const values = [
-      formatDateTime(row.last_seen),
+      formatDateTime(row.visited_at),
       COUNTRY_NAMES[code] || (code || "Unknown"),
       formatLabel(row.device_type),
       formatLabel(row.browser),
-      formatPage(row.last_page),
-      String(row.visit_count ?? 0)
+      formatPage(row.page),
+      formatReferrer(row.referrer)
     ];
+
     values.forEach((value, index) => {
       const td = document.createElement("td");
       td.textContent = value;
       if (index === 4) td.className = "recent-page";
       tr.appendChild(td);
     });
+
     tbody.appendChild(tr);
   });
+}
+
+function localDateKey(offsetDays = 0) {
+  const d = new Date();
+  d.setDate(d.getDate() + offsetDays);
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Jakarta",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit"
+  }).formatToParts(d);
+  const values = Object.fromEntries(parts.map((p) => [p.type, p.value]));
+  return `${values.year}-${values.month}-${values.day}`;
+}
+
+function renderTrend(rows, days = 7) {
+  const chart = document.getElementById("trendChart");
+  if (!chart) return;
+  chart.innerHTML = "";
+
+  const map = new Map(
+    (Array.isArray(rows) ? rows : []).map((row) => [
+      String(row.day),
+      Number(row.total || 0)
+    ])
+  );
+
+  const data = [];
+  for (let i = days - 1; i >= 0; i -= 1) {
+    const day = localDateKey(-i);
+    data.push({ day, total: map.get(day) || 0 });
+  }
+
+  const max = Math.max(1, ...data.map((item) => item.total));
+
+  data.forEach((item) => {
+    const column = document.createElement("div");
+    column.className = "chart-column";
+
+    const value = document.createElement("div");
+    value.className = "chart-value";
+    value.textContent = item.total;
+
+    const barWrap = document.createElement("div");
+    barWrap.className = "chart-bar-wrap";
+
+    const bar = document.createElement("div");
+    bar.className = "chart-bar";
+    bar.style.height = `${Math.max(4, (item.total / max) * 100)}%`;
+    bar.title = `${item.day}: ${item.total} visits`;
+
+    const label = document.createElement("div");
+    label.className = "chart-label";
+    const [year, month, day] = item.day.split("-");
+    label.textContent = `${day}/${month}`;
+
+    barWrap.appendChild(bar);
+    column.append(value, barWrap, label);
+    chart.appendChild(column);
+  });
+}
+
+function escapeCsv(value) {
+  const text = String(value ?? "");
+  return `"${text.replace(/"/g, '""')}"`;
+}
+
+function exportCsv() {
+  if (!lastStatsData) return;
+
+  const rows = [
+    ["Metric", "Value"],
+    ["Total Visitors", lastStatsData.total_visitors ?? 0],
+    ["Total Visits", lastStatsData.total_visits ?? 0],
+    ["Visitors Today", lastStatsData.visitors_today ?? 0],
+    ["Visits Today", lastStatsData.visits_today ?? 0],
+    ["Visitors 7 Days", lastStatsData.visitors_7_days ?? 0],
+    ["Visits 7 Days", lastStatsData.visits_7_days ?? 0],
+    ["Visitors 30 Days", lastStatsData.visitors_30_days ?? 0],
+    ["Visits 30 Days", lastStatsData.visits_30_days ?? 0],
+    ["Returning Visitors", lastStatsData.returning_visitors ?? 0],
+    ["Average Visits per Visitor", lastStatsData.avg_visits_per_visitor ?? 0],
+    [],
+    ["Recent Visit Time", "Country", "Device", "Browser", "Page", "Referrer"]
+  ];
+
+  (lastStatsData.recent_visits || []).forEach((row) => {
+    rows.push([
+      row.visited_at,
+      row.country,
+      row.device_type,
+      row.browser,
+      row.page,
+      row.referrer
+    ]);
+  });
+
+  const csv = rows.map((row) => row.map(escapeCsv).join(",")).join("\r\n");
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `srilexbuditra-analytics-${localDateKey()}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
+function renderDashboard(data) {
+  lastStatsData = data;
+
+  setNumber("totalVisitors", data.total_visitors);
+  setNumber("totalVisits", data.total_visits);
+  setNumber("visitorsToday", data.visitors_today);
+  setNumber("visitsToday", data.visits_today);
+  setNumber("visitors7Days", data.visitors_7_days);
+  setNumber("visits7Days", data.visits_7_days);
+  setNumber("visitors30Days", data.visitors_30_days);
+  setNumber("visits30Days", data.visits_30_days);
+  setNumber("returningVisitors", data.returning_visitors);
+  setNumber("avgVisits", data.avg_visits_per_visitor);
+
+  renderList("deviceStats", data.devices, (row) =>
+    formatLabel(row.device_type)
+  );
+
+  renderList("browserStats", data.browsers, (row) =>
+    formatLabel(row.browser)
+  );
+
+  renderList("countryStats", data.countries, (row) => {
+    const code = String(row.country || "").toUpperCase();
+    return COUNTRY_NAMES[code] || (code || "Unknown");
+  });
+
+  renderList(
+    "visitorTypeStats",
+    [
+      { label: "New / One-time", total: data.new_visitors ?? 0 },
+      { label: "Returning", total: data.returning_visitors ?? 0 }
+    ],
+    (row) => row.label
+  );
+
+  renderList("topPagesStats", data.top_pages, (row) =>
+    formatPage(row.page)
+  );
+
+  renderList("referrerStats", data.referrers, (row) =>
+    formatReferrer(row.referrer)
+  );
+
+  renderRecentVisits(data.recent_visits);
+  renderTrend(data.daily_trend, selectedTrendDays);
+
+  const trackingNote = document.getElementById("trackingNote");
+  if (trackingNote) {
+    trackingNote.textContent = data.event_tracking_since
+      ? `Event-level tracking aktif sejak ${formatDateTime(data.event_tracking_since)}. Total Visits tetap mempertahankan histori lama.`
+      : "Event-level tracking akan mulai tercatat setelah Analytics V4 menerima kunjungan pertama.";
+  }
+
+  updatedAt.textContent =
+    "Diperbarui " +
+    new Intl.DateTimeFormat("id-ID", {
+      timeZone: "Asia/Jakarta",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: false
+    }).format(new Date());
+
+  dashboard.style.display = "block";
 }
 
 async function loadStats() {
@@ -139,73 +333,51 @@ async function loadStats() {
   }
 
   statusBox.textContent = "Mengambil data statistik...";
-  dashboard.style.display = "none";
   loadBtn.disabled = true;
+  if (refreshBtn) refreshBtn.disabled = true;
 
   try {
-    const response = await fetch(STATS_API, {
+    const response = await fetch(STATS_API + "?t=" + Date.now(), {
       method: "GET",
       headers: {
         Authorization: "Bearer " + key
-      }
+      },
+      cache: "no-store"
     });
 
     if (!response.ok) {
       if (response.status === 401 || response.status === 403) {
         throw new Error("API Key tidak valid.");
       }
-
       throw new Error("Gagal mengambil statistik. HTTP " + response.status);
     }
 
     const data = await response.json();
-
-    document.getElementById("totalVisitors").textContent =
-      data.total_visitors ?? 0;
-
-    document.getElementById("totalVisits").textContent =
-      data.total_visits ?? 0;
-
-    document.getElementById("visitorsToday").textContent =
-      data.visitors_today ?? 0;
-
-    renderList("deviceStats", data.devices, (device) =>
-      formatLabel(device.device_type)
-    );
-
-    renderList("browserStats", data.browsers, (browser) =>
-      formatLabel(browser.browser)
-    );
-
-    renderList("countryStats", data.countries, (country) => {
-      const code = String(country.country || "").toUpperCase();
-      return COUNTRY_NAMES[code] || (code || "Unknown");
-    });
-
-    renderList("topPagesStats", data.top_pages, (row) =>
-      formatPage(row.page)
-    );
-
-    renderList("referrerStats", data.referrers, (row) =>
-      formatReferrer(row.referrer)
-    );
-
-    renderRecentVisitors(data.recent_visitors);
-
-    dashboard.style.display = "block";
+    renderDashboard(data);
     statusBox.textContent = "Statistik berhasil dimuat.";
   } catch (error) {
     console.error(error);
     statusBox.textContent = error.message;
   } finally {
     loadBtn.disabled = false;
+    if (refreshBtn) refreshBtn.disabled = false;
   }
 }
 
 loadBtn.addEventListener("click", loadStats);
+refreshBtn?.addEventListener("click", loadStats);
+exportBtn?.addEventListener("click", exportCsv);
 
 apiKeyInput.addEventListener("keydown", function (event) {
-  if (event.key === "Enter") {
-    loadStats();
-  }
+  if (event.key === "Enter") loadStats();
+});
+
+document.querySelectorAll(".range-btn").forEach((button) => {
+  button.addEventListener("click", () => {
+    selectedTrendDays = Number(button.dataset.days || 7);
+    document.querySelectorAll(".range-btn").forEach((item) => {
+      item.classList.toggle("active", item === button);
+    });
+    if (lastStatsData) renderTrend(lastStatsData.daily_trend, selectedTrendDays);
+  });
 });

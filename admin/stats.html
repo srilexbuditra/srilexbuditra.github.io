@@ -3,56 +3,115 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
   <title>Visitor Statistics | Srilex Buditra</title>
   <link rel="stylesheet" href="stats.css">
 </head>
 <body>
   <main class="container">
-    <h1>Visitor Statistics</h1>
-    <div class="subtitle">Srilex Buditra Website Analytics</div>
+    <header class="page-head">
+      <div>
+        <h1>Visitor Statistics</h1>
+        <div class="subtitle">Srilex Buditra Website Analytics — Analytics V4</div>
+      </div>
+      <div class="updated" id="updatedAt">Belum dimuat</div>
+    </header>
 
     <section class="login" id="loginBox">
       <label for="apiKey">Stats API Key</label>
-      <input
-        type="password"
-        id="apiKey"
-        placeholder="Masukkan STATS_API_KEY"
-        autocomplete="off"
-      >
-      <button id="loadBtn" type="button">Buka Statistik</button>
+      <div class="key-row">
+        <input
+          type="password"
+          id="apiKey"
+          placeholder="Masukkan STATS_API_KEY"
+          autocomplete="off"
+          spellcheck="false"
+        >
+        <button id="loadBtn" type="button">Buka Statistik</button>
+      </div>
       <div class="status" id="status" aria-live="polite"></div>
     </section>
 
     <section id="dashboard">
-      <div class="cards">
+      <div class="toolbar">
+        <button id="refreshBtn" class="secondary-btn" type="button">↻ Refresh</button>
+        <button id="exportBtn" class="secondary-btn" type="button">↓ Export CSV</button>
+      </div>
+
+      <div class="cards kpi-grid">
         <article class="card">
           <div>Total Visitors</div>
           <div class="number" id="totalVisitors">0</div>
         </article>
-
         <article class="card">
           <div>Total Visits</div>
           <div class="number" id="totalVisits">0</div>
         </article>
-
         <article class="card">
           <div>Visitors Today</div>
           <div class="number" id="visitorsToday">0</div>
         </article>
+        <article class="card">
+          <div>Visits Today</div>
+          <div class="number" id="visitsToday">0</div>
+        </article>
+        <article class="card">
+          <div>Visitors 7 Days</div>
+          <div class="number" id="visitors7Days">0</div>
+        </article>
+        <article class="card">
+          <div>Visits 7 Days</div>
+          <div class="number" id="visits7Days">0</div>
+        </article>
+        <article class="card">
+          <div>Visitors 30 Days</div>
+          <div class="number" id="visitors30Days">0</div>
+        </article>
+        <article class="card">
+          <div>Visits 30 Days</div>
+          <div class="number" id="visits30Days">0</div>
+        </article>
+        <article class="card">
+          <div>Returning Visitors</div>
+          <div class="number" id="returningVisitors">0</div>
+        </article>
+        <article class="card">
+          <div>Avg Visits / Visitor</div>
+          <div class="number" id="avgVisits">0</div>
+        </article>
+      </div>
 
+      <section class="stats-section wide-section trend-section">
+        <div class="section-head">
+          <div>
+            <h2>Visit Trend</h2>
+            <p>Riwayat event kunjungan sejak Analytics V4 aktif.</p>
+          </div>
+          <div class="range-tabs" role="group" aria-label="Rentang grafik">
+            <button type="button" class="range-btn active" data-days="7">7 Hari</button>
+            <button type="button" class="range-btn" data-days="30">30 Hari</button>
+          </div>
+        </div>
+        <div class="chart" id="trendChart" aria-label="Grafik tren kunjungan"></div>
+        <div class="tracking-note" id="trackingNote"></div>
+      </section>
+
+      <div class="cards">
         <section class="stats-section">
           <h2>Device Statistics</h2>
           <div class="stats-list" id="deviceStats"></div>
         </section>
-
         <section class="stats-section">
           <h2>Browser Statistics</h2>
           <div class="stats-list" id="browserStats"></div>
         </section>
-
         <section class="stats-section">
           <h2>Country Statistics</h2>
           <div class="stats-list" id="countryStats"></div>
+        </section>
+        <section class="stats-section">
+          <h2>Visitor Type</h2>
+          <div class="stats-list" id="visitorTypeStats"></div>
         </section>
 
         <section class="stats-section wide-section">
@@ -66,14 +125,20 @@
         </section>
 
         <section class="stats-section wide-section">
-          <h2>Recent Visitors</h2>
+          <h2>Recent Visits</h2>
           <div class="recent-wrap">
             <table class="recent-table">
-              <thead><tr>
-                <th>Waktu</th><th>Negara</th><th>Device</th>
-                <th>Browser</th><th>Halaman</th><th>Visits</th>
-              </tr></thead>
-              <tbody id="recentVisitors"></tbody>
+              <thead>
+                <tr>
+                  <th>Waktu</th>
+                  <th>Negara</th>
+                  <th>Device</th>
+                  <th>Browser</th>
+                  <th>Halaman</th>
+                  <th>Source</th>
+                </tr>
+              </thead>
+              <tbody id="recentVisits"></tbody>
             </table>
           </div>
         </section>
