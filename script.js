@@ -476,3 +476,30 @@ const activeObserver = new IntersectionObserver(entries => {
 sections.forEach(s => activeObserver.observe(s));
 
 updateEstimate();
+
+/* =========================================================
+   Visitor Analytics — Cloudflare Worker + D1
+   Records a page visit without blocking the website UI.
+   ========================================================= */
+(() => {
+  const VISITOR_API = 'https://srilexbuditra-visitors-api.srilexbuditra.workers.dev/visitor';
+
+  const registerVisitor = async () => {
+    try {
+      await fetch(VISITOR_API, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          page: window.location.href,
+          referrer: document.referrer || 'direct'
+        }),
+        keepalive: true
+      });
+    } catch (error) {
+      // Analytics must never interrupt the visitor's experience.
+      console.debug('Visitor analytics unavailable.', error);
+    }
+  };
+
+  registerVisitor();
+})();
