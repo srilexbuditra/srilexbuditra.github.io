@@ -46,6 +46,17 @@ async function loadStats() {
     document.getElementById("visitorsToday").textContent =
   data.visitors_today ?? 0;
 
+    const deviceStats = document.getElementById("deviceStats");
+
+deviceStats.innerHTML = "";
+
+(data.devices || []).forEach(function (device) {
+  const item = document.createElement("div");
+  item.textContent =
+    (device.device_type || "Unknown") + ": " + (device.total || 0);
+  deviceStats.appendChild(item);
+});
+
     dashboard.style.display = "block";
     statusBox.textContent = "Statistik berhasil dimuat.";
   } catch (error) {
