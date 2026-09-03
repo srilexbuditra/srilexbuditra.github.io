@@ -223,3 +223,20 @@ button:disabled {
     grid-column: auto;
   }
 }
+
+
+/* Analytics V3 — Recent Visitors */
+.recent-wrap { width: 100%; overflow-x: auto; }
+.recent-table { width: 100%; border-collapse: collapse; min-width: 760px; }
+.recent-table th, .recent-table td {
+  padding: 12px 10px; text-align: left; vertical-align: top;
+  border-bottom: 1px solid rgba(255,255,255,.1);
+}
+.recent-table th {
+  color: #94a3b8; font-size: 12px; text-transform: uppercase;
+  letter-spacing: .05em;
+}
+.recent-table td { color: #fff; font-size: 14px; }
+.recent-table tbody tr:last-child td { border-bottom: 0; }
+.recent-page { max-width: 320px; overflow-wrap: anywhere; }
+.recent-empty { color: #94a3b8 !important; text-align: center !important; }

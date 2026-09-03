@@ -78,6 +78,58 @@ function renderList(elementId, rows, labelGetter) {
   });
 }
 
+
+function formatDateTime(value) {
+  if (!value) return "Unknown";
+  const normalized = String(value).includes("T")
+    ? String(value)
+    : String(value).replace(" ", "T") + "Z";
+  const date = new Date(normalized);
+  if (Number.isNaN(date.getTime())) return String(value);
+  return new Intl.DateTimeFormat("id-ID", {
+    timeZone: "Asia/Jakarta",
+    day: "2-digit", month: "short", year: "numeric",
+    hour: "2-digit", minute: "2-digit", hour12: false
+  }).format(date);
+}
+
+function renderRecentVisitors(rows) {
+  const tbody = document.getElementById("recentVisitors");
+  if (!tbody) return;
+  tbody.innerHTML = "";
+
+  if (!Array.isArray(rows) || rows.length === 0) {
+    const tr = document.createElement("tr");
+    const td = document.createElement("td");
+    td.colSpan = 6;
+    td.className = "recent-empty";
+    td.textContent = "Belum ada data visitor terbaru.";
+    tr.appendChild(td);
+    tbody.appendChild(tr);
+    return;
+  }
+
+  rows.forEach((row) => {
+    const tr = document.createElement("tr");
+    const code = String(row.country || "").toUpperCase();
+    const values = [
+      formatDateTime(row.last_seen),
+      COUNTRY_NAMES[code] || (code || "Unknown"),
+      formatLabel(row.device_type),
+      formatLabel(row.browser),
+      formatPage(row.last_page),
+      String(row.visit_count ?? 0)
+    ];
+    values.forEach((value, index) => {
+      const td = document.createElement("td");
+      td.textContent = value;
+      if (index === 4) td.className = "recent-page";
+      tr.appendChild(td);
+    });
+    tbody.appendChild(tr);
+  });
+}
+
 async function loadStats() {
   const key = apiKeyInput.value.trim();
 
@@ -137,6 +189,8 @@ async function loadStats() {
     renderList("referrerStats", data.referrers, (row) =>
       formatReferrer(row.referrer)
     );
+
+    renderRecentVisitors(data.recent_visitors);
 
     dashboard.style.display = "block";
     statusBox.textContent = "Statistik berhasil dimuat.";
