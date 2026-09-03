@@ -21,8 +21,8 @@ async function loadStats() {
     const response = await fetch(STATS_API, {
       method: "GET",
       headers: {
-        "X-Stats-Key": key
-      }
+  "Authorization": "Bearer " + key
+}
     });
 
     if (!response.ok) {
