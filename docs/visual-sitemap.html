@@ -1,72 +1,88 @@
 <!doctype html>
 <html lang="id">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#020f1c">
-  <meta name="color-scheme" content="dark">
-  <title>Visual Sitemap | Srilex Buditra</title>
-  <meta name="description" content="Visual Sitemap dan arsitektur website Srilex Buditra V11.7.">
-  <link rel="stylesheet" href="style.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=5">
+<meta name="theme-color" content="#020f1c">
+<title>Visual Sitemap | Srilex Buditra</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:#020f1c;color:#f7fbff;font-family:Arial,Helvetica,sans-serif}
+body{min-height:100vh;background:radial-gradient(circle at 50% 0,#07304a 0,#020f1c 38%,#010914 100%)}
+.wrap{width:calc(100% - 32px);max-width:1500px;margin:0 auto;padding:24px 0 32px}
+.brand{display:flex;align-items:center;gap:12px}
+.brand img{display:block;width:56px;height:56px;object-fit:cover;border-radius:50%;border:2px solid #ffb51b}
+.brand-title{font-size:16px;font-weight:700}.brand-sub{margin-top:3px;font-size:9px;letter-spacing:1.5px;color:#94abc0}
+.hero{text-align:center;padding:46px 10px 24px}
+.hero h1{font-size:44px;line-height:1.1;margin:0}.version{color:#ffb51b;font-weight:700;font-size:14px;letter-spacing:1px;margin:10px 0}
+.desc{color:#94abc0;font-size:13px;margin:0}
+.domain{max-width:560px;margin:22px auto 44px;padding:21px;border:2px solid #ffb51b;border-radius:20px;background:#06243a;text-align:center}
+.domain strong{font-size:21px}.domain small{display:block;color:#94abc0;margin-top:7px}
+.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px}
+.card{border:2px solid var(--a);border-radius:18px;overflow:hidden;background:#06243a}
+.card h2{margin:0;padding:18px;background:#041b2d;border-bottom:1px solid var(--a);color:var(--a);font-size:16px}
+.card h2:before{content:"●";margin-right:9px}
+.card ul{list-style:none;margin:0;padding:5px 18px 12px}
+.card li{padding:13px 0;border-bottom:1px solid rgba(148,171,192,.14)}
+.card li:last-child{border:0}.card b{display:block;font-size:13px}
+.card code{display:block;margin-top:5px;color:#94abc0;font-size:10.5px;line-height:1.45;white-space:normal;overflow-wrap:anywhere}
+.public{--a:#ffb51b}.portfolio{--a:#22c5ee}.verify{--a:#00d86a}.analytics{--a:#b48cff}
+footer{margin-top:28px;padding-top:17px;border-top:1px solid #145a82;color:#94abc0;font-size:10px;text-align:center}
+@media(max-width:1100px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.hero h1{font-size:38px}}
+@media(max-width:640px){
+ .wrap{width:calc(100% - 24px);padding-top:18px}
+ .brand img{width:46px;height:46px}.brand-title{font-size:13px}.brand-sub{font-size:7.5px}
+ .hero{padding:34px 4px 18px}.hero h1{font-size:30px}.version{font-size:11px}.desc{font-size:11px;line-height:1.5}
+ .domain{margin:16px auto 22px;padding:17px 12px}.domain strong{font-size:17px}.domain small{font-size:10px}
+ .grid{grid-template-columns:1fr;gap:16px}
+ .card h2{font-size:14px;padding:16px}.card ul{padding:4px 16px 10px}.card li{padding:12px 0}
+ .card b{font-size:12px}.card code{font-size:10px}
+}
+</style>
 </head>
 <body>
-<main class="page">
-  <a class="brand" href="/" aria-label="Srilex Buditra - halaman utama">
-    <img class="brand-logo" src="/images/logo.avif" alt="Logo Srilex Buditra">
-    <span><strong>SRILEX BUDITRA</strong><span>FULL STACK DEVELOPER</span></span>
-  </a>
+<div class="wrap">
+<header class="brand">
+<img src="../images/logo.avif" alt="Srilex Buditra">
+<div><div class="brand-title">SRILEX BUDITRA</div><div class="brand-sub">FULL STACK DEVELOPER</div></div>
+</header>
 
-  <header class="hero">
-    <h1>Website Architecture</h1>
-    <p class="eyebrow">VISUAL SITEMAP · V11.7</p>
-    <p class="lead">Public pages · Portfolio · Document Verification · Analytics V4</p>
-  </header>
+<section class="hero">
+<h1>Website Architecture</h1>
+<p class="version">VISUAL SITEMAP · V11.7</p>
+<p class="desc">Public pages · Portfolio · Document Verification · Analytics V4</p>
+</section>
 
-  <section class="root" aria-label="Domain utama">
-    <strong>✳ srilexbuditra.work</strong>
-    <small>Current development · V11.7 · Analytics V4</small>
-  </section>
+<div class="domain"><strong>✳ srilexbuditra.work</strong><small>Current development · V11.7 · Analytics V4</small></div>
 
-  <section class="grid" aria-label="Struktur website">
-    <article class="card public"><h2>PUBLIC</h2><ul class="items">
-      <li><strong>Home</strong><code>/</code></li>
-      <li><strong>Search</strong><code>/search.html</code></li>
-      <li><strong>Privacy</strong><code>/privacy.html</code></li>
-      <li><strong>Terms</strong><code>/terms.html</code></li>
-      <li><strong>Security</strong><code>/security.html</code></li>
-      <li><strong>404</strong><code>/404.html</code></li>
-      <li><strong>Legacy redirect</strong><code>/term.html → /terms.html</code></li>
-    </ul></article>
+<main class="grid">
+<section class="card public"><h2>PUBLIC</h2><ul>
+<li><b>Home</b><code>/</code></li><li><b>Search</b><code>/search.html</code></li>
+<li><b>Privacy</b><code>/privacy.html</code></li><li><b>Terms</b><code>/terms.html</code></li>
+<li><b>Security</b><code>/security.html</code></li><li><b>404</b><code>/404.html</code></li>
+<li><b>Legacy redirect</b><code>/term.html → /terms.html</code></li>
+</ul></section>
 
-    <article class="card portfolio"><h2>PORTFOLIO</h2><ul class="items">
-      <li><strong>Aplikasi POS</strong><code>/portfolio/aplikasi-pos/</code></li>
-      <li><strong>POS Case Study</strong><code>detail.html</code></li>
-      <li><strong>Sistem Administrasi</strong><code>/portfolio/sistem-administrasi/</code></li>
-      <li><strong>Admin Case Study</strong><code>detail.html</code></li>
-      <li><strong>Website Sekolah</strong><code>/portfolio/website-sekolah/</code></li>
-      <li><strong>Project Detail</strong><code>project-detail.html</code></li>
-      <li><strong>Website Sekolah V2</strong><code>v2/</code></li>
-      <li><strong>TJKT SMKN 1</strong><code>tjkt-smkn1kotabengkulu/</code></li>
-    </ul></article>
+<section class="card portfolio"><h2>PORTFOLIO</h2><ul>
+<li><b>Aplikasi POS</b><code>/portfolio/aplikasi-pos/</code></li><li><b>POS Case Study</b><code>detail.html</code></li>
+<li><b>Sistem Administrasi</b><code>/portfolio/sistem-administrasi/</code></li><li><b>Admin Case Study</b><code>detail.html</code></li>
+<li><b>Website Sekolah</b><code>/portfolio/website-sekolah/</code></li><li><b>Project Detail</b><code>project-detail.html</code></li>
+<li><b>Website Sekolah V2</b><code>v2/</code></li><li><b>TJKT SMKN 1</b><code>tjkt-smkn1kotabengkulu/</code></li>
+</ul></section>
 
-    <article class="card verify"><h2>VERIFICATION</h2><ul class="items">
-      <li><strong>Verification Entry</strong><code>/verify/</code></li>
-      <li><strong>Verify Document</strong><code>verify.html</code></li>
-      <li><strong>Publisher</strong><code>publisher.html</code></li>
-      <li><strong>Invalid Document</strong><code>invalid.html</code></li>
-      <li><strong>Worker + KV</strong><code>Document verification backend</code></li>
-    </ul></article>
+<section class="card verify"><h2>VERIFICATION</h2><ul>
+<li><b>Verification Entry</b><code>/verify/</code></li><li><b>Verify Document</b><code>verify.html</code></li>
+<li><b>Publisher</b><code>publisher.html</code></li><li><b>Invalid Document</b><code>invalid.html</code></li>
+<li><b>Worker + KV</b><code>Document verification backend</code></li>
+</ul></section>
 
-    <article class="card analytics"><h2>ANALYTICS V4</h2><ul class="items">
-      <li><strong>Admin Dashboard</strong><code>/admin/stats.html</code></li>
-      <li><strong>Visitor Event</strong><code>POST /visitor</code></li>
-      <li><strong>Protected Stats</strong><code>GET /stats</code></li>
-      <li><strong>Cloudflare D1</strong><code>visit_events</code></li>
-      <li><strong>Anonymous Visitor ID</strong><code>sb_visitor_id</code></li>
-    </ul></article>
-  </section>
-
-  <footer><span>SRILEX BUDITRA · WEBSITE V11.7</span><span>Responsive architecture documentation</span></footer>
+<section class="card analytics"><h2>ANALYTICS V4</h2><ul>
+<li><b>Admin Dashboard</b><code>/admin/stats.html</code></li><li><b>Visitor Event</b><code>POST /visitor</code></li>
+<li><b>Protected Stats</b><code>GET /stats</code></li><li><b>Cloudflare D1</b><code>visit_events</code></li>
+<li><b>Anonymous Visitor ID</b><code>sb_visitor_id</code></li>
+</ul></section>
 </main>
+<footer>SRILEX BUDITRA · WEBSITE V11.7 · RESPONSIVE ARCHITECTURE DOCUMENTATION</footer>
+</div>
 </body>
 </html>
