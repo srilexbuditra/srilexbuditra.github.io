@@ -206,3 +206,20 @@ button:disabled {
   opacity: 0.65;
   cursor: wait;
 }
+
+
+/* Top Pages and Traffic Sources */
+.wide-section {
+  grid-column: 1 / -1;
+}
+
+.wide-section .stats-row span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 600px) {
+  .wide-section {
+    grid-column: auto;
+  }
+}

@@ -29,6 +29,26 @@ function formatLabel(value) {
     .replace(/\b\w/g, (char) => char.toUpperCase());
 }
 
+function formatPage(value) {
+  if (!value || value === "unknown") return "Unknown";
+  try {
+    const url = new URL(value);
+    return url.hostname + (url.pathname || "/") + url.search;
+  } catch {
+    return String(value);
+  }
+}
+
+function formatReferrer(value) {
+  if (!value || value === "direct") return "Direct";
+  if (value === "manual-test") return "Manual Test";
+  try {
+    return new URL(value).hostname.replace(/^www\./, "");
+  } catch {
+    return formatLabel(value);
+  }
+}
+
 function renderList(elementId, rows, labelGetter) {
   const container = document.getElementById(elementId);
   if (!container) return;
@@ -109,6 +129,14 @@ async function loadStats() {
       const code = String(country.country || "").toUpperCase();
       return COUNTRY_NAMES[code] || (code || "Unknown");
     });
+
+    renderList("topPagesStats", data.top_pages, (row) =>
+      formatPage(row.page)
+    );
+
+    renderList("referrerStats", data.referrers, (row) =>
+      formatReferrer(row.referrer)
+    );
 
     dashboard.style.display = "block";
     statusBox.textContent = "Statistik berhasil dimuat.";
