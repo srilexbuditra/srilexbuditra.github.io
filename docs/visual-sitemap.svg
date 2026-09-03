@@ -12,7 +12,14 @@
 <circle cx="800" cy="20" r="540" fill="url(#glow)"/>
 <!-- brand -->
 <rect x="65" y="55" width="62" height="62" rx="31" fill="none" stroke="#ffb31a" stroke-width="3"/>
-<text x="96" y="95" text-anchor="middle" fill="#ffb31a" font-family="Arial,sans-serif" font-size="23" font-weight="700"><img src="/images/logo.avif" alt="Srilex Buditra Logo"></text>
+<image
+  href="../images/logo.avif"
+  x="5"
+  y="5"
+  width="58"
+  height="58"
+  preserveAspectRatio="xMidYMid meet"
+/>
 <text x="150" y="83" fill="#f5f9fc" font-family="Arial,sans-serif" font-size="24" font-weight="700">SRILEX BUDITRA</text>
 <text x="150" y="108" fill="#91a9bb" font-family="Arial,sans-serif" font-size="14" letter-spacing="2">FULL STACK DEVELOPER</text>
 
