@@ -8,6 +8,29 @@ Dokumen ini menggunakan dua riwayat versi agar nomor versi website utama tidak t
 
 ## A. Versi Website Utama
 
+### V11.6 — Repository Audit, Search Accessibility & Verification Hardening
+**3 September 2026**
+
+#### Diubah
+- Menyelesaikan audit menengah repository dan merapikan aset duplikat pada proyek Website Sekolah.
+- Mengarahkan preview Website Sekolah V2 ke aset canonical utama agar tidak menyimpan salinan yang tidak diperlukan.
+- Menyempurnakan komponen pencarian website, termasuk autocomplete, riwayat pencarian, pencarian populer, navigasi keyboard, dan sinkronisasi status ARIA.
+- Mempertahankan `search-enhancer.js` sebagai enhancement terpisah tanpa mengubah alur halaman hasil pencarian utama.
+
+#### Diperbaiki
+- Menghapus aset preview Website Sekolah V2 yang duplikat/besar dan memastikan referensi internal tetap valid.
+- Menyempurnakan state awal dan pembaruan `aria-expanded`, `aria-controls`, `aria-activedescendant`, `role="option"`, serta pengelolaan fokus pada saran pencarian.
+- Memperkuat kompatibilitas fitur pencarian pada desktop dan perangkat mobile.
+
+#### Keamanan & Verifikasi
+- Menambahkan backend verifikasi opsional berbasis Cloudflare Worker + KV untuk penerbitan dan pembacaan data dokumen terverifikasi.
+- Menambahkan dukungan publisher token pada endpoint penerbitan dokumen.
+- Mempertahankan fallback database statis `verify/data/documents.json` ketika API publisher tidak dikonfigurasi.
+
+#### Dokumentasi
+- Menambahkan `AUDIT_MENENGAH_V11.6.md`.
+- Memperbarui dokumentasi database/verifikasi dokumen melalui `VERIFY_DATABASE_README.md`.
+
 ### V11.5.2 — Performance Implementation Synchronization Fix
 **1 September 2026**
 
@@ -55,31 +78,6 @@ Dokumen ini menggunakan dua riwayat versi agar nomor versi website utama tidak t
 - Menambahkan dokumentasi arsitektur dan audit aset:
   - `ASSET_ARCHITECTURE_V11.4.md`
   - `ASSET_OPTIMIZATION_AUDIT.md`
-
----
-
-### V11.6 — Repository Audit, Search Accessibility & Verification Hardening
-**3 September 2026**
-
-#### Diubah
-- Menyelesaikan audit menengah repository dan merapikan aset duplikat pada proyek Website Sekolah.
-- Mengarahkan preview Website Sekolah V2 ke aset canonical utama agar tidak menyimpan salinan yang tidak diperlukan.
-- Menyempurnakan komponen pencarian website, termasuk autocomplete, riwayat pencarian, pencarian populer, navigasi keyboard, dan sinkronisasi status ARIA.
-- Mempertahankan `search-enhancer.js` sebagai enhancement terpisah tanpa mengubah alur halaman hasil pencarian utama.
-
-#### Diperbaiki
-- Menghapus aset preview Website Sekolah V2 yang duplikat/besar dan memastikan referensi internal tetap valid.
-- Menyempurnakan state awal dan pembaruan `aria-expanded`, `aria-controls`, `aria-activedescendant`, `role="option"`, serta pengelolaan fokus pada saran pencarian.
-- Memperkuat kompatibilitas fitur pencarian pada desktop dan perangkat mobile.
-
-#### Keamanan & Verifikasi
-- Menambahkan backend verifikasi opsional berbasis Cloudflare Worker + KV untuk penerbitan dan pembacaan data dokumen terverifikasi.
-- Menambahkan dukungan publisher token pada endpoint penerbitan dokumen.
-- Mempertahankan fallback database statis `verify/data/documents.json` ketika API publisher tidak dikonfigurasi.
-
-#### Dokumentasi
-- Menambahkan `AUDIT_MENENGAH_V11.6.md`.
-- Memperbarui dokumentasi database/verifikasi dokumen melalui `VERIFY_DATABASE_README.md`.
 
 ---
 
