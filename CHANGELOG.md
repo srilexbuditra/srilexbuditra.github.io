@@ -8,6 +8,26 @@ Dokumen ini menggunakan dua riwayat versi agar nomor versi website utama tidak t
 
 ## A. Versi Website Utama
 
+### V11.7 — Analytics V4
+**4 September 2026**
+
+#### Ditambahkan
+- Menambahkan Analytics V4 berbasis Cloudflare Workers + D1.
+- Menambahkan dashboard admin statistik melalui `admin/stats.html`, `admin/stats.css`, dan `admin/stats.js`.
+- Menambahkan pencatatan event kunjungan untuk statistik periode, tren, perangkat, browser, negara, halaman, referrer, dan recent visits.
+- Menggunakan visitor ID anonim `sb_visitor_id` untuk membedakan visitor baru dan kembali tanpa mengambil identitas akun sosial.
+- Menambahkan endpoint `/visitor` untuk pencatatan kunjungan dan `/stats` untuk statistik admin.
+
+#### Keamanan & Privasi
+- Melindungi endpoint `/stats` menggunakan `STATS_API_KEY` sebagai Cloudflare Worker Secret.
+- Mempertahankan API key di luar JavaScript publik dan repository GitHub.
+- Membatasi analytics pada data kunjungan anonim dan metadata teknis yang diperlukan untuk statistik.
+
+#### Dokumentasi
+- Menambahkan `ANALYTICS-V4.md` sebagai dokumentasi aktif Analytics V4.
+- Memperbarui `README.md` dan `DOCUMENTATION.md` untuk menandai awal pengembangan website V11.7.
+
+
 ### V11.6 — Repository Audit, Search Accessibility & Verification Hardening
 **3 September 2026**
 

@@ -10,6 +10,7 @@ Dokumen ini adalah indeks dokumentasi repository `srilexbuditra.github.io`. Guna
 | [CHANGELOG.md](CHANGELOG.md) | Riwayat versi dan perubahan website/modul. |
 | [DOCUMENTATION.md](DOCUMENTATION.md) | Indeks dokumentasi repository ini. |
 | [DOCUMENTATION_AUDIT_V11.6.md](DOCUMENTATION_AUDIT_V11.6.md) | Hasil audit dan klasifikasi seluruh file Markdown pada baseline V11.6. |
+| [ANALYTICS-V4.md](ANALYTICS-V4.md) | Dokumentasi aktif Analytics V4 untuk Cloudflare Workers, D1, visitor tracking anonim, dan dashboard admin. |
 
 ## 2. Security, Privacy, Legal & Accessibility
 
@@ -103,5 +104,6 @@ Audit dokumentasi V11.6 telah selesai dan dirangkum pada [DOCUMENTATION_AUDIT_V1
 
 ---
 
-**Documentation baseline:** V11.6  
-**Last documentation organization:** 3 September 2026
+**Stable documentation baseline:** V11.6  
+**Current development documentation:** V11.7 — Analytics V4  
+**Last documentation update:** 4 September 2026

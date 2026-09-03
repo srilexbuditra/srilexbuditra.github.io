@@ -2,7 +2,8 @@
 
 Website portfolio profesional **Srilex Buditra** yang berfungsi sebagai pusat personal branding, layanan pengembangan web, portfolio, studi kasus, estimasi biaya proyek, dan verifikasi dokumen.
 
-**Current documentation baseline:** V11.6  
+**Current development version:** V11.7  
+**Stable baseline:** V11.6  
 **Website:** https://srilexbuditra.work
 
 ## ✨ Fitur Utama
@@ -18,6 +19,7 @@ Website portfolio profesional **Srilex Buditra** yang berfungsi sebagai pusat pe
 - QR generator lokal melalui `local-qrcode.js` tanpa ketergantungan CDN untuk alur utama dokumen.
 - Pencarian internal, search suggestions, history, trending search, dan dukungan keyboard/ARIA.
 - Text-to-Speech (TTS).
+- Analytics V4 berbasis Cloudflare Workers + D1 dengan visitor ID anonim dan dashboard admin terproteksi.
 - SEO on-page, canonical URL, OpenSearch, sitemap, robots directives, dan structured data.
 - Halaman legal, privasi, keamanan, aksesibilitas, serta audit repository publik.
 
@@ -31,6 +33,7 @@ Project utama menggunakan arsitektur frontend statis dan layanan pendukung ringa
 - JSON / XML
 - GitHub Pages
 - Cloudflare Worker + KV untuk publisher/verifikasi otomatis (opsional)
+- Cloudflare Workers + D1 untuk Analytics V4
 
 Tidak ada secret admin atau kredensial database yang boleh disimpan di JavaScript publik.
 
@@ -52,6 +55,10 @@ Tidak ada secret admin atau kredensial database yang boleh disimpan di JavaScrip
 ├── robots.txt
 ├── opensearch.xml
 │
+├── admin/
+│   ├── stats.html
+│   ├── stats.css
+│   └── stats.js
 ├── assets/
 ├── images/
 ├── portfolio/
@@ -76,6 +83,7 @@ Tidak ada secret admin atau kredensial database yang boleh disimpan di JavaScrip
 │   └── V30_VERIFICATION_SETUP.md
 │
 ├── README.md
+├── ANALYTICS-V4.md
 ├── DOCUMENTATION.md
 ├── DOCUMENTATION_AUDIT_V11.6.md
 ├── CHANGELOG.md
@@ -120,6 +128,12 @@ Panduan teknis:
 Website menyediakan pencarian internal dengan suggestions, history/trending search, navigasi keyboard, dan atribut ARIA. Discoverability didukung oleh metadata halaman, canonical URL, structured data, sitemap, robots directives, OpenSearch, dan internal search index.
 
 Komitmen dan catatan aksesibilitas tersedia di **[ACCESSIBILITY.md](ACCESSIBILITY.md)**.
+
+## 📊 Analytics V4
+
+Mulai V11.7, website memiliki Analytics V4 berbasis Cloudflare Workers + D1. Sistem menggunakan visitor ID anonim pada browser untuk membedakan kunjungan baru dan kunjungan kembali tanpa mengambil identitas akun sosial secara tersembunyi. Dashboard statistik tersedia pada `admin/stats.html` dan endpoint statistik dilindungi `STATS_API_KEY` yang disimpan sebagai Cloudflare Worker Secret.
+
+Dokumentasi teknis: **[ANALYTICS-V4.md](ANALYTICS-V4.md)**.
 
 ## 🚀 Menjalankan Secara Lokal
 
