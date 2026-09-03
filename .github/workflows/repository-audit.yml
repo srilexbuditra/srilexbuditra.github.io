@@ -30,7 +30,7 @@ jobs:
         shell: bash
         run: |
           set -e
-          if git grep -nE '-----BEGIN (RSA |EC |OPENSSH )?PRIVATE KEY-----' -- ':!*.pdf' ':!*.png' ':!*.jpg' ':!*.jpeg'; then
+          if git grep -nE -e '-----BEGIN (RSA |EC |OPENSSH )?PRIVATE KEY-----' -- ':!*.pdf' ':!*.png' ':!*.jpg' ':!*.jpeg'; then
             echo "Private key marker found."
             exit 1
           fi
