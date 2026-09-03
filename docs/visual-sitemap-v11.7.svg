@@ -1,0 +1,137 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1260" viewBox="0 0 1600 1260">
+<defs>
+  <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#031426"/>
+    <stop offset="100%" stop-color="#010b14"/>
+  </linearGradient>
+  <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+    <feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#000000" flood-opacity="0.35"/>
+  </filter>
+</defs>
+<rect width="100%" height="100%" fill="url(#bg)"/>
+<circle cx="820" cy="-120" r="460" fill="#0a4267" opacity="0.28"/>
+<circle cx="1520" cy="520" r="360" fill="#06283f" opacity="0.30"/>
+
+<text x="80" y="82" fill="#f7fbff" font-family="Arial,Helvetica,sans-serif" font-size="42" font-weight="700">
+  Srilex Buditra — Visual Sitemap
+</text>
+<text x="80" y="122" fill="#ffb51b" font-family="Arial,Helvetica,sans-serif" font-size="24" font-weight="700">
+  Website V11.7 · Analytics V4
+</text>
+<text x="80" y="157" fill="#94abc0" font-family="Arial,Helvetica,sans-serif" font-size="18">
+  Dokumentasi arsitektur halaman — tidak mengubah visual/layout website produksi.
+</text>
+
+<!-- Root -->
+<rect x="570" y="205" rx="22" ry="22" width="460" height="96" fill="#06243a" stroke="#ffb51b" stroke-width="2.5" filter="url(#shadow)"/>
+<text x="800" y="244" text-anchor="middle" fill="#f7fbff" font-family="Arial,Helvetica,sans-serif" font-size="25" font-weight="700">srilexbuditra.work</text>
+<text x="800" y="274" text-anchor="middle" fill="#94abc0" font-family="Arial,Helvetica,sans-serif" font-size="16">V11.7 current development</text>
+
+<line x1="800" y1="301" x2="800" y2="345" stroke="#145a82" stroke-width="3"/>
+<line x1="220" y1="345" x2="1375" y2="345" stroke="#145a82" stroke-width="3"/>
+<line x1="220.0" y1="345" x2="220.0" y2="390" stroke="#145a82" stroke-width="3"/>
+<rect x="55" y="390" rx="18" ry="18" width="330" height="472" fill="#041b2d" stroke="#ffb51b" stroke-width="2" filter="url(#shadow)"/>
+<rect x="55" y="390" rx="18" ry="18" width="330" height="62" fill="#06243a" stroke="none"/>
+<text x="75" y="429" fill="#ffb51b" font-family="Arial,Helvetica,sans-serif" font-size="20" font-weight="700">PUBLIC / ROOT</text>
+<circle cx="77" cy="471" r="5" fill="#ffb51b"/>
+<text x="93" y="476" fill="#f7fbff" font-family="Arial,Helvetica,sans-serif" font-size="15.5" font-weight="700">Home</text>
+<text x="93" y="498" fill="#94abc0" font-family="Arial,Helvetica,sans-serif" font-size="12.5">/</text>
+<circle cx="77" cy="525" r="5" fill="#ffb51b"/>
+<text x="93" y="530" fill="#f7fbff" font-family="Arial,Helvetica,sans-serif" font-size="15.5" font-weight="700">Search</text>
+<text x="93" y="552" fill="#94abc0" font-family="Arial,Helvetica,sans-serif" font-size="12.5">/search.html</text>
+<circle cx="77" cy="579" r="5" fill="#ffb51b"/>
+<text x="93" y="584" fill="#f7fbff" font-family="Arial,Helvetica,sans-serif" font-size="15.5" font-weight="700">Privacy</text>
+<text x="93" y="606" fill="#94abc0" font-family="Arial,Helvetica,sans-serif" font-size="12.5">/privacy.html</text>
+<circle cx="77" cy="633" r="5" fill="#ffb51b"/>
+<text x="93" y="638" fill="#f7fbff" font-family="Arial,Helvetica,sans-serif" font-size="15.5" font-weight="700">Terms</text>
+<text x="93" y="660" fill="#94abc0" font-family="Arial,Helvetica,sans-serif" font-size="12.5">/terms.html</text>
+<circle cx="77" cy="687" r="5" fill="#ffb51b"/>
+<text x="93" y="692" fill="#f7fbff" font-family="Arial,Helvetica,sans-serif" font-size="15.5" font-weight="700">Security</text>
+<text x="93" y="714" fill="#94abc0" font-family="Arial,Helvetica,sans-serif" font-size="12.5">/security.html</text>
+<circle cx="77" cy="741" r="5" fill="#ffb51b"/>
+<text x="93" y="746" fill="#f7fbff" font-family="Arial,Helvetica,sans-serif" font-size="15.5" font-weight="700">404</text>
+<text x="93" y="768" fill="#94abc0" font-family="Arial,Helvetica,sans-serif" font-size="12.5">/404.html</text>
+<circle cx="77" cy="795" r="5" fill="#ffb51b"/>
+<text x="93" y="800" fill="#f7fbff" font-family="Arial,Helvetica,sans-serif" font-size="15.5" font-weight="700">Legacy Terms Redirect</text>
+<text x="93" y="822" fill="#94abc0" font-family="Arial,Helvetica,sans-serif" font-size="12.5">/term.html → /terms.html</text>
+<line x1="612.5" y1="345" x2="612.5" y2="390" stroke="#145a82" stroke-width="3"/>
+<rect x="430" y="390" rx="18" ry="18" width="365" height="688" fill="#041b2d" stroke="#22c5ee" stroke-width="2" filter="url(#shadow)"/>
+<rect x="430" y="390" rx="18" ry="18" width="365" height="62" fill="#06243a" stroke="none"/>
+<text x="450" y="429" fill="#22c5ee" font-family="Arial,Helvetica,sans-serif" font-size="20" font-weight="700">PORTFOLIO</text>
+<circle cx="452" cy="471" r="5" fill="#22c5ee"/>
+<text x="468" y="476" fill="#f7fbff" font-family="Arial,Helvetica,sans-serif" font-size="15.5" font-weight="700">Portfolio 404</text>
+<text x="468" y="498" fill="#94abc0" font-family="Arial,Helvetica,sans-serif" font-size="12.5">/portfolio/404.html</text>
+<circle cx="452" cy="525" r="5" fill="#22c5ee"/>
+<text x="468" y="530" fill="#f7fbff" font-family="Arial,Helvetica,sans-serif" font-size="15.5" font-weight="700">Aplikasi POS</text>
+<text x="468" y="552" fill="#94abc0" font-family="Arial,Helvetica,sans-serif" font-size="12.5">/portfolio/aplikasi-pos/</text>
+<circle cx="452" cy="579" r="5" fill="#22c5ee"/>
+<text x="468" y="584" fill="#f7fbff" font-family="Arial,Helvetica,sans-serif" font-size="15.5" font-weight="700">POS Case Study</text>
+<text x="468" y="606" fill="#94abc0" font-family="Arial,Helvetica,sans-serif" font-size="12.5">/portfolio/aplikasi-pos/detail.html</text>
+<circle cx="452" cy="633" r="5" fill="#22c5ee"/>
+<text x="468" y="638" fill="#f7fbff" font-family="Arial,Helvetica,sans-serif" font-size="15.5" font-weight="700">Sistem Administrasi</text>
+<text x="468" y="660" fill="#94abc0" font-family="Arial,Helvetica,sans-serif" font-size="12.5">/portfolio/sistem-administrasi/</text>
+<circle cx="452" cy="687" r="5" fill="#22c5ee"/>
+<text x="468" y="692" fill="#f7fbff" font-family="Arial,Helvetica,sans-serif" font-size="15.5" font-weight="700">Admin Case Study</text>
+<text x="468" y="714" fill="#94abc0" font-family="Arial,Helvetica,sans-serif" font-size="12.5">/portfolio/sistem-administrasi/detail.html</text>
+<circle cx="452" cy="741" r="5" fill="#22c5ee"/>
+<text x="468" y="746" fill="#f7fbff" font-family="Arial,Helvetica,sans-serif" font-size="15.5" font-weight="700">Website Sekolah</text>
+<text x="468" y="768" fill="#94abc0" font-family="Arial,Helvetica,sans-serif" font-size="12.5">/portfolio/website-sekolah/</text>
+<circle cx="452" cy="795" r="5" fill="#22c5ee"/>
+<text x="468" y="800" fill="#f7fbff" font-family="Arial,Helvetica,sans-serif" font-size="15.5" font-weight="700">Website Sekolah Detail</text>
+<text x="468" y="822" fill="#94abc0" font-family="Arial,Helvetica,sans-serif" font-size="12.5">/portfolio/website-sekolah/detail.html</text>
+<circle cx="452" cy="849" r="5" fill="#22c5ee"/>
+<text x="468" y="854" fill="#f7fbff" font-family="Arial,Helvetica,sans-serif" font-size="15.5" font-weight="700">Project Detail</text>
+<text x="468" y="876" fill="#94abc0" font-family="Arial,Helvetica,sans-serif" font-size="12.5">/portfolio/website-sekolah/project-deta…</text>
+<circle cx="452" cy="903" r="5" fill="#22c5ee"/>
+<text x="468" y="908" fill="#f7fbff" font-family="Arial,Helvetica,sans-serif" font-size="15.5" font-weight="700">Website Sekolah V2</text>
+<text x="468" y="930" fill="#94abc0" font-family="Arial,Helvetica,sans-serif" font-size="12.5">/portfolio/website-sekolah/v2/</text>
+<circle cx="452" cy="957" r="5" fill="#22c5ee"/>
+<text x="468" y="962" fill="#f7fbff" font-family="Arial,Helvetica,sans-serif" font-size="15.5" font-weight="700">Website Sekolah V2 Detail</text>
+<text x="468" y="984" fill="#94abc0" font-family="Arial,Helvetica,sans-serif" font-size="12.5">/portfolio/website-sekolah/v2/detail.html</text>
+<circle cx="452" cy="1011" r="5" fill="#22c5ee"/>
+<text x="468" y="1016" fill="#f7fbff" font-family="Arial,Helvetica,sans-serif" font-size="15.5" font-weight="700">TJKT SMKN 1 Kota Bengkulu</text>
+<text x="468" y="1038" fill="#94abc0" font-family="Arial,Helvetica,sans-serif" font-size="12.5">/portfolio/website-sekolah/tjkt-smkn1ko…</text>
+<line x1="1002.5" y1="345" x2="1002.5" y2="390" stroke="#145a82" stroke-width="3"/>
+<rect x="825" y="390" rx="18" ry="18" width="355" height="418" fill="#041b2d" stroke="#00d86a" stroke-width="2" filter="url(#shadow)"/>
+<rect x="825" y="390" rx="18" ry="18" width="355" height="62" fill="#06243a" stroke="none"/>
+<text x="845" y="429" fill="#00d86a" font-family="Arial,Helvetica,sans-serif" font-size="20" font-weight="700">DOCUMENT VERIFICATION</text>
+<circle cx="847" cy="471" r="5" fill="#00d86a"/>
+<text x="863" y="476" fill="#f7fbff" font-family="Arial,Helvetica,sans-serif" font-size="15.5" font-weight="700">Verification Entry</text>
+<text x="863" y="498" fill="#94abc0" font-family="Arial,Helvetica,sans-serif" font-size="12.5">/verify/</text>
+<circle cx="847" cy="525" r="5" fill="#00d86a"/>
+<text x="863" y="530" fill="#f7fbff" font-family="Arial,Helvetica,sans-serif" font-size="15.5" font-weight="700">Verify Document</text>
+<text x="863" y="552" fill="#94abc0" font-family="Arial,Helvetica,sans-serif" font-size="12.5">/verify/verify.html</text>
+<circle cx="847" cy="579" r="5" fill="#00d86a"/>
+<text x="863" y="584" fill="#f7fbff" font-family="Arial,Helvetica,sans-serif" font-size="15.5" font-weight="700">Publisher</text>
+<text x="863" y="606" fill="#94abc0" font-family="Arial,Helvetica,sans-serif" font-size="12.5">/verify/publisher.html</text>
+<circle cx="847" cy="633" r="5" fill="#00d86a"/>
+<text x="863" y="638" fill="#f7fbff" font-family="Arial,Helvetica,sans-serif" font-size="15.5" font-weight="700">Invalid Document</text>
+<text x="863" y="660" fill="#94abc0" font-family="Arial,Helvetica,sans-serif" font-size="12.5">/verify/invalid.html</text>
+<circle cx="847" cy="687" r="5" fill="#00d86a"/>
+<text x="863" y="692" fill="#f7fbff" font-family="Arial,Helvetica,sans-serif" font-size="15.5" font-weight="700">Verify 404</text>
+<text x="863" y="714" fill="#94abc0" font-family="Arial,Helvetica,sans-serif" font-size="12.5">/verify/404.html</text>
+<circle cx="847" cy="741" r="5" fill="#00d86a"/>
+<text x="863" y="746" fill="#f7fbff" font-family="Arial,Helvetica,sans-serif" font-size="15.5" font-weight="700">Cloudflare Worker + KV</text>
+<text x="863" y="768" fill="#94abc0" font-family="Arial,Helvetica,sans-serif" font-size="12.5">API backend / documents</text>
+<line x1="1377.5" y1="345" x2="1377.5" y2="390" stroke="#145a82" stroke-width="3"/>
+<rect x="1210" y="390" rx="18" ry="18" width="335" height="256" fill="#041b2d" stroke="#ffd04d" stroke-width="2" filter="url(#shadow)"/>
+<rect x="1210" y="390" rx="18" ry="18" width="335" height="62" fill="#06243a" stroke="none"/>
+<text x="1230" y="429" fill="#ffd04d" font-family="Arial,Helvetica,sans-serif" font-size="20" font-weight="700">ADMIN / ANALYTICS V4</text>
+<circle cx="1232" cy="471" r="5" fill="#ffd04d"/>
+<text x="1248" y="476" fill="#f7fbff" font-family="Arial,Helvetica,sans-serif" font-size="15.5" font-weight="700">Visitor Statistics</text>
+<text x="1248" y="498" fill="#94abc0" font-family="Arial,Helvetica,sans-serif" font-size="12.5">/admin/stats.html</text>
+<circle cx="1232" cy="525" r="5" fill="#ffd04d"/>
+<text x="1248" y="530" fill="#f7fbff" font-family="Arial,Helvetica,sans-serif" font-size="15.5" font-weight="700">Analytics API</text>
+<text x="1248" y="552" fill="#94abc0" font-family="Arial,Helvetica,sans-serif" font-size="12.5">Worker /visitor + /stats</text>
+<circle cx="1232" cy="579" r="5" fill="#ffd04d"/>
+<text x="1248" y="584" fill="#f7fbff" font-family="Arial,Helvetica,sans-serif" font-size="15.5" font-weight="700">Storage</text>
+<text x="1248" y="606" fill="#94abc0" font-family="Arial,Helvetica,sans-serif" font-size="12.5">Cloudflare D1</text>
+
+<line x1="80" y1="1167" x2="1520" y2="1167" stroke="#145a82" stroke-width="1"/>
+<text x="80" y="1195" fill="#94abc0" font-family="Arial,Helvetica,sans-serif" font-size="14">
+  Warna mengikuti identitas visual website saat ini: navy panel, gold, cyan, green, dan teks terang.
+</text>
+<text x="80" y="1223" fill="#94abc0" font-family="Arial,Helvetica,sans-serif" font-size="14">
+  Catatan: halaman 404 subfolder tetap ada sebagai fallback; sitemap ini menampilkan rute utama dan arsitektur fungsional.
+</text>
+</svg>
