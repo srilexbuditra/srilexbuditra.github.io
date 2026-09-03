@@ -4,7 +4,7 @@ Tanggal audit: 3 September 2026
 
 ## Ringkasan
 
-Repository memiliki 35 file Markdown. Audit ini memisahkan dokumentasi aktif, referensi teknis, catatan historis, dokumentasi subproject, dan template operasional GitHub. Tidak ada file yang dihapus pada tahap ini agar histori pengembangan dan tautan internal tetap aman.
+Repository saat ini memiliki 36 file Markdown setelah penambahan dokumen audit ini dan penyelesaian Archive Migration. Audit memisahkan dokumentasi aktif, referensi teknis, catatan historis, dokumentasi subproject, dan template operasional GitHub. Enam engineering notes historis dipindahkan dari root ke `docs/archive/`; tidak ada histori dokumentasi yang dihapus.
 
 ## A. Dokumentasi aktif — pertahankan
 
@@ -68,7 +68,7 @@ File ini bukan dokumentasi produk; lokasinya sudah sesuai dengan konvensi GitHub
 
 ## Keputusan audit
 
-1. Tidak menghapus Markdown apa pun pada V11.6.
+1. Tidak menghapus histori Markdown pada V11.6; dokumen historis yang tidak lagi aktif dipindahkan ke `docs/archive/`.
 2. Menetapkan `README.md` sebagai halaman pengantar dan `DOCUMENTATION.md` sebagai indeks dokumentasi.
 3. Menetapkan `CHANGELOG.md` sebagai sumber histori versi.
 4. Enam engineering notes lama telah dipindahkan ke `docs/archive/` setelah referensi internal diverifikasi.

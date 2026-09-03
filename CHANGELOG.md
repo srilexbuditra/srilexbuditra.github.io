@@ -30,6 +30,9 @@ Dokumen ini menggunakan dua riwayat versi agar nomor versi website utama tidak t
 #### Dokumentasi
 - Menambahkan `AUDIT_MENENGAH_V11.6.md`.
 - Memperbarui dokumentasi database/verifikasi dokumen melalui `VERIFY_DATABASE_README.md`.
+- Menambahkan `DOCUMENTATION.md` sebagai indeks dokumentasi repository dan `DOCUMENTATION_AUDIT_V11.6.md` sebagai catatan audit dokumentasi V11.6.
+- Memindahkan enam engineering notes historis ke `docs/archive/` setelah referensi internal diverifikasi.
+- Memperbarui tautan dokumentasi agar catatan historis tetap dapat diakses tanpa memenuhi root repository.
 
 ### V11.5.2 — Performance Implementation Synchronization Fix
 **1 September 2026**
@@ -80,11 +83,6 @@ Dokumen ini menggunakan dua riwayat versi agar nomor versi website utama tidak t
   - `ASSET_OPTIMIZATION_AUDIT.md`
 
 ---
-
-### Documentation archive migration
-- Added `DOCUMENTATION.md` as the repository documentation index and `DOCUMENTATION_AUDIT_V11.6.md` as the V11.6 documentation audit record.
-- Moved six historical engineering notes to `docs/archive/` after verifying repository references.
-- Updated documentation links so historical implementation notes remain accessible without cluttering the repository root.
 
 ## B. Riwayat Modul Project Estimator & Secure Document
 

@@ -59,6 +59,9 @@ Tidak ada secret admin atau kredensial database yang boleh disimpan di JavaScrip
 │   ├── sistem-administrasi/
 │   └── website-sekolah/
 │
+├── docs/
+│   └── archive/            # Historical engineering notes
+│
 ├── verify/
 │   ├── index.html
 │   ├── verify.html
@@ -74,6 +77,7 @@ Tidak ada secret admin atau kredensial database yang boleh disimpan di JavaScrip
 │
 ├── README.md
 ├── DOCUMENTATION.md
+├── DOCUMENTATION_AUDIT_V11.6.md
 ├── CHANGELOG.md
 ├── SECURITY.md
 ├── PRIVACY.md
