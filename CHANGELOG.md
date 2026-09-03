@@ -58,15 +58,148 @@ Dokumen ini menggunakan dua riwayat versi agar nomor versi website utama tidak t
 
 ---
 
+### V11.6 — Repository Audit, Search Accessibility & Verification Hardening
+**3 September 2026**
+
+#### Diubah
+- Menyelesaikan audit menengah repository dan merapikan aset duplikat pada proyek Website Sekolah.
+- Mengarahkan preview Website Sekolah V2 ke aset canonical utama agar tidak menyimpan salinan yang tidak diperlukan.
+- Menyempurnakan komponen pencarian website, termasuk autocomplete, riwayat pencarian, pencarian populer, navigasi keyboard, dan sinkronisasi status ARIA.
+- Mempertahankan `search-enhancer.js` sebagai enhancement terpisah tanpa mengubah alur halaman hasil pencarian utama.
+
+#### Diperbaiki
+- Menghapus aset preview Website Sekolah V2 yang duplikat/besar dan memastikan referensi internal tetap valid.
+- Menyempurnakan state awal dan pembaruan `aria-expanded`, `aria-controls`, `aria-activedescendant`, `role="option"`, serta pengelolaan fokus pada saran pencarian.
+- Memperkuat kompatibilitas fitur pencarian pada desktop dan perangkat mobile.
+
+#### Keamanan & Verifikasi
+- Menambahkan backend verifikasi opsional berbasis Cloudflare Worker + KV untuk penerbitan dan pembacaan data dokumen terverifikasi.
+- Menambahkan dukungan publisher token pada endpoint penerbitan dokumen.
+- Mempertahankan fallback database statis `verify/data/documents.json` ketika API publisher tidak dikonfigurasi.
+
+#### Dokumentasi
+- Menambahkan `AUDIT_MENENGAH_V11.6.md`.
+- Memperbarui dokumentasi database/verifikasi dokumen melalui `VERIFY_DATABASE_README.md`.
+
+---
+
 ## B. Riwayat Modul Project Estimator & Secure Document
 
 > Nomor versi pada bagian ini adalah riwayat pengembangan modul. Nomor tersebut **bukan** versi keseluruhan website.
 
+### V31 — Balanced Vertical Signature Cards
+**3 September 2026**
+
+#### Diperbaiki
+- Menyeimbangkan posisi vertikal isi kartu tanda tangan pada hasil Print/PDF.
+- Menjaga nama, tanggal, dan tanda tangan tetap berada pada safe area kartu A4.
+
+---
+
+### V30 — Secure Verification Publisher & Signature Normalization
+**3 September 2026**
+
+#### Ditambahkan
+- Menambahkan Cloudflare Worker + KV sebagai backend verifikasi dokumen opsional.
+- Menambahkan endpoint penerbitan dokumen dengan autentikasi `PUBLISHER_TOKEN`.
+- Menambahkan dukungan `SB_VERIFY_API` pada estimator untuk mengirim record dokumen ketika backend dikonfigurasi.
+
+#### Diperbaiki
+- Menormalisasi stage tanda tangan pada mode Print/PDF agar ukuran dan posisi kedua pihak lebih konsisten.
+
+---
+
+### V29 — Local Verification QR & Larger Signatures
+**3 September 2026**
+
+#### Diubah
+- Mengganti ketergantungan QR eksternal dengan QR SVG inline yang dibuat sepenuhnya di browser.
+- Memastikan QR verifikasi tetap dapat dirender pada Chrome, browser mobile, in-app browser, dan print engine tanpa host gambar eksternal.
+- Memperbesar tanda tangan pada hasil Print/PDF tanpa menambah tinggi kartu A4.
+
+---
+
+### V28 — Professional Verification QR & Signature Alignment
+
+#### Diperbaiki
+- Menetapkan QR verifikasi profesional berukuran sekitar 3 cm × 3 cm pada dokumen cetak.
+- Menyempurnakan ukuran dan optical centering tanda tangan pada kartu Print/PDF.
+
+---
+
+### V27 — Document Verification QR & Database
+
+#### Ditambahkan
+- Menambahkan QR verifikasi pada Project Cost Estimate yang mengarah ke `/verify/?id=DOCUMENT_ID`.
+- Menambahkan database statis `verify/data/documents.json` sebagai fallback verifikasi pada deployment statis.
+- Menambahkan dokumentasi `VERIFY_DATABASE_README.md`.
+
+---
+
+### V24 — Signature Card Height & Caption Safe Zone
+
+#### Diperbaiki
+- Menyetarakan tinggi kartu tanda tangan dan menyediakan safe zone untuk caption agar tidak menyentuh outline kartu.
+
+---
+
+### V23 — Signature Date Safe Alignment
+
+#### Diperbaiki
+- Memisahkan baris tanda tangan, nama, dan tanggal agar kedua kartu tetap simetris dan teks tidak bertabrakan dengan batas kartu.
+
+---
+
+### V22 — Print Signature Caption Alignment
+
+#### Diperbaiki
+- Memusatkan caption dan identitas pada kedua kartu tanda tangan khusus mode Print/PDF.
+
+---
+
+### V21 — Readable A4 Portrait One-Page
+
+#### Diubah
+- Menyesuaikan engine cetak agar tetap satu halaman A4 portrait dengan tipografi yang lebih mudah dibaca.
+- Menggunakan pengukuran tinggi report aktual dan skala minimum adaptif untuk perbedaan print engine antar-browser.
+
+---
+
+### V20 — A4 Portrait One-Page Print
+
+#### Diubah
+- Mengubah canvas Print/PDF menjadi A4 portrait satu halaman dengan margin cetak terkontrol.
+- Menjaga tampilan layar dan Secure Document tetap tidak berubah.
+
+---
+
 ### V19 — A4 One-Page Print Engine
 
 #### Diubah
-- Mengembangkan strategi cetak/PDF agar dokumen estimator lebih terkontrol dalam format A4 satu halaman.
+- Mengembangkan strategi cetak/PDF satu halaman lintas browser menggunakan ukuran fisik A4 dan penyesuaian skala.
 - Menyempurnakan tata letak khusus mode cetak tanpa mengubah tampilan utama website.
+
+---
+
+### V18 — A4 Single-Page Print Canvas
+
+#### Diubah
+- Menambahkan canvas cetak A4 satu halaman sebagai tahap awal optimasi estimator untuk Print/Save PDF.
+
+---
+
+### V17 — Official Payment Accounts
+
+#### Ditambahkan
+- Menambahkan bagian rekening pembayaran resmi pada Project Cost Estimate.
+- Menambahkan kartu bank dan catatan pembayaran khusus dokumen estimator.
+
+---
+
+### V16 — Official Logo in PDF Header
+
+#### Diubah
+- Mengganti brand mark pada header PDF dengan logo resmi Srilex Buditra tanpa mengubah layout dokumen lainnya.
 
 ---
 
@@ -131,8 +264,8 @@ Dokumen ini menggunakan dua riwayat versi agar nomor versi website utama tidak t
 ## Prinsip Penomoran Versi
 
 - **Versi Website Utama** menggunakan riwayat versi keseluruhan proyek, misalnya `V11.4`, `V11.5.1`, dan `V11.5.2`.
-- **Versi Modul Project Estimator & Secure Document** mempertahankan riwayat pengembangan internal modul, misalnya `V2`, `V3`, `V5`, `V7`, `V11`, `V14`, dan `V19`.
-- Kedua sistem versi dipisahkan agar tidak menimbulkan kesan bahwa `V19` adalah versi keseluruhan website yang lebih baru daripada `V11.5.2`.
+- **Versi Modul Project Estimator & Secure Document** mempertahankan riwayat pengembangan internal modul, misalnya `V2`, `V3`, `V5`, `V7`, `V11`, `V14`, `V16`–`V24`, dan `V27`–`V31`.
+- Kedua sistem versi dipisahkan agar tidak menimbulkan kesan bahwa `V31` adalah versi keseluruhan website yang lebih baru daripada `V11.6`.
 
 ---
 
