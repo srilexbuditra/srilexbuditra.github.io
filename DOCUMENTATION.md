@@ -9,6 +9,7 @@ Dokumen ini adalah indeks dokumentasi repository `srilexbuditra.github.io`. Guna
 | [README.md](README.md) | Gambaran umum project, fitur, arsitektur, dan titik masuk dokumentasi. |
 | [CHANGELOG.md](CHANGELOG.md) | Riwayat versi dan perubahan website/modul. |
 | [DOCUMENTATION.md](DOCUMENTATION.md) | Indeks dokumentasi repository ini. |
+| [DOCUMENTATION_AUDIT_V11.6.md](DOCUMENTATION_AUDIT_V11.6.md) | Hasil audit dan klasifikasi seluruh file Markdown pada baseline V11.6. |
 
 ## 2. Security, Privacy, Legal & Accessibility
 
@@ -94,16 +95,17 @@ Saat ada perubahan berikutnya:
 5. Jangan menghapus engineering notes lama hanya karena sudah ada versi baru; pindahkan ke arsip hanya setelah dipastikan tidak lagi menjadi referensi aktif.
 6. Jangan menyimpan token, API secret, password, private key, atau kredensial layanan pada file Markdown maupun source publik.
 
-## 10. Rencana Rapikan Dokumentasi Berikutnya
+## 10. Status Audit & Rencana Berikutnya
 
-Tahap selanjutnya adalah mengaudit dokumen historis untuk menentukan mana yang:
+Audit dokumentasi V11.6 telah selesai dan dirangkum pada [DOCUMENTATION_AUDIT_V11.6.md](DOCUMENTATION_AUDIT_V11.6.md). Enam engineering notes lama ditetapkan sebagai kandidat `docs/archive/`.
 
-- tetap berada di root karena masih aktif;
-- dipindahkan ke `docs/archive/` karena hanya menjadi histori;
-- digabungkan karena informasinya tumpang tindih; atau
-- diperbarui karena sudah tidak sesuai dengan source code terbaru.
+Tahap berikutnya adalah **Archive Migration**, dengan ketentuan:
 
-Pemindahan/merge sebaiknya dilakukan setelah audit isi, agar link dokumentasi dan histori perubahan tidak rusak.
+- verifikasi semua referensi/link menuju kandidat arsip;
+- pindahkan hanya dokumen historis yang sudah dinyatakan aman;
+- perbarui tautan pada indeks dokumentasi;
+- catat perubahan struktur dokumentasi pada `CHANGELOG.md`;
+- jangan menghapus histori engineering.
 
 ---
 
