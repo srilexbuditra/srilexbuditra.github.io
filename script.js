@@ -482,21 +482,46 @@ updateEstimate();
    Records a page visit without blocking the website UI.
    ========================================================= */
 (() => {
-  const VISITOR_API = 'https://srilexbuditra-visitors-api.srilexbuditra.workers.dev/visitor';
+  const VISITOR_API =
+    'https://srilexbuditra-visitors-api.srilexbuditra.workers.dev/visitor';
+
+  const STORAGE_KEY = 'sb_visitor_id';
 
   const registerVisitor = async () => {
     try {
-      await fetch(VISITOR_API, {
+      // Ambil ID visitor lama jika browser ini sudah pernah berkunjung
+      const savedVisitorId = localStorage.getItem(STORAGE_KEY);
+
+      const response = await fetch(VISITOR_API, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json'
+        },
         body: JSON.stringify({
+          visitor_id: savedVisitorId || null,
           page: window.location.href,
           referrer: document.referrer || 'direct'
         }),
         keepalive: true
       });
+
+      if (!response.ok) {
+        throw new Error(`Visitor API HTTP ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      // Simpan ID yang diberikan Cloudflare
+      if (
+        data &&
+        data.ok === true &&
+        typeof data.visitor_id === 'string' &&
+        data.visitor_id.startsWith('v_')
+      ) {
+        localStorage.setItem(STORAGE_KEY, data.visitor_id);
+      }
     } catch (error) {
-      // Analytics must never interrupt the visitor's experience.
+      // Tracking tidak boleh mengganggu fungsi utama website
       console.debug('Visitor analytics unavailable.', error);
     }
   };
