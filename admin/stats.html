@@ -6,90 +6,9 @@
 
   <title>Visitor Statistics | Srilex Buditra</title>
 
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+   <link rel="stylesheet" href="./stats.css">
 
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #0b1120;
-      color: #ffffff;
-    }
 
-    .container {
-      width: min(100% - 30px, 1000px);
-      margin: 50px auto;
-    }
-
-    h1 {
-      margin-bottom: 8px;
-    }
-
-    .subtitle {
-      color: #94a3b8;
-      margin-bottom: 30px;
-    }
-
-    .login,
-    .card {
-      background: #111827;
-      border: 1px solid #263244;
-      border-radius: 16px;
-      padding: 22px;
-    }
-
-    .login {
-      max-width: 500px;
-      margin-bottom: 30px;
-    }
-
-    label {
-      display: block;
-      margin-bottom: 8px;
-    }
-
-    input {
-      width: 100%;
-      padding: 13px;
-      border-radius: 8px;
-      border: 1px solid #475569;
-      background: #0f172a;
-      color: white;
-      margin-bottom: 12px;
-    }
-
-    button {
-      padding: 12px 20px;
-      border: 0;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: bold;
-    }
-
-    .cards {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 16px;
-      margin-top: 20px;
-    }
-
-    .number {
-      font-size: 38px;
-      font-weight: bold;
-      margin-top: 10px;
-    }
-
-    .status {
-      margin-top: 15px;
-      color: #94a3b8;
-    }
-
-    #dashboard {
-      display: none;
-    }
-  </style>
 </head>
 
 <body>
@@ -136,75 +55,9 @@
 
 </div>
 
-<script>
-const STATS_API =
-  'https://srilexbuditra-visitors-api.srilexbuditra.workers.dev/stats';
+<script src="./stats.js"></script>
 
-const apiKeyInput = document.getElementById('apiKey');
-const loadBtn = document.getElementById('loadBtn');
-const statusBox = document.getElementById('status');
-const dashboard = document.getElementById('dashboard');
-
-async function loadStats() {
-
-  const key = apiKeyInput.value.trim();
-
-  if (!key) {
-    statusBox.textContent = 'Masukkan API Key terlebih dahulu.';
-    return;
-  }
-
-  statusBox.textContent = 'Mengambil data statistik...';
-  dashboard.style.display = 'none';
-
-  try {
-
-    const response = await fetch(STATS_API, {
-      method: 'GET',
-      headers: {
-        'Authorization': 'Bearer ' + key
-      }
-    });
-
-    if (response.status === 401) {
-      throw new Error('API Key salah atau tidak diizinkan.');
-    }
-
-    if (!response.ok) {
-      throw new Error('HTTP Error ' + response.status);
-    }
-
-    const data = await response.json();
-
-    if (!data.ok) {
-      throw new Error(data.error || 'Gagal mengambil statistik.');
-    }
-
-    document.getElementById('totalVisitors').textContent =
-      data.total_visitors ?? 0;
-
-    document.getElementById('totalVisits').textContent =
-      data.total_visits ?? 0;
-
-    dashboard.style.display = 'block';
-    statusBox.textContent = 'Statistik berhasil dimuat.';
-
-  } catch (error) {
-
-    console.error(error);
-    statusBox.textContent = error.message;
-
-  }
-}
-
-loadBtn.addEventListener('click', loadStats);
-
-apiKeyInput.addEventListener('keydown', function(event) {
-  if (event.key === 'Enter') {
-    loadStats();
-  }
-});
-</script>
-
+</body>
+</html>
 </body>
 </html>
