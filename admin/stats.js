@@ -6,6 +6,58 @@ const loadBtn = document.getElementById("loadBtn");
 const statusBox = document.getElementById("status");
 const dashboard = document.getElementById("dashboard");
 
+const COUNTRY_NAMES = {
+  ID: "🇮🇩 Indonesia",
+  US: "🇺🇸 United States",
+  SG: "🇸🇬 Singapore",
+  MY: "🇲🇾 Malaysia",
+  AU: "🇦🇺 Australia",
+  GB: "🇬🇧 United Kingdom",
+  JP: "🇯🇵 Japan",
+  CN: "🇨🇳 China",
+  IN: "🇮🇳 India",
+  DE: "🇩🇪 Germany",
+  FR: "🇫🇷 France",
+  NL: "🇳🇱 Netherlands",
+  CA: "🇨🇦 Canada"
+};
+
+function formatLabel(value) {
+  if (!value) return "Unknown";
+  return String(value)
+    .replace(/[_-]+/g, " ")
+    .replace(/\b\w/g, (char) => char.toUpperCase());
+}
+
+function renderList(elementId, rows, labelGetter) {
+  const container = document.getElementById(elementId);
+  if (!container) return;
+
+  container.innerHTML = "";
+
+  if (!Array.isArray(rows) || rows.length === 0) {
+    const empty = document.createElement("div");
+    empty.className = "stats-empty";
+    empty.textContent = "Belum ada data.";
+    container.appendChild(empty);
+    return;
+  }
+
+  rows.forEach((row) => {
+    const item = document.createElement("div");
+    item.className = "stats-row";
+
+    const label = document.createElement("span");
+    label.textContent = labelGetter(row);
+
+    const total = document.createElement("strong");
+    total.textContent = String(row.total ?? 0);
+
+    item.append(label, total);
+    container.appendChild(item);
+  });
+}
+
 async function loadStats() {
   const key = apiKeyInput.value.trim();
 
@@ -16,13 +68,14 @@ async function loadStats() {
 
   statusBox.textContent = "Mengambil data statistik...";
   dashboard.style.display = "none";
+  loadBtn.disabled = true;
 
   try {
     const response = await fetch(STATS_API, {
       method: "GET",
       headers: {
-  "Authorization": "Bearer " + key
-}
+        Authorization: "Bearer " + key
+      }
     });
 
     if (!response.ok) {
@@ -30,9 +83,7 @@ async function loadStats() {
         throw new Error("API Key tidak valid.");
       }
 
-      throw new Error(
-        "Gagal mengambil statistik. HTTP " + response.status
-      );
+      throw new Error("Gagal mengambil statistik. HTTP " + response.status);
     }
 
     const data = await response.json();
@@ -44,46 +95,28 @@ async function loadStats() {
       data.total_visits ?? 0;
 
     document.getElementById("visitorsToday").textContent =
-  data.visitors_today ?? 0;
+      data.visitors_today ?? 0;
 
-    const deviceStats = document.getElementById("deviceStats");
+    renderList("deviceStats", data.devices, (device) =>
+      formatLabel(device.device_type)
+    );
 
-deviceStats.innerHTML = "";
+    renderList("browserStats", data.browsers, (browser) =>
+      formatLabel(browser.browser)
+    );
 
-(data.devices || []).forEach(function (device) {
-  const item = document.createElement("div");
-  item.textContent =
-    (device.device_type || "Unknown") + ": " + (device.total || 0);
-  deviceStats.appendChild(item);
-});
-
-    const browserStats = document.getElementById("browserStats");
-
-browserStats.innerHTML = "";
-
-(data.browsers || []).forEach(function (browser) {
-  const item = document.createElement("div");
-  item.textContent =
-    (browser.browser || "Unknown") + ": " + (browser.total || 0);
-  browserStats.appendChild(item);
-});
-
-    const countryStats = document.getElementById("countryStats");
-
-countryStats.innerHTML = "";
-
-(data.countries || []).forEach(function (country) {
-  const item = document.createElement("div");
-  item.textContent =
-    (country.country || "Unknown") + ": " + (country.total || 0);
-  countryStats.appendChild(item);
-});
+    renderList("countryStats", data.countries, (country) => {
+      const code = String(country.country || "").toUpperCase();
+      return COUNTRY_NAMES[code] || (code || "Unknown");
+    });
 
     dashboard.style.display = "block";
     statusBox.textContent = "Statistik berhasil dimuat.";
   } catch (error) {
     console.error(error);
     statusBox.textContent = error.message;
+  } finally {
+    loadBtn.disabled = false;
   }
 }
 

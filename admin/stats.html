@@ -3,81 +3,61 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <title>Visitor Statistics | Srilex Buditra</title>
-
-   <link rel="stylesheet" href="stats.css">
-
-
+  <link rel="stylesheet" href="stats.css">
 </head>
-
 <body>
+  <main class="container">
+    <h1>Visitor Statistics</h1>
+    <div class="subtitle">Srilex Buditra Website Analytics</div>
 
-<div class="container">
+    <section class="login" id="loginBox">
+      <label for="apiKey">Stats API Key</label>
+      <input
+        type="password"
+        id="apiKey"
+        placeholder="Masukkan STATS_API_KEY"
+        autocomplete="off"
+      >
+      <button id="loadBtn" type="button">Buka Statistik</button>
+      <div class="status" id="status" aria-live="polite"></div>
+    </section>
 
-  <h1>Visitor Statistics</h1>
-  <div class="subtitle">Srilex Buditra Website Analytics</div>
+    <section id="dashboard">
+      <div class="cards">
+        <article class="card">
+          <div>Total Visitors</div>
+          <div class="number" id="totalVisitors">0</div>
+        </article>
 
-  <div class="login" id="loginBox">
+        <article class="card">
+          <div>Total Visits</div>
+          <div class="number" id="totalVisits">0</div>
+        </article>
 
-    <label for="apiKey">Stats API Key</label>
+        <article class="card">
+          <div>Visitors Today</div>
+          <div class="number" id="visitorsToday">0</div>
+        </article>
 
-    <input
-      type="password"
-      id="apiKey"
-      placeholder="Masukkan STATS_API_KEY"
-      autocomplete="off"
-    >
+        <section class="stats-section">
+          <h2>Device Statistics</h2>
+          <div class="stats-list" id="deviceStats"></div>
+        </section>
 
-    <button id="loadBtn">Buka Statistik</button>
+        <section class="stats-section">
+          <h2>Browser Statistics</h2>
+          <div class="stats-list" id="browserStats"></div>
+        </section>
 
-    <div class="status" id="status"></div>
-
-  </div>
-
-  <div id="dashboard">
-
-    <div class="cards">
-
-      <div class="card">
-        <div>Total Visitors</div>
-        <div class="number" id="totalVisitors">0</div>
+        <section class="stats-section">
+          <h2>Country Statistics</h2>
+          <div class="stats-list" id="countryStats"></div>
+        </section>
       </div>
+    </section>
+  </main>
 
-      <div class="card">
-        <div>Total Visits</div>
-        <div class="number" id="totalVisits">0</div>
-      </div>
-
-      <div class="card">
-  <div>Visitors Today</div>
-  <div class="number" id="visitorsToday">0</div>
-</div>
-
-      <div class="stats-section">
-  <h2>Device Statistics</h2>
-  <div id="deviceStats"></div>
-</div>
-
-      <div class="stats-section">
-  <h2>Browser Statistics</h2>
-  <div id="browserStats"></div>
-</div>
-
-      <div class="stats-section">
-  <h2>Country Statistics</h2>
-  <div id="countryStats"></div>
-</div>
-      
-    </div>
-
-  </div>
-
-</div>
-
-<script src="./stats.js"></script>
-
-</body>
-</html>
+  <script src="./stats.js"></script>
 </body>
 </html>
