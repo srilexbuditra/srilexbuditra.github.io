@@ -43,6 +43,9 @@ async function loadStats() {
     document.getElementById("totalVisits").textContent =
       data.total_visits ?? 0;
 
+    document.getElementById("visitorsToday").textContent =
+  data.visitors_today ?? 0;
+
     dashboard.style.display = "block";
     statusBox.textContent = "Statistik berhasil dimuat.";
   } catch (error) {
