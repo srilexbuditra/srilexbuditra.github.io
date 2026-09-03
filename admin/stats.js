@@ -57,6 +57,17 @@ deviceStats.innerHTML = "";
   deviceStats.appendChild(item);
 });
 
+    const browserStats = document.getElementById("browserStats");
+
+browserStats.innerHTML = "";
+
+(data.browsers || []).forEach(function (browser) {
+  const item = document.createElement("div");
+  item.textContent =
+    (browser.browser || "Unknown") + ": " + (browser.total || 0);
+  browserStats.appendChild(item);
+});
+
     dashboard.style.display = "block";
     statusBox.textContent = "Statistik berhasil dimuat.";
   } catch (error) {
