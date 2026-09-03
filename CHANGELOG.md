@@ -81,6 +81,11 @@ Dokumen ini menggunakan dua riwayat versi agar nomor versi website utama tidak t
 
 ---
 
+### Documentation archive migration
+- Added `DOCUMENTATION.md` as the repository documentation index and `DOCUMENTATION_AUDIT_V11.6.md` as the V11.6 documentation audit record.
+- Moved six historical engineering notes to `docs/archive/` after verifying repository references.
+- Updated documentation links so historical implementation notes remain accessible without cluttering the repository root.
+
 ## B. Riwayat Modul Project Estimator & Secure Document
 
 > Nomor versi pada bagian ini adalah riwayat pengembangan modul. Nomor tersebut **bukan** versi keseluruhan website.

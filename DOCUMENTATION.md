@@ -56,12 +56,12 @@ Dokumen berikut dipertahankan sebagai histori pengembangan. Nama versi pada file
 
 | Dokumen | Area |
 |---|---|
-| [MOBILE_LAYOUT_V5.md](MOBILE_LAYOUT_V5.md) | Layout mobile estimator. |
-| [MOBILE_LAYOUT_V6.md](MOBILE_LAYOUT_V6.md) | Penyempurnaan layout mobile. |
-| [CONTRACT_SIGNATURE_V7.md](CONTRACT_SIGNATURE_V7.md) | Implementasi tanda tangan kontrak/estimasi. |
-| [MOBILE_SIGNATURE_V8.md](MOBILE_SIGNATURE_V8.md) | Perbaikan tanda tangan pada mobile. |
-| [SIGNATURE_PRINT_V12.md](SIGNATURE_PRINT_V12.md) | Perbaikan tanda tangan pada hasil print. |
-| [PRINT_PDF_FIX_V3.md](PRINT_PDF_FIX_V3.md) | Perbaikan Print/PDF. |
+| [MOBILE_LAYOUT_V5.md](docs/archive/MOBILE_LAYOUT_V5.md) | Layout mobile estimator. |
+| [MOBILE_LAYOUT_V6.md](docs/archive/MOBILE_LAYOUT_V6.md) | Penyempurnaan layout mobile. |
+| [CONTRACT_SIGNATURE_V7.md](docs/archive/CONTRACT_SIGNATURE_V7.md) | Implementasi tanda tangan kontrak/estimasi. |
+| [MOBILE_SIGNATURE_V8.md](docs/archive/MOBILE_SIGNATURE_V8.md) | Perbaikan tanda tangan pada mobile. |
+| [SIGNATURE_PRINT_V12.md](docs/archive/SIGNATURE_PRINT_V12.md) | Perbaikan tanda tangan pada hasil print. |
+| [PRINT_PDF_FIX_V3.md](docs/archive/PRINT_PDF_FIX_V3.md) | Perbaikan Print/PDF. |
 
 Dokumen historis tidak boleh dianggap sebagai sumber konfigurasi terbaru jika bertentangan dengan source code atau dokumentasi versi yang lebih baru.
 
@@ -97,15 +97,9 @@ Saat ada perubahan berikutnya:
 
 ## 10. Status Audit & Rencana Berikutnya
 
-Audit dokumentasi V11.6 telah selesai dan dirangkum pada [DOCUMENTATION_AUDIT_V11.6.md](DOCUMENTATION_AUDIT_V11.6.md). Enam engineering notes lama ditetapkan sebagai kandidat `docs/archive/`.
+Audit dokumentasi V11.6 telah selesai dan dirangkum pada [DOCUMENTATION_AUDIT_V11.6.md](DOCUMENTATION_AUDIT_V11.6.md). Enam engineering notes lama telah dipindahkan ke `docs/archive/` setelah verifikasi referensi internal.
 
-Tahap berikutnya adalah **Archive Migration**, dengan ketentuan:
-
-- verifikasi semua referensi/link menuju kandidat arsip;
-- pindahkan hanya dokumen historis yang sudah dinyatakan aman;
-- perbarui tautan pada indeks dokumentasi;
-- catat perubahan struktur dokumentasi pada `CHANGELOG.md`;
-- jangan menghapus histori engineering.
+**Archive Migration selesai.** Seluruh enam engineering notes historis telah dipindahkan tanpa menghapus histori. Tautan pada indeks ini sudah diperbarui ke lokasi baru. Untuk perubahan dokumentasi berikutnya, pertahankan dokumen aktif di lokasi fungsionalnya dan gunakan `docs/archive/` hanya untuk catatan implementasi historis yang tidak lagi menjadi sumber konfigurasi aktif.
 
 ---
 

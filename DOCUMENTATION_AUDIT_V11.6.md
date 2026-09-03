@@ -36,16 +36,16 @@ Dokumen di kelompok ini masih berfungsi sebagai pintu masuk, kebijakan, baseline
 
 Dokumen ini tidak menjadi sumber versi terbaru, tetapi masih berguna untuk menjelaskan keputusan teknis dan evolusi implementasi.
 
-## C. Historical engineering notes — kandidat arsip
+## C. Historical engineering notes — diarsipkan
 
-- `PRINT_PDF_FIX_V3.md`
-- `MOBILE_LAYOUT_V5.md`
-- `MOBILE_LAYOUT_V6.md`
-- `CONTRACT_SIGNATURE_V7.md`
-- `MOBILE_SIGNATURE_V8.md`
-- `SIGNATURE_PRINT_V12.md`
+- `docs/archive/PRINT_PDF_FIX_V3.md`
+- `docs/archive/MOBILE_LAYOUT_V5.md`
+- `docs/archive/MOBILE_LAYOUT_V6.md`
+- `docs/archive/CONTRACT_SIGNATURE_V7.md`
+- `docs/archive/MOBILE_SIGNATURE_V8.md`
+- `docs/archive/SIGNATURE_PRINT_V12.md`
 
-Rekomendasi tahap berikutnya: pindahkan kelompok ini ke `docs/archive/` setelah seluruh referensi/link diverifikasi. Jangan menghapusnya.
+Archive Migration telah dilakukan setelah pemeriksaan referensi repository. File dipindahkan, bukan dihapus.
 
 ## D. Portfolio subprojects — pertahankan di lokasi masing-masing
 
@@ -71,15 +71,15 @@ File ini bukan dokumentasi produk; lokasinya sudah sesuai dengan konvensi GitHub
 1. Tidak menghapus Markdown apa pun pada V11.6.
 2. Menetapkan `README.md` sebagai halaman pengantar dan `DOCUMENTATION.md` sebagai indeks dokumentasi.
 3. Menetapkan `CHANGELOG.md` sebagai sumber histori versi.
-4. Menandai enam engineering notes lama sebagai kandidat `docs/archive/`.
+4. Enam engineering notes lama telah dipindahkan ke `docs/archive/` setelah referensi internal diverifikasi.
 5. Menjaga dokumentasi verification terpisah karena memiliki konfigurasi dan deployment sendiri.
 6. Menjaga README portfolio dekat dengan source subproject masing-masing.
 
-## Tahap berikutnya
+## Status Archive Migration
 
-Tahap 3 adalah **Archive Migration**. Sebelum pemindahan dilakukan, periksa semua referensi menuju enam kandidat arsip. Setelah aman, pindahkan file tersebut ke `docs/archive/`, perbarui link pada `DOCUMENTATION.md`, lalu catat perubahan organisasi dokumentasi pada `CHANGELOG.md`.
+Tahap 3 **Archive Migration selesai**. Pemeriksaan repository menunjukkan referensi nama file kandidat hanya terdapat pada `DOCUMENTATION.md` dan dokumen audit ini. Keenam file telah dipindahkan ke `docs/archive/`, dan tautan aktif pada `DOCUMENTATION.md` telah diperbarui.
 
 ---
 
 **Audit baseline:** V11.6  
-**Status:** Selesai — siap untuk tahap Archive Migration
+**Status:** Selesai — Archive Migration diterapkan
