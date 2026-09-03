@@ -68,6 +68,17 @@ browserStats.innerHTML = "";
   browserStats.appendChild(item);
 });
 
+    const countryStats = document.getElementById("countryStats");
+
+countryStats.innerHTML = "";
+
+(data.countries || []).forEach(function (country) {
+  const item = document.createElement("div");
+  item.textContent =
+    (country.country || "Unknown") + ": " + (country.total || 0);
+  countryStats.appendChild(item);
+});
+
     dashboard.style.display = "block";
     statusBox.textContent = "Statistik berhasil dimuat.";
   } catch (error) {
