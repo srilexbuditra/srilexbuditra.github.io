@@ -210,3 +210,10 @@ button:disabled { opacity: .65; cursor: wait; }
   .toolbar { justify-content: stretch; }
   .toolbar button { flex: 1; }
 }
+
+.filter-panel{margin-bottom:14px;padding:18px;background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.1);border-radius:16px}
+.filter-head{display:flex;justify-content:space-between;gap:18px;align-items:flex-start}
+.filter-head h2{margin:0 0 5px;font-size:19px}.filter-head p{margin:0;color:#94a3b8;font-size:13px}
+.preset-buttons{display:flex;flex-wrap:wrap;gap:6px}.preset-btn{padding:8px 11px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);font-size:12px}.preset-btn.active{background:#0284c7}
+.date-filter{display:flex;flex-wrap:wrap;gap:10px;align-items:end;margin-top:16px}.date-filter label{display:grid;gap:6px;color:#cbd5e1;font-size:12px;font-weight:700}.date-filter input{padding:9px 10px;color:#0f172a;background:#fff;border:1px solid #cbd5e1;border-radius:9px}.period-label{margin-top:12px;color:#94a3b8;font-size:12px}
+@media(max-width:700px){.filter-head{display:block}.preset-buttons{margin-top:12px}.date-filter{display:grid;grid-template-columns:1fr 1fr}.date-filter label{grid-column:1/-1}}

@@ -8,9 +8,16 @@ const exportBtn = document.getElementById("exportBtn");
 const statusBox = document.getElementById("status");
 const dashboard = document.getElementById("dashboard");
 const updatedAt = document.getElementById("updatedAt");
+const startDateInput = document.getElementById("startDate");
+const endDateInput = document.getElementById("endDate");
+const applyFilterBtn = document.getElementById("applyFilterBtn");
+const resetFilterBtn = document.getElementById("resetFilterBtn");
+const periodLabel = document.getElementById("periodLabel");
 
 let lastStatsData = null;
 let selectedTrendDays = 7;
+let activeStart = "";
+let activeEnd = "";
 
 const COUNTRY_NAMES = {
   ID: "🇮🇩 Indonesia",
@@ -32,6 +39,37 @@ const COUNTRY_NAMES = {
   KR: "🇰🇷 South Korea",
   AE: "🇦🇪 United Arab Emirates"
 };
+
+
+function jakartaDate(offsetDays = 0) {
+  const d = new Date(); d.setDate(d.getDate() + offsetDays);
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone:"Asia/Jakarta", year:"numeric", month:"2-digit", day:"2-digit"
+  }).formatToParts(d);
+  const v=Object.fromEntries(parts.map(p=>[p.type,p.value]));
+  return `${v.year}-${v.month}-${v.day}`;
+}
+function updatePeriodLabel() {
+  periodLabel.textContent = !activeStart && !activeEnd ? "Periode: Semua data"
+    : activeStart===activeEnd ? `Periode: ${activeStart}`
+    : `Periode: ${activeStart || "awal"} s/d ${activeEnd || "akhir"}`;
+}
+function setPreset(range) {
+  const today=jakartaDate();
+  if(range==="today"){activeStart=today;activeEnd=today;}
+  else if(range==="7"){activeStart=jakartaDate(-6);activeEnd=today;}
+  else if(range==="30"){activeStart=jakartaDate(-29);activeEnd=today;}
+  else {activeStart="";activeEnd="";}
+  startDateInput.value=activeStart; endDateInput.value=activeEnd;
+  document.querySelectorAll(".preset-btn").forEach(b=>b.classList.toggle("active",b.dataset.range===range));
+  updatePeriodLabel();
+}
+function statsUrl() {
+  const u=new URL(STATS_API); u.searchParams.set("t",Date.now());
+  if(activeStart) u.searchParams.set("start",activeStart);
+  if(activeEnd) u.searchParams.set("end",activeEnd);
+  return u.toString();
+}
 
 function formatLabel(value) {
   if (!value) return "Unknown";
@@ -250,7 +288,8 @@ function exportCsv() {
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
-  a.download = `srilexbuditra-analytics-${localDateKey()}.csv`;
+  const suffix = activeStart || activeEnd ? `${activeStart || "awal"}_${activeEnd || "akhir"}` : "semua";
+  a.download = `srilexbuditra-analytics-${suffix}.csv`;
   document.body.appendChild(a);
   a.click();
   a.remove();
@@ -337,7 +376,7 @@ async function loadStats() {
   if (refreshBtn) refreshBtn.disabled = true;
 
   try {
-    const response = await fetch(STATS_API + "?t=" + Date.now(), {
+    const response = await fetch(statsUrl(), {
       method: "GET",
       headers: {
         Authorization: "Bearer " + key
@@ -381,3 +420,15 @@ document.querySelectorAll(".range-btn").forEach((button) => {
     if (lastStatsData) renderTrend(lastStatsData.daily_trend, selectedTrendDays);
   });
 });
+
+document.querySelectorAll(".preset-btn").forEach(button => button.addEventListener("click", () => {
+  setPreset(button.dataset.range); loadStats();
+}));
+applyFilterBtn?.addEventListener("click", () => {
+  activeStart=startDateInput.value; activeEnd=endDateInput.value;
+  if(activeStart && activeEnd && activeStart>activeEnd){statusBox.textContent="Tanggal mulai tidak boleh setelah tanggal akhir.";return;}
+  document.querySelectorAll(".preset-btn").forEach(b=>b.classList.remove("active"));
+  updatePeriodLabel(); loadStats();
+});
+resetFilterBtn?.addEventListener("click",()=>{setPreset("today");loadStats();});
+setPreset("today");

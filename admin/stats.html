@@ -33,6 +33,24 @@
     </section>
 
     <section id="dashboard">
+      <section class="filter-panel">
+        <div class="filter-head">
+          <div><h2>Filter Periode</h2><p>Pilih periode statistik.</p></div>
+          <div class="preset-buttons">
+            <button class="preset-btn active" data-range="today" type="button">Hari Ini</button>
+            <button class="preset-btn" data-range="7" type="button">7 Hari</button>
+            <button class="preset-btn" data-range="30" type="button">30 Hari</button>
+            <button class="preset-btn" data-range="all" type="button">Semua</button>
+          </div>
+        </div>
+        <div class="date-filter">
+          <label>Tanggal Mulai<input type="date" id="startDate"></label>
+          <label>Tanggal Akhir<input type="date" id="endDate"></label>
+          <button id="applyFilterBtn" type="button">Terapkan</button>
+          <button id="resetFilterBtn" class="secondary-btn" type="button">Reset</button>
+        </div>
+        <div class="period-label" id="periodLabel">Periode: Hari Ini</div>
+      </section>
       <div class="toolbar">
         <button id="refreshBtn" class="secondary-btn" type="button">↻ Refresh</button>
         <button id="exportBtn" class="secondary-btn" type="button">↓ Export CSV</button>
