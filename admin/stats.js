@@ -299,6 +299,7 @@ function exportCsv() {
 function renderDashboard(data) {
   lastStatsData = data;
 
+  setNumber("onlineNow", data.online_now ?? 0);
   setNumber("totalVisitors", data.total_visitors);
   setNumber("totalVisits", data.total_visits);
   setNumber("visitorsToday", data.visitors_today);
