@@ -479,24 +479,57 @@ updateEstimate();
 
 /* =========================================================
    Visitor Analytics — Cloudflare Worker + D1
-   Records a page visit without blocking the website UI.
+   V6.5.1 Realtime Heartbeat Fix
    ========================================================= */
 (() => {
-  const VISITOR_API =
-    'https://srilexbuditra-visitors-api.srilexbuditra.workers.dev/visitor';
+  if (
+    window.location.pathname === '/admin' ||
+    window.location.pathname.startsWith('/admin/')
+  ) {
+    return;
+  }
+
+  const API_BASE =
+    'https://srilexbuditra-visitors-api.srilexbuditra.workers.dev';
+  const VISITOR_API = `${API_BASE}/visitor`;
+  const HEARTBEAT_API = `${API_BASE}/heartbeat`;
 
   const STORAGE_KEY = 'sb_visitor_id';
+  const HEARTBEAT_MS = 60 * 1000;
+  const HEARTBEAT_RETRY_MS = 5 * 1000;
+
+  const sendHeartbeat = async () => {
+    if (document.visibilityState !== 'visible') return;
+
+    const visitorId = localStorage.getItem(STORAGE_KEY);
+    if (!visitorId || !visitorId.startsWith('v_')) return;
+
+    try {
+      const response = await fetch(HEARTBEAT_API, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          visitor_id: visitorId,
+          page: window.location.href
+        }),
+        keepalive: true
+      });
+
+      if (!response.ok) {
+        throw new Error(`Heartbeat API HTTP ${response.status}`);
+      }
+    } catch (error) {
+      console.debug('Realtime heartbeat unavailable.', error);
+    }
+  };
 
   const registerVisitor = async () => {
     try {
-      // Ambil ID visitor lama jika browser ini sudah pernah berkunjung
       const savedVisitorId = localStorage.getItem(STORAGE_KEY);
 
       const response = await fetch(VISITOR_API, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           visitor_id: savedVisitorId || null,
           page: window.location.href,
@@ -511,7 +544,6 @@ updateEstimate();
 
       const data = await response.json();
 
-      // Simpan ID yang diberikan Cloudflare
       if (
         data &&
         data.ok === true &&
@@ -519,12 +551,23 @@ updateEstimate();
         data.visitor_id.startsWith('v_')
       ) {
         localStorage.setItem(STORAGE_KEY, data.visitor_id);
+        await sendHeartbeat();
       }
     } catch (error) {
-      // Tracking tidak boleh mengganggu fungsi utama website
       console.debug('Visitor analytics unavailable.', error);
     }
   };
 
   registerVisitor();
+
+  setTimeout(sendHeartbeat, HEARTBEAT_RETRY_MS);
+  setInterval(sendHeartbeat, HEARTBEAT_MS);
+
+  window.addEventListener('pageshow', sendHeartbeat);
+  window.addEventListener('focus', sendHeartbeat);
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') {
+      sendHeartbeat();
+    }
+  });
 })();
