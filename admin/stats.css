@@ -217,3 +217,11 @@ button:disabled { opacity: .65; cursor: wait; }
 .preset-buttons{display:flex;flex-wrap:wrap;gap:6px}.preset-btn{padding:8px 11px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);font-size:12px}.preset-btn.active{background:#0284c7}
 .date-filter{display:flex;flex-wrap:wrap;gap:10px;align-items:end;margin-top:16px}.date-filter label{display:grid;gap:6px;color:#cbd5e1;font-size:12px;font-weight:700}.date-filter input{padding:9px 10px;color:#0f172a;background:#fff;border:1px solid #cbd5e1;border-radius:9px}.period-label{margin-top:12px;color:#94a3b8;font-size:12px}
 @media(max-width:700px){.filter-head{display:block}.preset-buttons{margin-top:12px}.date-filter{display:grid;grid-template-columns:1fr 1fr}.date-filter label{grid-column:1/-1}}
+
+
+/* Analytics V5.1 — active filter indicator */
+.preset-btn.active {
+  background: #0284c7 !important;
+  border-color: #38bdf8 !important;
+  box-shadow: 0 0 0 2px rgba(56,189,248,.18);
+}

@@ -432,3 +432,64 @@ applyFilterBtn?.addEventListener("click", () => {
 });
 resetFilterBtn?.addEventListener("click",()=>{setPreset("today");loadStats();});
 setPreset("today");
+
+
+/* =========================================================
+   Analytics V5.1 — robust period filter fix
+   Uses capture phase so preset clicks always update period.
+   ========================================================= */
+const v51PresetContainer = document.querySelector(".preset-buttons");
+
+v51PresetContainer?.addEventListener(
+  "click",
+  (event) => {
+    const button = event.target.closest(".preset-btn");
+    if (!button) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+
+    const range = button.dataset.range;
+    setPreset(range);
+    statusBox.textContent = "Mengubah periode...";
+    loadStats();
+  },
+  true
+);
+
+applyFilterBtn?.addEventListener(
+  "click",
+  (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    activeStart = startDateInput.value;
+    activeEnd = endDateInput.value;
+
+    if (activeStart && activeEnd && activeStart > activeEnd) {
+      statusBox.textContent =
+        "Tanggal mulai tidak boleh setelah tanggal akhir.";
+      return;
+    }
+
+    document.querySelectorAll(".preset-btn").forEach((btn) => {
+      btn.classList.remove("active");
+    });
+
+    updatePeriodLabel();
+    statusBox.textContent = "Menerapkan filter tanggal...";
+    loadStats();
+  },
+  true
+);
+
+resetFilterBtn?.addEventListener(
+  "click",
+  (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    setPreset("today");
+    loadStats();
+  },
+  true
+);
