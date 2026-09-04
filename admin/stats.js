@@ -300,6 +300,7 @@ function renderDashboard(data) {
   lastStatsData = data;
 
   setNumber("onlineNow", data.online_now ?? 0);
+  renderOnlinePages(data.online_pages || []);
   setNumber("totalVisitors", data.total_visitors);
   setNumber("totalVisits", data.total_visits);
   setNumber("visitorsToday", data.visitors_today);
@@ -362,6 +363,31 @@ function renderDashboard(data) {
     }).format(new Date());
 
   dashboard.style.display = "block";
+}
+
+
+function renderOnlinePages(items = []) {
+  const box = document.getElementById("onlinePages");
+  if (!box) return;
+
+  if (!items.length) {
+    box.innerHTML = '<div class="empty-state">Belum ada pengunjung online.</div>';
+    return;
+  }
+
+  box.innerHTML = items.map((item) => {
+    let label = item.page || "unknown";
+    try {
+      const u = new URL(label);
+      label = u.pathname + u.search + u.hash;
+    } catch (_) {}
+    const total = Number(item.total || 0);
+    return `<div class="online-page-row">
+      <span class="online-dot">●</span>
+      <span class="online-page-name">${escapeHtml(label)}</span>
+      <strong>${total} online</strong>
+    </div>`;
+  }).join("");
 }
 
 async function loadStats() {

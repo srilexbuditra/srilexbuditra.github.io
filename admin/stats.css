@@ -225,3 +225,48 @@ button:disabled { opacity: .65; cursor: wait; }
   border-color: #38bdf8 !important;
   box-shadow: 0 0 0 2px rgba(56,189,248,.18);
 }
+
+
+/* Analytics V6.3 — realtime page detail */
+#onlinePagesPanel {
+  margin-top: 24px;
+}
+#onlinePagesPanel .section-heading {
+  margin-bottom: 14px;
+}
+#onlinePagesPanel h2 {
+  margin-bottom: 6px;
+}
+#onlinePagesPanel p {
+  margin: 0;
+  opacity: .72;
+}
+.stats-list {
+  display: grid;
+  gap: 10px;
+}
+.online-page-row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+  padding: 14px 16px;
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 14px;
+  background: rgba(255,255,255,.035);
+}
+.online-dot {
+  color: #38d996;
+  font-size: 14px;
+}
+.online-page-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.empty-state {
+  padding: 16px;
+  opacity: .7;
+  border: 1px dashed rgba(255,255,255,.15);
+  border-radius: 14px;
+}

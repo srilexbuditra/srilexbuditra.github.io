@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex, nofollow">
   <title>Visitor Statistics | Srilex Buditra</title>
-  <link rel="stylesheet" href="stats.css?v=6.0">
+  <link rel="stylesheet" href="stats.css?v=6.3">
 </head>
 <body>
   <main class="container">
@@ -104,7 +104,20 @@
         </article>
       </div>
 
-      <section class="stats-section wide-section trend-section">
+      
+      <section class="analytics-panel" id="onlinePagesPanel">
+        <div class="section-heading">
+          <div>
+            <h2>🟢 Halaman Sedang Dibuka</h2>
+            <p>Halaman yang aktif dalam 5 menit terakhir.</p>
+          </div>
+        </div>
+        <div id="onlinePages" class="stats-list">
+          <div class="empty-state">Belum ada pengunjung online.</div>
+        </div>
+      </section>
+
+<section class="stats-section wide-section trend-section">
         <div class="section-head">
           <div>
             <h2>Visit Trend</h2>
@@ -169,6 +182,6 @@
     </section>
   </main>
 
-  <script src="./stats.js?v=6.0"></script>
+  <script src="./stats.js?v=6.3"></script>
 </body>
 </html>
