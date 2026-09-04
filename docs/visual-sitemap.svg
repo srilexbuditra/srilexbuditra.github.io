@@ -1,165 +1,463 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1350" viewBox="0 0 1600 1350">
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="rootSvg" xmlns="http://www.w3.org/2000/svg"
+     viewBox="0 0 1600 1350"
+     width="100%" height="100%"
+     preserveAspectRatio="xMidYMin meet"
+     role="img" aria-labelledby="title desc"
+     style="display:block;width:100%;max-width:100%;margin:0;padding:0;background:#020f1c;">
+<title id="title">Visual Sitemap Srilex Buditra</title>
+<desc id="desc">Responsive visual sitemap website Srilex Buditra V11.7.</desc>
+
 <defs>
- <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
-  <stop offset="0" stop-color="#031522"/><stop offset="1" stop-color="#010812"/>
- </linearGradient>
- <radialGradient id="glow"><stop offset="0" stop-color="#0b5277" stop-opacity=".38"/><stop offset="1" stop-color="#0b5277" stop-opacity="0"/></radialGradient>
- <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
-  <feDropShadow dx="0" dy="12" stdDeviation="14" flood-color="#000" flood-opacity=".4"/>
- </filter>
+  <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#031522"/><stop offset="1" stop-color="#010812"/>
+  </linearGradient>
+  <radialGradient id="glow"><stop offset="0" stop-color="#0b5277" stop-opacity=".38"/><stop offset="1" stop-color="#0b5277" stop-opacity="0"/></radialGradient>
 </defs>
-<rect width="1600" height="1350" fill="url(#background)"/>
-<circle cx="800" cy="20" r="540" fill="url(#glow)"/>
-<!-- brand -->
-<rect x="65" y="55" width="62" height="62" rx="31" fill="none" stroke="#ffb31a" stroke-width="3"/>
-<image
-  href="../images/logo.avif"
-  x="67"
-  y="57"
-  width="58"
-  height="58"
-  preserveAspectRatio="xMidYMid slice"
-/>
-<text x="150" y="83" fill="#f5f9fc" font-family="Arial,sans-serif" font-size="24" font-weight="700">SRILEX BUDITRA</text>
-<text x="150" y="108" fill="#91a9bb" font-family="Arial,sans-serif" font-size="14" letter-spacing="2">FULL STACK DEVELOPER</text>
+<style>
+  text{font-family:Arial,Helvetica,sans-serif}
+  .brandName{fill:#f5f9fc;font-size:24px;font-weight:700}
+  .brandSub{fill:#91a9bb;font-size:14px;letter-spacing:2px}
+  .title{fill:#f5f9fc;font-size:46px;font-weight:700}
+  .version{fill:#ffb31a;font-size:20px;font-weight:700;letter-spacing:1px}
+  .subtitle{fill:#91a9bb;font-size:16px}
+  .domain{fill:#f5f9fc;font-size:25px;font-weight:700}
+  .domainSub{fill:#91a9bb;font-size:15px}
+  .cardTitle{font-size:19px;font-weight:700}
+  .itemName{fill:#f5f9fc;font-size:15px;font-weight:700}
+  .itemPath{fill:#91a9bb;font-size:12.5px}
+  .sep{stroke:#12364e;stroke-width:1}
+  .footer{fill:#91a9bb;font-size:14px}
+  #tablet,#mobile{display:none}
+</style>
 
-<text x="800" y="190" text-anchor="middle" fill="#f5f9fc" font-family="Arial,sans-serif" font-size="46" font-weight="700">Website Architecture</text>
-<text x="800" y="229" text-anchor="middle" fill="#ffb31a" font-family="Arial,sans-serif" font-size="20" font-weight="700" letter-spacing="1">VISUAL SITEMAP · V11.7</text>
-<text x="800" y="261" text-anchor="middle" fill="#91a9bb" font-family="Arial,sans-serif" font-size="16">Public pages · Portfolio · Document Verification · Analytics V4</text>
+<script><![CDATA[
+(function() {
+  function applyLayout() {
+    var w = window.innerWidth || document.documentElement.clientWidth || 1600;
+    var root = document.getElementById('rootSvg');
+    var desktop = document.getElementById('desktop');
+    var tablet = document.getElementById('tablet');
+    var mobile = document.getElementById('mobile');
 
-<!-- domain hero -->
-<rect x="530" y="310" width="540" height="110" rx="24" fill="#08263b" stroke="#ffb31a" stroke-width="2.5" filter="url(#shadow)"/>
-<circle cx="585" cy="365" r="25" fill="#ffb31a" opacity=".13"/>
-<path d="M573 365h24M585 353v24M575 356c13 8 13 10 20 18M595 356c-13 8-13 10-20 18" stroke="#ffb31a" stroke-width="2" fill="none"/>
-<text x="625" y="356" fill="#f5f9fc" font-family="Arial,sans-serif" font-size="25" font-weight="700">srilexbuditra.work</text>
-<text x="625" y="387" fill="#91a9bb" font-family="Arial,sans-serif" font-size="15">Current development · V11.7 · Analytics V4</text>
+    desktop.style.display = 'none';
+    tablet.style.display = 'none';
+    mobile.style.display = 'none';
 
-<!-- connector backbone -->
-<path d="M800 420V475 M235 475H1365" stroke="#164b69" stroke-width="3" fill="none"/>
+    if (w <= 640) {
+      root.setAttribute('viewBox','0 0 600 3000');
+      root.style.height = 'auto';
+      root.style.aspectRatio = '600 / 3000';
+      mobile.style.display = 'inline';
+    } else if (w <= 1100) {
+      root.setAttribute('viewBox','0 0 1000 1850');
+      root.style.height = 'auto';
+      root.style.aspectRatio = '1000 / 1850';
+      tablet.style.display = 'inline';
+    } else {
+      root.setAttribute('viewBox','0 0 1600 1350');
+      root.style.height = 'auto';
+      root.style.aspectRatio = '1600 / 1350';
+      desktop.style.display = 'inline';
+    }
+  }
+  applyLayout();
+  window.addEventListener('load', applyLayout);
+  window.addEventListener('resize', applyLayout);
+  window.addEventListener('orientationchange', applyLayout);
+})();
+]]></script>
 
-<path d="M230.0 475V520" stroke="#164b69" stroke-width="3"/>
-<rect x="60" y="520" width="340" height="637" rx="22" fill="#061c2d" stroke="#ffb31a" stroke-width="2" filter="url(#shadow)"/>
+<g id="desktop"><rect width="1600" height="1350" fill="url(#background)"/><circle cx="800" cy="20" r="540" fill="url(#glow)"/>
+<image href="../images/logo.avif" x="42" y="40" width="62" height="62" preserveAspectRatio="xMidYMid slice"/>
+<circle cx="73" cy="71" r="33" fill="none" stroke="#ffb31a" stroke-width="3"/>
+<text x="125" y="67" class="brandName">SRILEX BUDITRA</text>
+<text x="125" y="92" class="brandSub">FULL STACK DEVELOPER</text>
+
+<text x="800.0" y="185" text-anchor="middle" class="title">Website Architecture</text>
+<text x="800.0" y="224" text-anchor="middle" class="version">VISUAL SITEMAP · V11.7</text>
+<text x="800.0" y="257" text-anchor="middle" class="subtitle">Public pages · Portfolio · Document Verification · Analytics V4</text>
+
+<rect x="530.0" y="305" width="540" height="110" rx="24" fill="#08263b" stroke="#ffb31a" stroke-width="2.5"/>
+<text x="800.0" y="355" text-anchor="middle" class="domain">✳ srilexbuditra.work</text>
+<text x="800.0" y="387" text-anchor="middle" class="domainSub">Current development · V11.7 · Analytics V4</text>
+
+<rect x="60" y="520" width="340" height="614" rx="22" fill="#061c2d" stroke="#ffb31a" stroke-width="2"/>
 <rect x="60" y="520" width="340" height="74" rx="22" fill="#08263b"/>
-<rect x="60" y="592" width="340" height="2" fill="#ffb31a" opacity=".75"/>
+<line x1="60" y1="593" x2="400" y2="593" stroke="#ffb31a" stroke-width="2"/>
 <circle cx="90" cy="557" r="9" fill="#ffb31a"/>
-<text x="112" y="564" fill="#ffb31a" font-family="Arial,sans-serif" font-size="19" font-weight="700">PUBLIC</text>
-<circle cx="88" cy="628" r="4" fill="#ffb31a" opacity=".9"/>
-<text x="104" y="632" fill="#f5f9fc" font-family="Arial,sans-serif" font-size="15" font-weight="700">Home</text>
-<text x="104" y="656" fill="#91a9bb" font-family="Arial,sans-serif" font-size="12.5">/</text>
-<line x1="104" y1="674" x2="372" y2="674" stroke="#12364e" stroke-width="1"/>
-<circle cx="88" cy="702" r="4" fill="#ffb31a" opacity=".9"/>
-<text x="104" y="706" fill="#f5f9fc" font-family="Arial,sans-serif" font-size="15" font-weight="700">Search</text>
-<text x="104" y="730" fill="#91a9bb" font-family="Arial,sans-serif" font-size="12.5">/search.html</text>
-<line x1="104" y1="748" x2="372" y2="748" stroke="#12364e" stroke-width="1"/>
-<circle cx="88" cy="776" r="4" fill="#ffb31a" opacity=".9"/>
-<text x="104" y="780" fill="#f5f9fc" font-family="Arial,sans-serif" font-size="15" font-weight="700">Privacy</text>
-<text x="104" y="804" fill="#91a9bb" font-family="Arial,sans-serif" font-size="12.5">/privacy.html</text>
-<line x1="104" y1="822" x2="372" y2="822" stroke="#12364e" stroke-width="1"/>
-<circle cx="88" cy="850" r="4" fill="#ffb31a" opacity=".9"/>
-<text x="104" y="854" fill="#f5f9fc" font-family="Arial,sans-serif" font-size="15" font-weight="700">Terms</text>
-<text x="104" y="878" fill="#91a9bb" font-family="Arial,sans-serif" font-size="12.5">/terms.html</text>
-<line x1="104" y1="896" x2="372" y2="896" stroke="#12364e" stroke-width="1"/>
-<circle cx="88" cy="924" r="4" fill="#ffb31a" opacity=".9"/>
-<text x="104" y="928" fill="#f5f9fc" font-family="Arial,sans-serif" font-size="15" font-weight="700">Security</text>
-<text x="104" y="952" fill="#91a9bb" font-family="Arial,sans-serif" font-size="12.5">/security.html</text>
-<line x1="104" y1="970" x2="372" y2="970" stroke="#12364e" stroke-width="1"/>
-<circle cx="88" cy="998" r="4" fill="#ffb31a" opacity=".9"/>
-<text x="104" y="1002" fill="#f5f9fc" font-family="Arial,sans-serif" font-size="15" font-weight="700">404</text>
-<text x="104" y="1026" fill="#91a9bb" font-family="Arial,sans-serif" font-size="12.5">/404.html</text>
-<line x1="104" y1="1044" x2="372" y2="1044" stroke="#12364e" stroke-width="1"/>
-<circle cx="88" cy="1072" r="4" fill="#ffb31a" opacity=".9"/>
-<text x="104" y="1076" fill="#f5f9fc" font-family="Arial,sans-serif" font-size="15" font-weight="700">Legacy redirect</text>
-<text x="104" y="1100" fill="#91a9bb" font-family="Arial,sans-serif" font-size="12.5">/term.html → /terms.html</text>
-<path d="M610.0 475V520" stroke="#164b69" stroke-width="3"/>
-<rect x="440" y="520" width="340" height="711" rx="22" fill="#061c2d" stroke="#25c7e8" stroke-width="2" filter="url(#shadow)"/>
+<text x="112" y="564" fill="#ffb31a" class="cardTitle">PUBLIC</text>
+<circle cx="88" cy="628" r="4" fill="#ffb31a"/>
+<text x="106" y="632" class="itemName">Home</text>
+<text x="106" y="657" class="itemPath">/</text>
+<line x1="106" y1="674" x2="372" y2="674" class="sep"/>
+<circle cx="88" cy="702" r="4" fill="#ffb31a"/>
+<text x="106" y="706" class="itemName">Search</text>
+<text x="106" y="731" class="itemPath">/search.html</text>
+<line x1="106" y1="748" x2="372" y2="748" class="sep"/>
+<circle cx="88" cy="776" r="4" fill="#ffb31a"/>
+<text x="106" y="780" class="itemName">Privacy</text>
+<text x="106" y="805" class="itemPath">/privacy.html</text>
+<line x1="106" y1="822" x2="372" y2="822" class="sep"/>
+<circle cx="88" cy="850" r="4" fill="#ffb31a"/>
+<text x="106" y="854" class="itemName">Terms</text>
+<text x="106" y="879" class="itemPath">/terms.html</text>
+<line x1="106" y1="896" x2="372" y2="896" class="sep"/>
+<circle cx="88" cy="924" r="4" fill="#ffb31a"/>
+<text x="106" y="928" class="itemName">Security</text>
+<text x="106" y="953" class="itemPath">/security.html</text>
+<line x1="106" y1="970" x2="372" y2="970" class="sep"/>
+<circle cx="88" cy="998" r="4" fill="#ffb31a"/>
+<text x="106" y="1002" class="itemName">404</text>
+<text x="106" y="1027" class="itemPath">/404.html</text>
+<line x1="106" y1="1044" x2="372" y2="1044" class="sep"/>
+<circle cx="88" cy="1072" r="4" fill="#ffb31a"/>
+<text x="106" y="1076" class="itemName">Legacy redirect</text>
+<text x="106" y="1101" class="itemPath">/term.html → /terms.html</text>
+<rect x="440" y="520" width="340" height="688" rx="22" fill="#061c2d" stroke="#25c7e8" stroke-width="2"/>
 <rect x="440" y="520" width="340" height="74" rx="22" fill="#08263b"/>
-<rect x="440" y="592" width="340" height="2" fill="#25c7e8" opacity=".75"/>
+<line x1="440" y1="593" x2="780" y2="593" stroke="#25c7e8" stroke-width="2"/>
 <circle cx="470" cy="557" r="9" fill="#25c7e8"/>
-<text x="492" y="564" fill="#25c7e8" font-family="Arial,sans-serif" font-size="19" font-weight="700">PORTFOLIO</text>
-<circle cx="468" cy="628" r="4" fill="#25c7e8" opacity=".9"/>
-<text x="484" y="632" fill="#f5f9fc" font-family="Arial,sans-serif" font-size="15" font-weight="700">Aplikasi POS</text>
-<text x="484" y="656" fill="#91a9bb" font-family="Arial,sans-serif" font-size="12.5">/portfolio/aplikasi-pos/</text>
-<line x1="484" y1="674" x2="752" y2="674" stroke="#12364e" stroke-width="1"/>
-<circle cx="468" cy="702" r="4" fill="#25c7e8" opacity=".9"/>
-<text x="484" y="706" fill="#f5f9fc" font-family="Arial,sans-serif" font-size="15" font-weight="700">POS Case Study</text>
-<text x="484" y="730" fill="#91a9bb" font-family="Arial,sans-serif" font-size="12.5">detail.html</text>
-<line x1="484" y1="748" x2="752" y2="748" stroke="#12364e" stroke-width="1"/>
-<circle cx="468" cy="776" r="4" fill="#25c7e8" opacity=".9"/>
-<text x="484" y="780" fill="#f5f9fc" font-family="Arial,sans-serif" font-size="15" font-weight="700">Sistem Administrasi</text>
-<text x="484" y="804" fill="#91a9bb" font-family="Arial,sans-serif" font-size="12.5">/portfolio/sistem-administrasi/</text>
-<line x1="484" y1="822" x2="752" y2="822" stroke="#12364e" stroke-width="1"/>
-<circle cx="468" cy="850" r="4" fill="#25c7e8" opacity=".9"/>
-<text x="484" y="854" fill="#f5f9fc" font-family="Arial,sans-serif" font-size="15" font-weight="700">Admin Case Study</text>
-<text x="484" y="878" fill="#91a9bb" font-family="Arial,sans-serif" font-size="12.5">detail.html</text>
-<line x1="484" y1="896" x2="752" y2="896" stroke="#12364e" stroke-width="1"/>
-<circle cx="468" cy="924" r="4" fill="#25c7e8" opacity=".9"/>
-<text x="484" y="928" fill="#f5f9fc" font-family="Arial,sans-serif" font-size="15" font-weight="700">Website Sekolah</text>
-<text x="484" y="952" fill="#91a9bb" font-family="Arial,sans-serif" font-size="12.5">/portfolio/website-sekolah/</text>
-<line x1="484" y1="970" x2="752" y2="970" stroke="#12364e" stroke-width="1"/>
-<circle cx="468" cy="998" r="4" fill="#25c7e8" opacity=".9"/>
-<text x="484" y="1002" fill="#f5f9fc" font-family="Arial,sans-serif" font-size="15" font-weight="700">Project Detail</text>
-<text x="484" y="1026" fill="#91a9bb" font-family="Arial,sans-serif" font-size="12.5">project-detail.html</text>
-<line x1="484" y1="1044" x2="752" y2="1044" stroke="#12364e" stroke-width="1"/>
-<circle cx="468" cy="1072" r="4" fill="#25c7e8" opacity=".9"/>
-<text x="484" y="1076" fill="#f5f9fc" font-family="Arial,sans-serif" font-size="15" font-weight="700">Website Sekolah V2</text>
-<text x="484" y="1100" fill="#91a9bb" font-family="Arial,sans-serif" font-size="12.5">v2/</text>
-<line x1="484" y1="1118" x2="752" y2="1118" stroke="#12364e" stroke-width="1"/>
-<circle cx="468" cy="1146" r="4" fill="#25c7e8" opacity=".9"/>
-<text x="484" y="1150" fill="#f5f9fc" font-family="Arial,sans-serif" font-size="15" font-weight="700">TJKT SMKN 1</text>
-<text x="484" y="1174" fill="#91a9bb" font-family="Arial,sans-serif" font-size="12.5">tjkt-smkn1kotabengkulu/</text>
-<path d="M990.0 475V520" stroke="#164b69" stroke-width="3"/>
-<rect x="820" y="520" width="340" height="489" rx="22" fill="#061c2d" stroke="#22d47b" stroke-width="2" filter="url(#shadow)"/>
+<text x="492" y="564" fill="#25c7e8" class="cardTitle">PORTFOLIO</text>
+<circle cx="468" cy="628" r="4" fill="#25c7e8"/>
+<text x="486" y="632" class="itemName">Aplikasi POS</text>
+<text x="486" y="657" class="itemPath">/portfolio/aplikasi-pos/</text>
+<line x1="486" y1="674" x2="752" y2="674" class="sep"/>
+<circle cx="468" cy="702" r="4" fill="#25c7e8"/>
+<text x="486" y="706" class="itemName">POS Case Study</text>
+<text x="486" y="731" class="itemPath">detail.html</text>
+<line x1="486" y1="748" x2="752" y2="748" class="sep"/>
+<circle cx="468" cy="776" r="4" fill="#25c7e8"/>
+<text x="486" y="780" class="itemName">Sistem Administrasi</text>
+<text x="486" y="805" class="itemPath">/portfolio/sistem-administrasi/</text>
+<line x1="486" y1="822" x2="752" y2="822" class="sep"/>
+<circle cx="468" cy="850" r="4" fill="#25c7e8"/>
+<text x="486" y="854" class="itemName">Admin Case Study</text>
+<text x="486" y="879" class="itemPath">detail.html</text>
+<line x1="486" y1="896" x2="752" y2="896" class="sep"/>
+<circle cx="468" cy="924" r="4" fill="#25c7e8"/>
+<text x="486" y="928" class="itemName">Website Sekolah</text>
+<text x="486" y="953" class="itemPath">/portfolio/website-sekolah/</text>
+<line x1="486" y1="970" x2="752" y2="970" class="sep"/>
+<circle cx="468" cy="998" r="4" fill="#25c7e8"/>
+<text x="486" y="1002" class="itemName">Project Detail</text>
+<text x="486" y="1027" class="itemPath">project-detail.html</text>
+<line x1="486" y1="1044" x2="752" y2="1044" class="sep"/>
+<circle cx="468" cy="1072" r="4" fill="#25c7e8"/>
+<text x="486" y="1076" class="itemName">Website Sekolah V2</text>
+<text x="486" y="1101" class="itemPath">v2/</text>
+<line x1="486" y1="1118" x2="752" y2="1118" class="sep"/>
+<circle cx="468" cy="1146" r="4" fill="#25c7e8"/>
+<text x="486" y="1150" class="itemName">TJKT SMKN 1</text>
+<text x="486" y="1175" class="itemPath">tjkt-smkn1kotabengkulu/</text>
+<rect x="820" y="520" width="340" height="466" rx="22" fill="#061c2d" stroke="#22d47b" stroke-width="2"/>
 <rect x="820" y="520" width="340" height="74" rx="22" fill="#08263b"/>
-<rect x="820" y="592" width="340" height="2" fill="#22d47b" opacity=".75"/>
+<line x1="820" y1="593" x2="1160" y2="593" stroke="#22d47b" stroke-width="2"/>
 <circle cx="850" cy="557" r="9" fill="#22d47b"/>
-<text x="872" y="564" fill="#22d47b" font-family="Arial,sans-serif" font-size="19" font-weight="700">VERIFICATION</text>
-<circle cx="848" cy="628" r="4" fill="#22d47b" opacity=".9"/>
-<text x="864" y="632" fill="#f5f9fc" font-family="Arial,sans-serif" font-size="15" font-weight="700">Verification Entry</text>
-<text x="864" y="656" fill="#91a9bb" font-family="Arial,sans-serif" font-size="12.5">/verify/</text>
-<line x1="864" y1="674" x2="1132" y2="674" stroke="#12364e" stroke-width="1"/>
-<circle cx="848" cy="702" r="4" fill="#22d47b" opacity=".9"/>
-<text x="864" y="706" fill="#f5f9fc" font-family="Arial,sans-serif" font-size="15" font-weight="700">Verify Document</text>
-<text x="864" y="730" fill="#91a9bb" font-family="Arial,sans-serif" font-size="12.5">verify.html</text>
-<line x1="864" y1="748" x2="1132" y2="748" stroke="#12364e" stroke-width="1"/>
-<circle cx="848" cy="776" r="4" fill="#22d47b" opacity=".9"/>
-<text x="864" y="780" fill="#f5f9fc" font-family="Arial,sans-serif" font-size="15" font-weight="700">Publisher</text>
-<text x="864" y="804" fill="#91a9bb" font-family="Arial,sans-serif" font-size="12.5">publisher.html</text>
-<line x1="864" y1="822" x2="1132" y2="822" stroke="#12364e" stroke-width="1"/>
-<circle cx="848" cy="850" r="4" fill="#22d47b" opacity=".9"/>
-<text x="864" y="854" fill="#f5f9fc" font-family="Arial,sans-serif" font-size="15" font-weight="700">Invalid Document</text>
-<text x="864" y="878" fill="#91a9bb" font-family="Arial,sans-serif" font-size="12.5">invalid.html</text>
-<line x1="864" y1="896" x2="1132" y2="896" stroke="#12364e" stroke-width="1"/>
-<circle cx="848" cy="924" r="4" fill="#22d47b" opacity=".9"/>
-<text x="864" y="928" fill="#f5f9fc" font-family="Arial,sans-serif" font-size="15" font-weight="700">Worker + KV</text>
-<text x="864" y="952" fill="#91a9bb" font-family="Arial,sans-serif" font-size="12.5">Document verification backend</text>
-<path d="M1370.0 475V520" stroke="#164b69" stroke-width="3"/>
-<rect x="1200" y="520" width="340" height="489" rx="22" fill="#061c2d" stroke="#b48cff" stroke-width="2" filter="url(#shadow)"/>
+<text x="872" y="564" fill="#22d47b" class="cardTitle">VERIFICATION</text>
+<circle cx="848" cy="628" r="4" fill="#22d47b"/>
+<text x="866" y="632" class="itemName">Verification Entry</text>
+<text x="866" y="657" class="itemPath">/verify/</text>
+<line x1="866" y1="674" x2="1132" y2="674" class="sep"/>
+<circle cx="848" cy="702" r="4" fill="#22d47b"/>
+<text x="866" y="706" class="itemName">Verify Document</text>
+<text x="866" y="731" class="itemPath">verify.html</text>
+<line x1="866" y1="748" x2="1132" y2="748" class="sep"/>
+<circle cx="848" cy="776" r="4" fill="#22d47b"/>
+<text x="866" y="780" class="itemName">Publisher</text>
+<text x="866" y="805" class="itemPath">publisher.html</text>
+<line x1="866" y1="822" x2="1132" y2="822" class="sep"/>
+<circle cx="848" cy="850" r="4" fill="#22d47b"/>
+<text x="866" y="854" class="itemName">Invalid Document</text>
+<text x="866" y="879" class="itemPath">invalid.html</text>
+<line x1="866" y1="896" x2="1132" y2="896" class="sep"/>
+<circle cx="848" cy="924" r="4" fill="#22d47b"/>
+<text x="866" y="928" class="itemName">Worker + KV</text>
+<text x="866" y="953" class="itemPath">Document verification backend</text>
+<rect x="1200" y="520" width="340" height="466" rx="22" fill="#061c2d" stroke="#b48cff" stroke-width="2"/>
 <rect x="1200" y="520" width="340" height="74" rx="22" fill="#08263b"/>
-<rect x="1200" y="592" width="340" height="2" fill="#b48cff" opacity=".75"/>
+<line x1="1200" y1="593" x2="1540" y2="593" stroke="#b48cff" stroke-width="2"/>
 <circle cx="1230" cy="557" r="9" fill="#b48cff"/>
-<text x="1252" y="564" fill="#b48cff" font-family="Arial,sans-serif" font-size="19" font-weight="700">ANALYTICS V4</text>
-<circle cx="1228" cy="628" r="4" fill="#b48cff" opacity=".9"/>
-<text x="1244" y="632" fill="#f5f9fc" font-family="Arial,sans-serif" font-size="15" font-weight="700">Admin Dashboard</text>
-<text x="1244" y="656" fill="#91a9bb" font-family="Arial,sans-serif" font-size="12.5">/admin/stats.html</text>
-<line x1="1244" y1="674" x2="1512" y2="674" stroke="#12364e" stroke-width="1"/>
-<circle cx="1228" cy="702" r="4" fill="#b48cff" opacity=".9"/>
-<text x="1244" y="706" fill="#f5f9fc" font-family="Arial,sans-serif" font-size="15" font-weight="700">Visitor Event</text>
-<text x="1244" y="730" fill="#91a9bb" font-family="Arial,sans-serif" font-size="12.5">POST /visitor</text>
-<line x1="1244" y1="748" x2="1512" y2="748" stroke="#12364e" stroke-width="1"/>
-<circle cx="1228" cy="776" r="4" fill="#b48cff" opacity=".9"/>
-<text x="1244" y="780" fill="#f5f9fc" font-family="Arial,sans-serif" font-size="15" font-weight="700">Protected Stats</text>
-<text x="1244" y="804" fill="#91a9bb" font-family="Arial,sans-serif" font-size="12.5">GET /stats</text>
-<line x1="1244" y1="822" x2="1512" y2="822" stroke="#12364e" stroke-width="1"/>
-<circle cx="1228" cy="850" r="4" fill="#b48cff" opacity=".9"/>
-<text x="1244" y="854" fill="#f5f9fc" font-family="Arial,sans-serif" font-size="15" font-weight="700">Cloudflare D1</text>
-<text x="1244" y="878" fill="#91a9bb" font-family="Arial,sans-serif" font-size="12.5">visit_events</text>
-<line x1="1244" y1="896" x2="1512" y2="896" stroke="#12364e" stroke-width="1"/>
-<circle cx="1228" cy="924" r="4" fill="#b48cff" opacity=".9"/>
-<text x="1244" y="928" fill="#f5f9fc" font-family="Arial,sans-serif" font-size="15" font-weight="700">Anonymous Visitor ID</text>
-<text x="1244" y="952" fill="#91a9bb" font-family="Arial,sans-serif" font-size="12.5">sb_visitor_id</text>
+<text x="1252" y="564" fill="#b48cff" class="cardTitle">ANALYTICS V4</text>
+<circle cx="1228" cy="628" r="4" fill="#b48cff"/>
+<text x="1246" y="632" class="itemName">Admin Dashboard</text>
+<text x="1246" y="657" class="itemPath">/admin/stats.html</text>
+<line x1="1246" y1="674" x2="1512" y2="674" class="sep"/>
+<circle cx="1228" cy="702" r="4" fill="#b48cff"/>
+<text x="1246" y="706" class="itemName">Visitor Event</text>
+<text x="1246" y="731" class="itemPath">POST /visitor</text>
+<line x1="1246" y1="748" x2="1512" y2="748" class="sep"/>
+<circle cx="1228" cy="776" r="4" fill="#b48cff"/>
+<text x="1246" y="780" class="itemName">Protected Stats</text>
+<text x="1246" y="805" class="itemPath">GET /stats</text>
+<line x1="1246" y1="822" x2="1512" y2="822" class="sep"/>
+<circle cx="1228" cy="850" r="4" fill="#b48cff"/>
+<text x="1246" y="854" class="itemName">Cloudflare D1</text>
+<text x="1246" y="879" class="itemPath">visit_events</text>
+<line x1="1246" y1="896" x2="1512" y2="896" class="sep"/>
+<circle cx="1228" cy="924" r="4" fill="#b48cff"/>
+<text x="1246" y="928" class="itemName">Anonymous Visitor ID</text>
+<text x="1246" y="953" class="itemPath">sb_visitor_id</text>
+<line x1="65" y1="1272" x2="1535" y2="1272" class="sep"/><text x="65" y="1308" class="footer">SRILEX BUDITRA · WEBSITE V11.7</text><text x="1535" y="1308" text-anchor="end" class="footer">Responsive architecture documentation · 04 SEP 2026</text></g>
+<g id="tablet"><rect width="1000" height="1850" fill="url(#background)"/><circle cx="500" cy="20" r="440" fill="url(#glow)"/>
+<image href="../images/logo.avif" x="42" y="40" width="62" height="62" preserveAspectRatio="xMidYMid slice"/>
+<circle cx="73" cy="71" r="33" fill="none" stroke="#ffb31a" stroke-width="3"/>
+<text x="125" y="67" class="brandName">SRILEX BUDITRA</text>
+<text x="125" y="92" class="brandSub">FULL STACK DEVELOPER</text>
 
-<!-- footer -->
-<line x1="65" y1="1272" x2="1535" y2="1272" stroke="#164b69" stroke-width="1"/>
-<text x="65" y="1308" fill="#91a9bb" font-family="Arial,sans-serif" font-size="14">SRILEX BUDITRA · WEBSITE V11.7</text>
-<text x="1535" y="1308" text-anchor="end" fill="#91a9bb" font-family="Arial,sans-serif" font-size="14">Architecture documentation · 04 SEP 2026</text>
+<text x="500.0" y="185" text-anchor="middle" class="title">Website Architecture</text>
+<text x="500.0" y="224" text-anchor="middle" class="version">VISUAL SITEMAP · V11.7</text>
+<text x="500.0" y="257" text-anchor="middle" class="subtitle">Public pages · Portfolio · Document Verification · Analytics V4</text>
+
+<rect x="230.0" y="305" width="540" height="110" rx="24" fill="#08263b" stroke="#ffb31a" stroke-width="2.5"/>
+<text x="500.0" y="355" text-anchor="middle" class="domain">✳ srilexbuditra.work</text>
+<text x="500.0" y="387" text-anchor="middle" class="domainSub">Current development · V11.7 · Analytics V4</text>
+
+<rect x="45" y="500" width="440" height="558" rx="22" fill="#061c2d" stroke="#ffb31a" stroke-width="2"/>
+<rect x="45" y="500" width="440" height="74" rx="22" fill="#08263b"/>
+<line x1="45" y1="573" x2="485" y2="573" stroke="#ffb31a" stroke-width="2"/>
+<circle cx="75" cy="537" r="9" fill="#ffb31a"/>
+<text x="97" y="544" fill="#ffb31a" class="cardTitle">PUBLIC</text>
+<circle cx="73" cy="608" r="4" fill="#ffb31a"/>
+<text x="91" y="612" class="itemName">Home</text>
+<text x="91" y="637" class="itemPath">/</text>
+<line x1="91" y1="654" x2="457" y2="654" class="sep"/>
+<circle cx="73" cy="674" r="4" fill="#ffb31a"/>
+<text x="91" y="678" class="itemName">Search</text>
+<text x="91" y="703" class="itemPath">/search.html</text>
+<line x1="91" y1="720" x2="457" y2="720" class="sep"/>
+<circle cx="73" cy="740" r="4" fill="#ffb31a"/>
+<text x="91" y="744" class="itemName">Privacy</text>
+<text x="91" y="769" class="itemPath">/privacy.html</text>
+<line x1="91" y1="786" x2="457" y2="786" class="sep"/>
+<circle cx="73" cy="806" r="4" fill="#ffb31a"/>
+<text x="91" y="810" class="itemName">Terms</text>
+<text x="91" y="835" class="itemPath">/terms.html</text>
+<line x1="91" y1="852" x2="457" y2="852" class="sep"/>
+<circle cx="73" cy="872" r="4" fill="#ffb31a"/>
+<text x="91" y="876" class="itemName">Security</text>
+<text x="91" y="901" class="itemPath">/security.html</text>
+<line x1="91" y1="918" x2="457" y2="918" class="sep"/>
+<circle cx="73" cy="938" r="4" fill="#ffb31a"/>
+<text x="91" y="942" class="itemName">404</text>
+<text x="91" y="967" class="itemPath">/404.html</text>
+<line x1="91" y1="984" x2="457" y2="984" class="sep"/>
+<circle cx="73" cy="1004" r="4" fill="#ffb31a"/>
+<text x="91" y="1008" class="itemName">Legacy redirect</text>
+<text x="91" y="1033" class="itemPath">/term.html → /terms.html</text>
+<rect x="515" y="500" width="440" height="624" rx="22" fill="#061c2d" stroke="#25c7e8" stroke-width="2"/>
+<rect x="515" y="500" width="440" height="74" rx="22" fill="#08263b"/>
+<line x1="515" y1="573" x2="955" y2="573" stroke="#25c7e8" stroke-width="2"/>
+<circle cx="545" cy="537" r="9" fill="#25c7e8"/>
+<text x="567" y="544" fill="#25c7e8" class="cardTitle">PORTFOLIO</text>
+<circle cx="543" cy="608" r="4" fill="#25c7e8"/>
+<text x="561" y="612" class="itemName">Aplikasi POS</text>
+<text x="561" y="637" class="itemPath">/portfolio/aplikasi-pos/</text>
+<line x1="561" y1="654" x2="927" y2="654" class="sep"/>
+<circle cx="543" cy="674" r="4" fill="#25c7e8"/>
+<text x="561" y="678" class="itemName">POS Case Study</text>
+<text x="561" y="703" class="itemPath">detail.html</text>
+<line x1="561" y1="720" x2="927" y2="720" class="sep"/>
+<circle cx="543" cy="740" r="4" fill="#25c7e8"/>
+<text x="561" y="744" class="itemName">Sistem Administrasi</text>
+<text x="561" y="769" class="itemPath">/portfolio/sistem-administrasi/</text>
+<line x1="561" y1="786" x2="927" y2="786" class="sep"/>
+<circle cx="543" cy="806" r="4" fill="#25c7e8"/>
+<text x="561" y="810" class="itemName">Admin Case Study</text>
+<text x="561" y="835" class="itemPath">detail.html</text>
+<line x1="561" y1="852" x2="927" y2="852" class="sep"/>
+<circle cx="543" cy="872" r="4" fill="#25c7e8"/>
+<text x="561" y="876" class="itemName">Website Sekolah</text>
+<text x="561" y="901" class="itemPath">/portfolio/website-sekolah/</text>
+<line x1="561" y1="918" x2="927" y2="918" class="sep"/>
+<circle cx="543" cy="938" r="4" fill="#25c7e8"/>
+<text x="561" y="942" class="itemName">Project Detail</text>
+<text x="561" y="967" class="itemPath">project-detail.html</text>
+<line x1="561" y1="984" x2="927" y2="984" class="sep"/>
+<circle cx="543" cy="1004" r="4" fill="#25c7e8"/>
+<text x="561" y="1008" class="itemName">Website Sekolah V2</text>
+<text x="561" y="1033" class="itemPath">v2/</text>
+<line x1="561" y1="1050" x2="927" y2="1050" class="sep"/>
+<circle cx="543" cy="1070" r="4" fill="#25c7e8"/>
+<text x="561" y="1074" class="itemName">TJKT SMKN 1</text>
+<text x="561" y="1099" class="itemPath">tjkt-smkn1kotabengkulu/</text>
+<rect x="45" y="1120" width="440" height="426" rx="22" fill="#061c2d" stroke="#22d47b" stroke-width="2"/>
+<rect x="45" y="1120" width="440" height="74" rx="22" fill="#08263b"/>
+<line x1="45" y1="1193" x2="485" y2="1193" stroke="#22d47b" stroke-width="2"/>
+<circle cx="75" cy="1157" r="9" fill="#22d47b"/>
+<text x="97" y="1164" fill="#22d47b" class="cardTitle">VERIFICATION</text>
+<circle cx="73" cy="1228" r="4" fill="#22d47b"/>
+<text x="91" y="1232" class="itemName">Verification Entry</text>
+<text x="91" y="1257" class="itemPath">/verify/</text>
+<line x1="91" y1="1274" x2="457" y2="1274" class="sep"/>
+<circle cx="73" cy="1294" r="4" fill="#22d47b"/>
+<text x="91" y="1298" class="itemName">Verify Document</text>
+<text x="91" y="1323" class="itemPath">verify.html</text>
+<line x1="91" y1="1340" x2="457" y2="1340" class="sep"/>
+<circle cx="73" cy="1360" r="4" fill="#22d47b"/>
+<text x="91" y="1364" class="itemName">Publisher</text>
+<text x="91" y="1389" class="itemPath">publisher.html</text>
+<line x1="91" y1="1406" x2="457" y2="1406" class="sep"/>
+<circle cx="73" cy="1426" r="4" fill="#22d47b"/>
+<text x="91" y="1430" class="itemName">Invalid Document</text>
+<text x="91" y="1455" class="itemPath">invalid.html</text>
+<line x1="91" y1="1472" x2="457" y2="1472" class="sep"/>
+<circle cx="73" cy="1492" r="4" fill="#22d47b"/>
+<text x="91" y="1496" class="itemName">Worker + KV</text>
+<text x="91" y="1521" class="itemPath">Document verification backend</text>
+<rect x="515" y="1120" width="440" height="426" rx="22" fill="#061c2d" stroke="#b48cff" stroke-width="2"/>
+<rect x="515" y="1120" width="440" height="74" rx="22" fill="#08263b"/>
+<line x1="515" y1="1193" x2="955" y2="1193" stroke="#b48cff" stroke-width="2"/>
+<circle cx="545" cy="1157" r="9" fill="#b48cff"/>
+<text x="567" y="1164" fill="#b48cff" class="cardTitle">ANALYTICS V4</text>
+<circle cx="543" cy="1228" r="4" fill="#b48cff"/>
+<text x="561" y="1232" class="itemName">Admin Dashboard</text>
+<text x="561" y="1257" class="itemPath">/admin/stats.html</text>
+<line x1="561" y1="1274" x2="927" y2="1274" class="sep"/>
+<circle cx="543" cy="1294" r="4" fill="#b48cff"/>
+<text x="561" y="1298" class="itemName">Visitor Event</text>
+<text x="561" y="1323" class="itemPath">POST /visitor</text>
+<line x1="561" y1="1340" x2="927" y2="1340" class="sep"/>
+<circle cx="543" cy="1360" r="4" fill="#b48cff"/>
+<text x="561" y="1364" class="itemName">Protected Stats</text>
+<text x="561" y="1389" class="itemPath">GET /stats</text>
+<line x1="561" y1="1406" x2="927" y2="1406" class="sep"/>
+<circle cx="543" cy="1426" r="4" fill="#b48cff"/>
+<text x="561" y="1430" class="itemName">Cloudflare D1</text>
+<text x="561" y="1455" class="itemPath">visit_events</text>
+<line x1="561" y1="1472" x2="927" y2="1472" class="sep"/>
+<circle cx="543" cy="1492" r="4" fill="#b48cff"/>
+<text x="561" y="1496" class="itemName">Anonymous Visitor ID</text>
+<text x="561" y="1521" class="itemPath">sb_visitor_id</text>
+<text x="500" y="1810" text-anchor="middle" class="footer">SRILEX BUDITRA · RESPONSIVE VISUAL SITEMAP</text></g>
+<g id="mobile"><rect width="600" height="3000" fill="url(#background)"/><circle cx="300" cy="10" r="320" fill="url(#glow)"/>
+
+<image href="../images/logo.avif" x="28" y="28" width="58" height="58" preserveAspectRatio="xMidYMid slice"/>
+<circle cx="57" cy="57" r="31" fill="none" stroke="#ffb31a" stroke-width="3"/>
+<text x="105" y="54" class="brandName" style="font-size:20px">SRILEX BUDITRA</text>
+<text x="105" y="78" class="brandSub" style="font-size:11px">FULL STACK DEVELOPER</text>
+<text x="300" y="165" text-anchor="middle" class="title" style="font-size:34px">Website Architecture</text>
+<text x="300" y="205" text-anchor="middle" class="version" style="font-size:17px">VISUAL SITEMAP · V11.7</text>
+<text x="300" y="237" text-anchor="middle" class="subtitle" style="font-size:13px">Public · Portfolio · Verification · Analytics V4</text>
+<rect x="40" y="280" width="520" height="105" rx="22" fill="#08263b" stroke="#ffb31a" stroke-width="2.5"/>
+<text x="300" y="328" text-anchor="middle" class="domain" style="font-size:22px">✳ srilexbuditra.work</text>
+<text x="300" y="360" text-anchor="middle" class="domainSub" style="font-size:13px">Current development · V11.7 · Analytics V4</text>
+
+<rect x="40" y="430" width="520" height="551" rx="22" fill="#061c2d" stroke="#ffb31a" stroke-width="2"/>
+<rect x="40" y="430" width="520" height="74" rx="22" fill="#08263b"/>
+<line x1="40" y1="503" x2="560" y2="503" stroke="#ffb31a" stroke-width="2"/>
+<circle cx="70" cy="467" r="9" fill="#ffb31a"/>
+<text x="92" y="474" fill="#ffb31a" class="cardTitle">PUBLIC</text>
+<circle cx="68" cy="538" r="4" fill="#ffb31a"/>
+<text x="86" y="542" class="itemName">Home</text>
+<text x="86" y="567" class="itemPath">/</text>
+<line x1="86" y1="584" x2="532" y2="584" class="sep"/>
+<circle cx="68" cy="603" r="4" fill="#ffb31a"/>
+<text x="86" y="607" class="itemName">Search</text>
+<text x="86" y="632" class="itemPath">/search.html</text>
+<line x1="86" y1="649" x2="532" y2="649" class="sep"/>
+<circle cx="68" cy="668" r="4" fill="#ffb31a"/>
+<text x="86" y="672" class="itemName">Privacy</text>
+<text x="86" y="697" class="itemPath">/privacy.html</text>
+<line x1="86" y1="714" x2="532" y2="714" class="sep"/>
+<circle cx="68" cy="733" r="4" fill="#ffb31a"/>
+<text x="86" y="737" class="itemName">Terms</text>
+<text x="86" y="762" class="itemPath">/terms.html</text>
+<line x1="86" y1="779" x2="532" y2="779" class="sep"/>
+<circle cx="68" cy="798" r="4" fill="#ffb31a"/>
+<text x="86" y="802" class="itemName">Security</text>
+<text x="86" y="827" class="itemPath">/security.html</text>
+<line x1="86" y1="844" x2="532" y2="844" class="sep"/>
+<circle cx="68" cy="863" r="4" fill="#ffb31a"/>
+<text x="86" y="867" class="itemName">404</text>
+<text x="86" y="892" class="itemPath">/404.html</text>
+<line x1="86" y1="909" x2="532" y2="909" class="sep"/>
+<circle cx="68" cy="928" r="4" fill="#ffb31a"/>
+<text x="86" y="932" class="itemName">Legacy redirect</text>
+<text x="86" y="957" class="itemPath">/term.html → /terms.html</text>
+<rect x="40" y="1011" width="520" height="616" rx="22" fill="#061c2d" stroke="#25c7e8" stroke-width="2"/>
+<rect x="40" y="1011" width="520" height="74" rx="22" fill="#08263b"/>
+<line x1="40" y1="1084" x2="560" y2="1084" stroke="#25c7e8" stroke-width="2"/>
+<circle cx="70" cy="1048" r="9" fill="#25c7e8"/>
+<text x="92" y="1055" fill="#25c7e8" class="cardTitle">PORTFOLIO</text>
+<circle cx="68" cy="1119" r="4" fill="#25c7e8"/>
+<text x="86" y="1123" class="itemName">Aplikasi POS</text>
+<text x="86" y="1148" class="itemPath">/portfolio/aplikasi-pos/</text>
+<line x1="86" y1="1165" x2="532" y2="1165" class="sep"/>
+<circle cx="68" cy="1184" r="4" fill="#25c7e8"/>
+<text x="86" y="1188" class="itemName">POS Case Study</text>
+<text x="86" y="1213" class="itemPath">detail.html</text>
+<line x1="86" y1="1230" x2="532" y2="1230" class="sep"/>
+<circle cx="68" cy="1249" r="4" fill="#25c7e8"/>
+<text x="86" y="1253" class="itemName">Sistem Administrasi</text>
+<text x="86" y="1278" class="itemPath">/portfolio/sistem-administrasi/</text>
+<line x1="86" y1="1295" x2="532" y2="1295" class="sep"/>
+<circle cx="68" cy="1314" r="4" fill="#25c7e8"/>
+<text x="86" y="1318" class="itemName">Admin Case Study</text>
+<text x="86" y="1343" class="itemPath">detail.html</text>
+<line x1="86" y1="1360" x2="532" y2="1360" class="sep"/>
+<circle cx="68" cy="1379" r="4" fill="#25c7e8"/>
+<text x="86" y="1383" class="itemName">Website Sekolah</text>
+<text x="86" y="1408" class="itemPath">/portfolio/website-sekolah/</text>
+<line x1="86" y1="1425" x2="532" y2="1425" class="sep"/>
+<circle cx="68" cy="1444" r="4" fill="#25c7e8"/>
+<text x="86" y="1448" class="itemName">Project Detail</text>
+<text x="86" y="1473" class="itemPath">project-detail.html</text>
+<line x1="86" y1="1490" x2="532" y2="1490" class="sep"/>
+<circle cx="68" cy="1509" r="4" fill="#25c7e8"/>
+<text x="86" y="1513" class="itemName">Website Sekolah V2</text>
+<text x="86" y="1538" class="itemPath">v2/</text>
+<line x1="86" y1="1555" x2="532" y2="1555" class="sep"/>
+<circle cx="68" cy="1574" r="4" fill="#25c7e8"/>
+<text x="86" y="1578" class="itemName">TJKT SMKN 1</text>
+<text x="86" y="1603" class="itemPath">tjkt-smkn1kotabengkulu/</text>
+<rect x="40" y="1657" width="520" height="421" rx="22" fill="#061c2d" stroke="#22d47b" stroke-width="2"/>
+<rect x="40" y="1657" width="520" height="74" rx="22" fill="#08263b"/>
+<line x1="40" y1="1730" x2="560" y2="1730" stroke="#22d47b" stroke-width="2"/>
+<circle cx="70" cy="1694" r="9" fill="#22d47b"/>
+<text x="92" y="1701" fill="#22d47b" class="cardTitle">VERIFICATION</text>
+<circle cx="68" cy="1765" r="4" fill="#22d47b"/>
+<text x="86" y="1769" class="itemName">Verification Entry</text>
+<text x="86" y="1794" class="itemPath">/verify/</text>
+<line x1="86" y1="1811" x2="532" y2="1811" class="sep"/>
+<circle cx="68" cy="1830" r="4" fill="#22d47b"/>
+<text x="86" y="1834" class="itemName">Verify Document</text>
+<text x="86" y="1859" class="itemPath">verify.html</text>
+<line x1="86" y1="1876" x2="532" y2="1876" class="sep"/>
+<circle cx="68" cy="1895" r="4" fill="#22d47b"/>
+<text x="86" y="1899" class="itemName">Publisher</text>
+<text x="86" y="1924" class="itemPath">publisher.html</text>
+<line x1="86" y1="1941" x2="532" y2="1941" class="sep"/>
+<circle cx="68" cy="1960" r="4" fill="#22d47b"/>
+<text x="86" y="1964" class="itemName">Invalid Document</text>
+<text x="86" y="1989" class="itemPath">invalid.html</text>
+<line x1="86" y1="2006" x2="532" y2="2006" class="sep"/>
+<circle cx="68" cy="2025" r="4" fill="#22d47b"/>
+<text x="86" y="2029" class="itemName">Worker + KV</text>
+<text x="86" y="2054" class="itemPath">Document verification backend</text>
+<rect x="40" y="2108" width="520" height="421" rx="22" fill="#061c2d" stroke="#b48cff" stroke-width="2"/>
+<rect x="40" y="2108" width="520" height="74" rx="22" fill="#08263b"/>
+<line x1="40" y1="2181" x2="560" y2="2181" stroke="#b48cff" stroke-width="2"/>
+<circle cx="70" cy="2145" r="9" fill="#b48cff"/>
+<text x="92" y="2152" fill="#b48cff" class="cardTitle">ANALYTICS V4</text>
+<circle cx="68" cy="2216" r="4" fill="#b48cff"/>
+<text x="86" y="2220" class="itemName">Admin Dashboard</text>
+<text x="86" y="2245" class="itemPath">/admin/stats.html</text>
+<line x1="86" y1="2262" x2="532" y2="2262" class="sep"/>
+<circle cx="68" cy="2281" r="4" fill="#b48cff"/>
+<text x="86" y="2285" class="itemName">Visitor Event</text>
+<text x="86" y="2310" class="itemPath">POST /visitor</text>
+<line x1="86" y1="2327" x2="532" y2="2327" class="sep"/>
+<circle cx="68" cy="2346" r="4" fill="#b48cff"/>
+<text x="86" y="2350" class="itemName">Protected Stats</text>
+<text x="86" y="2375" class="itemPath">GET /stats</text>
+<line x1="86" y1="2392" x2="532" y2="2392" class="sep"/>
+<circle cx="68" cy="2411" r="4" fill="#b48cff"/>
+<text x="86" y="2415" class="itemName">Cloudflare D1</text>
+<text x="86" y="2440" class="itemPath">visit_events</text>
+<line x1="86" y1="2457" x2="532" y2="2457" class="sep"/>
+<circle cx="68" cy="2476" r="4" fill="#b48cff"/>
+<text x="86" y="2480" class="itemName">Anonymous Visitor ID</text>
+<text x="86" y="2505" class="itemPath">sb_visitor_id</text>
+<text x="300" y="2960" text-anchor="middle" class="footer">SRILEX BUDITRA · RESPONSIVE VISUAL SITEMAP</text></g>
 </svg>
