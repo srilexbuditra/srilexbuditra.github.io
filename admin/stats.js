@@ -22,10 +22,11 @@ const AUTO_REFRESH_MS = 15 * 1000;
 let autoRefreshTimer = null;
 
 const COUNTRY_NAMES = {
-  ID: "🇮🇩 Indonesia",
-  US: "🇺🇸 United States",
-  SG: "🇸🇬 Singapore",
-  MY: "🇲🇾 Malaysia",
+  ID: "ID Indonesia",
+  US: "US United States",
+  TW: "TW Taiwan",
+  SG: "SG Singapore",
+  MY: "MY Malaysia",
   AU: "🇦🇺 Australia",
   GB: "🇬🇧 United Kingdom",
   JP: "🇯🇵 Japan",
