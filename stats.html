@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Visitor Statistics | Srilex Buditra</title>
+  <link rel="stylesheet" href="stats.css?v=6.5">
+</head>
+<body>
+  <main class="container">
+    <header class="page-head">
+      <div>
+        <h1>Visitor Statistics</h1>
+        <div class="subtitle">Srilex Buditra Website Analytics — Analytics V4</div>
+      </div>
+      <div class="updated" id="updatedAt">Belum dimuat</div>
+    </header>
+
+    <section class="login" id="loginBox">
+      <label for="apiKey">Stats API Key</label>
+      <div class="key-row">
+        <input
+          type="password"
+          id="apiKey"
+          placeholder="Masukkan STATS_API_KEY"
+          autocomplete="off"
+          spellcheck="false"
+        >
+        <button id="loadBtn" type="button">Buka Statistik</button>
+      </div>
+      <div class="status" id="status" aria-live="polite"></div>
+    </section>
+
+    <section id="dashboard">
+      <section class="filter-panel">
+        <div class="filter-head">
+          <div><h2>Filter Periode</h2><p>Pilih periode statistik.</p></div>
+          <div class="preset-buttons">
+            <button class="preset-btn active" data-range="today" type="button">Hari Ini</button>
+            <button class="preset-btn" data-range="7" type="button">7 Hari</button>
+            <button class="preset-btn" data-range="30" type="button">30 Hari</button>
+            <button class="preset-btn" data-range="all" type="button">Semua</button>
+          </div>
+        </div>
+        <div class="date-filter">
+          <label>Tanggal Mulai<input type="date" id="startDate"></label>
+          <label>Tanggal Akhir<input type="date" id="endDate"></label>
+          <button id="applyFilterBtn" type="button">Terapkan</button>
+          <button id="resetFilterBtn" class="secondary-btn" type="button">Reset</button>
+        </div>
+        <div class="period-label" id="periodLabel">Periode: Hari Ini</div>
+      </section>
+      <div class="toolbar">
+        <span class="auto-refresh-badge">● Realtime · Auto refresh 15 detik</span>
+        <button id="refreshBtn" class="secondary-btn" type="button">↻ Refresh</button>
+        <button id="exportBtn" class="secondary-btn" type="button">↓ Export CSV</button>
+      </div>
+
+      <div class="cards kpi-grid">
+        <article class="card">
+          <div>🟢 Online Sekarang</div>
+          <div class="number" id="onlineNow">0</div>
+          <small>Aktif dalam 5 menit terakhir</small>
+        </article>
+        <article class="card">
+          <div>Total Visitors</div>
+          <div class="number" id="totalVisitors">0</div>
+        </article>
+        <article class="card">
+          <div>Total Visits</div>
+          <div class="number" id="totalVisits">0</div>
+        </article>
+        <article class="card">
+          <div>Visitors Today</div>
+          <div class="number" id="visitorsToday">0</div>
+        </article>
+        <article class="card">
+          <div>Visits Today</div>
+          <div class="number" id="visitsToday">0</div>
+        </article>
+        <article class="card">
+          <div>Visitors 7 Days</div>
+          <div class="number" id="visitors7Days">0</div>
+        </article>
+        <article class="card">
+          <div>Visits 7 Days</div>
+          <div class="number" id="visits7Days">0</div>
+        </article>
+        <article class="card">
+          <div>Visitors 30 Days</div>
+          <div class="number" id="visitors30Days">0</div>
+        </article>
+        <article class="card">
+          <div>Visits 30 Days</div>
+          <div class="number" id="visits30Days">0</div>
+        </article>
+        <article class="card">
+          <div>Returning Visitors</div>
+          <div class="number" id="returningVisitors">0</div>
+        </article>
+        <article class="card">
+          <div>Avg Visits / Visitor</div>
+          <div class="number" id="avgVisits">0</div>
+        </article>
+      </div>
+
+      
+            <section class="analytics-panel" id="onlineDetailsPanel">
+        <div class="section-heading"><div>
+          <h2>🟢 Detail Pengunjung Online</h2>
+          <p>Data anonim pengunjung yang aktif dalam 5 menit terakhir.</p>
+        </div></div>
+        <div id="onlineDetails" class="online-details-list">
+          <div class="empty-state">Belum ada pengunjung online.</div>
+        </div>
+      </section>
+
+<section class="analytics-panel" id="onlinePagesPanel">
+        <div class="section-heading">
+          <div>
+            <h2>🟢 Halaman Sedang Dibuka</h2>
+            <p>Halaman yang aktif dalam 5 menit terakhir.</p>
+          </div>
+        </div>
+        <div id="onlinePages" class="stats-list">
+          <div class="empty-state">Belum ada pengunjung online.</div>
+        </div>
+      </section>
+
+<section class="stats-section wide-section trend-section">
+        <div class="section-head">
+          <div>
+            <h2>Visit Trend</h2>
+            <p>Riwayat event kunjungan sejak Analytics V4 aktif.</p>
+          </div>
+          <div class="range-tabs" role="group" aria-label="Rentang grafik">
+            <button type="button" class="range-btn active" data-days="7">7 Hari</button>
+            <button type="button" class="range-btn" data-days="30">30 Hari</button>
+          </div>
+        </div>
+        <div class="chart" id="trendChart" aria-label="Grafik tren kunjungan"></div>
+        <div class="tracking-note" id="trackingNote"></div>
+      </section>
+
+      <div class="cards">
+        <section class="stats-section">
+          <h2>Device Statistics</h2>
+          <div class="stats-list" id="deviceStats"></div>
+        </section>
+        <section class="stats-section">
+          <h2>Browser Statistics</h2>
+          <div class="stats-list" id="browserStats"></div>
+        </section>
+        <section class="stats-section">
+          <h2>Country Statistics</h2>
+          <div class="stats-list" id="countryStats"></div>
+        </section>
+        <section class="stats-section">
+          <h2>Visitor Type</h2>
+          <div class="stats-list" id="visitorTypeStats"></div>
+        </section>
+
+        <section class="stats-section wide-section">
+          <h2>Top Pages</h2>
+          <div class="stats-list" id="topPagesStats"></div>
+        </section>
+
+        <section class="stats-section wide-section">
+          <h2>Traffic Sources</h2>
+          <div class="stats-list" id="referrerStats"></div>
+        </section>
+
+        <section class="stats-section wide-section">
+          <h2>Recent Visits</h2>
+          <div class="recent-wrap">
+            <table class="recent-table">
+              <thead>
+                <tr>
+                  <th>Waktu</th>
+                  <th>Negara</th>
+                  <th>Device</th>
+                  <th>Browser</th>
+                  <th>Halaman</th>
+                  <th>Source</th>
+                </tr>
+              </thead>
+              <tbody id="recentVisits"></tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <script src="./stats.js?v=6.5"></script>
+</body>
+</html>
