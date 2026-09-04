@@ -18,6 +18,8 @@ let lastStatsData = null;
 let selectedTrendDays = 7;
 let activeStart = "";
 let activeEnd = "";
+const AUTO_REFRESH_MS = 15 * 1000;
+let autoRefreshTimer = null;
 
 const COUNTRY_NAMES = {
   ID: "🇮🇩 Indonesia",
@@ -530,3 +532,16 @@ resetFilterBtn?.addEventListener(
   },
   true
 );
+
+// Analytics V6.4 — realtime dashboard auto refresh.
+// GET /stats only; this does not create visit events.
+function startAutoRefresh() {
+  if (autoRefreshTimer) clearInterval(autoRefreshTimer);
+  autoRefreshTimer = setInterval(() => {
+    if (document.visibilityState === "visible") loadStats();
+  }, AUTO_REFRESH_MS);
+}
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "visible") loadStats();
+});
+startAutoRefresh();

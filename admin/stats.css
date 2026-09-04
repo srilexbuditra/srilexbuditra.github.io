@@ -270,3 +270,13 @@ button:disabled { opacity: .65; cursor: wait; }
   border: 1px dashed rgba(255,255,255,.15);
   border-radius: 14px;
 }
+
+/* Analytics V6.4 */
+.auto-refresh-badge {
+  display: inline-flex;
+  align-items: center;
+  margin-right: 10px;
+  font-size: 12px;
+  opacity: .8;
+  white-space: nowrap;
+}
