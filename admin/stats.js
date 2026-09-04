@@ -366,6 +366,16 @@ function renderDashboard(data) {
 }
 
 
+
+function escapeHtml(value = "") {
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
 function renderOnlinePages(items = []) {
   const box = document.getElementById("onlinePages");
   if (!box) return;
