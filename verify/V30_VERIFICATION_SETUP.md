@@ -9,7 +9,7 @@ A record is verified when its exact Document ID exists in `verify/data/documents
 1. Deploy `verify/worker/worker.js` to Cloudflare Workers.
 2. Create a KV namespace and bind it as `VERIFY_DB` using the supplied `wrangler.toml`.
 3. Set a server-side secret: `wrangler secret put PUBLISHER_TOKEN`.
-4. Open `/verify/publisher.html` on the publisher device.
+4. Open the private Publisher Setup address stored securely by the publisher.
 5. Enter the Worker HTTPS endpoint and the publisher token, then save.
 6. The form will automatically POST each newly generated document record during **Konfirmasi & Buat PDF**.
 7. A scanned QR opens `/verify/?id=...`; the verification page checks the API first and falls back to `documents.json`.
