@@ -73,7 +73,6 @@ Tidak ada secret admin atau kredensial database yang boleh disimpan di JavaScrip
 │   ├── index.html
 │   ├── verify.html
 │   ├── invalid.html
-│   ├── publisher.html
 │   ├── config.js
 │   ├── data/documents.json
 │   ├── worker/
