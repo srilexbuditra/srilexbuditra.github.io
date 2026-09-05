@@ -11,7 +11,7 @@ V31 mengurangi risiko penyimpanan Publisher Token pada browser.
 - QR, Document ID, PDF, endpoint verifikasi publik, dan struktur Worker/KV tidak diubah.
 
 ## Cara pakai
-1. Buka `/verify/publisher.html`.
+1. Buka halaman Publisher Setup melalui alamat administratif yang disimpan secara privat oleh penerbit.
 2. Isi API Endpoint dan Publisher Token.
 3. Klik **Simpan Konfigurasi**.
 4. Klik **Buka Formulir Utama**.
