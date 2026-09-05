@@ -84,19 +84,26 @@ async function load(){
       }
     }catch(_){ }
   }
-  const api=(window.SB_VERIFY_API||'').replace(/\/$/,'');
-  if(api){
-    try{
-      const doc=await fetchJson(api+'/documents/'+encodeURIComponent(id));
-      if(doc && (doc.status||'').toLowerCase()==='verified'){showValid(doc,'API database penerbit');return;}
-      showInvalid('Document ID tidak ditemukan atau belum berstatus Verified pada database penerbit.');return;
-    }catch(_){ /* fallback to static registry */ }
-  }
-  try{
-    const db=await fetchJson('./data/documents.json');
-    const doc=(db.documents||[]).find(x=>String(x.id).toUpperCase()===id.toUpperCase() && String(x.status||'').toLowerCase()==='verified');
-    if(!doc){showInvalid('Document ID tidak ditemukan atau belum berstatus Verified pada database penerbit.');return;}
-    showValid(doc,'database penerbit');
-  }catch(_){showInvalid('Database verifikasi tidak dapat diakses saat ini.');}
+ const api=(window.SB_VERIFY_API||'').replace(/\/$/,'');
+if(!api){
+  showInvalid('API verifikasi resmi belum dikonfigurasi.');
+  return;
 }
+
+try{
+  const doc=await fetchJson(api+'/documents/'+encodeURIComponent(id));
+
+  if(doc && String(doc.status||'').toLowerCase()==='verified'){
+    showValid(doc,'API database penerbit');
+    return;
+  }
+
+  showInvalid('Document ID tidak ditemukan atau belum berstatus Verified pada database penerbit.');
+  return;
+
+}catch(_){
+  showInvalid('Database verifikasi resmi tidak dapat diakses saat ini.');
+  return;
+}
+  }
 load();
