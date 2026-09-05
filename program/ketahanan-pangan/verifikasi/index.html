@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Verifikasi Registrasi | Program Ketahanan Pangan</title>
+  <meta name="description" content="Verifikasi nomor registrasi Program Ketahanan Pangan secara aman melalui nomor registrasi, QR Code, atau barcode.">
+  <meta name="theme-color" content="#123f2b">
+  <meta property="og:title" content="Verifikasi Registrasi | Program Ketahanan Pangan">
+  <meta property="og:description" content="Periksa status registrasi Program Ketahanan Pangan menggunakan nomor registrasi atau pemindaian kode.">
+  <meta property="og:type" content="website">
+  <link rel="stylesheet" href="./style.css?v=1">
+</head>
+<body>
+  <main>
+    <section class="hero">
+      <div class="wrap hero-grid">
+        <div>
+          <a class="back-link" href="../registrasi/">← Kembali ke Registrasi</a>
+          <div class="eyebrow">Program Ketahanan Pangan</div>
+          <h1>Verifikasi <span>Nomor Registrasi</span></h1>
+          <p class="lead">Masukkan nomor registrasi yang diterima setelah pendaftaran, atau gunakan kamera untuk memindai QR Code/barcode.</p>
+          <div class="trust-row" aria-label="Informasi keamanan">
+            <span>✓ Data dibaca dari sistem verifikasi</span>
+            <span>🔒 NIK, KK, WhatsApp, dan dokumen tidak ditampilkan</span>
+          </div>
+        </div>
+        <aside class="hero-card" aria-label="Petunjuk singkat">
+          <span class="card-kicker">VERIFIKASI AMAN</span>
+          <h2>Cek status tanpa membuka data sensitif.</h2>
+          <p>Hasil publik hanya menampilkan nomor registrasi, nama, status, dan tanggal registrasi.</p>
+        </aside>
+      </div>
+    </section>
+
+    <section class="verify-section">
+      <div class="wrap verify-layout">
+        <section class="verify-card" aria-labelledby="verify-title">
+          <div class="section-head">
+            <span class="step-badge">01</span>
+            <div>
+              <h2 id="verify-title">Masukkan nomor registrasi</h2>
+              <p>Contoh: <code>KTPG-20260905-6117A3D9CE</code></p>
+            </div>
+          </div>
+
+          <form id="verifyForm" novalidate>
+            <label for="registrationId">Nomor Registrasi <span aria-hidden="true">*</span></label>
+            <div class="input-row">
+              <input id="registrationId" name="registration_id" type="text" inputmode="text" autocomplete="off" maxlength="100" required placeholder="KTPG-YYYYMMDD-XXXXXXXXXX" aria-describedby="registrationHelp">
+              <button class="btn primary" type="submit" id="verifyBtn">Verifikasi</button>
+            </div>
+            <small id="registrationHelp">Gunakan nomor registrasi persis seperti yang diterima setelah pendaftaran.</small>
+          </form>
+
+          <div class="divider"><span>atau</span></div>
+
+          <div class="scan-actions">
+            <button class="btn secondary" type="button" id="scanBtn">▣ Scan QR / Barcode</button>
+            <label class="btn ghost" for="imageScanInput">Unggah gambar kode</label>
+            <input id="imageScanInput" type="file" accept="image/*" hidden>
+          </div>
+          <p class="scan-note" id="scanSupport">Pemindaian kamera menggunakan fitur browser perangkat Anda. Input manual tetap tersedia sebagai cadangan.</p>
+
+          <div id="scannerPanel" class="scanner-panel" hidden>
+            <div class="scanner-head">
+              <div><strong>Arahkan kamera ke QR Code / barcode</strong><span>Posisikan kode di tengah area kamera.</span></div>
+              <button type="button" class="icon-btn" id="closeScanner" aria-label="Tutup kamera">×</button>
+            </div>
+            <div class="video-wrap">
+              <video id="scannerVideo" playsinline muted></video>
+              <div class="scan-frame" aria-hidden="true"></div>
+            </div>
+            <div id="scannerStatus" class="scanner-status" role="status" aria-live="polite">Menyiapkan kamera…</div>
+          </div>
+
+          <div id="message" class="message" role="status" aria-live="polite"></div>
+        </section>
+
+        <aside class="result-card" id="resultCard" aria-live="polite">
+          <div class="result-empty" id="resultEmpty">
+            <span class="result-icon">◇</span>
+            <h2>Hasil verifikasi</h2>
+            <p>Hasil akan muncul di sini setelah nomor registrasi diperiksa.</p>
+          </div>
+
+          <div class="result-content" id="resultContent" hidden>
+            <div class="result-status"><span class="status-dot"></span><div><small>STATUS REGISTRASI</small><strong id="resultStatus">-</strong></div></div>
+            <dl>
+              <div><dt>Nomor Registrasi</dt><dd id="resultRegistrationId">-</dd></div>
+              <div><dt>Nama</dt><dd id="resultName">-</dd></div>
+              <div><dt>Tanggal Registrasi</dt><dd id="resultDate">-</dd></div>
+            </dl>
+            <div class="privacy-box">🔒 Data sensitif seperti NIK, nomor KK, WhatsApp, dan dokumen identitas tidak ditampilkan pada halaman ini.</div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="info-section">
+      <div class="wrap info-grid">
+        <article><b>1</b><div><h3>Masukkan atau scan kode</h3><p>Gunakan nomor registrasi yang diterima setelah formulir berhasil dikirim.</p></div></article>
+        <article><b>2</b><div><h3>Sistem memeriksa D1</h3><p>Worker verifikasi mencocokkan nomor registrasi dengan data registrasi yang tersimpan.</p></div></article>
+        <article><b>3</b><div><h3>Lihat status aman</h3><p>Hanya informasi non-sensitif yang ditampilkan untuk kebutuhan pengecekan.</p></div></article>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap footer-inner">
+      <div><strong>Program Ketahanan Pangan</strong><span>Sistem Registrasi & Verifikasi Digital</span></div>
+      <a href="../../../privacy.html">Kebijakan Privasi</a>
+    </div>
+  </footer>
+
+  <script src="./script.js?v=1" defer></script>
+</body>
+</html>
