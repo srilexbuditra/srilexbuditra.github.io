@@ -479,7 +479,7 @@ updateEstimate();
 
 /* =========================================================
    Visitor Analytics — Cloudflare Worker + D1
-   V6.5.1 Realtime Heartbeat Fix
+   V6.5.2 Realtime Presence Leave Fix
    ========================================================= */
 (() => {
   if (
@@ -493,6 +493,7 @@ updateEstimate();
     'https://srilexbuditra-visitors-api.srilexbuditra.workers.dev';
   const VISITOR_API = `${API_BASE}/visitor`;
   const HEARTBEAT_API = `${API_BASE}/heartbeat`;
+  const LEAVE_API = `${API_BASE}/leave`;
 
   const STORAGE_KEY = 'sb_visitor_id';
   const HEARTBEAT_MS = 60 * 1000;
@@ -520,6 +521,32 @@ updateEstimate();
       }
     } catch (error) {
       console.debug('Realtime heartbeat unavailable.', error);
+    }
+  };
+
+  const sendLeave = () => {
+    const visitorId = localStorage.getItem(STORAGE_KEY);
+    if (!visitorId || !visitorId.startsWith('v_')) return;
+
+    const payload = JSON.stringify({ visitor_id: visitorId });
+
+    try {
+      if (navigator.sendBeacon) {
+        const blob = new Blob([payload], {
+          type: 'text/plain;charset=UTF-8'
+        });
+        navigator.sendBeacon(LEAVE_API, blob);
+        return;
+      }
+
+      fetch(LEAVE_API, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=UTF-8' },
+        body: payload,
+        keepalive: true
+      }).catch(() => {});
+    } catch (error) {
+      console.debug('Realtime leave unavailable.', error);
     }
   };
 
@@ -565,9 +592,12 @@ updateEstimate();
 
   window.addEventListener('pageshow', sendHeartbeat);
   window.addEventListener('focus', sendHeartbeat);
+  window.addEventListener('pagehide', sendLeave);
   document.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'visible') {
       sendHeartbeat();
+    } else {
+      sendLeave();
     }
   });
 })();
