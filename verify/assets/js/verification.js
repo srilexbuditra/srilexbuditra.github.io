@@ -14,7 +14,27 @@ function renderRecord(doc){
 }
 function showValid(doc,source='database penerbit'){
   renderRecord(doc);
-  setStatus('valid','DOKUMEN TERVERIFIKASI','Document ID ditemukan dan tercatat pada '+source+'.','');
+  setStatus(
+    'valid',
+    'DOKUMEN TERVERIFIKASI',
+    'Document ID ditemukan dan tercatat pada '+source+'.',
+    ''
+  );
+
+  const qrBox = document.querySelector('#verifyQrBox');
+  if(qrBox){
+    qrBox.style.display = '';
+  }
+
+  const qr = document.querySelector('#verifyQr');
+  if(qr){
+    qr.style.display = '';
+  }
+
+  const qrLink = document.querySelector('#qrLink');
+  if(qrLink){
+    qrLink.style.display = '';
+  }
 }
 function showInvalid(msg){
   setStatus(
@@ -23,6 +43,11 @@ function showInvalid(msg){
     msg,
     'Jangan menjadikan dokumen ini sebagai bukti penerbitan resmi sebelum Document ID terdaftar dan berstatus Verified.'
   );
+
+  const qrBox = document.querySelector('#verifyQrBox');
+  if(qrBox){
+    qrBox.style.display = 'none';
+  }
 
   const qr = document.querySelector('#verifyQr');
   if(qr){
