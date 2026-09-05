@@ -17,7 +17,24 @@ function showValid(doc,source='database penerbit'){
   setStatus('valid','DOKUMEN TERVERIFIKASI','Document ID ditemukan dan tercatat pada '+source+'.','');
 }
 function showInvalid(msg){
-  setStatus('invalid','DOKUMEN BELUM TERVERIFIKASI',msg,'Jangan menjadikan dokumen ini sebagai bukti penerbitan resmi sebelum Document ID terdaftar dan berstatus Verified.');
+  setStatus(
+    'invalid',
+    'DOKUMEN BELUM TERVERIFIKASI',
+    msg,
+    'Jangan menjadikan dokumen ini sebagai bukti penerbitan resmi sebelum Document ID terdaftar dan berstatus Verified.'
+  );
+
+  const qr = document.querySelector('#verifyQr');
+  if(qr){
+    qr.removeAttribute('src');
+    qr.style.display = 'none';
+  }
+
+  const qrLink = document.querySelector('#qrLink');
+  if(qrLink){
+    qrLink.style.display = 'none';
+    qrLink.removeAttribute('href');
+  }
 }
 async function fetchJson(url,opts={}){
   const res=await fetch(url,{cache:'no-store',...opts});
