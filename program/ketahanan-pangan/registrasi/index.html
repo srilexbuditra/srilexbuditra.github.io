@@ -10,8 +10,8 @@
 <meta property="og:description" content="Pendataan calon penerima dukungan pupuk untuk membantu produktivitas pertanian.">
 <meta property="og:type" content="website">
 <meta property="og:image" content="assets/logo-super-tani-indonesia.avif">
-<link rel="preload" href="./style.css?v=6" as="style">
-<link rel="stylesheet" href="./style.css?v=6">
+<link rel="preload" href="./style.css?v=7" as="style">
+<link rel="stylesheet" href="./style.css?v=7">
 </head>
 <body>
 <main>
@@ -61,6 +61,28 @@
         <div class="field"><label for="nama">Nama Lengkap <span class="req">*</span></label><input id="nama" class="input" name="nama" autocomplete="name" required maxlength="100" placeholder="Nama sesuai identitas"></div>
         <div class="field"><label for="nik">NIK / Nomor KTP <span class="req">*</span></label><input id="nik" class="input" name="nik" inputmode="numeric" pattern="[0-9]{16}" maxlength="16" required placeholder="16 digit NIK" autocomplete="off"><div class="hint">Masukkan 16 digit NIK sesuai KTP.</div></div>
         <div class="field"><label for="nomor_kk">Nomor Kartu Keluarga (KK) <span class="req">*</span></label><input id="nomor_kk" class="input" name="nomor_kk" inputmode="numeric" pattern="[0-9]{16}" maxlength="16" required placeholder="16 digit nomor KK" autocomplete="off"><div class="hint">Masukkan nomor KK sesuai dokumen Kartu Keluarga.</div></div>
+        <div class="field full document-upload-section" aria-labelledby="dokumen-title">
+          <div class="document-head">
+            <div><span class="document-kicker">Dokumen Verifikasi</span><h4 id="dokumen-title">Lampirkan KTP & Kartu Keluarga</h4><p>Foto atau scan harus jelas, tidak terpotong, dan seluruh data dapat dibaca.</p></div>
+            <span class="document-limit">Maks. 5 MB / berkas</span>
+          </div>
+          <div class="upload-grid">
+            <div class="upload-card" data-upload-card="ktp_file">
+              <div class="upload-card-top"><span class="upload-icon" aria-hidden="true">▣</span><div><strong>KTP <span class="req">*</span></strong><small>JPG, PNG, WEBP, AVIF, atau PDF</small></div></div>
+              <label class="upload-drop" for="ktp_file"><input id="ktp_file" name="ktp_file" type="file" accept="image/jpeg,image/png,image/webp,image/avif,application/pdf" required><span class="upload-cta">Pilih / Ambil Foto KTP</span><span class="upload-sub">Ketuk untuk memilih berkas</span></label>
+              <div class="file-preview" data-preview="ktp_file" hidden><div class="preview-media"></div><div class="preview-meta"><strong class="preview-name"></strong><span class="preview-size"></span></div><button class="remove-file" type="button" data-remove="ktp_file" aria-label="Hapus berkas KTP">×</button></div>
+              <div class="upload-progress" data-progressbar="ktp_file" aria-hidden="true"><span></span></div><div class="upload-status" data-upload-status="ktp_file">Belum ada berkas dipilih.</div>
+            </div>
+            <div class="upload-card" data-upload-card="kk_file">
+              <div class="upload-card-top"><span class="upload-icon" aria-hidden="true">▤</span><div><strong>Kartu Keluarga (KK) <span class="req">*</span></strong><small>JPG, PNG, WEBP, AVIF, atau PDF</small></div></div>
+              <label class="upload-drop" for="kk_file"><input id="kk_file" name="kk_file" type="file" accept="image/jpeg,image/png,image/webp,image/avif,application/pdf" required><span class="upload-cta">Pilih / Ambil Foto KK</span><span class="upload-sub">Ketuk untuk memilih berkas</span></label>
+              <div class="file-preview" data-preview="kk_file" hidden><div class="preview-media"></div><div class="preview-meta"><strong class="preview-name"></strong><span class="preview-size"></span></div><button class="remove-file" type="button" data-remove="kk_file" aria-label="Hapus berkas Kartu Keluarga">×</button></div>
+              <div class="upload-progress" data-progressbar="kk_file" aria-hidden="true"><span></span></div><div class="upload-status" data-upload-status="kk_file">Belum ada berkas dipilih.</div>
+            </div>
+          </div>
+          <div id="documentError" class="document-error" role="alert" aria-live="polite"></div>
+          <div class="document-privacy"><span aria-hidden="true">🔒</span><p><strong>Dokumen pribadi.</strong> Berkas hanya boleh digunakan untuk verifikasi program dan tidak boleh disimpan pada repository GitHub atau URL publik.</p></div>
+        </div>
         <div class="field"><label for="whatsapp">Nomor WhatsApp <span class="req">*</span></label><input id="whatsapp" class="input" name="whatsapp" inputmode="tel" required maxlength="18" placeholder="08xxxxxxxxxx" autocomplete="tel"></div>
         <div class="field"><label for="email">Email</label><input id="email" class="input" name="email" type="email" autocomplete="email" maxlength="120" placeholder="nama@email.com"></div>
         <div class="field full"><label for="alamat">Alamat Lengkap <span class="req">*</span></label><textarea id="alamat" name="alamat" required maxlength="300" placeholder="Dusun/RT/RW, jalan, nomor rumah" autocomplete="street-address"></textarea></div>
@@ -84,14 +106,14 @@
       </div></section>
       <section class="panel" data-step="3"><div class="panel-title"><div class="panel-icon">04</div><div><h3>Pernyataan & Persetujuan</h3><p>Pastikan seluruh informasi yang diberikan benar sebelum dikirim.</p></div></div><div class="consent-box">
         <label class="check"><input type="checkbox" name="pernyataan" required><span>Saya menyatakan bahwa data yang saya isi benar dan dapat dipertanggungjawabkan. Saya bersedia mengikuti proses verifikasi dan memahami bahwa pendaftaran tidak menjamin penerimaan pupuk gratis.</span></label>
-        <label class="check"><input type="checkbox" name="privasi" required><span>Saya menyetujui pemrosesan data yang saya berikan untuk keperluan registrasi, verifikasi, komunikasi, dan administrasi program ketahanan pangan.</span></label>
+        <label class="check"><input type="checkbox" name="privasi" required><span>Saya menyetujui pemrosesan data dan dokumen KTP/KK yang saya berikan untuk keperluan registrasi, verifikasi, komunikasi, dan administrasi program ketahanan pangan.</span></label>
       </div></section>
       <input class="trap" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
       <div class="form-nav"><button id="prevBtn" class="btn secondary" type="button" hidden>← Kembali</button><button id="nextBtn" class="btn primary" type="button">Lanjut →</button><button id="submitBtn" class="btn primary" type="submit" hidden>Kirim Registrasi →</button></div>
       <div id="status" class="status" role="status" aria-live="polite"></div>
     </div><aside class="form-aside">
       <span class="aside-badge">PROSES PENDAFTARAN</span><h4>Singkat, terarah, dan transparan.</h4><p>Gunakan data yang benar agar proses pemeriksaan dapat dilakukan dengan lebih mudah.</p>
-      <div class="aside-list"><div class="aside-item"><i>1</i><div><b>Lengkapi formulir</b><span>NIK, nomor KK, identitas, usaha tani, dan kebutuhan pupuk.</span></div></div><div class="aside-item"><i>2</i><div><b>Dapatkan nomor registrasi</b><span>ID dibuat setelah data berhasil diterima sistem.</span></div></div><div class="aside-item"><i>3</i><div><b>Verifikasi data</b><span>Data diperiksa sesuai ketentuan dan ketersediaan program.</span></div></div><div class="aside-item"><i>4</i><div><b>Informasi lanjutan</b><span>Pemohon yang memenuhi ketentuan dapat dihubungi.</span></div></div></div>
+      <div class="aside-list"><div class="aside-item"><i>1</i><div><b>Lengkapi formulir</b><span>NIK, nomor KK, dokumen KTP/KK, identitas, usaha tani, dan kebutuhan pupuk.</span></div></div><div class="aside-item"><i>2</i><div><b>Dapatkan nomor registrasi</b><span>ID dibuat setelah data berhasil diterima sistem.</span></div></div><div class="aside-item"><i>3</i><div><b>Verifikasi data</b><span>Data diperiksa sesuai ketentuan dan ketersediaan program.</span></div></div><div class="aside-item"><i>4</i><div><b>Informasi lanjutan</b><span>Pemohon yang memenuhi ketentuan dapat dihubungi.</span></div></div></div>
       <div class="secure">🔒 <strong>Keamanan data</strong><br>Jangan pernah memasukkan PIN, OTP, kata sandi, atau melakukan pembayaran melalui formulir ini.<br><a class="privacy-link" href="../../../privacy.html">Baca Kebijakan Privasi</a></div>
     </aside></div>
   </form>
@@ -99,6 +121,6 @@
 </div></section>
 </main>
 <footer class="footer"><div class="wrap footer-inner"><span><strong>Srilex Buditra</strong> · Full Stack Developer — <strong>DIGITAL SOLUTION</strong></span><span>PT Super Tani Indonesia · Pelopor &nbsp;•&nbsp; AY Group Agro Indonesia · Support System Marketing Nasional & Internasional</span></div></footer>
-<script src="./script.js?v=6" defer></script>
+<script src="./script.js?v=7" defer></script>
 </body>
 </html>
