@@ -1,4 +1,4 @@
-const API_ENDPOINT='/api/pupuk-registration';
+const API_ENDPOINT='https://ketahanan-pangan-registration-api.srilexbuditra.workers.dev';
 const MAX_FILE_SIZE=5*1024*1024;
 const ALLOWED_TYPES=new Set(['image/jpeg','image/png','image/webp','image/avif','application/pdf']);
 const form=document.getElementById('regForm');
