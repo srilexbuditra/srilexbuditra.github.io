@@ -101,7 +101,12 @@ try{
   showInvalid('Document ID tidak ditemukan atau belum berstatus Verified pada database penerbit.');
   return;
 
-}catch(_){
+}catch(err){
+  if(String(err.message||'').includes('HTTP 404')){
+    showInvalid('Document ID tidak ditemukan atau belum berstatus Verified pada database penerbit.');
+    return;
+  }
+
   showInvalid('Database verifikasi resmi tidak dapat diakses saat ini.');
   return;
 }
