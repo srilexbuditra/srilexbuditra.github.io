@@ -1,10 +1,29 @@
 'use strict';
 
 const API_URL =
-  'https://ketahanan-pangan-admin-api.srilexbuditra.workers.dev/registrations';
+  'https://admin-api.srilexbuditra.work/registrations';
+
+let adminToken = '';
 
 document.addEventListener('DOMContentLoaded', () => {
-  loadRegistrations();
+  const loginForm = document.getElementById('adminLoginForm');
+  const tokenInput = document.getElementById('adminToken');
+  const loginMessage = document.getElementById('loginMessage');
+
+  loginForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    adminToken = tokenInput.value.trim();
+
+    if (!adminToken) {
+      loginMessage.textContent = 'Masukkan Admin API Token.';
+      return;
+    }
+
+    loginMessage.textContent = 'Memeriksa akses...';
+
+    await loadRegistrations();
+  });
 });
 
 async function loadRegistrations() {
@@ -13,8 +32,9 @@ async function loadRegistrations() {
       method: 'GET',
       credentials: 'include',
       headers: {
-        Accept: 'application/json'
-      },
+  Accept: 'application/json',
+  Authorization: `Bearer ${adminToken}`
+},
       cache: 'no-store'
     });
 
@@ -44,7 +64,9 @@ async function loadRegistrations() {
      */
 
     window.KETAHANAN_PANGAN_REGISTRATIONS = registrations;
-
+document.getElementById('adminLogin').hidden = true;
+document.querySelector('main.wrap').hidden = false;
+document.getElementById('loginMessage').textContent = '';
   } catch (error) {
     console.error(
       'Ketahanan Pangan Admin: gagal memuat data registrasi.',
