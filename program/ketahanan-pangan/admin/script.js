@@ -100,6 +100,67 @@ if (statCards[3]) {
 }
 
 document.getElementById('adminLogin').hidden = true;
+const tableBody = document.querySelector('.table-wrap tbody');
+
+if (tableBody) {
+  tableBody.innerHTML = '';
+
+  registrations.forEach((item) => {
+    const row = document.createElement('tr');
+
+    const wilayah = [
+      item.kabupaten,
+      item.provinsi
+    ]
+      .filter(Boolean)
+      .join(', ');
+
+    const tanggal = item.created_at
+      ? new Date(item.created_at.replace(' ', 'T')).toLocaleString('id-ID')
+      : '-';
+
+    let statusLabel = item.status || '-';
+
+    if (item.status === 'submitted') {
+      statusLabel = 'Menunggu Verifikasi';
+    } else if (item.status === 'verified') {
+      statusLabel = 'Terverifikasi';
+    } else if (item.status === 'rejected') {
+      statusLabel = 'Ditolak';
+    } else if (item.status === 'revision') {
+      statusLabel = 'Perlu Perbaikan';
+    } else if (item.status === 'needs_action') {
+      statusLabel = 'Perlu Tindakan';
+    }
+
+    row.innerHTML = `
+      <td>${escapeHtml(item.registration_id || '-')}</td>
+      <td>${escapeHtml(item.nama || '-')}</td>
+      <td>${escapeHtml(wilayah || '-')}</td>
+      <td>${escapeHtml(tanggal)}</td>
+      <td>${escapeHtml(statusLabel)}</td>
+      <td>
+        <button type="button" disabled>
+          Detail
+        </button>
+      </td>
+    `;
+
+    tableBody.appendChild(row);
+  });
+
+  if (registrations.length === 0) {
+    tableBody.innerHTML = `
+      <tr>
+        <td colspan="6">
+          <div class="empty">
+            <strong>Belum ada data registrasi</strong>
+          </div>
+        </td>
+      </tr>
+    `;
+  }
+}
 document.querySelector('main.wrap').hidden = false;
 document.getElementById('loginMessage').textContent = '';
   } catch (error) {
@@ -108,4 +169,12 @@ document.getElementById('loginMessage').textContent = '';
       error
     );
   }
+}
+function escapeHtml(value) {
+  return String(value)
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#039;');
 }
