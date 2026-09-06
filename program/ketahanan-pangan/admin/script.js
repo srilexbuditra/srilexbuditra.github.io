@@ -518,11 +518,18 @@ function renderCertificate(certificate) {
         <div><dt>Status</dt><dd>Terverifikasi</dd></div>
       </dl>
       <div class="certificate-verification">
-        <strong>Verifikasi Keaslian</strong>
-        <p>Gunakan tautan berikut untuk memeriksa status registrasi.</p>
-        <a href="${escapeHtml(certificate.verification_url || '#')}" target="_blank" rel="noopener noreferrer">
-          ${escapeHtml(certificate.verification_url || '-')}
-        </a>
+        <div class="certificate-qr-wrap">
+          <canvas id="certificateQrCanvas" class="certificate-qr" width="240" height="240"
+            aria-label="QR Code verifikasi sertifikat"></canvas>
+          <span>SCAN UNTUK VERIFIKASI</span>
+        </div>
+        <div class="certificate-verification-copy">
+          <strong>Verifikasi Keaslian</strong>
+          <p>Pindai QR Code untuk membuka halaman verifikasi resmi. QR hanya memuat tautan verifikasi dan nomor registrasi, bukan NIK, KK, WhatsApp, atau dokumen identitas.</p>
+          <a href="${escapeHtml(certificate.verification_url || '#')}" target="_blank" rel="noopener noreferrer">
+            Buka halaman verifikasi
+          </a>
+        </div>
       </div>
       <div class="certificate-footer">
         <small>Dokumen digital administrasi Program Ketahanan Pangan.</small>
@@ -530,8 +537,55 @@ function renderCertificate(certificate) {
       </div>
     </article>`;
 
+  const qrCanvas = document.getElementById('certificateQrCanvas');
+  if (qrCanvas && certificate.verification_url) {
+    renderCertificateQrCode(qrCanvas, certificate.verification_url);
+  }
+
   panel.hidden = false;
   panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function renderCertificateQrCode(canvas, value) {
+  if (!canvas || !value || typeof window.LocalQRCode !== 'function') {
+    console.error('Ketahanan Pangan Admin: generator QR lokal tidak tersedia.');
+    return;
+  }
+
+  try {
+    const qr = new window.LocalQRCode(0, 2);
+    qr.addData(value);
+    qr.make();
+
+    const moduleCount = qr.getModuleCount();
+    const quietZone = 4;
+    const targetSize = 240;
+    const cellSize = Math.floor(targetSize / (moduleCount + quietZone * 2));
+    const actualSize = cellSize * (moduleCount + quietZone * 2);
+
+    canvas.width = actualSize;
+    canvas.height = actualSize;
+
+    const context = canvas.getContext('2d');
+    context.imageSmoothingEnabled = false;
+    context.fillStyle = '#ffffff';
+    context.fillRect(0, 0, actualSize, actualSize);
+    context.fillStyle = '#000000';
+
+    for (let row = 0; row < moduleCount; row += 1) {
+      for (let col = 0; col < moduleCount; col += 1) {
+        if (!qr.isDark(row, col)) continue;
+        context.fillRect(
+          (col + quietZone) * cellSize,
+          (row + quietZone) * cellSize,
+          cellSize,
+          cellSize
+        );
+      }
+    }
+  } catch (error) {
+    console.error('Ketahanan Pangan Admin: gagal membuat QR Code.', error);
+  }
 }
 
 function printCertificate() {
