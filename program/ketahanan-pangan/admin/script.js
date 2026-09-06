@@ -355,6 +355,22 @@ async function loadRegistrationDetail(registrationId) {
                 </div>
               </td>
             </tr>
+            <tr class="verification-row">
+              <th>Tindakan Verifikasi</th>
+              <td>
+                <div class="verification-actions">
+                  <button type="button" class="status-button status-verified" data-status="verified">
+                    Verifikasi
+                  </button>
+                  <button type="button" class="status-button status-revision" data-status="revision">
+                    Minta Perbaikan
+                  </button>
+                  <button type="button" class="status-button status-rejected" data-status="rejected">
+                    Tolak
+                  </button>
+                </div>
+              </td>
+            </tr>
           </tbody>
         </table>
       </div>
@@ -381,6 +397,30 @@ async function loadRegistrationDetail(registrationId) {
         });
       });
 
+    detailContent
+      .querySelectorAll('.status-button')
+      .forEach((button) => {
+        button.addEventListener('click', async () => {
+          const newStatus = button.dataset.status;
+          const labels = {
+            verified: 'Verifikasi',
+            revision: 'Minta Perbaikan',
+            rejected: 'Tolak'
+          };
+
+          const confirmed = window.confirm(
+            `${labels[newStatus] || 'Ubah status'} registrasi ${registration.registration_id}?`
+          );
+
+          if (!confirmed) return;
+
+          await updateRegistrationStatus(
+            registration.registration_id,
+            newStatus
+          );
+        });
+      });
+
     detailPanel.hidden = false;
 
     detailPanel.scrollIntoView({
@@ -394,6 +434,79 @@ async function loadRegistrationDetail(registrationId) {
     );
 
     alert('Detail registrasi gagal dimuat.');
+  }
+}
+
+async function updateRegistrationStatus(
+  registrationId,
+  newStatus
+) {
+  if (!adminToken) {
+    alert('Admin API Token tidak tersedia. Silakan login ulang.');
+    return;
+  }
+
+  if (!['verified', 'revision', 'rejected'].includes(newStatus)) {
+    alert('Status yang dipilih tidak valid.');
+    return;
+  }
+
+  try {
+    const baseUrl =
+      API_URL.replace(/\/registrations\/?$/, '');
+
+    const response = await fetch(
+      `${baseUrl}/registrations/${encodeURIComponent(registrationId)}/status`,
+      {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${adminToken}`
+        },
+        body: JSON.stringify({
+          status: newStatus
+        }),
+        cache: 'no-store'
+      }
+    );
+
+    let data = null;
+
+    try {
+      data = await response.json();
+    } catch (_) {}
+
+    if (!response.ok || !data?.ok) {
+      throw new Error(
+        data?.message ||
+        `Gagal memperbarui status (HTTP ${response.status}).`
+      );
+    }
+
+    const statusLabels = {
+      verified: 'Terverifikasi',
+      revision: 'Perlu Perbaikan',
+      rejected: 'Ditolak'
+    };
+
+    alert(
+      `Status registrasi berhasil diubah menjadi: ${statusLabels[newStatus] || newStatus}.`
+    );
+
+    await loadRegistrations();
+    await loadRegistrationDetail(registrationId);
+  } catch (error) {
+    console.error(
+      'Ketahanan Pangan Admin: gagal memperbarui status.',
+      error
+    );
+
+    alert(
+      error.message ||
+      'Gagal memperbarui status registrasi.'
+    );
   }
 }
 
