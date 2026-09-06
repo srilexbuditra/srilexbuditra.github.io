@@ -11,6 +11,7 @@ async function loadRegistrations() {
   try {
     const response = await fetch(API_URL, {
       method: 'GET',
+      credentials: 'include',
       headers: {
         Accept: 'application/json'
       },
