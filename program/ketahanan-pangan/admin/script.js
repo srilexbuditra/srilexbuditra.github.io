@@ -64,6 +64,41 @@ async function loadRegistrations() {
      */
 
     window.KETAHANAN_PANGAN_REGISTRATIONS = registrations;
+
+const total = registrations.length;
+const submitted = registrations.filter(
+  item => item.status === 'submitted'
+).length;
+
+const verified = registrations.filter(
+  item => item.status === 'verified'
+).length;
+
+const actionRequired = registrations.filter(
+  item =>
+    item.status === 'rejected' ||
+    item.status === 'revision' ||
+    item.status === 'needs_action'
+).length;
+
+const statCards = document.querySelectorAll('.stats article');
+
+if (statCards[0]) {
+  statCards[0].querySelector('strong').textContent = total;
+}
+
+if (statCards[1]) {
+  statCards[1].querySelector('strong').textContent = submitted;
+}
+
+if (statCards[2]) {
+  statCards[2].querySelector('strong').textContent = verified;
+}
+
+if (statCards[3]) {
+  statCards[3].querySelector('strong').textContent = actionRequired;
+}
+
 document.getElementById('adminLogin').hidden = true;
 document.querySelector('main.wrap').hidden = false;
 document.getElementById('loginMessage').textContent = '';
