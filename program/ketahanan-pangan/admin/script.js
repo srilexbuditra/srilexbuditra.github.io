@@ -371,6 +371,16 @@ async function loadRegistrationDetail(registrationId) {
                 </div>
               </td>
             </tr>
+            ${registration.status === 'verified' ? `
+            <tr class="certificate-row">
+              <th>Kartu / Sertifikat</th>
+              <td>
+                <button type="button" class="certificate-button" id="issueCertificateButton">
+                  Terbitkan Kartu / Sertifikat
+                </button>
+              </td>
+            </tr>
+            ` : ''}
           </tbody>
         </table>
       </div>
@@ -421,6 +431,15 @@ async function loadRegistrationDetail(registrationId) {
         });
       });
 
+    const issueCertificateButton =
+      detailContent.querySelector('#issueCertificateButton');
+
+    if (issueCertificateButton) {
+      issueCertificateButton.addEventListener('click', async () => {
+        await loadCertificate(registration.registration_id);
+      });
+    }
+
     detailPanel.hidden = false;
 
     detailPanel.scrollIntoView({
@@ -435,6 +454,94 @@ async function loadRegistrationDetail(registrationId) {
 
     alert('Detail registrasi gagal dimuat.');
   }
+}
+
+async function loadCertificate(registrationId) {
+  if (!adminToken) {
+    alert('Admin API Token tidak tersedia. Silakan login ulang.');
+    return;
+  }
+
+  try {
+    const baseUrl = API_URL.replace(/\/registrations\/?$/, '');
+    const response = await fetch(
+      `${baseUrl}/certificates/${encodeURIComponent(registrationId)}`,
+      {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+          Accept: 'application/json',
+          Authorization: `Bearer ${adminToken}`
+        },
+        cache: 'no-store'
+      }
+    );
+
+    let data = null;
+    try { data = await response.json(); } catch (_) {}
+
+    if (!response.ok || !data?.ok || !data?.certificate) {
+      throw new Error(data?.message || `Gagal menyiapkan sertifikat (HTTP ${response.status}).`);
+    }
+
+    renderCertificate(data.certificate);
+  } catch (error) {
+    console.error('Ketahanan Pangan Admin: gagal menyiapkan sertifikat.', error);
+    alert(error.message || 'Gagal menyiapkan kartu / sertifikat.');
+  }
+}
+
+function renderCertificate(certificate) {
+  const panel = document.getElementById('certificatePanel');
+  const content = document.getElementById('certificateContent');
+  if (!panel || !content) return;
+
+  const wilayah = [certificate.kabupaten, certificate.provinsi]
+    .filter(Boolean).join(', ') || '-';
+
+  content.innerHTML = `
+    <article class="certificate-card" id="printableCertificate">
+      <div class="certificate-brand">
+        <span>PROGRAM KETAHANAN PANGAN</span>
+        <strong>PT Super Tani Indonesia</strong>
+        <small>Didukung AY Group Agro Indonesia</small>
+      </div>
+      <div class="certificate-title">
+        <span>KARTU / SERTIFIKAT DIGITAL</span>
+        <h3>Anggota Terverifikasi</h3>
+      </div>
+      <div class="certificate-name">${escapeHtml(certificate.nama || '-')}</div>
+      <dl class="certificate-data">
+        <div><dt>ID Sertifikat</dt><dd>${escapeHtml(certificate.certificate_id || '-')}</dd></div>
+        <div><dt>Nomor Registrasi</dt><dd>${escapeHtml(certificate.registration_id || '-')}</dd></div>
+        <div><dt>Wilayah</dt><dd>${escapeHtml(wilayah)}</dd></div>
+        <div><dt>Status</dt><dd>Terverifikasi</dd></div>
+      </dl>
+      <div class="certificate-verification">
+        <strong>Verifikasi Keaslian</strong>
+        <p>Gunakan tautan berikut untuk memeriksa status registrasi.</p>
+        <a href="${escapeHtml(certificate.verification_url || '#')}" target="_blank" rel="noopener noreferrer">
+          ${escapeHtml(certificate.verification_url || '-')}
+        </a>
+      </div>
+      <div class="certificate-footer">
+        <small>Dokumen digital administrasi Program Ketahanan Pangan.</small>
+        <small>Technology & System Development · Srilex Buditra</small>
+      </div>
+    </article>`;
+
+  panel.hidden = false;
+  panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function printCertificate() {
+  if (!document.getElementById('printableCertificate')) {
+    alert('Sertifikat belum tersedia.');
+    return;
+  }
+  document.body.classList.add('certificate-print-mode');
+  window.print();
+  window.setTimeout(() => document.body.classList.remove('certificate-print-mode'), 300);
 }
 
 async function updateRegistrationStatus(
@@ -628,4 +735,18 @@ if (closeDetailButton) {
     detailContent.innerHTML =
       '<p>Memuat detail registrasi...</p>';
   });
+}
+
+
+const closeCertificateButton = document.getElementById('closeCertificateButton');
+if (closeCertificateButton) {
+  closeCertificateButton.addEventListener('click', () => {
+    const panel = document.getElementById('certificatePanel');
+    if (panel) panel.hidden = true;
+  });
+}
+
+const printCertificateButton = document.getElementById('printCertificateButton');
+if (printCertificateButton) {
+  printCertificateButton.addEventListener('click', printCertificate);
 }
