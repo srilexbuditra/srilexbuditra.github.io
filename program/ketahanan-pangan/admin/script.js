@@ -214,9 +214,129 @@ async function loadRegistrationDetail(registrationId) {
       throw new Error('Format detail registrasi tidak sesuai.');
     }
 
-    alert(
-      `Detail registrasi ${data.registration.registration_id} berhasil dimuat.`
-    );
+    const registration = data.registration;
+
+const detailPanel =
+  document.getElementById('registrationDetailPanel');
+
+const detailContent =
+  document.getElementById('registrationDetailContent');
+
+detailContent.innerHTML = `
+  <div class="detail-grid">
+    <div>
+      <small>Nomor Registrasi</small>
+      <strong>${escapeHtml(registration.registration_id || '-')}</strong>
+    </div>
+
+    <div>
+      <small>Status</small>
+      <strong>${escapeHtml(registration.status || '-')}</strong>
+    </div>
+
+    <div>
+      <small>Nama Lengkap</small>
+      <strong>${escapeHtml(registration.nama || '-')}</strong>
+    </div>
+
+    <div>
+      <small>NIK</small>
+      <strong>${escapeHtml(registration.nik || '-')}</strong>
+    </div>
+
+    <div>
+      <small>Nomor KK</small>
+      <strong>${escapeHtml(registration.nomor_kk || '-')}</strong>
+    </div>
+
+    <div>
+      <small>WhatsApp</small>
+      <strong>${escapeHtml(registration.whatsapp || '-')}</strong>
+    </div>
+
+    <div>
+      <small>Email</small>
+      <strong>${escapeHtml(registration.email || '-')}</strong>
+    </div>
+
+    <div>
+      <small>Provinsi</small>
+      <strong>${escapeHtml(registration.provinsi || '-')}</strong>
+    </div>
+
+    <div>
+      <small>Kabupaten / Kota</small>
+      <strong>${escapeHtml(registration.kabupaten || '-')}</strong>
+    </div>
+
+    <div>
+      <small>Kecamatan</small>
+      <strong>${escapeHtml(registration.kecamatan || '-')}</strong>
+    </div>
+
+    <div>
+      <small>Desa / Kelurahan</small>
+      <strong>${escapeHtml(registration.desa || '-')}</strong>
+    </div>
+
+    <div>
+      <small>Alamat</small>
+      <strong>${escapeHtml(registration.alamat || '-')}</strong>
+    </div>
+
+    <div>
+      <small>Status Pemohon</small>
+      <strong>${escapeHtml(registration.status_pemohon || '-')}</strong>
+    </div>
+
+    <div>
+      <small>Kelompok Tani</small>
+      <strong>${escapeHtml(registration.kelompok_tani || '-')}</strong>
+    </div>
+
+    <div>
+      <small>Luas Lahan</small>
+      <strong>${escapeHtml(registration.luas_lahan || '-')}</strong>
+    </div>
+
+    <div>
+      <small>Status Lahan</small>
+      <strong>${escapeHtml(registration.status_lahan || '-')}</strong>
+    </div>
+
+    <div>
+      <small>Komoditas</small>
+      <strong>${escapeHtml(registration.komoditas || '-')}</strong>
+    </div>
+
+    <div>
+      <small>Tahap</small>
+      <strong>${escapeHtml(registration.tahap || '-')}</strong>
+    </div>
+
+    <div>
+      <small>Jenis Pupuk</small>
+      <strong>${escapeHtml(registration.jenis_pupuk || '-')}</strong>
+    </div>
+
+    <div>
+      <small>Kebutuhan Pupuk</small>
+      <strong>${escapeHtml(registration.kebutuhan_kg || '-')} kg</strong>
+    </div>
+
+    <div>
+      <small>Keterangan</small>
+      <strong>${escapeHtml(registration.keterangan || '-')}</strong>
+    </div>
+  </div>
+`;
+
+detailPanel.hidden = false;
+
+detailPanel.scrollIntoView({
+  behavior: 'smooth',
+  block: 'start'
+});
   } catch (error) {
     console.error(
       'Ketahanan Pangan Admin: gagal memuat detail registrasi.',
@@ -225,4 +345,21 @@ async function loadRegistrationDetail(registrationId) {
 
     alert('Detail registrasi gagal dimuat.');
   }
+}
+const closeDetailButton =
+  document.getElementById('closeDetailButton');
+
+if (closeDetailButton) {
+  closeDetailButton.addEventListener('click', () => {
+    const detailPanel =
+      document.getElementById('registrationDetailPanel');
+
+    const detailContent =
+      document.getElementById('registrationDetailContent');
+
+    detailPanel.hidden = true;
+
+    detailContent.innerHTML =
+      '<p>Memuat detail registrasi...</p>';
+  });
 }
