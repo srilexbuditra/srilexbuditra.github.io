@@ -140,13 +140,24 @@ if (tableBody) {
       <td>${escapeHtml(tanggal)}</td>
       <td>${escapeHtml(statusLabel)}</td>
       <td>
-        <button type="button" disabled>
-          Detail
-        </button>
+        <button
+  type="button"
+  class="detail-button"
+  data-registration-id="${escapeHtml(item.registration_id || '')}"
+>
+  Detail
+</button>
       </td>
     `;
 
     tableBody.appendChild(row);
+    const detailButton = row.querySelector('.detail-button');
+
+if (detailButton) {
+  detailButton.addEventListener('click', () => {
+    loadRegistrationDetail(item.registration_id);
+  });
+}
   });
 
   if (registrations.length === 0) {
@@ -177,4 +188,41 @@ function escapeHtml(value) {
     .replaceAll('>', '&gt;')
     .replaceAll('"', '&quot;')
     .replaceAll("'", '&#039;');
+}
+async function loadRegistrationDetail(registrationId) {
+  try {
+    const response = await fetch(
+      `${API_URL}/${encodeURIComponent(registrationId)}`,
+      {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+          Accept: 'application/json',
+          Authorization: `Bearer ${adminToken}`
+        },
+        cache: 'no-store'
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    if (!data.ok || !data.registration) {
+      throw new Error('Format detail registrasi tidak sesuai.');
+    }
+
+    alert(
+      `Detail registrasi ${data.registration.registration_id} berhasil dimuat.`
+    );
+  } catch (error) {
+    console.error(
+      'Ketahanan Pangan Admin: gagal memuat detail registrasi.',
+      error
+    );
+
+    alert('Detail registrasi gagal dimuat.');
+  }
 }
