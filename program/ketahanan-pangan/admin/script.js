@@ -216,127 +216,177 @@ async function loadRegistrationDetail(registrationId) {
 
     const registration = data.registration;
 
-const detailPanel =
-  document.getElementById('registrationDetailPanel');
+    const detailPanel =
+      document.getElementById('registrationDetailPanel');
 
-const detailContent =
-  document.getElementById('registrationDetailContent');
+    const detailContent =
+      document.getElementById('registrationDetailContent');
 
-detailContent.innerHTML = `
-  <div class="detail-grid">
-    <div>
-      <small>Nomor Registrasi</small>
-      <strong>${escapeHtml(registration.registration_id || '-')}</strong>
-    </div>
+    const tanggalRegistrasi = registration.created_at
+      ? new Date(
+          registration.created_at.replace(' ', 'T')
+        ).toLocaleString('id-ID')
+      : '-';
 
-    <div>
-      <small>Status</small>
-      <strong>${escapeHtml(registration.status || '-')}</strong>
-    </div>
+    let statusLabel = registration.status || '-';
 
-    <div>
-      <small>Nama Lengkap</small>
-      <strong>${escapeHtml(registration.nama || '-')}</strong>
-    </div>
+    if (registration.status === 'submitted') {
+      statusLabel = 'Menunggu Verifikasi';
+    } else if (registration.status === 'verified') {
+      statusLabel = 'Terverifikasi';
+    } else if (registration.status === 'rejected') {
+      statusLabel = 'Ditolak';
+    } else if (registration.status === 'revision') {
+      statusLabel = 'Perlu Perbaikan';
+    } else if (registration.status === 'needs_action') {
+      statusLabel = 'Perlu Tindakan';
+    }
 
-    <div>
-      <small>NIK</small>
-      <strong>${escapeHtml(registration.nik || '-')}</strong>
-    </div>
+    detailContent.innerHTML = `
+      <div class="detail-table-wrapper">
+        <table class="detail-table">
+          <tbody>
+            <tr>
+              <th>Nomor Registrasi</th>
+              <td>${escapeHtml(registration.registration_id || '-')}</td>
+            </tr>
+            <tr>
+              <th>Status</th>
+              <td>${escapeHtml(statusLabel)}</td>
+            </tr>
+            <tr>
+              <th>Nama Lengkap</th>
+              <td>${escapeHtml(registration.nama || '-')}</td>
+            </tr>
+            <tr>
+              <th>NIK</th>
+              <td>${escapeHtml(registration.nik || '-')}</td>
+            </tr>
+            <tr>
+              <th>Nomor KK</th>
+              <td>${escapeHtml(registration.nomor_kk || '-')}</td>
+            </tr>
+            <tr>
+              <th>WhatsApp</th>
+              <td>${escapeHtml(registration.whatsapp || '-')}</td>
+            </tr>
+            <tr>
+              <th>Email</th>
+              <td>${escapeHtml(registration.email || '-')}</td>
+            </tr>
+            <tr>
+              <th>Provinsi</th>
+              <td>${escapeHtml(registration.provinsi || '-')}</td>
+            </tr>
+            <tr>
+              <th>Kabupaten / Kota</th>
+              <td>${escapeHtml(registration.kabupaten || '-')}</td>
+            </tr>
+            <tr>
+              <th>Kecamatan</th>
+              <td>${escapeHtml(registration.kecamatan || '-')}</td>
+            </tr>
+            <tr>
+              <th>Desa / Kelurahan</th>
+              <td>${escapeHtml(registration.desa || '-')}</td>
+            </tr>
+            <tr>
+              <th>Alamat</th>
+              <td>${escapeHtml(registration.alamat || '-')}</td>
+            </tr>
+            <tr>
+              <th>Status Pemohon</th>
+              <td>${escapeHtml(registration.status_pemohon || '-')}</td>
+            </tr>
+            <tr>
+              <th>Kelompok Tani</th>
+              <td>${escapeHtml(registration.kelompok_tani || '-')}</td>
+            </tr>
+            <tr>
+              <th>Luas Lahan</th>
+              <td>${escapeHtml(registration.luas_lahan || '-')}</td>
+            </tr>
+            <tr>
+              <th>Status Lahan</th>
+              <td>${escapeHtml(registration.status_lahan || '-')}</td>
+            </tr>
+            <tr>
+              <th>Komoditas</th>
+              <td>${escapeHtml(registration.komoditas || '-')}</td>
+            </tr>
+            <tr>
+              <th>Tahap</th>
+              <td>${escapeHtml(registration.tahap || '-')}</td>
+            </tr>
+            <tr>
+              <th>Jenis Pupuk</th>
+              <td>${escapeHtml(registration.jenis_pupuk || '-')}</td>
+            </tr>
+            <tr>
+              <th>Kebutuhan Pupuk</th>
+              <td>${escapeHtml(registration.kebutuhan_kg || '-')} kg</td>
+            </tr>
+            <tr>
+              <th>Keterangan</th>
+              <td>${escapeHtml(registration.keterangan || '-')}</td>
+            </tr>
+            <tr>
+              <th>Tanggal Registrasi</th>
+              <td>${escapeHtml(tanggalRegistrasi)}</td>
+            </tr>
+            <tr class="document-row">
+              <th>Dokumen Identitas</th>
+              <td>
+                <div class="document-actions">
+                  <button
+                    type="button"
+                    class="document-button"
+                    data-document="ktp"
+                  >
+                    Download KTP (NIK)
+                  </button>
+                  <button
+                    type="button"
+                    class="document-button"
+                    data-document="kk"
+                  >
+                    Download Kartu Keluarga (KK)
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    `;
 
-    <div>
-      <small>Nomor KK</small>
-      <strong>${escapeHtml(registration.nomor_kk || '-')}</strong>
-    </div>
+    detailContent
+      .querySelectorAll('.document-button')
+      .forEach((button) => {
+        button.addEventListener('click', async () => {
+          const originalText = button.textContent;
 
-    <div>
-      <small>WhatsApp</small>
-      <strong>${escapeHtml(registration.whatsapp || '-')}</strong>
-    </div>
+          button.disabled = true;
+          button.textContent = 'Mengunduh...';
 
-    <div>
-      <small>Email</small>
-      <strong>${escapeHtml(registration.email || '-')}</strong>
-    </div>
+          try {
+            await downloadRegistrationDocument(
+              registration.registration_id,
+              button.dataset.document
+            );
+          } finally {
+            button.disabled = false;
+            button.textContent = originalText;
+          }
+        });
+      });
 
-    <div>
-      <small>Provinsi</small>
-      <strong>${escapeHtml(registration.provinsi || '-')}</strong>
-    </div>
+    detailPanel.hidden = false;
 
-    <div>
-      <small>Kabupaten / Kota</small>
-      <strong>${escapeHtml(registration.kabupaten || '-')}</strong>
-    </div>
-
-    <div>
-      <small>Kecamatan</small>
-      <strong>${escapeHtml(registration.kecamatan || '-')}</strong>
-    </div>
-
-    <div>
-      <small>Desa / Kelurahan</small>
-      <strong>${escapeHtml(registration.desa || '-')}</strong>
-    </div>
-
-    <div>
-      <small>Alamat</small>
-      <strong>${escapeHtml(registration.alamat || '-')}</strong>
-    </div>
-
-    <div>
-      <small>Status Pemohon</small>
-      <strong>${escapeHtml(registration.status_pemohon || '-')}</strong>
-    </div>
-
-    <div>
-      <small>Kelompok Tani</small>
-      <strong>${escapeHtml(registration.kelompok_tani || '-')}</strong>
-    </div>
-
-    <div>
-      <small>Luas Lahan</small>
-      <strong>${escapeHtml(registration.luas_lahan || '-')}</strong>
-    </div>
-
-    <div>
-      <small>Status Lahan</small>
-      <strong>${escapeHtml(registration.status_lahan || '-')}</strong>
-    </div>
-
-    <div>
-      <small>Komoditas</small>
-      <strong>${escapeHtml(registration.komoditas || '-')}</strong>
-    </div>
-
-    <div>
-      <small>Tahap</small>
-      <strong>${escapeHtml(registration.tahap || '-')}</strong>
-    </div>
-
-    <div>
-      <small>Jenis Pupuk</small>
-      <strong>${escapeHtml(registration.jenis_pupuk || '-')}</strong>
-    </div>
-
-    <div>
-      <small>Kebutuhan Pupuk</small>
-      <strong>${escapeHtml(registration.kebutuhan_kg || '-')} kg</strong>
-    </div>
-
-    <div>
-      <small>Keterangan</small>
-      <strong>${escapeHtml(registration.keterangan || '-')}</strong>
-    </div>
-  </div>
-`;
-
-detailPanel.hidden = false;
-
-detailPanel.scrollIntoView({
-  behavior: 'smooth',
-  block: 'start'
-});
+    detailPanel.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start'
+    });
   } catch (error) {
     console.error(
       'Ketahanan Pangan Admin: gagal memuat detail registrasi.',
@@ -346,6 +396,109 @@ detailPanel.scrollIntoView({
     alert('Detail registrasi gagal dimuat.');
   }
 }
+
+async function downloadRegistrationDocument(
+  registrationId,
+  documentType
+) {
+  if (!adminToken) {
+    alert('Admin API Token tidak tersedia. Silakan login ulang.');
+    return;
+  }
+
+  if (!['ktp', 'kk'].includes(documentType)) {
+    alert('Jenis dokumen tidak valid.');
+    return;
+  }
+
+  try {
+    const baseUrl =
+      API_URL.replace(/\/registrations\/?$/, '');
+
+    const response = await fetch(
+      `${baseUrl}/documents/${encodeURIComponent(registrationId)}/${encodeURIComponent(documentType)}`,
+      {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+          Accept: '*/*',
+          Authorization: `Bearer ${adminToken}`
+        },
+        cache: 'no-store'
+      }
+    );
+
+    if (!response.ok) {
+      let message = `Gagal mengunduh dokumen (HTTP ${response.status}).`;
+
+      try {
+        const data = await response.json();
+
+        if (data && data.message) {
+          message = data.message;
+        }
+      } catch (_) {}
+
+      throw new Error(message);
+    }
+
+    const blob = await response.blob();
+
+    if (!blob || blob.size === 0) {
+      throw new Error('File dokumen kosong.');
+    }
+
+    const contentType =
+      (response.headers.get('Content-Type') || '').toLowerCase();
+
+    let extension = '';
+
+    if (contentType.includes('image/jpeg')) {
+      extension = '.jpg';
+    } else if (contentType.includes('image/png')) {
+      extension = '.png';
+    } else if (contentType.includes('image/webp')) {
+      extension = '.webp';
+    } else if (contentType.includes('application/pdf')) {
+      extension = '.pdf';
+    }
+
+    const documentLabel =
+      documentType === 'ktp' ? 'KTP' : 'KK';
+
+    const safeRegistrationId =
+      String(registrationId).replace(/[^a-zA-Z0-9_-]/g, '_');
+
+    const fileName =
+      `${documentLabel}-${safeRegistrationId}${extension}`;
+
+    const objectUrl = URL.createObjectURL(blob);
+
+    const link = document.createElement('a');
+    link.href = objectUrl;
+    link.download = fileName;
+    link.style.display = 'none';
+
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+
+    window.setTimeout(() => {
+      URL.revokeObjectURL(objectUrl);
+    }, 1000);
+  } catch (error) {
+    console.error(
+      'Ketahanan Pangan Admin: gagal mengunduh dokumen.',
+      error
+    );
+
+    alert(
+      error.message ||
+      'Gagal mengunduh dokumen.'
+    );
+  }
+}
+
 const closeDetailButton =
   document.getElementById('closeDetailButton');
 
