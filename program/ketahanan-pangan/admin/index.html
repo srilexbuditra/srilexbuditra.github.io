@@ -1,7 +1,90 @@
-<!doctype html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Dashboard Admin | Program Ketahanan Pangan</title><meta name="robots" content="noindex,nofollow"><meta name="theme-color" content="#123f2b"><link rel="stylesheet" href="./style.css?v=1"></head><body>
-<header class="top"><div class="wrap nav"><div><span class="eyebrow">PROGRAM KETAHANAN PANGAN</span><h1>Dashboard Admin</h1></div><span class="badge">V1 · MODE AMAN</span></div></header>
-<main class="wrap"><section class="notice"><strong>Dashboard Admin sedang disiapkan dengan akses terlindungi.</strong><p>Versi ini hanya menyiapkan antarmuka. Data D1, NIK, KK, WhatsApp, serta dokumen KTP/KK <b>belum diambil ke browser</b> sampai autentikasi admin dipasang.</p></section>
-<section class="stats"><article><small>Total Registrasi</small><strong>—</strong><span>Menunggu koneksi admin aman</span></article><article><small>Menunggu Verifikasi</small><strong>—</strong><span>Status submitted</span></article><article><small>Terverifikasi</small><strong>—</strong><span>Status verified</span></article><article><small>Perlu Tindakan</small><strong>—</strong><span>Perbaikan / ditolak</span></article></section>
-<section class="panel"><div class="panel-head"><div><span class="eyebrow">DATA PENDAFTAR</span><h2>Daftar Registrasi</h2></div><div class="search"><input type="search" placeholder="Cari nomor registrasi / nama" disabled><button disabled>Cari</button></div></div><div class="table-wrap"><table><thead><tr><th>Nomor Registrasi</th><th>Nama</th><th>Wilayah</th><th>Tanggal</th><th>Status</th><th>Aksi</th></tr></thead><tbody><tr><td colspan="6"><div class="empty"><span>🔒</span><strong>Data belum dibuka pada versi ini</strong><p>Langkah berikutnya adalah autentikasi admin dan endpoint Worker khusus admin. Ini mencegah data pendaftar menjadi endpoint publik.</p></div></td></tr></tbody></table></div></section>
-<section class="flow"><h2>Alur Verifikasi Admin</h2><div class="flow-grid"><article><b>1</b><div><strong>Pendaftar masuk</strong><span>Status awal: submitted</span></div></article><article><b>2</b><div><strong>Admin memeriksa</strong><span>Data dan dokumen secara terlindungi</span></div></article><article><b>3</b><div><strong>Admin memutuskan</strong><span>Verifikasi / perbaikan / tolak</span></div></article><article><b>4</b><div><strong>Anggota terverifikasi</strong><span>Nomor anggota + sertifikat + QR</span></div></article></div></section></main>
-<footer><div class="wrap"><strong>Program Ketahanan Pangan</strong><span>Administrasi & Verifikasi Digital</span><small>Technology & System Development · Srilex Buditra</small></div></footer><script src="./script.js?v=1" defer></script></body></html>
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Dashboard Admin | Program Ketahanan Pangan</title>
+    <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+    <!-- Program favicon: Super Tani Indonesia / Ketahanan Pangan -->
+<link rel="icon" href="/program/ketahanan-pangan/assets/brand/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="/program/ketahanan-pangan/assets/brand/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/program/ketahanan-pangan/assets/brand/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="48x48" href="/program/ketahanan-pangan/assets/brand/favicon-48x48.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/program/ketahanan-pangan/assets/brand/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/program/ketahanan-pangan/assets/brand/icon-192.png">
+    <meta name="theme-color" content="#123f2b">
+    <link rel="stylesheet" href="./style.css?v=1">
+  </head>
+  <body>
+    <header class="top">
+      <div class="wrap nav">
+        <div><span class="eyebrow">PROGRAM KETAHANAN PANGAN</span>
+          <h1>Dashboard Admin</h1>
+        </div><span class="badge">V1 · MODE AMAN</span>
+      </div>
+    </header>
+    <main class="wrap">
+      <section class="notice"><strong>Dashboard Admin sedang disiapkan dengan akses terlindungi.</strong>
+        <p>Versi ini hanya menyiapkan antarmuka. Data D1, NIK, KK, WhatsApp, serta dokumen KTP/KK <b>belum diambil ke browser</b> sampai autentikasi admin dipasang.</p>
+      </section>
+      <section class="stats">
+        <article><small>Total Registrasi</small><strong>—</strong><span>Menunggu koneksi admin aman</span></article>
+        <article><small>Menunggu Verifikasi</small><strong>—</strong><span>Status submitted</span></article>
+        <article><small>Terverifikasi</small><strong>—</strong><span>Status verified</span></article>
+        <article><small>Perlu Tindakan</small><strong>—</strong><span>Perbaikan / ditolak</span></article>
+      </section>
+      <section class="panel">
+        <div class="panel-head">
+          <div><span class="eyebrow">DATA PENDAFTAR</span>
+            <h2>Daftar Registrasi</h2>
+          </div>
+          <div class="search"><input type="search" placeholder="Cari nomor registrasi / nama" disabled><button disabled>Cari</button></div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Nomor Registrasi</th>
+                <th>Nama</th>
+                <th>Wilayah</th>
+                <th>Tanggal</th>
+                <th>Status</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td colspan="6">
+                  <div class="empty"><span>🔒</span><strong>Data belum dibuka pada versi ini</strong>
+                    <p>Langkah berikutnya adalah autentikasi admin dan endpoint Worker khusus admin. Ini mencegah data pendaftar menjadi endpoint publik.</p>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+      <section class="flow">
+        <h2>Alur Verifikasi Admin</h2>
+        <div class="flow-grid">
+          <article><b>1</b>
+            <div><strong>Pendaftar masuk</strong><span>Status awal: submitted</span></div>
+          </article>
+          <article><b>2</b>
+            <div><strong>Admin memeriksa</strong><span>Data dan dokumen secara terlindungi</span></div>
+          </article>
+          <article><b>3</b>
+            <div><strong>Admin memutuskan</strong><span>Verifikasi / perbaikan / tolak</span></div>
+          </article>
+          <article><b>4</b>
+            <div><strong>Anggota terverifikasi</strong><span>Nomor anggota + sertifikat + QR</span></div>
+          </article>
+        </div>
+      </section>
+    </main>
+    <footer>
+      <div class="wrap"><strong>Program Ketahanan Pangan</strong><span>Administrasi & Verifikasi Digital</span><small>Technology & System Development · Srilex Buditra</small></div>
+    </footer>
+    <script src="./script.js?v=1" defer></script>
+  </body>
+</html>
