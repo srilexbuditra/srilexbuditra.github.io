@@ -17,12 +17,46 @@
   </head>
   <body>
     <header class="top">
-      <div class="wrap nav">
-        <div><span class="eyebrow">PROGRAM KETAHANAN PANGAN</span>
-          <h1>Dashboard Admin</h1>
-        </div><span class="badge">V1 · MODE AMAN</span>
-      </div>
-    </header>
+  <div class="wrap nav">
+    <div>
+      <span class="eyebrow">PROGRAM KETAHANAN PANGAN</span>
+      <h1>Dashboard Admin</h1>
+    </div>
+
+    <span class="badge">V1 · MODE AMAN</span>
+  </div>
+</header>
+    <section id="adminLogin" class="admin-login">
+<div class="login-card">
+  <span class="eyebrow">AKSES TERLINDUNGI</span>
+
+  <h2>Login Administrator</h2>
+
+  <p>
+    Masukkan token administrator untuk membuka
+    Dashboard Program Ketahanan Pangan.
+  </p>
+
+  <form id="adminLoginForm">
+    <label for="adminToken">Admin API Token</label>
+
+    <input
+      id="adminToken"
+      name="adminToken"
+      type="password"
+      autocomplete="off"
+      required
+      placeholder="Masukkan token administrator"
+    >
+
+    <button type="submit">
+      Masuk Dashboard
+    </button>
+
+    <p id="loginMessage" role="status"></p>
+  </form>
+</div>
+</section>
     <main class="wrap">
       <section class="notice"><strong>Dashboard Admin sedang disiapkan dengan akses terlindungi.</strong>
         <p>Versi ini hanya menyiapkan antarmuka. Data D1, NIK, KK, WhatsApp, serta dokumen KTP/KK <b>belum diambil ke browser</b> sampai autentikasi admin dipasang.</p>
