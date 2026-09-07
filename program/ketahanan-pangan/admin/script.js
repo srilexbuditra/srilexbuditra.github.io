@@ -494,112 +494,79 @@ async function loadCertificate(registrationId) {
 function renderCertificate(certificate) {
   const panel = document.getElementById('certificatePanel');
   const content = document.getElementById('certificateContent');
+
   if (!panel || !content) return;
 
-  const wilayah = [certificate.kabupaten, certificate.provinsi]
-    .filter(Boolean).join(', ') || '-';
+  const wilayah = [
+    certificate.kabupaten,
+    certificate.provinsi
+  ].filter(Boolean).join(', ') || '-';
 
   content.innerHTML = `
-    <article class="certificate-card certificate-premium" id="printableCertificate">
-      <div class="certificate-corner certificate-corner-left" aria-hidden="true"></div>
-      <div class="certificate-corner certificate-corner-right" aria-hidden="true"></div>
-      <div class="certificate-map-watermark" aria-hidden="true">INDONESIA</div>
+    <article
+      class="certificate-template-card"
+      id="printableCertificate"
+      aria-label="Kartu / Sertifikat Digital Peserta Terverifikasi"
+    >
+      <img
+        class="certificate-template-image"
+        src="./certificate-template-a4.png"
+        alt=""
+        aria-hidden="true"
+      >
 
-      <header class="certificate-brand">
-        <div class="certificate-brand-item">
-          <img src="/program/ketahanan-pangan/admin/logo-super-tani.avif" alt="Logo PT Super Tani Indonesia" class="certificate-logo certificate-logo-sti">
-          <div class="certificate-brand-copy">
-            <strong>PT SUPER TANI INDONESIA</strong>
-            <small>Pelopor Program Ketahanan Pangan</small>
-          </div>
-        </div>
-        <div class="certificate-brand-divider" aria-hidden="true"></div>
-        <div class="certificate-brand-item">
-          <img src="/program/ketahanan-pangan/admin/logo-ay-group.avif" alt="Logo AY Group Agro Indonesia" class="certificate-logo certificate-logo-ay">
-          <div class="certificate-brand-copy">
-            <strong>AY GROUP AGRO INDONESIA</strong>
-            <small>Support System Marketing Nasional & Internasional</small>
-          </div>
-        </div>
-      </header>
-
-      <section class="certificate-title">
-        <span>KARTU / SERTIFIKAT DIGITAL</span>
-        <h3>PESERTA TERVERIFIKASI</h3>
-        <p>PROGRAM KETAHANAN PANGAN</p>
-        <div class="certificate-leaf-mark" aria-hidden="true">◆</div>
-      </section>
-
-      <section class="certificate-recipient">
-        <div class="certificate-name">${escapeHtml(certificate.nama || '-')}</div>
-        <p>“Bersama Petani, Mewujudkan Ketahanan Pangan Indonesia”</p>
-      </section>
-
-      <dl class="certificate-data certificate-data-premium">
-        <div>
-          <dt><span class="data-icon">▣</span>ID Sertifikat</dt>
-          <dd>${escapeHtml(certificate.certificate_id || '-')}</dd>
-        </div>
-        <div>
-          <dt><span class="data-icon">▤</span>Nomor Registrasi</dt>
-          <dd>${escapeHtml(certificate.registration_id || '-')}</dd>
-        </div>
-        <div>
-          <dt><span class="data-icon">●</span>Wilayah</dt>
-          <dd>${escapeHtml(wilayah)}</dd>
-        </div>
-        <div class="certificate-status-box">
-          <dt><span class="data-icon">✓</span>Status</dt>
-          <dd><span class="verified-pill">✓ Terverifikasi</span></dd>
-        </div>
-      </dl>
-
-      <section class="certificate-verification certificate-verification-premium">
-        <div class="certificate-qr-wrap">
-          <canvas id="certificateQrCanvas" class="certificate-qr" width="280" height="280"
-            aria-label="QR Code verifikasi sertifikat"></canvas>
-          <span>SCAN UNTUK VERIFIKASI</span>
-          <small>Arahkan kamera ponsel ke QR Code</small>
-        </div>
-        <div class="certificate-verification-copy">
-          <div class="verification-heading">
-            <span class="shield-icon" aria-hidden="true">✓</span>
-            <strong>Verifikasi Keaslian</strong>
-          </div>
-          <p>Pindai QR Code untuk membuka halaman verifikasi resmi. QR hanya memuat tautan verifikasi dan nomor registrasi, bukan NIK, KK, WhatsApp, atau dokumen identitas.</p>
-          <a href="${escapeHtml(certificate.verification_url || '#')}" target="_blank" rel="noopener noreferrer">
-            Buka halaman verifikasi
-          </a>
-          <blockquote>“Pertanian yang berdaya, pangan yang terjaga, masa depan yang lebih baik untuk Indonesia.”</blockquote>
-        </div>
-      </section>
-
-      <section class="certificate-program-note">
-        <span>PROGRAM KETAHANAN PANGAN</span>
-        <strong>PT Super Tani Indonesia</strong>
-        <small>Dokumen digital ini dinyatakan sah selama status verifikasi pada sistem masih aktif.</small>
-      </section>
-
-      <div class="certificate-field-scene" aria-hidden="true">
-        <div class="field-sun"></div>
-        <div class="field-mountain field-mountain-a"></div>
-        <div class="field-mountain field-mountain-b"></div>
-        <div class="field-lines"></div>
+      <div class="cert-overlay cert-overlay-name">
+        ${escapeHtml(certificate.nama || '-')}
       </div>
 
-      <footer class="certificate-footer certificate-footer-premium">
-        <small>“Pertanian untuk Kehidupan yang Lebih Baik”</small>
-        <small>Integrated Digital Platform &amp; System Development · srilexbuditra.work</small>
-      </footer>
-    </article>`;
+      <div class="cert-overlay cert-overlay-certificate-id">
+        ${escapeHtml(certificate.certificate_id || '-')}
+      </div>
 
-  const qrCanvas = document.getElementById('certificateQrCanvas');
+      <div class="cert-overlay cert-overlay-registration-id">
+        ${escapeHtml(certificate.registration_id || '-')}
+      </div>
+
+      <div class="cert-overlay cert-overlay-region">
+        ${escapeHtml(wilayah)}
+      </div>
+
+      <div class="cert-overlay cert-overlay-status">
+        <span class="cert-status-pill">✓ Terverifikasi</span>
+      </div>
+
+      <div class="cert-overlay cert-overlay-qr">
+        <canvas
+          id="certificateQrCanvas"
+          class="certificate-template-qr"
+          width="300"
+          height="300"
+          aria-label="QR Code verifikasi sertifikat"
+        ></canvas>
+      </div>
+
+      <div class="cert-overlay cert-overlay-issue-note">
+        <strong>Dokumen Digital Terverifikasi</strong>
+        <small>Program Ketahanan Pangan · PT Super Tani Indonesia</small>
+      </div>
+    </article>
+  `;
+
+  const qrCanvas =
+    document.getElementById('certificateQrCanvas');
+
   if (qrCanvas && certificate.verification_url) {
-    renderCertificateQrCode(qrCanvas, certificate.verification_url);
+    renderCertificateQrCode(
+      qrCanvas,
+      certificate.verification_url
+    );
   }
 
   panel.hidden = false;
-  panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  panel.scrollIntoView({
+    behavior: 'smooth',
+    block: 'start'
+  });
 }
 
 function renderCertificateQrCode(canvas, value) {
