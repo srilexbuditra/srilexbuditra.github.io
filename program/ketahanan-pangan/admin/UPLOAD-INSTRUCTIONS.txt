@@ -1,0 +1,6 @@
+Upload seluruh isi ZIP ini ke folder:
+/program/ketahanan-pangan/admin/
+
+Ganti file lama jika diminta.
+Setelah upload lakukan Ctrl+F5.
+Lalu buka detail peserta terverifikasi > Terbitkan Kartu / Sertifikat > Cetak / Simpan PDF.
