@@ -332,79 +332,377 @@
 
 
 /* =========================================================
-   TEMPLATE A4 PREMIUM + DATA DINAMIS OVERLAY — RAPIH V2
+   SERTIFIKAT A4 PREMIUM — CLEAN DYNAMIC LAYOUT V3
    ========================================================= */
-.certificate-content{display:flex;justify-content:center;padding:18px;background:#eef2ef}
-.certificate-template-card{position:relative;width:min(860px,100%);aspect-ratio:1055/1491;overflow:hidden;background:#fff;box-shadow:0 18px 50px rgba(14,57,37,.16)}
-.certificate-template-image{position:absolute;inset:0;display:block;width:100%;height:100%;object-fit:fill;user-select:none;pointer-events:none}
-.cert-overlay{position:absolute;z-index:5;box-sizing:border-box;color:#07172b}
-
-.cert-overlay-name{
-  left:28.4%;top:33.9%;width:43.6%;height:3.8%;
-  display:flex;align-items:center;justify-content:center;
-  background:#fff;padding:0 .6%;font-size:clamp(19px,3vw,37px);
-  line-height:1;font-weight:900;text-align:center;white-space:nowrap;
-  overflow:hidden;text-overflow:ellipsis
+.certificate-content{
+  display:flex;
+  justify-content:center;
+  padding:18px;
+  background:#eef2ef
 }
 
-.cert-overlay-certificate-id,.cert-overlay-registration-id,.cert-overlay-region{
-  display:flex;align-items:center;background:#fff;color:#07172b;
-  font-size:clamp(8px,1.18vw,15px);line-height:1;font-weight:900;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis
-}
-.cert-overlay-certificate-id{left:13.4%;top:44.65%;width:32.2%;height:1.95%}
-.cert-overlay-registration-id{left:58.3%;top:44.65%;width:33.7%;height:1.95%}
-.cert-overlay-region{left:13.4%;top:50.75%;width:31%;height:2%}
-
-.cert-overlay-status{
-  left:58.5%;top:50.58%;width:18%;height:2.45%;
-  display:flex;align-items:center;background:#fff
-}
-.cert-status-pill{
-  display:inline-flex;align-items:center;justify-content:center;min-height:22px;
-  padding:.28em .9em;border-radius:999px;background:#c8f0d3;color:#08733e;
-  font-size:clamp(8px,1.05vw,14px);line-height:1;font-weight:900;white-space:nowrap
+.certificate-template-card{
+  position:relative;
+  width:min(860px,100%);
+  aspect-ratio:1055/1491;
+  overflow:hidden;
+  background:#fff;
+  box-shadow:0 18px 50px rgba(14,57,37,.16)
 }
 
-.cert-overlay-qr{
-  left:8.95%;top:56.25%;width:22.45%;height:14.95%;
-  display:flex;align-items:center;justify-content:center;padding:.6%;background:#fff
+.certificate-template-image{
+  position:absolute;
+  inset:0;
+  display:block;
+  width:100%;
+  height:100%;
+  object-fit:fill;
+  pointer-events:none;
+  user-select:none
 }
-.certificate-template-qr{display:block;width:100%;height:100%;object-fit:contain;image-rendering:pixelated}
+
+.cert-dynamic-layer{
+  position:absolute;
+  left:6.7%;
+  right:6.7%;
+  top:32.8%;
+  height:42.5%;
+  z-index:5;
+  display:flex;
+  flex-direction:column;
+  gap:1.05%;
+  box-sizing:border-box
+}
+
+.cert-person{
+  height:14%;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  text-align:center
+}
+
+.cert-person-name{
+  max-width:82%;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  color:#081628;
+  font-size:clamp(20px,3.05vw,38px);
+  line-height:1.05;
+  font-weight:900
+}
+
+.cert-person-tagline{
+  margin-top:.8%;
+  color:#5f6473;
+  font-size:clamp(8px,1.3vw,16px);
+  font-style:italic
+}
+
+.cert-info-grid{
+  height:24%;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  grid-template-rows:1fr 1fr;
+  gap:1.7%
+}
+
+.cert-info-card{
+  display:grid;
+  grid-template-columns:10% 1fr;
+  align-items:center;
+  gap:2.5%;
+  min-width:0;
+  padding:2.4% 3%;
+  border:1px solid rgba(22,74,49,.18);
+  border-radius:14px;
+  background:rgba(255,255,255,.96);
+  box-shadow:0 3px 12px rgba(19,66,44,.04);
+  box-sizing:border-box
+}
+
+.cert-info-icon{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:100%;
+  aspect-ratio:1;
+  border-radius:9px;
+  background:#fff4c9;
+  color:#0d5b37;
+  font-size:clamp(12px,1.75vw,22px);
+  font-weight:900
+}
+
+.cert-info-card span{
+  display:block;
+  margin-bottom:1.8%;
+  color:#596274;
+  font-size:clamp(6px,.82vw,10px);
+  font-weight:800;
+  letter-spacing:.04em
+}
+
+.cert-info-card strong{
+  display:block;
+  max-width:100%;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  color:#07172b;
+  font-size:clamp(8px,1.15vw,14px);
+  line-height:1.15;
+  font-weight:900
+}
+
+.cert-verified-pill{
+  width:max-content;
+  max-width:100%;
+  padding:.35em 1.1em;
+  border-radius:999px;
+  background:#c8f0d3;
+  color:#08733e!important
+}
+
+.cert-verification-layout{
+  flex:1;
+  min-height:0;
+  display:grid;
+  grid-template-columns:29% 1fr;
+  gap:2.2%
+}
+
+.cert-qr-card{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  min-height:0;
+  padding:3%;
+  border:2px solid #0d5b37;
+  border-radius:14px;
+  background:#fff;
+  box-sizing:border-box
+}
+
+.certificate-template-qr{
+  display:block;
+  width:78%;
+  aspect-ratio:1;
+  max-height:72%;
+  object-fit:contain;
+  image-rendering:pixelated
+}
+
+.cert-qr-label{
+  width:92%;
+  margin-top:2.5%;
+  padding:2.5% 3%;
+  border-radius:7px;
+  background:#075c38;
+  color:#fff;
+  font-size:clamp(7px,.95vw,12px);
+  line-height:1;
+  font-weight:900;
+  text-align:center
+}
+
+.cert-qr-card small{
+  margin-top:2.3%;
+  color:#26333f;
+  font-size:clamp(5px,.72vw,9px);
+  line-height:1.25;
+  text-align:center
+}
+
+.cert-verification-copy{
+  min-height:0;
+  display:grid;
+  grid-template-rows:1.05fr .88fr .42fr;
+  gap:2.4%
+}
+
+.cert-verify-box,
+.cert-quote-box{
+  display:grid;
+  align-items:center;
+  min-height:0;
+  border-radius:14px;
+  background:rgba(226,244,233,.83);
+  box-sizing:border-box
+}
+
+.cert-verify-box{
+  grid-template-columns:12% 1fr;
+  gap:3%;
+  padding:3.3% 4%
+}
+
+.cert-shield{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:100%;
+  aspect-ratio:1;
+  border:3px solid #08733e;
+  border-radius:30% 30% 45% 45%;
+  color:#08733e;
+  font-size:clamp(14px,2.2vw,28px);
+  font-weight:900
+}
+
+.cert-verify-box h4{
+  margin:0 0 2%;
+  color:#075c38;
+  font-size:clamp(10px,1.65vw,20px)
+}
+
+.cert-verify-box p{
+  margin:0;
+  color:#455064;
+  font-size:clamp(6px,.92vw,11px);
+  line-height:1.45
+}
+
+.cert-quote-box{
+  grid-template-columns:17% 1fr;
+  gap:3%;
+  padding:3.2% 4%
+}
+
+.cert-leaf{
+  color:#2d9c45;
+  font-size:clamp(26px,4.2vw,54px);
+  text-align:center
+}
+
+.cert-quote-box blockquote{
+  margin:0;
+  color:#183b2c;
+  font-family:Georgia,serif;
+  font-size:clamp(8px,1.25vw,15px);
+  line-height:1.35
+}
+
+.cert-program-note{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  color:#203227;
+  text-align:center
+}
+
+.cert-program-note strong{
+  font-size:clamp(6px,.78vw,10px);
+  letter-spacing:.13em
+}
+
+.cert-program-note span{
+  margin-top:1%;
+  font-size:clamp(7px,.9vw,11px);
+  font-weight:700
+}
 
 .certificate-print-root{display:none}
-@page{size:A4 portrait;margin:0}
+
+@page{
+  size:A4 portrait;
+  margin:0
+}
 
 @media print{
-  html,body{width:210mm!important;height:297mm!important;margin:0!important;padding:0!important;background:#fff!important}
-  body.certificate-print-mode>*:not(#certificatePrintRoot){display:none!important}
-  body.certificate-print-mode #certificatePrintRoot{
-    display:block!important;position:fixed!important;inset:0!important;
-    width:210mm!important;height:297mm!important;margin:0!important;padding:0!important;
-    overflow:hidden!important;background:#fff!important
+  html,body{
+    width:210mm!important;
+    height:297mm!important;
+    margin:0!important;
+    padding:0!important;
+    background:#fff!important
   }
+
+  body.certificate-print-mode>*:not(#certificatePrintRoot){
+    display:none!important
+  }
+
+  body.certificate-print-mode #certificatePrintRoot{
+    display:block!important;
+    position:fixed!important;
+    inset:0!important;
+    width:210mm!important;
+    height:297mm!important;
+    margin:0!important;
+    padding:0!important;
+    overflow:hidden!important;
+    background:#fff!important
+  }
+
   body.certificate-print-mode .certificate-template-card,
   body.certificate-print-mode .certificate-card-print{
-    position:relative!important;width:210mm!important;height:297mm!important;max-width:none!important;
-    aspect-ratio:auto!important;margin:0!important;padding:0!important;border:0!important;
-    border-radius:0!important;box-shadow:none!important;overflow:hidden!important;
-    break-inside:avoid!important;page-break-inside:avoid!important
+    position:relative!important;
+    width:210mm!important;
+    height:297mm!important;
+    max-width:none!important;
+    aspect-ratio:auto!important;
+    margin:0!important;
+    padding:0!important;
+    border:0!important;
+    border-radius:0!important;
+    box-shadow:none!important;
+    overflow:hidden!important
   }
+
   body.certificate-print-mode .certificate-template-image{
-    width:210mm!important;height:297mm!important;object-fit:fill!important
+    width:210mm!important;
+    height:297mm!important;
+    object-fit:fill!important
   }
-  body.certificate-print-mode .cert-overlay-name{font-size:20pt!important}
-  body.certificate-print-mode .cert-overlay-certificate-id,
-  body.certificate-print-mode .cert-overlay-registration-id,
-  body.certificate-print-mode .cert-overlay-region{font-size:8.7pt!important}
-  body.certificate-print-mode .cert-status-pill{min-height:5mm!important;font-size:8.5pt!important}
-  body.certificate-print-mode .certificate-template-qr{width:100%!important;height:100%!important}
-  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+
+  body.certificate-print-mode .cert-person-name{
+    font-size:20pt!important
+  }
+
+  body.certificate-print-mode .cert-person-tagline{
+    font-size:8.5pt!important
+  }
+
+  body.certificate-print-mode .cert-info-card span{
+    font-size:6.5pt!important
+  }
+
+  body.certificate-print-mode .cert-info-card strong{
+    font-size:8.7pt!important
+  }
+
+  body.certificate-print-mode .cert-qr-label{
+    font-size:7.3pt!important
+  }
+
+  body.certificate-print-mode .cert-qr-card small{
+    font-size:5.8pt!important
+  }
+
+  body.certificate-print-mode .cert-verify-box h4{
+    font-size:11.5pt!important
+  }
+
+  body.certificate-print-mode .cert-verify-box p{
+    font-size:7pt!important
+  }
+
+  body.certificate-print-mode .cert-quote-box blockquote{
+    font-size:9pt!important
+  }
+
+  *{
+    -webkit-print-color-adjust:exact!important;
+    print-color-adjust:exact!important
+  }
 }
 
 @media(max-width:700px){
   .certificate-content{padding:8px}
-  .cert-overlay-certificate-id,.cert-overlay-registration-id,.cert-overlay-region{
-    font-size:clamp(6px,1.65vw,10px)
-  }
+  .cert-info-card{border-radius:8px}
+  .cert-qr-card,.cert-verify-box,.cert-quote-box{border-radius:8px}
 }
