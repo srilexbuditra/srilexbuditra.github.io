@@ -533,7 +533,7 @@ function renderCertificate(certificate) {
       </div>
       <div class="certificate-footer">
         <small>Dokumen digital administrasi Program Ketahanan Pangan.</small>
-        <small>Technology & System Development · Srilex Buditra</small>
+        <small>Integrated Digital Platform & System Development · srilexbuditra.work</small>
       </div>
     </article>`;
 
