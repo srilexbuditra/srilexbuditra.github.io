@@ -174,3 +174,38 @@
     page-break-inside: avoid !important;
   }
 }
+
+/* ===== Sertifikat Peserta A4 Final ===== */
+.certificate-card{
+  position:relative;overflow:hidden;
+  width:min(900px,100%);padding:34px 38px 30px;
+  border:1px solid #c9d8cd;border-radius:22px;
+  background:
+    radial-gradient(circle at 8% 10%,rgba(72,150,82,.12),transparent 23%),
+    radial-gradient(circle at 92% 88%,rgba(232,183,55,.13),transparent 25%),
+    linear-gradient(180deg,#fff 0%,#fbfefb 64%,#eef8ef 100%);
+}
+.certificate-card::before{content:"";position:absolute;left:-8%;right:-8%;bottom:-54px;height:125px;background:linear-gradient(165deg,transparent 0 28%,#e5b83c 29% 35%,#0d6a3f 36% 55%,#064d31 56% 100%);opacity:.96;z-index:0}
+.certificate-card>*{position:relative;z-index:1}
+.certificate-brand{display:grid;grid-template-columns:1fr 1px 1fr;align-items:center;gap:22px;color:var(--g);padding-bottom:18px;border-bottom:2px solid rgba(167,123,32,.35)}
+.certificate-brand-item{display:flex;align-items:center;justify-content:center;gap:12px;text-align:center}.certificate-brand-item>div{display:grid;gap:2px}.certificate-brand-item strong{font-size:.9rem;letter-spacing:.02em}.certificate-brand-item small{font-size:.7rem;color:var(--muted)}.certificate-brand-divider{width:1px;height:74px;background:#d8c083}.certificate-logo{display:block;object-fit:contain;flex:0 0 auto}.certificate-logo-sti{width:92px;height:92px}.certificate-logo-ay{width:104px;height:92px}
+.certificate-title{padding:22px 0 12px}.certificate-title span{display:inline-block;padding:6px 22px;border-radius:999px;background:linear-gradient(90deg,#f5d86c,#dcae2d,#f5d86c);color:#174c32;letter-spacing:.14em}.certificate-title h3{text-transform:uppercase;font-size:clamp(2rem,5vw,3rem);letter-spacing:.02em;margin:12px 0 2px}.certificate-title p{margin:0;color:#49566a;font-weight:800;letter-spacing:.16em;font-size:.82rem}.certificate-name{border:0;padding:13px 18px 18px;font-size:clamp(1.7rem,4vw,2.35rem);color:#101c17}.certificate-name::after{content:"Bersama Petani, Mewujudkan Ketahanan Pangan Indonesia";display:block;margin-top:5px;font-size:.82rem;font-weight:500;font-style:italic;color:#66736c}
+.certificate-data{gap:10px;margin:14px 0}.certificate-data div{padding:12px 14px;border-color:#d8e2db;background:rgba(255,255,255,.88);box-shadow:0 3px 12px rgba(18,63,43,.035)}.certificate-data dt{color:#68736d}.certificate-data dd{color:#14251c}
+.certificate-verification{grid-template-columns:180px minmax(0,1fr);gap:18px;padding:15px;background:linear-gradient(135deg,#edf8f0,#f7fbf7);border:1px solid #dcebe0}.certificate-qr-wrap{border:2px solid #17633f;padding:10px}.certificate-qr{width:154px;height:154px}.certificate-qr-wrap span{background:#0d5c3a;color:#fff;border-radius:7px;width:100%;padding:5px}.certificate-verification-copy strong{font-size:1.08rem;color:#0c5837}.certificate-footer{padding:18px 0 46px;border-top:1px solid rgba(20,90,56,.12);margin-top:15px}.certificate-footer small:last-child{font-weight:700;color:#315a46}
+@media(max-width:700px){.certificate-brand{grid-template-columns:1fr;gap:10px}.certificate-brand-divider{width:70%;height:1px;margin:auto}.certificate-brand-item{flex-direction:column}.certificate-logo-sti,.certificate-logo-ay{height:78px}.certificate-title p{letter-spacing:.08em}}
+
+@media print{
+  @page{size:A4 portrait;margin:5mm}
+  body.certificate-print-mode #certificatePrintRoot{height:287mm!important;overflow:hidden!important}
+  body.certificate-print-mode .certificate-card-print{height:287mm!important;min-height:287mm!important;padding:7mm 8mm 6mm!important;border-radius:0!important;overflow:hidden!important;background:radial-gradient(circle at 8% 10%,rgba(72,150,82,.12),transparent 23%),radial-gradient(circle at 92% 88%,rgba(232,183,55,.13),transparent 25%),linear-gradient(180deg,#fff 0%,#fbfefb 64%,#eef8ef 100%)!important;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+  body.certificate-print-mode .certificate-brand{grid-template-columns:1fr 1px 1fr!important;gap:5mm!important;padding-bottom:3mm!important}
+  body.certificate-print-mode .certificate-brand-item{flex-direction:row!important;gap:3mm!important}
+  body.certificate-print-mode .certificate-brand-divider{width:1px!important;height:18mm!important}
+  body.certificate-print-mode .certificate-logo-sti{width:21mm!important;height:21mm!important}body.certificate-print-mode .certificate-logo-ay{width:24mm!important;height:21mm!important}
+  body.certificate-print-mode .certificate-brand-item strong{font-size:8.5pt!important}body.certificate-print-mode .certificate-brand-item small{font-size:6.8pt!important}
+  body.certificate-print-mode .certificate-title{padding:4mm 0 2mm!important}body.certificate-print-mode .certificate-title span{padding:1.5mm 5mm!important;font-size:7pt!important}body.certificate-print-mode .certificate-title h3{font-size:22pt!important;margin:2mm 0 0!important}body.certificate-print-mode .certificate-title p{font-size:7pt!important}
+  body.certificate-print-mode .certificate-name{padding:2mm 3mm 3mm!important;font-size:18pt!important}body.certificate-print-mode .certificate-name::after{font-size:7pt!important;margin-top:1mm!important}
+  body.certificate-print-mode .certificate-data{gap:2.5mm!important;margin:3mm 0!important}body.certificate-print-mode .certificate-data div{padding:2.6mm 3mm!important}body.certificate-print-mode .certificate-data dt{font-size:6.5pt!important}body.certificate-print-mode .certificate-data dd{font-size:9pt!important;margin-top:1mm!important}
+  body.certificate-print-mode .certificate-verification{grid-template-columns:40mm minmax(0,1fr)!important;gap:4mm!important;padding:3mm!important}body.certificate-print-mode .certificate-qr-wrap{padding:2mm!important}body.certificate-print-mode .certificate-qr{width:31mm!important;height:31mm!important}body.certificate-print-mode .certificate-qr-wrap span{font-size:6pt!important;padding:1mm!important}body.certificate-print-mode .certificate-verification-copy strong{font-size:10pt!important}body.certificate-print-mode .certificate-verification-copy p{font-size:7.5pt!important;line-height:1.35!important}
+  body.certificate-print-mode .certificate-footer{padding:3mm 0 12mm!important;margin-top:3mm!important;font-size:7pt!important}
+}

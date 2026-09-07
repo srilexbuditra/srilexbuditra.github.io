@@ -502,13 +502,20 @@ function renderCertificate(certificate) {
   content.innerHTML = `
     <article class="certificate-card" id="printableCertificate">
       <div class="certificate-brand">
-        <span>PROGRAM KETAHANAN PANGAN</span>
-        <strong>PT Super Tani Indonesia</strong>
-        <small>Didukung AY Group Agro Indonesia</small>
+        <div class="certificate-brand-item">
+          <img src="./logo-super-tani.png" alt="Logo PT Super Tani Indonesia" class="certificate-logo certificate-logo-sti">
+          <div><strong>PT SUPER TANI INDONESIA</strong><small>Pelopor Program Ketahanan Pangan</small></div>
+        </div>
+        <div class="certificate-brand-divider" aria-hidden="true"></div>
+        <div class="certificate-brand-item">
+          <img src="./logo-ay-group.png" alt="Logo AY Group Agro Indonesia" class="certificate-logo certificate-logo-ay">
+          <div><strong>AY GROUP AGRO INDONESIA</strong><small>Support System Marketing Nasional & Internasional</small></div>
+        </div>
       </div>
       <div class="certificate-title">
         <span>KARTU / SERTIFIKAT DIGITAL</span>
-        <h3>Anggota Terverifikasi</h3>
+        <h3>Peserta Terverifikasi</h3>
+        <p>PROGRAM KETAHANAN PANGAN</p>
       </div>
       <div class="certificate-name">${escapeHtml(certificate.nama || '-')}</div>
       <dl class="certificate-data">
@@ -603,6 +610,15 @@ function printCertificate() {
 
   const clonedCertificate =
     printable.cloneNode(true);
+
+  const sourceQr = printable.querySelector('#certificateQrCanvas');
+  const clonedQr = clonedCertificate.querySelector('#certificateQrCanvas');
+  if (sourceQr && clonedQr) {
+    clonedQr.width = sourceQr.width;
+    clonedQr.height = sourceQr.height;
+    const clonedContext = clonedQr.getContext('2d');
+    clonedContext.drawImage(sourceQr, 0, 0);
+  }
 
   clonedCertificate.removeAttribute('id');
   clonedCertificate.classList.add(
