@@ -1,10 +1,18 @@
-FINAL CLEAN
-- Tidak ada blok putih HTML di belakang data.
-- Tidak ada blok hijau HTML di belakang status.
-- QR Code diposisikan center di area scan.
-- Data tetap dinamis dari sistem.
+MASTER BACKGROUND KOSONG FINAL
 
 Upload seluruh isi ZIP ke:
 program/ketahanan-pangan/admin/
 
-Timpa file lama, deploy, lalu Ctrl+F5.
+Timpa file lama lalu deploy.
+Sesudah deploy tekan Ctrl+F5.
+
+Background tidak berisi:
+- nama peserta
+- ID sertifikat
+- nomor registrasi
+- wilayah
+- status
+- QR
+- tanggal
+
+Semua data di atas hanya dibuat sekali oleh HTML/JavaScript.
