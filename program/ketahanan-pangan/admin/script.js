@@ -507,7 +507,7 @@ function renderCertificate(certificate) {
 
       <header class="certificate-brand">
         <div class="certificate-brand-item">
-          <img src="./logo-super-tani.png" alt="Logo PT Super Tani Indonesia" class="certificate-logo certificate-logo-sti">
+          <img src="/program/ketahanan-pangan/admin/logo-super-tani.avif" alt="Logo PT Super Tani Indonesia" class="certificate-logo certificate-logo-sti">
           <div class="certificate-brand-copy">
             <strong>PT SUPER TANI INDONESIA</strong>
             <small>Pelopor Program Ketahanan Pangan</small>
@@ -515,7 +515,7 @@ function renderCertificate(certificate) {
         </div>
         <div class="certificate-brand-divider" aria-hidden="true"></div>
         <div class="certificate-brand-item">
-          <img src="./logo-ay-group.png" alt="Logo AY Group Agro Indonesia" class="certificate-logo certificate-logo-ay">
+          <img src="/program/ketahanan-pangan/admin/logo-ay-group.avif" alt="Logo AY Group Agro Indonesia" class="certificate-logo certificate-logo-ay">
           <div class="certificate-brand-copy">
             <strong>AY GROUP AGRO INDONESIA</strong>
             <small>Support System Marketing Nasional & Internasional</small>
