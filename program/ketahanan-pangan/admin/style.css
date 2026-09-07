@@ -332,270 +332,79 @@
 
 
 /* =========================================================
-   TEMPLATE A4 PREMIUM + DATA DINAMIS OVERLAY
+   TEMPLATE A4 PREMIUM + DATA DINAMIS OVERLAY — RAPIH V2
    ========================================================= */
-.certificate-content {
-  display: flex;
-  justify-content: center;
-  padding: 22px;
-  background: #eef2ef;
+.certificate-content{display:flex;justify-content:center;padding:18px;background:#eef2ef}
+.certificate-template-card{position:relative;width:min(860px,100%);aspect-ratio:1055/1491;overflow:hidden;background:#fff;box-shadow:0 18px 50px rgba(14,57,37,.16)}
+.certificate-template-image{position:absolute;inset:0;display:block;width:100%;height:100%;object-fit:fill;user-select:none;pointer-events:none}
+.cert-overlay{position:absolute;z-index:5;box-sizing:border-box;color:#07172b}
+
+.cert-overlay-name{
+  left:28.4%;top:33.9%;width:43.6%;height:3.8%;
+  display:flex;align-items:center;justify-content:center;
+  background:#fff;padding:0 .6%;font-size:clamp(19px,3vw,37px);
+  line-height:1;font-weight:900;text-align:center;white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis
 }
 
-.certificate-template-card {
-  position: relative;
-  width: min(860px, 100%);
-  aspect-ratio: 1055 / 1491;
-  overflow: hidden;
-  background: #fff;
-  box-shadow: 0 18px 50px rgba(14, 57, 37, .16);
+.cert-overlay-certificate-id,.cert-overlay-registration-id,.cert-overlay-region{
+  display:flex;align-items:center;background:#fff;color:#07172b;
+  font-size:clamp(8px,1.18vw,15px);line-height:1;font-weight:900;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis
+}
+.cert-overlay-certificate-id{left:13.4%;top:44.65%;width:32.2%;height:1.95%}
+.cert-overlay-registration-id{left:58.3%;top:44.65%;width:33.7%;height:1.95%}
+.cert-overlay-region{left:13.4%;top:50.75%;width:31%;height:2%}
+
+.cert-overlay-status{
+  left:58.5%;top:50.58%;width:18%;height:2.45%;
+  display:flex;align-items:center;background:#fff
+}
+.cert-status-pill{
+  display:inline-flex;align-items:center;justify-content:center;min-height:22px;
+  padding:.28em .9em;border-radius:999px;background:#c8f0d3;color:#08733e;
+  font-size:clamp(8px,1.05vw,14px);line-height:1;font-weight:900;white-space:nowrap
 }
 
-.certificate-template-image {
-  position: absolute;
-  inset: 0;
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: fill;
-  user-select: none;
-  pointer-events: none;
+.cert-overlay-qr{
+  left:8.95%;top:56.25%;width:22.45%;height:14.95%;
+  display:flex;align-items:center;justify-content:center;padding:.6%;background:#fff
 }
+.certificate-template-qr{display:block;width:100%;height:100%;object-fit:contain;image-rendering:pixelated}
 
-.cert-overlay {
-  position: absolute;
-  z-index: 4;
-  box-sizing: border-box;
-  color: #07172b;
-}
+.certificate-print-root{display:none}
+@page{size:A4 portrait;margin:0}
 
-.cert-overlay-name {
-  left: 20%;
-  top: 34.0%;
-  width: 60%;
-  height: 4.1%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 1.5%;
-  background: rgba(255,255,255,.96);
-  font-size: clamp(20px, 3.05vw, 38px);
-  line-height: 1;
-  font-weight: 900;
-  text-align: center;
-}
-
-.cert-overlay-certificate-id,
-.cert-overlay-registration-id,
-.cert-overlay-region {
-  display: flex;
-  align-items: center;
-  overflow: hidden;
-  padding: 0 .8%;
-  background: rgba(255,255,255,.97);
-  font-size: clamp(9px, 1.25vw, 16px);
-  line-height: 1.15;
-  font-weight: 900;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-
-.cert-overlay-certificate-id {
-  left: 13.2%;
-  top: 44.7%;
-  width: 34.5%;
-  height: 2.75%;
-}
-
-.cert-overlay-registration-id {
-  left: 58.2%;
-  top: 44.7%;
-  width: 34.2%;
-  height: 2.75%;
-}
-
-.cert-overlay-region {
-  left: 13.2%;
-  top: 51.05%;
-  width: 34.5%;
-  height: 2.75%;
-}
-
-.cert-overlay-status {
-  left: 58.2%;
-  top: 51.0%;
-  width: 28%;
-  height: 3%;
-  display: flex;
-  align-items: center;
-  background: rgba(255,255,255,.97);
-}
-
-.cert-status-pill {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 24px;
-  padding: .32em 1em;
-  border-radius: 999px;
-  background: #c8f0d3;
-  color: #08733e;
-  font-size: clamp(9px, 1.15vw, 15px);
-  font-weight: 900;
-  white-space: nowrap;
-}
-
-.cert-overlay-qr {
-  left: 8.3%;
-  top: 56.15%;
-  width: 26%;
-  height: 18.1%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 1.3%;
-  background: #fff;
-}
-
-.certificate-template-qr {
-  display: block;
-  width: 100%;
-  height: 100%;
-  max-width: 245px;
-  max-height: 245px;
-  object-fit: contain;
-  image-rendering: pixelated;
-}
-
-.cert-overlay-issue-note {
-  left: 37%;
-  top: 75.0%;
-  width: 28%;
-  min-height: 4.5%;
-  display: grid;
-  align-content: center;
-  gap: 3px;
-  padding: .6% 1%;
-  background: rgba(255,255,255,.93);
-  color: #0b4930;
-  text-align: center;
-}
-
-.cert-overlay-issue-note strong {
-  font-size: clamp(8px, 1.1vw, 14px);
-  letter-spacing: .04em;
-}
-
-.cert-overlay-issue-note small {
-  font-size: clamp(7px, .86vw, 11px);
-  line-height: 1.25;
-}
-
-/* Hanya sertifikat yang dicetak, ukuran A4 penuh. */
-.certificate-print-root {
-  display: none;
-}
-
-@page {
-  size: A4 portrait;
-  margin: 0;
-}
-
-@media print {
-  html,
-  body {
-    width: 210mm !important;
-    height: 297mm !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    background: #fff !important;
+@media print{
+  html,body{width:210mm!important;height:297mm!important;margin:0!important;padding:0!important;background:#fff!important}
+  body.certificate-print-mode>*:not(#certificatePrintRoot){display:none!important}
+  body.certificate-print-mode #certificatePrintRoot{
+    display:block!important;position:fixed!important;inset:0!important;
+    width:210mm!important;height:297mm!important;margin:0!important;padding:0!important;
+    overflow:hidden!important;background:#fff!important
   }
-
-  body.certificate-print-mode > *:not(#certificatePrintRoot) {
-    display: none !important;
-  }
-
-  body.certificate-print-mode #certificatePrintRoot {
-    display: block !important;
-    position: fixed !important;
-    inset: 0 !important;
-    width: 210mm !important;
-    height: 297mm !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    overflow: hidden !important;
-    background: #fff !important;
-  }
-
   body.certificate-print-mode .certificate-template-card,
-  body.certificate-print-mode .certificate-card-print {
-    position: relative !important;
-    width: 210mm !important;
-    height: 297mm !important;
-    max-width: none !important;
-    aspect-ratio: auto !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    border: 0 !important;
-    border-radius: 0 !important;
-    box-shadow: none !important;
-    overflow: hidden !important;
-    break-inside: avoid !important;
-    page-break-inside: avoid !important;
+  body.certificate-print-mode .certificate-card-print{
+    position:relative!important;width:210mm!important;height:297mm!important;max-width:none!important;
+    aspect-ratio:auto!important;margin:0!important;padding:0!important;border:0!important;
+    border-radius:0!important;box-shadow:none!important;overflow:hidden!important;
+    break-inside:avoid!important;page-break-inside:avoid!important
   }
-
-  body.certificate-print-mode .certificate-template-image {
-    width: 210mm !important;
-    height: 297mm !important;
-    object-fit: fill !important;
+  body.certificate-print-mode .certificate-template-image{
+    width:210mm!important;height:297mm!important;object-fit:fill!important
   }
-
-  body.certificate-print-mode .cert-overlay-name {
-    font-size: 21pt !important;
-  }
-
+  body.certificate-print-mode .cert-overlay-name{font-size:20pt!important}
   body.certificate-print-mode .cert-overlay-certificate-id,
   body.certificate-print-mode .cert-overlay-registration-id,
-  body.certificate-print-mode .cert-overlay-region {
-    font-size: 9.3pt !important;
-  }
-
-  body.certificate-print-mode .cert-status-pill {
-    font-size: 9pt !important;
-  }
-
-  body.certificate-print-mode .certificate-template-qr {
-    width: 44mm !important;
-    height: 44mm !important;
-    max-width: none !important;
-    max-height: none !important;
-  }
-
-  body.certificate-print-mode .cert-overlay-issue-note strong {
-    font-size: 8.5pt !important;
-  }
-
-  body.certificate-print-mode .cert-overlay-issue-note small {
-    font-size: 6.7pt !important;
-  }
-
-  * {
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
-  }
+  body.certificate-print-mode .cert-overlay-region{font-size:8.7pt!important}
+  body.certificate-print-mode .cert-status-pill{min-height:5mm!important;font-size:8.5pt!important}
+  body.certificate-print-mode .certificate-template-qr{width:100%!important;height:100%!important}
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
 }
 
-@media (max-width: 700px) {
-  .certificate-content {
-    padding: 10px;
-  }
-
-  .cert-overlay-certificate-id,
-  .cert-overlay-registration-id,
-  .cert-overlay-region {
-    font-size: clamp(6px, 1.75vw, 11px);
-  }
-
-  .cert-status-pill {
-    min-height: 16px;
+@media(max-width:700px){
+  .certificate-content{padding:8px}
+  .cert-overlay-certificate-id,.cert-overlay-registration-id,.cert-overlay-region{
+    font-size:clamp(6px,1.65vw,10px)
   }
 }
