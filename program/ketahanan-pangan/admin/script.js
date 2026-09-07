@@ -589,13 +589,54 @@ function renderCertificateQrCode(canvas, value) {
 }
 
 function printCertificate() {
-  if (!document.getElementById('printableCertificate')) {
+  const printable =
+    document.getElementById('printableCertificate');
+
+  if (!printable) {
     alert('Sertifikat belum tersedia.');
     return;
   }
+
+  const printRoot = document.createElement('div');
+  printRoot.id = 'certificatePrintRoot';
+  printRoot.className = 'certificate-print-root';
+
+  const clonedCertificate =
+    printable.cloneNode(true);
+
+  clonedCertificate.removeAttribute('id');
+  clonedCertificate.classList.add(
+    'certificate-card-print'
+  );
+
+  printRoot.appendChild(clonedCertificate);
+  document.body.appendChild(printRoot);
   document.body.classList.add('certificate-print-mode');
+
+  const cleanup = () => {
+    document.body.classList.remove(
+      'certificate-print-mode'
+    );
+
+    printRoot.remove();
+    window.removeEventListener(
+      'afterprint',
+      cleanup
+    );
+  };
+
+  window.addEventListener(
+    'afterprint',
+    cleanup
+  );
+
   window.print();
-  window.setTimeout(() => document.body.classList.remove('certificate-print-mode'), 300);
+
+  window.setTimeout(() => {
+    if (document.body.contains(printRoot)) {
+      cleanup();
+    }
+  }, 1500);
 }
 
 async function updateRegistrationStatus(
