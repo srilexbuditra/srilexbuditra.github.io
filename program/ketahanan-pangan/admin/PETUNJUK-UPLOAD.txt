@@ -1,0 +1,17 @@
+SERTIFIKAT FINAL DISETUJUI
+
+Upload SEMUA file di paket ini ke:
+program/ketahanan-pangan/admin/
+
+Timpa file lama.
+Setelah deploy: Ctrl+F5.
+Kemudian buka peserta berstatus verified > Terbitkan Kartu/Sertifikat.
+
+Data dinamis:
+- Nama peserta
+- ID sertifikat
+- Nomor registrasi
+- Wilayah
+- Status
+- QR verifikasi
+- Tanggal penerbitan
