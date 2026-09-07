@@ -601,31 +601,31 @@
 }
 
 
-/* ===== SERTIFIKAT FINAL DISETUJUI ===== */
+/* ===== FINAL CLEAN: TEKS LANGSUNG DI ATAS BACKGROUND ===== */
 .certificate-content{display:flex;justify-content:center;padding:20px;background:#edf2ef}
-.certificate-final-card{position:relative;width:min(860px,100%);aspect-ratio:2480/3508;overflow:hidden;background:#fff;box-shadow:0 18px 50px rgba(0,48,28,.18)}
-.certificate-final-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;pointer-events:none;user-select:none}
-.certificate-dynamic-name,.certificate-dynamic-value,.certificate-dynamic-status,.certificate-dynamic-qr,.certificate-dynamic-date{position:absolute;z-index:10;box-sizing:border-box}
-.certificate-dynamic-name{left:14%;top:33.6%;width:72%;height:5.1%;display:flex;align-items:center;justify-content:center;padding:0 2%;color:#073d2b;font-weight:900;line-height:1;text-align:center;white-space:nowrap;overflow:hidden}
-.certificate-dynamic-value{display:flex;align-items:center;padding:0 .7%;color:#07172b;font-size:clamp(8px,1.15vw,14px);font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.cert-id{left:14.2%;top:44.7%;width:32.6%;height:2.7%}
-.cert-registration{left:60.4%;top:44.7%;width:32.6%;height:2.7%}
-.cert-region{left:14.2%;top:50.0%;width:32.6%;height:2.7%}
-.certificate-dynamic-status{left:60.4%;top:49.85%;width:25%;height:3%;display:flex;align-items:center;justify-content:center;border-radius:999px;background:#c8f0d3;color:#08733e;font-size:clamp(8px,1.1vw,14px);font-weight:900}
-.certificate-dynamic-qr{left:11.7%;top:58.4%;width:19%;height:10.8%;display:flex;align-items:center;justify-content:center;background:#fff;padding:.5%}
-.certificate-dynamic-qr canvas{width:100%!important;height:100%!important;object-fit:contain;image-rendering:pixelated}
-.certificate-dynamic-date{left:39.5%;top:76.0%;width:24%;height:2.2%;display:flex;align-items:center;justify-content:center;color:#07172b;font-size:clamp(7px,.95vw,12px);font-weight:800;white-space:nowrap}
+.certificate-clean-card{position:relative;width:min(860px,100%);aspect-ratio:2480/3508;overflow:hidden;background:#fff;box-shadow:0 18px 50px rgba(0,48,28,.18)}
+.certificate-clean-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;pointer-events:none}
+.cert-clean-name,.cert-clean-value,.cert-clean-status,.cert-clean-qr,.cert-clean-date{position:absolute;z-index:10;box-sizing:border-box;background:transparent!important;border:0!important;box-shadow:none!important}
+.cert-clean-name{left:27%;top:34.25%;width:46%;height:4%;display:flex;align-items:center;justify-content:center;color:#073d2b;font-weight:900;line-height:1;text-align:center;white-space:nowrap;overflow:hidden}
+.cert-clean-value{display:flex;align-items:center;color:#07172b;font-size:clamp(8px,1.15vw,14px);font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cert-clean-id{left:15%;top:43.55%;width:31%;height:2.5%}
+.cert-clean-reg{left:61%;top:43.55%;width:31%;height:2.5%}
+.cert-clean-region{left:15%;top:48.85%;width:31%;height:2.5%}
+.cert-clean-status{left:61%;top:48.75%;width:28%;height:2.7%;display:flex;align-items:center;color:#0b8a3e;font-size:clamp(9px,1.2vw,15px);font-weight:900;white-space:nowrap}
+.cert-clean-qr{left:18.0%;top:55.65%;width:17.2%;height:13.1%;display:flex;align-items:center;justify-content:center;padding:0!important}
+.cert-clean-qr canvas{display:block;width:100%!important;height:100%!important;object-fit:contain;image-rendering:pixelated}
+.cert-clean-date{left:41%;top:74.5%;width:18%;height:2.2%;display:flex;align-items:center;justify-content:center;color:#07172b;font-size:clamp(7px,.95vw,12px);font-weight:800;white-space:nowrap}
 .certificate-print-root{display:none}
 @page{size:A4 portrait;margin:0}
 @media print{
  html,body{width:210mm!important;height:297mm!important;margin:0!important;padding:0!important;background:#fff!important}
  body.certificate-print-mode>*:not(#certificatePrintRoot){display:none!important}
  body.certificate-print-mode #certificatePrintRoot{display:block!important;position:fixed!important;inset:0!important;width:210mm!important;height:297mm!important;margin:0!important;padding:0!important;overflow:hidden!important}
- body.certificate-print-mode .certificate-final-card{width:210mm!important;height:297mm!important;max-width:none!important;aspect-ratio:auto!important;margin:0!important;box-shadow:none!important;overflow:hidden!important}
- body.certificate-print-mode .certificate-final-bg{width:210mm!important;height:297mm!important;object-fit:fill!important}
- body.certificate-print-mode .certificate-dynamic-name{font-size:20pt!important}
- body.certificate-print-mode .certificate-dynamic-value{font-size:8.5pt!important}
- body.certificate-print-mode .certificate-dynamic-status{font-size:8.5pt!important}
- body.certificate-print-mode .certificate-dynamic-date{font-size:7.2pt!important}
+ body.certificate-print-mode .certificate-clean-card{width:210mm!important;height:297mm!important;max-width:none!important;aspect-ratio:auto!important;margin:0!important;box-shadow:none!important}
+ body.certificate-print-mode .certificate-clean-bg{width:210mm!important;height:297mm!important}
+ body.certificate-print-mode .cert-clean-name{font-size:20pt!important}
+ body.certificate-print-mode .cert-clean-value{font-size:8.5pt!important}
+ body.certificate-print-mode .cert-clean-status{font-size:9pt!important}
+ body.certificate-print-mode .cert-clean-date{font-size:7.2pt!important}
  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
 }

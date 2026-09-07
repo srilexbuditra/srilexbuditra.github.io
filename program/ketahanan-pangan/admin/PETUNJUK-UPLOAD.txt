@@ -1,17 +1,10 @@
-SERTIFIKAT FINAL DISETUJUI
+FINAL CLEAN
+- Tidak ada blok putih HTML di belakang data.
+- Tidak ada blok hijau HTML di belakang status.
+- QR Code diposisikan center di area scan.
+- Data tetap dinamis dari sistem.
 
-Upload SEMUA file di paket ini ke:
+Upload seluruh isi ZIP ke:
 program/ketahanan-pangan/admin/
 
-Timpa file lama.
-Setelah deploy: Ctrl+F5.
-Kemudian buka peserta berstatus verified > Terbitkan Kartu/Sertifikat.
-
-Data dinamis:
-- Nama peserta
-- ID sertifikat
-- Nomor registrasi
-- Wilayah
-- Status
-- QR verifikasi
-- Tanggal penerbitan
+Timpa file lama, deploy, lalu Ctrl+F5.
