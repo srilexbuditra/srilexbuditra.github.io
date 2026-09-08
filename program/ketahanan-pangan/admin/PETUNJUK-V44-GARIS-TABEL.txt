@@ -1,0 +1,5 @@
+V44 — GARIS TABEL PESERTA
+Basis V43 yang sudah berhasil tanpa Recovery.
+Ditambahkan border tipis pada setiap sel/baris peserta untuk Sheet 1, Sheet 2, dan Sheet 3.
+Layout, header hijau, pembagian kolom, dan A4 Landscape tidak diubah.
+Upload semua file admin, Deploy, Ctrl+F5, lalu ekspor Excel baru.
