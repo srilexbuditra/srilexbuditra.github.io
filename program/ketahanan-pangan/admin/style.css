@@ -1636,3 +1636,36 @@
     transform:translateX(-50%) !important;
   }
 }
+
+
+/* =========================================================
+   V19 — TANGGAL NAIK SEDIKIT, CENTER TETAP
+   QR dan seluruh elemen lainnya dikunci.
+   ========================================================= */
+
+.cert-master-date{
+  left:50.70% !important;
+  top:77.78% !important; /* naik sedikit dari V18 */
+  width:20.50% !important;
+  height:3.10% !important;
+
+  transform:translateX(-50%) !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  text-align:center !important;
+
+  padding:0 !important;
+  margin:0 !important;
+  box-sizing:border-box !important;
+}
+
+@media print{
+  body.certificate-print-mode .cert-master-date{
+    left:50.70% !important;
+    top:77.78% !important;
+    width:20.50% !important;
+    height:3.10% !important;
+    transform:translateX(-50%) !important;
+  }
+}
