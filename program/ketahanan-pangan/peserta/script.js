@@ -130,7 +130,15 @@ function showDashboard(p) {
 	renderParticipantTimeline(p.status);
 	const s = String(p.status || '').toLowerCase(),
 		note = document.getElementById('statusNote'),
+		adminCard = document.getElementById('adminNoteCard'),
+		adminText = document.getElementById('adminNoteText'),
 		cert = document.getElementById('certificateBtn');
+	if (adminCard && adminText) {
+		const adminNote = String(p.admin_note || '').trim();
+		adminText.textContent = adminNote;
+		adminCard.hidden = !adminNote;
+		adminCard.dataset.status = s;
+	}
 	cert.hidden = true;
 	if (s === 'verified') {
 		note.textContent = 'Pendaftaran Anda telah terverifikasi. Sertifikat digital tersedia.';
