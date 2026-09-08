@@ -73,7 +73,30 @@
           <div><span class="eyebrow">DATA PENDAFTAR</span>
             <h2>Daftar Registrasi</h2>
           </div>
-          <div class="search"><input type="search" placeholder="Cari nomor registrasi / nama" disabled><button disabled>Cari</button></div>
+          <div class="admin-filter-bar" id="adminFilterBar">
+            <label class="admin-filter-search">
+              <span class="sr-only">Cari peserta</span>
+              <input id="participantSearch" type="search" placeholder="Cari nomor registrasi / nama" autocomplete="off">
+            </label>
+            <label>
+              <span class="sr-only">Filter status</span>
+              <select id="participantStatusFilter">
+                <option value="">Semua status</option>
+                <option value="submitted">Menunggu</option>
+                <option value="verified">Terverifikasi</option>
+                <option value="revision">Perbaikan</option>
+                <option value="rejected">Ditolak</option>
+              </select>
+            </label>
+            <label>
+              <span class="sr-only">Filter wilayah</span>
+              <select id="participantRegionFilter">
+                <option value="">Semua wilayah</option>
+              </select>
+            </label>
+            <button type="button" id="participantResetFilter" class="admin-filter-reset">Reset</button>
+            <span id="participantResultCount" class="admin-filter-count" aria-live="polite"></span>
+          </div>
         </div>
         <div class="table-wrap">
           <table>

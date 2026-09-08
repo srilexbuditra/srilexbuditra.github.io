@@ -66,6 +66,7 @@ async function loadRegistrations() {
      */
 
     window.KETAHANAN_PANGAN_REGISTRATIONS = registrations;
+    initAdminParticipantFilters(registrations);
 
 const total = registrations.length;
 const submitted = registrations.filter(
@@ -886,4 +887,116 @@ if (closeCertificateButton) {
 const printCertificateButton = document.getElementById('printCertificateButton');
 if (printCertificateButton) {
   printCertificateButton.addEventListener('click', printCertificate);
+}
+
+
+// =========================================================
+// ADMIN FILTER PESERTA V1
+// Client-side only: tidak mengubah API, token, dokumen, status, atau sertifikat.
+// =========================================================
+function normalizeAdminFilterText(value) {
+  return String(value || '').toLocaleLowerCase('id-ID').trim();
+}
+
+function adminRegistrationRegion(item) {
+  return [item.kabupaten, item.provinsi].filter(Boolean).join(', ').trim();
+}
+
+function refreshAdminRegionOptions(registrations) {
+  const select = document.getElementById('participantRegionFilter');
+  if (!select) return;
+
+  const current = select.value;
+  const regions = [...new Set(
+    registrations.map(adminRegistrationRegion).filter(Boolean)
+  )].sort((a, b) => a.localeCompare(b, 'id-ID'));
+
+  select.innerHTML =
+    '<option value="">Semua wilayah</option>' +
+    regions.map(region =>
+      `<option value="${region.replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}">${region.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</option>`
+    ).join('');
+
+  if (regions.includes(current)) select.value = current;
+}
+
+function applyAdminParticipantFilters() {
+  const registrations =
+    Array.isArray(window.KETAHANAN_PANGAN_REGISTRATIONS)
+      ? window.KETAHANAN_PANGAN_REGISTRATIONS
+      : [];
+
+  const search = normalizeAdminFilterText(
+    document.getElementById('participantSearch')?.value
+  );
+  const status = normalizeAdminFilterText(
+    document.getElementById('participantStatusFilter')?.value
+  );
+  const region = normalizeAdminFilterText(
+    document.getElementById('participantRegionFilter')?.value
+  );
+
+  const rows = document.querySelectorAll('.table-wrap tbody tr');
+  let visible = 0;
+
+  rows.forEach((row, index) => {
+    const item = registrations[index];
+    if (!item) return;
+
+    const haystack = normalizeAdminFilterText(
+      `${item.registration_id || ''} ${item.nama || ''}`
+    );
+    const itemStatus = normalizeAdminFilterText(item.status);
+    const itemRegion = normalizeAdminFilterText(adminRegistrationRegion(item));
+
+    const match =
+      (!search || haystack.includes(search)) &&
+      (!status || itemStatus === status) &&
+      (!region || itemRegion === region);
+
+    row.hidden = !match;
+    if (match) visible += 1;
+  });
+
+  const count = document.getElementById('participantResultCount');
+  if (count) {
+    count.textContent =
+      registrations.length
+        ? `${visible} dari ${registrations.length} peserta`
+        : '0 peserta';
+  }
+}
+
+function initAdminParticipantFilters(registrations) {
+  refreshAdminRegionOptions(registrations);
+
+  const search = document.getElementById('participantSearch');
+  const status = document.getElementById('participantStatusFilter');
+  const region = document.getElementById('participantRegionFilter');
+  const reset = document.getElementById('participantResetFilter');
+
+  if (search && !search.dataset.filterReady) {
+    search.dataset.filterReady = '1';
+    search.addEventListener('input', applyAdminParticipantFilters);
+  }
+  if (status && !status.dataset.filterReady) {
+    status.dataset.filterReady = '1';
+    status.addEventListener('change', applyAdminParticipantFilters);
+  }
+  if (region && !region.dataset.filterReady) {
+    region.dataset.filterReady = '1';
+    region.addEventListener('change', applyAdminParticipantFilters);
+  }
+  if (reset && !reset.dataset.filterReady) {
+    reset.dataset.filterReady = '1';
+    reset.addEventListener('click', () => {
+      if (search) search.value = '';
+      if (status) status.value = '';
+      if (region) region.value = '';
+      applyAdminParticipantFilters();
+    });
+  }
+
+  // loadRegistrations merender baris secara sinkron setelah assignment ini.
+  setTimeout(applyAdminParticipantFilters, 0);
 }
