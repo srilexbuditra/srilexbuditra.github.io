@@ -1459,3 +1459,64 @@
     width:21.10% !important;
   }
 }
+
+
+/* =========================================================
+   V16 — CENTER FINAL SESUAI ACUAN VISUAL
+   Hanya QR Code dan Tanggal.
+   ========================================================= */
+
+/* QR Code: pusat QR dibuat tepat di pusat empat sudut scanner */
+.cert-master-qr{
+  left:17.55% !important;
+  top:57.05% !important;
+  width:15.55% !important;
+  height:12.05% !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  padding:0 !important;
+  margin:0 !important;
+  box-sizing:border-box !important;
+}
+.cert-master-qr canvas{
+  display:block !important;
+  width:100% !important;
+  height:100% !important;
+  max-width:100% !important;
+  max-height:100% !important;
+  margin:auto !important;
+  padding:0 !important;
+  object-fit:contain !important;
+  image-rendering:pixelated !important;
+}
+
+/* Tanggal: pusat tulisan tepat di pusat kotak tanggal */
+.cert-master-date{
+  left:39.75% !important;
+  top:78.05% !important;
+  width:20.50% !important;
+  height:3.10% !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  text-align:center !important;
+  padding:0 !important;
+  margin:0 !important;
+  box-sizing:border-box !important;
+}
+
+@media print{
+  body.certificate-print-mode .cert-master-qr{
+    left:17.55% !important;
+    top:57.05% !important;
+    width:15.55% !important;
+    height:12.05% !important;
+  }
+  body.certificate-print-mode .cert-master-date{
+    left:39.75% !important;
+    top:78.05% !important;
+    width:20.50% !important;
+    height:3.10% !important;
+  }
+}
