@@ -1313,3 +1313,55 @@
     width:19.62% !important;
   }
 }
+
+
+/* =========================================================
+   FINAL V13 — HANYA QR CODE + TANGGAL
+   Semua elemen lainnya dikunci.
+   ========================================================= */
+
+/* QR Code: koreksi mikro ke pusat frame scanner */
+.cert-master-qr{
+  left:17.42% !important;
+  top:58.16% !important;
+  width:15.56% !important;
+  height:11.98% !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  padding:0 !important;
+}
+.cert-master-qr canvas{
+  display:block !important;
+  width:100% !important;
+  height:100% !important;
+  margin:auto !important;
+  object-fit:contain !important;
+  image-rendering:pixelated !important;
+}
+
+/* Tanggal: koreksi mikro ke pusat kolom */
+.cert-master-date{
+  left:40.32% !important;
+  top:78.25% !important;
+  width:19.42% !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  text-align:center !important;
+  padding:0 !important;
+}
+
+@media print{
+  body.certificate-print-mode .cert-master-qr{
+    left:17.42% !important;
+    top:58.16% !important;
+    width:15.56% !important;
+    height:11.98% !important;
+  }
+  body.certificate-print-mode .cert-master-date{
+    left:40.32% !important;
+    top:78.25% !important;
+    width:19.42% !important;
+  }
+}
