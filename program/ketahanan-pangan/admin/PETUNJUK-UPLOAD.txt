@@ -1,0 +1,14 @@
+KOREKSI POSISI FINAL
+
+Perubahan:
+- Nama peserta dinaikkan dan diperkecil agar tidak menabrak teks statis.
+- ID Sertifikat, Nomor Registrasi, Wilayah, dan Status dirapikan ke pusat kolom masing-masing.
+- QR Code diperkecil dan dipusatkan di dalam empat sudut scanner.
+- Tanggal dinaikkan ke tengah kolom Diterbitkan pada.
+- Background TIDAK diubah.
+
+Upload seluruh isi ZIP ini ke:
+program/ketahanan-pangan/admin/
+
+Timpa file lama, deploy, lalu Ctrl+F5.
+Setelah itu buka Terbitkan Kartu / Sertifikat.

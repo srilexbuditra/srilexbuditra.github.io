@@ -629,3 +629,23 @@
  body.certificate-print-mode .cert-master-date{font-size:7.2pt!important}
  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
 }
+
+
+/* ===== KOREKSI POSISI FINAL BERDASARKAN SCREENSHOT 2026-09-08 ===== */
+.cert-master-name{left:26.5%!important;top:35.65%!important;width:47%!important;height:3.35%!important;font-size:clamp(20px,2.75vw,34px)!important;line-height:1!important;align-items:center!important;justify-content:center!important;padding:0 1.5%!important;text-align:center!important}
+.cert-master-id{left:15.1%!important;top:44.15%!important;width:31.5%!important;height:2.45%!important}
+.cert-master-reg{left:61.0%!important;top:44.15%!important;width:31.5%!important;height:2.45%!important}
+.cert-master-region{left:15.1%!important;top:50.30%!important;width:31.5%!important;height:2.45%!important}
+.cert-master-status{left:61.0%!important;top:50.20%!important;width:26.5%!important;height:2.55%!important;align-items:center!important;justify-content:flex-start!important}
+.cert-master-qr{left:17.25%!important;top:58.10%!important;width:16.2%!important;height:12.1%!important;padding:0!important;align-items:center!important;justify-content:center!important}
+.cert-master-qr canvas{width:100%!important;height:100%!important;display:block!important;margin:auto!important}
+.cert-master-date{left:39.35%!important;top:76.65%!important;width:21.5%!important;height:2.0%!important;align-items:center!important;justify-content:center!important;text-align:center!important;font-size:clamp(7px,.92vw,11px)!important}
+@media print{
+ body.certificate-print-mode .cert-master-name{left:26.5%!important;top:35.65%!important;width:47%!important;height:3.35%!important;font-size:18pt!important}
+ body.certificate-print-mode .cert-master-id{left:15.1%!important;top:44.15%!important}
+ body.certificate-print-mode .cert-master-reg{left:61.0%!important;top:44.15%!important}
+ body.certificate-print-mode .cert-master-region{left:15.1%!important;top:50.30%!important}
+ body.certificate-print-mode .cert-master-status{left:61.0%!important;top:50.20%!important}
+ body.certificate-print-mode .cert-master-qr{left:17.25%!important;top:58.10%!important;width:16.2%!important;height:12.1%!important}
+ body.certificate-print-mode .cert-master-date{left:39.35%!important;top:76.65%!important;width:21.5%!important;height:2.0%!important;font-size:7pt!important}
+}
