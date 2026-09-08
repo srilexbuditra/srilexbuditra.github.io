@@ -746,3 +746,79 @@
   overflow:hidden !important;
   white-space:nowrap !important;
 }
+
+
+/* ===== FINAL V6: POSISI DIKUNCI SESUAI VISUAL YANG DISETUJUI ===== */
+
+/* Wilayah benar-benar center pada kolom nilainya */
+.cert-master-region{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  text-align:center !important;
+  padding-left:1.2% !important;
+  padding-right:1.2% !important;
+}
+
+/* Status benar-benar center pada kolom nilainya */
+.cert-master-status{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  text-align:center !important;
+  padding-left:1.2% !important;
+  padding-right:1.2% !important;
+}
+
+/* QR dikunci tepat di tengah frame scanner */
+.cert-master-qr{
+  left:16.9% !important;
+  top:57.95% !important;
+  width:17.0% !important;
+  height:12.55% !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  padding:0 !important;
+}
+.cert-master-qr canvas{
+  display:block !important;
+  width:100% !important;
+  height:100% !important;
+  margin:auto !important;
+  object-fit:contain !important;
+  image-rendering:pixelated !important;
+}
+
+/* Tanggal benar-benar center dalam kolom Diterbitkan pada */
+.cert-master-date{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  text-align:center !important;
+  left:40.35% !important;
+  width:21.3% !important;
+}
+
+@media print{
+  body.certificate-print-mode .cert-master-region{
+    justify-content:center !important;
+    text-align:center !important;
+  }
+  body.certificate-print-mode .cert-master-status{
+    justify-content:center !important;
+    text-align:center !important;
+  }
+  body.certificate-print-mode .cert-master-qr{
+    left:16.9% !important;
+    top:57.95% !important;
+    width:17.0% !important;
+    height:12.55% !important;
+  }
+  body.certificate-print-mode .cert-master-date{
+    left:40.35% !important;
+    width:21.3% !important;
+    justify-content:center !important;
+    text-align:center !important;
+  }
+}
