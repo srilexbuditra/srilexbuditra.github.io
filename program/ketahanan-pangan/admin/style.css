@@ -675,3 +675,56 @@
   body.certificate-print-mode .cert-master-status{top:51.45% !important;}
   body.certificate-print-mode .cert-master-date{top:78.15% !important;}
 }
+
+
+/* ===== FINISHING FINAL V3 ===== */
+
+/* Data 4 kolom sedikit lebih besar agar jelas saat cetak A4 */
+.cert-master-value{
+  font-size:clamp(9px,1.28vw,16px) !important;
+}
+.cert-master-status{
+  font-size:clamp(10px,1.28vw,16px) !important;
+}
+
+/* QR sedikit diperbesar, tetap center dalam frame scanner */
+.cert-master-qr{
+  left:16.45% !important;
+  top:57.75% !important;
+  width:17.8% !important;
+  height:13.0% !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+}
+.cert-master-qr canvas{
+  display:block !important;
+  width:100% !important;
+  height:100% !important;
+  margin:auto !important;
+  object-fit:contain !important;
+}
+
+/* Tanggal sedikit lebih besar tanpa mengubah kotaknya */
+.cert-master-date{
+  font-size:clamp(8px,1.08vw,13px) !important;
+  font-weight:800 !important;
+}
+
+@media print{
+  body.certificate-print-mode .cert-master-value{
+    font-size:9.4pt !important;
+  }
+  body.certificate-print-mode .cert-master-status{
+    font-size:9.4pt !important;
+  }
+  body.certificate-print-mode .cert-master-qr{
+    left:16.45% !important;
+    top:57.75% !important;
+    width:17.8% !important;
+    height:13.0% !important;
+  }
+  body.certificate-print-mode .cert-master-date{
+    font-size:8pt !important;
+  }
+}
