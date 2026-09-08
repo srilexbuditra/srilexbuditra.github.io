@@ -1,0 +1,9 @@
+V3.6 - GANTI MESIN EKSPOR EXCEL
+
+1. Upload index.html dan script-a4-v36.js ke folder /program/ketahanan-pangan/admin/
+2. Tidak perlu mengubah script.js, style.css, sertifikat, QR, Worker, D1, atau R2.
+3. Deploy.
+4. Buka dashboard admin lalu Ctrl+F5.
+5. Klik Ekspor Excel A4.
+
+Perubahan utama: generator OOXML manual dihapus dari jalur ekspor. File XLSX sekarang dibuat oleh SheetJS 0.20.3.
