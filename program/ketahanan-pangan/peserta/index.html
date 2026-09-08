@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>Akun Peserta | Program Ketahanan Pangan</title>
+  <meta name="description" content="Aktivasi akun, login, dan dashboard pribadi peserta Program Ketahanan Pangan.">
+  <meta name="theme-color" content="#123f2b">
+  <link rel="stylesheet" href="./style.css?v=1">
+</head>
+<body>
+<header class="topbar"><div class="wrap topbar-inner"><a href="../registrasi/" class="brand">Program Ketahanan Pangan</a><a href="../verifikasi/" class="toplink">Verifikasi Publik</a></div></header>
+<main>
+  <section class="hero"><div class="wrap hero-grid"><div><div class="eyebrow">PORTAL PESERTA</div><h1>Akun pribadi <span>setiap peserta</span></h1><p class="lead">Aktivasi akun menggunakan data pendaftaran Anda, lalu masuk untuk melihat status dan sertifikat secara pribadi.</p><div class="trust"><span>🔒 Sesi aman</span><span>✓ Data peserta lain tidak dapat diakses</span><span>✓ Admin tetap terpisah</span></div></div><aside class="hero-card"><small>ALUR AKUN</small><strong>Aktivasi → Login → Dashboard</strong><p>Gunakan Nomor Registrasi sebagai ID akun. Password hanya disimpan dalam bentuk hash.</p></aside></div></section>
+  <section class="content"><div class="wrap">
+    <div id="authView" class="auth-grid">
+      <section class="card"><div class="tabs"><button class="tab active" data-tab="login">Login</button><button class="tab" data-tab="activate">Aktivasi Akun</button></div>
+        <form id="loginForm" class="form active" data-panel="login"><h2>Login Peserta</h2><p>Masuk menggunakan Nomor Registrasi dan password pribadi.</p><label>Nomor Registrasi<input name="registration_id" required autocomplete="username" placeholder="KTPG-YYYYMMDD-XXXXXXXXXX"></label><label>Password<div class="password-row"><input name="password" type="password" minlength="8" required autocomplete="current-password"><button type="button" class="showpass">Lihat</button></div></label><button class="btn primary" type="submit">Masuk ke Dashboard</button></form>
+        <form id="activateForm" class="form" data-panel="activate"><h2>Aktivasi Akun</h2><p>Untuk mencegah pengambilalihan akun, cocokkan data yang pernah Anda kirim saat registrasi.</p><label>Nomor Registrasi<input name="registration_id" required autocomplete="username" placeholder="KTPG-YYYYMMDD-XXXXXXXXXX"></label><label>NIK<input name="nik" required inputmode="numeric" maxlength="16" pattern="[0-9]{16}" autocomplete="off" placeholder="16 digit NIK"></label><label>Nomor WhatsApp<input name="whatsapp" required inputmode="tel" autocomplete="tel" placeholder="08... atau 62..."></label><label>Buat Password<div class="password-row"><input name="password" type="password" minlength="8" maxlength="128" required autocomplete="new-password"><button type="button" class="showpass">Lihat</button></div></label><small class="hint">Minimal 8 karakter. Disarankan memakai huruf besar, huruf kecil, angka, dan simbol.</small><label>Ulangi Password<input name="password_confirm" type="password" minlength="8" maxlength="128" required autocomplete="new-password"></label><button class="btn primary" type="submit">Aktifkan Akun</button></form>
+        <div id="authMessage" class="message" role="status" aria-live="polite"></div>
+      </section>
+      <aside class="card side"><span class="badge">AKUN PESERTA</span><h2>Satu akun untuk satu Nomor Registrasi.</h2><ul><li>Status registrasi pribadi</li><li>Nama dan wilayah peserta</li><li>Catatan revisi/status proses</li><li>Akses sertifikat saat terverifikasi</li></ul><div class="privacy">NIK, KK, WhatsApp, email, dan dokumen identitas tidak ditampilkan di dashboard.</div></aside>
+    </div>
+    <section id="dashboardView" class="dashboard" hidden>
+      <div class="dash-head"><div><span class="badge">DASHBOARD PESERTA</span><h2>Selamat datang, <span id="dashName">Peserta</span></h2><p id="dashId">-</p></div><button id="logoutBtn" class="btn secondary">Keluar</button></div>
+      <div class="stats"><article><small>STATUS REGISTRASI</small><strong id="dashStatus">-</strong></article><article><small>TANGGAL REGISTRASI</small><strong id="dashDate">-</strong></article><article><small>WILAYAH</small><strong id="dashRegion">-</strong></article></div>
+      <div class="dash-grid"><article class="card"><h3>Informasi Peserta</h3><dl><div><dt>Nomor Registrasi</dt><dd id="infoId">-</dd></div><div><dt>Nama</dt><dd id="infoName">-</dd></div><div><dt>Status Pemohon</dt><dd id="infoApplicant">-</dd></div><div><dt>Komoditas</dt><dd id="infoCommodity">-</dd></div><div><dt>Jenis Pupuk</dt><dd id="infoFertilizer">-</dd></div></dl></article><article class="card"><h3>Status & Layanan</h3><div id="statusNote" class="status-note">Status akun sedang dimuat.</div><a id="certificateBtn" class="btn primary full" href="#" hidden>Lihat Kartu / Sertifikat Digital</a><a class="btn secondary full" href="../verifikasi/">Buka Verifikasi Publik</a></article></div>
+    </section>
+  </div></section>
+</main>
+<footer><div class="wrap footer-inner"><div><strong>Program Ketahanan Pangan</strong><span>Portal Akun Peserta</span></div><span>Integrated Digital Platform &amp; System Development · srilexbuditra.work</span></div></footer>
+<script src="./script.js?v=1" defer></script>
+</body></html>
