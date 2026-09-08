@@ -358,6 +358,13 @@ async function loadRegistrationDetail(registrationId) {
                 </div>
               </td>
             </tr>
+            <tr class="admin-note-row">
+              <th>Catatan Admin</th>
+              <td>
+                <textarea id="adminNoteInput" class="admin-note-input" maxlength="1000" placeholder="Tuliskan hasil pemeriksaan atau informasi untuk peserta...">${escapeHtml(registration.admin_note || '')}</textarea>
+                <div class="admin-note-help">Catatan ini hanya ditampilkan kepada admin dan peserta yang login. Maksimal 1000 karakter.</div>
+              </td>
+            </tr>
             <tr class="verification-row">
               <th>Tindakan Verifikasi</th>
               <td>
@@ -427,9 +434,11 @@ async function loadRegistrationDetail(registrationId) {
 
           if (!confirmed) return;
 
+          const adminNote = detailContent.querySelector('#adminNoteInput')?.value || '';
           await updateRegistrationStatus(
             registration.registration_id,
-            newStatus
+            newStatus,
+            adminNote
           );
         });
       });
@@ -684,7 +693,8 @@ async function printCertificate() {
 
 async function updateRegistrationStatus(
   registrationId,
-  newStatus
+  newStatus,
+  adminNote = ''
 ) {
   if (!adminToken) {
     alert('Admin API Token tidak tersedia. Silakan login ulang.');
@@ -711,7 +721,8 @@ async function updateRegistrationStatus(
           Authorization: `Bearer ${adminToken}`
         },
         body: JSON.stringify({
-          status: newStatus
+          status: newStatus,
+          admin_note: String(adminNote || '').trim().slice(0, 1000)
         }),
         cache: 'no-store'
       }

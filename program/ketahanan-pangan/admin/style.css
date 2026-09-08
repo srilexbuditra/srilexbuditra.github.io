@@ -1828,3 +1828,9 @@
     width:100%;
   }
 }
+
+
+/* V8.1 - Catatan Admin */
+.admin-note-input{width:100%;min-height:110px;resize:vertical;padding:12px 14px;border:1px solid #cbd9d1;border-radius:10px;background:#fff;color:#173326;font:inherit;line-height:1.5;box-sizing:border-box}
+.admin-note-input:focus{outline:2px solid rgba(20,92,62,.18);border-color:#17633f}
+.admin-note-help{margin-top:7px;font-size:12px;color:#66756d;line-height:1.45}
