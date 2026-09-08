@@ -70,7 +70,7 @@ async function loadRegistrations() {
 
 const total = registrations.length;
 const submitted = registrations.filter(
-  item => item.status === 'submitted'
+  item => item.status === 'submitted' || item.status === 'resubmitted'
 ).length;
 
 const verified = registrations.filter(
@@ -126,6 +126,8 @@ if (tableBody) {
 
     if (item.status === 'submitted') {
       statusLabel = 'Menunggu Verifikasi';
+    } else if (item.status === 'resubmitted') {
+      statusLabel = 'Menunggu Pemeriksaan Ulang';
     } else if (item.status === 'verified') {
       statusLabel = 'Terverifikasi';
     } else if (item.status === 'rejected') {
@@ -235,6 +237,8 @@ async function loadRegistrationDetail(registrationId) {
 
     if (registration.status === 'submitted') {
       statusLabel = 'Menunggu Verifikasi';
+    } else if (registration.status === 'resubmitted') {
+      statusLabel = 'Menunggu Pemeriksaan Ulang';
     } else if (registration.status === 'verified') {
       statusLabel = 'Terverifikasi';
     } else if (registration.status === 'rejected') {
@@ -1051,7 +1055,7 @@ function getFilteredAdminRegistrations() {
 
 
 function excelStatusLabel(status) {
-  const labels = { submitted:'Menunggu Verifikasi', verified:'Terverifikasi', revision:'Perlu Perbaikan', rejected:'Ditolak', needs_action:'Perlu Tindakan' };
+  const labels = { submitted:'Menunggu Verifikasi', resubmitted:'Menunggu Pemeriksaan Ulang', verified:'Terverifikasi', revision:'Perlu Perbaikan', rejected:'Ditolak', needs_action:'Perlu Tindakan' };
   return labels[status] || status || '-';
 }
 

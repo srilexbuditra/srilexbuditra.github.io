@@ -64,7 +64,7 @@
       </section>
       <section class="stats">
         <article><small>Total Registrasi</small><strong>—</strong><span>Menunggu koneksi admin aman</span></article>
-        <article><small>Menunggu Verifikasi</small><strong>—</strong><span>Status submitted</span></article>
+        <article><small>Menunggu Verifikasi</small><strong>—</strong><span>Submitted + pemeriksaan ulang</span></article>
         <article><small>Terverifikasi</small><strong>—</strong><span>Status verified</span></article>
         <article><small>Perlu Tindakan</small><strong>—</strong><span>Perbaikan / ditolak</span></article>
       </section>
@@ -82,7 +82,8 @@
               <span class="sr-only">Filter status</span>
               <select id="participantStatusFilter">
                 <option value="">Semua status</option>
-                <option value="submitted">Menunggu</option>
+                <option value="submitted">Menunggu Verifikasi</option>
+                <option value="resubmitted">Menunggu Pemeriksaan Ulang</option>
                 <option value="verified">Terverifikasi</option>
                 <option value="revision">Perbaikan</option>
                 <option value="rejected">Ditolak</option>
@@ -175,6 +176,6 @@
     <script src="./local-qrcode.js?v=1" defer></script>
     <script src="./jszip.min.js?v=1" defer></script>
     <script src="./excel-engine-template.js?v=45" defer></script>
-    <script src="./script-a4-v45.js?v=2" defer></script>
+    <script src="./script-a4-v45.js?v=3" defer></script>
   </body>
 </html>
