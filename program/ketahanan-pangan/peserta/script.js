@@ -265,9 +265,9 @@ document.getElementById('logoutBtn').onclick = async () => {
 			method: 'POST'
 		});
 	} catch (error) {
-		console.warn('Logout API gagal, halaman tetap dimuat ulang untuk menyegarkan sesi.', error);
+		console.warn('Logout API gagal, pengguna tetap diarahkan kembali ke halaman registrasi.', error);
 	} finally {
-		window.location.reload();
+		window.location.replace('../registrasi/');
 	}
 };
 (async () => {
