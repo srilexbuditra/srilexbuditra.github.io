@@ -1,5 +1,6 @@
 const API_ENDPOINT = 'https://ketahanan-pangan-registration-api.srilexbuditra.workers.dev';
 const VERIFY_ENDPOINT = API_ENDPOINT + '/verify';
+const CERTIFICATE_ENDPOINT = API_ENDPOINT + '/certificate';
 
 const form = document.getElementById('verifyForm');
 const input = document.getElementById('registrationId');
@@ -18,6 +19,9 @@ const scannerVideo = document.getElementById('scannerVideo');
 const scannerStatus = document.getElementById('scannerStatus');
 const scanSupport = document.getElementById('scanSupport');
 const imageScanInput = document.getElementById('imageScanInput');
+const certificateAccess = document.getElementById('certificateAccess');
+const certificateLink = document.getElementById('certificateLink');
+
 
 let stream = null;
 let detector = null;
@@ -71,6 +75,49 @@ function statusLabel(status) {
   return map[String(status || '').toLowerCase()] || String(status || 'Terdaftar');
 }
 
+function hideCertificateAccess() {
+  if (certificateAccess) certificateAccess.hidden = true;
+  if (certificateLink) certificateLink.removeAttribute('href');
+}
+
+async function prepareCertificateAccess(registration) {
+  hideCertificateAccess();
+
+  if (String(registration?.status || '').toLowerCase() !== 'verified') {
+    return;
+  }
+
+  const id = normalizeRegistrationId(registration.registration_id);
+  if (!id) return;
+
+  try {
+    const response = await fetch(
+      CERTIFICATE_ENDPOINT + '?registration_id=' + encodeURIComponent(id),
+      {
+        method: 'GET',
+        headers: { 'Accept': 'application/json' },
+        cache: 'no-store'
+      }
+    );
+
+    let data = {};
+    try { data = await response.json(); } catch (_) {}
+
+    if (!response.ok || !data.ok || !data.eligible || !data.certificate) {
+      return;
+    }
+
+    if (certificateLink) {
+      certificateLink.href =
+        './sertifikat/?registration_id=' + encodeURIComponent(id);
+    }
+    if (certificateAccess) certificateAccess.hidden = false;
+  } catch (_) {
+    // Status verifikasi tetap dapat ditampilkan meskipun layanan sertifikat
+    // sedang tidak tersedia. Tombol sertifikat cukup disembunyikan.
+  }
+}
+
 function showResult(registration) {
   resultRegistrationId.textContent = registration.registration_id || '-';
   resultName.textContent = registration.nama || '-';
@@ -78,9 +125,11 @@ function showResult(registration) {
   resultDate.textContent = formatDate(registration.created_at);
   resultEmpty.hidden = true;
   resultContent.hidden = false;
+  prepareCertificateAccess(registration);
 }
 
 function resetResult() {
+  hideCertificateAccess();
   resultContent.hidden = true;
   resultEmpty.hidden = false;
 }

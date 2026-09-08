@@ -635,3 +635,63 @@ footer {
   box-shadow: 0 0 0 2px rgba(255, 204, 69, 0.14);
   transition: background 0.18s ease, box-shadow 0.18s ease;
 }
+
+
+/* =========================================================
+   V2 — AKSES SERTIFIKAT PUBLIK
+   Hanya tampil setelah endpoint publik memastikan status verified.
+   ========================================================= */
+.certificate-access {
+  margin-top: 20px;
+  padding: 16px;
+  border: 1px solid #cce5d5;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #f0faf4, #ffffff);
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 12px 14px;
+  align-items: center;
+}
+.certificate-access[hidden] {
+  display: none !important;
+}
+.certificate-access-icon {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #157347;
+  color: #fff;
+  font-size: 1.25rem;
+  font-weight: 900;
+}
+.certificate-access-copy small,
+.certificate-access-copy strong,
+.certificate-access-copy span {
+  display: block;
+}
+.certificate-access-copy small {
+  color: #1d6a48;
+  font-size: .68rem;
+  font-weight: 900;
+  letter-spacing: .1em;
+}
+.certificate-access-copy strong {
+  margin-top: 2px;
+  color: #123f2b;
+}
+.certificate-access-copy span {
+  margin-top: 2px;
+  color: #66736c;
+  font-size: .84rem;
+}
+.certificate-link {
+  grid-column: 1 / -1;
+  width: 100%;
+  background: #123f2b;
+  color: #fff;
+}
+.certificate-link:hover {
+  background: #0b3221;
+}

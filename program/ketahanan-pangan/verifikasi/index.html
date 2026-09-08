@@ -9,7 +9,7 @@
   <meta property="og:title" content="Verifikasi Registrasi | Program Ketahanan Pangan">
   <meta property="og:description" content="Periksa status registrasi Program Ketahanan Pangan menggunakan nomor registrasi atau pemindaian kode.">
   <meta property="og:type" content="website">
-  <link rel="stylesheet" href="./style.css?v=1">
+  <link rel="stylesheet" href="./style.css?v=2">
 </head>
 <body>
   <main>
@@ -92,6 +92,18 @@
               <div><dt>Tanggal Registrasi</dt><dd id="resultDate">-</dd></div>
             </dl>
             <div class="privacy-box">🔒 Data sensitif seperti NIK, nomor KK, WhatsApp, dan dokumen identitas tidak ditampilkan pada halaman ini.</div>
+
+            <div class="certificate-access" id="certificateAccess" hidden>
+              <div class="certificate-access-icon" aria-hidden="true">✓</div>
+              <div class="certificate-access-copy">
+                <small>SERTIFIKAT DIGITAL</small>
+                <strong>Kartu / Sertifikat peserta tersedia</strong>
+                <span>Sertifikat hanya tersedia untuk peserta dengan status Terverifikasi.</span>
+              </div>
+              <a class="btn certificate-link" id="certificateLink" href="#" rel="noopener">
+                Lihat Kartu / Sertifikat Digital
+              </a>
+            </div>
           </div>
         </aside>
       </div>
@@ -113,7 +125,7 @@
     </div>
   </footer>
 
-  <script src="./script.js?v=1" defer></script>
+  <script src="./script.js?v=2" defer></script>
   
   <!-- Floating Text-to-Speech accessibility control -->
 <div class="tts-fab-wrap" id="ttsFabWrap" aria-label="Kontrol pembaca halaman">

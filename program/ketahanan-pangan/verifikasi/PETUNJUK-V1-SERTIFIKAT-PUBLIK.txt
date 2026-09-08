@@ -1,0 +1,32 @@
+VERIFIKASI PUBLIK + SERTIFIKAT DIGITAL — V1
+
+Lokasi upload:
+program/ketahanan-pangan/verifikasi/
+
+File yang diperbarui:
+- index.html
+- script.js
+- style.css
+
+Folder baru:
+- sertifikat/
+  - index.html
+  - script.js
+  - style.css
+  - local-qrcode.js
+  - certificate-master-background-kosong-a4-300dpi.png
+
+FUNGSI:
+1. Verifikasi registrasi tetap memakai /verify.
+2. Jika status peserta verified, frontend mengecek /certificate.
+3. Tombol "Lihat Kartu / Sertifikat Digital" hanya muncul bila endpoint
+   mengembalikan eligible=true.
+4. Halaman sertifikat publik hanya memakai data non-sensitif.
+5. Tombol "Cetak / Simpan PDF" menggunakan print browser.
+6. QR dibuat lokal dan mengarah ke verification_url dari Worker.
+7. Visual sertifikat memakai master background dan CSS V21 dari admin.
+
+CATATAN KEAMANAN:
+- Tidak memakai ADMIN_API_TOKEN.
+- Tidak memanggil endpoint admin.
+- Tidak menampilkan NIK, nomor KK, WhatsApp, email, atau object key dokumen.
