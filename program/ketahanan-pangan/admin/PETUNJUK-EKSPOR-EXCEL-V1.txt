@@ -1,0 +1,35 @@
+DASHBOARD ADMIN — EKSPOR EXCEL V1
+
+Tambahan:
+- Tombol Ekspor Excel.
+- File yang dihasilkan benar-benar berformat .xlsx.
+- Ekspor mengikuti pencarian, filter status, dan filter wilayah yang sedang aktif.
+- Sheet bernama: Data Peserta.
+- Header dibekukan dan AutoFilter Excel aktif.
+
+Kolom ekspor:
+1. No.
+2. Nomor Registrasi
+3. Nama Peserta
+4. Wilayah
+5. Tanggal Registrasi
+6. Status
+
+PRIVASI:
+Tidak mengekspor NIK, nomor KK, WhatsApp, email, object key, KTP, KK,
+atau dokumen identitas.
+
+Tidak diubah:
+- Admin API / token.
+- Detail peserta.
+- Download KTP/KK.
+- Verifikasi / Perbaikan / Tolak.
+- Sertifikat V21.
+- QR/tanggal.
+- Verifikasi publik.
+
+UPLOAD:
+Upload isi paket ke:
+program/ketahanan-pangan/admin/
+
+Setelah deploy: Ctrl+F5.

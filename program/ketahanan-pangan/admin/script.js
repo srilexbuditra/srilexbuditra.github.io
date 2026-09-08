@@ -1000,3 +1000,299 @@ function initAdminParticipantFilters(registrations) {
   // loadRegistrations merender baris secara sinkron setelah assignment ini.
   setTimeout(applyAdminParticipantFilters, 0);
 }
+
+
+// =========================================================
+// ADMIN EKSPOR EXCEL V1 — XLSX lokal tanpa library eksternal.
+// Mengekspor hanya data non-dokumen yang sudah dimuat oleh endpoint list.
+// Mengikuti pencarian/filter yang sedang aktif.
+// =========================================================
+function getFilteredAdminRegistrations() {
+  const registrations =
+    Array.isArray(window.KETAHANAN_PANGAN_REGISTRATIONS)
+      ? window.KETAHANAN_PANGAN_REGISTRATIONS
+      : [];
+
+  const search = normalizeAdminFilterText(
+    document.getElementById('participantSearch')?.value
+  );
+  const status = normalizeAdminFilterText(
+    document.getElementById('participantStatusFilter')?.value
+  );
+  const region = normalizeAdminFilterText(
+    document.getElementById('participantRegionFilter')?.value
+  );
+
+  return registrations.filter((item) => {
+    const haystack = normalizeAdminFilterText(
+      `${item.registration_id || ''} ${item.nama || ''}`
+    );
+    const itemStatus = normalizeAdminFilterText(item.status);
+    const itemRegion = normalizeAdminFilterText(adminRegistrationRegion(item));
+
+    return (
+      (!search || haystack.includes(search)) &&
+      (!status || itemStatus === status) &&
+      (!region || itemRegion === region)
+    );
+  });
+}
+
+function excelXmlEscape(value) {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&apos;');
+}
+
+function excelStatusLabel(status) {
+  const value = String(status || '').toLowerCase();
+  if (value === 'verified') return 'Terverifikasi';
+  if (value === 'revision') return 'Perbaikan';
+  if (value === 'rejected') return 'Ditolak';
+  if (value === 'submitted') return 'Menunggu Verifikasi';
+  return status || '-';
+}
+
+function excelColumnName(index) {
+  let result = '';
+  let n = index + 1;
+  while (n > 0) {
+    const rem = (n - 1) % 26;
+    result = String.fromCharCode(65 + rem) + result;
+    n = Math.floor((n - 1) / 26);
+  }
+  return result;
+}
+
+function buildExcelSheetXml(rows) {
+  const widths = [6, 30, 28, 32, 24, 22];
+  const cols = widths.map((w, i) =>
+    `<col min="${i + 1}" max="${i + 1}" width="${w}" customWidth="1"/>`
+  ).join('');
+
+  const rowXml = rows.map((row, r) => {
+    const cells = row.map((value, c) => {
+      const ref = excelColumnName(c) + (r + 1);
+      const style = r === 0 ? ' s="1"' : '';
+      return `<c r="${ref}" t="inlineStr"${style}><is><t>${excelXmlEscape(value)}</t></is></c>`;
+    }).join('');
+    return `<row r="${r + 1}">${cells}</row>`;
+  }).join('');
+
+  const lastCell = excelColumnName(rows[0].length - 1) + rows.length;
+
+  return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">
+  <dimension ref="A1:${lastCell}"/>
+  <sheetViews><sheetView workbookViewId="0"><pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/></sheetView></sheetViews>
+  <cols>${cols}</cols>
+  <sheetData>${rowXml}</sheetData>
+  <autoFilter ref="A1:${lastCell}"/>
+</worksheet>`;
+}
+
+function crc32(bytes) {
+  if (!crc32.table) {
+    crc32.table = Array.from({length: 256}, (_, n) => {
+      let c = n;
+      for (let k = 0; k < 8; k++) {
+        c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1);
+      }
+      return c >>> 0;
+    });
+  }
+  let crc = 0xFFFFFFFF;
+  for (const byte of bytes) {
+    crc = crc32.table[(crc ^ byte) & 0xFF] ^ (crc >>> 8);
+  }
+  return (crc ^ 0xFFFFFFFF) >>> 0;
+}
+
+function u16(n) {
+  return new Uint8Array([n & 255, (n >>> 8) & 255]);
+}
+function u32(n) {
+  return new Uint8Array([
+    n & 255, (n >>> 8) & 255, (n >>> 16) & 255, (n >>> 24) & 255
+  ]);
+}
+function concatBytes(parts) {
+  const total = parts.reduce((sum, p) => sum + p.length, 0);
+  const out = new Uint8Array(total);
+  let offset = 0;
+  for (const part of parts) {
+    out.set(part, offset);
+    offset += part.length;
+  }
+  return out;
+}
+
+function makeStoredZip(files) {
+  const encoder = new TextEncoder();
+  const localParts = [];
+  const centralParts = [];
+  let offset = 0;
+
+  for (const file of files) {
+    const name = encoder.encode(file.name);
+    const data = typeof file.data === 'string'
+      ? encoder.encode(file.data)
+      : file.data;
+    const crc = crc32(data);
+
+    const local = concatBytes([
+      u32(0x04034b50), u16(20), u16(0), u16(0),
+      u16(0), u16(0), u32(crc),
+      u32(data.length), u32(data.length),
+      u16(name.length), u16(0), name, data
+    ]);
+    localParts.push(local);
+
+    const central = concatBytes([
+      u32(0x02014b50), u16(20), u16(20), u16(0), u16(0),
+      u16(0), u16(0), u32(crc),
+      u32(data.length), u32(data.length),
+      u16(name.length), u16(0), u16(0), u16(0), u16(0),
+      u32(0), u32(offset), name
+    ]);
+    centralParts.push(central);
+    offset += local.length;
+  }
+
+  const centralDir = concatBytes(centralParts);
+  const end = concatBytes([
+    u32(0x06054b50), u16(0), u16(0),
+    u16(files.length), u16(files.length),
+    u32(centralDir.length), u32(offset), u16(0)
+  ]);
+
+  return new Blob(
+    [...localParts, centralDir, end],
+    { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }
+  );
+}
+
+function buildParticipantXlsx(registrations) {
+  const rows = [[
+    'No.',
+    'Nomor Registrasi',
+    'Nama Peserta',
+    'Wilayah',
+    'Tanggal Registrasi',
+    'Status'
+  ]];
+
+  registrations.forEach((item, index) => {
+    rows.push([
+      String(index + 1),
+      item.registration_id || '',
+      item.nama || '',
+      adminRegistrationRegion(item) || '',
+      item.created_at || '',
+      excelStatusLabel(item.status)
+    ]);
+  });
+
+  const sheetXml = buildExcelSheetXml(rows);
+
+  const files = [
+    {
+      name: '[Content_Types].xml',
+      data: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
+  <Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>
+  <Default Extension="xml" ContentType="application/xml"/>
+  <Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/>
+  <Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>
+  <Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/>
+</Types>`
+    },
+    {
+      name: '_rels/.rels',
+      data: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+  <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/>
+</Relationships>`
+    },
+    {
+      name: 'xl/workbook.xml',
+      data: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"
+ xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
+  <sheets><sheet name="Data Peserta" sheetId="1" r:id="rId1"/></sheets>
+</workbook>`
+    },
+    {
+      name: 'xl/_rels/workbook.xml.rels',
+      data: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+  <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/>
+  <Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/>
+</Relationships>`
+    },
+    {
+      name: 'xl/styles.xml',
+      data: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">
+  <fonts count="2">
+    <font><sz val="11"/><name val="Calibri"/></font>
+    <font><b/><sz val="11"/><name val="Calibri"/></font>
+  </fonts>
+  <fills count="2"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill></fills>
+  <borders count="1"><border><left/><right/><top/><bottom/><diagonal/></border></borders>
+  <cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs>
+  <cellXfs count="2">
+    <xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/>
+    <xf numFmtId="0" fontId="1" fillId="0" borderId="0" xfId="0" applyFont="1"/>
+  </cellXfs>
+</styleSheet>`
+    },
+    { name: 'xl/worksheets/sheet1.xml', data: sheetXml }
+  ];
+
+  return makeStoredZip(files);
+}
+
+function exportFilteredParticipantsToExcel() {
+  const registrations = getFilteredAdminRegistrations();
+
+  if (!registrations.length) {
+    alert('Tidak ada peserta pada hasil filter yang dapat diekspor.');
+    return;
+  }
+
+  const blob = buildParticipantXlsx(registrations);
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  const now = new Date();
+  const stamp =
+    now.getFullYear() +
+    String(now.getMonth() + 1).padStart(2, '0') +
+    String(now.getDate()).padStart(2, '0') + '-' +
+    String(now.getHours()).padStart(2, '0') +
+    String(now.getMinutes()).padStart(2, '0');
+
+  link.href = url;
+  link.download = `rekap-peserta-ketahanan-pangan-${stamp}.xlsx`;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+
+  setTimeout(() => URL.revokeObjectURL(url), 1500);
+}
+
+function initAdminExcelExport() {
+  const button = document.getElementById('participantExportExcel');
+  if (!button || button.dataset.exportReady) return;
+  button.dataset.exportReady = '1';
+  button.addEventListener('click', exportFilteredParticipantsToExcel);
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initAdminExcelExport, { once: true });
+} else {
+  initAdminExcelExport();
+}
