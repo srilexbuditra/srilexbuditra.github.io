@@ -1067,147 +1067,349 @@ function excelColumnName(index) {
   return result;
 }
 
-function buildExcelSheetXml(rows) {
-  const widths = [
-    6,30,28,22,22,20,28,38,22,22,22,22,24,28,18,20,22,18,22,18,38,24,22
-  ];
-  const cols = rows[0].map((_, i) =>
-    `<col min="${i + 1}" max="${i + 1}" width="${widths[i] || 22}" customWidth="1"/>`
+
+function formatExcelReportDate(value) {
+  if (!value) return '-';
+  const raw = String(value);
+  const safe = raw.includes('T') ? raw : raw.replace(' ', 'T') + 'Z';
+  const date = new Date(safe);
+  if (Number.isNaN(date.getTime())) return raw;
+  return new Intl.DateTimeFormat('id-ID', {
+    day: 'numeric',
+    month: 'numeric',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false
+  }).format(date).replace(/:/g, '.');
+}
+
+function excelReportPrintDate() {
+  return new Intl.DateTimeFormat('id-ID', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric'
+  }).format(new Date());
+}
+
+function excelCell(ref, value, style = 0) {
+  return `<c r="${ref}" t="inlineStr" s="${style}"><is><t xml:space="preserve">${excelXmlEscape(value ?? '')}</t></is></c>`;
+}
+
+function excelRow(rowNumber, cells, height = null) {
+  const heightAttr = height ? ` ht="${height}" customHeight="1"` : '';
+  return `<row r="${rowNumber}"${heightAttr}>${cells.join('')}</row>`;
+}
+
+function buildExcelReportStylesXml() {
+  return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">
+  <fonts count="10">
+    <font><sz val="9"/><name val="Arial"/><color rgb="FF17241D"/></font>
+    <font><b/><sz val="8"/><name val="Arial"/><color rgb="FFFFFFFF"/></font>
+    <font><b/><sz val="20"/><name val="Arial"/><color rgb="FF073B3A"/></font>
+    <font><b/><sz val="15"/><name val="Arial"/><color rgb="FF08745A"/></font>
+    <font><sz val="10"/><name val="Arial"/><color rgb="FF173B3A"/></font>
+    <font><b/><sz val="9"/><name val="Arial"/><color rgb="FF173B3A"/></font>
+    <font><sz val="8"/><name val="Arial"/><color rgb="FF47635B"/></font>
+    <font><i/><b/><sz val="8"/><name val="Arial"/><color rgb="FF173B3A"/></font>
+    <font><b/><sz val="9"/><name val="Arial"/><color rgb="FF08745A"/></font>
+    <font><b/><sz val="8"/><name val="Arial"/><color rgb="FFFFFFFF"/></font>
+  </fonts>
+  <fills count="7">
+    <fill><patternFill patternType="none"/></fill>
+    <fill><patternFill patternType="gray125"/></fill>
+    <fill><patternFill patternType="solid"><fgColor rgb="FF006B54"/><bgColor indexed="64"/></patternFill></fill>
+    <fill><patternFill patternType="solid"><fgColor rgb="FFEAF6F0"/><bgColor indexed="64"/></patternFill></fill>
+    <fill><patternFill patternType="solid"><fgColor rgb="FFFFFFFF"/><bgColor indexed="64"/></patternFill></fill>
+    <fill><patternFill patternType="solid"><fgColor rgb="FFF7FBF9"/><bgColor indexed="64"/></patternFill></fill>
+    <fill><patternFill patternType="solid"><fgColor rgb="FF004D40"/><bgColor indexed="64"/></patternFill></fill>
+  </fills>
+  <borders count="3">
+    <border><left/><right/><top/><bottom/><diagonal/></border>
+    <border>
+      <left style="thin"><color rgb="FFC9D8D1"/></left>
+      <right style="thin"><color rgb="FFC9D8D1"/></right>
+      <top style="thin"><color rgb="FFC9D8D1"/></top>
+      <bottom style="thin"><color rgb="FFC9D8D1"/></bottom>
+      <diagonal/>
+    </border>
+    <border>
+      <left/><right/><top/>
+      <bottom style="medium"><color rgb="FF0A6B57"/></bottom>
+      <diagonal/>
+    </border>
+  </borders>
+  <cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs>
+  <cellXfs count="16">
+    <xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/>
+    <xf numFmtId="0" fontId="1" fillId="2" borderId="1" xfId="0" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1"><alignment horizontal="center" vertical="center" wrapText="1"/></xf>
+    <xf numFmtId="0" fontId="0" fillId="4" borderId="1" xfId="0" applyFill="1" applyBorder="1" applyAlignment="1"><alignment horizontal="left" vertical="center" wrapText="1" shrinkToFit="1"/></xf>
+    <xf numFmtId="0" fontId="0" fillId="4" borderId="1" xfId="0" applyFill="1" applyBorder="1" applyAlignment="1"><alignment horizontal="center" vertical="center" wrapText="1" shrinkToFit="1"/></xf>
+    <xf numFmtId="0" fontId="2" fillId="0" borderId="0" xfId="0" applyFont="1" applyAlignment="1"><alignment horizontal="center" vertical="center"/></xf>
+    <xf numFmtId="0" fontId="3" fillId="0" borderId="0" xfId="0" applyFont="1" applyAlignment="1"><alignment horizontal="center" vertical="center"/></xf>
+    <xf numFmtId="0" fontId="4" fillId="0" borderId="2" xfId="0" applyFont="1" applyBorder="1" applyAlignment="1"><alignment horizontal="center" vertical="center"/></xf>
+    <xf numFmtId="0" fontId="8" fillId="3" borderId="0" xfId="0" applyFont="1" applyFill="1" applyAlignment="1"><alignment horizontal="left" vertical="center"/></xf>
+    <xf numFmtId="0" fontId="5" fillId="3" borderId="0" xfId="0" applyFont="1" applyFill="1" applyAlignment="1"><alignment horizontal="left" vertical="center" wrapText="1"/></xf>
+    <xf numFmtId="0" fontId="5" fillId="3" borderId="0" xfId="0" applyFont="1" applyFill="1" applyAlignment="1"><alignment horizontal="left" vertical="top"/></xf>
+    <xf numFmtId="0" fontId="6" fillId="3" borderId="0" xfId="0" applyFont="1" applyFill="1" applyAlignment="1"><alignment horizontal="left" vertical="top" wrapText="1"/></xf>
+    <xf numFmtId="0" fontId="5" fillId="0" borderId="0" xfId="0" applyFont="1" applyAlignment="1"><alignment horizontal="center" vertical="center"/></xf>
+    <xf numFmtId="0" fontId="9" fillId="6" borderId="0" xfId="0" applyFont="1" applyFill="1" applyAlignment="1"><alignment horizontal="center" vertical="center"/></xf>
+    <xf numFmtId="0" fontId="8" fillId="0" borderId="0" xfId="0" applyFont="1" applyAlignment="1"><alignment horizontal="center" vertical="center"/></xf>
+    <xf numFmtId="0" fontId="5" fillId="4" borderId="1" xfId="0" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1"><alignment horizontal="center" vertical="center" wrapText="1" shrinkToFit="1"/></xf>
+    <xf numFmtId="0" fontId="7" fillId="0" borderId="0" xfId="0" applyFont="1" applyAlignment="1"><alignment horizontal="center" vertical="center"/></xf>
+  </cellXfs>
+</styleSheet>`;
+}
+
+function getExcelReportMeta(total) {
+  const statusSelect = document.getElementById('participantStatusFilter');
+  const regionSelect = document.getElementById('participantRegionFilter');
+  return {
+    printDate: excelReportPrintDate(),
+    status: statusSelect?.selectedOptions?.[0]?.textContent || 'Semua status',
+    region: regionSelect?.selectedOptions?.[0]?.textContent || 'Semua wilayah',
+    total
+  };
+}
+
+function buildExcelSheetXml(registrations, meta) {
+  const n = registrations.length;
+  const topHeaderRow = 6;
+  const topStart = 7;
+  const topEnd = topStart + n - 1;
+  const secondHeaderRow = topEnd + 2;
+  const secondStart = secondHeaderRow + 1;
+  const secondEnd = secondStart + n - 1;
+  const notesStart = secondEnd + 3;
+  const footerRow = notesStart + 6;
+  const lastRow = footerRow;
+
+  const widths = [5,18,18,18,18,15,19,22,16,16,17,13];
+  const cols = widths.map((w, i) =>
+    `<col min="${i + 1}" max="${i + 1}" width="${w}" customWidth="1"/>`
   ).join('');
 
-  const rowXml = rows.map((row, r) => {
-    const cells = row.map((value, c) => {
-      const ref = excelColumnName(c) + (r + 1);
-      const style = r === 0 ? ' s="1"' : '';
-      return `<c r="${ref}" t="inlineStr"${style}><is><t>${excelXmlEscape(value)}</t></is></c>`;
-    }).join('');
-    return `<row r="${r + 1}">${cells}</row>`;
-  }).join('');
+  const rows = [];
 
-  const lastCell = excelColumnName(rows[0].length - 1) + rows.length;
+  rows.push(excelRow(1, [
+    excelCell('C1', 'DATA PESERTA REGISTRASI', 4),
+    excelCell('I1', 'Tanggal Cetak', 7),
+    excelCell('K1', `:  ${meta.printDate}`, 8)
+  ], 24));
+  rows.push(excelRow(2, [
+    excelCell('C2', 'PROGRAM KETAHANAN PANGAN', 5),
+    excelCell('I2', 'Filter Status', 7),
+    excelCell('K2', `:  ${meta.status}`, 8)
+  ], 21));
+  rows.push(excelRow(3, [
+    excelCell('C3', 'Rekapitulasi Data Pendaftaran Peserta', 6),
+    excelCell('I3', 'Filter Wilayah', 7),
+    excelCell('K3', `:  ${meta.region}`, 8)
+  ], 18));
+  rows.push(excelRow(4, [
+    excelCell('I4', 'Total Data', 7),
+    excelCell('K4', `:  ${meta.total} peserta`, 8)
+  ], 18));
+  rows.push(excelRow(5, [excelCell('A5', '', 6)], 6));
 
-  return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">
-  <dimension ref="A1:${lastCell}"/>
-  <sheetViews><sheetView workbookViewId="0"><pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/></sheetView></sheetViews>
-  <cols>${cols}</cols>
-  <sheetData>${rowXml}</sheetData>
-  <autoFilter ref="A1:${lastCell}"/>
-</worksheet>`;
-}
-
-function crc32(bytes) {
-  if (!crc32.table) {
-    crc32.table = Array.from({length: 256}, (_, n) => {
-      let c = n;
-      for (let k = 0; k < 8; k++) {
-        c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1);
-      }
-      return c >>> 0;
-    });
-  }
-  let crc = 0xFFFFFFFF;
-  for (const byte of bytes) {
-    crc = crc32.table[(crc ^ byte) & 0xFF] ^ (crc >>> 8);
-  }
-  return (crc ^ 0xFFFFFFFF) >>> 0;
-}
-
-function u16(n) {
-  return new Uint8Array([n & 255, (n >>> 8) & 255]);
-}
-function u32(n) {
-  return new Uint8Array([
-    n & 255, (n >>> 8) & 255, (n >>> 16) & 255, (n >>> 24) & 255
-  ]);
-}
-function concatBytes(parts) {
-  const total = parts.reduce((sum, p) => sum + p.length, 0);
-  const out = new Uint8Array(total);
-  let offset = 0;
-  for (const part of parts) {
-    out.set(part, offset);
-    offset += part.length;
-  }
-  return out;
-}
-
-function makeStoredZip(files) {
-  const encoder = new TextEncoder();
-  const localParts = [];
-  const centralParts = [];
-  let offset = 0;
-
-  for (const file of files) {
-    const name = encoder.encode(file.name);
-    const data = typeof file.data === 'string'
-      ? encoder.encode(file.data)
-      : file.data;
-    const crc = crc32(data);
-
-    const local = concatBytes([
-      u32(0x04034b50), u16(20), u16(0), u16(0),
-      u16(0), u16(0), u32(crc),
-      u32(data.length), u32(data.length),
-      u16(name.length), u16(0), name, data
-    ]);
-    localParts.push(local);
-
-    const central = concatBytes([
-      u32(0x02014b50), u16(20), u16(20), u16(0), u16(0),
-      u16(0), u16(0), u32(crc),
-      u32(data.length), u32(data.length),
-      u16(name.length), u16(0), u16(0), u16(0), u16(0),
-      u32(0), u32(offset), name
-    ]);
-    centralParts.push(central);
-    offset += local.length;
-  }
-
-  const centralDir = concatBytes(centralParts);
-  const end = concatBytes([
-    u32(0x06054b50), u16(0), u16(0),
-    u16(files.length), u16(files.length),
-    u32(centralDir.length), u32(offset), u16(0)
-  ]);
-
-  return new Blob(
-    [...localParts, centralDir, end],
-    { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }
-  );
-}
-
-function buildParticipantXlsx(registrations) {
-  const rows = [[
-    'No.','Nomor Registrasi','Nama Lengkap','NIK','Nomor KK','WhatsApp','Email',
-    'Alamat','Desa / Kelurahan','Kecamatan','Kabupaten / Kota','Provinsi',
-    'Status Pemohon','Kelompok Tani','Luas Lahan','Status Lahan','Komoditas',
-    'Tahap','Jenis Pupuk','Kebutuhan Pupuk (kg)','Keterangan',
-    'Tanggal Registrasi','Status Registrasi'
-  ]];
+  const topHeaders = [
+    'No.','Nomor\nRegistrasi','Nama Peserta','NIK','Nomor KK','WhatsApp',
+    'Email','Alamat','Desa /\nKelurahan','Kecamatan','Kabupaten /\nKota','Provinsi'
+  ];
+  rows.push(excelRow(topHeaderRow,
+    topHeaders.map((h, i) => excelCell(`${excelColumnName(i)}${topHeaderRow}`, h, 1)),
+    34
+  ));
 
   registrations.forEach((item, index) => {
-    rows.push([
+    const r = topStart + index;
+    const vals = [
       String(index + 1), item.registration_id || '', item.nama || '',
-      item.nik || '', item.nomor_kk || '', item.whatsapp || '', item.email || '',
-      item.alamat || '', item.desa || '', item.kecamatan || '',
-      item.kabupaten || '', item.provinsi || '', item.status_pemohon || '',
-      item.kelompok_tani || '', item.luas_lahan || '', item.status_lahan || '',
-      item.komoditas || '', item.tahap || '', item.jenis_pupuk || '',
-      item.kebutuhan_kg || '', item.keterangan || '', item.created_at || '',
-      excelStatusLabel(item.status)
-    ]);
+      item.nik || '', item.nomor_kk || '', item.whatsapp || '',
+      item.email || '', item.alamat || '', item.desa || '',
+      item.kecamatan || '', item.kabupaten || '', item.provinsi || ''
+    ];
+    rows.push(excelRow(r, vals.map((v, i) =>
+      excelCell(`${excelColumnName(i)}${r}`, v, i === 0 ? 3 : 2)
+    ), 30));
   });
 
-  const sheetXml = buildExcelSheetXml(rows);
-  const files = [
-    {name:'[Content_Types].xml',data:`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/></Types>`},
-    {name:'_rels/.rels',data:`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>`},
-    {name:'xl/workbook.xml',data:`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets><sheet name="Detail Registrasi" sheetId="1" r:id="rId1"/></sheets></workbook>`},
-    {name:'xl/_rels/workbook.xml.rels',data:`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>`},
-    {name:'xl/styles.xml',data:`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><fonts count="2"><font><sz val="11"/><name val="Calibri"/></font><font><b/><sz val="11"/><name val="Calibri"/></font></fonts><fills count="2"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill></fills><borders count="1"><border><left/><right/><top/><bottom/><diagonal/></border></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="2"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/><xf numFmtId="0" fontId="1" fillId="0" borderId="0" xfId="0" applyFont="1"/></cellXfs></styleSheet>`},
-    {name:'xl/worksheets/sheet1.xml',data:sheetXml}
+  const secondHeaders = [
+    'Status\nPemohon','Kelompok Tani','Luas Lahan\n(ha)','Status Lahan',
+    'Komoditas','Tahap','Jenis Pupuk\nyang Diajukan','Kebutuhan\n(kg)',
+    'Keterangan','Tanggal\nRegistrasi','Status Registrasi'
   ];
+  rows.push(excelRow(secondHeaderRow, [
+    ...secondHeaders.slice(0, 10).map((h, i) =>
+      excelCell(`${excelColumnName(i)}${secondHeaderRow}`, h, 1)
+    ),
+    excelCell(`K${secondHeaderRow}`, secondHeaders[10], 1)
+  ], 34));
+
+  registrations.forEach((item, index) => {
+    const r = secondStart + index;
+    const vals = [
+      item.status_pemohon || '', item.kelompok_tani || '', item.luas_lahan || '',
+      item.status_lahan || '', item.komoditas || '', item.tahap || '',
+      item.jenis_pupuk || '', item.kebutuhan_kg || '', item.keterangan || '',
+      formatExcelReportDate(item.created_at),
+      excelStatusLabel(item.status)
+    ];
+    rows.push(excelRow(r, [
+      ...vals.slice(0, 10).map((v, i) =>
+        excelCell(`${excelColumnName(i)}${r}`, v, 2)
+      ),
+      excelCell(`K${r}`, vals[10], 14)
+    ], 30));
+  });
+
+  rows.push(excelRow(notesStart, [
+    excelCell(`A${notesStart}`, 'Catatan:', 9),
+    excelCell(`I${notesStart}`, 'Mengetahui,', 11)
+  ], 18));
+  rows.push(excelRow(notesStart + 1, [
+    excelCell(`A${notesStart + 1}`, '1. Data ini diambil dari sistem registrasi Program Ketahanan Pangan.', 10),
+    excelCell(`I${notesStart + 1}`, 'Administrator', 11)
+  ], 18));
+  rows.push(excelRow(notesStart + 2, [
+    excelCell(`A${notesStart + 2}`, '2. Dokumen KTP/KK tidak ditampilkan dalam laporan ini dan tersimpan secara aman di sistem.', 10)
+  ], 18));
+  rows.push(excelRow(notesStart + 3, [
+    excelCell(`A${notesStart + 3}`, '3. Laporan ini dicetak secara otomatis melalui Dashboard Admin.', 10)
+  ], 18));
+  rows.push(excelRow(notesStart + 4, [
+    excelCell(`I${notesStart + 4}`, '________________________', 15)
+  ], 18));
+  rows.push(excelRow(notesStart + 5, [
+    excelCell(`I${notesStart + 5}`, 'Srilex Buditra', 11)
+  ], 18));
+  rows.push(excelRow(footerRow, [
+    excelCell(`A${footerRow}`, 'https://srilexbuditra.work', 12),
+    excelCell(`D${footerRow}`, 'Pertanian Kuat, Ketahanan Pangan Terwujud', 12),
+    excelCell(`I${footerRow}`, 'Petani Sejahtera • Indonesia Maju', 12)
+  ], 24));
+
+  const mergeCells = [
+    'C1:H1','C2:H2','C3:H3',
+    'I1:J1','K1:L1','I2:J2','K2:L2','I3:J3','K3:L3','I4:J4','K4:L4',
+    `K${secondHeaderRow}:L${secondHeaderRow}`,
+    ...registrations.map((_, index) => `K${secondStart + index}:L${secondStart + index}`),
+    `A${notesStart}:G${notesStart}`,
+    `A${notesStart + 1}:G${notesStart + 1}`,
+    `A${notesStart + 2}:G${notesStart + 2}`,
+    `A${notesStart + 3}:G${notesStart + 3}`,
+    `I${notesStart}:L${notesStart}`,
+    `I${notesStart + 1}:L${notesStart + 1}`,
+    `I${notesStart + 4}:L${notesStart + 4}`,
+    `I${notesStart + 5}:L${notesStart + 5}`,
+    `A${footerRow}:C${footerRow}`,
+    `D${footerRow}:H${footerRow}`,
+    `I${footerRow}:L${footerRow}`
+  ];
+
+  const autoFilterRef = `A${topHeaderRow}:L${topEnd}`;
+
+  return {
+    xml: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"
+ xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
+  <sheetPr><pageSetUpPr fitToPage="1"/></sheetPr>
+  <dimension ref="A1:L${lastRow}"/>
+  <sheetViews>
+    <sheetView workbookViewId="0" showGridLines="0">
+      <pane ySplit="${topHeaderRow}" topLeftCell="A${topStart}" activePane="bottomLeft" state="frozen"/>
+    </sheetView>
+  </sheetViews>
+  <sheetFormatPr defaultRowHeight="15"/>
+  <cols>${cols}</cols>
+  <sheetData>${rows.join('')}</sheetData>
+  <mergeCells count="${mergeCells.length}">
+    ${mergeCells.map(ref => `<mergeCell ref="${ref}"/>`).join('')}
+  </mergeCells>
+  <autoFilter ref="${autoFilterRef}"/>
+  <printOptions horizontalCentered="1"/>
+  <pageMargins left="0.20" right="0.20" top="0.28" bottom="0.30" header="0.12" footer="0.18"/>
+  <pageSetup paperSize="9" orientation="landscape" fitToWidth="1" fitToHeight="0"/>
+  <headerFooter>
+    <oddFooter>&amp;Lhttps://srilexbuditra.work&amp;C&amp;B Pertanian Kuat, Ketahanan Pangan Terwujud&amp;RHalaman &amp;P dari &amp;N</oddFooter>
+  </headerFooter>
+  <drawing r:id="rId1"/>
+</worksheet>`,
+    lastRow
+  };
+}
+
+async function loadExcelReportLogo() {
+  try {
+    const response = await fetch('./logo-ketahanan-pangan-report.png', { cache: 'force-cache' });
+    if (!response.ok) return null;
+    return new Uint8Array(await response.arrayBuffer());
+  } catch (_) {
+    return null;
+  }
+}
+
+function buildExcelDrawingXml() {
+  return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xdr:wsDr xmlns:xdr="http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing"
+ xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"
+ xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
+  <xdr:twoCellAnchor editAs="oneCell">
+    <xdr:from><xdr:col>0</xdr:col><xdr:colOff>0</xdr:colOff><xdr:row>0</xdr:row><xdr:rowOff>0</xdr:rowOff></xdr:from>
+    <xdr:to><xdr:col>2</xdr:col><xdr:colOff>700000</xdr:colOff><xdr:row>4</xdr:row><xdr:rowOff>0</xdr:rowOff></xdr:to>
+    <xdr:pic>
+      <xdr:nvPicPr><xdr:cNvPr id="1" name="Logo Ketahanan Pangan"/><xdr:cNvPicPr/></xdr:nvPicPr>
+      <xdr:blipFill><a:blip r:embed="rId1"/><a:stretch><a:fillRect/></a:stretch></xdr:blipFill>
+      <xdr:spPr><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></xdr:spPr>
+    </xdr:pic>
+    <xdr:clientData/>
+  </xdr:twoCellAnchor>
+</xdr:wsDr>`;
+}
+
+async function buildParticipantXlsx(registrations) {
+  const meta = getExcelReportMeta(registrations.length);
+  const sheet = buildExcelSheetXml(registrations, meta);
+  const logoBytes = await loadExcelReportLogo();
+
+  const contentTypes = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
+  <Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>
+  <Default Extension="xml" ContentType="application/xml"/>
+  <Default Extension="png" ContentType="image/png"/>
+  <Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/>
+  <Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>
+  <Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/>
+  <Override PartName="/xl/drawings/drawing1.xml" ContentType="application/vnd.openxmlformats-officedocument.drawing+xml"/>
+</Types>`;
+
+  const workbookXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"
+ xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
+  <sheets><sheet name="Data Peserta" sheetId="1" r:id="rId1"/></sheets>
+  <definedNames>
+    <definedName name="_xlnm.Print_Area" localSheetId="0">'Data Peserta'!$A$1:$L$${sheet.lastRow}</definedName>
+  </definedNames>
+</workbook>`;
+
+  const files = [
+    { name: '[Content_Types].xml', data: contentTypes },
+    { name: '_rels/.rels', data: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>` },
+    { name: 'xl/workbook.xml', data: workbookXml },
+    { name: 'xl/_rels/workbook.xml.rels', data: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>` },
+    { name: 'xl/styles.xml', data: buildExcelReportStylesXml() },
+    { name: 'xl/worksheets/sheet1.xml', data: sheet.xml },
+    { name: 'xl/worksheets/_rels/sheet1.xml.rels', data: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/drawing" Target="../drawings/drawing1.xml"/></Relationships>` },
+    { name: 'xl/drawings/drawing1.xml', data: buildExcelDrawingXml() },
+    { name: 'xl/drawings/_rels/drawing1.xml.rels', data: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="../media/image1.png"/></Relationships>` }
+  ];
+
+  if (logoBytes) {
+    files.push({ name: 'xl/media/image1.png', data: logoBytes });
+  }
+
   return makeStoredZip(files);
 }
 
@@ -1237,7 +1439,7 @@ async function exportFilteredParticipantsToExcel() {
   }
 
   const button = document.getElementById('participantExportExcel');
-  const originalLabel = button?.textContent || 'Ekspor Excel Detail';
+  const originalLabel = button?.textContent || 'Ekspor Excel A4';
 
   try {
     if (button) { button.disabled = true; button.textContent = `Mengambil detail 0/${registrations.length}...`; }
@@ -1247,7 +1449,7 @@ async function exportFilteredParticipantsToExcel() {
       if (button) button.textContent = `Mengambil detail ${i+1}/${registrations.length}...`;
     }
 
-    const blob = buildParticipantXlsx(details);
+    const blob = await buildParticipantXlsx(details);
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     const now = new Date();
@@ -1255,7 +1457,7 @@ async function exportFilteredParticipantsToExcel() {
       String(now.getDate()).padStart(2,'0')+'-'+String(now.getHours()).padStart(2,'0')+
       String(now.getMinutes()).padStart(2,'0');
     link.href=url;
-    link.download=`detail-registrasi-ketahanan-pangan-${stamp}.xlsx`;
+    link.download=`laporan-data-peserta-ketahanan-pangan-A4-${stamp}.xlsx`;
     document.body.appendChild(link); link.click(); link.remove();
     setTimeout(()=>URL.revokeObjectURL(url),1500);
   } catch(error) {

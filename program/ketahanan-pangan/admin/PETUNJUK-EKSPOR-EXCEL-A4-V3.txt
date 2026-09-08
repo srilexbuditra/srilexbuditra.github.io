@@ -1,0 +1,34 @@
+DASHBOARD ADMIN — EKSPOR EXCEL A4 V3
+
+Desain dibuat mengikuti konsep yang disetujui:
+- A4 Landscape.
+- Fit to 1 page wide (tidak pecah ke banyak halaman secara horizontal).
+- Logo/branding Ketahanan Pangan.
+- Judul besar + metadata Tanggal Cetak, Filter Status, Filter Wilayah, Total Data.
+- Data dibagi menjadi 2 tabel agar 23 field tetap terbaca.
+- Header tabel hijau, border rapi, teks wrap.
+- Catatan, tanda tangan Administrator, footer URL/slogan.
+- Footer print otomatis: Halaman X dari Y.
+- Gridline disembunyikan.
+- Jika peserta banyak, halaman boleh bertambah KE BAWAH, tetapi tetap 1 halaman LEBAR.
+
+Data:
+Tabel 1: nomor registrasi, identitas, kontak, alamat/wilayah.
+Tabel 2: data pemohon/lahan/pupuk/keterangan/tanggal/status.
+
+Privasi:
+- Excel admin dapat memuat NIK, Nomor KK, WhatsApp, dan Email.
+- Foto/file KTP dan KK TIDAK masuk ke Excel dan tetap privat di R2.
+
+Tidak diubah:
+- Admin API/token.
+- Detail/Download KTP-KK.
+- Verifikasi/Perbaikan/Tolak.
+- Filter peserta.
+- Sertifikat V21.
+- Verifikasi publik.
+
+Upload seluruh isi paket ke:
+program/ketahanan-pangan/admin/
+
+Setelah deploy lakukan Ctrl+F5 lalu klik "Ekspor Excel A4".
