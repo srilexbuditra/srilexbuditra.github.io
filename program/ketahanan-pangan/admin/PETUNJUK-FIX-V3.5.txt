@@ -1,4 +1,0 @@
-V3.5 — STRICT OOXML FIX
-Upload index.html dan script-a4-v35.js ke program/ketahanan-pangan/admin/
-Deploy, Ctrl+F5, lalu ekspor file BARU.
-Perbaikan utama: urutan elemen font OOXML yang sebelumnya masih tidak sesuai aturan Excel.
