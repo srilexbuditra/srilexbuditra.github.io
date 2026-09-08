@@ -20,7 +20,7 @@ function sheetXml(ws){
  return`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetPr><pageSetUpPr fitToPage="1" autoPageBreaks="0"/></sheetPr><dimension ref="A1:${cn(lastCol)}${lastRow}"/>${views}<sheetFormatPr defaultRowHeight="15"/>${cols?`<cols>${cols}</cols>`:''}<sheetData>${rows}</sheetData>${af}${merges?`<mergeCells count="${ws['!merges'].length}">${merges}</mergeCells>`:''}<printOptions horizontalCentered="0" verticalCentered="0" headings="0" gridLines="0"/><pageMargins left="${m.left??.2}" right="${m.right??.2}" top="${m.top??.35}" bottom="${m.bottom??.35}" header="${m.header??.15}" footer="${m.footer??.15}"/><pageSetup paperSize="${p.paperSize||9}" orientation="${p.orientation||'landscape'}" fitToWidth="${p.fitToWidth??1}" fitToHeight="${p.fitToHeight??0}" pageOrder="downThenOver"/>${brXml}</worksheet>`}
 async function writeFile(wb,name){
  if(!window.JSZip)throw new Error('Mesin ZIP lokal tidak tersedia.');
- const res=await fetch('./excel-template-3sheet-v44.xlsx?v=1',{cache:'no-store'});if(!res.ok)throw new Error(`Template Excel lokal gagal dimuat (HTTP ${res.status}).`);
+ const res=await fetch('./excel-template-3sheet-v45.xlsx?v=1',{cache:'no-store'});if(!res.ok)throw new Error(`Template Excel lokal gagal dimuat (HTTP ${res.status}).`);
  const zip=await JSZip.loadAsync(await res.arrayBuffer());
  const sheets=wb.SheetNames.map(n=>wb.Sheets[n]);
  sheets.forEach((ws,i)=>zip.file(`xl/worksheets/sheet${i+1}.xml`,sheetXml(ws)));

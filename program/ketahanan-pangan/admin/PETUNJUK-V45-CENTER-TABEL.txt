@@ -1,0 +1,8 @@
+V45 — CENTER ISI TABEL
+Basis V44 yang sudah berhasil.
+Perubahan hanya alignment isi data peserta:
+- Sheet 1, Sheet 2, Sheet 3: isi setiap kolom rata tengah horizontal.
+- Header hijau tetap center.
+- Garis tabel V44 tetap dipertahankan.
+- Layout, lebar kolom, 3 sheet, dan A4 Landscape tidak berubah.
+Upload semua file admin, Deploy, Ctrl+F5, lalu ekspor Excel baru.
