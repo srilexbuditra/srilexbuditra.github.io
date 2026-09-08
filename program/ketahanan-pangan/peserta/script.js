@@ -53,6 +53,7 @@ function statusLabel(s) {
 		pending: 'Dalam proses',
 		verified: 'Terverifikasi',
 		revision: 'Perlu perbaikan',
+		resubmitted: 'Menunggu pemeriksaan ulang',
 		rejected: 'Tidak disetujui',
 		approved: 'Disetujui'
 	})[String(s || '').toLowerCase()] || String(s || '-')
@@ -86,6 +87,7 @@ function renderParticipantTimeline(status) {
 	if (s === 'pending' || !s) activeIndex = 1;
 	if (s === 'verified' || s === 'approved') activeIndex = 3;
 	if (s === 'revision' || s === 'rejected') activeIndex = 1;
+	if (s === 'resubmitted') activeIndex = 1;
 
 	items.forEach((item, index) => {
 		if (index < activeIndex) item.classList.add('done');
@@ -101,6 +103,10 @@ function renderParticipantTimeline(status) {
 		alert.hidden = false;
 		alert.classList.add('revision');
 		alert.textContent = 'Perlu perbaikan: ikuti petunjuk pengelola program sebelum proses dilanjutkan.';
+	} else if (s === 'resubmitted') {
+		summary.textContent = 'Perbaikan telah dikirim dan menunggu pemeriksaan ulang admin.';
+		alert.hidden = false;
+		alert.textContent = 'Perbaikan terkirim. Admin akan memeriksa kembali data dan dokumen Anda.';
 	} else if (s === 'rejected') {
 		items[1]?.classList.add('stopped');
 		summary.textContent = 'Proses berhenti pada tahap pemeriksaan.';
@@ -139,6 +145,15 @@ function showDashboard(p) {
 		adminCard.hidden = !adminNote;
 		adminCard.dataset.status = s;
 	}
+	const revisionCard = document.getElementById('revisionCard');
+	if (revisionCard) {
+		revisionCard.hidden = s !== 'revision';
+		if (s === 'revision') {
+			const rf = document.getElementById('revisionForm');
+			const vals = ['status_pemohon','kelompok_tani','luas_lahan','status_lahan','komoditas','tahap','jenis_pupuk','kebutuhan_kg','keterangan'];
+			vals.forEach(name => { const el = rf?.elements?.namedItem(name); if (el) el.value = p[name] ?? ''; });
+		}
+	}
 	cert.hidden = true;
 	if (s === 'verified') {
 		note.textContent = 'Pendaftaran Anda telah terverifikasi. Sertifikat digital tersedia.';
@@ -146,6 +161,8 @@ function showDashboard(p) {
 		cert.hidden = false
 	} else if (s === 'revision') {
 		note.textContent = p.status_note || 'Pendaftaran memerlukan perbaikan. Silakan mengikuti petunjuk dari pengelola program.'
+	} else if (s === 'resubmitted') {
+		note.textContent = 'Perbaikan Anda telah dikirim dan sedang menunggu pemeriksaan ulang admin.'
 	} else if (s === 'rejected') {
 		note.textContent = p.status_note || 'Pendaftaran belum dapat disetujui. Hubungi pengelola program bila memerlukan informasi lebih lanjut.'
 	} else {
@@ -213,6 +230,32 @@ document.getElementById('loginForm').onsubmit = async e => {
 		btn.textContent = 'Masuk ke Dashboard'
 	}
 };
+const revisionForm = document.getElementById('revisionForm');
+if (revisionForm) revisionForm.onsubmit = async e => {
+  e.preventDefault();
+  const form = e.currentTarget;
+  const out = document.getElementById('revisionMessage');
+  const btn = e.submitter;
+  const fd = new FormData(form);
+  for (const [k,v] of [...fd.entries()]) {
+    if (typeof v === 'string' && !v.trim()) fd.delete(k);
+    if (v instanceof File && !v.size) fd.delete(k);
+  }
+  if (![...fd.keys()].length) {
+    out.className = 'message show error'; out.textContent = 'Belum ada data atau dokumen yang diperbaiki.'; return;
+  }
+  btn.disabled = true; btn.textContent = 'Mengirim…';
+  try {
+    const r = await fetch(API + '/revision', { method:'POST', body:fd, credentials:'include', headers:{Accept:'application/json'}, cache:'no-store' });
+    let d={}; try { d=await r.json(); } catch {}
+    if (!r.ok || !d.ok) throw new Error(d.message || 'Perbaikan belum dapat dikirim.');
+    out.className = 'message show ok'; out.textContent = d.message || 'Perbaikan berhasil dikirim.';
+    showDashboard(d.participant);
+  } catch (x) {
+    out.className = 'message show error'; out.textContent = x.message;
+  } finally { btn.disabled=false; btn.textContent='Kirim Perbaikan'; }
+};
+
 document.getElementById('logoutBtn').onclick = async () => {
 	const btn = document.getElementById('logoutBtn');
 	if (btn) btn.disabled = true;
