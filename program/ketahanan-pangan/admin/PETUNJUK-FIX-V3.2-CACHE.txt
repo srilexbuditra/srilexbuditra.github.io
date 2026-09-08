@@ -1,0 +1,24 @@
+FIX V3.2 — CACHE-BUST
+
+Masalah:
+Browser masih menjalankan script.js versi lama sehingga muncul:
+makeStoredZip is not defined
+
+Solusi:
+- Kode fixed sekarang memakai file BARU: script-a4-v32.js
+- index.html diarahkan ke file baru tersebut.
+- Ini memaksa browser/CDN mengambil JavaScript baru, bukan cache lama.
+
+Upload minimal:
+1. index.html
+2. script-a4-v32.js
+
+Lokasi:
+program/ketahanan-pangan/admin/
+
+Setelah upload/deploy:
+1. Buka ulang Dashboard Admin.
+2. Ctrl+F5 sekali.
+3. Klik Ekspor Excel A4.
+
+Jangan hapus script.js lama; biarkan sebagai cadangan.
