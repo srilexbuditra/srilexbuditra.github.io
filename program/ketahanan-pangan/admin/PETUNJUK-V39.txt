@@ -1,0 +1,4 @@
+V39 — MESIN EXCEL TEMPLATE LOKAL
+Upload semua file dalam folder program/ketahanan-pangan/admin/ dari ZIP ini.
+Tidak memakai CDN. XLSX dibuat dari template workbook standar lokal.
+Setelah deploy: Ctrl+F5 → login admin → Ekspor Excel A4.
