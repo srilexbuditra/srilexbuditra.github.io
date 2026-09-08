@@ -1,0 +1,18 @@
+HASIL AUDIT FOLDER /program/ketahanan-pangan/admin/
+
+AKTIF / DIPAKAI index.html:
+- style.css
+- style-verifikasi-tambahan.css
+- local-qrcode.js
+- jszip.min.js
+- excel-engine-local.js
+- script-a4-v38.js
+
+DIHAPUS:
+- script.js (identik dengan script-a4-v32.js, versi lama)
+- script-a4-v32.js s.d. script-a4-v37.js
+- excel-engine-loader.js (loader CDN lama, tidak dipakai index.html)
+- seluruh PETUNJUK versi lama
+- file logo/background di folder admin yang tidak dirujuk oleh index/style/script aktif; template sertifikat pada script aktif sudah tertanam sebagai data URL
+
+Pengecekan referensi relatif index.html: OK, tidak ada file runtime aktif yang hilang.
