@@ -1520,3 +1520,82 @@
     height:3.10% !important;
   }
 }
+
+
+/* =========================================================
+   V17 — CENTER PRESISI FINAL
+   QR dan tanggal diposisikan berdasarkan TITIK TENGAH.
+   Elemen lain tidak diubah.
+   ========================================================= */
+
+/* QR Code:
+   - Titik pusat QR dikunci ke pusat area 4 sudut scanner.
+   - Atas/bawah dipertahankan karena sudah pas.
+*/
+.cert-master-qr{
+  left:22.70% !important;
+  top:57.05% !important;
+  width:15.55% !important;
+  height:12.05% !important;
+
+  transform:translateX(-50%) !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+
+  padding:0 !important;
+  margin:0 !important;
+  box-sizing:border-box !important;
+}
+
+.cert-master-qr canvas{
+  display:block !important;
+  width:100% !important;
+  height:100% !important;
+  max-width:100% !important;
+  max-height:100% !important;
+
+  margin:auto !important;
+  padding:0 !important;
+  object-fit:contain !important;
+  image-rendering:pixelated !important;
+}
+
+/* Tanggal:
+   - Titik pusat kolom tanggal dikunci ke tengah sertifikat.
+   - Posisi vertikal dipertahankan.
+*/
+.cert-master-date{
+  left:50.00% !important;
+  top:78.05% !important;
+  width:20.50% !important;
+  height:3.10% !important;
+
+  transform:translateX(-50%) !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  text-align:center !important;
+
+  padding:0 !important;
+  margin:0 !important;
+  box-sizing:border-box !important;
+}
+
+@media print{
+  body.certificate-print-mode .cert-master-qr{
+    left:22.70% !important;
+    top:57.05% !important;
+    width:15.55% !important;
+    height:12.05% !important;
+    transform:translateX(-50%) !important;
+  }
+
+  body.certificate-print-mode .cert-master-date{
+    left:50.00% !important;
+    top:78.05% !important;
+    width:20.50% !important;
+    height:3.10% !important;
+    transform:translateX(-50%) !important;
+  }
+}
