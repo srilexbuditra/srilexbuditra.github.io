@@ -1365,3 +1365,38 @@
     width:19.42% !important;
   }
 }
+
+
+/* =========================================================
+   FINAL V14 — QR CENTER FINAL
+   Tanggal dan semua elemen lain DIKUNCI.
+   ========================================================= */
+
+/* QR Code: posisi final lebih presisi di tengah frame scanner */
+.cert-master-qr{
+  left:17.55% !important;
+  top:58.18% !important;
+  width:15.35% !important;
+  height:11.90% !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  padding:0 !important;
+}
+.cert-master-qr canvas{
+  display:block !important;
+  width:100% !important;
+  height:100% !important;
+  margin:auto !important;
+  object-fit:contain !important;
+  image-rendering:pixelated !important;
+}
+
+@media print{
+  body.certificate-print-mode .cert-master-qr{
+    left:17.55% !important;
+    top:58.18% !important;
+    width:15.35% !important;
+    height:11.90% !important;
+  }
+}
