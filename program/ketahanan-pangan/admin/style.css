@@ -1834,3 +1834,33 @@
 .admin-note-input{width:100%;min-height:110px;resize:vertical;padding:12px 14px;border:1px solid #cbd9d1;border-radius:10px;background:#fff;color:#173326;font:inherit;line-height:1.5;box-sizing:border-box}
 .admin-note-input:focus{outline:2px solid rgba(20,92,62,.18);border-color:#17633f}
 .admin-note-help{margin-top:7px;font-size:12px;color:#66756d;line-height:1.45}
+
+
+/* =========================================================
+   V8.3 - RIWAYAT PERBAIKAN PESERTA
+   ========================================================= */
+.revision-history-card{margin-top:18px;border:1px solid #cddbd3;border-radius:16px;background:#fff;padding:18px;box-shadow:0 10px 28px rgba(18,63,43,.05)}
+.revision-history-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:8px}
+.revision-history-kicker{display:block;margin-bottom:5px;color:#177044;font-size:11px;font-weight:900;letter-spacing:.08em}
+.revision-history-head h3{margin:0;color:#173326;font-size:18px}
+.revision-history-count,.revision-latest-badge{display:inline-flex;align-items:center;border-radius:999px;background:#e9f5ee;color:#17633f;padding:6px 10px;font-size:12px;font-weight:850;white-space:nowrap}
+.revision-history-intro,.revision-history-empty p,.revision-history-error p{margin:0 0 14px;color:#617168;line-height:1.55;font-size:13px}
+.revision-history-list{display:grid;gap:12px}
+.revision-history-item{border:1px solid #dce6e0;border-radius:13px;background:#fbfdfc;padding:15px}
+.revision-history-item.is-latest{border-color:#91b9a3;box-shadow:inset 4px 0 0 #17633f}
+.revision-history-item-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+.revision-history-item-head strong{color:#173326;font-size:15px}
+.revision-history-meta{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 13px}
+.revision-history-meta div{border-radius:10px;background:#f0f6f2;padding:10px}
+.revision-history-meta dt{margin-bottom:3px;color:#6b786f;font-size:11px;font-weight:750}
+.revision-history-meta dd{margin:0;color:#173326;font-size:12px;font-weight:800;overflow-wrap:anywhere}
+.revision-history-section{margin-top:12px}
+.revision-history-label{display:block;margin-bottom:7px;color:#486056;font-size:12px;font-weight:850}
+.revision-field-list,.revision-document-list{display:flex;flex-wrap:wrap;gap:7px}
+.revision-field-list span,.revision-document-list span{display:inline-flex;align-items:center;border:1px solid #d5e3db;border-radius:999px;background:#fff;color:#244b39;padding:6px 9px;font-size:12px;font-weight:750}
+.revision-document-list span{border-color:#b7d2c3;background:#eef8f2}
+.revision-admin-note{margin:0;border-left:3px solid #d5a33f;border-radius:8px;background:#fff8e9;padding:10px 12px;color:#594519;line-height:1.5;white-space:pre-wrap;overflow-wrap:anywhere}
+.revision-history-muted{margin:5px 0 0;color:#748178;font-size:12px;line-height:1.45}
+.revision-history-empty{background:#fbfdfc}
+.revision-history-error{border-color:#e5c9c9;background:#fff8f8}
+@media(max-width:760px){.revision-history-head{flex-direction:column}.revision-history-meta{grid-template-columns:1fr}}

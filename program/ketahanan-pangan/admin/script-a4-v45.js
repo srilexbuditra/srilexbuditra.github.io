@@ -194,6 +194,128 @@ function escapeHtml(value) {
     .replaceAll('"', '&quot;')
     .replaceAll("'", '&#039;');
 }
+const REVISION_FIELD_LABELS = {
+  status_pemohon: 'Status Pemohon',
+  kelompok_tani: 'Kelompok Tani',
+  luas_lahan: 'Luas Lahan',
+  status_lahan: 'Status Lahan',
+  komoditas: 'Komoditas',
+  tahap: 'Tahap Budidaya',
+  jenis_pupuk: 'Jenis Pupuk',
+  kebutuhan_kg: 'Kebutuhan Pupuk',
+  keterangan: 'Keterangan',
+  ktp_file: 'Dokumen KTP',
+  kk_file: 'Dokumen Kartu Keluarga (KK)'
+};
+
+function formatAdminStatus(status) {
+  const labels = {
+    submitted: 'Menunggu Verifikasi',
+    resubmitted: 'Menunggu Pemeriksaan Ulang',
+    verified: 'Terverifikasi',
+    revision: 'Perlu Perbaikan',
+    rejected: 'Ditolak',
+    needs_action: 'Perlu Tindakan'
+  };
+  return labels[status] || status || '-';
+}
+
+function formatRevisionDate(value) {
+  if (!value) return '-';
+  const normalized = String(value).includes('T') ? String(value) : String(value).replace(' ', 'T');
+  const date = new Date(normalized);
+  return Number.isNaN(date.getTime()) ? String(value) : date.toLocaleString('id-ID');
+}
+
+async function fetchRegistrationRevisions(registrationId) {
+  if (!adminToken) return [];
+  const response = await fetch(
+    `${API_URL}/${encodeURIComponent(registrationId)}/revisions`,
+    {
+      method: 'GET',
+      credentials: 'include',
+      headers: {
+        Accept: 'application/json',
+        Authorization: `Bearer ${adminToken}`
+      },
+      cache: 'no-store'
+    }
+  );
+  if (!response.ok) throw new Error(`HTTP ${response.status}`);
+  const data = await response.json();
+  if (!data.ok || !Array.isArray(data.revisions)) {
+    throw new Error('Format riwayat perbaikan tidak sesuai.');
+  }
+  return data.revisions;
+}
+
+function renderRevisionHistory(revisions) {
+  if (!Array.isArray(revisions) || revisions.length === 0) {
+    return `
+      <section class="revision-history-card revision-history-empty" aria-label="Riwayat Perbaikan Peserta">
+        <div class="revision-history-head">
+          <div>
+            <span class="revision-history-kicker">RIWAYAT PERBAIKAN PESERTA</span>
+            <h3>Belum ada perbaikan yang dikirim</h3>
+          </div>
+        </div>
+        <p>Riwayat akan muncul setelah peserta mengirim perbaikan melalui Dashboard Peserta.</p>
+      </section>
+    `;
+  }
+
+  const items = revisions.map((revision, index) => {
+    const fields = Array.isArray(revision.submitted_fields) ? revision.submitted_fields : [];
+    const documentFields = fields.filter(field => field === 'ktp_file' || field === 'kk_file');
+    const textFields = fields.filter(field => field !== 'ktp_file' && field !== 'kk_file');
+
+    return `
+      <article class="revision-history-item ${index === 0 ? 'is-latest' : ''}">
+        <div class="revision-history-item-head">
+          <strong>Perbaikan #${escapeHtml(revision.id || revisions.length - index)}</strong>
+          ${index === 0 ? '<span class="revision-latest-badge">Terbaru</span>' : ''}
+        </div>
+        <dl class="revision-history-meta">
+          <div><dt>Status sebelumnya</dt><dd>${escapeHtml(formatAdminStatus(revision.previous_status))}</dd></div>
+          <div><dt>Dikirim peserta</dt><dd>${escapeHtml(formatRevisionDate(revision.submitted_at || revision.created_at))}</dd></div>
+          <div><dt>Ditinjau admin</dt><dd>${escapeHtml(revision.reviewed_at ? formatRevisionDate(revision.reviewed_at) : 'Belum ditandai selesai')}</dd></div>
+        </dl>
+        <div class="revision-history-section">
+          <span class="revision-history-label">Bidang yang dikirim dalam perbaikan</span>
+          ${textFields.length
+            ? `<div class="revision-field-list">${textFields.map(field => `<span>${escapeHtml(REVISION_FIELD_LABELS[field] || field)}</span>`).join('')}</div>`
+            : '<p class="revision-history-muted">Tidak ada bidang data teks yang dicatat.</p>'}
+        </div>
+        ${documentFields.length ? `
+          <div class="revision-history-section">
+            <span class="revision-history-label">Dokumen pengganti</span>
+            <div class="revision-document-list">${documentFields.map(field => `<span>${escapeHtml(REVISION_FIELD_LABELS[field] || field)}</span>`).join('')}</div>
+            <p class="revision-history-muted">Tombol Download KTP/KK pada detail registrasi membuka dokumen terbaru yang tersimpan.</p>
+          </div>
+        ` : ''}
+        <div class="revision-history-section">
+          <span class="revision-history-label">Catatan pemeriksaan saat revisi diminta</span>
+          <p class="revision-admin-note">${escapeHtml(revision.admin_note || 'Tidak ada catatan admin.')}</p>
+        </div>
+      </article>
+    `;
+  }).join('');
+
+  return `
+    <section class="revision-history-card" aria-label="Riwayat Perbaikan Peserta">
+      <div class="revision-history-head">
+        <div>
+          <span class="revision-history-kicker">RIWAYAT PERBAIKAN PESERTA</span>
+          <h3>Pemeriksaan ulang perubahan peserta</h3>
+        </div>
+        <span class="revision-history-count">${revisions.length} riwayat</span>
+      </div>
+      <p class="revision-history-intro">Gunakan bagian ini untuk melihat data yang dikirim ulang peserta dan catatan pemeriksaan sebelumnya sebelum mengambil keputusan.</p>
+      <div class="revision-history-list">${items}</div>
+    </section>
+  `;
+}
+
 async function loadRegistrationDetail(registrationId) {
   try {
     const response = await fetch(
@@ -220,6 +342,15 @@ async function loadRegistrationDetail(registrationId) {
     }
 
     const registration = data.registration;
+
+    let revisions = [];
+    let revisionHistoryError = '';
+    try {
+      revisions = await fetchRegistrationRevisions(registration.registration_id);
+    } catch (error) {
+      console.warn('Ketahanan Pangan Admin: riwayat perbaikan belum dapat dimuat.', error);
+      revisionHistoryError = 'Riwayat perbaikan belum dapat dimuat. Detail registrasi tetap dapat diperiksa.';
+    }
 
     const detailPanel =
       document.getElementById('registrationDetailPanel');
@@ -398,6 +529,9 @@ async function loadRegistrationDetail(registrationId) {
           </tbody>
         </table>
       </div>
+      ${revisionHistoryError
+        ? `<section class="revision-history-card revision-history-error"><strong>Riwayat Perbaikan Peserta</strong><p>${escapeHtml(revisionHistoryError)}</p></section>`
+        : renderRevisionHistory(revisions)}
     `;
 
     detailContent
