@@ -1,0 +1,1244 @@
+
+:root{
+  --g:#123f2b;
+  --g2:#1d6a48;
+  --bg:#f6f9f7;
+  --ink:#17241d;
+  --muted:#66736c;
+  --line:#dfe8e2;
+  --white:#fff;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  background:var(--bg);
+  color:var(--ink);
+  line-height:1.5;
+}
+.public-cert-wrap{
+  width:min(980px,calc(100% - 28px));
+  margin:auto;
+}
+.public-cert-top{
+  background:linear-gradient(135deg,#103b28,#1b6243);
+  color:#fff;
+  padding:20px 0;
+}
+.public-cert-nav{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:18px;
+}
+.public-cert-nav small,
+.public-cert-nav strong{display:block}
+.public-cert-nav small{
+  color:#c3e2cf;
+  font-size:.7rem;
+  font-weight:900;
+  letter-spacing:.12em;
+}
+.public-cert-nav strong{font-size:1.2rem}
+.public-cert-nav a{
+  color:#fff;
+  text-decoration:none;
+  font-weight:800;
+  font-size:.9rem;
+}
+.public-cert-main{padding:28px 0 54px}
+.public-cert-state{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:24px;
+  box-shadow:0 12px 36px rgba(18,63,43,.08);
+}
+.public-cert-state strong,
+.public-cert-state span{display:block}
+.public-cert-state span{margin-top:5px;color:var(--muted)}
+.public-cert-state a{
+  display:inline-flex;
+  margin-top:14px;
+  color:var(--g2);
+  font-weight:800;
+}
+.public-cert-error{border-color:#efcccc;background:#fff8f8}
+.public-cert-toolbar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  margin-bottom:16px;
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:15px 17px;
+}
+.public-cert-toolbar strong,
+.public-cert-toolbar span{display:block}
+.public-cert-toolbar span{color:var(--muted);font-size:.84rem;margin-top:2px}
+.public-cert-toolbar button{
+  border:0;
+  border-radius:11px;
+  min-height:44px;
+  padding:0 16px;
+  background:var(--g2);
+  color:#fff;
+  font:inherit;
+  font-weight:850;
+  cursor:pointer;
+}
+.certificate-content{
+  display:flex;
+  justify-content:center;
+  padding:0;
+}
+.public-cert-privacy{
+  margin:16px 0 0;
+  padding:13px 15px;
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:13px;
+  color:var(--muted);
+  font-size:.86rem;
+}
+@media(max-width:680px){
+  .public-cert-nav{align-items:flex-start;flex-direction:column}
+  .public-cert-toolbar{align-items:flex-start;flex-direction:column}
+  .public-cert-toolbar button{width:100%}
+}
+
+
+.cert-master{position:relative;width:min(860px,100%);aspect-ratio:2480/3508;overflow:hidden;background:#fff;box-shadow:0 18px 50px rgba(0,48,28,.18)}
+.cert-master-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;pointer-events:none}
+.cert-master-name,.cert-master-value,.cert-master-status,.cert-master-qr,.cert-master-date{position:absolute;z-index:10;box-sizing:border-box;background:transparent!important;border:0!important;box-shadow:none!important}
+.cert-master-name{left:27%;top:37.25%;width:46%;height:3.8%;display:flex;align-items:center;justify-content:center;color:#073d2b;font-weight:900;line-height:1;text-align:center;white-space:nowrap;overflow:hidden}
+.cert-master-value{display:flex;align-items:center;color:#07172b;font-size:clamp(8px,1.1vw,14px);font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cert-master-id{left:14.7%;top:45.65%;width:32.5%;height:2.35%}
+.cert-master-reg{left:60.6%;top:45.65%;width:32.5%;height:2.35%}
+.cert-master-region{left:14.7%;top:51.75%;width:32.5%;height:2.35%}
+.cert-master-status{left:60.6%;top:51.65%;width:28%;height:2.5%;display:flex;align-items:center;color:#0b8a3e;font-size:clamp(9px,1.15vw,15px);font-weight:900;white-space:nowrap}
+.cert-master-qr{left:12.7%;top:59.3%;width:21.5%;height:13.2%;display:flex;align-items:center;justify-content:center;padding:0!important}
+.cert-master-qr canvas{display:block;width:100%!important;height:100%!important;object-fit:contain;image-rendering:pixelated}
+.cert-master-date{left:40.4%;top:79.0%;width:21%;height:2%;display:flex;align-items:center;justify-content:center;color:#07172b;font-size:clamp(7px,.95vw,12px);font-weight:800;white-space:nowrap}
+.certificate-print-root{display:none}
+@page{size:A4 portrait;margin:0}
+@media print{
+ html,body{width:210mm!important;height:297mm!important;margin:0!important;padding:0!important;background:#fff!important}
+ body.certificate-print-mode>*:not(#certificatePrintRoot){display:none!important}
+ body.certificate-print-mode #certificatePrintRoot{display:block!important;position:fixed!important;inset:0!important;width:210mm!important;height:297mm!important;margin:0!important;padding:0!important;overflow:hidden!important}
+ body.certificate-print-mode .cert-master{width:210mm!important;height:297mm!important;max-width:none!important;aspect-ratio:auto!important;margin:0!important;box-shadow:none!important}
+ body.certificate-print-mode .cert-master-bg{width:210mm!important;height:297mm!important}
+ body.certificate-print-mode .cert-master-name{font-size:20pt!important}
+ body.certificate-print-mode .cert-master-value{font-size:8.5pt!important}
+ body.certificate-print-mode .cert-master-status{font-size:9pt!important}
+ body.certificate-print-mode .cert-master-date{font-size:7.2pt!important}
+ *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+}
+
+
+/* ===== KOREKSI POSISI FINAL BERDASARKAN SCREENSHOT 2026-09-08 ===== */
+.cert-master-name{left:26.5%!important;top:35.65%!important;width:47%!important;height:3.35%!important;font-size:clamp(20px,2.75vw,34px)!important;line-height:1!important;align-items:center!important;justify-content:center!important;padding:0 1.5%!important;text-align:center!important}
+.cert-master-id{left:15.1%!important;top:44.15%!important;width:31.5%!important;height:2.45%!important}
+.cert-master-reg{left:61.0%!important;top:44.15%!important;width:31.5%!important;height:2.45%!important}
+.cert-master-region{left:15.1%!important;top:50.30%!important;width:31.5%!important;height:2.45%!important}
+.cert-master-status{left:61.0%!important;top:50.20%!important;width:26.5%!important;height:2.55%!important;align-items:center!important;justify-content:flex-start!important}
+.cert-master-qr{left:17.25%!important;top:58.10%!important;width:16.2%!important;height:12.1%!important;padding:0!important;align-items:center!important;justify-content:center!important}
+.cert-master-qr canvas{width:100%!important;height:100%!important;display:block!important;margin:auto!important}
+.cert-master-date{left:39.35%!important;top:76.65%!important;width:21.5%!important;height:2.0%!important;align-items:center!important;justify-content:center!important;text-align:center!important;font-size:clamp(7px,.92vw,11px)!important}
+@media print{
+ body.certificate-print-mode .cert-master-name{left:26.5%!important;top:35.65%!important;width:47%!important;height:3.35%!important;font-size:18pt!important}
+ body.certificate-print-mode .cert-master-id{left:15.1%!important;top:44.15%!important}
+ body.certificate-print-mode .cert-master-reg{left:61.0%!important;top:44.15%!important}
+ body.certificate-print-mode .cert-master-region{left:15.1%!important;top:50.30%!important}
+ body.certificate-print-mode .cert-master-status{left:61.0%!important;top:50.20%!important}
+ body.certificate-print-mode .cert-master-qr{left:17.25%!important;top:58.10%!important;width:16.2%!important;height:12.1%!important}
+ body.certificate-print-mode .cert-master-date{left:39.35%!important;top:76.65%!important;width:21.5%!important;height:2.0%!important;font-size:7pt!important}
+}
+
+
+/* ===== FINAL V2: TURUNKAN NILAI KOLOM + TANGGAL SAJA ===== */
+.cert-master-id{
+  top:45.45% !important;
+}
+.cert-master-reg{
+  top:45.45% !important;
+}
+.cert-master-region{
+  top:51.55% !important;
+}
+.cert-master-status{
+  top:51.45% !important;
+}
+.cert-master-date{
+  top:78.15% !important;
+}
+
+@media print{
+  body.certificate-print-mode .cert-master-id{top:45.45% !important;}
+  body.certificate-print-mode .cert-master-reg{top:45.45% !important;}
+  body.certificate-print-mode .cert-master-region{top:51.55% !important;}
+  body.certificate-print-mode .cert-master-status{top:51.45% !important;}
+  body.certificate-print-mode .cert-master-date{top:78.15% !important;}
+}
+
+
+/* ===== FINISHING FINAL V3 ===== */
+
+/* Data 4 kolom sedikit lebih besar agar jelas saat cetak A4 */
+.cert-master-value{
+  font-size:clamp(9px,1.28vw,16px) !important;
+}
+.cert-master-status{
+  font-size:clamp(10px,1.28vw,16px) !important;
+}
+
+/* QR sedikit diperbesar, tetap center dalam frame scanner */
+.cert-master-qr{
+  left:16.45% !important;
+  top:57.75% !important;
+  width:17.8% !important;
+  height:13.0% !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+}
+.cert-master-qr canvas{
+  display:block !important;
+  width:100% !important;
+  height:100% !important;
+  margin:auto !important;
+  object-fit:contain !important;
+}
+
+/* Tanggal sedikit lebih besar tanpa mengubah kotaknya */
+.cert-master-date{
+  font-size:clamp(8px,1.08vw,13px) !important;
+  font-weight:800 !important;
+}
+
+@media print{
+  body.certificate-print-mode .cert-master-value{
+    font-size:9.4pt !important;
+  }
+  body.certificate-print-mode .cert-master-status{
+    font-size:9.4pt !important;
+  }
+  body.certificate-print-mode .cert-master-qr{
+    left:16.45% !important;
+    top:57.75% !important;
+    width:17.8% !important;
+    height:13.0% !important;
+  }
+  body.certificate-print-mode .cert-master-date{
+    font-size:8pt !important;
+  }
+}
+
+
+/* ===== FINAL V4: AUTO-FIT ID & NOMOR REGISTRASI SAJA ===== */
+.cert-master-id,
+.cert-master-reg{
+  padding-right:1.2% !important;
+  min-width:0 !important;
+}
+
+
+/* ===== PRODUCTION FINAL V5: SAFE MARGIN KODE ===== */
+.cert-master-id,
+.cert-master-reg{
+  padding-left:.45% !important;
+  padding-right:2.0% !important;
+  overflow:hidden !important;
+  white-space:nowrap !important;
+}
+
+
+/* ===== FINAL V6: POSISI DIKUNCI SESUAI VISUAL YANG DISETUJUI ===== */
+
+/* Wilayah benar-benar center pada kolom nilainya */
+.cert-master-region{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  text-align:center !important;
+  padding-left:1.2% !important;
+  padding-right:1.2% !important;
+}
+
+/* Status benar-benar center pada kolom nilainya */
+.cert-master-status{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  text-align:center !important;
+  padding-left:1.2% !important;
+  padding-right:1.2% !important;
+}
+
+/* QR dikunci tepat di tengah frame scanner */
+.cert-master-qr{
+  left:16.9% !important;
+  top:57.95% !important;
+  width:17.0% !important;
+  height:12.55% !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  padding:0 !important;
+}
+.cert-master-qr canvas{
+  display:block !important;
+  width:100% !important;
+  height:100% !important;
+  margin:auto !important;
+  object-fit:contain !important;
+  image-rendering:pixelated !important;
+}
+
+/* Tanggal benar-benar center dalam kolom Diterbitkan pada */
+.cert-master-date{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  text-align:center !important;
+  left:40.35% !important;
+  width:21.3% !important;
+}
+
+@media print{
+  body.certificate-print-mode .cert-master-region{
+    justify-content:center !important;
+    text-align:center !important;
+  }
+  body.certificate-print-mode .cert-master-status{
+    justify-content:center !important;
+    text-align:center !important;
+  }
+  body.certificate-print-mode .cert-master-qr{
+    left:16.9% !important;
+    top:57.95% !important;
+    width:17.0% !important;
+    height:12.55% !important;
+  }
+  body.certificate-print-mode .cert-master-date{
+    left:40.35% !important;
+    width:21.3% !important;
+    justify-content:center !important;
+    text-align:center !important;
+  }
+}
+
+
+/* =========================================================
+   FINAL V7 — POSISI SESUAI VISUAL YANG DISETUJUI
+   Background dan struktur TIDAK diubah.
+   ========================================================= */
+
+/* ID Sertifikat: center horizontal + vertical, tetap auto-fit */
+.cert-master-id{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  text-align:center !important;
+  padding-left:1.2% !important;
+  padding-right:1.2% !important;
+}
+
+/* Nomor Registrasi: center horizontal + vertical, tetap auto-fit */
+.cert-master-reg{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  text-align:center !important;
+  padding-left:1.2% !important;
+  padding-right:1.2% !important;
+}
+
+/* Wilayah tetap seperti posisi sekarang */
+.cert-master-region{
+  /* sengaja tidak mengubah koordinat */
+}
+
+/* Terverifikasi: center di dalam kolom */
+.cert-master-status{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  text-align:center !important;
+  padding-left:1.0% !important;
+  padding-right:1.0% !important;
+}
+
+/* QR: sedikit koreksi ke tengah frame scanner */
+.cert-master-qr{
+  left:16.65% !important;
+  top:57.95% !important;
+  width:17.0% !important;
+  height:12.55% !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  padding:0 !important;
+}
+.cert-master-qr canvas{
+  display:block !important;
+  width:100% !important;
+  height:100% !important;
+  margin:auto !important;
+  object-fit:contain !important;
+  image-rendering:pixelated !important;
+}
+
+/* Tanggal: center di dalam kolom */
+.cert-master-date{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  text-align:center !important;
+  left:39.35% !important;
+  width:21.3% !important;
+  padding:0 !important;
+}
+
+@media print{
+  body.certificate-print-mode .cert-master-id,
+  body.certificate-print-mode .cert-master-reg,
+  body.certificate-print-mode .cert-master-status,
+  body.certificate-print-mode .cert-master-date{
+    align-items:center !important;
+    justify-content:center !important;
+    text-align:center !important;
+  }
+
+  body.certificate-print-mode .cert-master-qr{
+    left:16.65% !important;
+    top:57.95% !important;
+    width:17.0% !important;
+    height:12.55% !important;
+  }
+
+  body.certificate-print-mode .cert-master-date{
+    left:39.35% !important;
+    width:21.3% !important;
+  }
+}
+
+
+/* =========================================================
+   FINAL V8 — PENYESUAIAN POSISI PRESISI
+   Nama, Wilayah, background dan struktur tetap.
+   ========================================================= */
+
+/* ID Sertifikat tetap seperti versi sekarang */
+.cert-master-id{
+  /* posisi dan ukuran dipertahankan */
+}
+
+/* Nomor Registrasi: sedikit lebih center dan font sedikit diperkecil */
+.cert-master-reg{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  text-align:center !important;
+  padding-left:1.8% !important;
+  padding-right:1.8% !important;
+  font-size:clamp(8px,1.12vw,14px) !important;
+  white-space:nowrap !important;
+  overflow:hidden !important;
+}
+
+/* Status: sedikit digeser/dirapikan ke tengah kolom */
+.cert-master-status{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  text-align:center !important;
+  padding:0 1.4% !important;
+}
+
+/* QR: koreksi kecil agar lebih presisi di tengah frame scanner */
+.cert-master-qr{
+  left:16.85% !important;
+  top:57.95% !important;
+  width:16.7% !important;
+  height:12.55% !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  padding:0 !important;
+}
+.cert-master-qr canvas{
+  display:block !important;
+  width:100% !important;
+  height:100% !important;
+  margin:auto !important;
+  object-fit:contain !important;
+  image-rendering:pixelated !important;
+}
+
+/* Tanggal: center horizontal dan vertical dalam kotak */
+.cert-master-date{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  text-align:center !important;
+  left:39.35% !important;
+  width:21.3% !important;
+  padding:0 !important;
+}
+
+@media print{
+  body.certificate-print-mode .cert-master-reg{
+    justify-content:center !important;
+    text-align:center !important;
+    font-size:8.7pt !important;
+  }
+  body.certificate-print-mode .cert-master-status{
+    justify-content:center !important;
+    text-align:center !important;
+  }
+  body.certificate-print-mode .cert-master-qr{
+    left:16.85% !important;
+    top:57.95% !important;
+    width:16.7% !important;
+    height:12.55% !important;
+  }
+  body.certificate-print-mode .cert-master-date{
+    left:39.35% !important;
+    width:21.3% !important;
+    justify-content:center !important;
+    text-align:center !important;
+  }
+}
+
+
+/* =========================================================
+   FINAL V9 — PRESISI BERDASARKAN PDF TERBARU
+   Background dan struktur tidak diubah.
+   ========================================================= */
+
+/* ID Sertifikat: posisi tetap, font sedikit diperkecil seperti Nomor Registrasi */
+.cert-master-id{
+  font-size:clamp(8px,1.12vw,14px) !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  text-align:center !important;
+  padding-left:1.8% !important;
+  padding-right:1.8% !important;
+  white-space:nowrap !important;
+  overflow:hidden !important;
+}
+
+/* Nomor Registrasi: font tetap, sedikit lebih center */
+.cert-master-reg{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  text-align:center !important;
+  padding-left:1.8% !important;
+  padding-right:1.8% !important;
+}
+
+/* Status: koreksi sedikit lagi ke tengah area nilai */
+.cert-master-status{
+  left:61.45% !important;
+  width:25.6% !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  text-align:center !important;
+  padding:0 !important;
+}
+
+/* QR: presisi di pusat area empat sudut scanner */
+.cert-master-qr{
+  left:16.95% !important;
+  top:58.05% !important;
+  width:16.45% !important;
+  height:12.35% !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  padding:0 !important;
+}
+.cert-master-qr canvas{
+  display:block !important;
+  width:100% !important;
+  height:100% !important;
+  margin:auto !important;
+  object-fit:contain !important;
+  image-rendering:pixelated !important;
+}
+
+/* Tanggal: koreksi sedikit lagi ke pusat kotak */
+.cert-master-date{
+  left:39.70% !important;
+  top:78.15% !important;
+  width:20.6% !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  text-align:center !important;
+  padding:0 !important;
+}
+
+@media print{
+  body.certificate-print-mode .cert-master-id{
+    font-size:8.7pt !important;
+  }
+  body.certificate-print-mode .cert-master-status{
+    left:61.45% !important;
+    width:25.6% !important;
+  }
+  body.certificate-print-mode .cert-master-qr{
+    left:16.95% !important;
+    top:58.05% !important;
+    width:16.45% !important;
+    height:12.35% !important;
+  }
+  body.certificate-print-mode .cert-master-date{
+    left:39.70% !important;
+    top:78.15% !important;
+    width:20.6% !important;
+  }
+}
+
+
+/* =========================================================
+   FINAL V10 — KOREKSI POSISI MIKRO
+   Nama, Wilayah, ID Sertifikat, background & struktur DIKUNCI.
+   ========================================================= */
+
+/* Nomor Registrasi: sedikit lebih center lagi dalam kolom */
+.cert-master-reg{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  text-align:center !important;
+  padding-left:2.15% !important;
+  padding-right:2.15% !important;
+}
+
+/* Terverifikasi: sedikit lebih center lagi */
+.cert-master-status{
+  left:61.75% !important;
+  width:25.0% !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  text-align:center !important;
+  padding:0 !important;
+}
+
+/* QR Code: koreksi mikro ke pusat frame scanner */
+.cert-master-qr{
+  left:17.10% !important;
+  top:58.10% !important;
+  width:16.15% !important;
+  height:12.20% !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  padding:0 !important;
+}
+.cert-master-qr canvas{
+  display:block !important;
+  width:100% !important;
+  height:100% !important;
+  margin:auto !important;
+  object-fit:contain !important;
+  image-rendering:pixelated !important;
+}
+
+/* Tanggal: sedikit lebih center lagi dalam kotak */
+.cert-master-date{
+  left:39.95% !important;
+  top:78.20% !important;
+  width:20.15% !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  text-align:center !important;
+  padding:0 !important;
+}
+
+@media print{
+  body.certificate-print-mode .cert-master-reg{
+    justify-content:center !important;
+    text-align:center !important;
+  }
+  body.certificate-print-mode .cert-master-status{
+    left:61.75% !important;
+    width:25.0% !important;
+  }
+  body.certificate-print-mode .cert-master-qr{
+    left:17.10% !important;
+    top:58.10% !important;
+    width:16.15% !important;
+    height:12.20% !important;
+  }
+  body.certificate-print-mode .cert-master-date{
+    left:39.95% !important;
+    top:78.20% !important;
+    width:20.15% !important;
+  }
+}
+
+
+/* =========================================================
+   FINAL V11 — KOREKSI MIKRO LANJUTAN
+   Nama, Wilayah, ID Sertifikat, background & struktur DIKUNCI.
+   ========================================================= */
+
+/* Nomor Registrasi: sedikit lebih presisi di pusat kolom */
+.cert-master-reg{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  text-align:center !important;
+  padding-left:2.35% !important;
+  padding-right:2.35% !important;
+}
+
+/* Terverifikasi: koreksi mikro lagi ke pusat kolom */
+.cert-master-status{
+  left:61.95% !important;
+  width:24.60% !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  text-align:center !important;
+  padding:0 !important;
+}
+
+/* QR: koreksi mikro lagi agar pusat QR sejajar pusat frame scanner */
+.cert-master-qr{
+  left:17.22% !important;
+  top:58.12% !important;
+  width:15.95% !important;
+  height:12.12% !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  padding:0 !important;
+}
+.cert-master-qr canvas{
+  display:block !important;
+  width:100% !important;
+  height:100% !important;
+  margin:auto !important;
+  object-fit:contain !important;
+  image-rendering:pixelated !important;
+}
+
+/* Tanggal: koreksi mikro lagi ke pusat kotak */
+.cert-master-date{
+  left:40.10% !important;
+  top:78.22% !important;
+  width:19.85% !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  text-align:center !important;
+  padding:0 !important;
+}
+
+@media print{
+  body.certificate-print-mode .cert-master-reg{
+    justify-content:center !important;
+    text-align:center !important;
+  }
+  body.certificate-print-mode .cert-master-status{
+    left:61.95% !important;
+    width:24.60% !important;
+  }
+  body.certificate-print-mode .cert-master-qr{
+    left:17.22% !important;
+    top:58.12% !important;
+    width:15.95% !important;
+    height:12.12% !important;
+  }
+  body.certificate-print-mode .cert-master-date{
+    left:40.10% !important;
+    top:78.22% !important;
+    width:19.85% !important;
+  }
+}
+
+
+/* =========================================================
+   FINAL V12 — KOREKSI MIKRO QR + TANGGAL SAJA
+   Nama, Wilayah, ID, Nomor Registrasi, Status,
+   Background dan struktur DIKUNCI.
+   ========================================================= */
+
+/* QR Code: dipresisikan lagi ke pusat frame scanner */
+.cert-master-qr{
+  left:17.34% !important;
+  top:58.14% !important;
+  width:15.72% !important;
+  height:12.04% !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  padding:0 !important;
+}
+.cert-master-qr canvas{
+  display:block !important;
+  width:100% !important;
+  height:100% !important;
+  margin:auto !important;
+  object-fit:contain !important;
+  image-rendering:pixelated !important;
+}
+
+/* Tanggal: sedikit lebih presisi ke tengah kolom */
+.cert-master-date{
+  left:40.22% !important;
+  top:78.24% !important;
+  width:19.62% !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  text-align:center !important;
+  padding:0 !important;
+}
+
+@media print{
+  body.certificate-print-mode .cert-master-qr{
+    left:17.34% !important;
+    top:58.14% !important;
+    width:15.72% !important;
+    height:12.04% !important;
+  }
+  body.certificate-print-mode .cert-master-date{
+    left:40.22% !important;
+    top:78.24% !important;
+    width:19.62% !important;
+  }
+}
+
+
+/* =========================================================
+   FINAL V13 — HANYA QR CODE + TANGGAL
+   Semua elemen lainnya dikunci.
+   ========================================================= */
+
+/* QR Code: koreksi mikro ke pusat frame scanner */
+.cert-master-qr{
+  left:17.42% !important;
+  top:58.16% !important;
+  width:15.56% !important;
+  height:11.98% !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  padding:0 !important;
+}
+.cert-master-qr canvas{
+  display:block !important;
+  width:100% !important;
+  height:100% !important;
+  margin:auto !important;
+  object-fit:contain !important;
+  image-rendering:pixelated !important;
+}
+
+/* Tanggal: koreksi mikro ke pusat kolom */
+.cert-master-date{
+  left:40.32% !important;
+  top:78.25% !important;
+  width:19.42% !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  text-align:center !important;
+  padding:0 !important;
+}
+
+@media print{
+  body.certificate-print-mode .cert-master-qr{
+    left:17.42% !important;
+    top:58.16% !important;
+    width:15.56% !important;
+    height:11.98% !important;
+  }
+  body.certificate-print-mode .cert-master-date{
+    left:40.32% !important;
+    top:78.25% !important;
+    width:19.42% !important;
+  }
+}
+
+
+/* =========================================================
+   FINAL V14 — QR CENTER FINAL
+   Tanggal dan semua elemen lain DIKUNCI.
+   ========================================================= */
+
+/* QR Code: posisi final lebih presisi di tengah frame scanner */
+.cert-master-qr{
+  left:17.55% !important;
+  top:58.18% !important;
+  width:15.35% !important;
+  height:11.90% !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  padding:0 !important;
+}
+.cert-master-qr canvas{
+  display:block !important;
+  width:100% !important;
+  height:100% !important;
+  margin:auto !important;
+  object-fit:contain !important;
+  image-rendering:pixelated !important;
+}
+
+@media print{
+  body.certificate-print-mode .cert-master-qr{
+    left:17.55% !important;
+    top:58.18% !important;
+    width:15.35% !important;
+    height:11.90% !important;
+  }
+}
+
+
+/* =========================================================
+   V15 — POSISI QR & TANGGAL SESUAI ACUAN VISUAL
+   Elemen sertifikat lainnya tidak diubah.
+   ========================================================= */
+
+/* QR dibuat benar-benar center terhadap area 4 sudut scanner */
+.cert-master-qr{
+  left:17.10% !important;
+  top:57.55% !important;
+  width:16.30% !important;
+  height:12.30% !important;
+
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  padding:0 !important;
+  margin:0 !important;
+}
+
+.cert-master-qr canvas{
+  display:block !important;
+  width:100% !important;
+  height:100% !important;
+  margin:0 auto !important;
+  padding:0 !important;
+  object-fit:contain !important;
+  image-rendering:pixelated !important;
+}
+
+/* Tanggal tepat di tengah kotak tanggal */
+.cert-master-date{
+  left:39.45% !important;
+  top:78.15% !important;
+  width:21.10% !important;
+
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  text-align:center !important;
+  padding:0 !important;
+  margin:0 !important;
+}
+
+@media print{
+  body.certificate-print-mode .cert-master-qr{
+    left:17.10% !important;
+    top:57.55% !important;
+    width:16.30% !important;
+    height:12.30% !important;
+  }
+
+  body.certificate-print-mode .cert-master-date{
+    left:39.45% !important;
+    top:78.15% !important;
+    width:21.10% !important;
+  }
+}
+
+
+/* =========================================================
+   V16 — CENTER FINAL SESUAI ACUAN VISUAL
+   Hanya QR Code dan Tanggal.
+   ========================================================= */
+
+/* QR Code: pusat QR dibuat tepat di pusat empat sudut scanner */
+.cert-master-qr{
+  left:17.55% !important;
+  top:57.05% !important;
+  width:15.55% !important;
+  height:12.05% !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  padding:0 !important;
+  margin:0 !important;
+  box-sizing:border-box !important;
+}
+.cert-master-qr canvas{
+  display:block !important;
+  width:100% !important;
+  height:100% !important;
+  max-width:100% !important;
+  max-height:100% !important;
+  margin:auto !important;
+  padding:0 !important;
+  object-fit:contain !important;
+  image-rendering:pixelated !important;
+}
+
+/* Tanggal: pusat tulisan tepat di pusat kotak tanggal */
+.cert-master-date{
+  left:39.75% !important;
+  top:78.05% !important;
+  width:20.50% !important;
+  height:3.10% !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  text-align:center !important;
+  padding:0 !important;
+  margin:0 !important;
+  box-sizing:border-box !important;
+}
+
+@media print{
+  body.certificate-print-mode .cert-master-qr{
+    left:17.55% !important;
+    top:57.05% !important;
+    width:15.55% !important;
+    height:12.05% !important;
+  }
+  body.certificate-print-mode .cert-master-date{
+    left:39.75% !important;
+    top:78.05% !important;
+    width:20.50% !important;
+    height:3.10% !important;
+  }
+}
+
+
+/* =========================================================
+   V17 — CENTER PRESISI FINAL
+   QR dan tanggal diposisikan berdasarkan TITIK TENGAH.
+   Elemen lain tidak diubah.
+   ========================================================= */
+
+/* QR Code:
+   - Titik pusat QR dikunci ke pusat area 4 sudut scanner.
+   - Atas/bawah dipertahankan karena sudah pas.
+*/
+.cert-master-qr{
+  left:22.70% !important;
+  top:57.05% !important;
+  width:15.55% !important;
+  height:12.05% !important;
+
+  transform:translateX(-50%) !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+
+  padding:0 !important;
+  margin:0 !important;
+  box-sizing:border-box !important;
+}
+
+.cert-master-qr canvas{
+  display:block !important;
+  width:100% !important;
+  height:100% !important;
+  max-width:100% !important;
+  max-height:100% !important;
+
+  margin:auto !important;
+  padding:0 !important;
+  object-fit:contain !important;
+  image-rendering:pixelated !important;
+}
+
+/* Tanggal:
+   - Titik pusat kolom tanggal dikunci ke tengah sertifikat.
+   - Posisi vertikal dipertahankan.
+*/
+.cert-master-date{
+  left:50.00% !important;
+  top:78.05% !important;
+  width:20.50% !important;
+  height:3.10% !important;
+
+  transform:translateX(-50%) !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  text-align:center !important;
+
+  padding:0 !important;
+  margin:0 !important;
+  box-sizing:border-box !important;
+}
+
+@media print{
+  body.certificate-print-mode .cert-master-qr{
+    left:22.70% !important;
+    top:57.05% !important;
+    width:15.55% !important;
+    height:12.05% !important;
+    transform:translateX(-50%) !important;
+  }
+
+  body.certificate-print-mode .cert-master-date{
+    left:50.00% !important;
+    top:78.05% !important;
+    width:20.50% !important;
+    height:3.10% !important;
+    transform:translateX(-50%) !important;
+  }
+}
+
+
+/* =========================================================
+   V18 — TANGGAL CENTER FINAL
+   QR Code dan seluruh elemen lain DIKUNCI.
+   ========================================================= */
+
+/* Tanggal:
+   digeser sangat sedikit ke kanan agar titik tengah teks
+   benar-benar bertemu titik tengah kotak tanggal.
+*/
+.cert-master-date{
+  left:50.70% !important;
+  top:78.05% !important;
+  width:20.50% !important;
+  height:3.10% !important;
+
+  transform:translateX(-50%) !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  text-align:center !important;
+
+  padding:0 !important;
+  margin:0 !important;
+  box-sizing:border-box !important;
+}
+
+@media print{
+  body.certificate-print-mode .cert-master-date{
+    left:50.70% !important;
+    top:78.05% !important;
+    width:20.50% !important;
+    height:3.10% !important;
+    transform:translateX(-50%) !important;
+  }
+}
+
+
+/* =========================================================
+   V19 — TANGGAL NAIK SEDIKIT, CENTER TETAP
+   QR dan seluruh elemen lainnya dikunci.
+   ========================================================= */
+
+.cert-master-date{
+  left:50.70% !important;
+  top:77.78% !important; /* naik sedikit dari V18 */
+  width:20.50% !important;
+  height:3.10% !important;
+
+  transform:translateX(-50%) !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  text-align:center !important;
+
+  padding:0 !important;
+  margin:0 !important;
+  box-sizing:border-box !important;
+}
+
+@media print{
+  body.certificate-print-mode .cert-master-date{
+    left:50.70% !important;
+    top:77.78% !important;
+    width:20.50% !important;
+    height:3.10% !important;
+    transform:translateX(-50%) !important;
+  }
+}
+
+
+/* =========================================================
+   V20 — TANGGAL NAIK SEDIKIT LAGI
+   QR Code dan semua elemen lain tetap/dikunci.
+   ========================================================= */
+
+.cert-master-date{
+  left:50.70% !important;
+  top:77.55% !important;
+  width:20.50% !important;
+  height:3.10% !important;
+
+  transform:translateX(-50%) !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  text-align:center !important;
+
+  padding:0 !important;
+  margin:0 !important;
+  box-sizing:border-box !important;
+}
+
+@media print{
+  body.certificate-print-mode .cert-master-date{
+    left:50.70% !important;
+    top:77.55% !important;
+    width:20.50% !important;
+    height:3.10% !important;
+    transform:translateX(-50%) !important;
+  }
+}
+
+
+/* =========================================================
+   V21 — TANGGAL NAIK SEDIKIT LAGI
+   HANYA posisi vertikal tanggal yang berubah.
+   QR Code dan seluruh elemen lainnya tetap.
+   ========================================================= */
+
+.cert-master-date{
+  left:50.70% !important;
+  top:77.32% !important;
+  width:20.50% !important;
+  height:3.10% !important;
+  transform:translateX(-50%) !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  text-align:center !important;
+  padding:0 !important;
+  margin:0 !important;
+  box-sizing:border-box !important;
+}
+
+@media print{
+  body.certificate-print-mode .cert-master-date{
+    left:50.70% !important;
+    top:77.32% !important;
+    width:20.50% !important;
+    height:3.10% !important;
+    transform:translateX(-50%) !important;
+  }
+}

@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Kartu / Sertifikat Digital | Program Ketahanan Pangan</title>
+  <meta name="description" content="Kartu / Sertifikat Digital peserta terverifikasi Program Ketahanan Pangan.">
+  <meta name="theme-color" content="#123f2b">
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="stylesheet" href="./style.css?v=1">
+</head>
+<body>
+  <header class="public-cert-top">
+    <div class="public-cert-wrap public-cert-nav">
+      <div>
+        <small>PROGRAM KETAHANAN PANGAN</small>
+        <strong>Kartu / Sertifikat Digital</strong>
+      </div>
+      <a id="backLink" href="../">← Kembali ke Verifikasi</a>
+    </div>
+  </header>
+
+  <main class="public-cert-main">
+    <div class="public-cert-wrap">
+      <section class="public-cert-state" id="loadingState">
+        <strong>Menyiapkan sertifikat…</strong>
+        <span>Sistem sedang memastikan status peserta melalui layanan verifikasi resmi.</span>
+      </section>
+
+      <section class="public-cert-state public-cert-error" id="errorState" hidden>
+        <strong>Sertifikat tidak tersedia</strong>
+        <span id="errorMessage">Nomor registrasi tidak ditemukan atau peserta belum terverifikasi.</span>
+        <a href="../">Kembali ke halaman verifikasi</a>
+      </section>
+
+      <section id="certificateArea" hidden>
+        <div class="public-cert-toolbar">
+          <div>
+            <strong>Sertifikat peserta terverifikasi</strong>
+            <span>QR Code mengarah ke halaman verifikasi publik resmi.</span>
+          </div>
+          <button type="button" id="printCertificateButton">Cetak / Simpan PDF</button>
+        </div>
+
+        <div class="certificate-content">
+          <article class="cert-master" id="printableCertificate">
+            <img class="cert-master-bg" src="./certificate-master-background-kosong-a4-300dpi.png" alt="" aria-hidden="true">
+            <div class="cert-master-name" data-fit-name>-</div>
+            <div class="cert-master-value cert-master-id" data-fit-code>-</div>
+            <div class="cert-master-value cert-master-reg" data-fit-code>-</div>
+            <div class="cert-master-value cert-master-region">-</div>
+            <div class="cert-master-status">✓ Terverifikasi</div>
+            <div class="cert-master-qr">
+              <canvas id="certificateQrCanvas" width="600" height="600" aria-label="QR Code verifikasi"></canvas>
+            </div>
+            <div class="cert-master-date">-</div>
+          </article>
+        </div>
+
+        <p class="public-cert-privacy">🔒 Halaman sertifikat publik tidak menampilkan NIK, nomor KK, WhatsApp, email, atau dokumen identitas peserta.</p>
+      </section>
+    </div>
+  </main>
+
+  <script src="./local-qrcode.js"></script>
+  <script src="./script.js?v=1" defer></script>
+</body>
+</html>
