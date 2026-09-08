@@ -1,0 +1,13 @@
+EKSPOR EXCEL DETAIL REGISTRASI V2
+
+1 peserta = 1 baris. Ekspor mengikuti filter aktif.
+Kolom: Nomor Registrasi, Nama, NIK, Nomor KK, WhatsApp, Email, Alamat,
+Desa/Kelurahan, Kecamatan, Kabupaten/Kota, Provinsi, Status Pemohon,
+Kelompok Tani, Luas Lahan, Status Lahan, Komoditas, Tahap, Jenis Pupuk,
+Kebutuhan Pupuk, Keterangan, Tanggal Registrasi, Status Registrasi.
+
+Detail diambil melalui endpoint detail Admin API yang sudah ada dan dilindungi token.
+Tidak perlu mengubah Worker.
+Foto/file KTP dan KK tidak dimasukkan ke Excel dan tetap privat di R2.
+
+Upload isi ZIP ke program/ketahanan-pangan/admin/ lalu Ctrl+F5.

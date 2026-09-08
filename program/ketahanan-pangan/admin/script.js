@@ -1068,9 +1068,11 @@ function excelColumnName(index) {
 }
 
 function buildExcelSheetXml(rows) {
-  const widths = [6, 30, 28, 32, 24, 22];
-  const cols = widths.map((w, i) =>
-    `<col min="${i + 1}" max="${i + 1}" width="${w}" customWidth="1"/>`
+  const widths = [
+    6,30,28,22,22,20,28,38,22,22,22,22,24,28,18,20,22,18,22,18,38,24,22
+  ];
+  const cols = rows[0].map((_, i) =>
+    `<col min="${i + 1}" max="${i + 1}" width="${widths[i] || 22}" customWidth="1"/>`
   ).join('');
 
   const rowXml = rows.map((row, r) => {
@@ -1177,111 +1179,91 @@ function makeStoredZip(files) {
 
 function buildParticipantXlsx(registrations) {
   const rows = [[
-    'No.',
-    'Nomor Registrasi',
-    'Nama Peserta',
-    'Wilayah',
-    'Tanggal Registrasi',
-    'Status'
+    'No.','Nomor Registrasi','Nama Lengkap','NIK','Nomor KK','WhatsApp','Email',
+    'Alamat','Desa / Kelurahan','Kecamatan','Kabupaten / Kota','Provinsi',
+    'Status Pemohon','Kelompok Tani','Luas Lahan','Status Lahan','Komoditas',
+    'Tahap','Jenis Pupuk','Kebutuhan Pupuk (kg)','Keterangan',
+    'Tanggal Registrasi','Status Registrasi'
   ]];
 
   registrations.forEach((item, index) => {
     rows.push([
-      String(index + 1),
-      item.registration_id || '',
-      item.nama || '',
-      adminRegistrationRegion(item) || '',
-      item.created_at || '',
+      String(index + 1), item.registration_id || '', item.nama || '',
+      item.nik || '', item.nomor_kk || '', item.whatsapp || '', item.email || '',
+      item.alamat || '', item.desa || '', item.kecamatan || '',
+      item.kabupaten || '', item.provinsi || '', item.status_pemohon || '',
+      item.kelompok_tani || '', item.luas_lahan || '', item.status_lahan || '',
+      item.komoditas || '', item.tahap || '', item.jenis_pupuk || '',
+      item.kebutuhan_kg || '', item.keterangan || '', item.created_at || '',
       excelStatusLabel(item.status)
     ]);
   });
 
   const sheetXml = buildExcelSheetXml(rows);
-
   const files = [
-    {
-      name: '[Content_Types].xml',
-      data: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
-  <Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>
-  <Default Extension="xml" ContentType="application/xml"/>
-  <Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/>
-  <Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>
-  <Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/>
-</Types>`
-    },
-    {
-      name: '_rels/.rels',
-      data: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
-  <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/>
-</Relationships>`
-    },
-    {
-      name: 'xl/workbook.xml',
-      data: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"
- xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
-  <sheets><sheet name="Data Peserta" sheetId="1" r:id="rId1"/></sheets>
-</workbook>`
-    },
-    {
-      name: 'xl/_rels/workbook.xml.rels',
-      data: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
-  <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/>
-  <Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/>
-</Relationships>`
-    },
-    {
-      name: 'xl/styles.xml',
-      data: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">
-  <fonts count="2">
-    <font><sz val="11"/><name val="Calibri"/></font>
-    <font><b/><sz val="11"/><name val="Calibri"/></font>
-  </fonts>
-  <fills count="2"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill></fills>
-  <borders count="1"><border><left/><right/><top/><bottom/><diagonal/></border></borders>
-  <cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs>
-  <cellXfs count="2">
-    <xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/>
-    <xf numFmtId="0" fontId="1" fillId="0" borderId="0" xfId="0" applyFont="1"/>
-  </cellXfs>
-</styleSheet>`
-    },
-    { name: 'xl/worksheets/sheet1.xml', data: sheetXml }
+    {name:'[Content_Types].xml',data:`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/></Types>`},
+    {name:'_rels/.rels',data:`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>`},
+    {name:'xl/workbook.xml',data:`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets><sheet name="Detail Registrasi" sheetId="1" r:id="rId1"/></sheets></workbook>`},
+    {name:'xl/_rels/workbook.xml.rels',data:`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>`},
+    {name:'xl/styles.xml',data:`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><fonts count="2"><font><sz val="11"/><name val="Calibri"/></font><font><b/><sz val="11"/><name val="Calibri"/></font></fonts><fills count="2"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill></fills><borders count="1"><border><left/><right/><top/><bottom/><diagonal/></border></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="2"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/><xf numFmtId="0" fontId="1" fillId="0" borderId="0" xfId="0" applyFont="1"/></cellXfs></styleSheet>`},
+    {name:'xl/worksheets/sheet1.xml',data:sheetXml}
   ];
-
   return makeStoredZip(files);
 }
 
-function exportFilteredParticipantsToExcel() {
-  const registrations = getFilteredAdminRegistrations();
+async function fetchAdminRegistrationDetailForExport(registrationId) {
+  const response = await fetch(`${API_URL}/${encodeURIComponent(registrationId)}`, {
+    method:'GET', credentials:'include',
+    headers:{Accept:'application/json', Authorization:`Bearer ${adminToken}`},
+    cache:'no-store'
+  });
+  let data = null;
+  try { data = await response.json(); } catch (_) {}
+  if (!response.ok || !data?.ok || !data?.registration) {
+    throw new Error(data?.message || `Detail ${registrationId} gagal dimuat (HTTP ${response.status}).`);
+  }
+  return data.registration;
+}
 
+async function exportFilteredParticipantsToExcel() {
+  const registrations = getFilteredAdminRegistrations();
   if (!registrations.length) {
     alert('Tidak ada peserta pada hasil filter yang dapat diekspor.');
     return;
   }
+  if (!adminToken) {
+    alert('Admin API Token tidak tersedia. Silakan login ulang.');
+    return;
+  }
 
-  const blob = buildParticipantXlsx(registrations);
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  const now = new Date();
-  const stamp =
-    now.getFullYear() +
-    String(now.getMonth() + 1).padStart(2, '0') +
-    String(now.getDate()).padStart(2, '0') + '-' +
-    String(now.getHours()).padStart(2, '0') +
-    String(now.getMinutes()).padStart(2, '0');
+  const button = document.getElementById('participantExportExcel');
+  const originalLabel = button?.textContent || 'Ekspor Excel Detail';
 
-  link.href = url;
-  link.download = `rekap-peserta-ketahanan-pangan-${stamp}.xlsx`;
-  document.body.appendChild(link);
-  link.click();
-  link.remove();
+  try {
+    if (button) { button.disabled = true; button.textContent = `Mengambil detail 0/${registrations.length}...`; }
+    const details = [];
+    for (let i=0; i<registrations.length; i++) {
+      details.push(await fetchAdminRegistrationDetailForExport(registrations[i].registration_id));
+      if (button) button.textContent = `Mengambil detail ${i+1}/${registrations.length}...`;
+    }
 
-  setTimeout(() => URL.revokeObjectURL(url), 1500);
+    const blob = buildParticipantXlsx(details);
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    const now = new Date();
+    const stamp = now.getFullYear()+String(now.getMonth()+1).padStart(2,'0')+
+      String(now.getDate()).padStart(2,'0')+'-'+String(now.getHours()).padStart(2,'0')+
+      String(now.getMinutes()).padStart(2,'0');
+    link.href=url;
+    link.download=`detail-registrasi-ketahanan-pangan-${stamp}.xlsx`;
+    document.body.appendChild(link); link.click(); link.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),1500);
+  } catch(error) {
+    console.error('Ketahanan Pangan Admin: ekspor detail gagal.', error);
+    alert(error.message || 'Ekspor Excel detail registrasi gagal.');
+  } finally {
+    if (button) { button.disabled=false; button.textContent=originalLabel; }
+  }
 }
 
 function initAdminExcelExport() {
