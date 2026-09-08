@@ -1242,3 +1242,24 @@ body{
     transform:translateX(-50%) !important;
   }
 }
+
+/* V5: navigasi Dashboard Peserta + Verifikasi */
+.public-cert-nav-links{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  justify-content:flex-end;
+  gap:10px 18px;
+}
+.public-cert-nav-links a{
+  color:#fff;
+  text-decoration:none;
+  font-weight:800;
+}
+.public-cert-nav-links a:hover{text-decoration:underline}
+@media (max-width:720px){
+  .public-cert-nav-links{justify-content:flex-start}
+}
+@media print{
+  .public-cert-nav-links{display:none !important}
+}
