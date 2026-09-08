@@ -1260,3 +1260,56 @@
     width:19.85% !important;
   }
 }
+
+
+/* =========================================================
+   FINAL V12 — KOREKSI MIKRO QR + TANGGAL SAJA
+   Nama, Wilayah, ID, Nomor Registrasi, Status,
+   Background dan struktur DIKUNCI.
+   ========================================================= */
+
+/* QR Code: dipresisikan lagi ke pusat frame scanner */
+.cert-master-qr{
+  left:17.34% !important;
+  top:58.14% !important;
+  width:15.72% !important;
+  height:12.04% !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  padding:0 !important;
+}
+.cert-master-qr canvas{
+  display:block !important;
+  width:100% !important;
+  height:100% !important;
+  margin:auto !important;
+  object-fit:contain !important;
+  image-rendering:pixelated !important;
+}
+
+/* Tanggal: sedikit lebih presisi ke tengah kolom */
+.cert-master-date{
+  left:40.22% !important;
+  top:78.24% !important;
+  width:19.62% !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  text-align:center !important;
+  padding:0 !important;
+}
+
+@media print{
+  body.certificate-print-mode .cert-master-qr{
+    left:17.34% !important;
+    top:58.14% !important;
+    width:15.72% !important;
+    height:12.04% !important;
+  }
+  body.certificate-print-mode .cert-master-date{
+    left:40.22% !important;
+    top:78.24% !important;
+    width:19.62% !important;
+  }
+}
