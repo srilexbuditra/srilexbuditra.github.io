@@ -728,3 +728,11 @@
     font-size:8pt !important;
   }
 }
+
+
+/* ===== FINAL V4: AUTO-FIT ID & NOMOR REGISTRASI SAJA ===== */
+.cert-master-id,
+.cert-master-reg{
+  padding-right:1.2% !important;
+  min-width:0 !important;
+}

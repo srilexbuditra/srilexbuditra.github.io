@@ -509,8 +509,8 @@ function renderCertificate(certificate) {
       <img class="cert-master-bg" src="${CERTIFICATE_TEMPLATE_DATA_URL}" alt="" aria-hidden="true">
 
       <div class="cert-master-name" data-fit-name>${escapeHtml(certificate.nama || '-')}</div>
-      <div class="cert-master-value cert-master-id">${escapeHtml(certificate.certificate_id || '-')}</div>
-      <div class="cert-master-value cert-master-reg">${escapeHtml(certificate.registration_id || '-')}</div>
+      <div class="cert-master-value cert-master-id" data-fit-code>${escapeHtml(certificate.certificate_id || '-')}</div>
+      <div class="cert-master-value cert-master-reg" data-fit-code>${escapeHtml(certificate.registration_id || '-')}</div>
       <div class="cert-master-value cert-master-region">${escapeHtml(wilayah)}</div>
       <div class="cert-master-status">✓ Terverifikasi</div>
 
@@ -526,9 +526,10 @@ function renderCertificate(certificate) {
     renderCertificateQrCode(qr, certificate.verification_url);
   }
 
-  requestAnimationFrame(() => fitCertificateName(
-    content.querySelector('[data-fit-name]')
-  ));
+  requestAnimationFrame(() => {
+    fitCertificateName(content.querySelector('[data-fit-name]'));
+    content.querySelectorAll('[data-fit-code]').forEach(fitCertificateCode);
+  });
 
   panel.hidden = false;
   panel.scrollIntoView({behavior:'smooth', block:'start'});
@@ -540,6 +541,18 @@ function fitCertificateName(el) {
   el.style.fontSize = size + 'px';
   while (el.scrollWidth > el.clientWidth && size > 19) {
     el.style.fontSize = (--size) + 'px';
+  }
+}
+
+
+function fitCertificateCode(el) {
+  if (!el) return;
+  const base = parseFloat(getComputedStyle(el).fontSize) || 16;
+  let size = base;
+  el.style.fontSize = size + 'px';
+  while (el.scrollWidth > el.clientWidth && size > 9) {
+    size -= 0.5;
+    el.style.fontSize = size + 'px';
   }
 }
 
