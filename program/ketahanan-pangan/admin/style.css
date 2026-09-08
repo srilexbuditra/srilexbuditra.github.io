@@ -822,3 +822,98 @@
     text-align:center !important;
   }
 }
+
+
+/* =========================================================
+   FINAL V7 — POSISI SESUAI VISUAL YANG DISETUJUI
+   Background dan struktur TIDAK diubah.
+   ========================================================= */
+
+/* ID Sertifikat: center horizontal + vertical, tetap auto-fit */
+.cert-master-id{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  text-align:center !important;
+  padding-left:1.2% !important;
+  padding-right:1.2% !important;
+}
+
+/* Nomor Registrasi: center horizontal + vertical, tetap auto-fit */
+.cert-master-reg{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  text-align:center !important;
+  padding-left:1.2% !important;
+  padding-right:1.2% !important;
+}
+
+/* Wilayah tetap seperti posisi sekarang */
+.cert-master-region{
+  /* sengaja tidak mengubah koordinat */
+}
+
+/* Terverifikasi: center di dalam kolom */
+.cert-master-status{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  text-align:center !important;
+  padding-left:1.0% !important;
+  padding-right:1.0% !important;
+}
+
+/* QR: sedikit koreksi ke tengah frame scanner */
+.cert-master-qr{
+  left:16.65% !important;
+  top:57.95% !important;
+  width:17.0% !important;
+  height:12.55% !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  padding:0 !important;
+}
+.cert-master-qr canvas{
+  display:block !important;
+  width:100% !important;
+  height:100% !important;
+  margin:auto !important;
+  object-fit:contain !important;
+  image-rendering:pixelated !important;
+}
+
+/* Tanggal: center di dalam kolom */
+.cert-master-date{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  text-align:center !important;
+  left:39.35% !important;
+  width:21.3% !important;
+  padding:0 !important;
+}
+
+@media print{
+  body.certificate-print-mode .cert-master-id,
+  body.certificate-print-mode .cert-master-reg,
+  body.certificate-print-mode .cert-master-status,
+  body.certificate-print-mode .cert-master-date{
+    align-items:center !important;
+    justify-content:center !important;
+    text-align:center !important;
+  }
+
+  body.certificate-print-mode .cert-master-qr{
+    left:16.65% !important;
+    top:57.95% !important;
+    width:17.0% !important;
+    height:12.55% !important;
+  }
+
+  body.certificate-print-mode .cert-master-date{
+    left:39.35% !important;
+    width:21.3% !important;
+  }
+}
