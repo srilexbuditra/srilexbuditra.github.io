@@ -1,8 +1,0 @@
-V3.8 — MESIN EXCEL 100% LOKAL
-Upload/replace 4 file ke program/ketahanan-pangan/admin/:
-index.html
-jszip.min.js
-excel-engine-local.js
-script-a4-v38.js
-Deploy -> Ctrl+F5 -> login admin -> Ekspor Excel A4.
-Tidak memakai CDN untuk mesin ekspor.
