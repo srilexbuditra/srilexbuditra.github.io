@@ -1,0 +1,7 @@
+V42 — 3 SHEET STABIL
+Perbaikan: template XLSX sekarang sejak awal sudah memiliki 3 worksheet valid.
+Generator tidak lagi membuat/mengubah relationship workbook saat ekspor.
+Sheet 1 Data Peserta tetap dipertahankan.
+Sheet 2 Identitas & Wilayah.
+Sheet 3 Pertanian & Status.
+Upload semua file admin dari ZIP ini, deploy, Ctrl+F5, lalu ekspor Excel baru.
