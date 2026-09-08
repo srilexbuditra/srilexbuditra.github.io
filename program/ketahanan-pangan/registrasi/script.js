@@ -1,3 +1,25 @@
+// V6: peserta yang sudah login tetap diarahkan ke Dashboard Peserta.
+// Fail-open: jika pemeriksaan sesi gagal, halaman registrasi tetap dapat digunakan.
+const PARTICIPANT_API='https://ketahanan-pangan-peserta-api.srilexbuditra.workers.dev';
+
+(async function redirectAuthenticatedParticipant(){
+  try {
+    const response=await fetch(PARTICIPANT_API + '/me',{
+      method:'GET',
+      credentials:'include',
+      headers:{Accept:'application/json'},
+      cache:'no-store'
+    });
+    if(!response.ok) return;
+    const data=await response.json();
+    if(data && data.authenticated===true && data.participant){
+      window.location.replace('../peserta/');
+    }
+  } catch (_) {
+    // Fail-open: jangan blokir registrasi bila API peserta tidak tersedia.
+  }
+})();
+
 const API_ENDPOINT='https://ketahanan-pangan-registration-api.srilexbuditra.workers.dev';
 const MAX_FILE_SIZE=5*1024*1024;
 const ALLOWED_TYPES=new Set(['image/jpeg','image/png','image/webp','image/avif','application/pdf']);
