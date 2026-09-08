@@ -1,0 +1,8 @@
+name = "ketahanan-pangan-peserta-api"
+main = "worker.js"
+compatibility_date = "2026-09-08"
+
+[[d1_databases]]
+binding = "REGISTRATION_DB"
+database_name = "ketahanan-pangan-registration"
+database_id = "ISI_DATABASE_ID_D1_ANDA"

@@ -1,0 +1,33 @@
+AKUN PESERTA V1 — PETUNJUK INSTALASI
+
+PENTING:
+- V45 Admin/Excel tidak diubah.
+- Worker registrasi dan Worker admin tidak diubah.
+- Akun peserta memakai Worker BARU dan D1 yang sama melalui binding REGISTRATION_DB.
+
+1. Buat Worker baru: ketahanan-pangan-peserta-api
+2. Salin isi worker.js ke Worker baru.
+3. Tambahkan D1 binding:
+   Variable name: REGISTRATION_DB
+   Database: ketahanan-pangan-registration
+4. Jalankan SQL pada migrations/001_participant_accounts.sql di D1 Console SATU KALI.
+5. Tambahkan Custom Domain Worker:
+   peserta-api.srilexbuditra.work
+6. Deploy Worker.
+7. Tes URL https://peserta-api.srilexbuditra.work/ dan pastikan JSON service participant-account-api muncul.
+8. Deploy folder website /program/ketahanan-pangan/peserta/
+9. Buka https://srilexbuditra.work/program/ketahanan-pangan/peserta/
+
+AKTIVASI:
+- Nomor Registrasi + NIK + WhatsApp harus cocok dengan data registrasi.
+- Peserta membuat password minimal 8 karakter.
+- Password di-hash PBKDF2-SHA256 + salt; password asli tidak disimpan.
+
+LOGIN:
+- Nomor Registrasi + password.
+- Session disimpan dalam cookie HttpOnly + Secure + SameSite=Lax selama 7 hari.
+- 5 password salah memicu penguncian login 15 menit.
+
+CATATAN:
+- V1 belum memiliki fitur lupa/reset password. Jangan menambahkan reset berbasis data publik.
+- Sertifikat hanya muncul ketika status = verified.
