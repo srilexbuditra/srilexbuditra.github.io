@@ -1102,6 +1102,116 @@ function excelRow(rowNumber, cells, height = null) {
   return `<row r="${rowNumber}"${heightAttr}>${cells.join('')}</row>`;
 }
 
+
+function excelZipBytes(value) {
+  if (value instanceof Uint8Array) return value;
+  return new TextEncoder().encode(String(value ?? ''));
+}
+
+function excelZipCrc32(bytes) {
+  let crc = 0xFFFFFFFF;
+  for (let i = 0; i < bytes.length; i++) {
+    crc ^= bytes[i];
+    for (let bit = 0; bit < 8; bit++) {
+      crc = (crc >>> 1) ^ ((crc & 1) ? 0xEDB88320 : 0);
+    }
+  }
+  return (crc ^ 0xFFFFFFFF) >>> 0;
+}
+
+function excelZipU16(value) {
+  return new Uint8Array([value & 255, (value >>> 8) & 255]);
+}
+
+function excelZipU32(value) {
+  return new Uint8Array([
+    value & 255,
+    (value >>> 8) & 255,
+    (value >>> 16) & 255,
+    (value >>> 24) & 255
+  ]);
+}
+
+function excelZipConcat(parts) {
+  const size = parts.reduce((sum, part) => sum + part.length, 0);
+  const out = new Uint8Array(size);
+  let offset = 0;
+  for (const part of parts) {
+    out.set(part, offset);
+    offset += part.length;
+  }
+  return out;
+}
+
+function makeStoredZip(files) {
+  const encoder = new TextEncoder();
+  const localParts = [];
+  const centralParts = [];
+  let offset = 0;
+
+  for (const file of files) {
+    const name = encoder.encode(file.name);
+    const data = excelZipBytes(file.data);
+    const crc = excelZipCrc32(data);
+
+    const localHeader = excelZipConcat([
+      excelZipU32(0x04034B50),
+      excelZipU16(20),
+      excelZipU16(0),
+      excelZipU16(0),
+      excelZipU16(0),
+      excelZipU16(0),
+      excelZipU32(crc),
+      excelZipU32(data.length),
+      excelZipU32(data.length),
+      excelZipU16(name.length),
+      excelZipU16(0),
+      name
+    ]);
+    localParts.push(localHeader, data);
+
+    const centralHeader = excelZipConcat([
+      excelZipU32(0x02014B50),
+      excelZipU16(20),
+      excelZipU16(20),
+      excelZipU16(0),
+      excelZipU16(0),
+      excelZipU16(0),
+      excelZipU16(0),
+      excelZipU32(crc),
+      excelZipU32(data.length),
+      excelZipU32(data.length),
+      excelZipU16(name.length),
+      excelZipU16(0),
+      excelZipU16(0),
+      excelZipU16(0),
+      excelZipU16(0),
+      excelZipU32(0),
+      excelZipU32(offset),
+      name
+    ]);
+    centralParts.push(centralHeader);
+    offset += localHeader.length + data.length;
+  }
+
+  const central = excelZipConcat(centralParts);
+  const local = excelZipConcat(localParts);
+  const end = excelZipConcat([
+    excelZipU32(0x06054B50),
+    excelZipU16(0),
+    excelZipU16(0),
+    excelZipU16(files.length),
+    excelZipU16(files.length),
+    excelZipU32(central.length),
+    excelZipU32(local.length),
+    excelZipU16(0)
+  ]);
+
+  return new Blob([local, central, end], {
+    type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+  });
+}
+
 function buildExcelReportStylesXml() {
   return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">

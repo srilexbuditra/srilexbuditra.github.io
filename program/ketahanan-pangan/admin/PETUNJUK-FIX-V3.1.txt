@@ -1,0 +1,13 @@
+FIX V3.1 — Ekspor Excel A4
+
+Memperbaiki error:
+makeStoredZip is not defined
+
+Tidak mengubah desain laporan A4 V3.
+Tidak mengubah Admin API, sertifikat, verifikasi, filter, atau data registrasi.
+
+Cara:
+1. Upload/replace isi ZIP ini ke program/ketahanan-pangan/admin/
+2. Deploy.
+3. Tekan Ctrl+F5.
+4. Klik Ekspor Excel A4.
