@@ -68,6 +68,52 @@ function date(v) {
 	}).format(d)
 }
 
+function renderParticipantTimeline(status) {
+	const s = String(status || '').toLowerCase();
+	const timeline = document.getElementById('participantTimeline');
+	const summary = document.getElementById('progressSummary');
+	const alert = document.getElementById('progressAlert');
+	if (!timeline || !summary || !alert) return;
+
+	const items = [...timeline.querySelectorAll('li')];
+	items.forEach(item => item.classList.remove('done', 'active', 'stopped'));
+	alert.hidden = true;
+	alert.className = 'progress-alert';
+	alert.textContent = '';
+
+	let activeIndex = 1;
+	if (s === 'submitted') activeIndex = 0;
+	if (s === 'pending' || !s) activeIndex = 1;
+	if (s === 'verified' || s === 'approved') activeIndex = 3;
+	if (s === 'revision' || s === 'rejected') activeIndex = 1;
+
+	items.forEach((item, index) => {
+		if (index < activeIndex) item.classList.add('done');
+		else if (index === activeIndex) item.classList.add('active');
+	});
+
+	if (s === 'verified' || s === 'approved') {
+		items.forEach(item => { item.classList.remove('active'); item.classList.add('done'); });
+		summary.textContent = 'Seluruh tahapan utama telah selesai.';
+	} else if (s === 'revision') {
+		items[1]?.classList.add('stopped');
+		summary.textContent = 'Pemeriksaan membutuhkan perbaikan data.';
+		alert.hidden = false;
+		alert.classList.add('revision');
+		alert.textContent = 'Perlu perbaikan: ikuti petunjuk pengelola program sebelum proses dilanjutkan.';
+	} else if (s === 'rejected') {
+		items[1]?.classList.add('stopped');
+		summary.textContent = 'Proses berhenti pada tahap pemeriksaan.';
+		alert.hidden = false;
+		alert.classList.add('rejected');
+		alert.textContent = 'Pendaftaran belum dapat disetujui. Hubungi pengelola program bila memerlukan informasi lebih lanjut.';
+	} else if (s === 'submitted') {
+		summary.textContent = 'Registrasi telah diterima dan menunggu pemeriksaan.';
+	} else {
+		summary.textContent = 'Data peserta sedang dalam tahap pemeriksaan.';
+	}
+}
+
 function showDashboard(p) {
 	authView.hidden = true;
 	dashboardView.hidden = false;
@@ -81,6 +127,7 @@ function showDashboard(p) {
 	document.getElementById('infoApplicant').textContent = p.status_pemohon || '-';
 	document.getElementById('infoCommodity').textContent = p.komoditas || '-';
 	document.getElementById('infoFertilizer').textContent = p.jenis_pupuk || '-';
+	renderParticipantTimeline(p.status);
 	const s = String(p.status || '').toLowerCase(),
 		note = document.getElementById('statusNote'),
 		cert = document.getElementById('certificateBtn');

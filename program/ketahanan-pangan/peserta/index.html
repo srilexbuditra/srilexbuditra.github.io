@@ -6,7 +6,7 @@
   <title>Akun Peserta | Program Ketahanan Pangan</title>
   <meta name="description" content="Aktivasi akun, login, dan dashboard pribadi peserta Program Ketahanan Pangan.">
   <meta name="theme-color" content="#123f2b">
-  <link rel="stylesheet" href="./style.css?v=2">
+  <link rel="stylesheet" href="./style.css?v=5">
 </head>
 <body>
 <header class="topbar"><div class="wrap topbar-inner"><a href="../registrasi/" class="brand">Program Ketahanan Pangan</a><a href="../verifikasi/" class="toplink">Verifikasi Publik</a></div></header>
@@ -24,10 +24,20 @@
     <section id="dashboardView" class="dashboard" hidden>
       <div class="dash-head"><div><span class="badge">DASHBOARD PESERTA</span><h2>Selamat datang, <span id="dashName">Peserta</span></h2><p id="dashId">-</p></div><button id="logoutBtn" class="btn secondary">Keluar</button></div>
       <div class="stats"><article><small>STATUS REGISTRASI</small><strong id="dashStatus">-</strong></article><article><small>TANGGAL REGISTRASI</small><strong id="dashDate">-</strong></article><article><small>WILAYAH</small><strong id="dashRegion">-</strong></article></div>
+      <article class="card progress-card" aria-labelledby="progressTitle">
+        <div class="progress-head"><div><span class="badge">PROGRES PESERTA</span><h3 id="progressTitle">Tahapan Program</h3></div><p id="progressSummary">Status proses sedang dimuat.</p></div>
+        <ol id="participantTimeline" class="participant-timeline">
+          <li data-stage="received"><span class="timeline-dot">1</span><div><strong>Registrasi Diterima</strong><small>Data pendaftaran telah masuk ke sistem.</small></div></li>
+          <li data-stage="review"><span class="timeline-dot">2</span><div><strong>Pemeriksaan Data</strong><small>Admin memeriksa data dan kelengkapan peserta.</small></div></li>
+          <li data-stage="verified"><span class="timeline-dot">3</span><div><strong>Terverifikasi</strong><small>Data peserta dinyatakan telah terverifikasi.</small></div></li>
+          <li data-stage="certificate"><span class="timeline-dot">4</span><div><strong>Sertifikat Digital</strong><small>Sertifikat tersedia untuk peserta terverifikasi.</small></div></li>
+        </ol>
+        <div id="progressAlert" class="progress-alert" hidden></div>
+      </article>
       <div class="dash-grid"><article class="card"><h3>Informasi Peserta</h3><dl><div><dt>Nomor Registrasi</dt><dd id="infoId">-</dd></div><div><dt>Nama</dt><dd id="infoName">-</dd></div><div><dt>Status Pemohon</dt><dd id="infoApplicant">-</dd></div><div><dt>Komoditas</dt><dd id="infoCommodity">-</dd></div><div><dt>Jenis Pupuk</dt><dd id="infoFertilizer">-</dd></div></dl></article><article class="card"><h3>Status & Layanan</h3><div id="statusNote" class="status-note">Status akun sedang dimuat.</div><a id="certificateBtn" class="btn primary full" href="#" hidden>Lihat Kartu / Sertifikat Digital</a><a class="btn secondary full" href="../verifikasi/">Buka Verifikasi Publik</a></article></div>
     </section>
   </div></section>
 </main>
 <footer><div class="wrap footer-inner"><div><strong>Program Ketahanan Pangan</strong><span>Portal Akun Peserta</span></div><span>Integrated Digital Platform &amp; System Development · srilexbuditra.work</span></div></footer>
-<script src="./script.js?v=4"></script>
+<script src="./script.js?v=5"></script>
 </body></html>
