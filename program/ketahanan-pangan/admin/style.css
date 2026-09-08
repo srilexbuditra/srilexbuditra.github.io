@@ -1599,3 +1599,40 @@
     transform:translateX(-50%) !important;
   }
 }
+
+
+/* =========================================================
+   V18 — TANGGAL CENTER FINAL
+   QR Code dan seluruh elemen lain DIKUNCI.
+   ========================================================= */
+
+/* Tanggal:
+   digeser sangat sedikit ke kanan agar titik tengah teks
+   benar-benar bertemu titik tengah kotak tanggal.
+*/
+.cert-master-date{
+  left:50.70% !important;
+  top:78.05% !important;
+  width:20.50% !important;
+  height:3.10% !important;
+
+  transform:translateX(-50%) !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  text-align:center !important;
+
+  padding:0 !important;
+  margin:0 !important;
+  box-sizing:border-box !important;
+}
+
+@media print{
+  body.certificate-print-mode .cert-master-date{
+    left:50.70% !important;
+    top:78.05% !important;
+    width:20.50% !important;
+    height:3.10% !important;
+    transform:translateX(-50%) !important;
+  }
+}
