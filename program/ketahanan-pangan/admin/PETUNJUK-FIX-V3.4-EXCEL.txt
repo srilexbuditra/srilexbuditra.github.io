@@ -1,0 +1,18 @@
+V3.4 — FIX STRUKTUR OOXML EXCEL
+
+Perbaikan:
+- Urutan elemen font/style OOXML dibuat sesuai struktur Excel.
+- Menambahkan cellStyles Normal.
+- Embedded image/logo XLSX dinonaktifkan sementara untuk menghilangkan sumber relationship rusak.
+- Layout A4, tabel detail, filter, data peserta, footer, dan format laporan tetap dipertahankan.
+- File JS memakai nama baru script-a4-v34.js agar cache lama tidak dipakai.
+
+UPLOAD:
+1. index.html
+2. script-a4-v34.js
+
+Ke:
+program/ketahanan-pangan/admin/
+
+Deploy -> Ctrl+F5 -> Ekspor Excel A4.
+Gunakan file XLSX BARU hasil ekspor.
