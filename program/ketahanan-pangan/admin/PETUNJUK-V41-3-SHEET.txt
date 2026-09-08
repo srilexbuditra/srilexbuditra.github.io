@@ -1,0 +1,7 @@
+V41 — 3 SHEET EXCEL
+Sheet 1 Data Peserta: dipertahankan, data lengkap.
+Sheet 2 Identitas & Wilayah: 12 kolom, lebih lega.
+Sheet 3 Pertanian & Status: 12 kolom, lebih lega.
+Ketiga sheet A4 Landscape, Fit to Width 1 page.
+Mesin Excel template lokal tetap dipertahankan.
+Upload semua file admin dari ZIP, deploy, Ctrl+F5, lalu ekspor Excel A4.

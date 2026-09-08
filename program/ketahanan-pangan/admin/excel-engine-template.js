@@ -21,8 +21,27 @@ function sheetXml(ws){
 async function writeFile(wb,name){
  if(!window.JSZip)throw new Error('Mesin ZIP lokal tidak tersedia.');
  const res=await fetch('./excel-template-a4.xlsx?v=1',{cache:'no-store'});if(!res.ok)throw new Error(`Template Excel lokal gagal dimuat (HTTP ${res.status}).`);
- const zip=await JSZip.loadAsync(await res.arrayBuffer()),sn=wb.SheetNames[0],ws=wb.Sheets[sn];
- zip.file('xl/worksheets/sheet1.xml',sheetXml(ws));
+ const zip=await JSZip.loadAsync(await res.arrayBuffer());
+ const sheets=wb.SheetNames.map(n=>wb.Sheets[n]);
+ sheets.forEach((ws,i)=>zip.file(`xl/worksheets/sheet${i+1}.xml`,sheetXml(ws)));
+ if(sheets.length>1){
+   const types=zip.file('[Content_Types].xml');
+   let ct=await types.async('string');
+   for(let i=2;i<=sheets.length;i++) if(!ct.includes(`/xl/worksheets/sheet${i}.xml`))
+     ct=ct.replace('</Types>',`<Override PartName="/xl/worksheets/sheet${i}.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/></Types>`);
+   zip.file('[Content_Types].xml',ct);
+
+   let wbxml=await zip.file('xl/workbook.xml').async('string');
+   wbxml=wbxml.replace(/<sheets>[\s\S]*?<\/sheets>/,
+     '<sheets>'+wb.SheetNames.map((n,i)=>`<sheet name="${esc(n)}" sheetId="${i+1}" r:id="rId${i+1}"/>`).join('')+'</sheets>');
+   zip.file('xl/workbook.xml',wbxml);
+
+   let rels=await zip.file('xl/_rels/workbook.xml.rels').async('string');
+   rels=rels.replace(/<Relationship[^>]+Type="http:\/\/schemas\.openxmlformats\.org\/officeDocument\/2006\/relationships\/worksheet"[^>]*\/>/g,'');
+   const additions=wb.SheetNames.map((n,i)=>`<Relationship Id="rId${i+1}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet${i+1}.xml"/>`).join('');
+   rels=rels.replace('</Relationships>',additions+'</Relationships>');
+   zip.file('xl/_rels/workbook.xml.rels',rels);
+ }
  const blob=await zip.generateAsync({type:'blob',mimeType:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',compression:'DEFLATE'});
  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1200)
 }
