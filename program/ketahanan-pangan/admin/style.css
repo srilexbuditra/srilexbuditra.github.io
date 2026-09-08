@@ -1669,3 +1669,36 @@
     transform:translateX(-50%) !important;
   }
 }
+
+
+/* =========================================================
+   V20 — TANGGAL NAIK SEDIKIT LAGI
+   QR Code dan semua elemen lain tetap/dikunci.
+   ========================================================= */
+
+.cert-master-date{
+  left:50.70% !important;
+  top:77.55% !important;
+  width:20.50% !important;
+  height:3.10% !important;
+
+  transform:translateX(-50%) !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  text-align:center !important;
+
+  padding:0 !important;
+  margin:0 !important;
+  box-sizing:border-box !important;
+}
+
+@media print{
+  body.certificate-print-mode .cert-master-date{
+    left:50.70% !important;
+    top:77.55% !important;
+    width:20.50% !important;
+    height:3.10% !important;
+    transform:translateX(-50%) !important;
+  }
+}
