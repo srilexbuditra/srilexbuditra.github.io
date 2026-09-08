@@ -1,6 +1,6 @@
 // V6: peserta yang sudah login tetap diarahkan ke Dashboard Peserta.
 // Fail-open: jika pemeriksaan sesi gagal, halaman registrasi tetap dapat digunakan.
-const PARTICIPANT_API='https://ketahanan-pangan-peserta-api.srilexbuditra.workers.dev';
+const PARTICIPANT_API='https://peserta-api.srilexbuditra.work';
 
 (async function redirectAuthenticatedParticipant(){
   try {
