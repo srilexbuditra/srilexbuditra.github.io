@@ -1,4 +1,4 @@
-const API='https://peserta-api.srilexbuditra.work';
+const API='https://ketahanan-pangan-peserta-api.srilexbuditra.workers.dev';
 const authView=document.getElementById('authView'),dashboardView=document.getElementById('dashboardView'),message=document.getElementById('authMessage');
 const normalizeId=v=>String(v||'').trim().toUpperCase().replace(/\s+/g,'');
 const normalizeWa=v=>String(v||'').replace(/\D/g,'').replace(/^0/,'62');
