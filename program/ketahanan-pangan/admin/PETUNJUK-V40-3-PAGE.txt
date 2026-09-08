@@ -1,0 +1,7 @@
+V40 — LAPORAN EXCEL 3 PAGE
+Page 1: laporan lengkap V39 dipertahankan.
+Page 2: Identitas, Kontak & Wilayah (12 kolom).
+Page 3: Profil Pertanian & Status Pengajuan (12 kolom).
+Semua tetap dalam sheet Data Peserta dan dipisahkan manual page break untuk cetak A4 Landscape.
+Mesin XLSX template lokal V39 tetap dipertahankan.
+Upload semua file folder admin dari ZIP ini, deploy, Ctrl+F5, lalu ekspor Excel A4.
