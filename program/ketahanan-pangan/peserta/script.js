@@ -1,4 +1,4 @@
-const API = 'https://ketahanan-pangan-peserta-api.srilexbuditra.workers.dev';
+const API = 'https://peserta-api.srilexbuditra.work';
 const authView = document.getElementById('authView'),
 	dashboardView = document.getElementById('dashboardView'),
 	message = document.getElementById('authMessage');
