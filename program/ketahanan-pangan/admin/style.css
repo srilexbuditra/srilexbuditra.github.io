@@ -1400,3 +1400,62 @@
     height:11.90% !important;
   }
 }
+
+
+/* =========================================================
+   V15 — POSISI QR & TANGGAL SESUAI ACUAN VISUAL
+   Elemen sertifikat lainnya tidak diubah.
+   ========================================================= */
+
+/* QR dibuat benar-benar center terhadap area 4 sudut scanner */
+.cert-master-qr{
+  left:17.10% !important;
+  top:57.55% !important;
+  width:16.30% !important;
+  height:12.30% !important;
+
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  padding:0 !important;
+  margin:0 !important;
+}
+
+.cert-master-qr canvas{
+  display:block !important;
+  width:100% !important;
+  height:100% !important;
+  margin:0 auto !important;
+  padding:0 !important;
+  object-fit:contain !important;
+  image-rendering:pixelated !important;
+}
+
+/* Tanggal tepat di tengah kotak tanggal */
+.cert-master-date{
+  left:39.45% !important;
+  top:78.15% !important;
+  width:21.10% !important;
+
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  text-align:center !important;
+  padding:0 !important;
+  margin:0 !important;
+}
+
+@media print{
+  body.certificate-print-mode .cert-master-qr{
+    left:17.10% !important;
+    top:57.55% !important;
+    width:16.30% !important;
+    height:12.30% !important;
+  }
+
+  body.certificate-print-mode .cert-master-date{
+    left:39.45% !important;
+    top:78.15% !important;
+    width:21.10% !important;
+  }
+}
