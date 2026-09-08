@@ -1098,3 +1098,84 @@
     width:20.6% !important;
   }
 }
+
+
+/* =========================================================
+   FINAL V10 — KOREKSI POSISI MIKRO
+   Nama, Wilayah, ID Sertifikat, background & struktur DIKUNCI.
+   ========================================================= */
+
+/* Nomor Registrasi: sedikit lebih center lagi dalam kolom */
+.cert-master-reg{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  text-align:center !important;
+  padding-left:2.15% !important;
+  padding-right:2.15% !important;
+}
+
+/* Terverifikasi: sedikit lebih center lagi */
+.cert-master-status{
+  left:61.75% !important;
+  width:25.0% !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  text-align:center !important;
+  padding:0 !important;
+}
+
+/* QR Code: koreksi mikro ke pusat frame scanner */
+.cert-master-qr{
+  left:17.10% !important;
+  top:58.10% !important;
+  width:16.15% !important;
+  height:12.20% !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  padding:0 !important;
+}
+.cert-master-qr canvas{
+  display:block !important;
+  width:100% !important;
+  height:100% !important;
+  margin:auto !important;
+  object-fit:contain !important;
+  image-rendering:pixelated !important;
+}
+
+/* Tanggal: sedikit lebih center lagi dalam kotak */
+.cert-master-date{
+  left:39.95% !important;
+  top:78.20% !important;
+  width:20.15% !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  text-align:center !important;
+  padding:0 !important;
+}
+
+@media print{
+  body.certificate-print-mode .cert-master-reg{
+    justify-content:center !important;
+    text-align:center !important;
+  }
+  body.certificate-print-mode .cert-master-status{
+    left:61.75% !important;
+    width:25.0% !important;
+  }
+  body.certificate-print-mode .cert-master-qr{
+    left:17.10% !important;
+    top:58.10% !important;
+    width:16.15% !important;
+    height:12.20% !important;
+  }
+  body.certificate-print-mode .cert-master-date{
+    left:39.95% !important;
+    top:78.20% !important;
+    width:20.15% !important;
+  }
+}
