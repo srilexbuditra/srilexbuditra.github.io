@@ -649,3 +649,29 @@
  body.certificate-print-mode .cert-master-qr{left:17.25%!important;top:58.10%!important;width:16.2%!important;height:12.1%!important}
  body.certificate-print-mode .cert-master-date{left:39.35%!important;top:76.65%!important;width:21.5%!important;height:2.0%!important;font-size:7pt!important}
 }
+
+
+/* ===== FINAL V2: TURUNKAN NILAI KOLOM + TANGGAL SAJA ===== */
+.cert-master-id{
+  top:45.45% !important;
+}
+.cert-master-reg{
+  top:45.45% !important;
+}
+.cert-master-region{
+  top:51.55% !important;
+}
+.cert-master-status{
+  top:51.45% !important;
+}
+.cert-master-date{
+  top:78.15% !important;
+}
+
+@media print{
+  body.certificate-print-mode .cert-master-id{top:45.45% !important;}
+  body.certificate-print-mode .cert-master-reg{top:45.45% !important;}
+  body.certificate-print-mode .cert-master-region{top:51.55% !important;}
+  body.certificate-print-mode .cert-master-status{top:51.45% !important;}
+  body.certificate-print-mode .cert-master-date{top:78.15% !important;}
+}
