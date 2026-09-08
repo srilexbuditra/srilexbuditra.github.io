@@ -1,0 +1,8 @@
+V43 — FIX STYLE ID EXCEL
+Penyebab V42 ditemukan dari file XLSX hasil ekspor:
+styles.xml hanya memiliki 38 cell styles, tetapi generator lama menulis style ID 11, 15, 22, dan 30.
+Itu membuat Microsoft Excel melakukan Recovery.
+
+V43 memakai style ID yang benar-benar ada di template 3-sheet:
+Title=4, Subtitle=10, Meta=16, Header=24, Body=33.
+Sheet 1 tetap Data Peserta; Sheet 2 Identitas & Wilayah; Sheet 3 Pertanian & Status.
