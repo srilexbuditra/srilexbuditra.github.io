@@ -122,10 +122,11 @@ document.getElementById('activateForm').onsubmit = async e => {
 				password: pw
 			})
 		});
-		msg('ok', 'Akun berhasil diaktifkan. Silakan masuk menggunakan Nomor Registrasi dan password Anda.');
+		const registrationId = normalizeId(f.get('registration_id'));
+		form.reset();
 		document.querySelector('[data-tab="login"]').click();
-		document.querySelector('#loginForm [name="registration_id"]').value = normalizeId(f.get('registration_id'));
-		form.reset()
+		document.querySelector('#loginForm [name="registration_id"]').value = registrationId;
+		msg('ok', 'Akun berhasil diaktifkan. Silakan masuk menggunakan Nomor Registrasi dan password Anda.')
 	} catch (x) {
 		msg('error', x.message)
 	} finally {
@@ -135,6 +136,7 @@ document.getElementById('activateForm').onsubmit = async e => {
 };
 document.getElementById('loginForm').onsubmit = async e => {
 	e.preventDefault();
+	const form = e.currentTarget;
 	clearMsg();
 	const f = new FormData(form),
 		btn = e.submitter;
