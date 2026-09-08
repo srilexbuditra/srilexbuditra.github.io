@@ -1744,3 +1744,81 @@ textarea {
   .public-nav { gap:4px; }
   .public-nav a { min-height:36px; padding:7px 9px; font-size:10px; }
 }
+
+/* V8.6 — Brand cards di area teratas + header mobile ringkas */
+
+/* Desktop/laptop: pertahankan visual brand-card, tarik lebih dekat ke bagian top */
+@media (min-width: 801px) {
+  .hero .wrap {
+    padding-top: 18px;
+  }
+  .brand-row-v86 {
+    margin-top: 0 !important;
+    margin-bottom: 28px !important;
+  }
+}
+
+/* Mobile: hilangkan identitas KP/header teks dan jadikan brand cards sebagai identitas teratas */
+@media (max-width: 800px) {
+  .topbar .mini-brand {
+    display: none !important;
+  }
+
+  .topbar-inner {
+    padding-top: 8px !important;
+    padding-bottom: 8px !important;
+  }
+
+  .hero .wrap {
+    padding-top: 12px !important;
+  }
+
+  .brand-row-v86 {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+    gap: 10px !important;
+    align-items: stretch !important;
+    margin-top: 0 !important;
+    margin-bottom: 22px !important;
+  }
+
+  .brand-row-v86 .brand-card {
+    width: 100% !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+  }
+
+  .brand-row-v86 .brand-x {
+    display: none !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero .wrap {
+    padding-top: 10px !important;
+  }
+
+  .brand-row-v86 {
+    gap: 8px !important;
+    margin-bottom: 18px !important;
+  }
+
+  .brand-row-v86 .brand-card {
+    padding: 10px !important;
+    border-radius: 16px !important;
+  }
+
+  .brand-row-v86 .brand-card img {
+    flex: 0 0 auto;
+  }
+
+  .brand-row-v86 .brand-card strong {
+    font-size: 11px !important;
+    line-height: 1.18 !important;
+  }
+
+  .brand-row-v86 .brand-card small {
+    font-size: 8px !important;
+    line-height: 1.2 !important;
+  }
+}
