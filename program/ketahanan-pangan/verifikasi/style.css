@@ -695,3 +695,16 @@ footer {
 .certificate-link:hover {
   background: #0b3221;
 }
+
+/* V5: navigasi kembali ke Dashboard Peserta */
+.page-nav{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:10px 18px;
+  margin-bottom:18px;
+}
+.page-nav .back-link{margin:0}
+@media (max-width:560px){
+  .page-nav{gap:8px 14px}
+}
