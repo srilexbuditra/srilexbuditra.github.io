@@ -549,8 +549,10 @@ function fitCertificateCode(el) {
   if (!el) return;
   const base = parseFloat(getComputedStyle(el).fontSize) || 16;
   let size = base;
+  const safeWidth = Math.max(0, el.clientWidth - 14);
   el.style.fontSize = size + 'px';
-  while (el.scrollWidth > el.clientWidth && size > 9) {
+
+  while (el.scrollWidth > safeWidth && size > 9) {
     size -= 0.5;
     el.style.fontSize = size + 'px';
   }

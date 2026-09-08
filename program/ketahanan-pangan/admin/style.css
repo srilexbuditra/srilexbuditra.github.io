@@ -736,3 +736,13 @@
   padding-right:1.2% !important;
   min-width:0 !important;
 }
+
+
+/* ===== PRODUCTION FINAL V5: SAFE MARGIN KODE ===== */
+.cert-master-id,
+.cert-master-reg{
+  padding-left:.45% !important;
+  padding-right:2.0% !important;
+  overflow:hidden !important;
+  white-space:nowrap !important;
+}
