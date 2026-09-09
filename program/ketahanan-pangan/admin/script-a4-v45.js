@@ -1,5 +1,7 @@
 'use strict';
 
+const CERTIFICATE_TEMPLATE_DATA_URL = `data:image/png;
+
 const API_URL =
   'https://admin-api.srilexbuditra.work/registrations';
 
