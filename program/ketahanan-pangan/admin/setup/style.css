@@ -49,3 +49,47 @@ input:focus{border-color:#4ca57f;box-shadow:0 0 0 4px rgba(76,165,127,.10)}
 .support-label{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:#8b9a95;font-weight:900}.support strong{font-size:13px}.support-role{font-size:11px;color:#84928d;text-align:right}
 @media(max-width:900px){.shell{grid-template-columns:1fr}.intro{padding:28px}.hero-copy{margin:35px 0 28px}.hero-copy h1 br{display:none}.security-list{grid-template-columns:1fr 1fr 1fr}.security-item{grid-template-columns:1fr}.intro-foot{display:none}.form-panel{padding:32px}}
 @media(max-width:680px){.page{padding:12px}.shell{border-radius:20px}.intro{padding:22px}.hero-copy h1{font-size:36px}.hero-copy p{font-size:14px}.security-list{grid-template-columns:1fr}.form-panel{padding:24px 20px}.field-grid{grid-template-columns:1fr}.form-head h2{font-size:25px}.shield{display:none}.support{align-items:flex-start;flex-direction:column}.support-role{text-align:left}}
+
+
+/* V9.0 1E.3 — laptop/desktop fit polish */
+@media (min-width:901px){
+  .page{padding:16px;align-items:center}
+  .shell{max-height:calc(100dvh - 32px);min-height:0}
+  .intro,.form-panel{min-height:0}
+  .intro{padding:28px 34px}
+  .brand-mark{width:42px;height:42px}
+  .hero-copy{margin:34px 0 24px}
+  .hero-copy h1{font-size:clamp(38px,3.5vw,54px);margin:9px 0 12px}
+  .hero-copy p{font-size:14px;line-height:1.52}
+  .security-list{gap:7px}
+  .security-item{padding:9px 11px}
+  .intro-foot{margin-top:14px}
+  .form-panel{padding:26px 34px 20px}
+  .form-head{margin-bottom:18px}
+  .form-head h2{font-size:26px}
+  .field{margin-bottom:14px}
+  input{height:46px}
+  .warning{margin:2px 0 15px;padding:11px 13px}
+  .submit{height:50px}
+  .support{margin-top:18px;padding-top:14px}
+}
+@media (min-width:901px) and (max-height:760px){
+  .page{padding:10px}
+  .shell{max-height:calc(100dvh - 20px)}
+  .intro{padding:22px 28px}
+  .hero-copy{margin:22px 0 18px}
+  .hero-copy h1{font-size:40px}
+  .hero-copy p{font-size:13px}
+  .security-item{padding:7px 9px}
+  .security-item small{font-size:10px}
+  .intro-foot{margin-top:9px}
+  .form-panel{padding:20px 28px 16px}
+  .form-head{margin-bottom:13px}
+  .field{margin-bottom:10px}
+  input{height:42px}
+  .meter-wrap{margin-top:6px}
+  .warning{margin:0 0 11px;padding:9px 11px}
+  .warning p{font-size:11px}
+  .submit{height:46px}
+  .support{margin-top:12px;padding-top:10px}
+}
