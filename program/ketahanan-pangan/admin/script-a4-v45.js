@@ -42,11 +42,31 @@ document.addEventListener('DOMContentLoaded', async () => {
   const logoutButton = document.getElementById('adminLogoutButton');
   const closeRoleNotice = document.getElementById('closeRoleNotice');
 
-  passwordToggle?.addEventListener('click', () => {
-    const show = passwordInput.type === 'password';
-    passwordInput.type = show ? 'text' : 'password';
-    passwordToggle.textContent = show ? 'Sembunyi' : 'Lihat';
-  });
+  if (passwordToggle && passwordInput) {
+    // V15: make the password visibility control reliably clickable even when
+    // browser/password-manager UI overlaps the input area.
+    passwordToggle.style.zIndex = '5';
+    passwordToggle.style.pointerEvents = 'auto';
+    passwordToggle.setAttribute('aria-controls', 'adminPassword');
+    passwordToggle.setAttribute('aria-pressed', 'false');
+
+    passwordToggle.addEventListener('click', (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+
+      const show = passwordInput.type === 'password';
+      passwordInput.type = show ? 'text' : 'password';
+      passwordToggle.textContent = show ? 'Sembunyi' : 'Lihat';
+      passwordToggle.setAttribute('aria-pressed', show ? 'true' : 'false');
+
+      // Keep focus in the password field without moving the caret unexpectedly.
+      passwordInput.focus({ preventScroll: true });
+      try {
+        const end = passwordInput.value.length;
+        passwordInput.setSelectionRange(end, end);
+      } catch (_) {}
+    });
+  }
 
   closeRoleNotice?.addEventListener('click', () => {
     const panel = document.getElementById('adminRoleNotice');
