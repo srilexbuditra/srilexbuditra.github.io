@@ -1908,3 +1908,27 @@
 @media (max-width: 720px) {
   .duplicate-audit-notice { margin: 0 10px 10px; }
 }
+
+
+/* V8.9 Anti-Duplikasi Tahap 2C — kontrol Admin */
+.marked-duplicate-row{background:#f5f6f5;opacity:.78}
+.duplicate-badge.is-marked{border-color:#c9d0cc;background:#eef1ef;color:#4d5b54}
+.duplicate-management-card{margin-top:18px;border:1px solid #e2bd61;border-radius:16px;background:#fffaf0;padding:18px;box-shadow:0 10px 28px rgba(18,63,43,.05)}
+.duplicate-management-card.is-marked{border-color:#cbd6d0;background:#f7f9f8}
+.duplicate-management-kicker{display:block;margin-bottom:6px;color:#815800;font-size:11px;font-weight:900;letter-spacing:.08em}
+.duplicate-management-card h3{margin:0 0 7px;color:#2e3d35;font-size:18px}
+.duplicate-management-card p{margin:0 0 14px;color:#5b675f;font-size:13px;line-height:1.55}
+.duplicate-current-summary,.duplicate-primary-summary{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;border:1px solid #ead69f;border-radius:12px;background:#fff;padding:12px 14px;margin-bottom:12px}
+.duplicate-current-summary span,.duplicate-primary-summary span{font-size:11px;font-weight:800;color:#6d756f;text-transform:uppercase}
+.duplicate-current-summary strong,.duplicate-primary-summary strong{color:#173326;overflow-wrap:anywhere}
+.duplicate-current-summary small{margin-left:auto;color:#6c786f}
+.duplicate-related-list{display:grid;gap:10px;margin-top:10px}
+.duplicate-related-item{display:flex;align-items:center;justify-content:space-between;gap:14px;border:1px solid #e7d8ad;border-radius:12px;background:#fff;padding:12px 14px}
+.duplicate-related-item div{display:grid;gap:3px;min-width:0}
+.duplicate-related-item span{font-size:11px;color:#6f786f;font-weight:750}
+.duplicate-related-item strong{color:#173326;overflow-wrap:anywhere}
+.duplicate-related-item small{color:#6f786f}
+.duplicate-primary-button{min-height:40px;border:0;border-radius:10px;background:#17633f;color:#fff;padding:9px 13px;font:inherit;font-size:12px;font-weight:850;cursor:pointer}
+.duplicate-primary-button:disabled{opacity:.6;cursor:wait}
+.duplicate-safety-note{margin:12px 0 0!important;border-left:3px solid #d4a63e;padding:8px 10px;background:#fff7df;border-radius:7px}
+@media(max-width:760px){.duplicate-related-item{align-items:stretch;flex-direction:column}.duplicate-primary-button{width:100%}.duplicate-current-summary small{margin-left:0;width:100%}}

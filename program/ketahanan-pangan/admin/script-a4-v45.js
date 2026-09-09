@@ -7,6 +7,9 @@ const CERTIFICATE_TEMPLATE_DATA_URL = `data:image/png;base64,iVBORw0KGgoAAAANSUh
 
 let adminToken = '';
 
+// V8.9 Tahap 2C: relasi NIK ganda hanya disimpan di memori sesi Admin.
+let duplicateAuditByRegistrationId = new Map();
+
 document.addEventListener('DOMContentLoaded', () => {
   const loginForm = document.getElementById('adminLoginForm');
   const tokenInput = document.getElementById('adminToken');
@@ -261,24 +264,53 @@ async function auditDuplicateRegistrations(registrations) {
 
   const duplicateGroups = [...nikGroups.values()].filter(group => group.length > 1);
   const duplicateIds = new Set();
-  duplicateGroups.forEach(group => group.forEach(item => duplicateIds.add(item.registration_id)));
+
+  duplicateAuditByRegistrationId = new Map();
+  duplicateGroups.forEach(group => {
+    const sortedGroup = [...group].sort((a, b) =>
+      String(b.created_at || '').localeCompare(String(a.created_at || ''))
+    );
+    sortedGroup.forEach(item => {
+      duplicateIds.add(item.registration_id);
+      duplicateAuditByRegistrationId.set(item.registration_id, sortedGroup);
+    });
+  });
 
   document.querySelectorAll('.table-wrap tbody .detail-button').forEach(button => {
     const id = button.dataset.registrationId || '';
     const row = button.closest('tr');
     if (!row) return;
-    row.classList.toggle('potential-duplicate-row', duplicateIds.has(id));
+    const detail = details.find(item => item.registration_id === id);
+    const isMarkedDuplicate = Number(detail?.is_duplicate || 0) === 1;
+    const hasDuplicateIdentity = duplicateIds.has(id);
+
+    row.classList.toggle('potential-duplicate-row', hasDuplicateIdentity && !isMarkedDuplicate);
+    row.classList.toggle('marked-duplicate-row', isMarkedDuplicate);
+
     const statusCell = row.children[4];
     if (!statusCell) return;
     let badge = statusCell.querySelector('.duplicate-badge');
-    if (duplicateIds.has(id)) {
+
+    if (isMarkedDuplicate) {
       if (!badge) {
         badge = document.createElement('span');
         badge.className = 'duplicate-badge';
-        badge.textContent = '⚠ Potensi Data Ganda';
-        badge.title = 'NIK yang sama ditemukan pada lebih dari satu nomor registrasi.';
         statusCell.appendChild(badge);
       }
+      badge.classList.add('is-marked');
+      badge.textContent = 'Duplikat / Tidak Aktif';
+      badge.title = detail?.primary_registration_id
+        ? `Registrasi utama: ${detail.primary_registration_id}`
+        : 'Registrasi telah ditandai sebagai duplikat.';
+    } else if (hasDuplicateIdentity) {
+      if (!badge) {
+        badge = document.createElement('span');
+        badge.className = 'duplicate-badge';
+        statusCell.appendChild(badge);
+      }
+      badge.classList.remove('is-marked');
+      badge.textContent = '⚠ Potensi Data Ganda';
+      badge.title = 'NIK yang sama ditemukan pada lebih dari satu nomor registrasi.';
     } else if (badge) {
       badge.remove();
     }
@@ -298,6 +330,110 @@ async function auditDuplicateRegistrations(registrations) {
     <span>${affected} nomor registrasi terkait. Buka Detail untuk pemeriksaan KTP/KK. Jangan hapus atau tolak data hanya berdasarkan penanda ini.</span>
   `;
 }
+
+
+function formatDuplicateAuditDate(value) {
+  if (!value) return '-';
+  return new Date(String(value).replace(' ', 'T')).toLocaleString('id-ID');
+}
+
+function renderDuplicateManagementCard(registration) {
+  const group = duplicateAuditByRegistrationId.get(registration.registration_id) || [];
+  const others = group.filter(item => item.registration_id !== registration.registration_id);
+  const isMarkedDuplicate = Number(registration.is_duplicate || 0) === 1;
+
+  if (isMarkedDuplicate) {
+    return `
+      <section class="duplicate-management-card is-marked">
+        <span class="duplicate-management-kicker">ANTI-DUPLIKASI PESERTA</span>
+        <h3>Duplikat / Tidak Aktif</h3>
+        <p>Registrasi ini tetap disimpan sebagai riwayat dan tidak dianggap sebagai peserta aktif kedua.</p>
+        <div class="duplicate-primary-summary">
+          <span>Registrasi Utama</span>
+          <strong>${escapeHtml(registration.primary_registration_id || '-')}</strong>
+        </div>
+        ${registration.duplicate_reason ? `<p class="duplicate-reason"><strong>Alasan:</strong> ${escapeHtml(registration.duplicate_reason)}</p>` : ''}
+      </section>`;
+  }
+
+  if (!others.length) return '';
+
+  const newest = [...group].sort((a, b) =>
+    String(b.created_at || '').localeCompare(String(a.created_at || ''))
+  )[0];
+
+  const rows = others.map(other => `
+    <div class="duplicate-related-item">
+      <div>
+        <span>Registrasi terkait</span>
+        <strong>${escapeHtml(other.registration_id || '-')}</strong>
+        <small>${escapeHtml(formatDuplicateAuditDate(other.created_at))}</small>
+      </div>
+      <button type="button" class="duplicate-primary-button"
+        data-duplicate-id="${escapeHtml(other.registration_id || '')}"
+        data-primary-id="${escapeHtml(registration.registration_id || '')}">
+        Jadikan yang ini Registrasi Utama
+      </button>
+    </div>`).join('');
+
+  const recommendation = newest?.registration_id === registration.registration_id
+    ? 'Registrasi ini adalah pendaftaran terbaru dan disarankan sebagai Registrasi Utama setelah KTP/KK diperiksa.'
+    : `Pendaftaran terbaru adalah ${escapeHtml(newest?.registration_id || '-')}. Periksa kedua dokumen sebelum menentukan Registrasi Utama.`;
+
+  return `
+    <section class="duplicate-management-card">
+      <span class="duplicate-management-kicker">⚠ POTENSI DATA GANDA</span>
+      <h3>NIK yang sama ditemukan pada registrasi lain</h3>
+      <p>${recommendation}</p>
+      <div class="duplicate-current-summary">
+        <span>Registrasi yang sedang dibuka</span>
+        <strong>${escapeHtml(registration.registration_id || '-')}</strong>
+        <small>${escapeHtml(formatDuplicateAuditDate(registration.created_at))}</small>
+      </div>
+      <div class="duplicate-related-list">${rows}</div>
+      <p class="duplicate-safety-note">Tidak menghapus data dan tidak mengubah status verifikasi. Registrasi lain hanya ditandai Duplikat / Tidak Aktif.</p>
+    </section>`;
+}
+
+async function markRegistrationDuplicate(duplicateRegistrationId, primaryRegistrationId) {
+  if (!adminToken) throw new Error('Admin API Token tidak tersedia.');
+
+  if (!window.confirm(
+    `Tetapkan ${primaryRegistrationId} sebagai REGISTRASI UTAMA dan tandai ${duplicateRegistrationId} sebagai DUPLIKAT / TIDAK AKTIF?`
+  )) return false;
+
+  if (!window.confirm(
+    'Konfirmasi terakhir: pastikan KTP/KK sudah diperiksa dan kedua registrasi benar-benar milik peserta dengan NIK yang sama. Lanjutkan?'
+  )) return false;
+
+  const response = await fetch(
+    `${API_URL}/${encodeURIComponent(duplicateRegistrationId)}/duplicate`,
+    {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${adminToken}`
+      },
+      cache: 'no-store',
+      body: JSON.stringify({
+        primary_registration_id: primaryRegistrationId,
+        duplicate_reason: 'Pendaftaran ganda dengan NIK yang sama. Registrasi utama ditetapkan oleh Admin setelah pemeriksaan identitas.'
+      })
+    }
+  );
+
+  let data = null;
+  try { data = await response.json(); } catch (_) {}
+  if (!response.ok || !data?.ok) throw new Error(data?.message || `HTTP ${response.status}`);
+
+  alert('Berhasil. Registrasi lama telah ditandai Duplikat / Tidak Aktif dan data tetap tersimpan.');
+  await loadRegistrations();
+  await loadRegistrationDetail(primaryRegistrationId);
+  return true;
+}
+
 
 function escapeHtml(value) {
   return String(value)
@@ -642,6 +778,7 @@ async function loadRegistrationDetail(registrationId) {
           </tbody>
         </table>
       </div>
+      ${renderDuplicateManagementCard(registration)}
       ${revisionHistoryError
         ? `<section class="revision-history-card revision-history-error"><strong>Riwayat Perbaikan Peserta</strong><p>${escapeHtml(revisionHistoryError)}</p></section>`
         : renderRevisionHistory(revisions)}
@@ -693,6 +830,26 @@ async function loadRegistrationDetail(registrationId) {
           );
         });
       });
+
+    detailContent.querySelectorAll('.duplicate-primary-button').forEach((button) => {
+      button.addEventListener('click', async () => {
+        const duplicateId = button.dataset.duplicateId || '';
+        const primaryId = button.dataset.primaryId || '';
+        if (!duplicateId || !primaryId) return;
+        const originalText = button.textContent;
+        button.disabled = true;
+        button.textContent = 'Memproses...';
+        try {
+          await markRegistrationDuplicate(duplicateId, primaryId);
+        } catch (error) {
+          console.error('Ketahanan Pangan Admin: gagal menandai duplikat.', error);
+          alert(error.message || 'Gagal menandai registrasi sebagai duplikat.');
+        } finally {
+          button.disabled = false;
+          button.textContent = originalText;
+        }
+      });
+    });
 
     const issueCertificateButton =
       detailContent.querySelector('#issueCertificateButton');
