@@ -4,24 +4,15 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="robots" content="noindex,nofollow">
+  <meta name="theme-color" content="#176b3a">
   <title>Setup Super Administrator | Program Ketahanan Pangan</title>
-  <style>
-    *{box-sizing:border-box} body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:#f4f7f6;color:#17342a}
-    .page{min-height:100vh;display:grid;place-items:center;padding:24px}.card{width:min(100%,520px);background:#fff;border:1px solid #dce8e2;border-radius:20px;padding:28px;box-shadow:0 18px 50px rgba(17,60,43,.10)}
-    .eyebrow{font-size:12px;font-weight:800;letter-spacing:.08em;color:#176b3a;text-transform:uppercase}.title{margin:8px 0 6px;font-size:26px}.sub{margin:0 0 24px;color:#607269;line-height:1.55}
-    label{display:block;margin:15px 0 6px;font-weight:700;font-size:14px}input{width:100%;padding:13px 14px;border:1px solid #cbdad2;border-radius:11px;font-size:16px;outline:none}input:focus{border-color:#176b3a;box-shadow:0 0 0 3px rgba(23,107,58,.10)}
-    .password-row{position:relative}.password-row input{padding-right:76px}.toggle{position:absolute;right:8px;top:7px;border:0;background:#eef5f1;border-radius:8px;padding:7px 9px;cursor:pointer;font-weight:700}
-    .note{margin:18px 0;padding:12px 14px;border-radius:11px;background:#fff8e6;border:1px solid #f0d99a;font-size:13px;line-height:1.5}
-    button.submit{width:100%;border:0;border-radius:11px;background:#176b3a;color:white;font-weight:800;font-size:15px;padding:14px;cursor:pointer}.submit:disabled{opacity:.6;cursor:not-allowed}
-    .status{display:none;margin-top:16px;padding:12px 14px;border-radius:11px;line-height:1.5}.status.ok{display:block;background:#eaf7ef;border:1px solid #b8dfc5}.status.err{display:block;background:#fff0f0;border:1px solid #edc2c2;color:#8c2020}
-    .foot{margin-top:22px;padding-top:18px;border-top:1px solid #e4ece8;font-size:12px;color:#718179;text-align:center}
-  </style>
+  <link rel="stylesheet" href="./style.css?v=1">
 </head>
 <body>
 <main class="page">
   <section class="card">
     <div class="eyebrow">Program Ketahanan Pangan</div>
-    <h1 class="title">Setup Super Administrator</h1>
+    <h1>Setup Super Administrator</h1>
     <p class="sub">Digunakan satu kali untuk membuat akun Super Administrator utama. Password diproses langsung oleh Admin API dan tidak ditulis ke halaman ini.</p>
 
     <form id="bootstrapForm" autocomplete="off">
@@ -29,17 +20,20 @@
       <input id="displayName" value="Srilex Buditra" maxlength="100" required>
 
       <label for="username">Username</label>
-      <input id="username" value="srilex.admin" minlength="4" maxlength="40" pattern="[A-Za-z0-9._-]{4,40}" autocapitalize="none" spellcheck="false" required>
+      <input id="username" value="srilex.admin" minlength="4" maxlength="40"
+             pattern="[A-Za-z0-9._-]{4,40}" autocapitalize="none" spellcheck="false" required>
 
       <label for="password">Password</label>
       <div class="password-row">
-        <input id="password" type="password" minlength="12" maxlength="128" autocomplete="new-password" required>
+        <input id="password" type="password" minlength="12" maxlength="128"
+               autocomplete="new-password" required>
         <button class="toggle" type="button" data-target="password">Lihat</button>
       </div>
 
       <label for="confirmPassword">Konfirmasi Password</label>
       <div class="password-row">
-        <input id="confirmPassword" type="password" minlength="12" maxlength="128" autocomplete="new-password" required>
+        <input id="confirmPassword" type="password" minlength="12" maxlength="128"
+               autocomplete="new-password" required>
         <button class="toggle" type="button" data-target="confirmPassword">Lihat</button>
       </div>
 
@@ -49,71 +43,9 @@
       <div id="status" class="status" role="status" aria-live="polite"></div>
     </form>
 
-    <div class="foot">Dukungan Teknologi — Srilex Buditra · Full Stack Developer — DIGITAL SOLUTION</div>
+    <div class="foot">Dukungan Teknologi — Srilex Buditra<br><strong>Full Stack Developer — DIGITAL SOLUTION</strong></div>
   </section>
 </main>
-<script>
-const API = "https://admin-api.srilexbuditra.work";
-const form = document.getElementById("bootstrapForm");
-const statusBox = document.getElementById("status");
-const submitBtn = document.getElementById("submitBtn");
-
-document.querySelectorAll(".toggle").forEach(btn => {
-  btn.addEventListener("click", () => {
-    const input = document.getElementById(btn.dataset.target);
-    const show = input.type === "password";
-    input.type = show ? "text" : "password";
-    btn.textContent = show ? "Sembunyi" : "Lihat";
-  });
-});
-
-function showStatus(kind, message) {
-  statusBox.className = "status " + kind;
-  statusBox.textContent = message;
-}
-
-form.addEventListener("submit", async (event) => {
-  event.preventDefault();
-  statusBox.className = "status";
-
-  const display_name = document.getElementById("displayName").value.trim();
-  const username = document.getElementById("username").value.trim().toLowerCase();
-  const password = document.getElementById("password").value;
-  const confirm = document.getElementById("confirmPassword").value;
-
-  if (password !== confirm) {
-    showStatus("err", "Konfirmasi password tidak sama.");
-    return;
-  }
-  if (password.length < 12) {
-    showStatus("err", "Password minimal 12 karakter.");
-    return;
-  }
-
-  submitBtn.disabled = true;
-  submitBtn.textContent = "Membuat akun...";
-
-  try {
-    const response = await fetch(API + "/auth/bootstrap", {
-      method: "POST",
-      credentials: "include",
-      headers: {"Content-Type":"application/json","Accept":"application/json"},
-      body: JSON.stringify({display_name, username, password})
-    });
-    const data = await response.json().catch(() => ({}));
-
-    if (!response.ok) throw new Error(data.message || "Bootstrap gagal.");
-
-    document.getElementById("password").value = "";
-    document.getElementById("confirmPassword").value = "";
-    showStatus("ok", "Super Administrator berhasil dibuat. Halaman bootstrap ini tidak diperlukan lagi. Selanjutnya gunakan halaman Login Admin.");
-    submitBtn.textContent = "Bootstrap Selesai";
-  } catch (error) {
-    showStatus("err", error.message || "Tidak dapat menghubungi Admin API.");
-    submitBtn.disabled = false;
-    submitBtn.textContent = "Buat Super Administrator";
-  }
-});
-</script>
+<script src="./script.js?v=1" defer></script>
 </body>
 </html>

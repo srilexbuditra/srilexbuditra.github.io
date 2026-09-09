@@ -1,0 +1,21 @@
+*{box-sizing:border-box}
+:root{font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#17342a;background:#f3f7f5}
+body{margin:0;background:linear-gradient(180deg,#edf6f1 0,#f8faf9 100%)}
+.page{min-height:100vh;display:grid;place-items:center;padding:28px 18px}
+.card{width:min(100%,540px);background:#fff;border:1px solid #dbe8e1;border-radius:22px;padding:30px;box-shadow:0 20px 55px rgba(17,60,43,.11)}
+.eyebrow{font-size:12px;font-weight:800;letter-spacing:.09em;color:#176b3a;text-transform:uppercase}
+h1{margin:8px 0 8px;font-size:clamp(25px,5vw,31px);line-height:1.15}
+.sub{margin:0 0 24px;color:#607269;line-height:1.6}
+label{display:block;margin:15px 0 7px;font-weight:750;font-size:14px}
+input{width:100%;padding:13px 14px;border:1px solid #cbdad2;border-radius:11px;background:#fff;color:#17342a;font:inherit;outline:none}
+input:focus{border-color:#176b3a;box-shadow:0 0 0 3px rgba(23,107,58,.11)}
+.password-row{position:relative}.password-row input{padding-right:92px}
+.toggle{position:absolute;right:7px;top:7px;border:0;background:#eef5f1;color:#174c34;border-radius:8px;padding:7px 10px;cursor:pointer;font-weight:750}
+.note{margin:19px 0;padding:13px 14px;border-radius:11px;background:#fff8e6;border:1px solid #efd99c;font-size:13px;line-height:1.55}
+.submit{width:100%;border:0;border-radius:11px;background:#176b3a;color:#fff;font:inherit;font-weight:800;padding:14px;cursor:pointer}
+.submit:hover{filter:brightness(.96)}.submit:disabled{opacity:.6;cursor:not-allowed}
+.status{display:none;margin-top:16px;padding:13px 14px;border-radius:11px;line-height:1.5;font-size:14px}
+.status.ok{display:block;background:#eaf7ef;border:1px solid #b8dfc5}
+.status.err{display:block;background:#fff0f0;border:1px solid #edc2c2;color:#8c2020}
+.foot{margin-top:23px;padding-top:19px;border-top:1px solid #e4ece8;color:#718179;text-align:center;font-size:12px;line-height:1.6}
+@media(max-width:520px){.page{padding:16px}.card{padding:22px 18px;border-radius:17px}}
