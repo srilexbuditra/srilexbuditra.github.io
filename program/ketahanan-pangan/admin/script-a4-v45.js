@@ -179,6 +179,10 @@ if (detailButton) {
 }
 document.querySelector('main.wrap').hidden = false;
 document.getElementById('loginMessage').textContent = '';
+
+// V8.9 Tahap 1: audit duplikasi hanya-baca setelah daftar utama tampil.
+// Tidak mengubah status, D1, R2, atau endpoint registrasi produksi.
+auditDuplicateRegistrations(registrations);
   } catch (error) {
     console.error(
       'Ketahanan Pangan Admin: gagal memuat data registrasi.',
@@ -186,6 +190,115 @@ document.getElementById('loginMessage').textContent = '';
     );
   }
 }
+
+// -----------------------------------------------------------------------------
+// V8.9 ANTI-DUPLIKASI — TAHAP 1 (READ ONLY)
+// Mengambil detail melalui endpoint Admin yang sudah terlindungi untuk membandingkan
+// NIK. NIK tidak ditulis ke DOM, tidak disimpan ke localStorage, dan tidak dikirim
+// ke endpoint baru. Hasil hanya berupa penanda visual pada sesi admin saat ini.
+// -----------------------------------------------------------------------------
+function normalizeDuplicateNik(value) {
+  return String(value || '').replace(/\D/g, '');
+}
+
+async function fetchDuplicateAuditDetail(registrationId) {
+  const response = await fetch(
+    `${API_URL}/${encodeURIComponent(registrationId)}`,
+    {
+      method: 'GET',
+      credentials: 'include',
+      headers: {
+        Accept: 'application/json',
+        Authorization: `Bearer ${adminToken}`
+      },
+      cache: 'no-store'
+    }
+  );
+  if (!response.ok) throw new Error(`HTTP ${response.status}`);
+  const data = await response.json();
+  if (!data.ok || !data.registration) throw new Error('Format detail registrasi tidak sesuai.');
+  return data.registration;
+}
+
+async function auditDuplicateRegistrations(registrations) {
+  const panel = document.querySelector('.panel .table-wrap');
+  if (!panel || !Array.isArray(registrations) || registrations.length < 2) return;
+
+  let auditBox = document.getElementById('duplicateAuditNotice');
+  if (!auditBox) {
+    auditBox = document.createElement('div');
+    auditBox.id = 'duplicateAuditNotice';
+    auditBox.className = 'duplicate-audit-notice is-loading';
+    panel.parentNode.insertBefore(auditBox, panel);
+  }
+  auditBox.innerHTML = '<strong>Memeriksa potensi data ganda…</strong><span>Pemeriksaan identitas dilakukan hanya di sesi Admin.</span>';
+
+  const details = [];
+  // Batasi paralelisme agar endpoint Admin tidak dibanjiri request sekaligus.
+  const queue = registrations.slice();
+  const workers = Array.from({ length: Math.min(3, queue.length) }, async () => {
+    while (queue.length) {
+      const item = queue.shift();
+      if (!item || !item.registration_id) continue;
+      try {
+        details.push(await fetchDuplicateAuditDetail(item.registration_id));
+      } catch (error) {
+        console.warn('Audit duplikasi: detail tidak dapat diperiksa.', item.registration_id, error);
+      }
+    }
+  });
+  await Promise.all(workers);
+
+  const nikGroups = new Map();
+  for (const detail of details) {
+    const nik = normalizeDuplicateNik(detail.nik);
+    // NIK Indonesia normalnya 16 digit. Abaikan nilai kosong/tidak valid agar tidak
+    // menghasilkan false-positive.
+    if (nik.length !== 16) continue;
+    if (!nikGroups.has(nik)) nikGroups.set(nik, []);
+    nikGroups.get(nik).push(detail);
+  }
+
+  const duplicateGroups = [...nikGroups.values()].filter(group => group.length > 1);
+  const duplicateIds = new Set();
+  duplicateGroups.forEach(group => group.forEach(item => duplicateIds.add(item.registration_id)));
+
+  document.querySelectorAll('.table-wrap tbody .detail-button').forEach(button => {
+    const id = button.dataset.registrationId || '';
+    const row = button.closest('tr');
+    if (!row) return;
+    row.classList.toggle('potential-duplicate-row', duplicateIds.has(id));
+    const statusCell = row.children[4];
+    if (!statusCell) return;
+    let badge = statusCell.querySelector('.duplicate-badge');
+    if (duplicateIds.has(id)) {
+      if (!badge) {
+        badge = document.createElement('span');
+        badge.className = 'duplicate-badge';
+        badge.textContent = '⚠ Potensi Data Ganda';
+        badge.title = 'NIK yang sama ditemukan pada lebih dari satu nomor registrasi.';
+        statusCell.appendChild(badge);
+      }
+    } else if (badge) {
+      badge.remove();
+    }
+  });
+
+  auditBox.classList.remove('is-loading');
+  if (!duplicateGroups.length) {
+    auditBox.classList.add('is-clear');
+    auditBox.innerHTML = '<strong>✓ Tidak ditemukan NIK ganda</strong><span>Audit hanya-baca selesai. Tidak ada data yang diubah.</span>';
+    return;
+  }
+
+  const affected = duplicateIds.size;
+  auditBox.classList.add('has-duplicates');
+  auditBox.innerHTML = `
+    <strong>⚠ Ditemukan ${duplicateGroups.length} identitas dengan potensi data ganda</strong>
+    <span>${affected} nomor registrasi terkait. Buka Detail untuk pemeriksaan KTP/KK. Jangan hapus atau tolak data hanya berdasarkan penanda ini.</span>
+  `;
+}
+
 function escapeHtml(value) {
   return String(value)
     .replaceAll('&', '&amp;')
