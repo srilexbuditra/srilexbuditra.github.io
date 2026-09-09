@@ -2120,3 +2120,282 @@
   .it-support-panel{align-items:flex-start;flex-direction:column}
   .it-support-panel a{width:100%;text-align:center}
 }
+
+
+/* =========================================================
+   V9.0 TAHAP 1F.3 — PREMIUM LOGIN + OG/META POLISH
+   ========================================================= */
+.admin-identity[hidden],
+.admin-logout-button[hidden]{display:none!important}
+
+.admin-login-premium{
+  min-height:calc(100dvh - 116px);
+  padding:34px 18px 42px;
+  display:grid;
+  place-items:center;
+  background:
+    radial-gradient(circle at 8% 10%,rgba(70,156,112,.14),transparent 34%),
+    radial-gradient(circle at 92% 88%,rgba(194,166,73,.11),transparent 28%),
+    linear-gradient(180deg,#eef6f2 0%,#f8fbf9 100%);
+}
+.admin-login-premium[hidden]{display:none!important}
+.admin-login-shell{
+  width:min(1180px,100%);
+  display:grid;
+  grid-template-columns:.95fr 1.05fr;
+  border:1px solid rgba(13,93,67,.12);
+  border-radius:28px;
+  overflow:hidden;
+  background:#fff;
+  box-shadow:0 28px 80px rgba(19,68,50,.16);
+}
+.admin-login-visual{
+  min-height:620px;
+  padding:34px;
+  color:#fff;
+  display:flex;
+  flex-direction:column;
+  position:relative;
+  overflow:hidden;
+  background:
+    linear-gradient(145deg,rgba(7,66,48,.97),rgba(16,115,80,.94)),
+    url("./assets/og-admin-dashboard.jpg") center/cover no-repeat;
+}
+.admin-login-visual:after{
+  content:"";
+  position:absolute;
+  width:360px;height:360px;border-radius:50%;
+  right:-155px;bottom:-160px;
+  border:1px solid rgba(255,255,255,.12);
+  box-shadow:0 0 0 55px rgba(255,255,255,.028),0 0 0 110px rgba(255,255,255,.018);
+}
+.login-brand-row{position:relative;z-index:2;display:grid;gap:20px}
+.program-brand{display:flex;align-items:center;gap:12px}
+.program-brand img{width:48px;height:48px;border-radius:14px;background:#fff;object-fit:cover}
+.program-brand strong{display:block;font-size:16px}
+.program-brand span{display:block;margin-top:2px;color:#c7e3d9;font-size:11px;letter-spacing:.05em}
+.partner-brand-row{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 12px;border:1px solid rgba(255,255,255,.12);
+  border-radius:14px;background:rgba(255,255,255,.07);width:max-content;max-width:100%
+}
+.partner-brand{height:38px;padding:5px 7px;background:#fff;border-radius:9px;display:flex;align-items:center}
+.partner-brand img{display:block;max-width:115px;max-height:28px;object-fit:contain}
+.partner-separator{color:#bfe1d5;font-weight:900}
+.login-hero-copy{position:relative;z-index:2;margin:auto 0 34px}
+.login-kicker{font-size:10px;letter-spacing:.16em;font-weight:900;color:#bde4d5}
+.login-hero-copy h2{margin:10px 0 14px;font-size:clamp(34px,4.5vw,58px);line-height:1.02;letter-spacing:-.045em;color:#fff}
+.login-hero-copy p{margin:0;max-width:520px;color:#d8ebe4;font-size:15px;line-height:1.65}
+.login-feature-grid{position:relative;z-index:2;display:grid;gap:9px}
+.login-feature-grid article{
+  display:grid;grid-template-columns:38px 1fr;gap:11px;align-items:start;
+  padding:11px 12px;border:1px solid rgba(255,255,255,.11);
+  border-radius:14px;background:rgba(255,255,255,.065)
+}
+.login-feature-grid article>span{
+  width:31px;height:31px;display:grid;place-items:center;border-radius:9px;
+  background:rgba(255,255,255,.12);font-size:10px;font-weight:900;color:#d7eee5
+}
+.login-feature-grid strong{display:block;font-size:12px;color:#fff}
+.login-feature-grid small{display:block;margin-top:2px;font-size:10.5px;line-height:1.4;color:#c6ddd5}
+.login-visual-foot{position:relative;z-index:2;margin-top:18px;display:flex;align-items:center;gap:8px;font-size:10px;color:#c7e3d9}
+.status-dot{width:7px;height:7px;border-radius:50%;background:#63d6a7;box-shadow:0 0 0 5px rgba(99,214,167,.13)}
+
+.premium-login-card{
+  position:relative;
+  width:100%;
+  max-width:none;
+  min-height:620px;
+  padding:54px 54px 36px;
+  border:0;
+  border-radius:0;
+  box-shadow:none;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  background:linear-gradient(180deg,#fff 0,#fbfdfc 100%);
+}
+.premium-login-card .eyebrow{color:#1b855e}
+.premium-login-card>h2{margin:7px 0 7px;font-size:32px;letter-spacing:-.035em;color:#123d30}
+.premium-login-card>p{max-width:620px;margin:0 0 28px;color:#687b73;font-size:14px;line-height:1.6}
+.premium-login-card form{display:grid;gap:8px}
+.premium-login-card label{margin-top:7px;color:#24483c;font-size:13px;font-weight:850}
+.login-input-wrap{position:relative}
+.login-input-wrap .input-icon{
+  position:absolute;left:14px;top:50%;transform:translateY(-50%);
+  width:20px;text-align:center;color:#77998c;font-size:9px;z-index:2
+}
+.premium-login-card input{
+  width:100%;height:52px;border:1px solid #ccdbd5;border-radius:13px;
+  padding:0 14px 0 42px;background:#fff;color:#173f32;font:inherit;font-size:15px;outline:none
+}
+.premium-login-card input:focus{border-color:#4ea57f;box-shadow:0 0 0 4px rgba(78,165,127,.10)}
+.premium-login-card .admin-password-row input{padding-right:88px;padding-left:42px}
+.premium-login-card .admin-password-toggle{top:8px;height:36px}
+.premium-login-submit{
+  margin-top:16px!important;width:100%;height:54px!important;
+  display:flex!important;align-items:center!important;justify-content:space-between!important;
+  border:0!important;border-radius:14px!important;padding:0 18px!important;
+  background:linear-gradient(135deg,#0c6648,#16885f)!important;
+  color:#fff!important;font:inherit!important;font-weight:900!important;
+  box-shadow:0 12px 28px rgba(13,93,67,.22);cursor:pointer
+}
+.premium-login-submit:hover{filter:brightness(.97);transform:translateY(-1px)}
+.premium-login-submit:disabled{opacity:.65;cursor:wait;transform:none}
+.premium-login-card #loginMessage{min-height:20px;margin:5px 0 0;color:#9c3333;font-size:12px}
+.premium-login-card .login-security-note{
+  display:grid;grid-template-columns:30px 1fr;gap:10px;align-items:start;
+  margin-top:18px;padding:13px 14px;border:1px solid #d4e8df;border-radius:13px;
+  background:#eef8f3;color:#375e50
+}
+.premium-login-card .login-security-note>span{
+  width:26px;height:26px;border-radius:8px;background:#d8eee4;color:#0c6748;display:grid;place-items:center;font-weight:900
+}
+.premium-login-card .login-security-note strong{display:block;font-size:12px;color:#174d3a}
+.premium-login-card .login-security-note small{display:block;margin-top:2px;font-size:11px;line-height:1.45;color:#6a7e76}
+.login-card-footer{
+  display:flex;justify-content:center;gap:8px;flex-wrap:wrap;
+  margin-top:22px;padding-top:18px;border-top:1px solid #e2ebe7;color:#87958f;font-size:10.5px
+}
+
+@media(max-width:900px){
+  .admin-login-premium{padding:18px 12px 28px}
+  .admin-login-shell{grid-template-columns:1fr;border-radius:20px}
+  .admin-login-visual{min-height:auto;padding:26px}
+  .login-hero-copy{margin:34px 0 26px}
+  .login-hero-copy h2{font-size:38px}
+  .login-feature-grid{grid-template-columns:repeat(3,1fr)}
+  .login-feature-grid article{grid-template-columns:1fr}
+  .premium-login-card{min-height:auto;padding:32px 26px}
+}
+@media(max-width:620px){
+  .admin-login-visual{padding:22px 18px}
+  .partner-brand-row{width:100%;justify-content:center}
+  .partner-brand img{max-width:95px}
+  .login-hero-copy h2{font-size:32px}
+  .login-feature-grid{grid-template-columns:1fr}
+  .premium-login-card{padding:28px 18px}
+  .premium-login-card>h2{font-size:27px}
+}
+
+
+/* =========================================================
+   V9.0 TAHAP 1F.4 — APPROVED BRAND VISUAL
+   ========================================================= */
+
+/* Header dashboard: identity program + two approved partner logos */
+.admin-program-title{
+  display:flex;
+  align-items:center;
+  gap:22px;
+  min-width:0;
+}
+.dashboard-brand-lockup{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:7px 10px;
+  border:1px solid rgba(255,255,255,.14);
+  border-radius:13px;
+  background:rgba(255,255,255,.08);
+  backdrop-filter:blur(10px);
+}
+.dashboard-brand-lockup img{
+  width:auto;
+  height:46px;
+  max-width:82px;
+  object-fit:contain;
+  filter:drop-shadow(0 4px 8px rgba(0,0,0,.16));
+}
+.dashboard-brand-lockup span{
+  color:#cce6dc;
+  font-weight:900;
+  opacity:.9;
+}
+
+/* Approved logos must float without white/black boxes */
+.partner-brand{
+  height:58px;
+  min-width:78px;
+  padding:2px;
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+}
+.partner-brand img{
+  max-width:84px!important;
+  max-height:56px!important;
+  object-fit:contain;
+  filter:drop-shadow(0 5px 10px rgba(0,0,0,.22));
+}
+.partner-brand-row{
+  padding:10px 12px;
+  background:rgba(255,255,255,.06)!important;
+  border-color:rgba(255,255,255,.12)!important;
+}
+
+/* More agricultural, premium hero treatment without turning the UI into a static image */
+.admin-login-visual{
+  background:
+    radial-gradient(circle at 16% 14%,rgba(218,241,226,.15),transparent 30%),
+    linear-gradient(145deg,rgba(5,62,44,.98),rgba(13,112,77,.95));
+}
+.admin-login-visual:before{
+  content:"";
+  position:absolute;
+  inset:auto 0 0 0;
+  height:34%;
+  opacity:.18;
+  pointer-events:none;
+  background:
+    radial-gradient(ellipse at 20% 100%,#d4e9be 0 18%,transparent 19%),
+    radial-gradient(ellipse at 46% 100%,#9ccc82 0 21%,transparent 22%),
+    radial-gradient(ellipse at 75% 100%,#70ae6c 0 24%,transparent 25%);
+}
+.program-brand img{
+  filter:drop-shadow(0 6px 12px rgba(0,0,0,.18));
+}
+
+/* Give logged-in dashboard a closer visual rhythm to the approved concept */
+main.wrap{
+  position:relative;
+}
+.stats article{
+  border:1px solid #dceae4;
+  box-shadow:0 10px 28px rgba(24,72,55,.07);
+}
+.panel,
+.detail-panel,
+.it-support-panel{
+  box-shadow:0 12px 32px rgba(24,72,55,.07);
+}
+.admin-role-notice{
+  border-left:5px solid #18835e;
+}
+
+/* Small screen */
+@media(max-width:980px){
+  .admin-program-title{
+    align-items:flex-start;
+    flex-direction:column;
+    gap:10px;
+  }
+  .dashboard-brand-lockup img{
+    height:38px;
+    max-width:68px;
+  }
+}
+@media(max-width:620px){
+  .dashboard-brand-lockup{
+    width:100%;
+    justify-content:center;
+  }
+  .partner-brand{
+    min-width:64px;
+    height:50px;
+  }
+  .partner-brand img{
+    max-width:70px!important;
+    max-height:48px!important;
+  }
+}

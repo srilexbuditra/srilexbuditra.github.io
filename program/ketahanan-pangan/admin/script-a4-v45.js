@@ -15,7 +15,22 @@ let adminToken = '';
 let currentAdminUser = null;
 let adminLoginJustCompleted = false;
 
+
+function stripLegacyAdminTokenFromUrl() {
+  try {
+    const url = new URL(window.location.href);
+    if (url.searchParams.has('adminToken')) {
+      url.searchParams.delete('adminToken');
+      const clean = url.pathname + (url.searchParams.toString() ? `?${url.searchParams.toString()}` : '') + url.hash;
+      window.history.replaceState({}, document.title, clean);
+    }
+  } catch (_) {
+    // URL cleanup must never block login/session restoration.
+  }
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
+  stripLegacyAdminTokenFromUrl();
   const loginForm = document.getElementById('adminLoginForm');
   const usernameInput = document.getElementById('adminUsername');
   const passwordInput = document.getElementById('adminPassword');

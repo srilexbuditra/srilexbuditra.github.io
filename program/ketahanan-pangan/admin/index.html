@@ -1,30 +1,76 @@
 <!doctype html>
 <html lang="id">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-    <title>Dashboard Admin | Program Ketahanan Pangan</title>
-    <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
-    <!-- Program favicon: Super Tani Indonesia / Ketahanan Pangan -->
-<link rel="icon" href="/program/ketahanan-pangan/assets/brand/favicon.ico">
-<link rel="icon" type="image/png" sizes="16x16" href="/program/ketahanan-pangan/assets/brand/favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="/program/ketahanan-pangan/assets/brand/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="48x48" href="/program/ketahanan-pangan/assets/brand/favicon-48x48.png">
-<link rel="apple-touch-icon" sizes="180x180" href="/program/ketahanan-pangan/assets/brand/apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="192x192" href="/program/ketahanan-pangan/assets/brand/icon-192.png">
-    <meta name="theme-color" content="#123f2b">
-    <meta name="description" content="Dashboard pengelolaan Program Ketahanan Pangan untuk administrator yang terautentikasi.">
-    <meta name="referrer" content="strict-origin-when-cross-origin">
-    <link rel="canonical" href="https://srilexbuditra.work/program/ketahanan-pangan/admin/">
-    <link rel="stylesheet" href="./style.css?v=13">
-    <link rel="stylesheet" href="./style-verifikasi-tambahan.css?v=1">
-  </head>
-  <body>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+
+  <title>Dashboard Admin | Program Ketahanan Pangan</title>
+  <meta name="description" content="Dashboard administrasi dan verifikasi digital Program Ketahanan Pangan untuk pengelolaan data peserta, verifikasi, laporan, sertifikat, dan operasional program.">
+  <meta name="author" content="Srilex Buditra">
+  <meta name="application-name" content="Dashboard Admin Program Ketahanan Pangan">
+  <meta name="generator" content="Srilex Buditra — DIGITAL SOLUTION">
+  <meta name="keywords" content="Program Ketahanan Pangan, Dashboard Admin, Verifikasi Peserta, Super Tani Indonesia, AY Group Agro Indonesia, Administrasi Pertanian">
+  <meta name="robots" content="noindex,nofollow,noarchive,nosnippet">
+  <meta name="googlebot" content="noindex,nofollow,noarchive,nosnippet">
+  <meta name="googlebot-news" content="noindex,nofollow">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta name="theme-color" content="#0d5d43">
+  <meta name="color-scheme" content="light">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Admin Ketahanan Pangan">
+
+  <link rel="canonical" href="https://srilexbuditra.work/program/ketahanan-pangan/admin/">
+  <link rel="icon" href="/program/ketahanan-pangan/assets/brand/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/program/ketahanan-pangan/assets/brand/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/program/ketahanan-pangan/assets/brand/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="48x48" href="/program/ketahanan-pangan/assets/brand/favicon-48x48.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/program/ketahanan-pangan/assets/brand/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="/program/ketahanan-pangan/assets/brand/icon-192.png">
+
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Program Ketahanan Pangan">
+  <meta property="og:locale" content="id_ID">
+  <meta property="og:url" content="https://srilexbuditra.work/program/ketahanan-pangan/admin/">
+  <meta property="og:title" content="Dashboard Admin | Program Ketahanan Pangan">
+  <meta property="og:description" content="Administrasi dan verifikasi digital Program Ketahanan Pangan dengan akses pengelola yang aman dan berbasis session.">
+  <meta property="og:image" content="https://srilexbuditra.work/program/ketahanan-pangan/admin/assets/og-admin-dashboard.jpg">
+  <meta property="og:image:secure_url" content="https://srilexbuditra.work/program/ketahanan-pangan/admin/assets/og-admin-dashboard.jpg">
+  <meta property="og:image:type" content="image/jpeg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Dashboard Admin Program Ketahanan Pangan dengan akses aman, pengelolaan peserta, verifikasi, laporan, serta identitas Super Tani Indonesia dan AY Group Agro Indonesia.">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Dashboard Admin | Program Ketahanan Pangan">
+  <meta name="twitter:description" content="Administrasi dan verifikasi digital Program Ketahanan Pangan dengan akses pengelola yang aman.">
+  <meta name="twitter:image" content="https://srilexbuditra.work/program/ketahanan-pangan/admin/assets/og-admin-dashboard.jpg">
+  <meta name="twitter:image:alt" content="Dashboard Admin Program Ketahanan Pangan dengan akses aman, verifikasi peserta, dan identitas program pertanian Indonesia.">
+
+  <meta itemprop="name" content="Dashboard Admin | Program Ketahanan Pangan">
+  <meta itemprop="description" content="Dashboard administrasi dan verifikasi digital Program Ketahanan Pangan.">
+  <meta itemprop="image" content="https://srilexbuditra.work/program/ketahanan-pangan/admin/assets/og-admin-dashboard.jpg">
+  <meta itemprop="inLanguage" content="id-ID">
+
+  <link rel="stylesheet" href="./style.css?v=15">
+  <link rel="stylesheet" href="./style-verifikasi-tambahan.css?v=1">
+</head>
+<body>
     <header class="top">
   <div class="wrap nav">
-    <div>
-      <span class="eyebrow">PROGRAM KETAHANAN PANGAN</span>
-      <h1>Dashboard Admin</h1>
+    <div class="admin-program-title">
+      <div>
+        <span class="eyebrow">PROGRAM KETAHANAN PANGAN</span>
+        <h1>Dashboard Admin</h1>
+      </div>
+      <div class="dashboard-brand-lockup" aria-label="Identitas program">
+        <img src="./assets/logo-super-tani-transparent.png" alt="Super Tani Indonesia">
+        <span>×</span>
+        <img src="./assets/logo-ay-group-transparent.png" alt="AY Group Agro Indonesia">
+      </div>
     </div>
 
     <div class="admin-session-head">
@@ -39,48 +85,104 @@
     </div>
   </div>
 </header>
-    <section id="adminLogin" class="admin-login">
-  <div class="login-card login-card-v9">
-    <div class="login-security-mark" aria-hidden="true">✓</div>
-    <span class="eyebrow">AKSES TERLINDUNGI · V9.0</span>
-    <h2>Login Administrator</h2>
-    <p>Masuk menggunakan akun pengelola. Session disimpan melalui cookie aman dan tetap aktif saat halaman dimuat ulang.</p>
+    <section id="adminLogin" class="admin-login admin-login-premium">
+  <div class="admin-login-shell">
+    <aside class="admin-login-visual">
+      <div class="login-brand-row">
+        <div class="program-brand">
+          <img src="/program/ketahanan-pangan/assets/brand/favicon-192x192.png" alt="">
+          <div>
+            <strong>Program Ketahanan Pangan</strong>
+            <span>Administrasi & Verifikasi Digital</span>
+          </div>
+        </div>
 
-    <form id="adminLoginForm" autocomplete="on">
-      <label for="adminUsername">Username</label>
-      <input
-        id="adminUsername"
-        name="username"
-        type="text"
-        autocomplete="username"
-        autocapitalize="none"
-        spellcheck="false"
-        required
-        placeholder="Masukkan username"
-      >
-
-      <label for="adminPassword">Password</label>
-      <div class="admin-password-row">
-        <input
-          id="adminPassword"
-          name="password"
-          type="password"
-          autocomplete="current-password"
-          required
-          placeholder="Masukkan password"
-        >
-        <button id="adminPasswordToggle" type="button" class="admin-password-toggle">Lihat</button>
+        <div class="partner-brand-row" aria-label="Identitas program">
+          <div class="partner-brand">
+            <img src="./assets/logo-super-tani-transparent.png" alt="Super Tani Indonesia">
+          </div>
+          <span class="partner-separator">×</span>
+          <div class="partner-brand">
+            <img src="./assets/logo-ay-group-transparent.png" alt="AY Group Agro Indonesia">
+          </div>
+        </div>
       </div>
 
-      <button id="adminLoginButton" type="submit">
-        <span class="login-button-label">Masuk Dashboard</span>
-      </button>
+      <div class="login-hero-copy">
+        <span class="login-kicker">V9.0 · SECURE ADMIN ACCESS</span>
+        <h2>Dashboard Admin<br>Program Ketahanan Pangan</h2>
+        <p>Kelola data peserta, verifikasi, laporan, sertifikat, dan proses operasional program melalui akses yang terlindungi.</p>
+      </div>
 
-      <p id="loginMessage" role="status" aria-live="polite"></p>
-    </form>
+      <div class="login-feature-grid">
+        <article><span>01</span><div><strong>Akses berbasis akun</strong><small>Username dan password untuk setiap pengelola.</small></div></article>
+        <article><span>02</span><div><strong>Session persisten</strong><small>Tetap aktif saat refresh selama session masih valid.</small></div></article>
+        <article><span>03</span><div><strong>Data terlindungi</strong><small>Akses sensitif mengikuti role dari server.</small></div></article>
+      </div>
 
-    <div class="login-security-note">
-      Password tidak disimpan di halaman ini. API token tidak digunakan pada URL.
+      <div class="login-visual-foot">
+        <span class="status-dot"></span>
+        Admin API · Session Security Active
+      </div>
+    </aside>
+
+    <div class="login-card login-card-v9 premium-login-card">
+      <div class="login-security-mark" aria-hidden="true">✓</div>
+      <span class="eyebrow">AKSES TERLINDUNGI · V9.0</span>
+      <h2>Login Administrator</h2>
+      <p>Masuk menggunakan akun pengelola resmi. Session disimpan melalui cookie aman dan tidak menggunakan API token pada URL.</p>
+
+      <form id="adminLoginForm" autocomplete="on">
+        <label for="adminUsername">Username</label>
+        <div class="login-input-wrap">
+          <span class="input-icon" aria-hidden="true">●</span>
+          <input
+            id="adminUsername"
+            name="username"
+            type="text"
+            autocomplete="username"
+            autocapitalize="none"
+            spellcheck="false"
+            required
+            placeholder="Masukkan username"
+          >
+        </div>
+
+        <label for="adminPassword">Password</label>
+        <div class="admin-password-row login-input-wrap">
+          <span class="input-icon" aria-hidden="true">◆</span>
+          <input
+            id="adminPassword"
+            name="password"
+            type="password"
+            autocomplete="current-password"
+            required
+            placeholder="Masukkan password"
+          >
+          <button id="adminPasswordToggle" type="button" class="admin-password-toggle">Lihat</button>
+        </div>
+
+        <button id="adminLoginButton" type="submit" class="premium-login-submit">
+          <span class="login-button-label">Masuk Dashboard</span>
+          <span aria-hidden="true">→</span>
+        </button>
+
+        <p id="loginMessage" role="status" aria-live="polite"></p>
+      </form>
+
+      <div class="login-security-note">
+        <span aria-hidden="true">✓</span>
+        <div>
+          <strong>Session aman</strong>
+          <small>Password tidak disimpan pada halaman ini. Cookie session bersifat HttpOnly, Secure, dan SameSite.</small>
+        </div>
+      </div>
+
+      <div class="login-card-footer">
+        <span>Akses hanya untuk pengelola resmi</span>
+        <span>•</span>
+        <span>Program Ketahanan Pangan</span>
+      </div>
     </div>
   </div>
 </section>
@@ -218,6 +320,6 @@
     <script src="./local-qrcode.js?v=1" defer></script>
     <script src="./jszip.min.js?v=1" defer></script>
     <script src="./excel-engine-template.js?v=45" defer></script>
-    <script src="./script-a4-v45.js?v=8" defer></script>
+    <script src="./script-a4-v45.js?v=10" defer></script>
   </body>
 </html>
