@@ -4,48 +4,126 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="robots" content="noindex,nofollow">
-  <meta name="theme-color" content="#176b3a">
+  <meta name="theme-color" content="#0d4f3b">
   <title>Setup Super Administrator | Program Ketahanan Pangan</title>
-  <link rel="stylesheet" href="./style.css?v=1">
+  <link rel="stylesheet" href="./style.css?v=2">
 </head>
 <body>
+<div class="bg-orb orb-1"></div>
+<div class="bg-orb orb-2"></div>
+
 <main class="page">
-  <section class="card">
-    <div class="eyebrow">Program Ketahanan Pangan</div>
-    <h1>Setup Super Administrator</h1>
-    <p class="sub">Digunakan satu kali untuk membuat akun Super Administrator utama. Password diproses langsung oleh Admin API dan tidak ditulis ke halaman ini.</p>
-
-    <form id="bootstrapForm" autocomplete="off">
-      <label for="displayName">Nama</label>
-      <input id="displayName" value="Srilex Buditra" maxlength="100" required>
-
-      <label for="username">Username</label>
-      <input id="username" value="srilex.admin" minlength="4" maxlength="40"
-             pattern="[A-Za-z0-9._-]{4,40}" autocapitalize="none" spellcheck="false" required>
-
-      <label for="password">Password</label>
-      <div class="password-row">
-        <input id="password" type="password" minlength="12" maxlength="128"
-               autocomplete="new-password" required>
-        <button class="toggle" type="button" data-target="password">Lihat</button>
+  <section class="shell">
+    <aside class="intro">
+      <div class="brand">
+        <span class="brand-mark">
+          <img src="/program/ketahanan-pangan/assets/brand/favicon-192x192.png" alt="">
+        </span>
+        <div>
+          <strong>Program Ketahanan Pangan</strong>
+          <small>Secure Admin Initialization</small>
+        </div>
       </div>
 
-      <label for="confirmPassword">Konfirmasi Password</label>
-      <div class="password-row">
-        <input id="confirmPassword" type="password" minlength="12" maxlength="128"
-               autocomplete="new-password" required>
-        <button class="toggle" type="button" data-target="confirmPassword">Lihat</button>
+      <div class="hero-copy">
+        <span class="kicker">V9.0 · ADMIN SECURITY</span>
+        <h1>Aktivasi<br>Super Administrator</h1>
+        <p>Setup satu kali untuk membentuk akun pemilik akses teknis tertinggi pada platform digital Program Ketahanan Pangan.</p>
       </div>
 
-      <div class="note"><strong>Penting:</strong> jangan kirim atau screenshot password. Setelah akun owner berhasil dibuat, endpoint bootstrap akan menolak pembuatan owner berikutnya.</div>
+      <div class="security-list">
+        <div class="security-item">
+          <span>01</span>
+          <div><strong>Password tidak disimpan mentah</strong><small>Diproses oleh Admin API dengan hashing aman.</small></div>
+        </div>
+        <div class="security-item">
+          <span>02</span>
+          <div><strong>Bootstrap hanya satu kali</strong><small>Setelah owner aktif tersedia, setup akan ditolak otomatis.</small></div>
+        </div>
+        <div class="security-item">
+          <span>03</span>
+          <div><strong>Audit tercatat</strong><small>Pembuatan akun utama direkam dalam Audit Log.</small></div>
+        </div>
+      </div>
 
-      <button class="submit" id="submitBtn" type="submit">Buat Super Administrator</button>
-      <div id="status" class="status" role="status" aria-live="polite"></div>
-    </form>
+      <div class="intro-foot">
+        <span class="dot"></span>
+        Sistem Admin · Protected Setup
+      </div>
+    </aside>
 
-    <div class="foot">Dukungan Teknologi — Srilex Buditra<br><strong>Full Stack Developer — DIGITAL SOLUTION</strong></div>
+    <section class="form-panel">
+      <div class="form-head">
+        <div>
+          <span class="step">LANGKAH 1 DARI 1</span>
+          <h2>Buat akun utama</h2>
+          <p>Pastikan identitas akun sudah benar sebelum melanjutkan.</p>
+        </div>
+        <div class="shield" aria-hidden="true">✓</div>
+      </div>
+
+      <form id="bootstrapForm" autocomplete="off">
+        <div class="field-grid">
+          <div class="field">
+            <label for="displayName">Nama Administrator</label>
+            <input id="displayName" value="Srilex Buditra" maxlength="100" required>
+          </div>
+          <div class="field">
+            <label for="username">Username</label>
+            <input id="username" value="srilex.admin" minlength="4" maxlength="40"
+                   pattern="[A-Za-z0-9._-]{4,40}" autocapitalize="none" spellcheck="false" required>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="password">Password Baru</label>
+          <div class="password-row">
+            <input id="password" type="password" minlength="12" maxlength="128"
+                   autocomplete="new-password" placeholder="Minimal 12 karakter" required>
+            <button class="toggle" type="button" data-target="password">Lihat</button>
+          </div>
+          <div class="meter-wrap" aria-hidden="true">
+            <span class="meter-label">Kekuatan password</span>
+            <div class="meter"><i id="strengthBar"></i></div>
+            <span id="strengthText">Belum diisi</span>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="confirmPassword">Konfirmasi Password</label>
+          <div class="password-row">
+            <input id="confirmPassword" type="password" minlength="12" maxlength="128"
+                   autocomplete="new-password" placeholder="Ketik ulang password" required>
+            <button class="toggle" type="button" data-target="confirmPassword">Lihat</button>
+          </div>
+        </div>
+
+        <div class="warning">
+          <div class="warning-icon">!</div>
+          <div>
+            <strong>Informasi keamanan</strong>
+            <p>Jangan kirim, simpan di screenshot, atau bagikan password kepada siapa pun. Setelah setup berhasil, halaman ini tidak diperlukan lagi.</p>
+          </div>
+        </div>
+
+        <button class="submit" id="submitBtn" type="submit">
+          <span class="btn-label">Aktifkan Super Administrator</span>
+          <span class="btn-arrow">→</span>
+        </button>
+
+        <div id="status" class="status" role="status" aria-live="polite"></div>
+      </form>
+
+      <div class="support">
+        <div>
+          <span class="support-label">Dukungan Teknologi</span>
+          <strong>Srilex Buditra</strong>
+        </div>
+        <div class="support-role">Full Stack Developer · DIGITAL SOLUTION</div>
+      </div>
+    </section>
   </section>
 </main>
-<script src="./script.js?v=1" defer></script>
+<script src="./script.js?v=2" defer></script>
 </body>
 </html>
