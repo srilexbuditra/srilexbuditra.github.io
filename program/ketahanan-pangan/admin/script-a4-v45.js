@@ -41,6 +41,16 @@ document.addEventListener('DOMContentLoaded', async () => {
   const passwordToggle = document.getElementById('adminPasswordToggle');
   const logoutButton = document.getElementById('adminLogoutButton');
   const closeRoleNotice = document.getElementById('closeRoleNotice');
+  const roleGuideToggle = document.getElementById('adminRoleGuideToggle');
+  const roleGuidePanel = document.getElementById('adminRoleGuide');
+
+  roleGuideToggle?.addEventListener('click', () => {
+    if (!roleGuidePanel) return;
+    const willOpen = roleGuidePanel.hidden;
+    roleGuidePanel.hidden = !willOpen;
+    roleGuideToggle.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+    roleGuideToggle.textContent = willOpen ? 'Peran & Hak Akses ▴' : 'Peran & Hak Akses ▾';
+  });
 
   if (passwordToggle && passwordInput) {
     // V15: make the password visibility control reliably clickable even when

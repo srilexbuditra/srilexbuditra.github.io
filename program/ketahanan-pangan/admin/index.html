@@ -184,8 +184,18 @@
     <span class="role-notice-kicker">SESSION AKTIF</span>
     <strong id="adminRoleTitle">Administrator</strong>
     <p id="adminRoleDescription">Hak akses dashboard mengikuti role akun yang diberikan oleh server.</p>
+    <button id="adminRoleGuideToggle" class="role-guide-toggle" type="button" aria-expanded="false" aria-controls="adminRoleGuide">Peran &amp; Hak Akses ▾</button>
+    <div id="adminRoleGuide" class="role-guide-panel" hidden>
+      <div class="role-guide-grid">
+        <article><strong>Super Administrator</strong><span>Teknologi &amp; sistem · akun/role · keamanan · audit teknis.</span></article>
+        <article><strong>Admin</strong><span>Operasional peserta · verifikasi · anti-duplikasi · sertifikat.</span></article>
+        <article><strong>Pemasaran</strong><span>Komunikasi · pemetaan · statistik · laporan pemasaran.</span></article>
+      </div>
+      <a class="role-guide-pdf" href="./Pembagian-Peran-Pengelola-Platform-Digital-Ketahanan-Pangan-V3-A4-FINAL.pdf" target="_blank" rel="noopener">Lihat PDF Pedoman Peran ↗</a>
+      <small>Pedoman dapat dilihat oleh super_admin, admin, dan pemasaran. Pengelolaan akun/role tetap khusus Super Administrator.</small>
+    </div>
   </div>
-  <button id="closeRoleNotice" type="button" aria-label="Tutup pemberitahuan">×</button>
+  <button id="closeRoleNotice" class="role-notice-close" type="button" aria-label="Tutup pemberitahuan">×</button>
 </section>
       <section class="stats">
         <article><small>Total Registrasi</small><strong>—</strong><span>Menunggu koneksi admin aman</span></article>
@@ -312,6 +322,6 @@
     <script src="./local-qrcode.js?v=1" defer></script>
     <script src="./jszip.min.js?v=1" defer></script>
     <script src="./excel-engine-template.js?v=45" defer></script>
-    <script src="./script-a4-v45.js?v=15" defer></script>
+    <script src="./script-a4-v45.js?v=16" defer></script>
   </body>
 </html>
