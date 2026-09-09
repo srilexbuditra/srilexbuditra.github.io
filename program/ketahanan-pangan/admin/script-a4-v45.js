@@ -14,6 +14,7 @@ const ADMIN_API_BASE =
 let adminToken = '';
 let currentAdminUser = null;
 let adminLoginJustCompleted = false;
+let duplicateAuditByRegistrationId = new Map();
 
 
 function stripLegacyAdminTokenFromUrl() {
