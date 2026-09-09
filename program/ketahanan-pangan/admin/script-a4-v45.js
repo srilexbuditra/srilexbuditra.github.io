@@ -803,22 +803,42 @@ function renderRevisionHistory(revisions) {
   `;
 }
 
+async function fetchRegistrationDetailForView(registrationId) {
+  const url = `${API_URL}/${encodeURIComponent(registrationId)}`;
+  const retryDelays = [0, 350, 700, 1400];
+  let lastResponse = null;
+
+  for (let attempt = 0; attempt < retryDelays.length; attempt += 1) {
+    if (retryDelays[attempt] > 0) {
+      await new Promise(resolve => setTimeout(resolve, retryDelays[attempt]));
+    }
+
+    const response = await fetch(url, {
+      method: 'GET',
+      credentials: 'include',
+      headers: { Accept: 'application/json' },
+      cache: 'no-store'
+    });
+
+    lastResponse = response;
+
+    // Audit anti-duplikasi berjalan paralel sesaat setelah tabel tampil. Jika Worker
+    // sedang sibuk / membatasi request sementara, beri kesempatan request Detail
+    // mengulang tanpa mengubah endpoint, session auth, atau proses audit V8.9.
+    if (response.ok || ![429, 502, 503, 504].includes(response.status)) {
+      return response;
+    }
+  }
+
+  return lastResponse;
+}
+
 async function loadRegistrationDetail(registrationId) {
   try {
-    const response = await fetch(
-      `${API_URL}/${encodeURIComponent(registrationId)}`,
-      {
-        method: 'GET',
-        credentials: 'include',
-        headers: {
-          Accept: 'application/json'
-        },
-        cache: 'no-store'
-      }
-    );
+    const response = await fetchRegistrationDetailForView(registrationId);
 
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}`);
+    if (!response || !response.ok) {
+      throw new Error(`HTTP ${response?.status || 'NETWORK'}`);
     }
 
     const data = await response.json();
