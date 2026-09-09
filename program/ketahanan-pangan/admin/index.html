@@ -2,7 +2,7 @@
 <html lang="id">
   <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
     <title>Dashboard Admin | Program Ketahanan Pangan</title>
     <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
     <!-- Program favicon: Super Tani Indonesia / Ketahanan Pangan -->
@@ -13,7 +13,10 @@
 <link rel="apple-touch-icon" sizes="180x180" href="/program/ketahanan-pangan/assets/brand/apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="192x192" href="/program/ketahanan-pangan/assets/brand/icon-192.png">
     <meta name="theme-color" content="#123f2b">
-    <link rel="stylesheet" href="./style.css?v=12">
+    <meta name="description" content="Dashboard pengelolaan Program Ketahanan Pangan untuk administrator yang terautentikasi.">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    <link rel="canonical" href="https://srilexbuditra.work/program/ketahanan-pangan/admin/">
+    <link rel="stylesheet" href="./style.css?v=13">
     <link rel="stylesheet" href="./style-verifikasi-tambahan.css?v=1">
   </head>
   <body>
@@ -24,44 +27,72 @@
       <h1>Dashboard Admin</h1>
     </div>
 
-    <span class="badge">V1 · MODE AMAN</span>
+    <div class="admin-session-head">
+      <div id="adminIdentity" class="admin-identity" hidden>
+        <span id="adminDisplayName">Administrator</span>
+        <strong id="adminRoleBadge">ADMIN</strong>
+      </div>
+      <span class="badge">V9.0 · SESSION AMAN</span>
+      <button id="adminLogoutButton" class="admin-logout-button" type="button" hidden>
+        <span class="logout-label">Logout</span>
+      </button>
+    </div>
   </div>
 </header>
     <section id="adminLogin" class="admin-login">
-<div class="login-card">
-  <span class="eyebrow">AKSES TERLINDUNGI</span>
+  <div class="login-card login-card-v9">
+    <div class="login-security-mark" aria-hidden="true">✓</div>
+    <span class="eyebrow">AKSES TERLINDUNGI · V9.0</span>
+    <h2>Login Administrator</h2>
+    <p>Masuk menggunakan akun pengelola. Session disimpan melalui cookie aman dan tetap aktif saat halaman dimuat ulang.</p>
 
-  <h2>Login Administrator</h2>
+    <form id="adminLoginForm" autocomplete="on">
+      <label for="adminUsername">Username</label>
+      <input
+        id="adminUsername"
+        name="username"
+        type="text"
+        autocomplete="username"
+        autocapitalize="none"
+        spellcheck="false"
+        required
+        placeholder="Masukkan username"
+      >
 
-  <p>
-    Masukkan token administrator untuk membuka
-    Dashboard Program Ketahanan Pangan.
-  </p>
+      <label for="adminPassword">Password</label>
+      <div class="admin-password-row">
+        <input
+          id="adminPassword"
+          name="password"
+          type="password"
+          autocomplete="current-password"
+          required
+          placeholder="Masukkan password"
+        >
+        <button id="adminPasswordToggle" type="button" class="admin-password-toggle">Lihat</button>
+      </div>
 
-  <form id="adminLoginForm">
-    <label for="adminToken">Admin API Token</label>
+      <button id="adminLoginButton" type="submit">
+        <span class="login-button-label">Masuk Dashboard</span>
+      </button>
 
-    <input
-      id="adminToken"
-      name="adminToken"
-      type="password"
-      autocomplete="off"
-      required
-      placeholder="Masukkan token administrator"
-    >
+      <p id="loginMessage" role="status" aria-live="polite"></p>
+    </form>
 
-    <button type="submit">
-      Masuk Dashboard
-    </button>
-
-    <p id="loginMessage" role="status"></p>
-  </form>
-</div>
+    <div class="login-security-note">
+      Password tidak disimpan di halaman ini. API token tidak digunakan pada URL.
+    </div>
+  </div>
 </section>
     <main class="wrap" hidden>
-      <section class="notice"><strong>Dashboard Admin sedang disiapkan dengan akses terlindungi.</strong>
-        <p>Versi ini hanya menyiapkan antarmuka. Data D1, NIK, KK, WhatsApp, serta dokumen KTP/KK <b>belum diambil ke browser</b> sampai autentikasi admin dipasang.</p>
-      </section>
+      <section id="adminRoleNotice" class="admin-role-notice" hidden>
+  <div>
+    <span class="role-notice-kicker">SESSION AKTIF</span>
+    <strong id="adminRoleTitle">Administrator</strong>
+    <p id="adminRoleDescription">Hak akses dashboard mengikuti role akun yang diberikan oleh server.</p>
+  </div>
+  <button id="closeRoleNotice" type="button" aria-label="Tutup pemberitahuan">×</button>
+</section>
       <section class="stats">
         <article><small>Total Registrasi</small><strong>—</strong><span>Menunggu koneksi admin aman</span></article>
         <article><small>Menunggu Verifikasi</small><strong>—</strong><span>Submitted + pemeriksaan ulang</span></article>
@@ -169,13 +200,24 @@
         <div id="certificateContent" class="certificate-content"><p>Belum ada sertifikat yang diterbitkan.</p></div>
       </section>
 
+      <section class="it-support-panel">
+        <div>
+          <span class="eyebrow">KONSULTASI & DUKUNGAN IT</span>
+          <h2>Dukungan Teknologi — Srilex Buditra</h2>
+          <p>Untuk kendala login, keamanan akun, error sistem, fungsi dashboard, atau konsultasi teknologi.</p>
+          <small>Full Stack Developer — DIGITAL SOLUTION</small>
+        </div>
+        <a href="https://srilexbuditra.work/" target="_blank" rel="noopener noreferrer">Konsultasi IT →</a>
+      </section>
+
     </main>
+    <div id="adminToastRegion" class="admin-toast-region" aria-live="polite" aria-atomic="true"></div>
     <footer>
       <div class="wrap"><strong>Program Ketahanan Pangan</strong><span>Administrasi & Verifikasi Digital</span><small>Integrated Digital Platform & System Development · srilexbuditra.work</small></div>
     </footer>
     <script src="./local-qrcode.js?v=1" defer></script>
     <script src="./jszip.min.js?v=1" defer></script>
     <script src="./excel-engine-template.js?v=45" defer></script>
-    <script src="./script-a4-v45.js?v=7" defer></script>
+    <script src="./script-a4-v45.js?v=8" defer></script>
   </body>
 </html>
