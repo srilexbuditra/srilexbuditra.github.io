@@ -71,39 +71,25 @@ async function loadRegistrations() {
     window.KETAHANAN_PANGAN_REGISTRATIONS = registrations;
     initAdminParticipantFilters(registrations);
 
-const total = registrations.length;
-const submitted = registrations.filter(
+const totalStored = registrations.length;
+const activeRegistrations = registrations.filter(item => Number(item.is_duplicate || 0) !== 1);
+const total = activeRegistrations.length;
+const submitted = activeRegistrations.filter(
   item => item.status === 'submitted' || item.status === 'resubmitted'
 ).length;
-
-const verified = registrations.filter(
-  item => item.status === 'verified'
-).length;
-
-const actionRequired = registrations.filter(
-  item =>
-    item.status === 'rejected' ||
-    item.status === 'revision' ||
-    item.status === 'needs_action'
+const verified = activeRegistrations.filter(item => item.status === 'verified').length;
+const actionRequired = activeRegistrations.filter(
+  item => item.status === 'rejected' || item.status === 'revision' || item.status === 'needs_action'
 ).length;
 
 const statCards = document.querySelectorAll('.stats article');
-
 if (statCards[0]) {
   statCards[0].querySelector('strong').textContent = total;
+  statCards[0].title = `Peserta aktif: ${total}. Total data tersimpan: ${totalStored}.`;
 }
-
-if (statCards[1]) {
-  statCards[1].querySelector('strong').textContent = submitted;
-}
-
-if (statCards[2]) {
-  statCards[2].querySelector('strong').textContent = verified;
-}
-
-if (statCards[3]) {
-  statCards[3].querySelector('strong').textContent = actionRequired;
-}
+if (statCards[1]) statCards[1].querySelector('strong').textContent = submitted;
+if (statCards[2]) statCards[2].querySelector('strong').textContent = verified;
+if (statCards[3]) statCards[3].querySelector('strong').textContent = actionRequired;
 
 document.getElementById('adminLogin').hidden = true;
 const tableBody = document.querySelector('.table-wrap tbody');
@@ -146,7 +132,9 @@ if (tableBody) {
       <td>${escapeHtml(item.nama || '-')}</td>
       <td>${escapeHtml(wilayah || '-')}</td>
       <td>${escapeHtml(tanggal)}</td>
-      <td>${escapeHtml(statusLabel)}</td>
+      <td>${Number(item.is_duplicate || 0) === 1
+          ? '<span class="status-duplicate-label">Duplikat / Tidak Aktif</span>'
+          : escapeHtml(statusLabel)}</td>
       <td>
         <button
   type="button"
@@ -263,17 +251,29 @@ async function auditDuplicateRegistrations(registrations) {
   }
 
   const duplicateGroups = [...nikGroups.values()].filter(group => group.length > 1);
-  const duplicateIds = new Set();
+  const unresolvedGroups = [];
+  const unresolvedIds = new Set();
+  const resolvedPrimaryIds = new Set();
 
   duplicateAuditByRegistrationId = new Map();
+
   duplicateGroups.forEach(group => {
     const sortedGroup = [...group].sort((a, b) =>
       String(b.created_at || '').localeCompare(String(a.created_at || ''))
     );
-    sortedGroup.forEach(item => {
-      duplicateIds.add(item.registration_id);
-      duplicateAuditByRegistrationId.set(item.registration_id, sortedGroup);
-    });
+    const marked = sortedGroup.filter(item => Number(item.is_duplicate || 0) === 1);
+    const active = sortedGroup.filter(item => Number(item.is_duplicate || 0) !== 1);
+
+    sortedGroup.forEach(item => duplicateAuditByRegistrationId.set(item.registration_id, sortedGroup));
+
+    const resolved = marked.length > 0 && active.length === 1 &&
+      marked.every(item => item.primary_registration_id === active[0].registration_id);
+
+    if (resolved) resolvedPrimaryIds.add(active[0].registration_id);
+    else {
+      unresolvedGroups.push(sortedGroup);
+      sortedGroup.forEach(item => unresolvedIds.add(item.registration_id));
+    }
   });
 
   document.querySelectorAll('.table-wrap tbody .detail-button').forEach(button => {
@@ -281,54 +281,50 @@ async function auditDuplicateRegistrations(registrations) {
     const row = button.closest('tr');
     if (!row) return;
     const detail = details.find(item => item.registration_id === id);
-    const isMarkedDuplicate = Number(detail?.is_duplicate || 0) === 1;
-    const hasDuplicateIdentity = duplicateIds.has(id);
+    const marked = Number(detail?.is_duplicate || 0) === 1;
+    const unresolved = unresolvedIds.has(id) && !marked;
+    const resolvedPrimary = resolvedPrimaryIds.has(id);
 
-    row.classList.toggle('potential-duplicate-row', hasDuplicateIdentity && !isMarkedDuplicate);
-    row.classList.toggle('marked-duplicate-row', isMarkedDuplicate);
+    row.classList.toggle('potential-duplicate-row', unresolved);
+    row.classList.toggle('marked-duplicate-row', marked);
+    row.classList.toggle('resolved-primary-row', resolvedPrimary);
 
     const statusCell = row.children[4];
     if (!statusCell) return;
     let badge = statusCell.querySelector('.duplicate-badge');
 
-    if (isMarkedDuplicate) {
-      if (!badge) {
-        badge = document.createElement('span');
-        badge.className = 'duplicate-badge';
-        statusCell.appendChild(badge);
-      }
-      badge.classList.add('is-marked');
-      badge.textContent = 'Duplikat / Tidak Aktif';
-      badge.title = detail?.primary_registration_id
-        ? `Registrasi utama: ${detail.primary_registration_id}`
-        : 'Registrasi telah ditandai sebagai duplikat.';
-    } else if (hasDuplicateIdentity) {
-      if (!badge) {
-        badge = document.createElement('span');
-        badge.className = 'duplicate-badge';
-        statusCell.appendChild(badge);
-      }
-      badge.classList.remove('is-marked');
-      badge.textContent = '⚠ Potensi Data Ganda';
-      badge.title = 'NIK yang sama ditemukan pada lebih dari satu nomor registrasi.';
-    } else if (badge) {
-      badge.remove();
-    }
+    if (marked) {
+      if (!badge) { badge=document.createElement('span'); statusCell.appendChild(badge); }
+      badge.className='duplicate-badge is-marked';
+      badge.textContent='Duplikat / Tidak Aktif';
+    } else if (resolvedPrimary) {
+      if (!badge) { badge=document.createElement('span'); statusCell.appendChild(badge); }
+      badge.className='duplicate-badge is-resolved';
+      badge.textContent='✓ Registrasi Utama';
+    } else if (unresolved) {
+      if (!badge) { badge=document.createElement('span'); statusCell.appendChild(badge); }
+      badge.className='duplicate-badge';
+      badge.textContent='⚠ Potensi Data Ganda';
+    } else if (badge) badge.remove();
   });
 
   auditBox.classList.remove('is-loading');
-  if (!duplicateGroups.length) {
+  if (!unresolvedGroups.length) {
     auditBox.classList.add('is-clear');
-    auditBox.innerHTML = '<strong>✓ Tidak ditemukan NIK ganda</strong><span>Audit hanya-baca selesai. Tidak ada data yang diubah.</span>';
+    auditBox.classList.remove('has-duplicates');
+    auditBox.innerHTML = duplicateGroups.length
+      ? '<strong>✓ Kasus data ganda telah diselesaikan</strong><span>Registrasi utama tetap aktif dan registrasi duplikat tetap tersimpan sebagai riwayat.</span>'
+      : '<strong>✓ Tidak ditemukan NIK ganda</strong><span>Audit hanya-baca selesai. Tidak ada data yang diubah.</span>';
     return;
   }
 
-  const affected = duplicateIds.size;
+  const affected = new Set(unresolvedGroups.flat().map(item => item.registration_id)).size;
   auditBox.classList.add('has-duplicates');
   auditBox.innerHTML = `
-    <strong>⚠ Ditemukan ${duplicateGroups.length} identitas dengan potensi data ganda</strong>
-    <span>${affected} nomor registrasi terkait. Buka Detail untuk pemeriksaan KTP/KK. Jangan hapus atau tolak data hanya berdasarkan penanda ini.</span>
+    <strong>⚠ Ditemukan ${unresolvedGroups.length} identitas dengan potensi data ganda yang belum diselesaikan</strong>
+    <span>${affected} nomor registrasi terkait. Buka Detail untuk pemeriksaan KTP/KK.</span>
   `;
+
 }
 
 
@@ -357,6 +353,20 @@ function renderDuplicateManagementCard(registration) {
   }
 
   if (!others.length) return '';
+
+  const markedDuplicates = others.filter(item => Number(item.is_duplicate || 0) === 1);
+  const resolvedForThisPrimary = markedDuplicates.length > 0 &&
+    markedDuplicates.length === others.length &&
+    markedDuplicates.every(item => item.primary_registration_id === registration.registration_id);
+
+  if (resolvedForThisPrimary) {
+    return `
+      <section class="duplicate-management-card is-resolved">
+        <span class="duplicate-management-kicker">✓ REGISTRASI UTAMA</span>
+        <h3>Data ganda telah diselesaikan</h3>
+        <p>Registrasi ini tetap aktif sebagai Registrasi Utama. Registrasi terkait telah ditandai Duplikat / Tidak Aktif dan tetap tersimpan sebagai riwayat.</p>
+      </section>`;
+  }
 
   const newest = [...group].sort((a, b) =>
     String(b.created_at || '').localeCompare(String(a.created_at || ''))
@@ -830,6 +840,18 @@ async function loadRegistrationDetail(registrationId) {
           );
         });
       });
+
+    if (Number(registration.is_duplicate || 0) === 1) {
+      detailContent.querySelectorAll('.status-button').forEach((button) => {
+        button.disabled = true;
+        button.title = 'Registrasi duplikat tidak dapat diproses melalui tindakan verifikasi.';
+      });
+      const noteInput = detailContent.querySelector('#adminNoteInput');
+      if (noteInput) {
+        noteInput.disabled = true;
+        noteInput.placeholder = 'Registrasi duplikat / tidak aktif.';
+      }
+    }
 
     detailContent.querySelectorAll('.duplicate-primary-button').forEach((button) => {
       button.addEventListener('click', async () => {

@@ -1932,3 +1932,11 @@
 .duplicate-primary-button:disabled{opacity:.6;cursor:wait}
 .duplicate-safety-note{margin:12px 0 0!important;border-left:3px solid #d4a63e;padding:8px 10px;background:#fff7df;border-radius:7px}
 @media(max-width:760px){.duplicate-related-item{align-items:stretch;flex-direction:column}.duplicate-primary-button{width:100%}.duplicate-current-summary small{margin-left:0;width:100%}}
+
+/* V8.9 Anti-Duplikasi Tahap 2D Final */
+.status-duplicate-label{font-weight:850;color:#58645e}
+.resolved-primary-row{background:#f4fbf7}
+.duplicate-badge.is-resolved{border-color:#b9dcc8;background:#edf8f1;color:#17633f}
+.duplicate-management-card.is-resolved{border-color:#b9dcc8;background:#f2fbf5}
+.duplicate-management-card.is-resolved .duplicate-management-kicker{color:#17633f}
+.status-button:disabled,.admin-note-input:disabled{opacity:.52;cursor:not-allowed}
