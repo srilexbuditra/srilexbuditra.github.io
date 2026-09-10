@@ -2748,3 +2748,98 @@ main.wrap{
   .registration-status{transition:transform .18s ease,box-shadow .18s ease}
   .table-wrap tbody tr:hover .registration-status{transform:translateY(-1px)}
 }
+
+
+/* =========================================================
+   V3.5 — RINGKASAN STATUS PEMERIKSAAN + FILTER CEPAT
+   Client-side dashboard enhancement only.
+   ========================================================= */
+.status-overview{
+  margin:0 0 22px;
+  padding:20px;
+  border:1px solid #dce8e1;
+  border-radius:18px;
+  background:#fff;
+  box-shadow:0 12px 32px rgba(24,72,55,.065);
+}
+.status-overview[hidden]{display:none!important}
+.status-overview-head{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(240px,330px);
+  gap:18px;
+  align-items:stretch;
+  margin-bottom:16px;
+}
+.status-overview-head h2{margin:4px 0 5px}
+.status-overview-head p{margin:0;color:#68766e;font-size:13px;max-width:720px}
+.status-progress-card{
+  padding:13px 14px;
+  border:1px solid #dce9e2;
+  border-radius:14px;
+  background:linear-gradient(145deg,#f8fcfa,#f1f8f4);
+}
+.status-progress-copy{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
+.status-progress-copy span{font-size:11px;font-weight:800;color:#5d6d64}
+.status-progress-copy strong{font-size:20px;line-height:1;color:#17633f}
+.status-progress-card progress{
+  display:block;
+  width:100%;
+  height:9px;
+  border:0;
+  border-radius:999px;
+  overflow:hidden;
+  background:#e3ece7;
+  accent-color:#24885d;
+}
+.status-progress-card progress::-webkit-progress-bar{background:#e3ece7;border-radius:999px}
+.status-progress-card progress::-webkit-progress-value{background:linear-gradient(90deg,#176b3a,#35a863);border-radius:999px}
+.status-progress-card progress::-moz-progress-bar{background:linear-gradient(90deg,#176b3a,#35a863);border-radius:999px}
+.status-progress-card small{display:block;margin-top:7px;color:#718078;font-size:10px}
+.status-quick-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:9px}
+.status-quick-card{
+  appearance:none;
+  display:flex;
+  align-items:center;
+  gap:9px;
+  min-width:0;
+  min-height:64px;
+  padding:10px;
+  border:1px solid #dbe5df;
+  border-radius:13px;
+  background:#f9fbfa;
+  color:#36483e;
+  text-align:left;
+  font:inherit;
+  cursor:pointer;
+  box-shadow:0 3px 10px rgba(18,63,43,.035);
+  transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease,background .18s ease;
+}
+.status-quick-card>span:last-child{min-width:0}
+.status-quick-card small{display:block;color:inherit;font-size:9px;font-weight:800;line-height:1.25;opacity:.85}
+.status-quick-card strong{display:block;margin-top:3px;font-size:20px;line-height:1;color:inherit}
+.status-quick-icon{display:grid;place-items:center;flex:0 0 27px;width:27px;height:27px;border-radius:9px;background:rgba(255,255,255,.78);font-size:14px;font-weight:950}
+.status-quick-card:hover{transform:translateY(-1px);box-shadow:0 7px 18px rgba(18,63,43,.075)}
+.status-quick-card:focus-visible{outline:2px solid #0e9a67;outline-offset:2px}
+.status-quick-card.is-active{box-shadow:0 0 0 2px rgba(18,107,58,.14),0 8px 20px rgba(18,63,43,.08)}
+.status-quick-card--waiting{background:#fffaf0;border-color:#eadcae;color:#755817}
+.status-quick-card--checking{background:#f2f8fb;border-color:#bfd6e2;color:#2a6078}
+.status-quick-card--recheck{background:#f6f5ff;border-color:#cbc9e8;color:#57538d}
+.status-quick-card--verified{background:#f0faf4;border-color:#bdddc9;color:#17633f}
+.status-quick-card--revision{background:#fff8e8;border-color:#edd49c;color:#815d0a}
+.status-quick-card--rejected{background:#fff3f3;border-color:#e9c2c2;color:#963f3f}
+.status-quick-card--action{background:#fff5ee;border-color:#e5c9b7;color:#8d4c26}
+.status-overview-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:13px;padding-top:12px;border-top:1px solid #e6eee9}
+.status-overview-foot>span{color:#6a786f;font-size:10px}
+.status-quick-clear{border:0;border-radius:10px;background:#eef6f2;color:#17633f;padding:7px 10px;font:inherit;font-size:10px;font-weight:850;cursor:pointer}
+.status-quick-clear:hover{background:#e4f2eb}
+.status-quick-clear:focus-visible{outline:2px solid #0e9a67;outline-offset:2px}
+@media(max-width:1050px){.status-quick-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:760px){
+  .status-overview{padding:15px}
+  .status-overview-head{grid-template-columns:1fr}
+  .status-quick-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .status-overview-foot{align-items:flex-start;flex-direction:column}
+  .status-quick-clear{width:100%;min-height:38px}
+}
+@media(max-width:420px){.status-quick-grid{grid-template-columns:1fr}.status-quick-card{min-height:58px}}
+@media(prefers-reduced-motion:reduce){.status-quick-card{transition:none!important}}

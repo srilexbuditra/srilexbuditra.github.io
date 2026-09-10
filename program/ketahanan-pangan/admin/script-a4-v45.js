@@ -194,6 +194,9 @@ function applyDashboardRoleAccess(user) {
   const standardStats = document.querySelector('.stats');
   if (standardStats) standardStats.hidden = marketing;
 
+  const statusOverview = document.getElementById('statusOverview');
+  if (statusOverview) statusOverview.hidden = marketing;
+
   const flow = document.querySelector('.flow');
   if (flow) flow.hidden = marketing;
 
@@ -419,6 +422,8 @@ if (statCards[0]) {
 if (statCards[1]) statCards[1].querySelector('strong').textContent = submitted;
 if (statCards[2]) statCards[2].querySelector('strong').textContent = verified;
 if (statCards[3]) statCards[3].querySelector('strong').textContent = actionRequired;
+
+renderAdminStatusOverview(registrations);
 
 document.getElementById('adminLogin').hidden = true;
 const tableBody = document.querySelector('.table-wrap tbody');
@@ -1795,6 +1800,7 @@ function initAdminParticipantFilters(registrations) {
       if (status) status.value = '';
       if (region) region.value = '';
       applyAdminParticipantFilters();
+      syncAdminStatusQuickFilters();
     });
   }
 
@@ -1802,6 +1808,102 @@ function initAdminParticipantFilters(registrations) {
   setTimeout(applyAdminParticipantFilters, 0);
 }
 
+
+// =========================================================
+// V3.5 — RINGKASAN STATUS PEMERIKSAAN + FILTER CEPAT
+// UI client-side saja; tidak mengubah endpoint, status, atau data di Worker.
+// =========================================================
+const ADMIN_STATUS_OVERVIEW_ITEMS = [
+  ['submitted', 'statusCountSubmitted'],
+  ['pending', 'statusCountPending'],
+  ['resubmitted', 'statusCountResubmitted'],
+  ['verified', 'statusCountVerified'],
+  ['revision', 'statusCountRevision'],
+  ['rejected', 'statusCountRejected'],
+  ['needs_action', 'statusCountNeedsAction']
+];
+
+function syncAdminStatusQuickFilters() {
+  const selected = document.getElementById('participantStatusFilter')?.value || '';
+  document.querySelectorAll('#statusQuickFilters [data-status]').forEach((button) => {
+    const active = button.dataset.status === selected;
+    button.classList.toggle('is-active', active);
+    button.setAttribute('aria-pressed', active ? 'true' : 'false');
+  });
+}
+
+function renderAdminStatusOverview(registrations) {
+  const list = Array.isArray(registrations) ? registrations : [];
+  const active = list.filter(item => Number(item.is_duplicate || 0) !== 1);
+  const duplicateCount = Math.max(0, list.length - active.length);
+  const counts = Object.fromEntries(ADMIN_STATUS_OVERVIEW_ITEMS.map(([status]) => [status, 0]));
+
+  active.forEach((item) => {
+    if (Object.prototype.hasOwnProperty.call(counts, item.status)) counts[item.status] += 1;
+  });
+
+  ADMIN_STATUS_OVERVIEW_ITEMS.forEach(([status, id]) => {
+    const node = document.getElementById(id);
+    if (node) node.textContent = counts[status] || 0;
+  });
+
+  const total = active.length;
+  const verified = counts.verified || 0;
+  const percent = total ? Math.round((verified / total) * 100) : 0;
+  const progress = document.getElementById('statusVerificationProgress');
+  const percentNode = document.getElementById('statusVerifiedPercent');
+  const progressText = document.getElementById('statusProgressText');
+  const meta = document.getElementById('statusOverviewMeta');
+
+  if (progress) {
+    progress.value = percent;
+    progress.textContent = `${percent}%`;
+    progress.setAttribute('aria-label', `Progres peserta terverifikasi ${percent} persen`);
+  }
+  if (percentNode) percentNode.textContent = `${percent}%`;
+  if (progressText) progressText.textContent = `${verified} dari ${total} peserta aktif terverifikasi`;
+  if (meta) {
+    meta.textContent = duplicateCount
+      ? `${total} peserta aktif · ${duplicateCount} data duplikat/tidak aktif tidak dihitung dalam ringkasan.`
+      : `${total} peserta aktif · Ringkasan diperbarui dari data registrasi yang sedang dimuat.`;
+  }
+
+  initAdminStatusQuickFilters();
+  syncAdminStatusQuickFilters();
+}
+
+function initAdminStatusQuickFilters() {
+  const wrap = document.getElementById('statusQuickFilters');
+  const clear = document.getElementById('statusQuickClear');
+  const select = document.getElementById('participantStatusFilter');
+
+  if (wrap && !wrap.dataset.quickFilterReady) {
+    wrap.dataset.quickFilterReady = '1';
+    wrap.addEventListener('click', (event) => {
+      const button = event.target.closest('[data-status]');
+      if (!button || !wrap.contains(button) || !select) return;
+      const next = button.dataset.status || '';
+      select.value = select.value === next ? '' : next;
+      applyAdminParticipantFilters();
+      syncAdminStatusQuickFilters();
+      document.querySelector('.panel')?.scrollIntoView({behavior:'smooth', block:'start'});
+    });
+  }
+
+  if (clear && !clear.dataset.quickFilterReady) {
+    clear.dataset.quickFilterReady = '1';
+    clear.addEventListener('click', () => {
+      if (select) select.value = '';
+      applyAdminParticipantFilters();
+      syncAdminStatusQuickFilters();
+    });
+  }
+
+  if (select && !select.dataset.quickSyncReady) {
+    select.dataset.quickSyncReady = '1';
+    select.addEventListener('change', syncAdminStatusQuickFilters);
+  }
+}
 
 // =========================================================
 // ADMIN EKSPOR EXCEL V1 — XLSX lokal tanpa library eksternal.

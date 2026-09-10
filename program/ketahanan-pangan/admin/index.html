@@ -56,7 +56,7 @@
   <meta itemprop="image" content="https://srilexbuditra.work/program/ketahanan-pangan/admin/assets/og-admin-dashboard-v17.3.3.jpg">
   <meta itemprop="inLanguage" content="id-ID">
 
-  <link rel="stylesheet" href="./style.css?v=17.6.0">
+  <link rel="stylesheet" href="./style.css?v=17.7.0">
   <link rel="stylesheet" href="./style-verifikasi-tambahan.css?v=1">
 </head>
 <body>
@@ -325,6 +325,36 @@
         <article><small>Terverifikasi</small><strong>—</strong><span>Status verified</span></article>
         <article><small>Perlu Tindakan</small><strong>—</strong><span>Perbaikan / ditolak</span></article>
       </section>
+      <section id="statusOverview" class="status-overview" aria-labelledby="statusOverviewTitle">
+        <div class="status-overview-head">
+          <div>
+            <span class="eyebrow">STATUS PEMERIKSAAN DATA</span>
+            <h2 id="statusOverviewTitle">Ringkasan Status Peserta</h2>
+            <p>Pantau tahapan pemeriksaan dan gunakan status di bawah sebagai filter cepat daftar registrasi.</p>
+          </div>
+          <div class="status-progress-card" aria-live="polite">
+            <div class="status-progress-copy">
+              <span>Progres Terverifikasi</span>
+              <strong id="statusVerifiedPercent">0%</strong>
+            </div>
+            <progress id="statusVerificationProgress" max="100" value="0">0%</progress>
+            <small id="statusProgressText">0 dari 0 peserta terverifikasi</small>
+          </div>
+        </div>
+        <div id="statusQuickFilters" class="status-quick-grid" aria-label="Filter cepat status pemeriksaan">
+          <button type="button" class="status-quick-card status-quick-card--waiting" data-status="submitted" aria-pressed="false"><span class="status-quick-icon" aria-hidden="true">⏳</span><span><small>Menunggu Verifikasi</small><strong id="statusCountSubmitted">0</strong></span></button>
+          <button type="button" class="status-quick-card status-quick-card--checking" data-status="pending" aria-pressed="false"><span class="status-quick-icon" aria-hidden="true">⌕</span><span><small>Pemeriksaan Data</small><strong id="statusCountPending">0</strong></span></button>
+          <button type="button" class="status-quick-card status-quick-card--recheck" data-status="resubmitted" aria-pressed="false"><span class="status-quick-icon" aria-hidden="true">↻</span><span><small>Pemeriksaan Ulang</small><strong id="statusCountResubmitted">0</strong></span></button>
+          <button type="button" class="status-quick-card status-quick-card--verified" data-status="verified" aria-pressed="false"><span class="status-quick-icon" aria-hidden="true">✓</span><span><small>Terverifikasi</small><strong id="statusCountVerified">0</strong></span></button>
+          <button type="button" class="status-quick-card status-quick-card--revision" data-status="revision" aria-pressed="false"><span class="status-quick-icon" aria-hidden="true">✎</span><span><small>Perlu Perbaikan</small><strong id="statusCountRevision">0</strong></span></button>
+          <button type="button" class="status-quick-card status-quick-card--rejected" data-status="rejected" aria-pressed="false"><span class="status-quick-icon" aria-hidden="true">×</span><span><small>Ditolak</small><strong id="statusCountRejected">0</strong></span></button>
+          <button type="button" class="status-quick-card status-quick-card--action" data-status="needs_action" aria-pressed="false"><span class="status-quick-icon" aria-hidden="true">!</span><span><small>Perlu Tindakan</small><strong id="statusCountNeedsAction">0</strong></span></button>
+        </div>
+        <div class="status-overview-foot">
+          <span id="statusOverviewMeta">Belum ada data registrasi.</span>
+          <button type="button" id="statusQuickClear" class="status-quick-clear">Tampilkan Semua</button>
+        </div>
+      </section>
       <section class="panel">
         <div class="panel-head">
           <div><span class="eyebrow">DATA PENDAFTAR</span>
@@ -446,6 +476,6 @@
     <script src="./local-qrcode.js?v=1" defer></script>
     <script src="./jszip.min.js?v=1" defer></script>
     <script src="./excel-engine-template.js?v=45" defer></script>
-    <script src="./script-a4-v45.js?v=17.6.0" defer></script>
+    <script src="./script-a4-v45.js?v=17.7.0" defer></script>
   </body>
 </html>
