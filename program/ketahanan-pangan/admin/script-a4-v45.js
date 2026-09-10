@@ -249,6 +249,7 @@ function setAuthenticatedAdmin(user) {
   }
 
   applyDashboardRoleAccess(user);
+  initAccountSecurityForUser(user);
 }
 
 function showAdminLogin() {
@@ -1942,3 +1943,158 @@ function initAdminExcelExport() {
 
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initAdminExcelExport, {once:true});
 else initAdminExcelExport();
+
+
+// V17.1 — Account & password management UI. Existing registration features remain untouched.
+function initAccountSecurityForUser(user) {
+  const panel = document.getElementById('accountSecurityPanel');
+  const managementToggle = document.getElementById('userManagementToggle');
+  if (!panel) return;
+  panel.hidden = false;
+  if (managementToggle) managementToggle.hidden = user?.role !== 'super_admin';
+  bindAccountSecurityEvents();
+}
+
+function bindAccountSecurityEvents() {
+  const panel = document.getElementById('accountSecurityPanel');
+  if (!panel || panel.dataset.bound === '1') return;
+  panel.dataset.bound = '1';
+
+  const ownToggle = document.getElementById('changeOwnPasswordToggle');
+  const ownForm = document.getElementById('changeOwnPasswordForm');
+  const cancelOwn = document.getElementById('cancelOwnPassword');
+  const managementToggle = document.getElementById('userManagementToggle');
+  const managementPanel = document.getElementById('userManagementPanel');
+  const refresh = document.getElementById('refreshAdminUsers');
+  const createForm = document.getElementById('createAdminUserForm');
+
+  ownToggle?.addEventListener('click', () => {
+    if (!ownForm) return;
+    ownForm.hidden = !ownForm.hidden;
+    if (!ownForm.hidden) document.getElementById('currentAccountPassword')?.focus();
+  });
+  cancelOwn?.addEventListener('click', () => { if (ownForm) { ownForm.reset(); ownForm.hidden = true; } });
+  ownForm?.addEventListener('submit', submitOwnPasswordChange);
+
+  managementToggle?.addEventListener('click', async () => {
+    if (!managementPanel) return;
+    managementPanel.hidden = !managementPanel.hidden;
+    if (!managementPanel.hidden) await loadAdminUsers();
+  });
+  refresh?.addEventListener('click', loadAdminUsers);
+  createForm?.addEventListener('submit', createAdminUser);
+}
+
+function validV171Password(password) {
+  return String(password || '').length >= 10 && /[a-z]/.test(password) && /[A-Z]/.test(password) && /\\d/.test(password) && /[^A-Za-z0-9]/.test(password);
+}
+
+async function submitOwnPasswordChange(event) {
+  event.preventDefault();
+  const form = event.currentTarget;
+  const currentPassword = document.getElementById('currentAccountPassword')?.value || '';
+  const newPassword = document.getElementById('newAccountPassword')?.value || '';
+  const confirmPassword = document.getElementById('confirmAccountPassword')?.value || '';
+  if (newPassword !== confirmPassword) return showAdminToast('error','Password Tidak Sama','Konfirmasi password baru tidak sama.');
+  if (!validV171Password(newPassword)) return showAdminToast('error','Password Belum Memenuhi Syarat','Gunakan minimal 10 karakter dengan huruf besar, huruf kecil, angka, dan simbol.');
+  const submit = form.querySelector('button[type="submit"]');
+  try {
+    if (submit) submit.disabled = true;
+    const response = await fetch(`${ADMIN_API_BASE}/auth/password`, { method:'POST', credentials:'include', headers:{'Content-Type':'application/json','Accept':'application/json'}, body:JSON.stringify({current_password:currentPassword,new_password:newPassword}) });
+    const data = await response.json().catch(()=>({}));
+    if (!response.ok || !data.ok) throw new Error(data.message || 'Gagal mengubah password.');
+    form.reset();
+    showAdminToast('success','Password Berhasil Diubah','Session telah dicabut. Silakan login kembali.');
+    setTimeout(()=>window.location.replace('./'), 1200);
+  } catch (error) { showAdminToast('error','Gagal Mengubah Password',error.message || 'Silakan coba kembali.'); }
+  finally { if (submit) submit.disabled = false; }
+}
+
+async function loadAdminUsers() {
+  if (currentAdminUser?.role !== 'super_admin') return;
+  const list = document.getElementById('adminUsersList');
+  if (!list) return;
+  list.innerHTML = '<p class="account-empty">Memuat daftar akun...</p>';
+  try {
+    const response = await fetch(`${ADMIN_API_BASE}/auth/users`, {credentials:'include',headers:{Accept:'application/json'},cache:'no-store'});
+    const data = await response.json().catch(()=>({}));
+    if (!response.ok || !data.ok) throw new Error(data.message || 'Gagal membaca daftar akun.');
+    renderAdminUsers(data.users || []);
+  } catch (error) { list.innerHTML = `<p class="account-empty account-error">${escapeV171Html(error.message || 'Gagal membaca daftar akun.')}</p>`; }
+}
+
+function renderAdminUsers(users) {
+  const list = document.getElementById('adminUsersList');
+  if (!list) return;
+  if (!users.length) { list.innerHTML='<p class="account-empty">Belum ada akun.</p>'; return; }
+  list.innerHTML = users.map(user => {
+    const owner = Number(user.is_owner) === 1;
+    const roleOptions = owner
+      ? '<option value="super_admin" selected>Super Admin</option>'
+      : `<option value="admin" ${user.role==='admin'?'selected':''}>Admin</option><option value="pemasaran" ${user.role==='pemasaran'?'selected':''}>Pemasaran</option>`;
+    return `<article class="admin-user-card" data-user-id="${Number(user.id)}">
+      <div class="admin-user-summary"><div><strong>${escapeV171Html(user.display_name || user.username)}</strong><span>@${escapeV171Html(user.username)} ${owner?'<b>OWNER</b>':''}</span></div><span class="admin-user-status ${Number(user.is_active)===1?'is-active':'is-inactive'}">${Number(user.is_active)===1?'Aktif':'Nonaktif'}</span></div>
+      <div class="admin-user-controls">
+        <label>Nama tampilan<input class="user-display-name" value="${escapeV171Attr(user.display_name || '')}" ${owner?'readonly':''}></label>
+        <label>Role<select class="user-role" ${owner?'disabled':''}>${roleOptions}</select></label>
+        <label>Status<select class="user-active" ${owner?'disabled':''}><option value="1" ${Number(user.is_active)===1?'selected':''}>Aktif</option><option value="0" ${Number(user.is_active)!==1?'selected':''}>Nonaktif</option></select></label>
+      </div>
+      <div class="admin-user-card-actions">
+        ${owner?'':`<button type="button" class="account-security-button save-user-button">Simpan Perubahan</button>`}
+        <button type="button" class="account-security-button reset-user-password">Reset Password</button>
+        <small>Login terakhir: ${escapeV171Html(user.last_login_at || 'Belum pernah')}</small>
+      </div>
+    </article>`;
+  }).join('');
+  list.querySelectorAll('.save-user-button').forEach(btn=>btn.addEventListener('click', updateAdminUser));
+  list.querySelectorAll('.reset-user-password').forEach(btn=>btn.addEventListener('click', resetAdminUserPassword));
+}
+
+async function createAdminUser(event) {
+  event.preventDefault();
+  const form=event.currentTarget, submit=form.querySelector('button[type="submit"]');
+  const payload={ username:document.getElementById('newAdminUsername')?.value||'', display_name:document.getElementById('newAdminDisplayName')?.value||'', role:document.getElementById('newAdminRole')?.value||'admin', password:document.getElementById('newAdminInitialPassword')?.value||'' };
+  if (!validV171Password(payload.password)) return showAdminToast('error','Password Belum Memenuhi Syarat','Password awal minimal 10 karakter dengan huruf besar, huruf kecil, angka, dan simbol.');
+  try {
+    if(submit) submit.disabled=true;
+    const response=await fetch(`${ADMIN_API_BASE}/auth/users`,{method:'POST',credentials:'include',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify(payload)});
+    const data=await response.json().catch(()=>({}));
+    if(!response.ok||!data.ok) throw new Error(data.message||'Gagal membuat akun.');
+    form.reset(); showAdminToast('success','Akun Berhasil Dibuat',`${data.user?.display_name||payload.username} siap digunakan.`); await loadAdminUsers();
+  } catch(error){showAdminToast('error','Gagal Membuat Akun',error.message||'Silakan coba kembali.');}
+  finally{if(submit) submit.disabled=false;}
+}
+
+async function updateAdminUser(event) {
+  const card=event.currentTarget.closest('.admin-user-card'); if(!card) return;
+  const id=card.dataset.userId;
+  const payload={display_name:card.querySelector('.user-display-name')?.value||'',role:card.querySelector('.user-role')?.value||'admin',is_active:card.querySelector('.user-active')?.value==='1'};
+  try {
+    event.currentTarget.disabled=true;
+    const response=await fetch(`${ADMIN_API_BASE}/auth/users/${id}/update`,{method:'POST',credentials:'include',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify(payload)});
+    const data=await response.json().catch(()=>({})); if(!response.ok||!data.ok) throw new Error(data.message||'Gagal memperbarui akun.');
+    showAdminToast('success','Akun Diperbarui','Role/status akun berhasil disimpan.'); await loadAdminUsers();
+  } catch(error){showAdminToast('error','Gagal Memperbarui Akun',error.message||'Silakan coba kembali.');}
+  finally{event.currentTarget.disabled=false;}
+}
+
+async function resetAdminUserPassword(event) {
+  const card=event.currentTarget.closest('.admin-user-card'); if(!card) return;
+  const name=card.querySelector('.admin-user-summary strong')?.textContent||'akun ini';
+  const newPassword=window.prompt(`Masukkan password baru untuk ${name}.\
+Minimal 10 karakter: huruf besar, huruf kecil, angka, dan simbol.`);
+  if(newPassword===null) return;
+  if(!validV171Password(newPassword)) return showAdminToast('error','Password Belum Memenuhi Syarat','Gunakan minimal 10 karakter dengan huruf besar, huruf kecil, angka, dan simbol.');
+  if(!window.confirm(`Reset password ${name}? Semua session akun tersebut akan dicabut.`)) return;
+  try {
+    event.currentTarget.disabled=true;
+    const response=await fetch(`${ADMIN_API_BASE}/auth/users/${card.dataset.userId}/password`,{method:'POST',credentials:'include',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify({new_password:newPassword})});
+    const data=await response.json().catch(()=>({})); if(!response.ok||!data.ok) throw new Error(data.message||'Gagal mereset password.');
+    showAdminToast('success','Password Berhasil Direset',data.message||'Session akun telah dicabut.');
+    if(Number(currentAdminUser?.id)===Number(card.dataset.userId)) setTimeout(()=>window.location.replace('./'),1200);
+  } catch(error){showAdminToast('error','Reset Password Gagal',error.message||'Silakan coba kembali.');}
+  finally{event.currentTarget.disabled=false;}
+}
+
+function escapeV171Html(value){ return String(value??'').replace(/[&<>\"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}[ch])); }
+function escapeV171Attr(value){ return escapeV171Html(value); }

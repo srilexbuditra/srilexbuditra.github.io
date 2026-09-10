@@ -2533,3 +2533,30 @@ main.wrap{
 .role-guide-panel small{display:block;margin-top:8px;color:#687a73;font-size:10px;line-height:1.45}
 .admin-role-notice .role-notice-close{width:32px;height:32px;padding:0;margin:0;flex:0 0 32px}
 @media(max-width:760px){.role-guide-grid{grid-template-columns:1fr}.admin-role-notice{gap:10px}.role-guide-pdf{width:100%;justify-content:center}}
+
+
+/* V17.1 — Account & Security, scoped FIT-ONLY */
+.account-security-panel{margin:14px 0;padding:16px;border:1px solid #d8e8e1;border-radius:16px;background:#fff;box-shadow:0 8px 24px rgba(15,71,52,.05)}
+.account-security-panel[hidden],.account-security-form[hidden],.user-management-panel[hidden]{display:none!important}
+.account-security-head,.user-management-title,.admin-user-summary,.admin-user-card-actions{display:flex;align-items:center;justify-content:space-between;gap:14px}
+.account-security-head h2,.user-management-title h3,.account-security-form h3{margin:3px 0 0;color:#123f31}
+.account-security-head p,.user-management-title p{margin:5px 0 0;color:#667a72;font-size:12px}
+.account-security-actions,.account-form-actions{display:flex;gap:8px;flex-wrap:wrap}
+.account-security-button{border:1px solid #cfe3da;border-radius:9px;background:#fff;color:#175a43;padding:9px 12px;font-weight:800;font-size:11px;cursor:pointer}
+.account-security-button-primary{background:#087a53;color:#fff;border-color:#087a53}
+.account-security-button:disabled{opacity:.55;cursor:not-allowed}
+.account-security-form{margin-top:14px;padding:14px;border:1px solid #dcebe5;border-radius:12px;background:#f8fcfa}
+.account-form-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:12px 0}
+.account-form-grid-four{grid-template-columns:repeat(4,minmax(0,1fr))}
+.account-security-form label,.admin-user-controls label{display:grid;gap:5px;color:#3d5d51;font-size:10px;font-weight:800}
+.account-security-form input,.account-security-form select,.admin-user-controls input,.admin-user-controls select{width:100%;min-height:38px;border:1px solid #d4e3dd;border-radius:8px;background:#fff;padding:8px;color:#183f33;font:inherit}
+.account-security-form small{display:block;margin:5px 0 10px;color:#6c7f77;font-size:10px}
+.user-management-panel{margin-top:14px;border-top:1px solid #e2eee9;padding-top:14px}
+.account-create-form{margin-bottom:12px}
+.admin-users-list{display:grid;gap:10px}
+.admin-user-card{border:1px solid #dce9e4;border-radius:12px;padding:12px;background:#fff}
+.admin-user-summary strong{display:block;color:#123f31;font-size:13px}.admin-user-summary span{display:block;color:#718079;font-size:10px;margin-top:3px}.admin-user-summary b{display:inline-block;margin-left:5px;padding:2px 5px;border-radius:999px;background:#e9f7f1;color:#0d6a49;font-size:8px}
+.admin-user-status{padding:5px 8px;border-radius:999px;font-size:9px;font-weight:900}.admin-user-status.is-active{background:#e7f7ef;color:#08734e}.admin-user-status.is-inactive{background:#f7eeee;color:#9a4747}
+.admin-user-controls{display:grid;grid-template-columns:2fr 1fr 1fr;gap:9px;margin:11px 0}
+.admin-user-card-actions small{margin-left:auto;color:#73827c;font-size:9px}.account-empty{padding:12px;text-align:center;color:#6e7f78;font-size:11px}.account-error{color:#a14545}
+@media(max-width:760px){.account-security-head,.user-management-title,.admin-user-card-actions{align-items:stretch;flex-direction:column}.account-security-actions,.account-security-actions .account-security-button{width:100%}.account-form-grid,.account-form-grid-four,.admin-user-controls{grid-template-columns:1fr}.admin-user-card-actions .account-security-button{width:100%}.admin-user-card-actions small{margin-left:0}.account-security-panel{padding:12px}}

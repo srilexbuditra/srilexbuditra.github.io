@@ -197,6 +197,40 @@
   </div>
   <button id="closeRoleNotice" class="role-notice-close" type="button" aria-label="Tutup pemberitahuan">×</button>
 </section>
+      <section id="accountSecurityPanel" class="account-security-panel" hidden>
+        <div class="account-security-head">
+          <div><span class="eyebrow">AKUN &amp; KEAMANAN</span><h2>Keamanan Akun</h2><p>Kelola password akun Anda. Manajemen pengguna hanya tersedia untuk Super Administrator.</p></div>
+          <div class="account-security-actions">
+            <button id="changeOwnPasswordToggle" type="button" class="account-security-button">Ubah Password Saya</button>
+            <button id="userManagementToggle" type="button" class="account-security-button account-security-button-primary" hidden>Manajemen Akun</button>
+          </div>
+        </div>
+        <form id="changeOwnPasswordForm" class="account-security-form" hidden>
+          <h3>Ubah Password Saya</h3>
+          <div class="account-form-grid">
+            <label>Password saat ini<input id="currentAccountPassword" type="password" autocomplete="current-password" required></label>
+            <label>Password baru<input id="newAccountPassword" type="password" autocomplete="new-password" required></label>
+            <label>Konfirmasi password baru<input id="confirmAccountPassword" type="password" autocomplete="new-password" required></label>
+          </div>
+          <small>Minimal 10 karakter serta memuat huruf besar, huruf kecil, angka, dan simbol. Setelah berhasil, Anda akan diminta login kembali.</small>
+          <div class="account-form-actions"><button type="submit" class="account-security-button account-security-button-primary">Simpan Password</button><button id="cancelOwnPassword" type="button" class="account-security-button">Batal</button></div>
+        </form>
+        <div id="userManagementPanel" class="user-management-panel" hidden>
+          <div class="user-management-title"><div><h3>Manajemen Akun</h3><p>Tambah akun Admin/Pemasaran, atur status/role, atau reset password.</p></div><button id="refreshAdminUsers" type="button" class="account-security-button">Muat Ulang</button></div>
+          <form id="createAdminUserForm" class="account-security-form account-create-form">
+            <h3>Tambah Akun</h3>
+            <div class="account-form-grid account-form-grid-four">
+              <label>Username<input id="newAdminUsername" type="text" autocomplete="off" placeholder="contoh: admin.operasional" required></label>
+              <label>Nama tampilan<input id="newAdminDisplayName" type="text" autocomplete="off" required></label>
+              <label>Role<select id="newAdminRole" required><option value="admin">Admin</option><option value="pemasaran">Pemasaran</option></select></label>
+              <label>Password awal<input id="newAdminInitialPassword" type="password" autocomplete="new-password" required></label>
+            </div>
+            <small>Password awal tidak pernah ditampilkan kembali oleh sistem.</small>
+            <div class="account-form-actions"><button type="submit" class="account-security-button account-security-button-primary">Tambah Akun</button></div>
+          </form>
+          <div id="adminUsersList" class="admin-users-list"><p class="account-empty">Memuat daftar akun...</p></div>
+        </div>
+      </section>
       <section class="stats">
         <article><small>Total Registrasi</small><strong>—</strong><span>Menunggu koneksi admin aman</span></article>
         <article><small>Menunggu Verifikasi</small><strong>—</strong><span>Submitted + pemeriksaan ulang</span></article>
@@ -322,6 +356,6 @@
     <script src="./local-qrcode.js?v=1" defer></script>
     <script src="./jszip.min.js?v=1" defer></script>
     <script src="./excel-engine-template.js?v=45" defer></script>
-    <script src="./script-a4-v45.js?v=17" defer></script>
+    <script src="./script-a4-v45.js?v=17.1" defer></script>
   </body>
 </html>
