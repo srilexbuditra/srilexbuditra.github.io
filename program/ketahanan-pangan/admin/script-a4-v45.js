@@ -1804,6 +1804,27 @@ function adminParticipantPeriodMode() {
   return document.getElementById('participantPeriodFilter')?.value || '';
 }
 
+// V4.0 — rentang tanggal kustom, tetap berbasis waktu lokal perangkat admin.
+function adminParticipantLocalDateBoundary(value, endExclusive = false) {
+  if (!value || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return null;
+  const [year, month, day] = value.split('-').map(Number);
+  const date = new Date(year, month - 1, day);
+  if (Number.isNaN(date.getTime())) return null;
+  if (endExclusive) date.setDate(date.getDate() + 1);
+  return date;
+}
+
+function adminParticipantCustomRange() {
+  const fromValue = document.getElementById('participantDateFrom')?.value || '';
+  const toValue = document.getElementById('participantDateTo')?.value || '';
+  return {
+    fromValue,
+    toValue,
+    start: adminParticipantLocalDateBoundary(fromValue),
+    endExclusive: adminParticipantLocalDateBoundary(toValue, true)
+  };
+}
+
 function adminParticipantMatchesPeriod(item, mode = adminParticipantPeriodMode(), now = new Date()) {
   if (!mode) return true;
 
@@ -1811,6 +1832,15 @@ function adminParticipantMatchesPeriod(item, mode = adminParticipantPeriodMode()
   if (!timestamp) return false;
 
   const date = new Date(timestamp);
+
+  if (mode === 'custom') {
+    const range = adminParticipantCustomRange();
+    if (!range.start && !range.endExclusive) return true;
+    if (range.start && date < range.start) return false;
+    if (range.endExclusive && date >= range.endExclusive) return false;
+    return true;
+  }
+
   const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   let start = null;
 
@@ -1831,6 +1861,29 @@ function adminParticipantMatchesPeriod(item, mode = adminParticipantPeriodMode()
   const endOfToday = new Date(startOfToday);
   endOfToday.setDate(endOfToday.getDate() + 1);
   return date >= start && date < endOfToday;
+}
+
+function syncAdminCustomDateRangeUI() {
+  const period = document.getElementById('participantPeriodFilter');
+  const wrap = document.getElementById('participantCustomDateRange');
+  if (!wrap) return;
+  wrap.hidden = period?.value !== 'custom';
+}
+
+function syncAdminCustomDateConstraints(changed = '') {
+  const from = document.getElementById('participantDateFrom');
+  const to = document.getElementById('participantDateTo');
+  if (!from || !to) return;
+
+  from.max = to.value || '';
+  to.min = from.value || '';
+
+  if (from.value && to.value && from.value > to.value) {
+    if (changed === 'to') from.value = to.value;
+    else to.value = from.value;
+    from.max = to.value || '';
+    to.min = from.value || '';
+  }
 }
 
 function refreshAdminRegionOptions(registrations) {
@@ -1969,7 +2022,7 @@ function applyAdminParticipantFilters(options = {}) {
           <div class="empty participant-empty-filter">
             <span aria-hidden="true">⌕</span>
             <strong>Tidak ada peserta yang sesuai</strong>
-            <p>Ubah kata pencarian atau filter status/wilayah untuk menampilkan data lain.</p>
+            <p>Ubah pencarian, status, wilayah, periode, atau rentang tanggal untuk menampilkan data lain.</p>
           </div>
         </td>`;
       tbody.appendChild(emptyRow);
@@ -1998,6 +2051,8 @@ function initAdminParticipantFilters(registrations, options = {}) {
   const status = document.getElementById('participantStatusFilter');
   const region = document.getElementById('participantRegionFilter');
   const period = document.getElementById('participantPeriodFilter');
+  const dateFrom = document.getElementById('participantDateFrom');
+  const dateTo = document.getElementById('participantDateTo');
   const sort = document.getElementById('participantSort');
   const reset = document.getElementById('participantResetFilter');
   const pageSize = document.getElementById('participantPageSize');
@@ -2017,9 +2072,31 @@ function initAdminParticipantFilters(registrations, options = {}) {
     region.dataset.filterReady = '1';
     region.addEventListener('change', () => applyAdminParticipantFilters());
   }
+  syncAdminCustomDateRangeUI();
+  syncAdminCustomDateConstraints();
   if (period && !period.dataset.filterReady) {
     period.dataset.filterReady = '1';
-    period.addEventListener('change', () => applyAdminParticipantFilters());
+    period.addEventListener('change', () => {
+      syncAdminCustomDateRangeUI();
+      applyAdminParticipantFilters();
+      if (period.value === 'custom' && !dateFrom?.value && !dateTo?.value) {
+        dateFrom?.focus({preventScroll:true});
+      }
+    });
+  }
+  if (dateFrom && !dateFrom.dataset.filterReady) {
+    dateFrom.dataset.filterReady = '1';
+    dateFrom.addEventListener('change', () => {
+      syncAdminCustomDateConstraints('from');
+      applyAdminParticipantFilters();
+    });
+  }
+  if (dateTo && !dateTo.dataset.filterReady) {
+    dateTo.dataset.filterReady = '1';
+    dateTo.addEventListener('change', () => {
+      syncAdminCustomDateConstraints('to');
+      applyAdminParticipantFilters();
+    });
   }
   if (sort) {
     sort.querySelectorAll('[data-admin-only="1"]').forEach((option) => {
@@ -2039,6 +2116,10 @@ function initAdminParticipantFilters(registrations, options = {}) {
       if (status) status.value = '';
       if (region) region.value = '';
       if (period) period.value = '';
+      if (dateFrom) dateFrom.value = '';
+      if (dateTo) dateTo.value = '';
+      syncAdminCustomDateRangeUI();
+      syncAdminCustomDateConstraints();
       if (sort) sort.value = 'newest';
       ADMIN_PARTICIPANT_PAGINATION.page = 1;
       applyAdminParticipantFilters();
