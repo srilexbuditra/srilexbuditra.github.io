@@ -2026,7 +2026,7 @@ function bindAccountSecurityEvents() {
 }
 
 function validV171Password(password) {
-  return String(password || '').length >= 10 && /[a-z]/.test(password) && /[A-Z]/.test(password) && /\\d/.test(password) && /[^A-Za-z0-9]/.test(password);
+  return String(password || '').length >= 10 && /[a-z]/.test(password) && /[A-Z]/.test(password) && /\d/.test(password) && /[^A-Za-z0-9]/.test(password);
 }
 
 async function submitOwnPasswordChange(event) {
