@@ -29,7 +29,7 @@
   <link itemprop="publisher" href="https://srilexbuditra.work/#person">
   <meta itemprop="description" content="Aktivasi akun, login, dan dashboard pribadi peserta Program Ketahanan Pangan.">
   <link rel="search" type="application/opensearchdescription+xml" title="Srilex Buditra Search" href="/opensearch.xml">
-  <link rel="stylesheet" href="./style.css?v=9.4">
+  <link rel="stylesheet" href="./style.css?v=9.5">
 </head>
 <body>
 <header class="topbar">
@@ -145,19 +145,26 @@
         </div>
 
         <div class="dashboard-main-grid">
-          <article class="card progress-card" aria-labelledby="progressTitle">
-            <div class="progress-head">
-              <div><span class="badge">STATUS &amp; TAHAPAN PROGRAM</span><h3 id="progressTitle">Perjalanan Pendaftaran Anda</h3></div>
-              <p id="progressSummary">Status proses sedang dimuat.</p>
-            </div>
-            <ol id="participantTimeline" class="participant-timeline">
-              <li data-stage="received"><span class="timeline-dot">1</span><div><strong>Registrasi Diterima</strong><small>Data pendaftaran telah masuk ke sistem.</small><span class="timeline-state">Menunggu</span></div></li>
-              <li data-stage="review"><span class="timeline-dot">2</span><div><strong>Pemeriksaan Data</strong><small>Admin memeriksa data dan kelengkapan peserta.</small><span class="timeline-state">Menunggu</span></div></li>
-              <li data-stage="verified"><span class="timeline-dot">3</span><div><strong>Terverifikasi</strong><small>Data peserta dinyatakan telah terverifikasi.</small><span class="timeline-state">Menunggu</span></div></li>
-              <li data-stage="certificate"><span class="timeline-dot">4</span><div><strong>Sertifikat Digital</strong><small>Sertifikat tersedia untuk peserta terverifikasi.</small><span class="timeline-state">Menunggu</span></div></li>
-            </ol>
-            <div id="progressAlert" class="progress-alert" hidden></div>
-          </article>
+          <div class="dashboard-primary-column">
+            <article class="card progress-card" aria-labelledby="progressTitle">
+              <div class="progress-head">
+                <div><span class="badge">STATUS &amp; TAHAPAN PROGRAM</span><h3 id="progressTitle">Perjalanan Pendaftaran Anda</h3></div>
+                <p id="progressSummary">Status proses sedang dimuat.</p>
+              </div>
+              <ol id="participantTimeline" class="participant-timeline">
+                <li data-stage="received"><span class="timeline-dot">1</span><div><strong>Registrasi Diterima</strong><small>Data pendaftaran telah masuk ke sistem.</small><span class="timeline-state">Menunggu</span></div></li>
+                <li data-stage="review"><span class="timeline-dot">2</span><div><strong>Pemeriksaan Data</strong><small>Admin memeriksa data dan kelengkapan peserta.</small><span class="timeline-state">Menunggu</span></div></li>
+                <li data-stage="verified"><span class="timeline-dot">3</span><div><strong>Terverifikasi</strong><small>Data peserta dinyatakan telah terverifikasi.</small><span class="timeline-state">Menunggu</span></div></li>
+                <li data-stage="certificate"><span class="timeline-dot">4</span><div><strong>Sertifikat Digital</strong><small>Sertifikat tersedia untuk peserta terverifikasi.</small><span class="timeline-state">Menunggu</span></div></li>
+              </ol>
+              <div id="progressAlert" class="progress-alert" hidden></div>
+            </article>
+
+            <article id="adminNoteCard" class="card admin-note-card" hidden>
+              <div class="notice-icon" aria-hidden="true">i</div>
+              <div><span class="badge">CATATAN DARI ADMIN</span><h3>Catatan Pemeriksaan</h3><p id="adminNoteText" class="admin-note-text"></p></div>
+            </article>
+          </div>
 
           <aside class="card quick-actions-card" aria-labelledby="quickActionsTitle">
             <span class="badge">AKSI PESERTA</span>
@@ -169,11 +176,6 @@
             <div id="statusNote" class="status-note">Status akun sedang dimuat.</div>
           </aside>
         </div>
-
-        <article id="adminNoteCard" class="card admin-note-card" hidden>
-          <div class="notice-icon" aria-hidden="true">i</div>
-          <div><span class="badge">CATATAN DARI ADMIN</span><h3>Catatan Pemeriksaan</h3><p id="adminNoteText" class="admin-note-text"></p></div>
-        </article>
 
         <article id="revisionCard" class="card revision-card" hidden>
           <span class="badge">PERBAIKAN DATA</span>
