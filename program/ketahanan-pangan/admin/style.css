@@ -2641,3 +2641,37 @@ main.wrap{
 .marketing-dashboard[hidden]{display:none!important}.marketing-dashboard-head{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;margin-bottom:18px}.marketing-dashboard-head h2{margin:4px 0 6px}.marketing-dashboard-head p{margin:0;color:#637168;max-width:720px}.marketing-kpi-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:16px}.marketing-kpi-grid article{padding:16px;border:1px solid #e2ece5;border-radius:14px;background:#f9fcfa}.marketing-kpi-grid small,.marketing-kpi-grid span{display:block;color:#68766d}.marketing-kpi-grid strong{display:block;font-size:28px;line-height:1.1;margin:5px 0;color:#176b3a}.marketing-chart-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.marketing-chart-card{border:1px solid #e2ece5;border-radius:14px;padding:16px;background:#fff}.marketing-chart-wide{grid-column:1/-1}.marketing-chart-title{display:flex;flex-direction:column;margin-bottom:14px}.marketing-chart-title span{font-size:12px;color:#6b776f;margin-top:3px}.marketing-bar-row{margin:0 0 11px}.marketing-bar-label{display:flex;justify-content:space-between;gap:12px;font-size:12px;margin-bottom:5px}.marketing-bar-label span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.marketing-bar-track{height:9px;border-radius:999px;background:#edf3ef;overflow:hidden}.marketing-bar-track span{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,#176b3a,#35a863)}.marketing-bars-status .marketing-bar-track span{background:linear-gradient(90deg,#1d6b47,#4aa66d)}.marketing-privacy-note{margin:14px 0 0;padding:11px 13px;border-radius:12px;background:#f3f8f5;color:#526158;font-size:12px}
 @media(max-width:820px){.marketing-dashboard{padding:16px}.marketing-dashboard-head{flex-direction:column}.marketing-dashboard-head .admin-export-excel{width:100%}.marketing-kpi-grid{grid-template-columns:1fr 1fr}.marketing-chart-grid{grid-template-columns:1fr}.marketing-chart-wide{grid-column:auto}}
 @media(max-width:480px){.marketing-kpi-grid{grid-template-columns:1fr}.marketing-kpi-grid article{padding:13px}.marketing-kpi-grid strong{font-size:24px}}
+
+/* V3.3 — polish toggle Pengelola */
+.role-manager-accordion[open] .role-manager-list{
+  animation:roleManagerReveal .24s cubic-bezier(.2,.8,.2,1) both;
+  transform-origin:top center;
+}
+.role-manager-accordion summary:active{
+  background:#eaf6f1;
+}
+.role-manager-accordion summary strong{
+  display:inline-flex;
+  align-items:center;
+  min-width:0;
+}
+.role-manager-accordion[open]{
+  box-shadow:0 7px 18px rgba(14,92,64,.07);
+  border-color:#cfe5dc;
+}
+.role-manager-person{
+  transition:transform .18s ease,background .18s ease,box-shadow .18s ease;
+}
+.role-manager-person:hover{
+  transform:translateY(-1px);
+  background:#f3faf7;
+  box-shadow:0 4px 12px rgba(13,83,59,.06);
+}
+@keyframes roleManagerReveal{
+  from{opacity:0;transform:translateY(-5px) scaleY(.985)}
+  to{opacity:1;transform:translateY(0) scaleY(1)}
+}
+@media (prefers-reduced-motion:reduce){
+  .role-manager-accordion[open] .role-manager-list{animation:none}
+  .role-manager-chevron,.role-manager-person,.role-manager-accordion summary{transition:none!important}
+}
