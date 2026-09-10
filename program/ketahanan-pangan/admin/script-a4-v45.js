@@ -169,6 +169,52 @@ async function restoreAdminSession() {
   }
 }
 
+// V17 RBAC — lapisan pembatasan antarmuka berbasis role session.
+// Catatan keamanan: otorisasi final tetap wajib ditegakkan oleh Admin API/Worker.
+function currentAdminRole() {
+  return currentAdminUser?.role || 'admin';
+}
+
+function isMarketingRole() {
+  return currentAdminRole() === 'pemasaran';
+}
+
+function applyDashboardRoleAccess(user) {
+  const role = user?.role || 'admin';
+  const marketing = role === 'pemasaran';
+  document.documentElement.dataset.adminRole = role;
+
+  const exportButton = document.getElementById('participantExportExcel');
+  if (exportButton) exportButton.hidden = marketing;
+
+  const flow = document.querySelector('.flow');
+  if (flow) flow.hidden = marketing;
+
+  const detailPanel = document.getElementById('registrationDetailPanel');
+  const certificatePanel = document.getElementById('certificatePanel');
+  if (marketing) {
+    if (detailPanel) detailPanel.hidden = true;
+    if (certificatePanel) certificatePanel.hidden = true;
+  }
+
+  const search = document.getElementById('participantSearch');
+  if (search) search.placeholder = marketing ? 'Cari wilayah / komoditas' : 'Cari nomor registrasi / nama';
+
+  const tableHeadRow = document.querySelector('#participantTableHead tr');
+  if (tableHeadRow) {
+    tableHeadRow.innerHTML = marketing
+      ? '<th>Wilayah</th><th>Komoditas</th><th>Tanggal</th><th>Status</th>'
+      : '<th>Nomor Registrasi</th><th>Nama</th><th>Wilayah</th><th>Tanggal</th><th>Status</th><th>Aksi</th>';
+  }
+
+  const heading = document.querySelector('.panel .panel-head h2');
+  const eyebrow = document.querySelector('.panel .panel-head .eyebrow');
+  if (marketing) {
+    if (heading) heading.textContent = 'Ringkasan Program';
+    if (eyebrow) eyebrow.textContent = 'PEMETAAN & STATUS';
+  }
+}
+
 function setAuthenticatedAdmin(user) {
   currentAdminUser = user;
   adminToken = 'session-authenticated';
@@ -201,6 +247,8 @@ function setAuthenticatedAdmin(user) {
   if (roleNoticeDescription) {
     roleNoticeDescription.textContent = roleDescription(user.role);
   }
+
+  applyDashboardRoleAccess(user);
 }
 
 function showAdminLogin() {
@@ -391,39 +439,41 @@ if (tableBody) {
       statusLabel = 'Perlu Tindakan';
     }
 
-    row.innerHTML = `
-      <td>${escapeHtml(item.registration_id || '-')}</td>
-      <td>${escapeHtml(item.nama || '-')}</td>
-      <td>${escapeHtml(wilayah || '-')}</td>
-      <td>${escapeHtml(tanggal)}</td>
-      <td>${Number(item.is_duplicate || 0) === 1
-          ? '<span class="status-duplicate-label">Duplikat / Tidak Aktif</span>'
-          : escapeHtml(statusLabel)}</td>
-      <td>
-        <button
-  type="button"
-  class="detail-button"
-  data-registration-id="${escapeHtml(item.registration_id || '')}"
->
-  Detail
-</button>
-      </td>
-    `;
+    if (isMarketingRole()) {
+      row.innerHTML = `
+        <td>${escapeHtml(wilayah || '-')}</td>
+        <td>${escapeHtml(item.komoditas || '-')}</td>
+        <td>${escapeHtml(tanggal)}</td>
+        <td>${escapeHtml(statusLabel)}</td>
+      `;
+    } else {
+      row.innerHTML = `
+        <td>${escapeHtml(item.registration_id || '-')}</td>
+        <td>${escapeHtml(item.nama || '-')}</td>
+        <td>${escapeHtml(wilayah || '-')}</td>
+        <td>${escapeHtml(tanggal)}</td>
+        <td>${Number(item.is_duplicate || 0) === 1
+            ? '<span class="status-duplicate-label">Duplikat / Tidak Aktif</span>'
+            : escapeHtml(statusLabel)}</td>
+        <td>
+          <button type="button" class="detail-button" data-registration-id="${escapeHtml(item.registration_id || '')}">Detail</button>
+        </td>
+      `;
+    }
 
     tableBody.appendChild(row);
     const detailButton = row.querySelector('.detail-button');
-
-if (detailButton) {
-  detailButton.addEventListener('click', () => {
-    loadRegistrationDetail(item.registration_id);
-  });
-}
+    if (detailButton) {
+      detailButton.addEventListener('click', () => {
+        loadRegistrationDetail(item.registration_id);
+      });
+    }
   });
 
   if (registrations.length === 0) {
     tableBody.innerHTML = `
       <tr>
-        <td colspan="6">
+        <td colspan="${isMarketingRole() ? 4 : 6}">
           <div class="empty">
             <strong>Belum ada data registrasi</strong>
           </div>
@@ -437,7 +487,7 @@ document.getElementById('loginMessage').textContent = '';
 
 // V8.9 Tahap 1: audit duplikasi hanya-baca setelah daftar utama tampil.
 // Tidak mengubah status, D1, R2, atau endpoint registrasi produksi.
-auditDuplicateRegistrations(registrations);
+if (!isMarketingRole()) auditDuplicateRegistrations(registrations);
   } catch (error) {
     console.error(
       'Ketahanan Pangan Admin: gagal memuat data registrasi.',
@@ -837,6 +887,10 @@ function renderRevisionHistory(revisions) {
 }
 
 async function loadRegistrationDetail(registrationId) {
+  if (isMarketingRole()) {
+    showAdminToast('error', 'Akses Dibatasi', 'Role Pemasaran tidak memiliki akses ke detail identitas peserta.');
+    return;
+  }
   try {
     const response = await fetch(
       `${API_URL}/${encodeURIComponent(registrationId)}`,
@@ -1642,7 +1696,9 @@ function applyAdminParticipantFilters() {
     if (!item) return;
 
     const haystack = normalizeAdminFilterText(
-      `${item.registration_id || ''} ${item.nama || ''}`
+      isMarketingRole()
+        ? `${adminRegistrationRegion(item)} ${item.komoditas || ''}`
+        : `${item.registration_id || ''} ${item.nama || ''}`
     );
     const itemStatus = normalizeAdminFilterText(item.status);
     const itemRegion = normalizeAdminFilterText(adminRegistrationRegion(item));
@@ -1723,7 +1779,9 @@ function getFilteredAdminRegistrations() {
 
   return registrations.filter((item) => {
     const haystack = normalizeAdminFilterText(
-      `${item.registration_id || ''} ${item.nama || ''}`
+      isMarketingRole()
+        ? `${adminRegistrationRegion(item)} ${item.komoditas || ''}`
+        : `${item.registration_id || ''} ${item.nama || ''}`
     );
     const itemStatus = normalizeAdminFilterText(item.status);
     const itemRegion = normalizeAdminFilterText(adminRegistrationRegion(item));
@@ -1843,6 +1901,10 @@ function buildParticipantWorkbook(registrations) {
 }
 
 async function exportFilteredParticipantsToExcel() {
+  if (isMarketingRole()) {
+    showAdminToast('error', 'Akses Dibatasi', 'Excel A4 V45 hanya tersedia untuk Admin dan Super Administrator.');
+    return;
+  }
   const registrations = getFilteredAdminRegistrations();
   if (!registrations.length) { alert('Tidak ada peserta pada hasil filter yang dapat diekspor.'); return; }
   if (!adminToken) { alert('Session Admin tidak tersedia. Silakan login ulang.'); return; }
