@@ -221,10 +221,10 @@
                 <span class="account-nav-icon" aria-hidden="true">🔐</span>
                 <span><strong>Ubah Password Saya</strong><small>Perbarui password akun</small></span>
               </button>
-              <div class="account-nav-info">
+              <button id="roleFunctionToggle" type="button" class="account-nav-button">
                 <span class="account-nav-icon" aria-hidden="true">ⓘ</span>
-                <span><strong>Informasi</strong><small>Hak akses mengikuti role akun</small></span>
-              </div>
+                <span><strong>Fungsi Peran</strong><small>Peran & pengelola dashboard</small></span>
+              </button>
             </nav>
 
             <div class="account-security-content">
@@ -241,6 +241,31 @@
                 <div class="account-note-box"><strong>Persyaratan password</strong><span>Minimal 10 karakter serta memuat huruf besar, huruf kecil, angka, dan simbol. Setelah berhasil, Anda akan diminta login kembali.</span></div>
                 <div class="account-form-actions"><button type="submit" class="account-security-button account-security-button-primary">🔑 Simpan Password</button></div>
               </form>
+
+              <section id="roleFunctionPanel" class="role-function-panel" hidden>
+                <div class="account-section-heading">
+                  <div><span class="account-section-icon" aria-hidden="true">ⓘ</span><div><h3>Fungsi Peran & Pengelola Dashboard</h3><p>Ringkasan fungsi setiap peran dan identitas pengelola yang sedang menggunakan dashboard.</p></div></div>
+                  <span id="currentRoleIdentity" class="account-role-badge">Peran aktif</span>
+                </div>
+                <div class="role-function-grid">
+                  <article class="role-function-card" data-role-card="super_admin">
+                    <div class="role-function-head"><span class="role-function-icon">🛡️</span><div><strong>Super Administrator</strong><small>Penanggung Jawab Teknologi Sistem</small></div></div>
+                    <p>Kelola keamanan sistem, akun & role, konfigurasi teknis, audit, database/API, serta pengawasan akses dashboard.</p>
+                    <div class="role-manager-line"><span>Pengelola</span><strong id="roleManagersSuper">—</strong></div>
+                  </article>
+                  <article class="role-function-card" data-role-card="admin">
+                    <div class="role-function-head"><span class="role-function-icon">✅</span><div><strong>Admin</strong><small>Pengelola Operasional Program</small></div></div>
+                    <p>Kelola data peserta, verifikasi, revisi, anti-duplikasi, dokumen, kartu/sertifikat, dan kebutuhan operasional program.</p>
+                    <div class="role-manager-line"><span>Pengelola</span><strong id="roleManagersAdmin">—</strong></div>
+                  </article>
+                  <article class="role-function-card" data-role-card="pemasaran">
+                    <div class="role-function-head"><span class="role-function-icon">📣</span><div><strong>Pemasaran</strong><small>Pemasaran & Komunikasi Program</small></div></div>
+                    <p>Fokus pada komunikasi program, pemetaan wilayah/komoditas, statistik, dan laporan pemasaran tanpa akses data sensitif peserta.</p>
+                    <div class="role-manager-line"><span>Pengelola</span><strong id="roleManagersMarketing">—</strong></div>
+                  </article>
+                </div>
+                <div class="account-note-box role-function-note"><strong>Identitas sesi</strong><span id="roleFunctionCurrentUser">Pengguna aktif akan ditampilkan di sini.</span></div>
+              </section>
 
               <div id="userManagementPanel" class="user-management-panel" hidden>
                 <div class="user-management-title">
@@ -399,6 +424,6 @@
     <script src="./local-qrcode.js?v=1" defer></script>
     <script src="./jszip.min.js?v=1" defer></script>
     <script src="./excel-engine-template.js?v=45" defer></script>
-    <script src="./script-a4-v45.js?v=17.2.2" defer></script>
+    <script src="./script-a4-v45.js?v=17.3" defer></script>
   </body>
 </html>

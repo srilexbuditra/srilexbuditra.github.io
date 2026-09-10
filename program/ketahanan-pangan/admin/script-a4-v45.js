@@ -1949,10 +1949,13 @@ else initAdminExcelExport();
 function initAccountSecurityForUser(user) {
   const panel = document.getElementById('accountSecurityPanel');
   const managementToggle = document.getElementById('userManagementToggle');
+  const roleFunctionToggle = document.getElementById('roleFunctionToggle');
+  const roleFunctionPanel = document.getElementById('roleFunctionPanel');
   if (!panel) return;
   panel.hidden = false;
   if (managementToggle) managementToggle.hidden = user?.role !== 'super_admin';
   bindAccountSecurityEvents();
+  renderRoleFunctionPanel(user);
   const managementPanel = document.getElementById('userManagementPanel');
   const ownForm = document.getElementById('changeOwnPasswordForm');
   if (user?.role === 'super_admin') {
@@ -1964,6 +1967,9 @@ function initAccountSecurityForUser(user) {
   } else {
     if (managementPanel) managementPanel.hidden = true;
     managementToggle?.classList.remove('is-active');
+    if (roleFunctionPanel) roleFunctionPanel.hidden = false;
+    roleFunctionToggle?.classList.add('is-active');
+    document.getElementById('changeOwnPasswordToggle')?.classList.remove('is-active');
   }
 }
 
@@ -1977,6 +1983,8 @@ function bindAccountSecurityEvents() {
   const cancelOwn = document.getElementById('cancelOwnPassword');
   const managementToggle = document.getElementById('userManagementToggle');
   const managementPanel = document.getElementById('userManagementPanel');
+  const roleFunctionToggle = document.getElementById('roleFunctionToggle');
+  const roleFunctionPanel = document.getElementById('roleFunctionPanel');
   const refresh = document.getElementById('refreshAdminUsers');
   const createForm = document.getElementById('createAdminUserForm');
   const createToggle = document.getElementById('createAdminUserToggle');
@@ -1990,14 +1998,20 @@ function bindAccountSecurityEvents() {
     const willOpen = ownForm.hidden;
     ownForm.hidden = !willOpen;
     if (willOpen && managementPanel) managementPanel.hidden = true;
+    if (willOpen && roleFunctionPanel) roleFunctionPanel.hidden = true;
     ownToggle.classList.toggle('is-active', willOpen);
     managementToggle?.classList.toggle('is-active', false);
+    roleFunctionToggle?.classList.toggle('is-active', false);
     if (willOpen) document.getElementById('currentAccountPassword')?.focus();
   });
   cancelOwn?.addEventListener('click', () => {
     if (!ownForm) return;
     ownForm.reset(); ownForm.hidden = true; ownToggle?.classList.remove('is-active');
-    if (currentAdminUser?.role === 'super_admin' && managementPanel) { managementPanel.hidden=false; managementToggle?.classList.add('is-active'); }
+    if (currentAdminUser?.role === 'super_admin' && managementPanel) {
+      managementPanel.hidden=false; managementToggle?.classList.add('is-active');
+    } else if (roleFunctionPanel) {
+      roleFunctionPanel.hidden=false; roleFunctionToggle?.classList.add('is-active');
+    }
   });
   ownForm?.addEventListener('submit', submitOwnPasswordChange);
 
@@ -2005,10 +2019,23 @@ function bindAccountSecurityEvents() {
     if (!managementPanel) return;
     managementPanel.hidden = false;
     if (ownForm) ownForm.hidden = true;
+    if (roleFunctionPanel) roleFunctionPanel.hidden = true;
     managementToggle.classList.add('is-active');
     ownToggle?.classList.remove('is-active');
+    roleFunctionToggle?.classList.remove('is-active');
     await loadAdminUsers();
   });
+  roleFunctionToggle?.addEventListener('click', () => {
+    if (!roleFunctionPanel) return;
+    roleFunctionPanel.hidden = false;
+    if (ownForm) ownForm.hidden = true;
+    if (managementPanel) managementPanel.hidden = true;
+    roleFunctionToggle.classList.add('is-active');
+    ownToggle?.classList.remove('is-active');
+    managementToggle?.classList.remove('is-active');
+    renderRoleFunctionPanel(currentAdminUser);
+  });
+
   collapse?.addEventListener('click', () => {
     if (!body) return;
     const willClose = !body.hidden;
@@ -2066,28 +2093,116 @@ async function loadAdminUsers() {
 function renderAdminUsers(users) {
   const list = document.getElementById('adminUsersList');
   if (!list) return;
+  renderRoleFunctionPanel(currentAdminUser, users);
   if (!users.length) { list.innerHTML='<p class="account-empty">Belum ada akun.</p>'; return; }
-  list.innerHTML = users.map(user => {
+
+  const roleOrder = {super_admin:0, admin:1, pemasaran:2};
+  const sorted = [...users].sort((a,b) => {
+    const ra = roleOrder[a.role] ?? 9, rb = roleOrder[b.role] ?? 9;
+    if (ra !== rb) return ra-rb;
+    return String(a.display_name||a.username).localeCompare(String(b.display_name||b.username),'id');
+  });
+
+  list.innerHTML = sorted.map(user => {
     const owner = Number(user.is_owner) === 1;
     const roleOptions = owner
       ? '<option value="super_admin" selected>Super Admin</option>'
       : `<option value="admin" ${user.role==='admin'?'selected':''}>Admin</option><option value="pemasaran" ${user.role==='pemasaran'?'selected':''}>Pemasaran</option>`;
-    return `<article class="admin-user-card" data-user-id="${Number(user.id)}">
-      <div class="admin-user-summary"><div><strong>${escapeV171Html(user.display_name || user.username)}</strong><span>@${escapeV171Html(user.username)} ${owner?'<b>OWNER</b>':''}</span></div><span class="admin-user-status ${Number(user.is_active)===1?'is-active':'is-inactive'}">${Number(user.is_active)===1?'Aktif':'Nonaktif'}</span></div>
-      <div class="admin-user-controls">
-        <label>Nama tampilan<input class="user-display-name" value="${escapeV171Attr(user.display_name || '')}" ${owner?'readonly':''}></label>
-        <label>Role<select class="user-role" ${owner?'disabled':''}>${roleOptions}</select></label>
-        <label>Status<select class="user-active" ${owner?'disabled':''}><option value="1" ${Number(user.is_active)===1?'selected':''}>Aktif</option><option value="0" ${Number(user.is_active)!==1?'selected':''}>Nonaktif</option></select></label>
+    const roleLabel = user.role === 'super_admin' ? 'Super Admin' : (user.role === 'pemasaran' ? 'Pemasaran' : 'Admin');
+    const roleClass = user.role === 'super_admin' ? 'role-super' : (user.role === 'pemasaran' ? 'role-marketing' : 'role-admin');
+
+    return `<article class="admin-user-card compact-user-card" data-user-id="${Number(user.id)}">
+      <div class="admin-user-compact-row">
+        <div class="admin-user-avatar" aria-hidden="true">${escapeV171Html((user.display_name||user.username||'?').trim().charAt(0).toUpperCase())}</div>
+        <div class="admin-user-summary">
+          <div><strong>${escapeV171Html(user.display_name || user.username)}</strong><span>@${escapeV171Html(user.username)} ${owner?'<b>OWNER</b>':''}</span></div>
+        </div>
+        <span class="admin-role-pill ${roleClass}">${roleLabel}</span>
+        <span class="admin-user-status ${Number(user.is_active)===1?'is-active':'is-inactive'}">${Number(user.is_active)===1?'Aktif':'Nonaktif'}</span>
+        <small class="admin-last-login">Login: ${escapeV171Html(user.last_login_at || 'Belum pernah')}</small>
+        <button type="button" class="account-security-button user-manage-toggle" aria-expanded="false">Kelola ▾</button>
       </div>
-      <div class="admin-user-card-actions">
-        ${owner?'':`<button type="button" class="account-security-button save-user-button">Simpan Perubahan</button>`}
-        <button type="button" class="account-security-button reset-user-password">Reset Password</button>
-        <small>Login terakhir: ${escapeV171Html(user.last_login_at || 'Belum pernah')}</small>
+      <div class="admin-user-edit-panel" hidden>
+        <div class="admin-user-controls">
+          <label>Nama tampilan<input class="user-display-name" value="${escapeV171Attr(user.display_name || '')}" ${owner?'readonly':''}></label>
+          <label>Role<select class="user-role" ${owner?'disabled':''}>${roleOptions}</select></label>
+          <label>Status<select class="user-active" ${owner?'disabled':''}><option value="1" ${Number(user.is_active)===1?'selected':''}>Aktif</option><option value="0" ${Number(user.is_active)!==1?'selected':''}>Nonaktif</option></select></label>
+        </div>
+        <div class="admin-user-card-actions">
+          ${owner?'':`<button type="button" class="account-security-button save-user-button">Simpan Perubahan</button>`}
+          <button type="button" class="account-security-button reset-user-password">Reset Password</button>
+          <button type="button" class="account-security-button user-manage-close">Tutup</button>
+        </div>
       </div>
     </article>`;
   }).join('');
+
+  list.querySelectorAll('.user-manage-toggle').forEach(btn => btn.addEventListener('click', toggleUserManagePanel));
+  list.querySelectorAll('.user-manage-close').forEach(btn => btn.addEventListener('click', closeUserManagePanel));
   list.querySelectorAll('.save-user-button').forEach(btn=>btn.addEventListener('click', updateAdminUser));
   list.querySelectorAll('.reset-user-password').forEach(btn=>btn.addEventListener('click', resetAdminUserPassword));
+}
+
+function toggleUserManagePanel(event) {
+  const card = event.currentTarget.closest('.admin-user-card');
+  const panel = card?.querySelector('.admin-user-edit-panel');
+  if (!panel) return;
+  const open = panel.hidden;
+  document.querySelectorAll('.admin-user-edit-panel:not([hidden])').forEach(other => {
+    if (other !== panel) {
+      other.hidden = true;
+      const otherButton = other.closest('.admin-user-card')?.querySelector('.user-manage-toggle');
+      if (otherButton) { otherButton.setAttribute('aria-expanded','false'); otherButton.textContent='Kelola ▾'; }
+    }
+  });
+  panel.hidden = !open;
+  event.currentTarget.setAttribute('aria-expanded', open ? 'true' : 'false');
+  event.currentTarget.textContent = open ? 'Kelola ▴' : 'Kelola ▾';
+}
+
+function closeUserManagePanel(event) {
+  const card = event.currentTarget.closest('.admin-user-card');
+  const panel = card?.querySelector('.admin-user-edit-panel');
+  const toggle = card?.querySelector('.user-manage-toggle');
+  if (panel) panel.hidden = true;
+  if (toggle) { toggle.setAttribute('aria-expanded','false'); toggle.textContent='Kelola ▾'; }
+}
+
+function renderRoleFunctionPanel(user, users = null) {
+  if (!user) return;
+  const identity = document.getElementById('currentRoleIdentity');
+  const current = document.getElementById('roleFunctionCurrentUser');
+  const roleMap = {
+    super_admin: ['roleManagersSuper','Super Administrator'],
+    admin: ['roleManagersAdmin','Admin'],
+    pemasaran: ['roleManagersMarketing','Pemasaran']
+  };
+  const roleLabel = roleMap[user.role]?.[1] || 'Pengguna';
+  if (identity) identity.textContent = `${roleLabel} · ${user.display_name || user.username}`;
+  if (current) current.textContent = `Anda masuk sebagai ${roleLabel}: ${user.display_name || user.username} (@${user.username || '-'})`;
+
+  const nameTargets = {
+    super_admin: document.getElementById('roleManagersSuper'),
+    admin: document.getElementById('roleManagersAdmin'),
+    pemasaran: document.getElementById('roleManagersMarketing')
+  };
+  Object.values(nameTargets).forEach(el => { if (el) el.textContent = 'Belum ditampilkan'; });
+
+  if (Array.isArray(users) && currentAdminUser?.role === 'super_admin') {
+    for (const role of ['super_admin','admin','pemasaran']) {
+      const names = users
+        .filter(item => item.role === role && Number(item.is_active) === 1)
+        .map(item => item.display_name || item.username)
+        .filter(Boolean);
+      if (nameTargets[role]) nameTargets[role].textContent = names.length ? names.join(', ') : 'Belum ada pengelola aktif';
+    }
+  } else if (nameTargets[user.role]) {
+    nameTargets[user.role].textContent = user.display_name || user.username;
+  }
+
+  document.querySelectorAll('.role-function-card').forEach(card => {
+    card.classList.toggle('is-current-role', card.dataset.roleCard === user.role);
+  });
 }
 
 async function createAdminUser(event) {

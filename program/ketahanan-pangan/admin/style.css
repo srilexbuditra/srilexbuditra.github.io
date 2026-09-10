@@ -2554,3 +2554,53 @@ main.wrap{
 .account-info-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.account-info-card{display:flex;gap:10px;padding:12px;border:1px solid #dcebe5;border-radius:12px;background:#f4fbf7;color:#315b4d}.account-info-card-blue{border-color:#cfe2f5;background:#f1f7fe;color:#285783}.account-info-card>span{font-size:18px}.account-info-card strong{display:block;font-size:10px}.account-info-card p{margin:3px 0 0;font-size:9px;line-height:1.5}
 @media(max-width:900px){.account-security-layout{grid-template-columns:1fr}.account-security-nav{grid-template-columns:1fr 1fr}.account-nav-info{display:none}.account-form-grid-four{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:760px){.account-security-panel{border-radius:14px}.account-security-banner{align-items:flex-start;padding:14px}.account-security-brand-icon{width:42px;height:42px;flex-basis:42px}.account-security-banner h2{font-size:16px}.account-security-banner p{font-size:10px}.account-security-body{padding:10px}.account-security-nav{grid-template-columns:1fr;padding:6px}.user-management-title,.account-section-heading,.admin-user-card-actions{align-items:stretch;flex-direction:column}.account-section-actions,.account-section-actions .account-security-button{width:100%}.account-role-badge{justify-content:center}.account-form-grid,.account-form-grid-four,.admin-user-controls,.account-info-grid{grid-template-columns:1fr}.admin-user-card-actions .account-security-button{width:100%}.admin-user-card-actions small{margin-left:0}.account-note-box{flex-direction:column}.account-create-form{padding:12px}}
+
+
+/* V17.3 — Pengelola dashboard & scalable account list (FIT-ONLY) */
+.role-function-panel[hidden],.admin-user-edit-panel[hidden]{display:none!important}
+.role-function-panel{display:grid;gap:12px}
+.role-function-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.role-function-card{border:1px solid #dbe9e3;border-radius:13px;background:#fff;padding:13px;box-shadow:0 4px 14px rgba(12,72,50,.04)}
+.role-function-card.is-current-role{border-color:#7dcfb0;background:#f1fbf6;box-shadow:inset 0 0 0 1px rgba(8,150,95,.12)}
+.role-function-head{display:flex;align-items:center;gap:9px}
+.role-function-icon{display:grid;place-items:center;width:34px;height:34px;flex:0 0 34px;border-radius:10px;background:#e9f8f1;font-size:17px}
+.role-function-card strong{display:block;color:#143f32;font-size:11px}
+.role-function-card small{display:block;margin-top:2px;color:#74827d;font-size:8px;line-height:1.3}
+.role-function-card p{min-height:56px;margin:9px 0;color:#5e716a;font-size:9px;line-height:1.5}
+.role-manager-line{display:grid;gap:3px;padding-top:9px;border-top:1px solid #e5efeb}
+.role-manager-line span{color:#7a8882;font-size:8px;text-transform:uppercase;letter-spacing:.06em;font-weight:800}
+.role-manager-line strong{font-size:9px;line-height:1.45}
+.role-function-note{margin-top:0}
+
+.compact-user-card{padding:0!important}
+.admin-user-compact-row{display:grid;grid-template-columns:36px minmax(150px,1.5fr) auto auto minmax(120px,.8fr) auto;align-items:center;gap:10px;padding:11px 13px}
+.admin-user-avatar{display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:#e9f7f1;color:#08714d;font-size:12px;font-weight:900}
+.admin-user-compact-row .admin-user-summary{display:block}
+.admin-role-pill{display:inline-flex;align-items:center;justify-content:center;min-width:76px;padding:5px 8px;border-radius:999px;font-size:8px;font-weight:900;white-space:nowrap}
+.admin-role-pill.role-super{background:#eee9ff;color:#6447ad}
+.admin-role-pill.role-admin{background:#e6f2ff;color:#23639a}
+.admin-role-pill.role-marketing{background:#e9f8ec;color:#2a7a3a}
+.admin-last-login{color:#72817b;font-size:8px;line-height:1.35}
+.user-manage-toggle{white-space:nowrap}
+.admin-user-edit-panel{padding:0 13px 12px;border-top:1px dashed #dbe8e2;background:#fbfdfc}
+.admin-user-edit-panel .admin-user-controls{margin-top:11px}
+.admin-user-edit-panel .admin-user-card-actions{justify-content:flex-start}
+.admin-user-edit-panel .admin-user-card-actions small{display:none}
+
+@media(max-width:1050px){
+  .admin-user-compact-row{grid-template-columns:36px minmax(140px,1fr) auto auto auto}
+  .admin-last-login{grid-column:2/6}
+}
+@media(max-width:900px){
+  .account-security-nav{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .role-function-grid{grid-template-columns:1fr}
+  .role-function-card p{min-height:0}
+}
+@media(max-width:760px){
+  .account-security-nav{grid-template-columns:1fr}
+  .admin-user-compact-row{grid-template-columns:34px 1fr auto;gap:8px}
+  .admin-role-pill{grid-column:2}
+  .admin-user-status{grid-column:3;grid-row:1}
+  .admin-last-login{grid-column:2/4}
+  .user-manage-toggle{grid-column:2/4;width:100%}
+}
