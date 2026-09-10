@@ -157,6 +157,7 @@ function renderParticipantTimeline(status) {
   const summary = document.getElementById('progressSummary');
   const alert = document.getElementById('progressAlert');
   if (!timeline || !summary || !alert) return;
+  timeline.dataset.status = s || 'pending';
 
   const items = [...timeline.querySelectorAll('li')];
   items.forEach(item => item.classList.remove('done', 'active', 'stopped'));
@@ -277,8 +278,12 @@ function showDashboard(p) {
 
   const statusHero = document.getElementById('statusHero');
   const nextActionCard = document.getElementById('nextActionCard');
+  const statusSummaryCard = document.getElementById('statusSummaryCard');
+  const dashStatusIcon = document.getElementById('dashStatusIcon');
   if (statusHero) statusHero.dataset.status = s || 'pending';
   if (nextActionCard) nextActionCard.dataset.status = s || 'pending';
+  if (statusSummaryCard) statusSummaryCard.dataset.status = s || 'pending';
+  if (dashStatusIcon) dashStatusIcon.textContent = presentation.icon || '⌕';
 
   renderParticipantTimeline(p.status);
 
