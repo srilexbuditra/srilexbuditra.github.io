@@ -2337,17 +2337,158 @@ function renderMarketingDashboard(registrations) {
   renderMarketingBars('marketingStatusChart', statuses, 10);
 }
 
-function downloadMarketingCsv() {
-  if (!isMarketingRole()) return;
-  const registrations=Array.isArray(window.KETAHANAN_PANGAN_REGISTRATIONS)?window.KETAHANAN_PANGAN_REGISTRATIONS:[];
-  const active=registrations.filter(item=>Number(item.is_duplicate||0)!==1);
-  const rows=[['Kategori','Nilai','Jumlah']];
-  marketingGroupCounts(active,item=>adminRegistrationRegion(item)).forEach(([v,n])=>rows.push(['Wilayah',v,n]));
-  marketingGroupCounts(active,item=>item.komoditas).forEach(([v,n])=>rows.push(['Komoditas',v,n]));
-  marketingGroupCounts(active,item=>marketingStatusText(item.status)).forEach(([v,n])=>rows.push(['Status',v,n]));
-  const csv='\ufeff'+rows.map(r=>r.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',')).join('\r\n');
-  const blob=new Blob([csv],{type:'text/csv;charset=utf-8'}); const url=URL.createObjectURL(blob);
-  const a=document.createElement('a'); a.href=url; a.download=`laporan-pemasaran-ketahanan-pangan-${new Date().toISOString().slice(0,10)}.csv`; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+// V17.4.2: Laporan Pemasaran XLSX profesional — hanya data agregat/non-sensitif.
+function marketingReportPeriod(registrations) {
+  const dates = registrations
+    .map(item => new Date(item.created_at))
+    .filter(date => !Number.isNaN(date.getTime()))
+    .sort((a,b) => a-b);
+  if (!dates.length) return 'Belum ada periode data';
+  const fmt = date => date.toLocaleDateString('id-ID', {day:'2-digit', month:'long', year:'numeric'});
+  const first = fmt(dates[0]);
+  const last = fmt(dates[dates.length-1]);
+  return first === last ? first : `${first} s.d. ${last}`;
 }
 
-document.getElementById('marketingReportCsv')?.addEventListener('click', downloadMarketingCsv);
+function buildMarketingWorkbook(registrations) {
+  const wb = XLSX.utils.book_new();
+  const active = registrations.filter(item => Number(item.is_duplicate || 0) !== 1);
+  const regions = marketingGroupCounts(active, item => adminRegistrationRegion(item));
+  const commodities = marketingGroupCounts(active, item => item.komoditas);
+  const statuses = marketingGroupCounts(active, item => marketingStatusText(item.status));
+  const verified = active.filter(item => item.status === 'verified').length;
+  const waiting = active.filter(item => item.status === 'submitted' || item.status === 'resubmitted').length;
+  const needsAction = active.filter(item => item.status === 'revision' || item.status === 'rejected' || item.status === 'needs_action').length;
+  const generatedAt = new Date().toLocaleString('id-ID');
+  const period = marketingReportPeriod(active);
+  const organization = 'PT Super Tani Indonesia · Didukung AY Group Agro Indonesia';
+
+  function makeReportSheet(title, subtitle, headers, rows, widths, mergeEnd) {
+    const aoa = [
+      [title],
+      [organization],
+      [subtitle],
+      [`Periode data: ${period} · Dibuat: ${generatedAt}`],
+      [],
+      headers,
+      ...rows
+    ];
+    const ws = XLSX.utils.aoa_to_sheet(aoa);
+    ws['!merges'] = [
+      XLSX.utils.decode_range(`A1:${mergeEnd}1`),
+      XLSX.utils.decode_range(`A2:${mergeEnd}2`),
+      XLSX.utils.decode_range(`A3:${mergeEnd}3`),
+      XLSX.utils.decode_range(`A4:${mergeEnd}4`)
+    ];
+    ws['!rows'] = aoa.map((_, i) => ({hpt: i === 0 ? 28 : i <= 3 ? 19 : i === 4 ? 8 : i === 5 ? 26 : 22}));
+    ws['!cols'] = widths.map(w => ({wch:w}));
+    ws['!freeze'] = {xSplit:0, ySplit:6, topLeftCell:'A7', activePane:'bottomLeft', state:'frozen'};
+    ws['!autofilter'] = {ref:`A6:${mergeEnd}${Math.max(6, aoa.length)}`};
+    ws['!margins'] = {left:0.25, right:0.25, top:0.35, bottom:0.35, header:0.15, footer:0.15};
+    ws['!pageSetup'] = {orientation:'portrait', paperSize:9, fitToWidth:1, fitToHeight:0};
+    return ws;
+  }
+
+  const summaryRows = [
+    ['Total Data Program', active.length, 'Ringkasan registrasi non-sensitif'],
+    ['Peserta Terverifikasi', verified, 'Status verified'],
+    ['Menunggu Verifikasi', waiting, 'Submitted + pemeriksaan ulang'],
+    ['Perlu Tindakan', needsAction, 'Perbaikan / ditolak / tindak lanjut'],
+    ['Wilayah Terjangkau', regions.filter(([name]) => name !== 'Belum diisi').length, 'Kabupaten / provinsi'],
+    ['Komoditas Tercatat', commodities.filter(([name]) => name !== 'Belum diisi').length, 'Jenis komoditas program']
+  ];
+  XLSX.utils.book_append_sheet(
+    wb,
+    makeReportSheet(
+      'LAPORAN PEMASARAN PROGRAM KETAHANAN PANGAN',
+      'Ringkasan eksekutif komunikasi, pemetaan wilayah, komoditas, dan status program.',
+      ['Indikator','Jumlah','Keterangan'],
+      summaryRows,
+      [30,14,42],
+      'C'
+    ),
+    'Ringkasan'
+  );
+
+  const regionRows = regions.map(([name,count], index) => [index+1, excelSafeText(name), count]);
+  XLSX.utils.book_append_sheet(
+    wb,
+    makeReportSheet(
+      'REKAP SEBARAN WILAYAH',
+      'Distribusi jumlah registrasi berdasarkan wilayah pada data Pemasaran yang tersanitasi.',
+      ['No.','Wilayah','Jumlah Registrasi'],
+      regionRows,
+      [7,42,20],
+      'C'
+    ),
+    'Rekap Wilayah'
+  );
+
+  const commodityRows = commodities.map(([name,count], index) => [index+1, excelSafeText(name), count]);
+  XLSX.utils.book_append_sheet(
+    wb,
+    makeReportSheet(
+      'REKAP KOMODITAS PROGRAM',
+      'Distribusi komoditas berdasarkan data registrasi non-sensitif.',
+      ['No.','Komoditas','Jumlah Registrasi'],
+      commodityRows,
+      [7,42,20],
+      'C'
+    ),
+    'Rekap Komoditas'
+  );
+
+  const statusRows = statuses.map(([name,count], index) => [index+1, excelSafeText(name), count]);
+  XLSX.utils.book_append_sheet(
+    wb,
+    makeReportSheet(
+      'REKAP STATUS PROGRAM',
+      'Ringkasan perkembangan status registrasi untuk kebutuhan komunikasi dan pemetaan program.',
+      ['No.','Status Program','Jumlah Registrasi'],
+      statusRows,
+      [7,42,20],
+      'C'
+    ),
+    'Rekap Status'
+  );
+
+  wb.Props = {
+    Title:'Laporan Pemasaran Program Ketahanan Pangan',
+    Subject:'Ringkasan non-sensitif untuk Pemasaran & Komunikasi Program',
+    Author:'Program Ketahanan Pangan',
+    Company:'PT Super Tani Indonesia',
+    Comments:'Tidak memuat NIK, KK, nama peserta, kontak, alamat lengkap, maupun dokumen KTP/KK.'
+  };
+  return wb;
+}
+
+async function downloadMarketingXlsx() {
+  if (!isMarketingRole()) return;
+  const registrations = Array.isArray(window.KETAHANAN_PANGAN_REGISTRATIONS)
+    ? window.KETAHANAN_PANGAN_REGISTRATIONS
+    : [];
+  const active = registrations.filter(item => Number(item.is_duplicate || 0) !== 1);
+  if (!active.length) {
+    showAdminToast('error', 'Laporan Belum Tersedia', 'Belum ada data Pemasaran yang dapat dibuat menjadi laporan.');
+    return;
+  }
+
+  const button = document.getElementById('marketingReportXlsx');
+  const originalLabel = button?.textContent || 'Unduh Laporan Pemasaran XLSX';
+  try {
+    if (button) { button.disabled = true; button.textContent = 'Menyiapkan Excel...'; }
+    await ensureExcelEngineLoaded();
+    if (button) button.textContent = 'Membuat laporan...';
+    const wb = buildMarketingWorkbook(active);
+    const now = new Date();
+    const stamp = now.getFullYear()+String(now.getMonth()+1).padStart(2,'0')+String(now.getDate()).padStart(2,'0')+'-'+String(now.getHours()).padStart(2,'0')+String(now.getMinutes()).padStart(2,'0');
+    XLSX.writeFile(wb, `laporan-pemasaran-ketahanan-pangan-${stamp}.xlsx`, {bookType:'xlsx', compression:true});
+  } catch (error) {
+    console.error('Ketahanan Pangan Pemasaran: ekspor XLSX gagal.', error);
+    showAdminToast('error', 'Laporan Gagal', error.message || 'Laporan Pemasaran XLSX gagal dibuat.');
+  } finally {
+    if (button) { button.disabled = false; button.textContent = originalLabel; }
+  }
+}
+
+document.getElementById('marketingReportXlsx')?.addEventListener('click', downloadMarketingXlsx);
