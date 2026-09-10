@@ -2843,3 +2843,79 @@ main.wrap{
 }
 @media(max-width:420px){.status-quick-grid{grid-template-columns:1fr}.status-quick-card{min-height:58px}}
 @media(prefers-reduced-motion:reduce){.status-quick-card{transition:none!important}}
+
+
+/* =========================================================
+   V3.6 — PAGINASI DAFTAR REGISTRASI
+   Client-side only; filter dan ekspor tetap mencakup seluruh hasil.
+   ========================================================= */
+.admin-pagination{
+  display:grid;
+  grid-template-columns:minmax(150px,1fr) auto minmax(330px,1fr);
+  align-items:center;
+  gap:14px;
+  padding:14px 18px;
+  border-top:1px solid #e1eae5;
+  background:linear-gradient(180deg,#fbfdfc,#f7faf8);
+}
+.admin-pagination[hidden]{display:none!important}
+.admin-pagination-summary{display:flex;align-items:baseline;gap:5px;color:#617068;font-size:12px}
+.admin-pagination-summary strong{font-size:14px;color:#214f39}
+.admin-pagination-summary b{color:#405148}
+.admin-page-size{display:flex;align-items:center;justify-content:center;gap:7px;color:#66766d;font-size:11px;font-weight:750}
+.admin-page-size select{
+  min-height:34px;
+  min-width:66px;
+  padding:0 25px 0 9px;
+  border:1px solid #d2dfd7;
+  border-radius:9px;
+  background:#fff;
+  color:#214f39;
+  font:inherit;
+  font-weight:850;
+}
+.admin-pagination-controls{display:flex;align-items:center;justify-content:flex-end;gap:8px}
+.admin-pagination-controls button{
+  min-height:36px;
+  padding:0 12px;
+  border:1px solid #cbdad1;
+  border-radius:10px;
+  background:#fff;
+  color:#17633f;
+  font:inherit;
+  font-size:11px;
+  font-weight:850;
+  cursor:pointer;
+  transition:background .18s ease,border-color .18s ease,transform .18s ease;
+}
+.admin-pagination-controls button:hover:not(:disabled){background:#edf7f2;border-color:#aed0bd;transform:translateY(-1px)}
+.admin-pagination-controls button:focus-visible,.admin-page-size select:focus-visible{outline:2px solid #0e9a67;outline-offset:2px}
+.admin-pagination-controls button:disabled{opacity:.42;cursor:not-allowed}
+#participantPageLabel{
+  min-width:104px;
+  padding:7px 9px;
+  border-radius:9px;
+  background:#edf5f1;
+  color:#365747;
+  font-size:10px;
+  font-weight:850;
+  text-align:center;
+  white-space:nowrap;
+}
+.participant-empty-filter{padding:32px 18px!important}
+.participant-empty-filter>span{font-size:1.55rem!important;color:#658276}
+.participant-empty-filter strong{margin-top:7px!important}
+.participant-empty-filter p{font-size:12px}
+@media(max-width:900px){
+  .admin-pagination{grid-template-columns:1fr auto}
+  .admin-pagination-controls{grid-column:1/-1;justify-content:space-between}
+}
+@media(max-width:560px){
+  .admin-pagination{grid-template-columns:1fr;padding:13px 12px;gap:10px}
+  .admin-pagination-summary{justify-content:center}
+  .admin-page-size{justify-content:center}
+  .admin-pagination-controls{grid-column:auto;display:grid;grid-template-columns:1fr auto 1fr}
+  .admin-pagination-controls button{padding:0 8px;min-width:0}
+  #participantPageLabel{min-width:92px}
+}
+@media(prefers-reduced-motion:reduce){.admin-pagination-controls button{transition:none!important}}

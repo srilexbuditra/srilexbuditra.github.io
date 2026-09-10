@@ -433,6 +433,7 @@ if (tableBody) {
 
   registrations.forEach((item) => {
     const row = document.createElement('tr');
+    row.dataset.participantRow = '1';
 
     const wilayah = [
       item.kabupaten,
@@ -1724,11 +1725,51 @@ function refreshAdminRegionOptions(registrations) {
   if (regions.includes(current)) select.value = current;
 }
 
-function applyAdminParticipantFilters() {
+const ADMIN_PARTICIPANT_PAGINATION = {
+  page: 1,
+  pageSize: 10
+};
+
+function adminParticipantPageSize() {
+  const value = Number(document.getElementById('participantPageSize')?.value || ADMIN_PARTICIPANT_PAGINATION.pageSize || 10);
+  return [10, 25, 50, 100].includes(value) ? value : 10;
+}
+
+function renderAdminParticipantPagination(totalMatches) {
+  const wrap = document.getElementById('participantPagination');
+  if (!wrap) return;
+
+  const pageSize = adminParticipantPageSize();
+  const pageCount = Math.max(1, Math.ceil(totalMatches / pageSize));
+  ADMIN_PARTICIPANT_PAGINATION.page = Math.min(Math.max(1, ADMIN_PARTICIPANT_PAGINATION.page), pageCount);
+  ADMIN_PARTICIPANT_PAGINATION.pageSize = pageSize;
+
+  const page = ADMIN_PARTICIPANT_PAGINATION.page;
+  const start = totalMatches ? ((page - 1) * pageSize) + 1 : 0;
+  const end = totalMatches ? Math.min(page * pageSize, totalMatches) : 0;
+
+  const range = document.getElementById('participantPageRange');
+  const total = document.getElementById('participantFilteredTotal');
+  const label = document.getElementById('participantPageLabel');
+  const prev = document.getElementById('participantPrevPage');
+  const next = document.getElementById('participantNextPage');
+
+  if (range) range.textContent = `${start}–${end}`;
+  if (total) total.textContent = String(totalMatches);
+  if (label) label.textContent = `Halaman ${totalMatches ? page : 0} dari ${totalMatches ? pageCount : 0}`;
+  if (prev) prev.disabled = !totalMatches || page <= 1;
+  if (next) next.disabled = !totalMatches || page >= pageCount;
+
+  wrap.hidden = totalMatches === 0;
+}
+
+function applyAdminParticipantFilters(options = {}) {
   const registrations =
     Array.isArray(window.KETAHANAN_PANGAN_REGISTRATIONS)
       ? window.KETAHANAN_PANGAN_REGISTRATIONS
       : [];
+
+  if (!options.preservePage) ADMIN_PARTICIPANT_PAGINATION.page = 1;
 
   const search = normalizeAdminFilterText(
     document.getElementById('participantSearch')?.value
@@ -1740,12 +1781,15 @@ function applyAdminParticipantFilters() {
     document.getElementById('participantRegionFilter')?.value
   );
 
-  const rows = document.querySelectorAll('.table-wrap tbody tr');
-  let visible = 0;
+  const rows = document.querySelectorAll('.table-wrap tbody tr[data-participant-row="1"]');
+  const matches = [];
 
   rows.forEach((row, index) => {
     const item = registrations[index];
-    if (!item) return;
+    if (!item) {
+      row.hidden = true;
+      return;
+    }
 
     const haystack = normalizeAdminFilterText(
       isMarketingRole()
@@ -1760,17 +1804,54 @@ function applyAdminParticipantFilters() {
       (!status || itemStatus === status) &&
       (!region || itemRegion === region);
 
-    row.hidden = !match;
-    if (match) visible += 1;
+    if (match) matches.push(index);
+    row.hidden = true;
   });
+
+  const pageSize = adminParticipantPageSize();
+  const pageCount = Math.max(1, Math.ceil(matches.length / pageSize));
+  ADMIN_PARTICIPANT_PAGINATION.page = Math.min(
+    Math.max(1, ADMIN_PARTICIPANT_PAGINATION.page),
+    pageCount
+  );
+
+  const startIndex = (ADMIN_PARTICIPANT_PAGINATION.page - 1) * pageSize;
+  const currentIndexes = new Set(matches.slice(startIndex, startIndex + pageSize));
+  rows.forEach((row, index) => {
+    row.hidden = !currentIndexes.has(index);
+  });
+
+  const tbody = document.querySelector('.table-wrap tbody');
+  if (tbody && registrations.length) {
+    let emptyRow = tbody.querySelector('.participant-filter-empty');
+    if (!emptyRow) {
+      emptyRow = document.createElement('tr');
+      emptyRow.className = 'participant-filter-empty';
+      emptyRow.innerHTML = `
+        <td colspan="${isMarketingRole() ? 4 : 6}">
+          <div class="empty participant-empty-filter">
+            <span aria-hidden="true">⌕</span>
+            <strong>Tidak ada peserta yang sesuai</strong>
+            <p>Ubah kata pencarian atau filter status/wilayah untuk menampilkan data lain.</p>
+          </div>
+        </td>`;
+      tbody.appendChild(emptyRow);
+    }
+    emptyRow.hidden = matches.length !== 0;
+  }
 
   const count = document.getElementById('participantResultCount');
   if (count) {
-    count.textContent =
-      registrations.length
-        ? `${visible} dari ${registrations.length} peserta`
-        : '0 peserta';
+    if (!registrations.length) {
+      count.textContent = '0 peserta';
+    } else if (matches.length === registrations.length) {
+      count.textContent = `${registrations.length} peserta`;
+    } else {
+      count.textContent = `${matches.length} ditemukan dari ${registrations.length}`;
+    }
   }
+
+  renderAdminParticipantPagination(matches.length);
 }
 
 function initAdminParticipantFilters(registrations) {
@@ -1780,18 +1861,21 @@ function initAdminParticipantFilters(registrations) {
   const status = document.getElementById('participantStatusFilter');
   const region = document.getElementById('participantRegionFilter');
   const reset = document.getElementById('participantResetFilter');
+  const pageSize = document.getElementById('participantPageSize');
+  const prev = document.getElementById('participantPrevPage');
+  const next = document.getElementById('participantNextPage');
 
   if (search && !search.dataset.filterReady) {
     search.dataset.filterReady = '1';
-    search.addEventListener('input', applyAdminParticipantFilters);
+    search.addEventListener('input', () => applyAdminParticipantFilters());
   }
   if (status && !status.dataset.filterReady) {
     status.dataset.filterReady = '1';
-    status.addEventListener('change', applyAdminParticipantFilters);
+    status.addEventListener('change', () => applyAdminParticipantFilters());
   }
   if (region && !region.dataset.filterReady) {
     region.dataset.filterReady = '1';
-    region.addEventListener('change', applyAdminParticipantFilters);
+    region.addEventListener('change', () => applyAdminParticipantFilters());
   }
   if (reset && !reset.dataset.filterReady) {
     reset.dataset.filterReady = '1';
@@ -1799,13 +1883,38 @@ function initAdminParticipantFilters(registrations) {
       if (search) search.value = '';
       if (status) status.value = '';
       if (region) region.value = '';
+      ADMIN_PARTICIPANT_PAGINATION.page = 1;
       applyAdminParticipantFilters();
       syncAdminStatusQuickFilters();
     });
   }
+  if (pageSize && !pageSize.dataset.paginationReady) {
+    pageSize.dataset.paginationReady = '1';
+    pageSize.addEventListener('change', () => {
+      ADMIN_PARTICIPANT_PAGINATION.page = 1;
+      applyAdminParticipantFilters({preservePage:true});
+    });
+  }
+  if (prev && !prev.dataset.paginationReady) {
+    prev.dataset.paginationReady = '1';
+    prev.addEventListener('click', () => {
+      if (ADMIN_PARTICIPANT_PAGINATION.page <= 1) return;
+      ADMIN_PARTICIPANT_PAGINATION.page -= 1;
+      applyAdminParticipantFilters({preservePage:true});
+      document.querySelector('.table-wrap')?.scrollIntoView({behavior:'smooth', block:'nearest'});
+    });
+  }
+  if (next && !next.dataset.paginationReady) {
+    next.dataset.paginationReady = '1';
+    next.addEventListener('click', () => {
+      ADMIN_PARTICIPANT_PAGINATION.page += 1;
+      applyAdminParticipantFilters({preservePage:true});
+      document.querySelector('.table-wrap')?.scrollIntoView({behavior:'smooth', block:'nearest'});
+    });
+  }
 
   // loadRegistrations merender baris secara sinkron setelah assignment ini.
-  setTimeout(applyAdminParticipantFilters, 0);
+  setTimeout(() => applyAdminParticipantFilters(), 0);
 }
 
 

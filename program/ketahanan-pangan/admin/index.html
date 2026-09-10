@@ -56,7 +56,7 @@
   <meta itemprop="image" content="https://srilexbuditra.work/program/ketahanan-pangan/admin/assets/og-admin-dashboard-v17.3.3.jpg">
   <meta itemprop="inLanguage" content="id-ID">
 
-  <link rel="stylesheet" href="./style.css?v=17.7.0">
+  <link rel="stylesheet" href="./style.css?v=17.8.0">
   <link rel="stylesheet" href="./style-verifikasi-tambahan.css?v=1">
 </head>
 <body>
@@ -412,6 +412,27 @@
             </tbody>
           </table>
         </div>
+        <div id="participantPagination" class="admin-pagination" aria-label="Navigasi halaman daftar registrasi" hidden>
+          <div class="admin-pagination-summary" aria-live="polite">
+            <strong id="participantPageRange">0–0</strong>
+            <span>dari <b id="participantFilteredTotal">0</b> peserta</span>
+          </div>
+          <label class="admin-page-size">
+            <span>Tampilkan</span>
+            <select id="participantPageSize" aria-label="Jumlah peserta per halaman">
+              <option value="10" selected>10</option>
+              <option value="25">25</option>
+              <option value="50">50</option>
+              <option value="100">100</option>
+            </select>
+            <span>per halaman</span>
+          </label>
+          <div class="admin-pagination-controls">
+            <button type="button" id="participantPrevPage" aria-label="Halaman sebelumnya">← Sebelumnya</button>
+            <span id="participantPageLabel">Halaman 1 dari 1</span>
+            <button type="button" id="participantNextPage" aria-label="Halaman berikutnya">Berikutnya →</button>
+          </div>
+        </div>
       </section>
       <section class="flow">
         <h2>Alur Verifikasi Admin</h2>
@@ -476,6 +497,6 @@
     <script src="./local-qrcode.js?v=1" defer></script>
     <script src="./jszip.min.js?v=1" defer></script>
     <script src="./excel-engine-template.js?v=45" defer></script>
-    <script src="./script-a4-v45.js?v=17.7.0" defer></script>
+    <script src="./script-a4-v45.js?v=17.8.0" defer></script>
   </body>
 </html>
