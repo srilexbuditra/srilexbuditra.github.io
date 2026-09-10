@@ -5,6 +5,7 @@ const authView = document.getElementById('authView'),
 const normalizeId = v => String(v || '').trim().toUpperCase().replace(/\s+/g, '');
 const normalizeWa = v => String(v || '').replace(/\D/g, '').replace(/^0/, '62');
 let currentRegistrationId = '';
+let lastParticipantRefreshAt = null;
 
 function msg(type, text) {
   message.className = 'message show ' + type;
@@ -119,6 +120,25 @@ function participantInitials(name) {
   return ((parts[0]?.[0] || 'P') + (parts.length > 1 ? parts[parts.length - 1][0] : '')).toUpperCase();
 }
 
+function formatRefreshTime(value = new Date()) {
+  const d = value instanceof Date ? value : new Date(value);
+  if (Number.isNaN(d.getTime())) return '-';
+  return new Intl.DateTimeFormat('id-ID', {
+    day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
+  }).format(d);
+}
+
+function setLastUpdated(value = new Date(), state = '') {
+  lastParticipantRefreshAt = value instanceof Date ? value : new Date(value);
+  const text = document.getElementById('lastUpdatedText');
+  const wrap = document.querySelector('.status-sync');
+  if (text) text.textContent = 'Terakhir diperbarui: ' + formatRefreshTime(lastParticipantRefreshAt);
+  if (wrap) {
+    wrap.classList.remove('is-ok', 'is-error');
+    if (state) wrap.classList.add(state);
+  }
+}
+
 function updateTimelineStates(items) {
   items.forEach(item => {
     const state = item.querySelector('.timeline-state');
@@ -187,6 +207,7 @@ function showDashboard(p) {
   authView.hidden = true;
   dashboardView.hidden = false;
   document.body.classList.add('is-authenticated');
+  setLastUpdated(new Date());
 
   const s = String(p.status || '').toLowerCase();
   const presentation = getStatusPresentation(s);
@@ -305,6 +326,41 @@ function bindCopyButton(button, mode = 'compact') {
 
 bindCopyButton(document.getElementById('copyRegistrationBtn'));
 bindCopyButton(document.getElementById('copyRegistrationAction'), 'action');
+
+
+const refreshParticipantBtn = document.getElementById('refreshParticipantBtn');
+const defaultRefreshLabel = '↻ Perbarui status';
+if (refreshParticipantBtn) refreshParticipantBtn.addEventListener('click', async () => {
+  refreshParticipantBtn.disabled = true;
+  refreshParticipantBtn.textContent = '↻ Memeriksa…';
+  try {
+    const d = await request('/me');
+    if (!d.authenticated || !d.participant) {
+      showAuth();
+      msg('error', 'Sesi Anda telah berakhir. Silakan masuk kembali untuk melihat status terbaru.');
+      return;
+    }
+    showDashboard(d.participant);
+    setLastUpdated(new Date(), 'is-ok');
+    refreshParticipantBtn.textContent = '✓ Status terbaru';
+    window.setTimeout(() => {
+      if (!refreshParticipantBtn.disabled) refreshParticipantBtn.textContent = defaultRefreshLabel;
+    }, 1600);
+  } catch (error) {
+    if (error?.status === 401 || error?.status === 403) {
+      showAuth();
+      msg('error', 'Sesi Anda telah berakhir. Silakan masuk kembali untuk melihat status terbaru.');
+      return;
+    }
+    const text = document.getElementById('lastUpdatedText');
+    const wrap = document.querySelector('.status-sync');
+    if (text) text.textContent = 'Pembaruan gagal. Periksa koneksi lalu coba lagi.';
+    if (wrap) { wrap.classList.remove('is-ok'); wrap.classList.add('is-error'); }
+    refreshParticipantBtn.textContent = '↻ Coba lagi';
+  } finally {
+    refreshParticipantBtn.disabled = false;
+  }
+});
 
 document.getElementById('activateForm').onsubmit = async e => {
   e.preventDefault();
