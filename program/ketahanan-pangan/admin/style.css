@@ -2604,3 +2604,12 @@ main.wrap{
   .admin-last-login{grid-column:2/4}
   .user-manage-toggle{grid-column:2/4;width:100%}
 }
+
+
+/* V17.3.1 — PASSWORD VISIBILITY TOGGLE (FIT-ONLY) */
+.account-password-wrap{position:relative;width:100%}
+.account-password-wrap input{padding-right:82px!important}
+.account-password-visibility{position:absolute;right:6px;top:50%;transform:translateY(-50%);min-width:62px;height:29px;border:1px solid #d6e6df;border-radius:8px;background:#eef7f3;color:#165b43;padding:0 8px;font:inherit;font-size:9px;font-weight:850;cursor:pointer;z-index:3}
+.account-password-visibility:hover{background:#e4f2ec}
+.account-password-visibility:focus-visible{outline:2px solid #0e9a67;outline-offset:1px}
+@media(max-width:760px){.account-password-wrap input{padding-right:88px!important}.account-password-visibility{min-width:68px}}

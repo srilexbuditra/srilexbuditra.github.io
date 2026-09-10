@@ -55,7 +55,7 @@
   <meta itemprop="image" content="https://srilexbuditra.work/program/ketahanan-pangan/admin/assets/og-admin-dashboard.jpg">
   <meta itemprop="inLanguage" content="id-ID">
 
-  <link rel="stylesheet" href="./style.css?v=17">
+  <link rel="stylesheet" href="./style.css?v=17.3.1">
   <link rel="stylesheet" href="./style-verifikasi-tambahan.css?v=1">
 </head>
 <body>
@@ -234,9 +234,9 @@
                   <button id="cancelOwnPassword" type="button" class="account-icon-close" aria-label="Tutup ubah password">×</button>
                 </div>
                 <div class="account-form-grid">
-                  <label>Password saat ini<input id="currentAccountPassword" type="password" autocomplete="current-password" required></label>
-                  <label>Password baru<input id="newAccountPassword" type="password" autocomplete="new-password" required></label>
-                  <label>Konfirmasi password baru<input id="confirmAccountPassword" type="password" autocomplete="new-password" required></label>
+                  <label>Password saat ini<div class="account-password-wrap"><input id="currentAccountPassword" type="password" autocomplete="current-password" required><button type="button" class="account-password-visibility" data-password-target="currentAccountPassword" aria-pressed="false">Lihat</button></div></label>
+                  <label>Password baru<div class="account-password-wrap"><input id="newAccountPassword" type="password" autocomplete="new-password" required><button type="button" class="account-password-visibility" data-password-target="newAccountPassword" aria-pressed="false">Lihat</button></div></label>
+                  <label>Konfirmasi password baru<div class="account-password-wrap"><input id="confirmAccountPassword" type="password" autocomplete="new-password" required><button type="button" class="account-password-visibility" data-password-target="confirmAccountPassword" aria-pressed="false">Lihat</button></div></label>
                 </div>
                 <div class="account-note-box"><strong>Persyaratan password</strong><span>Minimal 10 karakter serta memuat huruf besar, huruf kecil, angka, dan simbol. Setelah berhasil, Anda akan diminta login kembali.</span></div>
                 <div class="account-form-actions"><button type="submit" class="account-security-button account-security-button-primary">🔑 Simpan Password</button></div>
@@ -279,7 +279,7 @@
                     <label>Username<input id="newAdminUsername" type="text" autocomplete="off" placeholder="contoh: admin.operasional" required></label>
                     <label>Nama tampilan<input id="newAdminDisplayName" type="text" autocomplete="off" required></label>
                     <label>Role<select id="newAdminRole" required><option value="admin">Admin</option><option value="pemasaran">Pemasaran</option></select></label>
-                    <label>Password awal<input id="newAdminInitialPassword" type="password" autocomplete="new-password" required></label>
+                    <label>Password awal<div class="account-password-wrap"><input id="newAdminInitialPassword" type="password" autocomplete="new-password" required><button type="button" class="account-password-visibility" data-password-target="newAdminInitialPassword" aria-pressed="false">Lihat</button></div></label>
                   </div>
                   <small>Password awal tidak pernah ditampilkan kembali oleh sistem.</small>
                   <div class="account-form-actions"><button type="submit" class="account-security-button account-security-button-primary">＋ Tambah Akun</button><button id="cancelCreateAdminUserBottom" type="button" class="account-security-button">Batal</button></div>
@@ -424,6 +424,6 @@
     <script src="./local-qrcode.js?v=1" defer></script>
     <script src="./jszip.min.js?v=1" defer></script>
     <script src="./excel-engine-template.js?v=45" defer></script>
-    <script src="./script-a4-v45.js?v=17.3" defer></script>
+    <script src="./script-a4-v45.js?v=17.3.1" defer></script>
   </body>
 </html>

@@ -1978,6 +1978,26 @@ function bindAccountSecurityEvents() {
   if (!panel || panel.dataset.bound === '1') return;
   panel.dataset.bound = '1';
 
+  // V17.3.1 FIT-ONLY: tombol Lihat/Sembunyikan untuk field password panel akun.
+  panel.querySelectorAll('.account-password-visibility[data-password-target]').forEach((button) => {
+    if (button.dataset.visibilityBound === '1') return;
+    button.dataset.visibilityBound = '1';
+    button.addEventListener('click', (event) => {
+      event.preventDefault();
+      const input = document.getElementById(button.dataset.passwordTarget || '');
+      if (!input) return;
+      const show = input.type === 'password';
+      input.type = show ? 'text' : 'password';
+      button.textContent = show ? 'Sembunyikan' : 'Lihat';
+      button.setAttribute('aria-pressed', show ? 'true' : 'false');
+      input.focus({ preventScroll: true });
+      try {
+        const end = input.value.length;
+        input.setSelectionRange(end, end);
+      } catch (_) {}
+    });
+  });
+
   const ownToggle = document.getElementById('changeOwnPasswordToggle');
   const ownForm = document.getElementById('changeOwnPasswordForm');
   const cancelOwn = document.getElementById('cancelOwnPassword');
