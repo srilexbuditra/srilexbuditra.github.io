@@ -353,7 +353,13 @@ function showAdminToast(kind, title, message) {
 
 async function loadRegistrations() {
   try {
-    const response = await fetch(API_URL, {
+    // V17.4.1 FIT-ONLY: role Pemasaran membaca endpoint tersanitasi.
+    // Admin/Super Admin tetap memakai endpoint operasional lama tanpa perubahan.
+    const registrationsUrl = isMarketingRole()
+      ? `${ADMIN_API_BASE}/marketing/registrations`
+      : API_URL;
+
+    const response = await fetch(registrationsUrl, {
       method: 'GET',
       credentials: 'include',
       headers: {
