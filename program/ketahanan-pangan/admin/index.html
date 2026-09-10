@@ -56,7 +56,7 @@
   <meta itemprop="image" content="https://srilexbuditra.work/program/ketahanan-pangan/admin/assets/og-admin-dashboard-v17.3.3.jpg">
   <meta itemprop="inLanguage" content="id-ID">
 
-  <link rel="stylesheet" href="./style.css?v=17.10.0">
+  <link rel="stylesheet" href="./style.css?v=17.11.0">
   <link rel="stylesheet" href="./style-verifikasi-tambahan.css?v=1">
 </head>
 <body>
@@ -384,6 +384,16 @@
                 <option value="">Semua wilayah</option>
               </select>
             </label>
+            <label class="admin-filter-period">
+              <span class="sr-only">Filter periode registrasi</span>
+              <select id="participantPeriodFilter" aria-label="Filter periode registrasi">
+                <option value="">Semua waktu</option>
+                <option value="today">Hari ini</option>
+                <option value="7d">7 hari terakhir</option>
+                <option value="30d">30 hari terakhir</option>
+                <option value="month">Bulan ini</option>
+              </select>
+            </label>
             <label class="admin-filter-sort">
               <span class="sr-only">Urutkan daftar peserta</span>
               <select id="participantSort" aria-label="Urutkan daftar peserta">
@@ -512,6 +522,6 @@
     <script src="./local-qrcode.js?v=1" defer></script>
     <script src="./jszip.min.js?v=1" defer></script>
     <script src="./excel-engine-template.js?v=45" defer></script>
-    <script src="./script-a4-v45.js?v=17.10.0" defer></script>
+    <script src="./script-a4-v45.js?v=17.11.0" defer></script>
   </body>
 </html>

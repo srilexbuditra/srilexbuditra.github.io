@@ -1798,6 +1798,41 @@ function compareAdminParticipants(a, b, mode = adminParticipantSortMode()) {
     collate(text(b?.registration_id), text(a?.registration_id));
 }
 
+// V3.9 — filter periode registrasi berbasis waktu lokal perangkat admin.
+// Hanya memengaruhi tampilan dan ekspor; tidak mengubah data/API.
+function adminParticipantPeriodMode() {
+  return document.getElementById('participantPeriodFilter')?.value || '';
+}
+
+function adminParticipantMatchesPeriod(item, mode = adminParticipantPeriodMode(), now = new Date()) {
+  if (!mode) return true;
+
+  const timestamp = adminParticipantDateValue(item);
+  if (!timestamp) return false;
+
+  const date = new Date(timestamp);
+  const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  let start = null;
+
+  if (mode === 'today') {
+    start = startOfToday;
+  } else if (mode === '7d') {
+    start = new Date(startOfToday);
+    start.setDate(start.getDate() - 6);
+  } else if (mode === '30d') {
+    start = new Date(startOfToday);
+    start.setDate(start.getDate() - 29);
+  } else if (mode === 'month') {
+    start = new Date(now.getFullYear(), now.getMonth(), 1);
+  } else {
+    return true;
+  }
+
+  const endOfToday = new Date(startOfToday);
+  endOfToday.setDate(endOfToday.getDate() + 1);
+  return date >= start && date < endOfToday;
+}
+
 function refreshAdminRegionOptions(registrations) {
   const select = document.getElementById('participantRegionFilter');
   if (!select) return;
@@ -1871,6 +1906,7 @@ function applyAdminParticipantFilters(options = {}) {
   const region = normalizeAdminFilterText(
     document.getElementById('participantRegionFilter')?.value
   );
+  const period = document.getElementById('participantPeriodFilter')?.value || '';
   const sortMode = adminParticipantSortMode();
 
   const rows = Array.from(document.querySelectorAll('.table-wrap tbody tr[data-participant-row="1"]'));
@@ -1895,7 +1931,8 @@ function applyAdminParticipantFilters(options = {}) {
     const match =
       (!search || haystack.includes(search)) &&
       (!status || itemStatus === status) &&
-      (!region || itemRegion === region);
+      (!region || itemRegion === region) &&
+      adminParticipantMatchesPeriod(item, period);
 
     if (match) matches.push({ row, item, index });
     row.hidden = true;
@@ -1960,6 +1997,7 @@ function initAdminParticipantFilters(registrations, options = {}) {
   const search = document.getElementById('participantSearch');
   const status = document.getElementById('participantStatusFilter');
   const region = document.getElementById('participantRegionFilter');
+  const period = document.getElementById('participantPeriodFilter');
   const sort = document.getElementById('participantSort');
   const reset = document.getElementById('participantResetFilter');
   const pageSize = document.getElementById('participantPageSize');
@@ -1979,6 +2017,10 @@ function initAdminParticipantFilters(registrations, options = {}) {
     region.dataset.filterReady = '1';
     region.addEventListener('change', () => applyAdminParticipantFilters());
   }
+  if (period && !period.dataset.filterReady) {
+    period.dataset.filterReady = '1';
+    period.addEventListener('change', () => applyAdminParticipantFilters());
+  }
   if (sort) {
     sort.querySelectorAll('[data-admin-only="1"]').forEach((option) => {
       option.hidden = isMarketingRole();
@@ -1996,6 +2038,7 @@ function initAdminParticipantFilters(registrations, options = {}) {
       if (search) search.value = '';
       if (status) status.value = '';
       if (region) region.value = '';
+      if (period) period.value = '';
       if (sort) sort.value = 'newest';
       ADMIN_PARTICIPANT_PAGINATION.page = 1;
       applyAdminParticipantFilters();
@@ -2155,6 +2198,7 @@ function getFilteredAdminRegistrations() {
   const region = normalizeAdminFilterText(
     document.getElementById('participantRegionFilter')?.value
   );
+  const period = document.getElementById('participantPeriodFilter')?.value || '';
 
   return registrations.filter((item) => {
     const haystack = normalizeAdminFilterText(
@@ -2168,7 +2212,8 @@ function getFilteredAdminRegistrations() {
     return (
       (!search || haystack.includes(search)) &&
       (!status || itemStatus === status) &&
-      (!region || itemRegion === region)
+      (!region || itemRegion === region) &&
+      adminParticipantMatchesPeriod(item, period)
     );
   }).sort((a, b) => compareAdminParticipants(a, b));
 }
