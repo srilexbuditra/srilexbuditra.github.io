@@ -29,13 +29,16 @@
   <link itemprop="publisher" href="https://srilexbuditra.work/#person">
   <meta itemprop="description" content="Aktivasi akun, login, dan dashboard pribadi peserta Program Ketahanan Pangan.">
   <link rel="search" type="application/opensearchdescription+xml" title="Srilex Buditra Search" href="/opensearch.xml">
-  <link rel="stylesheet" href="./style.css?v=9.9">
+  <link rel="stylesheet" href="./style.css?v=10.0">
 </head>
 <body>
 <header class="topbar">
   <div class="wrap topbar-inner">
-    <a href="../registrasi/" class="brand">Program Ketahanan Pangan</a>
-    <a href="../verifikasi/" class="toplink">Verifikasi Publik</a>
+    <a href="../" class="brand" aria-label="Kembali ke Portal Peserta Program Ketahanan Pangan">Program Ketahanan Pangan</a>
+    <nav class="topnav" aria-label="Navigasi akun peserta">
+      <a href="../" class="toplink portal-link">← Portal Peserta</a>
+      <a href="../verifikasi/" class="toplink">Verifikasi Publik</a>
+    </nav>
   </div>
 </header>
 
@@ -43,15 +46,19 @@
   <section class="hero" id="authHero">
     <div class="wrap hero-grid">
       <div>
-        <div class="eyebrow">PORTAL PESERTA</div>
-        <h1>Akun pribadi <span>setiap peserta</span></h1>
-        <p class="lead">Aktivasi akun menggunakan data pendaftaran Anda, lalu masuk untuk melihat status dan sertifikat secara pribadi.</p>
-        <div class="trust"><span>🔒 Sesi aman</span><span>✓ Data peserta lain tidak dapat diakses</span><span>✓ Admin tetap terpisah</span></div>
+        <div class="eyebrow">PORTAL AKUN PESERTA</div>
+        <h1>Masuk ke <span>Akun Peserta</span></h1>
+        <p class="lead">Sudah mendaftar? Gunakan Nomor Registrasi Anda untuk aktivasi akun atau masuk ke dashboard.</p>
+        <div class="trust"><span>🔒 Sesi aman</span><span>✓ Akun pribadi peserta</span><span>✓ Data sensitif tidak ditampilkan</span></div>
       </div>
-      <aside class="hero-card">
-        <small>ALUR AKUN</small>
-        <strong>Aktivasi → Login → Dashboard</strong>
-        <p>Gunakan Nomor Registrasi sebagai ID akun. Password hanya disimpan dalam bentuk hash.</p>
+      <aside class="hero-card account-flow-card" aria-label="Langkah penggunaan akun peserta">
+        <small>LANGKAH SINGKAT</small>
+        <ol class="account-steps">
+          <li><span class="step-number">1</span><div><strong>Daftar Peserta</strong><small>Dapatkan Nomor Registrasi</small></div></li>
+          <li><span class="step-number">2</span><div><strong>Aktivasi Akun</strong><small>Buat password pribadi</small></div></li>
+          <li><span class="step-number">3</span><div><strong>Login</strong><small>Masuk dengan akun Anda</small></div></li>
+          <li><span class="step-number">4</span><div><strong>Dashboard</strong><small>Lihat status dan informasi</small></div></li>
+        </ol>
       </aside>
     </div>
   </section>
@@ -60,34 +67,50 @@
     <div class="wrap">
       <div id="authView" class="auth-grid">
         <section class="card auth-card">
-          <div class="tabs">
+          <div class="auth-guide" role="note" aria-label="Petunjuk memilih login atau aktivasi akun">
+            <strong>Pilih sesuai kondisi Anda</strong>
+            <div class="auth-guide-options">
+              <span><b>Sudah pernah aktivasi?</b> Pilih <strong>Login</strong>.</span>
+              <span><b>Belum pernah membuat password?</b> Pilih <strong>Aktivasi Akun</strong>.</span>
+            </div>
+          </div>
+          <div class="tabs" aria-label="Pilihan akses akun">
             <button class="tab active" data-tab="login" type="button">Login</button>
             <button class="tab" data-tab="activate" type="button">Aktivasi Akun</button>
           </div>
           <form id="loginForm" class="form active" data-panel="login">
             <h2>Login Peserta</h2>
-            <p>Masuk menggunakan Nomor Registrasi dan password pribadi.</p>
-            <label>Nomor Registrasi<input name="registration_id" required autocomplete="username" placeholder="KTPG-YYYYMMDD-XXXXXXXXXX"></label>
+            <p>Sudah pernah aktivasi akun? Masuk menggunakan Nomor Registrasi dan password pribadi.</p>
+            <label>Nomor Registrasi<input name="registration_id" required autocomplete="username" placeholder="KTPG-YYYYMMDD-XXXXXXXXXX"><small class="field-help">Nomor Registrasi diperoleh setelah pendaftaran berhasil.</small></label>
             <label>Password<div class="password-row"><input name="password" type="password" minlength="8" required autocomplete="current-password"><button type="button" class="showpass">Lihat</button></div></label>
             <button class="btn primary" type="submit">Masuk ke Dashboard</button>
+            <div class="auth-links" aria-label="Bantuan akun peserta">
+              <a href="../registrasi/">Belum mendaftar? <strong>Daftar Peserta →</strong></a>
+              <a href="../verifikasi/">Lupa Nomor Registrasi? <strong>Cek Status Pendaftaran →</strong></a>
+            </div>
           </form>
           <form id="activateForm" class="form" data-panel="activate">
             <h2>Aktivasi Akun</h2>
-            <p>Untuk mencegah pengambilalihan akun, cocokkan data yang pernah Anda kirim saat registrasi.</p>
-            <label>Nomor Registrasi<input name="registration_id" required autocomplete="username" placeholder="KTPG-YYYYMMDD-XXXXXXXXXX"></label>
+            <p>Belum pernah membuat password? Cocokkan data pendaftaran Anda untuk mengaktifkan akun.</p>
+            <label>Nomor Registrasi<input name="registration_id" required autocomplete="username" placeholder="KTPG-YYYYMMDD-XXXXXXXXXX"><small class="field-help">Nomor Registrasi diperoleh setelah pendaftaran berhasil.</small></label>
             <label>NIK<input name="nik" required inputmode="numeric" maxlength="16" pattern="[0-9]{16}" autocomplete="off" placeholder="16 digit NIK"></label>
             <label>Nomor WhatsApp<input name="whatsapp" required inputmode="tel" autocomplete="tel" placeholder="08... atau 62..."></label>
             <label>Buat Password<div class="password-row"><input name="password" type="password" minlength="8" maxlength="128" required autocomplete="new-password"><button type="button" class="showpass">Lihat</button></div></label>
             <small class="hint">Minimal 8 karakter. Disarankan memakai huruf besar, huruf kecil, angka, dan simbol.</small>
             <label>Ulangi Password<input name="password_confirm" type="password" minlength="8" maxlength="128" required autocomplete="new-password"></label>
             <button class="btn primary" type="submit">Aktifkan Akun</button>
+            <div class="auth-links" aria-label="Bantuan aktivasi akun peserta">
+              <a href="../registrasi/">Belum mendaftar? <strong>Daftar Peserta →</strong></a>
+              <a href="../verifikasi/">Cek data pendaftaran? <strong>Cek Status →</strong></a>
+            </div>
           </form>
           <div id="authMessage" class="message" role="status" aria-live="polite"></div>
         </section>
-        <aside class="card side">
-          <span class="badge">AKUN PESERTA</span>
-          <h2>Satu akun untuk satu Nomor Registrasi.</h2>
-          <ul><li>Status registrasi pribadi</li><li>Nama dan wilayah peserta</li><li>Catatan revisi/status proses</li><li>Akses sertifikat saat terverifikasi</li></ul>
+        <aside class="card side auth-info-card">
+          <span class="badge">INFORMASI AKUN</span>
+          <h2>Satu Nomor Registrasi untuk satu akun peserta.</h2>
+          <p class="side-summary">Setelah login, Anda dapat melihat status pemeriksaan, catatan admin, serta kartu atau sertifikat jika sudah tersedia.</p>
+          <div class="side-feature"><strong>Yang perlu disiapkan</strong><span>Nomor Registrasi dan password yang sudah Anda buat saat aktivasi.</span></div>
           <div class="privacy">NIK, KK, WhatsApp, email, dan dokumen identitas tidak ditampilkan di dashboard.</div>
         </aside>
       </div>
