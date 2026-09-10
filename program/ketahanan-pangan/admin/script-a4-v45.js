@@ -1886,6 +1886,119 @@ function syncAdminCustomDateConstraints(changed = '') {
   }
 }
 
+// V4.1 — ringkasan filter aktif + hapus filter satu per satu.
+// Seluruhnya client-side; tidak mengubah API, database, token, atau data peserta.
+function formatAdminActiveFilterDate(value) {
+  if (!value || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return '';
+  const [year, month, day] = value.split('-').map(Number);
+  const date = new Date(year, month - 1, day);
+  if (Number.isNaN(date.getTime())) return value;
+  return date.toLocaleDateString('id-ID', {day:'2-digit', month:'short', year:'numeric'});
+}
+
+function adminActiveFilterItems() {
+  const searchNode = document.getElementById('participantSearch');
+  const statusNode = document.getElementById('participantStatusFilter');
+  const regionNode = document.getElementById('participantRegionFilter');
+  const periodNode = document.getElementById('participantPeriodFilter');
+  const sortNode = document.getElementById('participantSort');
+  const dateFrom = document.getElementById('participantDateFrom')?.value || '';
+  const dateTo = document.getElementById('participantDateTo')?.value || '';
+
+  const items = [];
+  const search = String(searchNode?.value || '').trim();
+  if (search) items.push({key:'search', label:`Pencarian: ${search}`});
+
+  const status = statusNode?.value || '';
+  if (status) {
+    const label = statusNode?.selectedOptions?.[0]?.textContent?.trim() || status;
+    items.push({key:'status', label:`Status: ${label}`});
+  }
+
+  const region = regionNode?.value || '';
+  if (region) items.push({key:'region', label:`Wilayah: ${region}`});
+
+  const period = periodNode?.value || '';
+  if (period) {
+    let label = periodNode?.selectedOptions?.[0]?.textContent?.trim() || 'Periode';
+    if (period === 'custom') {
+      const fromLabel = formatAdminActiveFilterDate(dateFrom);
+      const toLabel = formatAdminActiveFilterDate(dateTo);
+      if (fromLabel && toLabel) label = `${fromLabel} – ${toLabel}`;
+      else if (fromLabel) label = `Sejak ${fromLabel}`;
+      else if (toLabel) label = `Sampai ${toLabel}`;
+      else label = 'Rentang tanggal';
+    }
+    items.push({key:'period', label:`Periode: ${label}`});
+  }
+
+  const sort = sortNode?.value || 'newest';
+  if (sort && sort !== 'newest') {
+    const label = sortNode?.selectedOptions?.[0]?.textContent?.trim() || sort;
+    items.push({key:'sort', label:`Urutan: ${label}`});
+  }
+
+  return items;
+}
+
+function renderAdminActiveFilters() {
+  const wrap = document.getElementById('participantActiveFilters');
+  const list = document.getElementById('participantActiveFilterList');
+  const count = document.getElementById('participantActiveFilterCount');
+  if (!wrap || !list) return;
+
+  const items = adminActiveFilterItems();
+  wrap.hidden = items.length === 0;
+  if (count) count.textContent = String(items.length);
+  list.replaceChildren();
+
+  items.forEach(({key, label}) => {
+    const chip = document.createElement('span');
+    chip.className = 'admin-active-filter-chip';
+
+    const text = document.createElement('span');
+    text.className = 'admin-active-filter-chip-text';
+    text.textContent = label;
+
+    const remove = document.createElement('button');
+    remove.type = 'button';
+    remove.dataset.clearFilter = key;
+    remove.className = 'admin-active-filter-remove';
+    remove.setAttribute('aria-label', `Hapus ${label}`);
+    remove.title = `Hapus ${label}`;
+    remove.textContent = '×';
+
+    chip.append(text, remove);
+    list.appendChild(chip);
+  });
+}
+
+function clearAdminParticipantFilter(key) {
+  const search = document.getElementById('participantSearch');
+  const status = document.getElementById('participantStatusFilter');
+  const region = document.getElementById('participantRegionFilter');
+  const period = document.getElementById('participantPeriodFilter');
+  const dateFrom = document.getElementById('participantDateFrom');
+  const dateTo = document.getElementById('participantDateTo');
+  const sort = document.getElementById('participantSort');
+
+  if (key === 'search' && search) search.value = '';
+  if (key === 'status' && status) status.value = '';
+  if (key === 'region' && region) region.value = '';
+  if (key === 'period') {
+    if (period) period.value = '';
+    if (dateFrom) dateFrom.value = '';
+    if (dateTo) dateTo.value = '';
+    syncAdminCustomDateRangeUI();
+    syncAdminCustomDateConstraints();
+  }
+  if (key === 'sort' && sort) sort.value = 'newest';
+
+  ADMIN_PARTICIPANT_PAGINATION.page = 1;
+  applyAdminParticipantFilters();
+  syncAdminStatusQuickFilters();
+}
+
 function refreshAdminRegionOptions(registrations) {
   const select = document.getElementById('participantRegionFilter');
   if (!select) return;
@@ -2041,6 +2154,7 @@ function applyAdminParticipantFilters(options = {}) {
     }
   }
 
+  renderAdminActiveFilters();
   renderAdminParticipantPagination(matches.length);
 }
 
@@ -2059,6 +2173,8 @@ function initAdminParticipantFilters(registrations, options = {}) {
   const prev = document.getElementById('participantPrevPage');
   const next = document.getElementById('participantNextPage');
   const refreshData = document.getElementById('participantRefreshData');
+  const activeFilters = document.getElementById('participantActiveFilters');
+  const clearActiveFilters = document.getElementById('participantClearActiveFilters');
 
   if (search && !search.dataset.filterReady) {
     search.dataset.filterReady = '1';
@@ -2155,6 +2271,22 @@ function initAdminParticipantFilters(registrations, options = {}) {
     refreshData.addEventListener('click', () => {
       if (refreshData.disabled) return;
       loadRegistrations({ manual: true });
+    });
+  }
+
+  if (activeFilters && !activeFilters.dataset.activeFilterReady) {
+    activeFilters.dataset.activeFilterReady = '1';
+    activeFilters.addEventListener('click', (event) => {
+      const button = event.target.closest('[data-clear-filter]');
+      if (!button || !activeFilters.contains(button)) return;
+      clearAdminParticipantFilter(button.dataset.clearFilter || '');
+    });
+  }
+  if (clearActiveFilters && !clearActiveFilters.dataset.activeFilterReady) {
+    clearActiveFilters.dataset.activeFilterReady = '1';
+    clearActiveFilters.addEventListener('click', () => {
+      const resetButton = document.getElementById('participantResetFilter');
+      if (resetButton) resetButton.click();
     });
   }
 

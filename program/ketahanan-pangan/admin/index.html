@@ -56,7 +56,7 @@
   <meta itemprop="image" content="https://srilexbuditra.work/program/ketahanan-pangan/admin/assets/og-admin-dashboard-v17.3.3.jpg">
   <meta itemprop="inLanguage" content="id-ID">
 
-  <link rel="stylesheet" href="./style.css?v=17.12.0">
+  <link rel="stylesheet" href="./style.css?v=17.13.0">
   <link rel="stylesheet" href="./style-verifikasi-tambahan.css?v=1">
 </head>
 <body>
@@ -426,6 +426,14 @@
             <span id="participantResultCount" class="admin-filter-count" aria-live="polite"></span>
           </div>
         </div>
+        <div id="participantActiveFilters" class="admin-active-filters" hidden aria-live="polite">
+          <div class="admin-active-filters-label">
+            <span>Filter aktif</span>
+            <b id="participantActiveFilterCount">0</b>
+          </div>
+          <div id="participantActiveFilterList" class="admin-active-filter-list" aria-label="Filter registrasi yang sedang aktif"></div>
+          <button type="button" id="participantClearActiveFilters" class="admin-active-filter-clear">Bersihkan semua</button>
+        </div>
         <div class="table-wrap">
           <table>
             <thead id="participantTableHead">
@@ -534,6 +542,6 @@
     <script src="./local-qrcode.js?v=1" defer></script>
     <script src="./jszip.min.js?v=1" defer></script>
     <script src="./excel-engine-template.js?v=45" defer></script>
-    <script src="./script-a4-v45.js?v=17.12.0" defer></script>
+    <script src="./script-a4-v45.js?v=17.13.0" defer></script>
   </body>
 </html>
