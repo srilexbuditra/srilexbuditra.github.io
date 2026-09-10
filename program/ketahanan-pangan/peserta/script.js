@@ -7,6 +7,9 @@ const normalizeWa = v => String(v || '').replace(/\D/g, '').replace(/^0/, '62');
 let currentRegistrationId = '';
 let lastParticipantRefreshAt = null;
 let lastKnownParticipantStatus = '';
+let participantSyncInFlight = false;
+let lastParticipantSyncRequestAt = 0;
+const AUTO_SYNC_MIN_INTERVAL_MS = 90 * 1000;
 
 function msg(type, text) {
   message.className = 'message show ' + type;
@@ -447,39 +450,86 @@ if (statusChangeDismiss) statusChangeDismiss.addEventListener('click', hideStatu
 
 const refreshParticipantBtn = document.getElementById('refreshParticipantBtn');
 const defaultRefreshLabel = '↻ Perbarui status';
-if (refreshParticipantBtn) refreshParticipantBtn.addEventListener('click', async () => {
-  refreshParticipantBtn.disabled = true;
-  refreshParticipantBtn.textContent = '↻ Memeriksa…';
+
+// V5.1 — Sinkron otomatis saat peserta kembali ke tab/dashboard.
+function participantDashboardReady() {
+  return Boolean(currentRegistrationId && dashboardView && !dashboardView.hidden);
+}
+
+function participantStatusIsStale() {
+  const lastVisibleUpdate = lastParticipantRefreshAt instanceof Date ? lastParticipantRefreshAt.getTime() : 0;
+  const reference = Math.max(lastVisibleUpdate, lastParticipantSyncRequestAt || 0);
+  return !reference || (Date.now() - reference >= AUTO_SYNC_MIN_INTERVAL_MS);
+}
+
+async function syncParticipantStatus({ manual = false } = {}) {
+  if (participantSyncInFlight || !participantDashboardReady()) return false;
+  if (!manual && navigator.onLine === false) return false;
+
+  participantSyncInFlight = true;
+  lastParticipantSyncRequestAt = Date.now();
+  if (manual && refreshParticipantBtn) {
+    refreshParticipantBtn.disabled = true;
+    refreshParticipantBtn.textContent = '↻ Memeriksa…';
+  }
+
   try {
     const previousStatus = lastKnownParticipantStatus;
     const d = await request('/me');
     if (!d.authenticated || !d.participant) {
       showAuth();
       msg('error', 'Sesi Anda telah berakhir. Silakan masuk kembali untuk melihat status terbaru.');
-      return;
+      return false;
     }
+
     showDashboard(d.participant);
     const changed = showStatusChangeNotice(previousStatus, d.participant.status);
     setLastUpdated(new Date(), 'is-ok');
-    refreshParticipantBtn.textContent = changed ? '✓ Status berubah' : '✓ Status terbaru';
-    window.setTimeout(() => {
-      if (!refreshParticipantBtn.disabled) refreshParticipantBtn.textContent = defaultRefreshLabel;
-    }, 1600);
+
+    if (manual && refreshParticipantBtn) {
+      refreshParticipantBtn.textContent = changed ? '✓ Status berubah' : '✓ Status terbaru';
+      window.setTimeout(() => {
+        if (!participantSyncInFlight && !refreshParticipantBtn.disabled) refreshParticipantBtn.textContent = defaultRefreshLabel;
+      }, 1600);
+    }
+    return true;
   } catch (error) {
     if (error?.status === 401 || error?.status === 403) {
       showAuth();
       msg('error', 'Sesi Anda telah berakhir. Silakan masuk kembali untuk melihat status terbaru.');
-      return;
+      return false;
     }
-    const text = document.getElementById('lastUpdatedText');
-    const wrap = document.querySelector('.status-sync');
-    if (text) text.textContent = 'Pembaruan gagal. Periksa koneksi lalu coba lagi.';
-    if (wrap) { wrap.classList.remove('is-ok'); wrap.classList.add('is-error'); }
-    refreshParticipantBtn.textContent = '↻ Coba lagi';
+
+    // Sinkron otomatis dibuat tenang agar tidak mengganggu peserta saat koneksi sesaat bermasalah.
+    if (manual) {
+      const text = document.getElementById('lastUpdatedText');
+      const wrap = document.querySelector('.status-sync');
+      if (text) text.textContent = 'Pembaruan gagal. Periksa koneksi lalu coba lagi.';
+      if (wrap) { wrap.classList.remove('is-ok'); wrap.classList.add('is-error'); }
+      if (refreshParticipantBtn) refreshParticipantBtn.textContent = '↻ Coba lagi';
+    }
+    return false;
   } finally {
-    refreshParticipantBtn.disabled = false;
+    participantSyncInFlight = false;
+    if (manual && refreshParticipantBtn) refreshParticipantBtn.disabled = false;
   }
+}
+
+if (refreshParticipantBtn) {
+  refreshParticipantBtn.addEventListener('click', () => syncParticipantStatus({ manual: true }));
+}
+
+function maybeAutoSyncParticipant() {
+  if (document.visibilityState !== 'visible') return;
+  if (!participantDashboardReady() || !participantStatusIsStale()) return;
+  syncParticipantStatus({ manual: false });
+}
+
+document.addEventListener('visibilitychange', maybeAutoSyncParticipant);
+window.addEventListener('pageshow', event => {
+  if (event.persisted) window.setTimeout(maybeAutoSyncParticipant, 150);
 });
+window.addEventListener('online', maybeAutoSyncParticipant);
 
 document.getElementById('activateForm').onsubmit = async e => {
   e.preventDefault();
