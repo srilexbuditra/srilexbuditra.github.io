@@ -1953,7 +1953,12 @@ function initAccountSecurityForUser(user) {
   const roleFunctionPanel = document.getElementById('roleFunctionPanel');
   if (!panel) return;
   panel.hidden = false;
-  if (managementToggle) managementToggle.hidden = user?.role !== 'super_admin';
+  if (managementToggle) {
+    const canManageAccounts = user?.role === 'super_admin';
+    managementToggle.hidden = !canManageAccounts;
+    managementToggle.style.display = canManageAccounts ? '' : 'none';
+    managementToggle.setAttribute('aria-hidden', canManageAccounts ? 'false' : 'true');
+  }
   bindAccountSecurityEvents();
   renderRoleFunctionPanel(user);
   const managementPanel = document.getElementById('userManagementPanel');

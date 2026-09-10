@@ -2613,3 +2613,6 @@ main.wrap{
 .account-password-visibility:hover{background:#e4f2ec}
 .account-password-visibility:focus-visible{outline:2px solid #0e9a67;outline-offset:1px}
 @media(max-width:760px){.account-password-wrap input{padding-right:88px!important}.account-password-visibility{min-width:68px}}
+
+/* V17.3.2 FIT-ONLY: enforce RBAC visibility even when component display rules override [hidden]. */
+#userManagementToggle[hidden]{display:none!important}
