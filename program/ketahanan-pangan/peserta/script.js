@@ -7,6 +7,8 @@ const normalizeWa = v => String(v || '').replace(/\D/g, '').replace(/^0/, '62');
 let currentRegistrationId = '';
 let lastParticipantRefreshAt = null;
 let lastKnownParticipantStatus = '';
+let lastKnownAdminNote = '';
+let lastKnownStatusNote = '';
 let participantSyncInFlight = false;
 let lastParticipantSyncRequestAt = 0;
 const AUTO_SYNC_MIN_INTERVAL_MS = 90 * 1000;
@@ -238,6 +240,55 @@ function hideStatusChangeNotice() {
   if (notice) notice.hidden = true;
 }
 
+function hideAdminUpdateNotice() {
+  const notice = document.getElementById('adminUpdateNotice');
+  if (notice) notice.hidden = true;
+}
+
+function normalizeNoticeText(value) {
+  return String(value || '').trim().replace(/\s+/g, ' ');
+}
+
+function showAdminUpdateNotice(previousAdminNote, nextAdminNote, previousStatusNote, nextStatusNote, statusChanged = false) {
+  const notice = document.getElementById('adminUpdateNotice');
+  const title = document.getElementById('adminUpdateTitle');
+  const text = document.getElementById('adminUpdateText');
+  const action = document.getElementById('adminUpdateActionBtn');
+  if (!notice || !title || !text || !action) return false;
+
+  if (statusChanged) {
+    hideAdminUpdateNotice();
+    return false;
+  }
+
+  const prevAdmin = normalizeNoticeText(previousAdminNote);
+  const nextAdmin = normalizeNoticeText(nextAdminNote);
+  const prevStatus = normalizeNoticeText(previousStatusNote);
+  const nextStatus = normalizeNoticeText(nextStatusNote);
+  const adminChanged = Boolean(nextAdmin && nextAdmin !== prevAdmin);
+  const statusNoteChanged = Boolean(nextStatus && nextStatus !== prevStatus);
+
+  if (!adminChanged && !statusNoteChanged) {
+    hideAdminUpdateNotice();
+    return false;
+  }
+
+  if (adminChanged) {
+    title.textContent = 'Ada catatan baru dari admin';
+    text.textContent = 'Admin memperbarui Catatan Pemeriksaan. Buka catatan untuk melihat petunjuk terbaru.';
+    action.dataset.target = 'adminNoteCard';
+    action.textContent = 'Lihat catatan admin ↓';
+  } else {
+    title.textContent = 'Keterangan status diperbarui';
+    text.textContent = 'Ada informasi terbaru terkait status pendaftaran Anda.';
+    action.dataset.target = 'statusNote';
+    action.textContent = 'Lihat keterangan ↓';
+  }
+
+  notice.hidden = false;
+  return true;
+}
+
 function showStatusChangeNotice(previousStatus, nextStatus) {
   const prev = String(previousStatus || '').toLowerCase();
   const next = String(nextStatus || '').toLowerCase();
@@ -357,6 +408,8 @@ function showDashboard(p) {
   }
 
   lastKnownParticipantStatus = s;
+  lastKnownAdminNote = normalizeNoticeText(p.admin_note);
+  lastKnownStatusNote = normalizeNoticeText(p.status_note);
 }
 
 function showAuth() {
@@ -365,7 +418,10 @@ function showAuth() {
   document.body.classList.remove('is-authenticated');
   currentRegistrationId = '';
   lastKnownParticipantStatus = '';
+  lastKnownAdminNote = '';
+  lastKnownStatusNote = '';
   hideStatusChangeNotice();
+  hideAdminUpdateNotice();
 }
 
 async function copyText(value) {
@@ -448,6 +504,18 @@ if (statusChangeActionBtn) statusChangeActionBtn.addEventListener('click', () =>
 const statusChangeDismiss = document.getElementById('statusChangeDismiss');
 if (statusChangeDismiss) statusChangeDismiss.addEventListener('click', hideStatusChangeNotice);
 
+const adminUpdateActionBtn = document.getElementById('adminUpdateActionBtn');
+if (adminUpdateActionBtn) adminUpdateActionBtn.addEventListener('click', () => {
+  const targetId = adminUpdateActionBtn.dataset.target || 'adminNoteCard';
+  let target = document.getElementById(targetId);
+  if (target?.hidden) target = document.getElementById('statusNote');
+  target?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  window.setTimeout(() => target?.focus?.({ preventScroll: true }), 350);
+});
+
+const adminUpdateDismiss = document.getElementById('adminUpdateDismiss');
+if (adminUpdateDismiss) adminUpdateDismiss.addEventListener('click', hideAdminUpdateNotice);
+
 const refreshParticipantBtn = document.getElementById('refreshParticipantBtn');
 const defaultRefreshLabel = '↻ Perbarui status';
 
@@ -475,6 +543,8 @@ async function syncParticipantStatus({ manual = false } = {}) {
 
   try {
     const previousStatus = lastKnownParticipantStatus;
+    const previousAdminNote = lastKnownAdminNote;
+    const previousStatusNote = lastKnownStatusNote;
     const d = await request('/me');
     if (!d.authenticated || !d.participant) {
       showAuth();
@@ -484,10 +554,17 @@ async function syncParticipantStatus({ manual = false } = {}) {
 
     showDashboard(d.participant);
     const changed = showStatusChangeNotice(previousStatus, d.participant.status);
+    const adminUpdateChanged = showAdminUpdateNotice(
+      previousAdminNote,
+      d.participant.admin_note,
+      previousStatusNote,
+      d.participant.status_note,
+      changed
+    );
     setLastUpdated(new Date(), 'is-ok');
 
     if (manual && refreshParticipantBtn) {
-      refreshParticipantBtn.textContent = changed ? '✓ Status berubah' : '✓ Status terbaru';
+      refreshParticipantBtn.textContent = changed ? '✓ Status berubah' : adminUpdateChanged ? '✓ Ada pesan baru' : '✓ Status terbaru';
       window.setTimeout(() => {
         if (!participantSyncInFlight && !refreshParticipantBtn.disabled) refreshParticipantBtn.textContent = defaultRefreshLabel;
       }, 1600);
@@ -580,6 +657,7 @@ document.getElementById('loginForm').onsubmit = async e => {
     });
     showDashboard(d.participant);
     hideStatusChangeNotice();
+    hideAdminUpdateNotice();
   } catch (x) {
     msg('error', x.message);
   } finally {
@@ -616,8 +694,11 @@ if (revisionForm) revisionForm.onsubmit = async e => {
     out.className = 'message show ok';
     out.textContent = d.message || 'Perbaikan berhasil dikirim.';
     const previousStatus = lastKnownParticipantStatus;
+    const previousAdminNote = lastKnownAdminNote;
+    const previousStatusNote = lastKnownStatusNote;
     showDashboard(d.participant);
-    showStatusChangeNotice(previousStatus, d.participant?.status);
+    const changed = showStatusChangeNotice(previousStatus, d.participant?.status);
+    showAdminUpdateNotice(previousAdminNote, d.participant?.admin_note, previousStatusNote, d.participant?.status_note, changed);
   } catch (x) {
     out.className = 'message show error';
     out.textContent = x.message;
@@ -645,6 +726,7 @@ document.getElementById('logoutBtn').onclick = async () => {
     if (d.authenticated && d.participant) {
       showDashboard(d.participant);
       hideStatusChangeNotice();
+      hideAdminUpdateNotice();
     } else showAuth();
   } catch {
     showAuth();
