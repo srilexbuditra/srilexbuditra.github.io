@@ -401,7 +401,7 @@ const totalStored = registrations.length;
 const activeRegistrations = registrations.filter(item => Number(item.is_duplicate || 0) !== 1);
 const total = activeRegistrations.length;
 const submitted = activeRegistrations.filter(
-  item => item.status === 'submitted' || item.status === 'resubmitted'
+  item => item.status === 'submitted' || item.status === 'pending' || item.status === 'resubmitted'
 ).length;
 const verified = activeRegistrations.filter(item => item.status === 'verified').length;
 const actionRequired = activeRegistrations.filter(
@@ -441,6 +441,8 @@ if (tableBody) {
 
     if (item.status === 'submitted') {
       statusLabel = 'Menunggu Verifikasi';
+    } else if (item.status === 'pending') {
+      statusLabel = 'Pemeriksaan Data';
     } else if (item.status === 'resubmitted') {
       statusLabel = 'Menunggu Pemeriksaan Ulang';
     } else if (item.status === 'verified') {
@@ -796,6 +798,7 @@ const REVISION_FIELD_LABELS = {
 function formatAdminStatus(status) {
   const labels = {
     submitted: 'Menunggu Verifikasi',
+    pending: 'Pemeriksaan Data',
     resubmitted: 'Menunggu Pemeriksaan Ulang',
     verified: 'Terverifikasi',
     revision: 'Perlu Perbaikan',
@@ -955,6 +958,8 @@ async function loadRegistrationDetail(registrationId) {
 
     if (registration.status === 'submitted') {
       statusLabel = 'Menunggu Verifikasi';
+    } else if (registration.status === 'pending') {
+      statusLabel = 'Pemeriksaan Data';
     } else if (registration.status === 'resubmitted') {
       statusLabel = 'Menunggu Pemeriksaan Ulang';
     } else if (registration.status === 'verified') {
@@ -1091,6 +1096,10 @@ async function loadRegistrationDetail(registrationId) {
               <th>Tindakan Verifikasi</th>
               <td>
                 <div class="verification-actions">
+                  ${registration.status === 'submitted' ? `
+                  <button type="button" class="status-button status-pending" data-status="pending">
+                    Mulai Pemeriksaan
+                  </button>` : ''}
                   <button type="button" class="status-button status-verified" data-status="verified">
                     Verifikasi
                   </button>
@@ -1149,6 +1158,7 @@ async function loadRegistrationDetail(registrationId) {
         button.addEventListener('click', async () => {
           const newStatus = button.dataset.status;
           const labels = {
+            pending: 'Mulai Pemeriksaan',
             verified: 'Verifikasi',
             revision: 'Minta Perbaikan',
             rejected: 'Tolak'
@@ -1458,7 +1468,7 @@ async function updateRegistrationStatus(
     return;
   }
 
-  if (!['verified', 'revision', 'rejected'].includes(newStatus)) {
+  if (!['pending', 'verified', 'revision', 'rejected'].includes(newStatus)) {
     alert('Status yang dipilih tidak valid.');
     return;
   }
@@ -1498,6 +1508,7 @@ async function updateRegistrationStatus(
     }
 
     const statusLabels = {
+      pending: 'Pemeriksaan Data',
       verified: 'Terverifikasi',
       revision: 'Perlu Perbaikan',
       rejected: 'Ditolak'
@@ -1810,7 +1821,7 @@ function getFilteredAdminRegistrations() {
 
 
 function excelStatusLabel(status) {
-  const labels = { submitted:'Menunggu Verifikasi', resubmitted:'Menunggu Pemeriksaan Ulang', verified:'Terverifikasi', revision:'Perlu Perbaikan', rejected:'Ditolak', needs_action:'Perlu Tindakan' };
+  const labels = { submitted:'Menunggu Verifikasi', pending:'Pemeriksaan Data', resubmitted:'Menunggu Pemeriksaan Ulang', verified:'Terverifikasi', revision:'Perlu Perbaikan', rejected:'Ditolak', needs_action:'Perlu Tindakan' };
   return labels[status] || status || '-';
 }
 
@@ -2306,7 +2317,7 @@ function marketingGroupCounts(registrations, getter) {
 }
 
 function marketingStatusText(status) {
-  const labels = {submitted:'Menunggu Verifikasi',resubmitted:'Pemeriksaan Ulang',verified:'Terverifikasi',revision:'Perlu Perbaikan',rejected:'Ditolak',needs_action:'Perlu Tindakan'};
+  const labels = {submitted:'Menunggu Verifikasi',pending:'Pemeriksaan Data',resubmitted:'Pemeriksaan Ulang',verified:'Terverifikasi',revision:'Perlu Perbaikan',rejected:'Ditolak',needs_action:'Perlu Tindakan'};
   return labels[status] || status || 'Belum diisi';
 }
 
@@ -2357,7 +2368,7 @@ function buildMarketingWorkbook(registrations) {
   const commodities = marketingGroupCounts(active, item => item.komoditas);
   const statuses = marketingGroupCounts(active, item => marketingStatusText(item.status));
   const verified = active.filter(item => item.status === 'verified').length;
-  const waiting = active.filter(item => item.status === 'submitted' || item.status === 'resubmitted').length;
+  const waiting = active.filter(item => item.status === 'submitted' || item.status === 'pending' || item.status === 'resubmitted').length;
   const needsAction = active.filter(item => item.status === 'revision' || item.status === 'rejected' || item.status === 'needs_action').length;
   const generatedAt = new Date().toLocaleString('id-ID');
   const period = marketingReportPeriod(active);
