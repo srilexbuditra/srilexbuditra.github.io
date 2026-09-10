@@ -187,6 +187,12 @@ function applyDashboardRoleAccess(user) {
   const exportButton = document.getElementById('participantExportExcel');
   if (exportButton) exportButton.hidden = marketing;
 
+  const marketingDashboard = document.getElementById('marketingDashboard');
+  if (marketingDashboard) marketingDashboard.hidden = !marketing;
+
+  const standardStats = document.querySelector('.stats');
+  if (standardStats) standardStats.hidden = marketing;
+
   const flow = document.querySelector('.flow');
   if (flow) flow.hidden = marketing;
 
@@ -383,6 +389,7 @@ async function loadRegistrations() {
 
     window.KETAHANAN_PANGAN_REGISTRATIONS = registrations;
     initAdminParticipantFilters(registrations);
+    if (isMarketingRole()) renderMarketingDashboard(registrations);
 
 const totalStored = registrations.length;
 const activeRegistrations = registrations.filter(item => Number(item.is_duplicate || 0) !== 1);
@@ -2277,3 +2284,64 @@ Minimal 10 karakter: huruf besar, huruf kecil, angka, dan simbol.`);
 
 function escapeV171Html(value){ return String(value??'').replace(/[&<>\"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}[ch])); }
 function escapeV171Attr(value){ return escapeV171Html(value); }
+
+
+// =========================================================
+// V17.4 DASHBOARD PEMASARAN — FIT-ONLY
+// Ringkasan UI non-dokumen. Tidak mengubah endpoint/API/status registrasi.
+// =========================================================
+function marketingGroupCounts(registrations, getter) {
+  const map = new Map();
+  registrations.forEach(item => {
+    const key = String(getter(item) || 'Belum diisi').trim() || 'Belum diisi';
+    map.set(key, (map.get(key) || 0) + 1);
+  });
+  return [...map.entries()].sort((a,b) => b[1]-a[1] || a[0].localeCompare(b[0], 'id-ID'));
+}
+
+function marketingStatusText(status) {
+  const labels = {submitted:'Menunggu Verifikasi',resubmitted:'Pemeriksaan Ulang',verified:'Terverifikasi',revision:'Perlu Perbaikan',rejected:'Ditolak',needs_action:'Perlu Tindakan'};
+  return labels[status] || status || 'Belum diisi';
+}
+
+function renderMarketingBars(targetId, entries, limit=8) {
+  const target=document.getElementById(targetId); if(!target) return;
+  const rows=entries.slice(0,limit); const max=Math.max(1,...rows.map(x=>x[1]));
+  target.innerHTML = rows.length ? rows.map(([label,value]) => `
+    <div class="marketing-bar-row">
+      <div class="marketing-bar-label"><span>${escapeHtml(label)}</span><strong>${value}</strong></div>
+      <div class="marketing-bar-track"><span style="width:${Math.max(4,(value/max)*100).toFixed(1)}%"></span></div>
+    </div>`).join('') : '<p class="account-empty">Belum ada data.</p>';
+}
+
+function renderMarketingDashboard(registrations) {
+  if (!isMarketingRole() || !Array.isArray(registrations)) return;
+  const active=registrations.filter(item=>Number(item.is_duplicate||0)!==1);
+  const regions=marketingGroupCounts(active, item=>adminRegistrationRegion(item));
+  const commodities=marketingGroupCounts(active, item=>item.komoditas);
+  const statuses=marketingGroupCounts(active, item=>marketingStatusText(item.status));
+  const verified=active.filter(item=>item.status==='verified').length;
+  const set=(id,value)=>{const el=document.getElementById(id);if(el)el.textContent=value;};
+  set('marketingRegionCount', regions.filter(x=>x[0]!=='Belum diisi').length);
+  set('marketingCommodityCount', commodities.filter(x=>x[0]!=='Belum diisi').length);
+  set('marketingVerifiedCount', verified);
+  set('marketingTotalCount', active.length);
+  renderMarketingBars('marketingRegionChart', regions);
+  renderMarketingBars('marketingCommodityChart', commodities);
+  renderMarketingBars('marketingStatusChart', statuses, 10);
+}
+
+function downloadMarketingCsv() {
+  if (!isMarketingRole()) return;
+  const registrations=Array.isArray(window.KETAHANAN_PANGAN_REGISTRATIONS)?window.KETAHANAN_PANGAN_REGISTRATIONS:[];
+  const active=registrations.filter(item=>Number(item.is_duplicate||0)!==1);
+  const rows=[['Kategori','Nilai','Jumlah']];
+  marketingGroupCounts(active,item=>adminRegistrationRegion(item)).forEach(([v,n])=>rows.push(['Wilayah',v,n]));
+  marketingGroupCounts(active,item=>item.komoditas).forEach(([v,n])=>rows.push(['Komoditas',v,n]));
+  marketingGroupCounts(active,item=>marketingStatusText(item.status)).forEach(([v,n])=>rows.push(['Status',v,n]));
+  const csv='\ufeff'+rows.map(r=>r.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',')).join('\r\n');
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8'}); const url=URL.createObjectURL(blob);
+  const a=document.createElement('a'); a.href=url; a.download=`laporan-pemasaran-ketahanan-pangan-${new Date().toISOString().slice(0,10)}.csv`; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+}
+
+document.getElementById('marketingReportCsv')?.addEventListener('click', downloadMarketingCsv);

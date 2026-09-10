@@ -300,6 +300,25 @@
           </div>
         </div>
       </section>
+
+      <section id="marketingDashboard" class="marketing-dashboard" hidden aria-labelledby="marketingDashboardTitle">
+        <div class="marketing-dashboard-head">
+          <div><span class="eyebrow">DASHBOARD PEMASARAN</span><h2 id="marketingDashboardTitle">Ringkasan Pemasaran &amp; Pemetaan Program</h2><p>Statistik non-sensitif untuk komunikasi, pemetaan wilayah, komoditas, dan perkembangan program.</p></div>
+          <button id="marketingReportCsv" type="button" class="admin-export-excel">Unduh Laporan Pemasaran CSV</button>
+        </div>
+        <div class="marketing-kpi-grid">
+          <article><small>Wilayah Terjangkau</small><strong id="marketingRegionCount">—</strong><span>Kabupaten / provinsi</span></article>
+          <article><small>Komoditas Tercatat</small><strong id="marketingCommodityCount">—</strong><span>Jenis komoditas program</span></article>
+          <article><small>Peserta Terverifikasi</small><strong id="marketingVerifiedCount">—</strong><span>Status verified</span></article>
+          <article><small>Total Data Program</small><strong id="marketingTotalCount">—</strong><span>Ringkasan registrasi</span></article>
+        </div>
+        <div class="marketing-chart-grid">
+          <article class="marketing-chart-card"><div class="marketing-chart-title"><strong>Sebaran Wilayah</strong><span>Jumlah registrasi per wilayah</span></div><div id="marketingRegionChart" class="marketing-bars"></div></article>
+          <article class="marketing-chart-card"><div class="marketing-chart-title"><strong>Komoditas</strong><span>Komposisi komoditas peserta</span></div><div id="marketingCommodityChart" class="marketing-bars"></div></article>
+          <article class="marketing-chart-card marketing-chart-wide"><div class="marketing-chart-title"><strong>Status Program</strong><span>Ringkasan perkembangan registrasi</span></div><div id="marketingStatusChart" class="marketing-bars marketing-bars-status"></div></article>
+        </div>
+        <p class="marketing-privacy-note">Dashboard Pemasaran hanya menampilkan ringkasan operasional non-dokumen. Detail identitas peserta dan tindakan verifikasi tidak ditampilkan pada antarmuka role Pemasaran.</p>
+      </section>
       <section class="stats">
         <article><small>Total Registrasi</small><strong>—</strong><span>Menunggu koneksi admin aman</span></article>
         <article><small>Menunggu Verifikasi</small><strong>—</strong><span>Submitted + pemeriksaan ulang</span></article>
@@ -425,6 +444,6 @@
     <script src="./local-qrcode.js?v=1" defer></script>
     <script src="./jszip.min.js?v=1" defer></script>
     <script src="./excel-engine-template.js?v=45" defer></script>
-    <script src="./script-a4-v45.js?v=17.3.2" defer></script>
+    <script src="./script-a4-v45.js?v=17.4" defer></script>
   </body>
 </html>
