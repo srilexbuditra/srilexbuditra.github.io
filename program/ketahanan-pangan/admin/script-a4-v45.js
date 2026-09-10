@@ -357,7 +357,8 @@ function showAdminToast(kind, title, message) {
   }, 4300);
 }
 
-async function loadRegistrations() {
+async function loadRegistrations(options = {}) {
+  setParticipantRefreshState({ loading: true });
   try {
     // V17.4.1 FIT-ONLY: role Pemasaran membaca endpoint tersanitasi.
     // Admin/Super Admin tetap memakai endpoint operasional lama tanpa perubahan.
@@ -400,7 +401,7 @@ async function loadRegistrations() {
      */
 
     window.KETAHANAN_PANGAN_REGISTRATIONS = registrations;
-    initAdminParticipantFilters(registrations);
+    initAdminParticipantFilters(registrations, { preservePage: Boolean(options.manual) });
     if (isMarketingRole()) renderMarketingDashboard(registrations);
 
 const totalStored = registrations.length;
@@ -509,6 +510,10 @@ if (tableBody) {
 }
 document.querySelector('main.wrap').hidden = false;
 document.getElementById('loginMessage').textContent = '';
+setParticipantRefreshState({ loading: false, updatedAt: new Date() });
+if (options.manual) {
+  showAdminToast('success', 'Data diperbarui', `${registrations.length} data registrasi berhasil dimuat ulang.`);
+}
 
 // V8.9 Tahap 1: audit duplikasi hanya-baca setelah daftar utama tampil.
 // Tidak mengubah status, D1, R2, atau endpoint registrasi produksi.
@@ -518,6 +523,10 @@ if (!isMarketingRole()) auditDuplicateRegistrations(registrations);
       'Ketahanan Pangan Admin: gagal memuat data registrasi.',
       error
     );
+    setParticipantRefreshState({ loading: false, error: true });
+    if (options.manual) {
+      showAdminToast('error', 'Gagal memperbarui data', 'Data registrasi belum berhasil dimuat. Coba lagi beberapa saat.');
+    }
   }
 }
 
@@ -1696,6 +1705,39 @@ if (printCertificateButton) {
 
 
 // =========================================================
+// V3.7 — MUAT ULANG DATA + WAKTU SINKRON TERAKHIR
+// Client-side only. Menggunakan endpoint registrasi yang sudah ada.
+// =========================================================
+function formatParticipantLastUpdated(date) {
+  if (!(date instanceof Date) || Number.isNaN(date.getTime())) return 'Belum diperbarui';
+  return `Diperbarui ${date.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })} · ${date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}`;
+}
+
+function setParticipantRefreshState({ loading = false, error = false, updatedAt = null } = {}) {
+  const button = document.getElementById('participantRefreshData');
+  const label = document.getElementById('participantLastUpdated');
+
+  if (button) {
+    button.disabled = loading;
+    button.classList.toggle('is-loading', loading);
+    button.setAttribute('aria-busy', loading ? 'true' : 'false');
+    button.textContent = loading ? '↻ Memuat Data...' : '↻ Muat Ulang Data';
+  }
+
+  if (!label) return;
+  label.classList.toggle('is-error', error);
+  label.classList.toggle('is-loading', loading);
+
+  if (loading) {
+    label.textContent = 'Menyinkronkan data…';
+  } else if (error) {
+    label.textContent = 'Pembaruan terakhir gagal';
+  } else if (updatedAt) {
+    label.textContent = formatParticipantLastUpdated(updatedAt);
+  }
+}
+
+// =========================================================
 // ADMIN FILTER PESERTA V1
 // Client-side only: tidak mengubah API, token, dokumen, status, atau sertifikat.
 // =========================================================
@@ -1854,7 +1896,7 @@ function applyAdminParticipantFilters(options = {}) {
   renderAdminParticipantPagination(matches.length);
 }
 
-function initAdminParticipantFilters(registrations) {
+function initAdminParticipantFilters(registrations, options = {}) {
   refreshAdminRegionOptions(registrations);
 
   const search = document.getElementById('participantSearch');
@@ -1864,6 +1906,7 @@ function initAdminParticipantFilters(registrations) {
   const pageSize = document.getElementById('participantPageSize');
   const prev = document.getElementById('participantPrevPage');
   const next = document.getElementById('participantNextPage');
+  const refreshData = document.getElementById('participantRefreshData');
 
   if (search && !search.dataset.filterReady) {
     search.dataset.filterReady = '1';
@@ -1912,9 +1955,16 @@ function initAdminParticipantFilters(registrations) {
       document.querySelector('.table-wrap')?.scrollIntoView({behavior:'smooth', block:'nearest'});
     });
   }
+  if (refreshData && !refreshData.dataset.refreshReady) {
+    refreshData.dataset.refreshReady = '1';
+    refreshData.addEventListener('click', () => {
+      if (refreshData.disabled) return;
+      loadRegistrations({ manual: true });
+    });
+  }
 
   // loadRegistrations merender baris secara sinkron setelah assignment ini.
-  setTimeout(() => applyAdminParticipantFilters(), 0);
+  setTimeout(() => applyAdminParticipantFilters({ preservePage: Boolean(options.preservePage) }), 0);
 }
 
 
