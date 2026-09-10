@@ -56,7 +56,7 @@
   <meta itemprop="image" content="https://srilexbuditra.work/program/ketahanan-pangan/admin/assets/og-admin-dashboard-v17.3.3.jpg">
   <meta itemprop="inLanguage" content="id-ID">
 
-  <link rel="stylesheet" href="./style.css?v=17.14.0">
+  <link rel="stylesheet" href="./style.css?v=17.15.0">
   <link rel="stylesheet" href="./style-verifikasi-tambahan.css?v=1">
 </head>
 <body>
@@ -473,9 +473,16 @@
             <span>per halaman</span>
           </label>
           <div class="admin-pagination-controls">
-            <button type="button" id="participantPrevPage" aria-label="Halaman sebelumnya">← Sebelumnya</button>
-            <span id="participantPageLabel">Halaman 1 dari 1</span>
-            <button type="button" id="participantNextPage" aria-label="Halaman berikutnya">Berikutnya →</button>
+            <button type="button" id="participantFirstPage" class="admin-pagination-edge" aria-label="Halaman pertama" title="Halaman pertama"><span aria-hidden="true">«</span><span class="admin-pagination-button-label">Pertama</span></button>
+            <button type="button" id="participantPrevPage" aria-label="Halaman sebelumnya"><span aria-hidden="true">←</span><span class="admin-pagination-button-label">Sebelumnya</span></button>
+            <label class="admin-page-jump" title="Lompat ke halaman tertentu">
+              <span class="sr-only">Ke halaman</span>
+              <input id="participantPageJump" type="number" min="1" step="1" inputmode="numeric" aria-label="Ke halaman" value="1">
+              <span id="participantPageJumpTotal" aria-hidden="true">/ 1</span>
+            </label>
+            <span id="participantPageLabel" class="sr-only" aria-live="polite">Halaman 1 dari 1</span>
+            <button type="button" id="participantNextPage" aria-label="Halaman berikutnya"><span class="admin-pagination-button-label">Berikutnya</span><span aria-hidden="true">→</span></button>
+            <button type="button" id="participantLastPage" class="admin-pagination-edge" aria-label="Halaman terakhir" title="Halaman terakhir"><span class="admin-pagination-button-label">Terakhir</span><span aria-hidden="true">»</span></button>
           </div>
         </div>
       </section>
@@ -542,6 +549,6 @@
     <script src="./local-qrcode.js?v=1" defer></script>
     <script src="./jszip.min.js?v=1" defer></script>
     <script src="./excel-engine-template.js?v=45" defer></script>
-    <script src="./script-a4-v45.js?v=17.14.0" defer></script>
+    <script src="./script-a4-v45.js?v=17.15.0" defer></script>
   </body>
 </html>

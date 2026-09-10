@@ -2102,7 +2102,8 @@ function refreshAdminRegionOptions(registrations) {
 
 const ADMIN_PARTICIPANT_PAGINATION = {
   page: 1,
-  pageSize: 10
+  pageSize: 10,
+  pageCount: 1
 };
 
 function adminParticipantPageSize() {
@@ -2126,16 +2127,48 @@ function renderAdminParticipantPagination(totalMatches) {
   const range = document.getElementById('participantPageRange');
   const total = document.getElementById('participantFilteredTotal');
   const label = document.getElementById('participantPageLabel');
+  const first = document.getElementById('participantFirstPage');
   const prev = document.getElementById('participantPrevPage');
   const next = document.getElementById('participantNextPage');
+  const last = document.getElementById('participantLastPage');
+  const jump = document.getElementById('participantPageJump');
+  const jumpTotal = document.getElementById('participantPageJumpTotal');
+
+  ADMIN_PARTICIPANT_PAGINATION.pageCount = pageCount;
 
   if (range) range.textContent = `${start}–${end}`;
   if (total) total.textContent = String(totalMatches);
   if (label) label.textContent = `Halaman ${totalMatches ? page : 0} dari ${totalMatches ? pageCount : 0}`;
+  if (first) first.disabled = !totalMatches || page <= 1;
   if (prev) prev.disabled = !totalMatches || page <= 1;
   if (next) next.disabled = !totalMatches || page >= pageCount;
+  if (last) last.disabled = !totalMatches || page >= pageCount;
+  if (jump) {
+    jump.disabled = !totalMatches;
+    jump.min = '1';
+    jump.max = String(pageCount);
+    if (document.activeElement !== jump) jump.value = String(totalMatches ? page : 1);
+  }
+  if (jumpTotal) jumpTotal.textContent = `/ ${totalMatches ? pageCount : 0}`;
 
   wrap.hidden = totalMatches === 0;
+}
+
+function goToAdminParticipantPage(targetPage, options = {}) {
+  const pageCount = Math.max(1, Number(ADMIN_PARTICIPANT_PAGINATION.pageCount) || 1);
+  const requested = Number(targetPage);
+  if (!Number.isFinite(requested)) return;
+
+  const nextPage = Math.min(pageCount, Math.max(1, Math.trunc(requested)));
+  ADMIN_PARTICIPANT_PAGINATION.page = nextPage;
+  applyAdminParticipantFilters({preservePage:true});
+
+  if (options.focusTable !== false) {
+    document.querySelector('.table-wrap')?.scrollIntoView({
+      behavior: window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches ? 'auto' : 'smooth',
+      block: 'nearest'
+    });
+  }
 }
 
 function applyAdminParticipantFilters(options = {}) {
@@ -2253,8 +2286,11 @@ function initAdminParticipantFilters(registrations, options = {}) {
   const sort = document.getElementById('participantSort');
   const reset = document.getElementById('participantResetFilter');
   const pageSize = document.getElementById('participantPageSize');
+  const first = document.getElementById('participantFirstPage');
   const prev = document.getElementById('participantPrevPage');
   const next = document.getElementById('participantNextPage');
+  const last = document.getElementById('participantLastPage');
+  const pageJump = document.getElementById('participantPageJump');
   const refreshData = document.getElementById('participantRefreshData');
   const activeFilters = document.getElementById('participantActiveFilters');
   const clearActiveFilters = document.getElementById('participantClearActiveFilters');
@@ -2332,21 +2368,47 @@ function initAdminParticipantFilters(registrations, options = {}) {
       applyAdminParticipantFilters({preservePage:true});
     });
   }
+  if (first && !first.dataset.paginationReady) {
+    first.dataset.paginationReady = '1';
+    first.addEventListener('click', () => goToAdminParticipantPage(1));
+  }
   if (prev && !prev.dataset.paginationReady) {
     prev.dataset.paginationReady = '1';
     prev.addEventListener('click', () => {
       if (ADMIN_PARTICIPANT_PAGINATION.page <= 1) return;
-      ADMIN_PARTICIPANT_PAGINATION.page -= 1;
-      applyAdminParticipantFilters({preservePage:true});
-      document.querySelector('.table-wrap')?.scrollIntoView({behavior:'smooth', block:'nearest'});
+      goToAdminParticipantPage(ADMIN_PARTICIPANT_PAGINATION.page - 1);
     });
   }
   if (next && !next.dataset.paginationReady) {
     next.dataset.paginationReady = '1';
     next.addEventListener('click', () => {
-      ADMIN_PARTICIPANT_PAGINATION.page += 1;
-      applyAdminParticipantFilters({preservePage:true});
-      document.querySelector('.table-wrap')?.scrollIntoView({behavior:'smooth', block:'nearest'});
+      if (ADMIN_PARTICIPANT_PAGINATION.page >= ADMIN_PARTICIPANT_PAGINATION.pageCount) return;
+      goToAdminParticipantPage(ADMIN_PARTICIPANT_PAGINATION.page + 1);
+    });
+  }
+  if (last && !last.dataset.paginationReady) {
+    last.dataset.paginationReady = '1';
+    last.addEventListener('click', () => goToAdminParticipantPage(ADMIN_PARTICIPANT_PAGINATION.pageCount));
+  }
+  if (pageJump && !pageJump.dataset.paginationReady) {
+    pageJump.dataset.paginationReady = '1';
+    const commitPageJump = () => {
+      const raw = Number(pageJump.value);
+      if (!Number.isFinite(raw) || raw < 1) {
+        pageJump.value = String(ADMIN_PARTICIPANT_PAGINATION.page);
+        return;
+      }
+      goToAdminParticipantPage(raw);
+    };
+    pageJump.addEventListener('change', commitPageJump);
+    pageJump.addEventListener('keydown', (event) => {
+      if (event.key !== 'Enter') return;
+      event.preventDefault();
+      commitPageJump();
+      pageJump.blur();
+    });
+    pageJump.addEventListener('blur', () => {
+      if (!pageJump.value) pageJump.value = String(ADMIN_PARTICIPANT_PAGINATION.page);
     });
   }
   if (refreshData && !refreshData.dataset.refreshReady) {
