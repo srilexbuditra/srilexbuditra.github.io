@@ -15,6 +15,7 @@ const ADMIN_API_BASE =
  */
 let adminToken = '';
 let currentAdminUser = null;
+let cachedAdminUsers = null;
 let adminLoginJustCompleted = false;
 let duplicateAuditByRegistrationId = new Map();
 
@@ -260,6 +261,7 @@ function setAuthenticatedAdmin(user) {
 
 function showAdminLogin() {
   currentAdminUser = null;
+  cachedAdminUsers = null;
   adminToken = '';
 
   const login = document.getElementById('adminLogin');
@@ -295,6 +297,7 @@ async function logoutAdmin() {
     );
 
     currentAdminUser = null;
+    cachedAdminUsers = null;
     adminToken = '';
     sessionStorage.removeItem('kp_admin_role_notice_closed');
 
@@ -309,13 +312,13 @@ async function logoutAdmin() {
 }
 
 function roleBadgeText(role) {
-  if (role === 'super_admin') return 'SUPER ADMIN';
+  if (role === 'super_admin') return 'SYSTEM DEVELOPER';
   if (role === 'pemasaran') return 'PEMASARAN';
   return 'ADMIN';
 }
 
 function roleTitle(role) {
-  if (role === 'super_admin') return 'Super Administrator — Penanggung Jawab Teknologi Sistem';
+  if (role === 'super_admin') return 'System Developer — Pengembang & Pengelola Sistem';
   if (role === 'pemasaran') return 'Pemasaran & Komunikasi Program';
   return 'Admin — Pengelola Operasional Program';
 }
@@ -1927,7 +1930,7 @@ function buildParticipantWorkbook(registrations) {
 
 async function exportFilteredParticipantsToExcel() {
   if (isMarketingRole()) {
-    showAdminToast('error', 'Akses Dibatasi', 'Excel A4 V45 hanya tersedia untuk Admin dan Super Administrator.');
+    showAdminToast('error', 'Akses Dibatasi', 'Excel A4 V45 hanya tersedia untuk Admin dan System Developer.');
     return;
   }
   const registrations = getFilteredAdminRegistrations();
@@ -2135,7 +2138,8 @@ async function loadAdminUsers() {
     const response = await fetch(`${ADMIN_API_BASE}/auth/users`, {credentials:'include',headers:{Accept:'application/json'},cache:'no-store'});
     const data = await response.json().catch(()=>({}));
     if (!response.ok || !data.ok) throw new Error(data.message || 'Gagal membaca daftar akun.');
-    renderAdminUsers(data.users || []);
+    cachedAdminUsers = Array.isArray(data.users) ? data.users : [];
+    renderAdminUsers(cachedAdminUsers);
   } catch (error) { list.innerHTML = `<p class="account-empty account-error">${escapeV171Html(error.message || 'Gagal membaca daftar akun.')}</p>`; }
 }
 
@@ -2155,16 +2159,16 @@ function renderAdminUsers(users) {
   list.innerHTML = sorted.map(user => {
     const owner = Number(user.is_owner) === 1;
     const roleOptions = owner
-      ? '<option value="super_admin" selected>Super Admin</option>'
+      ? '<option value="super_admin" selected>System Developer</option>'
       : `<option value="admin" ${user.role==='admin'?'selected':''}>Admin</option><option value="pemasaran" ${user.role==='pemasaran'?'selected':''}>Pemasaran</option>`;
-    const roleLabel = user.role === 'super_admin' ? 'Super Admin' : (user.role === 'pemasaran' ? 'Pemasaran' : 'Admin');
+    const roleLabel = user.role === 'super_admin' ? 'System Developer' : (user.role === 'pemasaran' ? 'Pemasaran' : 'Admin');
     const roleClass = user.role === 'super_admin' ? 'role-super' : (user.role === 'pemasaran' ? 'role-marketing' : 'role-admin');
 
     return `<article class="admin-user-card compact-user-card" data-user-id="${Number(user.id)}">
       <div class="admin-user-compact-row">
         <div class="admin-user-avatar" aria-hidden="true">${escapeV171Html((user.display_name||user.username||'?').trim().charAt(0).toUpperCase())}</div>
         <div class="admin-user-summary">
-          <div><strong>${escapeV171Html(user.display_name || user.username)}</strong><span>@${escapeV171Html(user.username)} ${owner?'<b>OWNER</b>':''}</span></div>
+          <div><strong>${escapeV171Html(user.display_name || user.username)}</strong><span>@${escapeV171Html(user.username)} ${owner?'<b>IT &amp; SYSTEM</b>':''}</span></div>
         </div>
         <span class="admin-role-pill ${roleClass}">${roleLabel}</span>
         <span class="admin-user-status ${Number(user.is_active)===1?'is-active':'is-inactive'}">${Number(user.is_active)===1?'Aktif':'Nonaktif'}</span>
@@ -2217,36 +2221,90 @@ function closeUserManagePanel(event) {
   if (toggle) { toggle.setAttribute('aria-expanded','false'); toggle.textContent='Kelola ▾'; }
 }
 
+function roleManagerFallbackDirectory() {
+  return {
+    super_admin: [
+      { display_name: 'Srilex Buditra', username: '', role: 'super_admin', is_active: 1 }
+    ],
+    admin: [
+      { display_name: 'Prapti Kanthie Rahayu', username: '', role: 'admin', is_active: 1 }
+    ],
+    pemasaran: [
+      { display_name: 'Marketing', username: '', role: 'pemasaran', is_active: 1 }
+    ]
+  };
+}
+
+function managerRoleDetail(role) {
+  if (role === 'super_admin') return 'IT & SYSTEM';
+  if (role === 'pemasaran') return 'Pemasaran';
+  return 'Admin';
+}
+
+function renderRoleManagerList(role, managers) {
+  const targetIds = {
+    super_admin: ['roleManagersSuper', 'roleManagersSuperSummary'],
+    admin: ['roleManagersAdmin', 'roleManagersAdminSummary'],
+    pemasaran: ['roleManagersMarketing', 'roleManagersMarketingSummary']
+  };
+  const [listId, summaryId] = targetIds[role] || [];
+  const list = listId ? document.getElementById(listId) : null;
+  const summary = summaryId ? document.getElementById(summaryId) : null;
+  if (!list || !summary) return;
+
+  const activeManagers = (Array.isArray(managers) ? managers : [])
+    .filter(item => Number(item?.is_active) === 1);
+
+  summary.textContent = activeManagers.length
+    ? `${activeManagers.length} Pengelola Terdaftar`
+    : 'Belum ada pengelola aktif';
+
+  if (!activeManagers.length) {
+    list.innerHTML = '<span class="role-manager-empty">Belum ada pengelola aktif.</span>';
+    return;
+  }
+
+  list.innerHTML = activeManagers.map(item => {
+    const displayName = item.display_name || item.username || 'Pengelola';
+    const username = item.username || '-';
+    const initial = String(displayName).trim().charAt(0).toUpperCase() || '?';
+    return `<div class="role-manager-person">
+      <span class="role-manager-avatar" aria-hidden="true">${escapeV171Html(initial)}</span>
+      <span class="role-manager-meta">
+        <strong>${escapeV171Html(displayName)}</strong>
+        <small>${username && username !== '-' ? `@${escapeV171Html(username)} · ` : ''}${escapeV171Html(managerRoleDetail(role))}</small>
+      </span>
+      <span class="role-manager-status">Aktif</span>
+    </div>`;
+  }).join('');
+}
+
 function renderRoleFunctionPanel(user, users = null) {
   if (!user) return;
   const identity = document.getElementById('currentRoleIdentity');
   const current = document.getElementById('roleFunctionCurrentUser');
   const roleMap = {
-    super_admin: ['roleManagersSuper','Super Administrator'],
-    admin: ['roleManagersAdmin','Admin'],
-    pemasaran: ['roleManagersMarketing','Pemasaran']
+    super_admin: ['System Developer'],
+    admin: ['Admin'],
+    pemasaran: ['Pemasaran']
   };
-  const roleLabel = roleMap[user.role]?.[1] || 'Pengguna';
+  const roleLabel = roleMap[user.role]?.[0] || 'Pengguna';
   if (identity) identity.textContent = `${roleLabel} · ${user.display_name || user.username}`;
   if (current) current.textContent = `Anda masuk sebagai ${roleLabel}: ${user.display_name || user.username} (@${user.username || '-'})`;
 
-  const nameTargets = {
-    super_admin: document.getElementById('roleManagersSuper'),
-    admin: document.getElementById('roleManagersAdmin'),
-    pemasaran: document.getElementById('roleManagersMarketing')
-  };
-  Object.values(nameTargets).forEach(el => { if (el) el.textContent = 'Belum ditampilkan'; });
+  const fallback = roleManagerFallbackDirectory();
+  const resolvedUsers = Array.isArray(users)
+    ? users
+    : (Array.isArray(cachedAdminUsers) ? cachedAdminUsers : null);
 
-  if (Array.isArray(users) && currentAdminUser?.role === 'super_admin') {
-    for (const role of ['super_admin','admin','pemasaran']) {
-      const names = users
-        .filter(item => item.role === role && Number(item.is_active) === 1)
-        .map(item => item.display_name || item.username)
-        .filter(Boolean);
-      if (nameTargets[role]) nameTargets[role].textContent = names.length ? names.join(', ') : 'Belum ada pengelola aktif';
+  for (const role of ['super_admin','admin','pemasaran']) {
+    let managers = fallback[role] || [];
+    if (Array.isArray(resolvedUsers) && currentAdminUser?.role === 'super_admin') {
+      managers = resolvedUsers.filter(item => item.role === role);
+    } else if (user.role === role) {
+      managers = [{ ...user, is_active: Number(user.is_active ?? 1) }];
     }
-  } else if (nameTargets[user.role]) {
-    nameTargets[user.role].textContent = user.display_name || user.username;
+    renderRoleManagerList(role, managers);
   }
 
   document.querySelectorAll('.role-function-card').forEach(card => {

@@ -56,7 +56,7 @@
   <meta itemprop="image" content="https://srilexbuditra.work/program/ketahanan-pangan/admin/assets/og-admin-dashboard-v17.3.3.jpg">
   <meta itemprop="inLanguage" content="id-ID">
 
-  <link rel="stylesheet" href="./style.css?v=17.3.2">
+  <link rel="stylesheet" href="./style.css?v=17.5.0">
   <link rel="stylesheet" href="./style-verifikasi-tambahan.css?v=1">
 </head>
 <body>
@@ -188,12 +188,12 @@
     <button id="adminRoleGuideToggle" class="role-guide-toggle" type="button" aria-expanded="false" aria-controls="adminRoleGuide">Peran &amp; Hak Akses ▾</button>
     <div id="adminRoleGuide" class="role-guide-panel" hidden>
       <div class="role-guide-grid">
-        <article><strong>Super Administrator</strong><span>Teknologi &amp; sistem · akun/role · keamanan · audit teknis.</span></article>
+        <article><strong>System Developer</strong><span>IT &amp; System · pengembangan · keamanan · audit teknis.</span></article>
         <article><strong>Admin</strong><span>Operasional peserta · verifikasi · anti-duplikasi · sertifikat.</span></article>
         <article><strong>Pemasaran</strong><span>Komunikasi · pemetaan · statistik · laporan pemasaran.</span></article>
       </div>
       <a class="role-guide-pdf" href="./Pembagian-Peran-Pengelola-Platform-Digital-Ketahanan-Pangan-V3-A4-FINAL.pdf" target="_blank" rel="noopener">Lihat PDF Pedoman Peran ↗</a>
-      <small>Pedoman dapat dilihat oleh super_admin, admin, dan pemasaran. Pengelolaan akun/role tetap khusus Super Administrator.</small>
+      <small>Pedoman dapat dilihat oleh System Developer, Admin, dan Pemasaran. Pengelolaan akun/role tetap khusus System Developer.</small>
     </div>
   </div>
   <button id="closeRoleNotice" class="role-notice-close" type="button" aria-label="Tutup pemberitahuan">×</button>
@@ -250,19 +250,19 @@
                 </div>
                 <div class="role-function-grid">
                   <article class="role-function-card" data-role-card="super_admin">
-                    <div class="role-function-head"><span class="role-function-icon">🛡️</span><div><strong>Super Administrator</strong><small>Penanggung Jawab Teknologi Sistem</small></div></div>
-                    <p>Kelola keamanan sistem, akun & role, konfigurasi teknis, audit, database/API, serta pengawasan akses dashboard.</p>
-                    <div class="role-manager-line"><span>Pengelola</span><strong id="roleManagersSuper">—</strong></div>
+                    <div class="role-function-head"><span class="role-function-icon">🛡️</span><div><strong>SYSTEM DEVELOPER</strong><small>Pengembang &amp; Pengelola Sistem</small></div></div>
+                    <p>Kelola pengembangan dan keamanan sistem, akun &amp; hak akses, konfigurasi teknis, audit, database/API, serta pemeliharaan dashboard.</p>
+                    <div class="role-manager-line"><span class="role-manager-label">Pengelola</span><details class="role-manager-accordion"><summary><strong id="roleManagersSuperSummary">Memuat pengelola...</strong><span class="role-manager-chevron" aria-hidden="true">⌄</span></summary><div id="roleManagersSuper" class="role-manager-list"><span class="role-manager-empty">Memuat data...</span></div></details></div>
                   </article>
                   <article class="role-function-card" data-role-card="admin">
                     <div class="role-function-head"><span class="role-function-icon">✅</span><div><strong>Admin</strong><small>Pengelola Operasional Program</small></div></div>
                     <p>Kelola data peserta, verifikasi, revisi, anti-duplikasi, dokumen, kartu/sertifikat, dan kebutuhan operasional program.</p>
-                    <div class="role-manager-line"><span>Pengelola</span><strong id="roleManagersAdmin">—</strong></div>
+                    <div class="role-manager-line"><span class="role-manager-label">Pengelola</span><details class="role-manager-accordion"><summary><strong id="roleManagersAdminSummary">Memuat pengelola...</strong><span class="role-manager-chevron" aria-hidden="true">⌄</span></summary><div id="roleManagersAdmin" class="role-manager-list"><span class="role-manager-empty">Memuat data...</span></div></details></div>
                   </article>
                   <article class="role-function-card" data-role-card="pemasaran">
                     <div class="role-function-head"><span class="role-function-icon">📣</span><div><strong>Pemasaran</strong><small>Pemasaran & Komunikasi Program</small></div></div>
                     <p>Fokus pada komunikasi program, pemetaan wilayah/komoditas, statistik, dan laporan pemasaran tanpa akses data sensitif peserta.</p>
-                    <div class="role-manager-line"><span>Pengelola</span><strong id="roleManagersMarketing">—</strong></div>
+                    <div class="role-manager-line"><span class="role-manager-label">Pengelola</span><details class="role-manager-accordion"><summary><strong id="roleManagersMarketingSummary">Memuat pengelola...</strong><span class="role-manager-chevron" aria-hidden="true">⌄</span></summary><div id="roleManagersMarketing" class="role-manager-list"><span class="role-manager-empty">Memuat data...</span></div></details></div>
                   </article>
                 </div>
                 <div class="account-note-box role-function-note"><strong>Identitas sesi</strong><span id="roleFunctionCurrentUser">Pengguna aktif akan ditampilkan di sini.</span></div>
@@ -271,7 +271,7 @@
               <div id="userManagementPanel" class="user-management-panel" hidden>
                 <div class="user-management-title">
                   <div class="account-section-title-wrap"><span class="account-section-icon" aria-hidden="true">👥</span><div><h3>Manajemen Akun</h3><p>Tambah akun baru, atur status/role, atau reset password Admin/Pemasaran.</p></div></div>
-                  <div class="account-section-actions"><span class="account-role-badge">★ Super Administrator</span><button id="createAdminUserToggle" type="button" class="account-security-button account-security-button-primary">＋ Tambah Akun Baru</button><button id="refreshAdminUsers" type="button" class="account-security-button">↻ Muat Ulang</button></div>
+                  <div class="account-section-actions"><span class="account-role-badge">★ System Developer</span><button id="createAdminUserToggle" type="button" class="account-security-button account-security-button-primary">＋ Tambah Akun Baru</button><button id="refreshAdminUsers" type="button" class="account-security-button">↻ Muat Ulang</button></div>
                 </div>
 
                 <form id="createAdminUserForm" class="account-security-form account-create-form" hidden>
@@ -287,12 +287,12 @@
                 </form>
 
                 <div class="account-list-card">
-                  <div class="account-list-head"><div><h4>Daftar Akun Pengguna</h4><p>Akun owner dilindungi dan tidak dapat dinonaktifkan.</p></div></div>
+                  <div class="account-list-head"><div><h4>Daftar Akun Pengguna</h4><p>Akun System Developer dilindungi dan tidak dapat dinonaktifkan.</p></div></div>
                   <div id="adminUsersList" class="admin-users-list"><p class="account-empty">Memuat daftar akun...</p></div>
                 </div>
 
                 <div class="account-info-grid">
-                  <article class="account-info-card account-info-card-blue"><span aria-hidden="true">ⓘ</span><div><strong>Keterangan</strong><p>Akun OWNER tidak dapat dinonaktifkan atau diturunkan dari Super Admin. Perubahan role/status akan mencabut session akun terkait.</p></div></article>
+                  <article class="account-info-card account-info-card-blue"><span aria-hidden="true">ⓘ</span><div><strong>Keterangan</strong><p>Akun System Developer dilindungi dan tidak dapat dinonaktifkan atau diturunkan hak aksesnya. Perubahan role/status akan mencabut session akun terkait.</p></div></article>
                   <article class="account-info-card"><span aria-hidden="true">🔐</span><div><strong>Keamanan Password</strong><p>Password tidak pernah ditampilkan kembali oleh sistem dan hanya disimpan dalam bentuk hash di server.</p></div></article>
                 </div>
               </div>
@@ -445,6 +445,6 @@
     <script src="./local-qrcode.js?v=1" defer></script>
     <script src="./jszip.min.js?v=1" defer></script>
     <script src="./excel-engine-template.js?v=45" defer></script>
-    <script src="./script-a4-v45.js?v=17.4.3" defer></script>
+    <script src="./script-a4-v45.js?v=17.5.0" defer></script>
   </body>
 </html>
