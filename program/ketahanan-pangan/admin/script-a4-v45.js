@@ -2035,8 +2035,8 @@ async function submitOwnPasswordChange(event) {
   const currentPassword = document.getElementById('currentAccountPassword')?.value || '';
   const newPassword = document.getElementById('newAccountPassword')?.value || '';
   const confirmPassword = document.getElementById('confirmAccountPassword')?.value || '';
+  if (!currentPassword || !newPassword || !confirmPassword) return showAdminToast('error','Password Belum Lengkap','Lengkapi password saat ini, password baru, dan konfirmasi.');
   if (newPassword !== confirmPassword) return showAdminToast('error','Password Tidak Sama','Konfirmasi password baru tidak sama.');
-  if (!validV171Password(newPassword)) return showAdminToast('error','Password Belum Memenuhi Syarat','Gunakan minimal 10 karakter dengan huruf besar, huruf kecil, angka, dan simbol.');
   const submit = form.querySelector('button[type="submit"]');
   try {
     if (submit) submit.disabled = true;
@@ -2094,7 +2094,7 @@ async function createAdminUser(event) {
   event.preventDefault();
   const form=event.currentTarget, submit=form.querySelector('button[type="submit"]');
   const payload={ username:document.getElementById('newAdminUsername')?.value||'', display_name:document.getElementById('newAdminDisplayName')?.value||'', role:document.getElementById('newAdminRole')?.value||'admin', password:document.getElementById('newAdminInitialPassword')?.value||'' };
-  if (!validV171Password(payload.password)) return showAdminToast('error','Password Belum Memenuhi Syarat','Password awal minimal 10 karakter dengan huruf besar, huruf kecil, angka, dan simbol.');
+  if (!payload.password) return showAdminToast('error','Password Wajib Diisi','Masukkan password awal untuk akun baru.');
   try {
     if(submit) submit.disabled=true;
     const response=await fetch(`${ADMIN_API_BASE}/auth/users`,{method:'POST',credentials:'include',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify(payload)});
@@ -2124,7 +2124,6 @@ async function resetAdminUserPassword(event) {
   const newPassword=window.prompt(`Masukkan password baru untuk ${name}.\
 Minimal 10 karakter: huruf besar, huruf kecil, angka, dan simbol.`);
   if(newPassword===null) return;
-  if(!validV171Password(newPassword)) return showAdminToast('error','Password Belum Memenuhi Syarat','Gunakan minimal 10 karakter dengan huruf besar, huruf kecil, angka, dan simbol.');
   if(!window.confirm(`Reset password ${name}? Semua session akun tersebut akan dicabut.`)) return;
   try {
     event.currentTarget.disabled=true;
