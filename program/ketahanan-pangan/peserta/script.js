@@ -6,6 +6,7 @@ const normalizeId = v => String(v || '').trim().toUpperCase().replace(/\s+/g, ''
 const normalizeWa = v => String(v || '').replace(/\D/g, '').replace(/^0/, '62');
 let currentRegistrationId = '';
 let lastParticipantRefreshAt = null;
+let lastKnownParticipantStatus = '';
 
 function msg(type, text) {
   message.className = 'message show ' + type;
@@ -203,6 +204,50 @@ function renderParticipantTimeline(status) {
   updateTimelineStates(items);
 }
 
+function hideStatusChangeNotice() {
+  const notice = document.getElementById('statusChangeNotice');
+  if (notice) notice.hidden = true;
+}
+
+function showStatusChangeNotice(previousStatus, nextStatus) {
+  const prev = String(previousStatus || '').toLowerCase();
+  const next = String(nextStatus || '').toLowerCase();
+  if (!prev || !next || prev === next) {
+    hideStatusChangeNotice();
+    return false;
+  }
+
+  const notice = document.getElementById('statusChangeNotice');
+  const icon = document.getElementById('statusChangeIcon');
+  const title = document.getElementById('statusChangeTitle');
+  const text = document.getElementById('statusChangeText');
+  const action = document.getElementById('statusChangeActionBtn');
+  if (!notice || !icon || !title || !text || !action) return false;
+
+  const presentation = getStatusPresentation(next);
+  notice.dataset.status = next || 'pending';
+  icon.textContent = presentation.icon || '↻';
+  title.textContent = 'Status berubah menjadi ' + statusLabel(next);
+  text.textContent = 'Sebelumnya: ' + statusLabel(prev) + ' → Sekarang: ' + statusLabel(next) + '. ' + presentation.text;
+
+  let targetId = 'nextActionCard';
+  let actionLabel = 'Lihat langkah berikutnya ↓';
+  if (next === 'revision') {
+    targetId = 'revisionCard';
+    actionLabel = 'Buka perbaikan data ↓';
+  } else if (next === 'verified') {
+    targetId = 'certificateBtn';
+    actionLabel = 'Buka sertifikat ↓';
+  } else if (next === 'rejected') {
+    targetId = 'adminNoteCard';
+    actionLabel = 'Lihat catatan admin ↓';
+  }
+  action.dataset.target = targetId;
+  action.textContent = actionLabel;
+  notice.hidden = false;
+  return true;
+}
+
 function showDashboard(p) {
   authView.hidden = true;
   dashboardView.hidden = false;
@@ -276,6 +321,8 @@ function showDashboard(p) {
   } else {
     note.textContent = 'Pendaftaran Anda sedang diproses. Status akan diperbarui setelah pemeriksaan admin.';
   }
+
+  lastKnownParticipantStatus = s;
 }
 
 function showAuth() {
@@ -283,6 +330,8 @@ function showAuth() {
   authView.hidden = false;
   document.body.classList.remove('is-authenticated');
   currentRegistrationId = '';
+  lastKnownParticipantStatus = '';
+  hideStatusChangeNotice();
 }
 
 async function copyText(value) {
@@ -328,12 +377,24 @@ bindCopyButton(document.getElementById('copyRegistrationBtn'));
 bindCopyButton(document.getElementById('copyRegistrationAction'), 'action');
 
 
+const statusChangeActionBtn = document.getElementById('statusChangeActionBtn');
+if (statusChangeActionBtn) statusChangeActionBtn.addEventListener('click', () => {
+  const targetId = statusChangeActionBtn.dataset.target || 'nextActionCard';
+  let target = document.getElementById(targetId);
+  if (target?.hidden) target = document.getElementById('nextActionCard');
+  target?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+});
+
+const statusChangeDismiss = document.getElementById('statusChangeDismiss');
+if (statusChangeDismiss) statusChangeDismiss.addEventListener('click', hideStatusChangeNotice);
+
 const refreshParticipantBtn = document.getElementById('refreshParticipantBtn');
 const defaultRefreshLabel = '↻ Perbarui status';
 if (refreshParticipantBtn) refreshParticipantBtn.addEventListener('click', async () => {
   refreshParticipantBtn.disabled = true;
   refreshParticipantBtn.textContent = '↻ Memeriksa…';
   try {
+    const previousStatus = lastKnownParticipantStatus;
     const d = await request('/me');
     if (!d.authenticated || !d.participant) {
       showAuth();
@@ -341,8 +402,9 @@ if (refreshParticipantBtn) refreshParticipantBtn.addEventListener('click', async
       return;
     }
     showDashboard(d.participant);
+    const changed = showStatusChangeNotice(previousStatus, d.participant.status);
     setLastUpdated(new Date(), 'is-ok');
-    refreshParticipantBtn.textContent = '✓ Status terbaru';
+    refreshParticipantBtn.textContent = changed ? '✓ Status berubah' : '✓ Status terbaru';
     window.setTimeout(() => {
       if (!refreshParticipantBtn.disabled) refreshParticipantBtn.textContent = defaultRefreshLabel;
     }, 1600);
@@ -410,6 +472,7 @@ document.getElementById('loginForm').onsubmit = async e => {
       })
     });
     showDashboard(d.participant);
+    hideStatusChangeNotice();
   } catch (x) {
     msg('error', x.message);
   } finally {
@@ -445,7 +508,9 @@ if (revisionForm) revisionForm.onsubmit = async e => {
     if (!r.ok || !d.ok) throw new Error(d.message || 'Perbaikan belum dapat dikirim.');
     out.className = 'message show ok';
     out.textContent = d.message || 'Perbaikan berhasil dikirim.';
+    const previousStatus = lastKnownParticipantStatus;
     showDashboard(d.participant);
+    showStatusChangeNotice(previousStatus, d.participant?.status);
   } catch (x) {
     out.className = 'message show error';
     out.textContent = x.message;
@@ -470,8 +535,10 @@ document.getElementById('logoutBtn').onclick = async () => {
 (async () => {
   try {
     const d = await request('/me');
-    if (d.authenticated && d.participant) showDashboard(d.participant);
-    else showAuth();
+    if (d.authenticated && d.participant) {
+      showDashboard(d.participant);
+      hideStatusChangeNotice();
+    } else showAuth();
   } catch {
     showAuth();
   }
