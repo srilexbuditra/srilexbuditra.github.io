@@ -1953,6 +1953,18 @@ function initAccountSecurityForUser(user) {
   panel.hidden = false;
   if (managementToggle) managementToggle.hidden = user?.role !== 'super_admin';
   bindAccountSecurityEvents();
+  const managementPanel = document.getElementById('userManagementPanel');
+  const ownForm = document.getElementById('changeOwnPasswordForm');
+  if (user?.role === 'super_admin') {
+    if (managementPanel) managementPanel.hidden = false;
+    if (ownForm) ownForm.hidden = true;
+    managementToggle?.classList.add('is-active');
+    document.getElementById('changeOwnPasswordToggle')?.classList.remove('is-active');
+    loadAdminUsers();
+  } else {
+    if (managementPanel) managementPanel.hidden = true;
+    managementToggle?.classList.remove('is-active');
+  }
 }
 
 function bindAccountSecurityEvents() {
@@ -1967,20 +1979,48 @@ function bindAccountSecurityEvents() {
   const managementPanel = document.getElementById('userManagementPanel');
   const refresh = document.getElementById('refreshAdminUsers');
   const createForm = document.getElementById('createAdminUserForm');
+  const createToggle = document.getElementById('createAdminUserToggle');
+  const cancelCreate = document.getElementById('cancelCreateAdminUser');
+  const cancelCreateBottom = document.getElementById('cancelCreateAdminUserBottom');
+  const collapse = document.getElementById('accountSecurityCollapse');
+  const body = document.getElementById('accountSecurityBody');
 
   ownToggle?.addEventListener('click', () => {
     if (!ownForm) return;
-    ownForm.hidden = !ownForm.hidden;
-    if (!ownForm.hidden) document.getElementById('currentAccountPassword')?.focus();
+    const willOpen = ownForm.hidden;
+    ownForm.hidden = !willOpen;
+    if (willOpen && managementPanel) managementPanel.hidden = true;
+    ownToggle.classList.toggle('is-active', willOpen);
+    managementToggle?.classList.toggle('is-active', false);
+    if (willOpen) document.getElementById('currentAccountPassword')?.focus();
   });
-  cancelOwn?.addEventListener('click', () => { if (ownForm) { ownForm.reset(); ownForm.hidden = true; } });
+  cancelOwn?.addEventListener('click', () => {
+    if (!ownForm) return;
+    ownForm.reset(); ownForm.hidden = true; ownToggle?.classList.remove('is-active');
+    if (currentAdminUser?.role === 'super_admin' && managementPanel) { managementPanel.hidden=false; managementToggle?.classList.add('is-active'); }
+  });
   ownForm?.addEventListener('submit', submitOwnPasswordChange);
 
   managementToggle?.addEventListener('click', async () => {
     if (!managementPanel) return;
-    managementPanel.hidden = !managementPanel.hidden;
-    if (!managementPanel.hidden) await loadAdminUsers();
+    managementPanel.hidden = false;
+    if (ownForm) ownForm.hidden = true;
+    managementToggle.classList.add('is-active');
+    ownToggle?.classList.remove('is-active');
+    await loadAdminUsers();
   });
+  collapse?.addEventListener('click', () => {
+    if (!body) return;
+    const willClose = !body.hidden;
+    body.hidden = willClose;
+    panel.classList.toggle('is-collapsed', willClose);
+    collapse.setAttribute('aria-expanded', willClose ? 'false' : 'true');
+    collapse.setAttribute('aria-label', willClose ? 'Buka panel Akun & Keamanan' : 'Tutup panel Akun & Keamanan');
+  });
+  const closeCreateForm = () => { if (createForm) { createForm.reset(); createForm.hidden = true; } };
+  createToggle?.addEventListener('click', () => { if (createForm) { createForm.hidden = !createForm.hidden; if (!createForm.hidden) document.getElementById('newAdminUsername')?.focus(); } });
+  cancelCreate?.addEventListener('click', closeCreateForm);
+  cancelCreateBottom?.addEventListener('click', closeCreateForm);
   refresh?.addEventListener('click', loadAdminUsers);
   createForm?.addEventListener('submit', createAdminUser);
 }
@@ -2060,7 +2100,7 @@ async function createAdminUser(event) {
     const response=await fetch(`${ADMIN_API_BASE}/auth/users`,{method:'POST',credentials:'include',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify(payload)});
     const data=await response.json().catch(()=>({}));
     if(!response.ok||!data.ok) throw new Error(data.message||'Gagal membuat akun.');
-    form.reset(); showAdminToast('success','Akun Berhasil Dibuat',`${data.user?.display_name||payload.username} siap digunakan.`); await loadAdminUsers();
+    form.reset(); form.hidden = true; showAdminToast('success','Akun Berhasil Dibuat',`${data.user?.display_name||payload.username} siap digunakan.`); await loadAdminUsers();
   } catch(error){showAdminToast('error','Gagal Membuat Akun',error.message||'Silakan coba kembali.');}
   finally{if(submit) submit.disabled=false;}
 }

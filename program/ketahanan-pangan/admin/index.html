@@ -198,37 +198,80 @@
   <button id="closeRoleNotice" class="role-notice-close" type="button" aria-label="Tutup pemberitahuan">×</button>
 </section>
       <section id="accountSecurityPanel" class="account-security-panel" hidden>
-        <div class="account-security-head">
-          <div><span class="eyebrow">AKUN &amp; KEAMANAN</span><h2>Keamanan Akun</h2><p>Kelola password akun Anda. Manajemen pengguna hanya tersedia untuk Super Administrator.</p></div>
-          <div class="account-security-actions">
-            <button id="changeOwnPasswordToggle" type="button" class="account-security-button">Ubah Password Saya</button>
-            <button id="userManagementToggle" type="button" class="account-security-button account-security-button-primary" hidden>Manajemen Akun</button>
+        <div class="account-security-banner">
+          <div class="account-security-brand-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M17 8h-1V6a4 4 0 0 0-8 0v2H7a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-9a2 2 0 0 0-2-2Zm-7-2a2 2 0 1 1 4 0v2h-4V6Zm3 9.73V18h-2v-2.27a2 2 0 1 1 2 0Z"/></svg>
           </div>
+          <div class="account-security-banner-copy">
+            <span class="eyebrow">AKUN &amp; KEAMANAN</span>
+            <h2>Kelola Akun &amp; Keamanan</h2>
+            <p>Kelola password akun Anda dan manajemen pengguna sesuai hak akses peran.</p>
+          </div>
+          <button id="accountSecurityCollapse" class="account-security-close" type="button" aria-expanded="true" aria-controls="accountSecurityBody" aria-label="Tutup panel Akun &amp; Keamanan">×</button>
         </div>
-        <form id="changeOwnPasswordForm" class="account-security-form" hidden>
-          <h3>Ubah Password Saya</h3>
-          <div class="account-form-grid">
-            <label>Password saat ini<input id="currentAccountPassword" type="password" autocomplete="current-password" required></label>
-            <label>Password baru<input id="newAccountPassword" type="password" autocomplete="new-password" required></label>
-            <label>Konfirmasi password baru<input id="confirmAccountPassword" type="password" autocomplete="new-password" required></label>
-          </div>
-          <small>Minimal 10 karakter serta memuat huruf besar, huruf kecil, angka, dan simbol. Setelah berhasil, Anda akan diminta login kembali.</small>
-          <div class="account-form-actions"><button type="submit" class="account-security-button account-security-button-primary">Simpan Password</button><button id="cancelOwnPassword" type="button" class="account-security-button">Batal</button></div>
-        </form>
-        <div id="userManagementPanel" class="user-management-panel" hidden>
-          <div class="user-management-title"><div><h3>Manajemen Akun</h3><p>Tambah akun Admin/Pemasaran, atur status/role, atau reset password.</p></div><button id="refreshAdminUsers" type="button" class="account-security-button">Muat Ulang</button></div>
-          <form id="createAdminUserForm" class="account-security-form account-create-form">
-            <h3>Tambah Akun</h3>
-            <div class="account-form-grid account-form-grid-four">
-              <label>Username<input id="newAdminUsername" type="text" autocomplete="off" placeholder="contoh: admin.operasional" required></label>
-              <label>Nama tampilan<input id="newAdminDisplayName" type="text" autocomplete="off" required></label>
-              <label>Role<select id="newAdminRole" required><option value="admin">Admin</option><option value="pemasaran">Pemasaran</option></select></label>
-              <label>Password awal<input id="newAdminInitialPassword" type="password" autocomplete="new-password" required></label>
+
+        <div id="accountSecurityBody" class="account-security-body">
+          <div class="account-security-layout">
+            <nav class="account-security-nav" aria-label="Menu Akun dan Keamanan">
+              <button id="userManagementToggle" type="button" class="account-nav-button is-active" hidden>
+                <span class="account-nav-icon" aria-hidden="true">👥</span>
+                <span><strong>Manajemen Akun</strong><small>Kelola pengguna sistem</small></span>
+              </button>
+              <button id="changeOwnPasswordToggle" type="button" class="account-nav-button">
+                <span class="account-nav-icon" aria-hidden="true">🔐</span>
+                <span><strong>Ubah Password Saya</strong><small>Perbarui password akun</small></span>
+              </button>
+              <div class="account-nav-info">
+                <span class="account-nav-icon" aria-hidden="true">ⓘ</span>
+                <span><strong>Informasi</strong><small>Hak akses mengikuti role akun</small></span>
+              </div>
+            </nav>
+
+            <div class="account-security-content">
+              <form id="changeOwnPasswordForm" class="account-security-form account-own-password-card" hidden>
+                <div class="account-section-heading">
+                  <div><span class="account-section-icon" aria-hidden="true">🔐</span><div><h3>Ubah Password Saya</h3><p>Gunakan password yang kuat dan berbeda dari password saat ini.</p></div></div>
+                  <button id="cancelOwnPassword" type="button" class="account-icon-close" aria-label="Tutup ubah password">×</button>
+                </div>
+                <div class="account-form-grid">
+                  <label>Password saat ini<input id="currentAccountPassword" type="password" autocomplete="current-password" required></label>
+                  <label>Password baru<input id="newAccountPassword" type="password" autocomplete="new-password" required></label>
+                  <label>Konfirmasi password baru<input id="confirmAccountPassword" type="password" autocomplete="new-password" required></label>
+                </div>
+                <div class="account-note-box"><strong>Persyaratan password</strong><span>Minimal 10 karakter serta memuat huruf besar, huruf kecil, angka, dan simbol. Setelah berhasil, Anda akan diminta login kembali.</span></div>
+                <div class="account-form-actions"><button type="submit" class="account-security-button account-security-button-primary">🔑 Simpan Password</button></div>
+              </form>
+
+              <div id="userManagementPanel" class="user-management-panel" hidden>
+                <div class="user-management-title">
+                  <div class="account-section-title-wrap"><span class="account-section-icon" aria-hidden="true">👥</span><div><h3>Manajemen Akun</h3><p>Tambah akun baru, atur status/role, atau reset password Admin/Pemasaran.</p></div></div>
+                  <div class="account-section-actions"><span class="account-role-badge">★ Super Administrator</span><button id="createAdminUserToggle" type="button" class="account-security-button account-security-button-primary">＋ Tambah Akun Baru</button><button id="refreshAdminUsers" type="button" class="account-security-button">↻ Muat Ulang</button></div>
+                </div>
+
+                <form id="createAdminUserForm" class="account-security-form account-create-form" hidden>
+                  <div class="account-section-heading compact"><div><span class="account-section-icon" aria-hidden="true">＋</span><div><h3>Tambah Akun</h3><p>Buat akun operasional baru untuk Admin atau Pemasaran.</p></div></div><button id="cancelCreateAdminUser" type="button" class="account-icon-close" aria-label="Tutup tambah akun">×</button></div>
+                  <div class="account-form-grid account-form-grid-four">
+                    <label>Username<input id="newAdminUsername" type="text" autocomplete="off" placeholder="contoh: admin.operasional" required></label>
+                    <label>Nama tampilan<input id="newAdminDisplayName" type="text" autocomplete="off" required></label>
+                    <label>Role<select id="newAdminRole" required><option value="admin">Admin</option><option value="pemasaran">Pemasaran</option></select></label>
+                    <label>Password awal<input id="newAdminInitialPassword" type="password" autocomplete="new-password" required></label>
+                  </div>
+                  <small>Password awal tidak pernah ditampilkan kembali oleh sistem.</small>
+                  <div class="account-form-actions"><button type="submit" class="account-security-button account-security-button-primary">＋ Tambah Akun</button><button id="cancelCreateAdminUserBottom" type="button" class="account-security-button">Batal</button></div>
+                </form>
+
+                <div class="account-list-card">
+                  <div class="account-list-head"><div><h4>Daftar Akun Pengguna</h4><p>Akun owner dilindungi dan tidak dapat dinonaktifkan.</p></div></div>
+                  <div id="adminUsersList" class="admin-users-list"><p class="account-empty">Memuat daftar akun...</p></div>
+                </div>
+
+                <div class="account-info-grid">
+                  <article class="account-info-card account-info-card-blue"><span aria-hidden="true">ⓘ</span><div><strong>Keterangan</strong><p>Akun OWNER tidak dapat dinonaktifkan atau diturunkan dari Super Admin. Perubahan role/status akan mencabut session akun terkait.</p></div></article>
+                  <article class="account-info-card"><span aria-hidden="true">🔐</span><div><strong>Keamanan Password</strong><p>Password tidak pernah ditampilkan kembali oleh sistem dan hanya disimpan dalam bentuk hash di server.</p></div></article>
+                </div>
+              </div>
             </div>
-            <small>Password awal tidak pernah ditampilkan kembali oleh sistem.</small>
-            <div class="account-form-actions"><button type="submit" class="account-security-button account-security-button-primary">Tambah Akun</button></div>
-          </form>
-          <div id="adminUsersList" class="admin-users-list"><p class="account-empty">Memuat daftar akun...</p></div>
+          </div>
         </div>
       </section>
       <section class="stats">
@@ -356,6 +399,6 @@
     <script src="./local-qrcode.js?v=1" defer></script>
     <script src="./jszip.min.js?v=1" defer></script>
     <script src="./excel-engine-template.js?v=45" defer></script>
-    <script src="./script-a4-v45.js?v=17.1" defer></script>
+    <script src="./script-a4-v45.js?v=17.2" defer></script>
   </body>
 </html>
