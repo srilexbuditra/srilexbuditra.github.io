@@ -36,7 +36,7 @@
   <link itemprop="publisher" href="https://srilexbuditra.work/#person">
   <meta itemprop="description" content="Pendataan calon penerima dukungan pupuk untuk membantu produktivitas pertanian.">
   <link rel="search" type="application/opensearchdescription+xml" title="Srilex Buditra Search" href="/opensearch.xml">
-  <link rel="stylesheet" href="./style.css?v=3">
+  <link rel="stylesheet" href="./style.css?v=4">
 </head>
 <body>
   <main>
@@ -87,10 +87,12 @@
 
           <div class="scan-actions">
             <button class="btn secondary" type="button" id="scanBtn">▣ Scan QR / Barcode</button>
+            <label class="btn ghost" for="cameraImageInput">Ambil foto kode</label>
+            <input id="cameraImageInput" type="file" accept="image/*" capture="environment" hidden>
             <label class="btn ghost" for="imageScanInput">Unggah gambar kode</label>
             <input id="imageScanInput" type="file" accept="image/*" hidden>
           </div>
-          <p class="scan-note" id="scanSupport">Pemindaian kamera menggunakan fitur browser perangkat Anda. Input manual tetap tersedia sebagai cadangan.</p>
+          <p class="scan-note" id="scanSupport">Pemindaian kamera menggunakan fitur browser perangkat Anda. Jika kamera live diblokir, gunakan <strong>Ambil foto kode</strong> atau input manual.</p>
 
           <div id="scannerPanel" class="scanner-panel" hidden>
             <div class="scanner-head">
@@ -105,6 +107,10 @@
           </div>
 
           <div id="message" class="message" role="status" aria-live="polite"></div>
+          <div id="cameraRecovery" class="camera-recovery" hidden>
+            <button type="button" class="btn secondary compact" id="retryCameraBtn">Coba kamera lagi</button>
+            <button type="button" class="btn ghost compact" id="manualFocusBtn">Masukkan nomor manual</button>
+          </div>
         </section>
 
         <aside class="result-card" id="resultCard" aria-live="polite">
@@ -155,7 +161,7 @@
     </div>
   </footer>
 
-  <script src="./script.js?v=2" defer></script>
+  <script src="./script.js?v=3" defer></script>
   
   <!-- Floating Text-to-Speech accessibility control -->
 <div class="tts-fab-wrap" id="ttsFabWrap" aria-label="Kontrol pembaca halaman">

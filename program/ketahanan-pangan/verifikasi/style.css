@@ -79,6 +79,26 @@ body {
 }
 .hero-card,
 .verify-card,
+
+.camera-recovery {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 12px;
+}
+.camera-recovery[hidden] {
+  display: none !important;
+}
+.btn.compact {
+  min-height: 40px;
+  padding: 9px 14px;
+  font-size: 0.88rem;
+}
+#scanBtn:disabled {
+  opacity: 0.72;
+  cursor: wait;
+}
+
 .result-card {
   background: var(--white);
   border: 1px solid var(--line);
@@ -107,6 +127,26 @@ body {
   align-items: start;
 }
 .verify-card,
+
+.camera-recovery {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 12px;
+}
+.camera-recovery[hidden] {
+  display: none !important;
+}
+.btn.compact {
+  min-height: 40px;
+  padding: 9px 14px;
+  font-size: 0.88rem;
+}
+#scanBtn:disabled {
+  opacity: 0.72;
+  cursor: wait;
+}
+
 .result-card {
   padding: 32px;
 }
@@ -306,6 +346,26 @@ form small {
   color: var(--green);
   border: 1px solid #d6e8dc;
 }
+
+.camera-recovery {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 12px;
+}
+.camera-recovery[hidden] {
+  display: none !important;
+}
+.btn.compact {
+  min-height: 40px;
+  padding: 9px 14px;
+  font-size: 0.88rem;
+}
+#scanBtn:disabled {
+  opacity: 0.72;
+  cursor: wait;
+}
+
 .result-card {
   position: sticky;
   top: 20px;
@@ -459,7 +519,27 @@ footer {
   .hero-card {
     padding: 24px;
   }
-  .result-card {
+  
+.camera-recovery {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 12px;
+}
+.camera-recovery[hidden] {
+  display: none !important;
+}
+.btn.compact {
+  min-height: 40px;
+  padding: 9px 14px;
+  font-size: 0.88rem;
+}
+#scanBtn:disabled {
+  opacity: 0.72;
+  cursor: wait;
+}
+
+.result-card {
     position: static;
   }
   .info-grid {
@@ -477,7 +557,27 @@ footer {
     width: min(100% - 22px, 1120px);
   }
   .verify-card,
-  .result-card {
+  
+.camera-recovery {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 12px;
+}
+.camera-recovery[hidden] {
+  display: none !important;
+}
+.btn.compact {
+  min-height: 40px;
+  padding: 9px 14px;
+  font-size: 0.88rem;
+}
+#scanBtn:disabled {
+  opacity: 0.72;
+  cursor: wait;
+}
+
+.result-card {
     padding: 22px;
     border-radius: 18px;
   }
@@ -707,4 +807,18 @@ footer {
 .page-nav .back-link{margin:0}
 @media (max-width:560px){
   .page-nav{gap:8px 14px}
+}
+
+/* V4.3.1 — pemulihan kamera mobile */
+@media (max-width: 560px) {
+  .camera-recovery {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+  .camera-recovery[hidden] {
+    display: none !important;
+  }
+  .camera-recovery .btn {
+    width: 100%;
+  }
 }

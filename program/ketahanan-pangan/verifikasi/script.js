@@ -19,6 +19,10 @@ const scannerVideo = document.getElementById('scannerVideo');
 const scannerStatus = document.getElementById('scannerStatus');
 const scanSupport = document.getElementById('scanSupport');
 const imageScanInput = document.getElementById('imageScanInput');
+const cameraImageInput = document.getElementById('cameraImageInput');
+const cameraRecovery = document.getElementById('cameraRecovery');
+const retryCameraBtn = document.getElementById('retryCameraBtn');
+const manualFocusBtn = document.getElementById('manualFocusBtn');
 const certificateAccess = document.getElementById('certificateAccess');
 const certificateLink = document.getElementById('certificateLink');
 
@@ -244,51 +248,126 @@ async function scanLoop() {
   scanFrameId = requestAnimationFrame(scanLoop);
 }
 
+function setCameraRecovery(show) {
+  if (cameraRecovery) cameraRecovery.hidden = !show;
+}
+
+function getCameraErrorMessage(error) {
+  const name = String(error && error.name || '');
+  if (name === 'NotAllowedError' || name === 'PermissionDeniedError') {
+    return 'Izin kamera belum diberikan atau diblokir. Izinkan Kamera untuk situs ini lalu tekan “Coba kamera lagi”. Jika halaman dibuka dari browser dalam aplikasi, coba buka tautan di Chrome. Anda juga dapat memakai “Ambil foto kode”.';
+  }
+  if (name === 'NotFoundError' || name === 'DevicesNotFoundError') {
+    return 'Kamera tidak ditemukan pada perangkat ini. Gunakan “Ambil foto kode”, unggah gambar kode, atau masukkan nomor registrasi secara manual.';
+  }
+  if (name === 'NotReadableError' || name === 'TrackStartError') {
+    return 'Kamera sedang tidak dapat digunakan, kemungkinan sedang dipakai aplikasi lain. Tutup aplikasi kamera/video lain lalu tekan “Coba kamera lagi”.';
+  }
+  if (name === 'SecurityError') {
+    return 'Browser memblokir akses kamera untuk halaman ini. Pastikan halaman dibuka melalui HTTPS dan, bila perlu, buka langsung di Chrome.';
+  }
+  if (name === 'OverconstrainedError' || name === 'ConstraintNotSatisfiedError') {
+    return 'Pengaturan kamera perangkat tidak kompatibel. Sistem sudah mencoba mode kamera alternatif; gunakan “Ambil foto kode” atau input manual bila kamera tetap tidak terbuka.';
+  }
+  return 'Kamera belum dapat dibuka pada browser ini. Tekan “Coba kamera lagi”, gunakan “Ambil foto kode”, atau masukkan nomor registrasi secara manual.';
+}
+
+async function requestCameraStream() {
+  const candidates = [
+    { video: { facingMode: { ideal: 'environment' }, width: { ideal: 1280 }, height: { ideal: 720 } }, audio: false },
+    { video: { facingMode: 'environment' }, audio: false },
+    { video: true, audio: false }
+  ];
+
+  let lastError = null;
+  for (const constraints of candidates) {
+    try {
+      return await navigator.mediaDevices.getUserMedia(constraints);
+    } catch (error) {
+      lastError = error;
+      const name = String(error && error.name || '');
+      if (name === 'NotAllowedError' || name === 'PermissionDeniedError' || name === 'SecurityError') {
+        throw error;
+      }
+    }
+  }
+  throw lastError || new Error('Camera unavailable');
+}
+
 async function startScanner() {
   clearMessage();
-  const availableDetector = await getDetector();
-  if (!availableDetector) {
-    setMessage('error', 'Pemindaian otomatis tidak didukung browser ini. Gunakan input manual atau unggah gambar kode pada browser yang mendukung BarcodeDetector.');
-    return;
-  }
-  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-    setMessage('error', 'Akses kamera tidak tersedia pada browser ini.');
+  setCameraRecovery(false);
+
+  if (!window.isSecureContext) {
+    setMessage('error', 'Kamera browser hanya dapat digunakan pada koneksi aman (HTTPS). Buka halaman verifikasi melalui HTTPS atau gunakan “Ambil foto kode”.');
+    setCameraRecovery(true);
     return;
   }
 
+  const availableDetector = await getDetector();
+  if (!availableDetector) {
+    setMessage('error', 'Scanner otomatis belum didukung browser ini. Gunakan input manual atau coba buka halaman di Chrome versi terbaru.');
+    setCameraRecovery(true);
+    return;
+  }
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    setMessage('error', 'Akses kamera live tidak tersedia pada browser ini. Gunakan “Ambil foto kode” atau input manual.');
+    setCameraRecovery(true);
+    return;
+  }
+
+  scanBtn.disabled = true;
+  scanBtn.textContent = 'Membuka kamera…';
   try {
+    await stopScanner();
     scannerPanel.hidden = false;
     scannerStatus.textContent = 'Meminta izin kamera…';
-    stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: 'environment' } }, audio: false });
+    stream = await requestCameraStream();
     scannerVideo.srcObject = stream;
     await scannerVideo.play();
     scanning = true;
     scannerStatus.textContent = 'Kamera aktif. Arahkan ke QR Code / barcode.';
+    setCameraRecovery(false);
     scanLoop();
-  } catch (_) {
+  } catch (error) {
     await stopScanner();
-    setMessage('error', 'Kamera tidak dapat dibuka. Pastikan izin kamera diberikan, atau gunakan input manual.');
+    setMessage('error', getCameraErrorMessage(error));
+    setCameraRecovery(true);
+  } finally {
+    scanBtn.disabled = false;
+    scanBtn.textContent = '▣ Scan QR / Barcode';
   }
 }
 
-scanBtn.addEventListener('click', startScanner);
-closeScannerBtn.addEventListener('click', stopScanner);
-
-imageScanInput.addEventListener('change', async () => {
-  const file = imageScanInput.files && imageScanInput.files[0];
+async function scanImageFile(file, inputElement) {
   if (!file) return;
+  clearMessage();
+  setCameraRecovery(false);
   const availableDetector = await getDetector();
   if (!availableDetector) {
-    setMessage('error', 'Browser ini belum mendukung pembacaan QR/barcode dari gambar. Gunakan input manual.');
-    imageScanInput.value = '';
+    setMessage('error', 'Browser ini belum mendukung pembacaan QR/barcode dari gambar. Gunakan input manual atau coba Chrome versi terbaru.');
+    if (inputElement) inputElement.value = '';
     return;
   }
+
+  let source = null;
+  let objectUrl = '';
   try {
-    const bitmap = await createImageBitmap(file);
-    const codes = await availableDetector.detect(bitmap);
-    if (typeof bitmap.close === 'function') bitmap.close();
-    if (!codes.length) {
-      setMessage('error', 'QR Code / barcode tidak terdeteksi pada gambar tersebut.');
+    if (typeof createImageBitmap === 'function') {
+      source = await createImageBitmap(file);
+    } else {
+      objectUrl = URL.createObjectURL(file);
+      source = await new Promise((resolve, reject) => {
+        const image = new Image();
+        image.onload = () => resolve(image);
+        image.onerror = reject;
+        image.src = objectUrl;
+      });
+    }
+
+    const codes = await availableDetector.detect(source);
+    if (!codes || !codes.length) {
+      setMessage('error', 'QR Code / barcode tidak terdeteksi. Pastikan kode terlihat utuh, terang, dan tidak buram.');
       return;
     }
     const id = extractRegistrationId(codes[0].rawValue);
@@ -299,11 +378,36 @@ imageScanInput.addEventListener('change', async () => {
     input.value = id;
     verifyRegistration(id);
   } catch (_) {
-    setMessage('error', 'Gambar tidak dapat dipindai. Coba gambar yang lebih jelas atau masukkan nomor secara manual.');
+    setMessage('error', 'Gambar tidak dapat dipindai. Coba ambil gambar lebih dekat dan jelas, atau masukkan nomor registrasi secara manual.');
   } finally {
-    imageScanInput.value = '';
+    if (source && typeof source.close === 'function') source.close();
+    if (objectUrl) URL.revokeObjectURL(objectUrl);
+    if (inputElement) inputElement.value = '';
   }
+}
+
+scanBtn.addEventListener('click', startScanner);
+closeScannerBtn.addEventListener('click', stopScanner);
+if (retryCameraBtn) retryCameraBtn.addEventListener('click', startScanner);
+if (manualFocusBtn) {
+  manualFocusBtn.addEventListener('click', () => {
+    setCameraRecovery(false);
+    input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    setTimeout(() => input.focus(), 250);
+  });
+}
+
+imageScanInput.addEventListener('change', () => {
+  const file = imageScanInput.files && imageScanInput.files[0];
+  scanImageFile(file, imageScanInput);
 });
+
+if (cameraImageInput) {
+  cameraImageInput.addEventListener('change', () => {
+    const file = cameraImageInput.files && cameraImageInput.files[0];
+    scanImageFile(file, cameraImageInput);
+  });
+}
 
 window.addEventListener('pagehide', stopScanner);
 
