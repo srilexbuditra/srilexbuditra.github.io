@@ -463,7 +463,7 @@ if (tableBody) {
         <td>${escapeHtml(wilayah || '-')}</td>
         <td>${escapeHtml(item.komoditas || '-')}</td>
         <td>${escapeHtml(tanggal)}</td>
-        <td>${escapeHtml(statusLabel)}</td>
+        <td>${renderRegistrationStatusBadge(item.status)}</td>
       `;
     } else {
       row.innerHTML = `
@@ -473,7 +473,7 @@ if (tableBody) {
         <td>${escapeHtml(tanggal)}</td>
         <td>${Number(item.is_duplicate || 0) === 1
             ? '<span class="status-duplicate-label">Duplikat / Tidak Aktif</span>'
-            : escapeHtml(statusLabel)}</td>
+            : renderRegistrationStatusBadge(item.status)}</td>
         <td>
           <button type="button" class="detail-button" data-registration-id="${escapeHtml(item.registration_id || '')}">Detail</button>
         </td>
@@ -811,6 +811,25 @@ function formatAdminStatus(status) {
   return labels[status] || status || '-';
 }
 
+
+function getRegistrationStatusMeta(status) {
+  const meta = {
+    submitted:   { label: 'Menunggu Verifikasi', icon: '⏳', tone: 'waiting' },
+    pending:     { label: 'Pemeriksaan Data', icon: '⌕', tone: 'checking' },
+    resubmitted: { label: 'Menunggu Pemeriksaan Ulang', icon: '↻', tone: 'recheck' },
+    verified:    { label: 'Terverifikasi', icon: '✓', tone: 'verified' },
+    revision:    { label: 'Perlu Perbaikan', icon: '✎', tone: 'revision' },
+    rejected:    { label: 'Ditolak', icon: '×', tone: 'rejected' },
+    needs_action:{ label: 'Perlu Tindakan', icon: '!', tone: 'action' }
+  };
+  return meta[status] || { label: status || '-', icon: '•', tone: 'neutral' };
+}
+
+function renderRegistrationStatusBadge(status) {
+  const meta = getRegistrationStatusMeta(status);
+  return `<span class="registration-status registration-status--${meta.tone}" title="${escapeHtml(meta.label)}"><span class="registration-status-icon" aria-hidden="true">${escapeHtml(meta.icon)}</span><span>${escapeHtml(meta.label)}</span></span>`;
+}
+
 function formatRevisionDate(value) {
   if (!value) return '-';
   const normalized = String(value).includes('T') ? String(value) : String(value).replace(' ', 'T');
@@ -985,7 +1004,7 @@ async function loadRegistrationDetail(registrationId) {
             </tr>
             <tr>
               <th>Status</th>
-              <td>${escapeHtml(statusLabel)}</td>
+              <td>${renderRegistrationStatusBadge(registration.status)}</td>
             </tr>
             <tr>
               <th>Nama Lengkap</th>

@@ -2675,3 +2675,76 @@ main.wrap{
   .role-manager-accordion[open] .role-manager-list{animation:none}
   .role-manager-chevron,.role-manager-person,.role-manager-accordion summary{transition:none!important}
 }
+
+
+/* =========================================================
+   V3.4 — STATUS PEMERIKSAAN DATA
+   Badge status konsisten untuk daftar dan detail peserta.
+   ========================================================= */
+.registration-status{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  width:max-content;
+  max-width:100%;
+  min-height:30px;
+  padding:5px 10px 5px 7px;
+  border:1px solid #d6e1db;
+  border-radius:999px;
+  background:#f7faf8;
+  color:#405148;
+  font-size:12px;
+  font-weight:850;
+  line-height:1.25;
+  white-space:nowrap;
+  box-shadow:0 2px 7px rgba(18,63,43,.04);
+}
+.registration-status-icon{
+  display:inline-grid;
+  place-items:center;
+  flex:0 0 20px;
+  width:20px;
+  height:20px;
+  border-radius:50%;
+  background:rgba(255,255,255,.82);
+  font-size:12px;
+  font-weight:950;
+  line-height:1;
+}
+.registration-status--waiting{border-color:#ead59a;background:#fff9e9;color:#765516}
+.registration-status--checking{border-color:#a9c8d8;background:#eef7fb;color:#245c77}
+.registration-status--recheck{border-color:#b9b8dc;background:#f4f3ff;color:#514e8a}
+.registration-status--verified{border-color:#afd6bf;background:#edf9f2;color:#17633f}
+.registration-status--revision{border-color:#edca82;background:#fff6df;color:#805900}
+.registration-status--rejected{border-color:#e6b4b4;background:#fff0f0;color:#983c3c}
+.registration-status--action{border-color:#dfb9a0;background:#fff3eb;color:#924b20}
+.registration-status--neutral{border-color:#d6e1db;background:#f7faf8;color:#526159}
+.status-duplicate-label{
+  display:inline-flex;
+  align-items:center;
+  width:max-content;
+  max-width:100%;
+  min-height:30px;
+  padding:5px 10px;
+  border:1px solid #cfd7d2;
+  border-radius:999px;
+  background:#f0f3f1;
+  color:#58645e;
+  font-size:12px;
+  font-weight:850;
+  line-height:1.25;
+}
+.detail-table td .registration-status{vertical-align:middle}
+.table-wrap tbody tr:hover td{background:#fbfdfc}
+.table-wrap tbody tr:hover .registration-status{box-shadow:0 4px 12px rgba(18,63,43,.08)}
+@media(max-width:720px){
+  .registration-status,
+  .status-duplicate-label{
+    white-space:normal;
+    text-align:left;
+  }
+}
+@media(prefers-reduced-motion:no-preference){
+  .registration-status{transition:transform .18s ease,box-shadow .18s ease}
+  .table-wrap tbody tr:hover .registration-status{transform:translateY(-1px)}
+}
