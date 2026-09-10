@@ -1766,6 +1766,12 @@
 .admin-filter-search input{
   width:min(310px,70vw);
 }
+.admin-filter-sort select{
+  min-width:178px;
+  font-weight:750;
+  color:#214f39;
+  background:#fff;
+}
 .admin-filter-reset{
   min-height:44px;
   border:1px solid #cbd8d0;

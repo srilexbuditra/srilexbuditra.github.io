@@ -56,7 +56,7 @@
   <meta itemprop="image" content="https://srilexbuditra.work/program/ketahanan-pangan/admin/assets/og-admin-dashboard-v17.3.3.jpg">
   <meta itemprop="inLanguage" content="id-ID">
 
-  <link rel="stylesheet" href="./style.css?v=17.9.0">
+  <link rel="stylesheet" href="./style.css?v=17.10.0">
   <link rel="stylesheet" href="./style-verifikasi-tambahan.css?v=1">
 </head>
 <body>
@@ -384,6 +384,17 @@
                 <option value="">Semua wilayah</option>
               </select>
             </label>
+            <label class="admin-filter-sort">
+              <span class="sr-only">Urutkan daftar peserta</span>
+              <select id="participantSort" aria-label="Urutkan daftar peserta">
+                <option value="newest" selected>Terbaru</option>
+                <option value="oldest">Terlama</option>
+                <option value="name_asc" data-admin-only="1">Nama A–Z</option>
+                <option value="name_desc" data-admin-only="1">Nama Z–A</option>
+                <option value="region_asc">Wilayah A–Z</option>
+                <option value="status">Status Pemeriksaan</option>
+              </select>
+            </label>
             <button type="button" id="participantResetFilter" class="admin-filter-reset">Reset</button>
             <button type="button" id="participantExportExcel" class="admin-export-excel">Ekspor Excel A4</button>
             <div class="participant-refresh-group">
@@ -501,6 +512,6 @@
     <script src="./local-qrcode.js?v=1" defer></script>
     <script src="./jszip.min.js?v=1" defer></script>
     <script src="./excel-engine-template.js?v=45" defer></script>
-    <script src="./script-a4-v45.js?v=17.9.0" defer></script>
+    <script src="./script-a4-v45.js?v=17.10.0" defer></script>
   </body>
 </html>
