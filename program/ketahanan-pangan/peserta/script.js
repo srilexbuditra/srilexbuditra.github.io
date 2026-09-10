@@ -13,6 +13,35 @@ let participantSyncInFlight = false;
 let lastParticipantSyncRequestAt = 0;
 const AUTO_SYNC_MIN_INTERVAL_MS = 90 * 1000;
 
+// V5.3 — Status koneksi & pemulihan sinkronisasi peserta.
+function setConnectionState(state = 'online', label = '') {
+  const wrap = document.getElementById('connectionState');
+  const text = document.getElementById('connectionStateText');
+  if (!wrap || !text) return;
+
+  const safeState = ['online', 'offline', 'syncing', 'error'].includes(state) ? state : 'online';
+  const labels = {
+    online: 'Online',
+    offline: 'Offline',
+    syncing: 'Menyinkronkan…',
+    error: 'Sinkronisasi gagal'
+  };
+  const titles = {
+    online: 'Dashboard terhubung. Data dapat disinkronkan dengan server.',
+    offline: 'Tidak ada koneksi internet. Data terakhir tetap ditampilkan.',
+    syncing: 'Dashboard sedang mengambil data terbaru dari server.',
+    error: 'Sinkronisasi belum berhasil. Data terakhir tetap ditampilkan.'
+  };
+
+  wrap.dataset.state = safeState;
+  wrap.title = titles[safeState];
+  text.textContent = label || labels[safeState];
+}
+
+function setConnectionStateFromNavigator() {
+  setConnectionState(navigator.onLine === false ? 'offline' : 'online');
+}
+
 function msg(type, text) {
   message.className = 'message show ' + type;
   message.textContent = text;
@@ -333,6 +362,7 @@ function showDashboard(p) {
   dashboardView.hidden = false;
   document.body.classList.add('is-authenticated');
   setLastUpdated(new Date());
+  setConnectionStateFromNavigator();
 
   const s = String(p.status || '').toLowerCase();
   const presentation = getStatusPresentation(s);
@@ -532,10 +562,23 @@ function participantStatusIsStale() {
 
 async function syncParticipantStatus({ manual = false } = {}) {
   if (participantSyncInFlight || !participantDashboardReady()) return false;
-  if (!manual && navigator.onLine === false) return false;
+
+  if (navigator.onLine === false) {
+    setConnectionState('offline');
+    if (manual) {
+      const text = document.getElementById('lastUpdatedText');
+      const wrap = document.querySelector('.status-sync');
+      if (text) text.textContent = 'Tidak ada koneksi. Data terakhir tetap ditampilkan.';
+      if (wrap) { wrap.classList.remove('is-ok'); wrap.classList.add('is-error'); }
+      if (refreshParticipantBtn) refreshParticipantBtn.textContent = '↻ Coba lagi';
+    }
+    return false;
+  }
 
   participantSyncInFlight = true;
   lastParticipantSyncRequestAt = Date.now();
+  setConnectionState('syncing');
+  if (refreshParticipantBtn) refreshParticipantBtn.setAttribute('aria-busy', 'true');
   if (manual && refreshParticipantBtn) {
     refreshParticipantBtn.disabled = true;
     refreshParticipantBtn.textContent = '↻ Memeriksa…';
@@ -561,7 +604,9 @@ async function syncParticipantStatus({ manual = false } = {}) {
       d.participant.status_note,
       changed
     );
+    setConnectionState('online');
     setLastUpdated(new Date(), 'is-ok');
+    if (!manual && refreshParticipantBtn) refreshParticipantBtn.textContent = defaultRefreshLabel;
 
     if (manual && refreshParticipantBtn) {
       refreshParticipantBtn.textContent = changed ? '✓ Status berubah' : adminUpdateChanged ? '✓ Ada pesan baru' : '✓ Status terbaru';
@@ -571,6 +616,7 @@ async function syncParticipantStatus({ manual = false } = {}) {
     }
     return true;
   } catch (error) {
+    setConnectionState(navigator.onLine === false ? 'offline' : 'error');
     if (error?.status === 401 || error?.status === 403) {
       showAuth();
       msg('error', 'Sesi Anda telah berakhir. Silakan masuk kembali untuk melihat status terbaru.');
@@ -588,6 +634,7 @@ async function syncParticipantStatus({ manual = false } = {}) {
     return false;
   } finally {
     participantSyncInFlight = false;
+    if (refreshParticipantBtn) refreshParticipantBtn.setAttribute('aria-busy', 'false');
     if (manual && refreshParticipantBtn) refreshParticipantBtn.disabled = false;
   }
 }
@@ -606,7 +653,11 @@ document.addEventListener('visibilitychange', maybeAutoSyncParticipant);
 window.addEventListener('pageshow', event => {
   if (event.persisted) window.setTimeout(maybeAutoSyncParticipant, 150);
 });
-window.addEventListener('online', maybeAutoSyncParticipant);
+window.addEventListener('online', () => {
+  setConnectionState('online');
+  if (participantDashboardReady()) syncParticipantStatus({ manual: false });
+});
+window.addEventListener('offline', () => setConnectionState('offline'));
 
 document.getElementById('activateForm').onsubmit = async e => {
   e.preventDefault();
