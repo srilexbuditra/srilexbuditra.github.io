@@ -475,7 +475,12 @@ if (tableBody) {
       `;
     } else {
       row.innerHTML = `
-        <td>${escapeHtml(item.registration_id || '-')}</td>
+        <td>
+          <div class="registration-id-copy-wrap">
+            <span class="registration-id-copy-value">${escapeHtml(item.registration_id || '-')}</span>
+            ${item.registration_id ? `<button type="button" class="registration-id-copy-button" data-copy-registration-id="${escapeHtml(item.registration_id)}" aria-label="Salin nomor registrasi ${escapeHtml(item.registration_id)}" title="Salin nomor registrasi"><span aria-hidden="true">⧉</span><span class="registration-id-copy-label">Salin</span></button>` : ''}
+          </div>
+        </td>
         <td>${escapeHtml(item.nama || '-')}</td>
         <td>${escapeHtml(wilayah || '-')}</td>
         <td>${escapeHtml(tanggal)}</td>
@@ -529,6 +534,79 @@ if (!isMarketingRole()) auditDuplicateRegistrations(registrations);
       showAdminToast('error', 'Gagal memperbarui data', 'Data registrasi belum berhasil dimuat. Coba lagi beberapa saat.');
     }
   }
+}
+
+
+// -----------------------------------------------------------------------------
+// V4.2 — SALIN NOMOR REGISTRASI
+// UI-only. Tidak mengubah API, database, status, role, maupun data peserta.
+// -----------------------------------------------------------------------------
+async function copyAdminRegistrationId(value) {
+  const text = String(value || '').trim();
+  if (!text) return false;
+
+  try {
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(text);
+      return true;
+    }
+  } catch (_) {}
+
+  const helper = document.createElement('textarea');
+  helper.value = text;
+  helper.setAttribute('readonly', '');
+  helper.style.position = 'fixed';
+  helper.style.opacity = '0';
+  helper.style.pointerEvents = 'none';
+  helper.style.left = '-9999px';
+  document.body.appendChild(helper);
+  helper.select();
+  helper.setSelectionRange(0, helper.value.length);
+
+  let copied = false;
+  try {
+    copied = document.execCommand('copy');
+  } catch (_) {
+    copied = false;
+  }
+  helper.remove();
+  return copied;
+}
+
+if (!document.documentElement.dataset.registrationCopyReady) {
+  document.documentElement.dataset.registrationCopyReady = '1';
+  document.addEventListener('click', async (event) => {
+    const button = event.target.closest('[data-copy-registration-id]');
+    if (!button || button.disabled) return;
+
+    const registrationId = String(button.dataset.copyRegistrationId || '').trim();
+    if (!registrationId) return;
+
+    const label = button.querySelector('.registration-id-copy-label');
+    const icon = button.querySelector('[aria-hidden="true"]');
+    const originalLabel = label?.textContent || 'Salin';
+    const originalIcon = icon?.textContent || '⧉';
+
+    button.disabled = true;
+    const copied = await copyAdminRegistrationId(registrationId);
+
+    if (copied) {
+      button.classList.add('is-copied');
+      if (icon) icon.textContent = '✓';
+      if (label) label.textContent = 'Tersalin';
+      button.title = 'Nomor registrasi tersalin';
+      window.setTimeout(() => {
+        button.classList.remove('is-copied');
+        button.disabled = false;
+        if (icon) icon.textContent = originalIcon;
+        if (label) label.textContent = originalLabel;
+        button.title = 'Salin nomor registrasi';
+      }, 1400);
+    } else {
+      button.disabled = false;
+      showAdminToast('error', 'Gagal menyalin', 'Nomor registrasi belum berhasil disalin. Silakan coba lagi.');
+    }
+  });
 }
 
 // -----------------------------------------------------------------------------
@@ -1016,7 +1094,12 @@ async function loadRegistrationDetail(registrationId) {
           <tbody>
             <tr>
               <th>Nomor Registrasi</th>
-              <td>${escapeHtml(registration.registration_id || '-')}</td>
+              <td>
+                <div class="registration-id-copy-wrap registration-id-copy-wrap--detail">
+                  <span class="registration-id-copy-value">${escapeHtml(registration.registration_id || '-')}</span>
+                  ${registration.registration_id ? `<button type="button" class="registration-id-copy-button" data-copy-registration-id="${escapeHtml(registration.registration_id)}" aria-label="Salin nomor registrasi ${escapeHtml(registration.registration_id)}" title="Salin nomor registrasi"><span aria-hidden="true">⧉</span><span class="registration-id-copy-label">Salin</span></button>` : ''}
+                </div>
+              </td>
             </tr>
             <tr>
               <th>Status</th>
