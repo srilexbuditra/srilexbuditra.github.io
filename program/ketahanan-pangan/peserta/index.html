@@ -29,7 +29,7 @@
   <link itemprop="publisher" href="https://srilexbuditra.work/#person">
   <meta itemprop="description" content="Aktivasi akun, login, dan dashboard pribadi peserta Program Ketahanan Pangan.">
   <link rel="search" type="application/opensearchdescription+xml" title="Srilex Buditra Search" href="/opensearch.xml">
-  <link rel="stylesheet" href="./style.css?v=9.6">
+  <link rel="stylesheet" href="./style.css?v=9.7">
 </head>
 <body>
 <header class="topbar">
@@ -131,10 +131,14 @@
 
         <section class="next-action-card" id="nextActionCard" data-status="pending" aria-labelledby="nextActionTitle">
           <div class="next-action-icon" id="nextActionIcon" aria-hidden="true">⌛</div>
-          <div>
+          <div class="next-action-content">
             <span class="section-kicker">LANGKAH BERIKUTNYA</span>
             <h3 id="nextActionTitle">Tunggu pemeriksaan admin</h3>
             <p id="nextActionText">Data Anda sedang diproses. Tidak ada tindakan yang perlu dilakukan saat ini.</p>
+            <div class="next-action-cta-row">
+              <button id="nextActionPrimaryBtn" class="next-action-primary" type="button" data-action="refresh">↻ Cek Status Terbaru</button>
+              <span id="nextActionHint" class="next-action-hint">Tidak ada tindakan wajib saat ini.</span>
+            </div>
           </div>
         </section>
 
@@ -259,7 +263,7 @@
   </div>
 </footer>
 
-<script src="./script.js?v=9.3"></script>
+<script src="./script.js?v=9.4"></script>
 <div class="tts-fab-wrap" id="ttsFabWrap" aria-label="Kontrol pembaca halaman">
   <button class="tts-stop" id="ttsStop" type="button" aria-label="Hentikan pembacaan" title="Hentikan"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6h12v12H6z"/></svg></button>
   <button class="tts-fab" id="ttsFab" type="button" aria-label="Bacakan halaman" aria-pressed="false">

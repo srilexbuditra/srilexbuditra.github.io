@@ -108,6 +108,31 @@ function getStatusPresentation(status) {
   return map[s] || map.pending;
 }
 
+function renderNextActionControl(status, participant = {}) {
+  const s = String(status || '').toLowerCase();
+  const button = document.getElementById('nextActionPrimaryBtn');
+  const hint = document.getElementById('nextActionHint');
+  if (!button || !hint) return;
+
+  const adminNote = String(participant.admin_note || '').trim();
+  const config = {
+    submitted: { label: '↻ Cek Status Terbaru', action: 'refresh', hint: 'Registrasi sudah masuk. Tidak perlu mengirim data ulang.' },
+    pending: { label: '↻ Cek Status Terbaru', action: 'refresh', hint: 'Tidak ada tindakan wajib selama pemeriksaan berlangsung.' },
+    verified: { label: '▣ Buka Kartu / Sertifikat', action: 'certificate', hint: 'Dokumen digital peserta sudah tersedia.' },
+    approved: { label: '↻ Cek Status Terbaru', action: 'refresh', hint: 'Pendaftaran sudah disetujui. Pantau informasi lanjutan di dashboard.' },
+    revision: { label: '✎ Perbaiki Data Sekarang', action: 'revision', hint: 'Tindakan diperlukan agar pemeriksaan dapat dilanjutkan.' },
+    resubmitted: { label: '↻ Cek Status Terbaru', action: 'refresh', hint: 'Perbaikan sudah terkirim. Jangan mengirim ulang kecuali diminta admin.' },
+    rejected: adminNote
+      ? { label: 'i Lihat Catatan Admin', action: 'admin-note', hint: 'Baca alasan atau petunjuk dari admin sebelum mengambil langkah berikutnya.' }
+      : { label: '⌕ Lihat Keterangan Status', action: 'status-note', hint: 'Baca keterangan status yang tersedia pada dashboard.' }
+  }[s] || { label: '↻ Cek Status Terbaru', action: 'refresh', hint: 'Gunakan tombol ini untuk mengambil status terbaru dari server.' };
+
+  button.dataset.action = config.action;
+  button.textContent = config.label;
+  button.hidden = false;
+  hint.textContent = config.hint;
+}
+
 function date(v) {
   if (!v) return '-';
   const d = new Date(String(v).includes('T') ? v : String(v).replace(' ', 'T') + 'Z');
@@ -275,6 +300,7 @@ function showDashboard(p) {
   document.getElementById('nextActionIcon').textContent = presentation.icon;
   document.getElementById('nextActionTitle').textContent = presentation.title;
   document.getElementById('nextActionText').textContent = presentation.text;
+  renderNextActionControl(s, p);
 
   const statusHero = document.getElementById('statusHero');
   const nextActionCard = document.getElementById('nextActionCard');
@@ -380,6 +406,32 @@ function bindCopyButton(button, mode = 'compact') {
 
 bindCopyButton(document.getElementById('copyRegistrationBtn'));
 bindCopyButton(document.getElementById('copyRegistrationAction'), 'action');
+
+const nextActionPrimaryBtn = document.getElementById('nextActionPrimaryBtn');
+if (nextActionPrimaryBtn) nextActionPrimaryBtn.addEventListener('click', () => {
+  const action = nextActionPrimaryBtn.dataset.action || 'refresh';
+  if (action === 'refresh') {
+    document.getElementById('refreshParticipantBtn')?.click();
+    document.getElementById('statusHero')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+  if (action === 'certificate') {
+    const certificate = document.getElementById('certificateBtn');
+    if (certificate && !certificate.hidden) { certificate.click(); return; }
+  }
+  if (action === 'revision') {
+    const target = document.getElementById('revisionCard');
+    target?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    window.setTimeout(() => target?.querySelector('input, textarea, button')?.focus({ preventScroll: true }), 450);
+    return;
+  }
+  if (action === 'admin-note') {
+    const target = document.getElementById('adminNoteCard');
+    if (target && !target.hidden) { target.scrollIntoView({ behavior: 'smooth', block: 'center' }); return; }
+  }
+  const statusNote = document.getElementById('statusNote');
+  statusNote?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+});
 
 
 const statusChangeActionBtn = document.getElementById('statusChangeActionBtn');
