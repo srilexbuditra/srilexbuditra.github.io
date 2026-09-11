@@ -498,6 +498,36 @@ sections.forEach(s => activeObserver.observe(s));
 
 updateEstimate();
 
+
+/* =========================================================
+   Google Analytics 4 — Homepage / Root
+   Added without changing existing website features or D1 analytics
+   ========================================================= */
+(() => {
+  if (window.__SB_GA4_LOADED__) return;
+  window.__SB_GA4_LOADED__ = true;
+
+  const GA_MEASUREMENT_ID = 'G-W0S2WQ2P3T';
+
+  window.dataLayer = window.dataLayer || [];
+  window.gtag = window.gtag || function () {
+    window.dataLayer.push(arguments);
+  };
+
+  window.gtag('js', new Date());
+  window.gtag('config', GA_MEASUREMENT_ID, {
+    page_path: window.location.pathname + window.location.search,
+    page_title: document.title
+  });
+
+  const gaScript = document.createElement('script');
+  gaScript.async = true;
+  gaScript.src =
+    'https://www.googletagmanager.com/gtag/js?id=' +
+    encodeURIComponent(GA_MEASUREMENT_ID);
+  document.head.appendChild(gaScript);
+})();
+
 /* =========================================================
    Visitor Analytics — Cloudflare Worker + D1
    V6.5.2 Realtime Presence Leave Fix
