@@ -34,52 +34,46 @@ a{color:inherit;text-decoration:none}
 img{display:block;max-width:100%}
 .wrap{width:min(1180px,calc(100% - 32px));margin:auto}
 
-/* Identity logos: positioned as a separate program identity band, similar to registration page */
-.site-header{background:var(--paper);border-bottom:1px solid var(--line)}
-.identity-wrap{
-  background:
-    radial-gradient(circle at 12% 30%,rgba(63,146,89,.08),transparent 24%),
-    radial-gradient(circle at 88% 30%,rgba(201,155,50,.10),transparent 24%),
-    var(--cream-2);
-  border-bottom:1px solid var(--line);
-}
-.identity-logos{
-  width:min(1180px,calc(100% - 32px));
-  margin:auto;
-  min-height:126px;
-  display:grid;
-  grid-template-columns:1fr auto 1fr;
-  align-items:center;
-  gap:20px;
-  padding:18px 0;
-}
-.identity-unit{display:grid;grid-template-columns:minmax(170px,310px) 1fr;align-items:center;gap:16px}
-.identity-unit-right{grid-template-columns:minmax(170px,310px) 1fr}
-.logo-viewport{height:92px;overflow:hidden;position:relative}
-.logo-viewport img{position:absolute;height:92px;width:auto;max-width:none;top:0}
-.identity-unit-left .logo-viewport img{left:0;width:200%;height:auto;top:50%;transform:translateY(-50%)}
-.identity-unit-right .logo-viewport img{right:0;width:200%;height:auto;top:50%;transform:translateY(-50%)}
-.identity-copy{min-width:0}
-.identity-copy strong{display:block;color:var(--forest);font-size:1rem}
-.identity-copy span{display:block;color:var(--muted);font-size:.82rem;margin-top:3px}
-.identity-separator{font-size:1.55rem;color:#8da494;font-weight:500}
-
+/* Header: identitas program + logo sejajar + navigasi */
 .nav-shell{
   position:sticky;top:0;z-index:50;
   background:rgba(255,255,255,.94);
   backdrop-filter:blur(12px);
   border-bottom:1px solid var(--line);
 }
-.nav{min-height:66px;display:flex;align-items:center;justify-content:space-between;gap:24px}
-.program-brand{display:flex;align-items:center;gap:11px;color:var(--forest)}
-.program-mark{width:38px;height:38px;display:grid;place-items:center;border-radius:12px;background:var(--soft);border:1px solid var(--line-2)}
-.program-brand strong{display:block;font-size:.96rem;letter-spacing:.01em}
-.program-brand small{display:block;color:var(--muted);font-size:.69rem;letter-spacing:.06em;text-transform:uppercase}
-.navlinks{display:flex;align-items:center;gap:5px}
-.navlinks a{padding:9px 12px;border-radius:10px;color:#365343;font-size:.9rem;font-weight:650}
+.nav{
+  min-height:86px;
+  display:grid;
+  grid-template-columns:minmax(250px,1fr) minmax(260px,410px) minmax(360px,1fr);
+  align-items:center;
+  gap:22px;
+}
+.program-brand{display:flex;align-items:center;gap:11px;color:var(--forest);min-width:0}
+.program-mark{width:38px;height:38px;display:grid;place-items:center;border-radius:12px;background:var(--soft);border:1px solid var(--line-2);flex:0 0 auto}
+.program-brand strong{display:block;font-size:.96rem;letter-spacing:.01em;white-space:nowrap}
+.program-brand small{display:block;color:var(--muted);font-size:.69rem;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap}
+
+.header-program-logo{
+  min-width:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  height:68px;
+  padding:4px 8px;
+}
+.header-program-logo img{
+  width:100%;
+  max-width:390px;
+  max-height:64px;
+  object-fit:contain;
+  object-position:center;
+}
+
+.navlinks{display:flex;align-items:center;justify-content:flex-end;gap:5px;white-space:nowrap}
+.navlinks a{padding:9px 10px;border-radius:10px;color:#365343;font-size:.88rem;font-weight:650}
 .navlinks a:hover{background:var(--soft)}
 .navlinks .nav-cta{background:var(--forest);color:white}
-.menu{display:none;border:1px solid var(--line-2);background:white;color:var(--forest);border-radius:10px;padding:9px 12px;font-weight:700}
+.menu{display:none;border:1px solid var(--line-2);background:white;color:var(--forest);border-radius:10px;padding:9px 12px;font-weight:700;justify-self:end}
 
 /* Hero */
 .hero{
@@ -163,27 +157,62 @@ img{display:block;max-width:100%}
 .credit small{color:#d4e1d7}
 .credit a{color:#f1ca67;font-size:.83rem;margin-top:4px}
 
-@media(max-width:1000px){
-  .identity-logos{grid-template-columns:1fr;gap:13px;padding:14px 0}
-  .identity-separator{display:none}
-  .identity-unit,.identity-unit-right{grid-template-columns:minmax(170px,300px) 1fr}
+@media(max-width:1100px){
+  .nav{
+    grid-template-columns:minmax(245px,1fr) minmax(240px,330px) auto;
+    gap:16px;
+    min-height:82px;
+  }
+  .header-program-logo img{max-width:320px;max-height:58px}
+  .navlinks{display:none}
+  .menu{display:inline-flex}
+  .navlinks.open{
+    display:flex;
+    position:absolute;
+    left:16px;
+    right:16px;
+    top:82px;
+    flex-direction:column;
+    align-items:stretch;
+    background:white;
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:9px;
+    box-shadow:var(--shadow);
+  }
   .hero-grid{grid-template-columns:1fr}
   .grid{grid-template-columns:repeat(2,1fr)}
   .access{grid-template-columns:repeat(2,1fr)}
   .identity-cards{grid-template-columns:1fr 1fr}
-  .navlinks{display:none}
-  .menu{display:inline-flex}
-  .navlinks.open{display:flex;position:absolute;left:16px;right:16px;top:62px;flex-direction:column;align-items:stretch;background:white;border:1px solid var(--line);border-radius:14px;padding:9px;box-shadow:var(--shadow)}
 }
 @media(max-width:650px){
   .wrap{width:min(100% - 22px,1180px)}
-  .identity-logos{width:min(100% - 22px,1180px)}
-  .identity-unit,.identity-unit-right{grid-template-columns:1fr;text-align:center;gap:7px}
-  .logo-viewport{height:76px;max-width:340px;width:100%;margin:auto}
-  .identity-unit-left .logo-viewport img,.identity-unit-right .logo-viewport img{height:auto;width:200%;top:50%}
-  .identity-copy span{font-size:.76rem}
-  .nav{min-height:62px}
-  .program-brand small{display:none}
+  .nav{
+    grid-template-columns:minmax(0,1fr) auto;
+    grid-template-areas:
+      "brand menu"
+      "logo logo";
+    min-height:auto;
+    gap:8px 12px;
+    padding:10px 0 9px;
+  }
+  .program-brand{grid-area:brand}
+  .program-brand strong{font-size:.88rem;white-space:normal}
+  .program-brand small{font-size:.61rem;white-space:normal}
+  .program-mark{width:34px;height:34px;border-radius:10px}
+  .menu{grid-area:menu}
+  .header-program-logo{
+    grid-area:logo;
+    width:100%;
+    height:70px;
+    padding:0 18px;
+    border-top:1px solid #e7eee4;
+  }
+  .header-program-logo img{
+    max-width:390px;
+    max-height:62px;
+  }
+  .navlinks.open{top:124px}
   .hero{padding:48px 0 46px}
   .hero h1{font-size:2.65rem}
   .hero p{font-size:.98rem}
