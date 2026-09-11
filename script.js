@@ -343,16 +343,27 @@ async function populatePrintReport(){
   renderCode39(currentDocumentRef);
   await renderVerificationQr(currentDocumentRef);
   text('printFingerprint',currentFingerprint ? currentFingerprint.slice(0,24) : 'Browser fingerprint unavailable');
-  // V30: optional secure publisher API. Disabled by default on static GitHub Pages.
-  // When SB_VERIFY_API is configured, the generated document record is sent to the
-  // publisher backend; otherwise verification continues to use documents.json.
-  try{
-    const api=(window.SB_VERIFY_API||'').replace(/\/$/,'');
-    if(api){
-      const record={id:currentDocumentRef,status:'Verified',issued_at:now.toISOString().slice(0,10),client_name:value('name'),project:$('#project')?.value||'-',fingerprint:currentFingerprint||'-'};
-      fetch(api+'/documents',{method:'POST',headers:{'Content-Type':'application/json',...(window.SB_VERIFY_PUBLISHER_TOKEN?{'Authorization':'Bearer '+window.SB_VERIFY_PUBLISHER_TOKEN}:{})},body:JSON.stringify(record),keepalive:true}).catch(()=>{});
+  // V32: publish the verification record before opening print preview.
+  // The existing API endpoint and session-only Publisher Token model are preserved.
+  const api=(window.SB_VERIFY_API||'').replace(/\/$/,'');
+  if(api){
+    const publisherToken=window.SB_VERIFY_PUBLISHER_TOKEN||'';
+    if(!publisherToken){
+      throw new Error('PUBLISHER_SESSION_REQUIRED');
     }
-  }catch(_){ }
+
+    const record={id:currentDocumentRef,status:'Verified',issued_at:now.toISOString().slice(0,10),client_name:value('name'),project:$('#project')?.value||'-',fingerprint:currentFingerprint||'-'};
+    const publishResponse=await fetch(api+'/documents',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+publisherToken},
+      body:JSON.stringify(record),
+      keepalive:true
+    });
+
+    if(!publishResponse.ok){
+      throw new Error('PUBLISH_FAILED_'+publishResponse.status);
+    }
+  }
 }
 
 async function prepareClientSignatureForPrint(){
@@ -448,6 +459,16 @@ confirmAgreementBtn?.addEventListener('click',async()=>{
     void $('.print-report')?.getBoundingClientRect();
     closeAgreementModal();
     requestAnimationFrame(()=>requestAnimationFrame(()=>setTimeout(()=>window.print(),180)));
+  }catch(err){
+    console.error('Document publishing failed:',err);
+    const code=String(err?.message||'');
+    if(code==='PUBLISHER_SESSION_REQUIRED'){
+      alert('Sesi Publisher belum aktif. Buka /verify/publisher.html, simpan konfigurasi Publisher, lalu gunakan tombol “Buka Formulir Utama” sebelum membuat PDF.');
+    }else if(code.startsWith('PUBLISH_FAILED_401') || code.startsWith('PUBLISH_FAILED_403')){
+      alert('Publisher Token ditolak oleh API. Aktifkan ulang sesi Publisher sebelum membuat PDF.');
+    }else{
+      alert('Dokumen belum berhasil didaftarkan ke database verifikasi. PDF tidak dibuat agar QR tidak menghasilkan dokumen yang belum terverifikasi. Silakan coba kembali.');
+    }
   }finally{
     setTimeout(()=>{confirmAgreementBtn.disabled=false;},1000);
   }
