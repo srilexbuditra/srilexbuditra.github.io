@@ -218,6 +218,14 @@ waBtn?.addEventListener('click', () => {
     `Estimasi Awal: ${formatIDR(total)}`,
     `Deskripsi: ${$('#description').value || '-'}`
   ].join('\n');
+  // GA4: record WhatsApp consultation click without changing the existing WhatsApp flow.
+  if (typeof window.gtag === 'function') {
+    window.gtag('event', 'whatsapp_click', {
+      event_category: 'engagement',
+      event_label: 'Homepage - Konsultasi WhatsApp'
+    });
+  }
+
   window.open('https://wa.me/6282136238350?text=' + encodeURIComponent(msg),'_blank','noopener');
 });
 async function sha256Hex(input){
