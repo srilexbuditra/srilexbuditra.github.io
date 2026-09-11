@@ -1,28 +1,25 @@
-# Program Ketahanan Pangan — Halaman Dokumentasi
+# Program Ketahanan Pangan — Dokumentasi Sistem Digital
+## Revisi fokus logo
 
-Versi ini sudah disesuaikan agar visualnya selaras dengan halaman registrasi:
-- tema terang bernuansa hijau/krim,
-- identitas Program Ketahanan Pangan menjadi fokus,
-- logo Super Tani Indonesia dan AY Group Agro Indonesia berada di bagian paling atas,
-- posisi identitas dipisahkan dari navigasi,
-- Srilex Buditra tetap sebagai Dukungan Teknologi di footer,
-- Open Graph image ikut diperbarui.
+Perubahan pada versi ini hanya difokuskan pada area logo/header. Visual halaman dan isi tulisan lainnya dipertahankan.
+
+### Perubahan
+- Menghapus tulisan tambahan di samping logo:
+  - "Super Tani Indonesia — Pelopor Program Ketahanan Pangan"
+  - "AY Group Agro Indonesia — Support System Marketing Nasional & Internasional"
+- Logo resmi Super Tani Indonesia + AY Group Agro Indonesia tetap menggunakan artwork pengguna.
+- Logo disejajarkan dan ditempatkan di tengah header, tepat di antara:
+  - kiri: "Program Ketahanan Pangan / Dokumentasi Sistem Digital"
+  - kanan: menu "Dokumentasi", "Layanan", "Identitas", dan "GitHub Wiki"
+- Desktop/laptop: logo berada pada satu baris yang seimbang dengan brand dan menu.
+- Mobile: logo berpindah menjadi baris tengah penuh di bawah brand/menu agar tetap jelas dan tidak terpotong.
+- Tidak mengubah hero, dokumentasi, layanan, identitas, footer, atau teks konten lainnya.
 
 ## Upload
-Upload seluruh isi folder ini ke:
-
+Ganti folder:
 `/program/ketahanan-pangan/dokumentasi/`
 
-URL publik:
+dengan isi paket ini.
+
+URL:
 `https://srilexbuditra.work/program/ketahanan-pangan/dokumentasi/`
-
-## File penting
-- `index.html`
-- `assets/style.css`
-- `assets/app.js`
-- `assets/logo-program-ketahanan-pangan.png`
-- `assets/og-ketahanan-pangan.jpg`
-- `assets/favicon.png`
-
-## Catatan
-Logo utama bersumber dari artwork yang diberikan dan hanya latar hitam murni yang dibuat transparan; artwork/logo tidak digambar ulang.
