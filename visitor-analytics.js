@@ -80,6 +80,31 @@
     } catch (error) { console.debug('Visitor analytics unavailable.', error); }
   };
 
+
+  /* =========================================================
+     GA4 — Program Ketahanan Pangan: Registration CTA
+     Tracks intent without changing navigation or visual behavior.
+     ========================================================= */
+  document.addEventListener('click', (event) => {
+    const link = event.target.closest?.('a[href]');
+    if (!link) return;
+
+    const href = link.getAttribute('href') || '';
+    if (
+      href === 'https://s.id/daftar_tani' ||
+      href.startsWith('https://s.id/daftar_tani?') ||
+      href.startsWith('https://s.id/daftar_tani#')
+    ) {
+      if (typeof window.gtag === 'function') {
+        window.gtag('event', 'registration_start', {
+          event_category: 'ketahanan_pangan',
+          event_label: 'Daftar Peserta',
+          transport_type: 'beacon'
+        });
+      }
+    }
+  });
+
   registerVisitor();
   setTimeout(sendHeartbeat, HEARTBEAT_RETRY_MS);
   setInterval(sendHeartbeat, HEARTBEAT_MS);
