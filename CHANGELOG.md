@@ -8,6 +8,23 @@ Dokumen ini menggunakan dua riwayat versi agar nomor versi website utama tidak t
 
 ## A. Versi Website Utama
 
+### V12.0 — Development Timeline / Activity
+**13 September 2026**
+
+#### Ditambahkan
+- Menambahkan halaman publik `/aktivitas/` sebagai Development Timeline & Activity.
+- Menampilkan selected public milestones dari performance, verification, analytics, flagship Program Ketahanan Pangan, Trust & Authority, Documentation Sync, dan Knowledge Center.
+- Menambahkan section Development Timeline pada homepage, internal search entry, sitemap route, dan footer link.
+- Menandai status milestone secara eksplisit sebagai `COMPLETED`, `LIVE SYSTEM`, atau `ROADMAP`.
+
+#### Dokumentasi
+- Menambahkan `PROJECT-TIMELINE-V12.0.md`.
+- Memperbarui README, DOCUMENTATION, dan roadmap agar current phase sinkron dengan implementasi.
+
+#### Prinsip Perubahan
+- V12.0 tidak mengubah API, Worker, autentikasi, registrasi, dashboard peserta, verifikasi, sertifikat, atau data peserta Program Ketahanan Pangan.
+- Timeline publik tidak menampilkan secret atau data pribadi.
+
 ### V11.9 — Knowledge Center / Insights Foundation
 **13 September 2026**
 

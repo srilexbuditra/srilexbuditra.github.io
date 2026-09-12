@@ -106,6 +106,12 @@
   </url>
 
   <url>
+    <loc>https://srilexbuditra.work/aktivitas/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
     <loc>https://srilexbuditra.work/insights/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>

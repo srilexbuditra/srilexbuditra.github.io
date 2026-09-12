@@ -2,8 +2,8 @@
 
 Website profesional **Srilex Buditra** yang berfungsi sebagai pusat personal branding, layanan pengembangan web, portfolio, studi kasus, profil publik, estimasi biaya proyek, verifikasi dokumen, serta dokumentasi implementasi sistem digital.
 
-**Documentation baseline:** V11.9 — Knowledge Center Foundation  
-**Current public direction:** Flagship Project + Trust & Authority + Knowledge Center  
+**Documentation baseline:** V12.0 — Development Timeline / Activity  
+**Current public direction:** Flagship Project + Trust & Authority + Knowledge Center + Public Development Timeline  
 **Website:** https://srilexbuditra.work
 
 ## ✨ Fitur Utama
@@ -11,6 +11,7 @@ Website profesional **Srilex Buditra** yang berfungsi sebagai pusat personal bra
 - Desain responsif untuk desktop, laptop, tablet, dan mobile.
 - Halaman **Profil & Rekam Jejak** pada `/profil/` untuk identitas publik, capability map, proof of work, dan trust principles.
 - **Knowledge Center / Insights** pada `/insights/` untuk artikel teknis berbasis implementasi nyata.
+- **Development Timeline & Activity** pada `/aktivitas/` untuk selected public milestones dan status pengembangan yang transparan.
 - **Program Ketahanan Pangan** sebagai flagship implementation di homepage dan case study publik pada `/portfolio/ketahanan-pangan/`.
 - Portal Program Ketahanan Pangan yang menghubungkan registrasi, verifikasi, akun peserta/dashboard, sertifikat QR, dan dokumentasi.
 - Portfolio dan selected project samples dengan studi kasus terpisah.
@@ -68,6 +69,10 @@ Project utama menggunakan frontend statis dan layanan pendukung berbasis edge/cl
 │   ├── insights.css
 │   └── [artikel]/index.html
 │
+├── aktivitas/
+│   ├── index.html
+│   └── activity.css
+│
 ├── portfolio/
 │   ├── ketahanan-pangan/
 │   │   ├── index.html
@@ -113,6 +118,7 @@ Project utama menggunakan frontend statis dan layanan pendukung berbasis edge/cl
 ├── ROADMAP-SRILEXBUDITRA-2026-2027.md
 ├── TRUST-AUTHORITY-V8.md
 ├── KNOWLEDGE-CENTER-V11.9.md
+├── PROJECT-TIMELINE-V12.0.md
 ├── ANALYTICS-V4.md
 ├── SECURITY.md
 ├── PRIVACY.md
@@ -152,6 +158,12 @@ Dokumentasi tahap: **[TRUST-AUTHORITY-V8.md](TRUST-AUTHORITY-V8.md)**.
 Route `/insights/` menjadi pusat artikel teknis Srilex Buditra yang membahas keputusan dan pelajaran dari implementasi nyata. Artikel awal mencakup perjalanan digital peserta, QR verification/sertifikat digital, dan responsive-first pada portal peserta.
 
 Dokumentasi tahap: **[KNOWLEDGE-CENTER-V11.9.md](KNOWLEDGE-CENTER-V11.9.md)**.
+
+## 🧭 Development Timeline / Activity
+
+Route `/aktivitas/` merangkum selected public milestones perkembangan srilexbuditra.work dengan status yang jelas antara completed, live system, dan roadmap. Halaman ini menjadi proof-of-work tambahan tanpa membuka secret atau data pribadi.
+
+Dokumentasi tahap: **[PROJECT-TIMELINE-V12.0.md](PROJECT-TIMELINE-V12.0.md)**.
 
 ## 🧮 Project Cost Estimator & Print/PDF
 

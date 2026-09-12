@@ -23,13 +23,14 @@ Sudah dilakukan:
 - Dokumentasi Trust & Authority V8.
 - **Knowledge Center / Insights V11.9** dengan hub dan tiga artikel awal berbasis implementasi nyata.
 - Struktur author artikel terhubung ke halaman `/profil/`.
+- **Development Timeline / Activity V12.0** pada `/aktivitas/` sebagai rekam jejak milestone publik.
 
 Berikutnya:
 
-1. Perluas artikel secara bertahap berdasarkan implementasi baru yang benar-benar terjadi.
-2. Dokumentasi project timeline/activity yang aman untuk publik.
+1. Search Console sebagai alat monitoring query, halaman, dan pertumbuhan brand.
+2. Perluas artikel secara bertahap berdasarkan implementasi baru yang benar-benar terjadi.
 3. Testimoni/dukungan hanya bila ada izin dan sumber dapat diverifikasi.
-4. Search Console sebagai alat monitoring query, halaman, dan pertumbuhan brand.
+4. Persiapan Fase 3 tanpa mengganggu sistem anggota yang sudah live.
 
 ## Fase 3 — Pengalaman Anggota
 
@@ -76,4 +77,4 @@ Jangan mengejar klaim "dipercaya semua kalangan" melalui slogan. Bangun kepercay
 ---
 
 **Current phase:** Fase 2 — Trust & Authority  
-**Next milestone:** Project timeline/activity + Search Console monitoring, lalu persiapan Fase 3
+**Next milestone:** Search Console monitoring + persiapan Fase 3 (Dashboard V2 → Kartu Anggota + QR)

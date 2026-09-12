@@ -2,7 +2,7 @@
 
 Dokumen ini adalah indeks dokumentasi aktif repository `srilexbuditra.github.io`. Gunakan indeks ini untuk membedakan dokumentasi operasional, panduan teknis, audit, dan referensi historis.
 
-**Current documentation baseline:** V11.9  
+**Current documentation baseline:** V12.0  
 **Last documentation sync:** 13 September 2026
 
 ## 1. Dokumentasi Utama
@@ -17,6 +17,7 @@ Dokumen ini adalah indeks dokumentasi aktif repository `srilexbuditra.github.io`
 | [ROADMAP-SRILEXBUDITRA-2026-2027.md](ROADMAP-SRILEXBUDITRA-2026-2027.md) | Active | Urutan prioritas pengembangan jangka menengah. |
 | [TRUST-AUTHORITY-V8.md](TRUST-AUTHORITY-V8.md) | Active | Catatan implementasi tahap Trust & Authority. |
 | [KNOWLEDGE-CENTER-V11.9.md](KNOWLEDGE-CENTER-V11.9.md) | Active | Dokumentasi implementasi Knowledge Center / Insights dan prinsip editorial. |
+| [PROJECT-TIMELINE-V12.0.md](PROJECT-TIMELINE-V12.0.md) | Active | Dokumentasi halaman Development Timeline / Activity dan aturan status milestone publik. |
 | [ANALYTICS-V4.md](ANALYTICS-V4.md) | Active | Dokumentasi Analytics V4 berbasis Cloudflare Workers + D1. |
 
 ## 2. Program Ketahanan Pangan
@@ -135,10 +136,11 @@ File berikut adalah template operasional GitHub, bukan dokumentasi produk:
 - Profil & Rekam Jejak `/profil/`: **implemented**.
 - Trust & Authority V8: **implemented sebagai fondasi**.
 - Knowledge Center / Insights: **implemented sebagai foundation pada V11.9**.
+- Development Timeline / Activity `/aktivitas/`: **implemented pada V12.0**.
 - Dashboard V2, Kartu Anggota QR, Level/Poin, Misi, Referral, dan Benefit: **roadmap**, kecuali bagian yang sudah ada dan dinyatakan live pada source terkait.
 
 ---
 
-**Documentation baseline:** V11.9 — Knowledge Center Foundation  
+**Documentation baseline:** V12.0 — Development Timeline / Activity  
 **Previous audit baseline:** V11.6  
 **Last documentation update:** 13 September 2026
