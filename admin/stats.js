@@ -261,6 +261,8 @@ function exportCsv() {
 
   const rows = [
     ["Metric", "Value"],
+    ["Online Now (5 Minutes)", lastStatsData.online_now ?? 0],
+    ["Active 30 Minutes", lastStatsData.active_30_minutes ?? 0],
     ["Total Visitors", lastStatsData.total_visitors ?? 0],
     ["Total Visits", lastStatsData.total_visits ?? 0],
     ["Visitors Today", lastStatsData.visitors_today ?? 0],
@@ -303,6 +305,7 @@ function renderDashboard(data) {
   lastStatsData = data;
 
   setNumber("onlineNow", data.online_now ?? 0);
+  setNumber("active30Minutes", data.active_30_minutes ?? 0);
   renderOnlinePages(data.online_pages || []);
   setNumber("totalVisitors", data.total_visitors);
   setNumber("totalVisits", data.total_visits);
