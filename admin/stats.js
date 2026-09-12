@@ -152,7 +152,7 @@ function renderList(elementId, rows, labelGetter) {
   });
 }
 
-function renderRecentVisits(rows) {
+function renderRecentVisits(rows, onlineDetails = []) {
   const tbody = document.getElementById("recentVisits");
   if (!tbody) return;
   tbody.innerHTML = "";
@@ -160,13 +160,19 @@ function renderRecentVisits(rows) {
   if (!Array.isArray(rows) || rows.length === 0) {
     const tr = document.createElement("tr");
     const td = document.createElement("td");
-    td.colSpan = 6;
+    td.colSpan = 7;
     td.className = "recent-empty";
     td.textContent = "Belum ada event kunjungan V4.";
     tr.appendChild(td);
     tbody.appendChild(tr);
     return;
   }
+
+  const onlineVisitorIds = new Set(
+    (Array.isArray(onlineDetails) ? onlineDetails : [])
+      .map((item) => String(item.visitor_id || ""))
+      .filter(Boolean)
+  );
 
   rows.forEach((row) => {
     const tr = document.createElement("tr");
@@ -186,6 +192,15 @@ function renderRecentVisits(rows) {
       if (index === 4) td.className = "recent-page";
       tr.appendChild(td);
     });
+
+    const statusTd = document.createElement("td");
+    const isOnline =
+      row.visitor_id &&
+      onlineVisitorIds.has(String(row.visitor_id));
+
+    statusTd.textContent = isOnline ? "🟢 Online" : "⚫ Offline";
+    statusTd.className = isOnline ? "recent-online" : "recent-offline";
+    tr.appendChild(statusTd);
 
     tbody.appendChild(tr);
   });
@@ -274,8 +289,14 @@ function exportCsv() {
     ["Returning Visitors", lastStatsData.returning_visitors ?? 0],
     ["Average Visits per Visitor", lastStatsData.avg_visits_per_visitor ?? 0],
     [],
-    ["Recent Visit Time", "Country", "Device", "Browser", "Page", "Referrer"]
+    ["Recent Visit Time", "Country", "Device", "Browser", "Page", "Referrer", "Online"]
   ];
+
+  const onlineVisitorIds = new Set(
+    (lastStatsData.online_details || [])
+      .map((item) => String(item.visitor_id || ""))
+      .filter(Boolean)
+  );
 
   (lastStatsData.recent_visits || []).forEach((row) => {
     rows.push([
@@ -284,7 +305,10 @@ function exportCsv() {
       row.device_type,
       row.browser,
       row.page,
-      row.referrer
+      row.referrer,
+      row.visitor_id && onlineVisitorIds.has(String(row.visitor_id))
+        ? "Online"
+        : "Offline"
     ]);
   });
 
@@ -348,7 +372,7 @@ function renderDashboard(data) {
     formatReferrer(row.referrer)
   );
 
-  renderRecentVisits(data.recent_visits);
+  renderRecentVisits(data.recent_visits, data.online_details || []);
   renderTrend(data.daily_trend, selectedTrendDays);
 
   const trackingNote = document.getElementById("trackingNote");
