@@ -175,6 +175,23 @@ async function verifyRegistration(registrationId, options = {}) {
     showResult(data.registration);
     setMessage('info', 'Nomor registrasi ditemukan dan berhasil diverifikasi.');
 
+    // GA4: cek status dinyatakan berhasil hanya setelah API verifikasi
+    // menemukan registrasi dan hasil berhasil ditampilkan.
+    const sendStatusCheckSuccess = (attempt = 0) => {
+      if (typeof window.gtag === 'function') {
+        window.gtag('event', 'status_check_success', {
+          event_category: 'ketahanan_pangan',
+          event_label: 'Cek Status Berhasil',
+          transport_type: 'beacon'
+        });
+        return;
+      }
+      if (attempt < 10) {
+        window.setTimeout(() => sendStatusCheckSuccess(attempt + 1), 200);
+      }
+    };
+    sendStatusCheckSuccess();
+
     if (!options.skipUrlUpdate) {
       const url = new URL(location.href);
       url.searchParams.set('registration_id', id);
