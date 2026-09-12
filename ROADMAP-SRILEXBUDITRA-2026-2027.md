@@ -38,7 +38,7 @@ Status: **fase aktif saat ini.**
 
 Urutan rekomendasi:
 
-**Dashboard V2 ✅ → Kartu Anggota + QR → Sertifikat QR → Level/Poin → Misi → Referral → Benefit → Event/Aktivitas**
+**Dashboard V2 ✅ → Kartu Anggota + QR ✅ → Sertifikat QR ✅ → Level/Poin → Misi → Referral → Benefit → Event/Aktivitas**
 
 Prinsip:
 
@@ -77,5 +77,5 @@ Jangan mengejar klaim "dipercaya semua kalangan" melalui slogan. Bangun kepercay
 ---
 
 **Current phase:** Fase 3 — Pengalaman Anggota  
-**Current milestone:** Dashboard Peserta V2 ✅  
-**Next milestone:** Kartu Anggota + QR
+**Current milestone:** Dashboard Peserta V2 ✅ + Kartu Anggota Digital + QR ✅ + Sertifikat QR ✅  
+**Next milestone:** Level/Poin

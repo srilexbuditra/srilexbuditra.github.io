@@ -2,7 +2,7 @@
 
 Website profesional **Srilex Buditra** yang berfungsi sebagai pusat personal branding, layanan pengembangan web, portfolio, studi kasus, profil publik, estimasi biaya proyek, verifikasi dokumen, serta dokumentasi implementasi sistem digital.
 
-**Documentation baseline:** V12.1 — Dashboard Peserta V2  
+**Documentation baseline:** V12.2 — Kartu Anggota Digital + QR  
 **Current public direction:** Flagship Project + Trust & Authority + Knowledge Center + Public Development Timeline  
 **Website:** https://srilexbuditra.work
 
@@ -14,7 +14,8 @@ Website profesional **Srilex Buditra** yang berfungsi sebagai pusat personal bra
 - **Development Timeline & Activity** pada `/aktivitas/` untuk selected public milestones dan status pengembangan yang transparan.
 - **Program Ketahanan Pangan** sebagai flagship implementation di homepage dan case study publik pada `/portfolio/ketahanan-pangan/`.
 - Portal Program Ketahanan Pangan yang menghubungkan registrasi, verifikasi, akun peserta/dashboard, sertifikat QR, dan dokumentasi.
-- **Dashboard Peserta V2** dengan ringkasan keanggotaan, progres akun, navigasi cepat, layanan digital berbasis status, dan penandaan roadmap fitur berikutnya.
+- **Dashboard Peserta V2** dengan ringkasan keanggotaan, progres akun, navigasi cepat, dan layanan digital berbasis status.
+- **Kartu Anggota Digital + QR** untuk peserta berstatus terverifikasi, dengan QR menuju verifikasi publik tanpa menampilkan data identitas sensitif.
 - Portfolio dan selected project samples dengan studi kasus terpisah.
 - Project Cost Estimator dengan keluaran Print/PDF A4.
 - Tanda tangan penyedia dan klien pada dokumen estimasi.
@@ -90,6 +91,7 @@ Project utama menggunakan frontend statis dan layanan pendukung berbasis edge/cl
 │       ├── registrasi/                # Pendaftaran peserta
 │       ├── verifikasi/                # Cek status + sertifikat publik
 │       ├── peserta/                   # Login/aktivasi/dashboard peserta
+│       │   └── kartu/                 # Kartu anggota digital + QR (authenticated/noindex)
 │       ├── dokumentasi/               # Dokumentasi publik program
 │       ├── admin/                     # Area administrasi
 │       ├── peserta-worker/            # Source/deployment helper layanan peserta
@@ -120,6 +122,8 @@ Project utama menggunakan frontend statis dan layanan pendukung berbasis edge/cl
 ├── TRUST-AUTHORITY-V8.md
 ├── KNOWLEDGE-CENTER-V11.9.md
 ├── PROJECT-TIMELINE-V12.0.md
+├── DASHBOARD-PESERTA-V2.md
+├── KARTU-ANGGOTA-QR-V12.2.md
 ├── ANALYTICS-V4.md
 ├── SECURITY.md
 ├── PRIVACY.md
@@ -142,6 +146,7 @@ Titik masuk utama:
 - Registrasi: `/program/ketahanan-pangan/registrasi/`
 - Verifikasi: `/program/ketahanan-pangan/verifikasi/`
 - Akun peserta: `/program/ketahanan-pangan/peserta/`
+- Kartu anggota digital (authenticated): `/program/ketahanan-pangan/peserta/kartu/`
 - Sertifikat publik: `/program/ketahanan-pangan/verifikasi/sertifikat/`
 - Dokumentasi: `/program/ketahanan-pangan/dokumentasi/`
 - Case study: `/portfolio/ketahanan-pangan/`

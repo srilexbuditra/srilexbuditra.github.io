@@ -8,6 +8,26 @@ Dokumen ini menggunakan dua riwayat versi agar nomor versi website utama tidak t
 
 ## A. Versi Website Utama
 
+### V12.2 — Kartu Anggota Digital + QR
+**13 September 2026**
+
+#### Ditambahkan
+- Menambahkan route authenticated `/program/ketahanan-pangan/peserta/kartu/` untuk Kartu Anggota Digital peserta terverifikasi.
+- Menambahkan kartu depan/belakang yang responsif dan print-friendly.
+- Menambahkan QR lokal yang mengarah ke verifikasi publik berdasarkan Nomor Registrasi.
+- Menambahkan aksi Cetak/Simpan PDF, Salin Link Verifikasi, dan Buka Verifikasi.
+- Mengaktifkan layanan **Kartu Anggota + QR** pada Dashboard Peserta V2 hanya untuk status `verified`.
+
+#### Keamanan & Privasi
+- Halaman kartu diberi `noindex,nofollow,noarchive` dan memerlukan sesi peserta aktif.
+- Kartu tidak menampilkan NIK, nomor KK, WhatsApp, email, password, atau dokumen identitas.
+- QR tidak menyimpan data sensitif; QR hanya mengarah ke halaman verifikasi publik dengan Nomor Registrasi.
+- Tidak ada perubahan pada Worker/API, database, session cookie, registrasi, verifikasi publik, atau penerbitan sertifikat.
+
+#### Dokumentasi
+- Menambahkan `KARTU-ANGGOTA-QR-V12.2.md`.
+- Memperbarui `DASHBOARD-PESERTA-V2.md`, README, DOCUMENTATION, roadmap, dan README Program Ketahanan Pangan.
+
 ### V12.1 — Dashboard Peserta V2
 **13 September 2026**
 

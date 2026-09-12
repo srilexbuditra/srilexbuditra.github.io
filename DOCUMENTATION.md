@@ -2,7 +2,7 @@
 
 Dokumen ini adalah indeks dokumentasi aktif repository `srilexbuditra.github.io`. Gunakan indeks ini untuk membedakan dokumentasi operasional, panduan teknis, audit, dan referensi historis.
 
-**Current documentation baseline:** V12.1  
+**Current documentation baseline:** V12.2  
 **Last documentation sync:** 13 September 2026
 
 ## 1. Dokumentasi Utama
@@ -138,10 +138,18 @@ File berikut adalah template operasional GitHub, bukan dokumentasi produk:
 - Trust & Authority V8: **implemented sebagai fondasi**.
 - Knowledge Center / Insights: **implemented sebagai foundation pada V11.9**.
 - Development Timeline / Activity `/aktivitas/`: **implemented pada V12.0**.
-- Dashboard V2, Kartu Anggota QR, Level/Poin, Misi, Referral, dan Benefit: **roadmap**, kecuali bagian yang sudah ada dan dinyatakan live pada source terkait.
+- Dashboard Peserta V2: **implemented**.
+- Kartu Anggota Digital + QR: **implemented untuk peserta `verified`**.
+- Sertifikat QR: **existing / aktif untuk peserta terverifikasi**.
+- Level/Poin, Misi, Referral, Benefit, dan Event: **roadmap**.
 
 ---
 
-**Documentation baseline:** V12.0 — Development Timeline / Activity  
+**Documentation baseline:** V12.2 — Kartu Anggota Digital + QR  
 **Previous audit baseline:** V11.6  
 **Last documentation update:** 13 September 2026
+
+### Kartu Anggota Digital + QR
+
+- `DASHBOARD-PESERTA-V2.md` — baseline pengalaman dashboard peserta.
+- `KARTU-ANGGOTA-QR-V12.2.md` — implementasi kartu anggota authenticated, QR verifikasi publik, print/PDF, keamanan, dan batas data yang ditampilkan.
