@@ -246,7 +246,7 @@
             <span class="badge">AKSI PESERTA</span>
             <h3 id="quickActionsTitle">Akses Cepat</h3>
             <p class="card-intro">Gunakan menu berikut untuk kebutuhan utama akun Anda.</p>
-            <a id="certificateBtn" class="action-button action-primary" href="#" hidden><span class="action-icon" aria-hidden="true">▣</span><span><strong>Lihat Kartu / Sertifikat</strong><small>Buka dokumen digital peserta</small></span><span class="action-arrow" aria-hidden="true">›</span></a>
+            <a id="certificateBtn" class="action-button action-primary" href="#" hidden><span class="action-icon" aria-hidden="true">▣</span><span><strong>Lihat Sertifikat Digital</strong><small>Buka sertifikat peserta terverifikasi</small></span><span class="action-arrow" aria-hidden="true">›</span></a>
             <a class="action-button" href="../verifikasi/"><span class="action-icon" aria-hidden="true">⌕</span><span><strong>Verifikasi Publik</strong><small>Cek keabsahan nomor registrasi</small></span><span class="action-arrow" aria-hidden="true">›</span></a>
             <button id="copyRegistrationAction" class="action-button" type="button"><span class="action-icon" aria-hidden="true">⧉</span><span><strong>Salin Nomor Registrasi</strong><small>Simpan nomor untuk digunakan kembali</small></span><span class="action-arrow" aria-hidden="true">›</span></button>
             <div id="statusNote" class="status-note">Status akun sedang dimuat.</div>
@@ -273,11 +273,11 @@
               <span class="member-service-copy"><b>Verifikasi Publik</b><small>Cek keabsahan nomor registrasi dan status publik.</small></span>
               <span class="member-service-state">AKTIF</span>
             </a>
-            <div class="member-service-card is-roadmap" aria-label="Kartu Anggota QR — tahap berikutnya">
+            <a id="memberCardService" class="member-service-card is-locked" href="#" aria-disabled="true">
               <span class="member-service-icon" aria-hidden="true">▦</span>
-              <span class="member-service-copy"><b>Kartu Anggota + QR</b><small>Identitas anggota digital yang dapat diverifikasi.</small></span>
-              <span class="member-service-state">NEXT</span>
-            </div>
+              <span class="member-service-copy"><b>Kartu Anggota + QR</b><small id="memberCardState">Tersedia setelah peserta terverifikasi.</small></span>
+              <span class="member-service-state" id="memberCardBadge">TERKUNCI</span>
+            </a>
             <div class="member-service-card is-roadmap" aria-label="Aktivitas dan poin — roadmap">
               <span class="member-service-icon" aria-hidden="true">◎</span>
               <span class="member-service-copy"><b>Aktivitas &amp; Poin</b><small>Fondasi engagement peserta untuk tahap pengembangan berikutnya.</small></span>
@@ -369,7 +369,7 @@
   </div>
 </footer>
 
-<script src="./script.js?v=12.1"></script>
+<script src="./script.js?v=12.2"></script>
 <div class="tts-fab-wrap" id="ttsFabWrap" aria-label="Kontrol pembaca halaman">
   <button class="tts-stop" id="ttsStop" type="button" aria-label="Hentikan pembacaan" title="Hentikan"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6h12v12H6z"/></svg></button>
   <button class="tts-fab" id="ttsFab" type="button" aria-label="Bacakan halaman" aria-pressed="false">

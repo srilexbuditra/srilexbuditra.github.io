@@ -365,7 +365,7 @@ function getMemberExperience(status) {
     pending: { label: 'Dalam pemeriksaan', text: 'Data peserta sedang diperiksa oleh admin.', progress: 50, progressText: 'Pemeriksaan data sedang berlangsung.', access: 'Dashboard & verifikasi aktif', accessText: 'Pantau status dan catatan admin dari dashboard.' },
     revision: { label: 'Perlu perbaikan data', text: 'Ada bagian data yang perlu diperbaiki sebelum pemeriksaan dilanjutkan.', progress: 45, progressText: 'Perbaiki data yang diminta agar proses dapat dilanjutkan.', access: 'Dashboard & perbaikan aktif', accessText: 'Sertifikat belum tersedia selama perbaikan berlangsung.' },
     resubmitted: { label: 'Menunggu pemeriksaan ulang', text: 'Perbaikan telah terkirim dan menunggu pemeriksaan ulang.', progress: 60, progressText: 'Perbaikan diterima. Menunggu pemeriksaan ulang admin.', access: 'Dashboard & verifikasi aktif', accessText: 'Status akan diperbarui setelah pemeriksaan ulang selesai.' },
-    verified: { label: 'Peserta terverifikasi', text: 'Data peserta telah diverifikasi dan layanan digital utama tersedia.', progress: 100, progressText: 'Tahapan utama selesai. Sertifikat digital dapat diakses.', access: 'Sertifikat digital aktif', accessText: 'Dashboard, verifikasi publik, dan sertifikat digital tersedia.' },
+    verified: { label: 'Peserta terverifikasi', text: 'Data peserta telah diverifikasi dan layanan digital utama tersedia.', progress: 100, progressText: 'Tahapan utama selesai. Kartu anggota dan sertifikat digital dapat diakses.', access: 'Kartu anggota & sertifikat aktif', accessText: 'Dashboard, kartu anggota QR, verifikasi publik, dan sertifikat digital tersedia.' },
     approved: { label: 'Pendaftaran disetujui', text: 'Pendaftaran telah disetujui dan menunggu layanan lanjutan sesuai program.', progress: 90, progressText: 'Pendaftaran disetujui. Pantau informasi lanjutan di dashboard.', access: 'Dashboard & verifikasi aktif', accessText: 'Layanan lanjutan mengikuti status program.' },
     rejected: { label: 'Perlu tindak lanjut', text: 'Pendaftaran belum dapat disetujui. Baca catatan admin untuk informasi berikutnya.', progress: 40, progressText: 'Proses berhenti pada tahap pemeriksaan.', access: 'Dashboard informasi aktif', accessText: 'Baca catatan admin atau keterangan status yang tersedia.' }
   };
@@ -386,6 +386,9 @@ function renderMemberExperience(participant = {}) {
   const certificateService = document.getElementById('memberCertificateService');
   const certificateState = document.getElementById('memberCertificateState');
   const certificateBadge = document.getElementById('memberCertificateBadge');
+  const memberCardService = document.getElementById('memberCardService');
+  const memberCardState = document.getElementById('memberCardState');
+  const memberCardBadge = document.getElementById('memberCardBadge');
 
   if (wrap) wrap.dataset.status = s || 'pending';
   if (label) label.textContent = experience.label;
@@ -409,6 +412,22 @@ function renderMemberExperience(participant = {}) {
       certificateService.href = '#';
       certificateState.textContent = 'Tersedia setelah peserta terverifikasi.';
       certificateBadge.textContent = 'TERKUNCI';
+    }
+  }
+
+  if (memberCardService && memberCardState && memberCardBadge) {
+    const isVerified = s === 'verified';
+    memberCardService.classList.toggle('is-active', isVerified);
+    memberCardService.classList.toggle('is-locked', !isVerified);
+    memberCardService.setAttribute('aria-disabled', isVerified ? 'false' : 'true');
+    if (isVerified) {
+      memberCardService.href = './kartu/';
+      memberCardState.textContent = 'Kartu anggota digital dan QR verifikasi tersedia.';
+      memberCardBadge.textContent = 'AKTIF';
+    } else {
+      memberCardService.href = '#';
+      memberCardState.textContent = 'Tersedia setelah peserta terverifikasi.';
+      memberCardBadge.textContent = 'TERKUNCI';
     }
   }
 }
@@ -557,6 +576,11 @@ bindCopyButton(document.getElementById('copyRegistrationAction'), 'action');
 const memberCertificateService = document.getElementById('memberCertificateService');
 if (memberCertificateService) memberCertificateService.addEventListener('click', event => {
   if (memberCertificateService.getAttribute('aria-disabled') === 'true') event.preventDefault();
+});
+
+const memberCardService = document.getElementById('memberCardService');
+if (memberCardService) memberCardService.addEventListener('click', event => {
+  if (memberCardService.getAttribute('aria-disabled') === 'true') event.preventDefault();
 });
 
 const nextActionPrimaryBtn = document.getElementById('nextActionPrimaryBtn');
