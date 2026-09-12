@@ -152,6 +152,21 @@ function renderList(elementId, rows, labelGetter) {
   });
 }
 
+
+function normalizePageKey(value) {
+  if (!value) return "unknown";
+  try {
+    const u = new URL(value, window.location.origin);
+    let path = u.pathname || "/";
+    if (path.length > 1) path = path.replace(/\/+$/, "");
+    return path || "/";
+  } catch (_) {
+    let text = String(value).split("#")[0].split("?")[0] || "/";
+    if (text.length > 1) text = text.replace(/\/+$/, "");
+    return text || "/";
+  }
+}
+
 function renderRecentVisits(rows, onlineDetails = []) {
   const tbody = document.getElementById("recentVisits");
   if (!tbody) return;
@@ -160,7 +175,7 @@ function renderRecentVisits(rows, onlineDetails = []) {
   if (!Array.isArray(rows) || rows.length === 0) {
     const tr = document.createElement("tr");
     const td = document.createElement("td");
-    td.colSpan = 7;
+    td.colSpan = 8;
     td.className = "recent-empty";
     td.textContent = "Belum ada event kunjungan V4.";
     tr.appendChild(td);
@@ -173,6 +188,15 @@ function renderRecentVisits(rows, onlineDetails = []) {
       .map((item) => String(item.visitor_id || ""))
       .filter(Boolean)
   );
+
+  const onlineByPage = new Map();
+  (Array.isArray(onlineDetails) ? onlineDetails : []).forEach((item) => {
+    const visitorId = String(item.visitor_id || "");
+    if (!visitorId) return;
+    const key = normalizePageKey(item.page);
+    if (!onlineByPage.has(key)) onlineByPage.set(key, new Set());
+    onlineByPage.get(key).add(visitorId);
+  });
 
   rows.forEach((row) => {
     const tr = document.createElement("tr");
@@ -201,6 +225,13 @@ function renderRecentVisits(rows, onlineDetails = []) {
     statusTd.textContent = isOnline ? "🟢 Online" : "⚫ Offline";
     statusTd.className = isOnline ? "recent-online" : "recent-offline";
     tr.appendChild(statusTd);
+
+    const onlineCountTd = document.createElement("td");
+    const pageKey = normalizePageKey(row.page);
+    const onlineCount = onlineByPage.get(pageKey)?.size || 0;
+    onlineCountTd.textContent = String(onlineCount);
+    onlineCountTd.className = onlineCount > 0 ? "recent-online-count" : "recent-offline-count";
+    tr.appendChild(onlineCountTd);
 
     tbody.appendChild(tr);
   });
@@ -289,7 +320,7 @@ function exportCsv() {
     ["Returning Visitors", lastStatsData.returning_visitors ?? 0],
     ["Average Visits per Visitor", lastStatsData.avg_visits_per_visitor ?? 0],
     [],
-    ["Recent Visit Time", "Country", "Device", "Browser", "Page", "Referrer", "Online"]
+    ["Recent Visit Time", "Country", "Device", "Browser", "Page", "Referrer", "Online", "Online on Page"]
   ];
 
   const onlineVisitorIds = new Set(
@@ -297,6 +328,15 @@ function exportCsv() {
       .map((item) => String(item.visitor_id || ""))
       .filter(Boolean)
   );
+
+  const onlineByPage = new Map();
+  (lastStatsData.online_details || []).forEach((item) => {
+    const visitorId = String(item.visitor_id || "");
+    if (!visitorId) return;
+    const key = normalizePageKey(item.page);
+    if (!onlineByPage.has(key)) onlineByPage.set(key, new Set());
+    onlineByPage.get(key).add(visitorId);
+  });
 
   (lastStatsData.recent_visits || []).forEach((row) => {
     rows.push([
@@ -308,7 +348,8 @@ function exportCsv() {
       row.referrer,
       row.visitor_id && onlineVisitorIds.has(String(row.visitor_id))
         ? "Online"
-        : "Offline"
+        : "Offline",
+      onlineByPage.get(normalizePageKey(row.page))?.size || 0
     ]);
   });
 
