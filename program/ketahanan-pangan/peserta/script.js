@@ -357,6 +357,62 @@ function showStatusChangeNotice(previousStatus, nextStatus) {
   return true;
 }
 
+// V12.1 — Dashboard Peserta V2: ringkasan keanggotaan dan kesiapan layanan.
+function getMemberExperience(status) {
+  const s = String(status || '').toLowerCase();
+  const map = {
+    submitted: { label: 'Peserta terdaftar', text: 'Registrasi sudah diterima dan menunggu pemeriksaan.', progress: 25, progressText: 'Registrasi selesai. Tahap berikutnya adalah pemeriksaan data.', access: 'Dashboard & verifikasi aktif', accessText: 'Sertifikat akan terbuka setelah status terverifikasi.' },
+    pending: { label: 'Dalam pemeriksaan', text: 'Data peserta sedang diperiksa oleh admin.', progress: 50, progressText: 'Pemeriksaan data sedang berlangsung.', access: 'Dashboard & verifikasi aktif', accessText: 'Pantau status dan catatan admin dari dashboard.' },
+    revision: { label: 'Perlu perbaikan data', text: 'Ada bagian data yang perlu diperbaiki sebelum pemeriksaan dilanjutkan.', progress: 45, progressText: 'Perbaiki data yang diminta agar proses dapat dilanjutkan.', access: 'Dashboard & perbaikan aktif', accessText: 'Sertifikat belum tersedia selama perbaikan berlangsung.' },
+    resubmitted: { label: 'Menunggu pemeriksaan ulang', text: 'Perbaikan telah terkirim dan menunggu pemeriksaan ulang.', progress: 60, progressText: 'Perbaikan diterima. Menunggu pemeriksaan ulang admin.', access: 'Dashboard & verifikasi aktif', accessText: 'Status akan diperbarui setelah pemeriksaan ulang selesai.' },
+    verified: { label: 'Peserta terverifikasi', text: 'Data peserta telah diverifikasi dan layanan digital utama tersedia.', progress: 100, progressText: 'Tahapan utama selesai. Sertifikat digital dapat diakses.', access: 'Sertifikat digital aktif', accessText: 'Dashboard, verifikasi publik, dan sertifikat digital tersedia.' },
+    approved: { label: 'Pendaftaran disetujui', text: 'Pendaftaran telah disetujui dan menunggu layanan lanjutan sesuai program.', progress: 90, progressText: 'Pendaftaran disetujui. Pantau informasi lanjutan di dashboard.', access: 'Dashboard & verifikasi aktif', accessText: 'Layanan lanjutan mengikuti status program.' },
+    rejected: { label: 'Perlu tindak lanjut', text: 'Pendaftaran belum dapat disetujui. Baca catatan admin untuk informasi berikutnya.', progress: 40, progressText: 'Proses berhenti pada tahap pemeriksaan.', access: 'Dashboard informasi aktif', accessText: 'Baca catatan admin atau keterangan status yang tersedia.' }
+  };
+  return map[s] || map.pending;
+}
+
+function renderMemberExperience(participant = {}) {
+  const s = String(participant.status || '').toLowerCase();
+  const experience = getMemberExperience(s);
+  const wrap = document.getElementById('memberOverview');
+  const label = document.getElementById('memberStatusLabel');
+  const text = document.getElementById('memberStatusText');
+  const progressValue = document.getElementById('memberProgressValue');
+  const progressBar = document.getElementById('memberProgressBar');
+  const progressText = document.getElementById('memberProgressText');
+  const accessLabel = document.getElementById('memberAccessLabel');
+  const accessText = document.getElementById('memberAccessText');
+  const certificateService = document.getElementById('memberCertificateService');
+  const certificateState = document.getElementById('memberCertificateState');
+  const certificateBadge = document.getElementById('memberCertificateBadge');
+
+  if (wrap) wrap.dataset.status = s || 'pending';
+  if (label) label.textContent = experience.label;
+  if (text) text.textContent = experience.text;
+  if (progressValue) progressValue.textContent = experience.progress + '%';
+  if (progressBar) progressBar.style.width = experience.progress + '%';
+  if (progressText) progressText.textContent = experience.progressText;
+  if (accessLabel) accessLabel.textContent = experience.access;
+  if (accessText) accessText.textContent = experience.accessText;
+
+  if (certificateService && certificateState && certificateBadge) {
+    const isVerified = s === 'verified';
+    certificateService.classList.toggle('is-active', isVerified);
+    certificateService.classList.toggle('is-locked', !isVerified);
+    certificateService.setAttribute('aria-disabled', isVerified ? 'false' : 'true');
+    if (isVerified && participant.registration_id) {
+      certificateService.href = '../verifikasi/sertifikat/?registration_id=' + encodeURIComponent(participant.registration_id);
+      certificateState.textContent = 'Sertifikat digital tersedia untuk peserta terverifikasi.';
+      certificateBadge.textContent = 'AKTIF';
+    } else {
+      certificateService.href = '#';
+      certificateState.textContent = 'Tersedia setelah peserta terverifikasi.';
+      certificateBadge.textContent = 'TERKUNCI';
+    }
+  }
+}
+
 function showDashboard(p) {
   authView.hidden = true;
   dashboardView.hidden = false;
@@ -396,6 +452,7 @@ function showDashboard(p) {
   if (dashStatusIcon) dashStatusIcon.textContent = presentation.icon || '⌕';
 
   renderParticipantTimeline(p.status);
+  renderMemberExperience(p);
 
   const note = document.getElementById('statusNote'),
     adminCard = document.getElementById('adminNoteCard'),
@@ -495,6 +552,12 @@ function bindCopyButton(button, mode = 'compact') {
 
 bindCopyButton(document.getElementById('copyRegistrationBtn'));
 bindCopyButton(document.getElementById('copyRegistrationAction'), 'action');
+
+
+const memberCertificateService = document.getElementById('memberCertificateService');
+if (memberCertificateService) memberCertificateService.addEventListener('click', event => {
+  if (memberCertificateService.getAttribute('aria-disabled') === 'true') event.preventDefault();
+});
 
 const nextActionPrimaryBtn = document.getElementById('nextActionPrimaryBtn');
 if (nextActionPrimaryBtn) nextActionPrimaryBtn.addEventListener('click', () => {

@@ -29,7 +29,7 @@
   <link itemprop="publisher" href="https://srilexbuditra.work/#person">
   <meta itemprop="description" content="Aktivasi akun, login, dan dashboard pribadi peserta Program Ketahanan Pangan.">
   <link rel="search" type="application/opensearchdescription+xml" title="Srilex Buditra Search" href="/opensearch.xml">
-  <link rel="stylesheet" href="./style.css?v=10.1">
+  <link rel="stylesheet" href="./style.css?v=12.1">
 </head>
 <body>
 <header class="topbar">
@@ -169,6 +169,14 @@
           <button id="adminUpdateDismiss" class="status-change-dismiss" type="button" aria-label="Tutup pemberitahuan dari admin">×</button>
         </section>
 
+        <nav class="dashboard-subnav" aria-label="Navigasi cepat dashboard peserta">
+          <a href="#memberOverview">Ringkasan</a>
+          <a href="#progressCard">Tahapan</a>
+          <a href="#memberServices">Layanan</a>
+          <a href="#participantInfoCard">Data Peserta</a>
+          <a href="#itSupportCard">Dukungan IT</a>
+        </nav>
+
         <section class="next-action-card" id="nextActionCard" data-status="pending" aria-labelledby="nextActionTitle">
           <div class="next-action-icon" id="nextActionIcon" aria-hidden="true">⌛</div>
           <div class="next-action-content">
@@ -188,9 +196,33 @@
           <article><div class="stat-icon" aria-hidden="true">⌖</div><div><small>WILAYAH</small><strong id="dashRegion">-</strong></div></article>
         </div>
 
+        <section id="memberOverview" class="member-overview" data-status="pending" aria-label="Ringkasan keanggotaan peserta">
+          <article class="member-overview-card member-status-card">
+            <div class="member-overview-icon" aria-hidden="true">✓</div>
+            <div>
+              <span>STATUS KEANGGOTAAN</span>
+              <strong id="memberStatusLabel">Peserta terdaftar</strong>
+              <p id="memberStatusText">Status keanggotaan mengikuti hasil pemeriksaan data peserta.</p>
+            </div>
+          </article>
+          <article class="member-overview-card member-progress-card">
+            <div class="member-progress-head"><span>PROGRES AKUN</span><strong id="memberProgressValue">0%</strong></div>
+            <div class="member-progress-track" aria-hidden="true"><span id="memberProgressBar"></span></div>
+            <p id="memberProgressText">Menyiapkan ringkasan progres akun.</p>
+          </article>
+          <article class="member-overview-card member-access-card">
+            <div class="member-overview-icon" aria-hidden="true">▦</div>
+            <div>
+              <span>LAYANAN DIGITAL</span>
+              <strong id="memberAccessLabel">Dashboard aktif</strong>
+              <p id="memberAccessText">Akses layanan akan menyesuaikan status peserta.</p>
+            </div>
+          </article>
+        </section>
+
         <div class="dashboard-main-grid">
           <div class="dashboard-primary-column">
-            <article class="card progress-card" aria-labelledby="progressTitle">
+            <article id="progressCard" class="card progress-card" aria-labelledby="progressTitle">
               <div class="progress-head">
                 <div><span class="badge">STATUS &amp; TAHAPAN PROGRAM</span><h3 id="progressTitle">Perjalanan Pendaftaran Anda</h3></div>
                 <p id="progressSummary">Status proses sedang dimuat.</p>
@@ -221,6 +253,40 @@
           </aside>
         </div>
 
+        <section id="memberServices" class="card member-services-card" aria-labelledby="memberServicesTitle">
+          <div class="member-services-head">
+            <div>
+              <span class="badge">EKOSISTEM KEANGGOTAAN</span>
+              <h3 id="memberServicesTitle">Layanan Peserta</h3>
+              <p>Layanan aktif ditampilkan sesuai status akun. Fitur yang belum tersedia diberi label roadmap agar tidak membingungkan peserta.</p>
+            </div>
+            <span class="member-services-version">DASHBOARD V2</span>
+          </div>
+          <div class="member-services-grid">
+            <a id="memberCertificateService" class="member-service-card is-locked" href="#" aria-disabled="true">
+              <span class="member-service-icon" aria-hidden="true">▣</span>
+              <span class="member-service-copy"><b>Sertifikat Digital</b><small id="memberCertificateState">Tersedia setelah peserta terverifikasi.</small></span>
+              <span class="member-service-state" id="memberCertificateBadge">TERKUNCI</span>
+            </a>
+            <a class="member-service-card is-active" href="../verifikasi/">
+              <span class="member-service-icon" aria-hidden="true">⌕</span>
+              <span class="member-service-copy"><b>Verifikasi Publik</b><small>Cek keabsahan nomor registrasi dan status publik.</small></span>
+              <span class="member-service-state">AKTIF</span>
+            </a>
+            <div class="member-service-card is-roadmap" aria-label="Kartu Anggota QR — tahap berikutnya">
+              <span class="member-service-icon" aria-hidden="true">▦</span>
+              <span class="member-service-copy"><b>Kartu Anggota + QR</b><small>Identitas anggota digital yang dapat diverifikasi.</small></span>
+              <span class="member-service-state">NEXT</span>
+            </div>
+            <div class="member-service-card is-roadmap" aria-label="Aktivitas dan poin — roadmap">
+              <span class="member-service-icon" aria-hidden="true">◎</span>
+              <span class="member-service-copy"><b>Aktivitas &amp; Poin</b><small>Fondasi engagement peserta untuk tahap pengembangan berikutnya.</small></span>
+              <span class="member-service-state">ROADMAP</span>
+            </div>
+          </div>
+          <p class="member-services-note">Fitur berlabel <strong>NEXT</strong> atau <strong>ROADMAP</strong> belum menjadi layanan aktif dan akan dikembangkan bertahap.</p>
+        </section>
+
         <article id="revisionCard" class="card revision-card" hidden>
           <span class="badge">PERBAIKAN DATA</span>
           <h3>Perbaiki Data Registrasi</h3>
@@ -244,7 +310,7 @@
           </form>
         </article>
 
-        <article class="card participant-info-card" aria-labelledby="participantInfoTitle">
+        <article id="participantInfoCard" class="card participant-info-card" aria-labelledby="participantInfoTitle">
           <div class="card-heading-row">
             <div><span class="badge">DATA PESERTA</span><h3 id="participantInfoTitle">Informasi Peserta</h3></div>
             <span class="privacy-badge">🔒 Data sensitif disembunyikan</span>
@@ -259,7 +325,7 @@
         </article>
 
 
-        <article class="card it-support-card" aria-labelledby="itSupportTitle">
+        <article id="itSupportCard" class="card it-support-card" aria-labelledby="itSupportTitle">
           <div class="it-support-head">
             <div class="it-support-mark" aria-hidden="true">&lt;/&gt;</div>
             <div>
@@ -303,7 +369,7 @@
   </div>
 </footer>
 
-<script src="./script.js?v=10.0"></script>
+<script src="./script.js?v=12.1"></script>
 <div class="tts-fab-wrap" id="ttsFabWrap" aria-label="Kontrol pembaca halaman">
   <button class="tts-stop" id="ttsStop" type="button" aria-label="Hentikan pembacaan" title="Hentikan"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6h12v12H6z"/></svg></button>
   <button class="tts-fab" id="ttsFab" type="button" aria-label="Bacakan halaman" aria-pressed="false">
