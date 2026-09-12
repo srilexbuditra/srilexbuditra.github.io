@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#031426">
+  <meta name="author" content="Srilex Buditra">
+  <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+  <title>Responsive-First untuk Portal Peserta di Perangkat Mobile | Srilex Buditra</title>
+  <meta name="description" content="Pelajaran responsive design dari pengujian portal pada mobile normal, tablet, desktop, dan mode Situs desktop di browser HP.">
+  <link rel="canonical" href="https://srilexbuditra.work/insights/responsive-first-portal-peserta/">
+  <meta property="og:type" content="article"><meta property="og:site_name" content="Srilex Buditra"><meta property="og:locale" content="id_ID">
+  <meta property="og:url" content="https://srilexbuditra.work/insights/responsive-first-portal-peserta/"><meta property="og:title" content="Responsive-First untuk Portal Peserta di Perangkat Mobile | Srilex Buditra"><meta property="og:description" content="Pelajaran responsive design dari pengujian portal pada mobile normal, tablet, desktop, dan mode Situs desktop di browser HP.">
+  <meta property="og:image" content="https://srilexbuditra.work/portfolio/ketahanan-pangan/assets/platform-digital-ketahanan-pangan.avif">
+  <meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Responsive-First untuk Portal Peserta di Perangkat Mobile | Srilex Buditra"><meta name="twitter:description" content="Pelajaran responsive design dari pengujian portal pada mobile normal, tablet, desktop, dan mode Situs desktop di browser HP."><meta name="twitter:image" content="https://srilexbuditra.work/portfolio/ketahanan-pangan/assets/platform-digital-ketahanan-pangan.avif">
+  <link rel="icon" href="/images/favicon.ico"><link rel="apple-touch-icon" href="/images/apple-touch-icon.avif">
+  <link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="/insights/insights.css">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Responsive-First untuk Portal Peserta di Perangkat Mobile","description":"Pelajaran responsive design dari pengujian portal pada mobile normal, tablet, desktop, dan mode Situs desktop di browser HP.","datePublished":"2026-09-13","dateModified":"2026-09-13","inLanguage":"id-ID","mainEntityOfPage":"https://srilexbuditra.work/insights/responsive-first-portal-peserta/","image":"https://srilexbuditra.work/portfolio/ketahanan-pangan/assets/platform-digital-ketahanan-pangan.avif","author":{"@type":"Person","name":"Srilex Buditra","url":"https://srilexbuditra.work/profil/"},"publisher":{"@type":"Person","name":"Srilex Buditra","url":"https://srilexbuditra.work/"},"about":"RESPONSIVE UX"}</script>
+</head>
+<body class="insights-page">
+<a class="skip-link" href="#konten-utama">Lewati ke konten utama</a>
+<header class="site-header"><div class="container nav-wrap"><a class="brand" href="/" aria-label="Srilex Buditra"><span class="brand-mark"><img src="/images/logo.avif" alt="Srilex Buditra Logo" width="1920" height="1916" decoding="async"></span><span><strong>SRILEX <b>BUDITRA</b></strong><small>FULL STACK DEVELOPER</small></span></a><nav class="insights-nav" aria-label="Navigasi artikel"><a href="/insights/">Insights</a><a href="/profil/">Profil</a><a href="/portfolio/ketahanan-pangan/">Flagship</a><a class="nav-cta" href="/#kontak">Hubungi Saya</a></nav></div></header>
+<main id="konten-utama">
+<section class="article-hero"><div class="container"><span class="article-eyebrow">RESPONSIVE UX / ENGINEERING NOTE</span><h1>Responsive-First untuk Portal Peserta di Perangkat Mobile</h1><p class="article-deck">Pelajaran responsive design dari pengujian portal pada mobile normal, tablet, desktop, dan mode Situs desktop di browser HP.</p><div class="article-meta"><span>13 September 2026</span><span>Ditulis oleh <a href="/profil/">Srilex Buditra</a></span><span>Berbasis implementasi nyata</span></div></div></section>
+<section class="article-body"><div class="container article-layout"><article class="article-content">
+<p>Responsive design tidak selesai ketika halaman “muat” di layar kecil. Pengguna mobile dapat membuka browser dengan mode normal, rotasi layar, zoom, atau bahkan memilih <strong>“Situs desktop”</strong>. Kombinasi ini membuat pengujian nyata jauh lebih penting daripada hanya melihat breakpoint di developer tools.</p>
+<div class="article-note"><strong>Pelajaran utama:</strong> pertahankan tampilan yang sudah stabil, lalu perbaiki kasus khusus secara terisolasi agar perubahan tidak menimbulkan regresi pada perangkat lain.</div>
+<h2>Mulai dari pengalaman mobile normal</h2>
+<p>Jika mayoritas peserta menggunakan smartphone, mobile normal harus menjadi baseline. Tombol perlu mudah disentuh, teks terbaca, form tidak terpotong, dan informasi utama muncul dengan urutan yang masuk akal.</p>
+<h2>Mode “Situs desktop” adalah kasus berbeda</h2>
+<p>Pada sebagian browser Android, mode Situs desktop dapat melaporkan viewport yang jauh lebih lebar daripada ukuran fisik layar. Akibatnya, aturan berbasis lebar saja tidak selalu cukup. Sebuah gambar dapat terlihat seolah-olah berada di desktop, padahal tetap dirender pada perangkat sentuh dengan layar fisik kecil.</p>
+<p>Dalam kasus seperti ini, responsivitas gambar perlu menjaga rasio asli, lebar maksimum, dan cara `object-fit` bekerja. Tujuannya bukan membuat semua perangkat identik, tetapi mencegah crop atau skala yang tidak proporsional.</p>
+<h2>Jangan memperbaiki satu viewport dengan merusak viewport lain</h2>
+<p>Ketika tampilan mobile normal sudah bagus, perubahan sebaiknya dibatasi pada selector atau kondisi yang benar-benar diperlukan. Ini mengurangi risiko regresi pada laptop, desktop, atau tablet.</p>
+<div class="article-callout"><b>Prinsip</b><p>Perbaikan responsive yang baik bersifat sempit: memperbaiki kasus bermasalah tanpa mengubah baseline yang sudah berhasil.</p></div>
+<h2>Gunakan rasio intrinsik gambar</h2>
+<p>Untuk visual horizontal, `width`, `height`, dan `aspect-ratio` membantu browser mengetahui geometri sebelum gambar selesai dimuat. `object-fit: contain` berguna ketika seluruh visual perlu terlihat; `cover` lebih cocok ketika crop memang menjadi bagian dari desain.</p>
+<h2>Uji perangkat nyata</h2>
+<p>Developer tools membantu, tetapi pengujian pada Chrome Android, Safari/iOS bila tersedia, tablet, laptop, dan desktop tetap penting. Screenshot dari perangkat nyata sering mengungkap perbedaan yang tidak terlihat pada simulasi.</p>
+<h2>Cache juga bagian dari debugging</h2>
+<p>Ketika CSS sudah diperbarui tetapi perangkat belum berubah, masalahnya tidak selalu pada media query. Browser, CDN, atau cache edge dapat menyajikan file lama. Version query atau cache-busting yang terkontrol dapat membantu memastikan stylesheet terbaru benar-benar diambil.</p>
+<h2>Kesimpulan</h2>
+<p>Responsive-first berarti memandang perangkat sebagai kondisi penggunaan nyata, bukan sekadar angka breakpoint. Baseline yang stabil harus dipertahankan, kasus khusus ditangani secara terisolasi, dan hasil akhir diuji pada perangkat yang benar-benar dipakai pengguna.</p>
+<div class="article-author"><img src="/assets/profile.avif" alt="Srilex Buditra" width="1008" height="1008" loading="lazy" decoding="async"><div><strong>Srilex Buditra</strong><p>Full Stack Developer. Catatan ini merupakan bagian dari Knowledge Center srilexbuditra.work dan ditulis dari pengalaman pengembangan sistem digital yang terdokumentasi.</p><a class="text-link" href="/profil/">Lihat Profil &amp; Rekam Jejak →</a></div></div>
+<p class="article-back"><a class="text-link" href="/insights/">← Kembali ke semua Insights</a></p>
+</article><aside class="article-aside"><section><small>Implementasi terkait</small><a href="/portfolio/ketahanan-pangan/">Case Study Program Ketahanan Pangan →</a><a href="/program/ketahanan-pangan/">Portal Program →</a></section><section><small>Trust &amp; Authority</small><a href="/profil/">Profil &amp; Rekam Jejak →</a><a href="/security.html">Keamanan →</a><a href="/privacy.html">Privasi →</a></section></aside></div></section>
+</main>
+<footer class="footer"><div class="container case-footer"><a class="brand" href="/"><span class="brand-mark"><img src="/images/logo.avif" alt="Srilex Buditra Logo" width="1920" height="1916" decoding="async"></span><span><strong>SRILEX <b>BUDITRA</b></strong><small>FULL STACK DEVELOPER</small></span></a><p>Knowledge Center • srilexbuditra.work</p><div><a href="/insights/">Insights</a><a href="/profil/">Profil</a><a href="/privacy.html">Privasi</a></div></div><div class="copyright">© 2026 Srilex Buditra. All Rights Reserved. <span>Full Stack. Full Solution. Full Impact.</span></div></footer>
+<script src="/tts.js" defer></script>
+</body></html>
