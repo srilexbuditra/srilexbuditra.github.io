@@ -1,9 +1,16 @@
 [
   {
+    "title": "Srilex Buditra — Profil & Rekam Jejak Digital",
+    "description": "Profil publik, kemampuan, identitas profesional, trust principles, dan flagship live implementation Srilex Buditra.",
+    "url": "/profil/",
+    "content": "srilex buditra profil rekam jejak full stack developer bengkulu github linkedin orcid trust authority web application rest api dashboard digital platform",
+    "category": "Profil"
+  },
+  {
     "title": "Website Company Profile",
     "description": "Profil bisnis profesional, cepat dan terpercaya.",
     "url": "/#layanan",
-    "content": "website company profile profil bisnis jasa website bengkulku",
+    "content": "website company profile profil bisnis jasa website bengkulu",
     "category": "Layanan"
   },
   {
