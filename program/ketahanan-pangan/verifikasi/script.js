@@ -31,6 +31,12 @@ let stream = null;
 let detector = null;
 let scanFrameId = 0;
 let scanning = false;
+let certificateVerifyTracked = false;
+
+function isCertificateQrSource() {
+  const params = new URLSearchParams(window.location.search);
+  return params.get('source') === 'certificate_qr';
+}
 
 function normalizeRegistrationId(value) {
   return String(value || '').trim().toUpperCase().replace(/\s+/g, '');
@@ -191,6 +197,26 @@ async function verifyRegistration(registrationId, options = {}) {
       }
     };
     sendStatusCheckSuccess();
+
+    // GA4: verifikasi keaslian sertifikat hanya dihitung bila halaman
+    // dibuka melalui QR pada Kartu / Sertifikat Digital.
+    if (isCertificateQrSource() && !certificateVerifyTracked) {
+      certificateVerifyTracked = true;
+      const sendCertificateVerifySuccess = (attempt = 0) => {
+        if (typeof window.gtag === 'function') {
+          window.gtag('event', 'certificate_verify_success', {
+            event_category: 'ketahanan_pangan',
+            event_label: 'Verifikasi Sertifikat Berhasil',
+            transport_type: 'beacon'
+          });
+          return;
+        }
+        if (attempt < 10) {
+          window.setTimeout(() => sendCertificateVerifySuccess(attempt + 1), 200);
+        }
+      };
+      sendCertificateVerifySuccess();
+    }
 
     if (!options.skipUrlUpdate) {
       const url = new URL(location.href);
