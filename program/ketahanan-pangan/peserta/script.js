@@ -706,6 +706,13 @@ document.getElementById('loginForm').onsubmit = async e => {
         password: f.get('password')
       })
     });
+    if (d && d.participant && typeof window.gtag === 'function') {
+      window.gtag('event', 'login_success', {
+        event_category: 'ketahanan_pangan',
+        event_label: 'Login Peserta Berhasil',
+        transport_type: 'beacon'
+      });
+    }
     showDashboard(d.participant);
     hideStatusChangeNotice();
     hideAdminUpdateNotice();
