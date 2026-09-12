@@ -6800,13 +6800,33 @@ body {
 }
 @media (max-width: 900px) {
   .flagship-project { grid-template-columns: 1fr; }
-  .flagship-visual { min-height: 0; max-height: none; aspect-ratio: 1491 / 1055; }
-  .flagship-visual:after { background: linear-gradient(180deg, transparent 76%, rgba(3,26,42,.18)); }
+  .flagship-visual {
+    min-height: 0;
+    max-height: none;
+    aspect-ratio: 1491 / 1055;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(145deg, #06243a, #031a2a);
+  }
+  .flagship-visual:after { background: linear-gradient(180deg, transparent 74%, rgba(3,26,42,.18)); }
+  .flagship-visual img {
+    height: 100%;
+    object-fit: contain;
+    object-position: center;
+  }
   .case-spotlight-grid { grid-template-columns: 1fr; }
 }
 @media (max-width: 560px) {
   .flagship-project { border-radius: 17px; }
-  .flagship-visual { min-height: 0; aspect-ratio: 1491 / 1055; }
+  .flagship-visual {
+    min-height: 0;
+    aspect-ratio: 1491 / 1055;
+  }
+  .flagship-live {
+    top: 12px;
+    left: 12px;
+  }
   .flagship-content { padding: 24px 19px 26px; }
   .flagship-content h3 { font-size: 29px; }
   .flagship-proof { grid-template-columns: 1fr; }
