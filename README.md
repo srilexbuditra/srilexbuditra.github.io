@@ -1,22 +1,24 @@
 # Srilex Buditra — Professional Full Stack Developer Portfolio
 
-Website portfolio profesional **Srilex Buditra** yang berfungsi sebagai pusat personal branding, layanan pengembangan web, portfolio, studi kasus, estimasi biaya proyek, dan verifikasi dokumen.
+Website profesional **Srilex Buditra** yang berfungsi sebagai pusat personal branding, layanan pengembangan web, portfolio, studi kasus, profil publik, estimasi biaya proyek, verifikasi dokumen, serta dokumentasi implementasi sistem digital.
 
-**Current development version:** V11.7  
-**Stable baseline:** V11.6  
+**Documentation baseline:** V11.8 — Documentation Sync  
+**Current public direction:** Flagship Project + Trust & Authority  
 **Website:** https://srilexbuditra.work
 
 ## ✨ Fitur Utama
 
-- Desain responsif untuk desktop, tablet, dan mobile.
-- Portfolio dan project showcase dengan studi kasus terpisah.
+- Desain responsif untuk desktop, laptop, tablet, dan mobile.
+- Halaman **Profil & Rekam Jejak** pada `/profil/` untuk identitas publik, capability map, proof of work, dan trust principles.
+- **Program Ketahanan Pangan** sebagai flagship implementation di homepage dan case study publik pada `/portfolio/ketahanan-pangan/`.
+- Portal Program Ketahanan Pangan yang menghubungkan registrasi, verifikasi, akun peserta/dashboard, sertifikat QR, dan dokumentasi.
+- Portfolio dan selected project samples dengan studi kasus terpisah.
 - Project Cost Estimator dengan keluaran Print/PDF A4.
 - Tanda tangan penyedia dan klien pada dokumen estimasi.
-- Informasi rekening pembayaran resmi pada dokumen estimasi.
 - Secure Document / Document Verification berbasis QR.
 - Registry verifikasi statis melalui `verify/data/documents.json`.
 - Publisher API opsional menggunakan Cloudflare Worker + KV.
-- QR generator lokal melalui `local-qrcode.js` tanpa ketergantungan CDN untuk alur utama dokumen.
+- QR generator lokal melalui `local-qrcode.js` untuk alur utama dokumen.
 - Pencarian internal, search suggestions, history, trending search, dan dukungan keyboard/ARIA.
 - Text-to-Speech (TTS).
 - Analytics V4 berbasis Cloudflare Workers + D1 dengan visitor ID anonim dan dashboard admin terproteksi.
@@ -25,17 +27,18 @@ Website portfolio profesional **Srilex Buditra** yang berfungsi sebagai pusat pe
 
 ## 🧱 Teknologi
 
-Project utama menggunakan arsitektur frontend statis dan layanan pendukung ringan:
+Project utama menggunakan frontend statis dan layanan pendukung berbasis edge/cloud sesuai kebutuhan:
 
 - HTML5
 - CSS3
 - JavaScript
 - JSON / XML
 - GitHub Pages
-- Cloudflare Worker + KV untuk publisher/verifikasi otomatis (opsional)
-- Cloudflare Workers + D1 untuk Analytics V4
+- Cloudflare Workers
+- Cloudflare KV untuk publisher/verifikasi tertentu
+- Cloudflare D1 untuk Analytics V4 dan layanan yang memang menggunakan D1
 
-Tidak ada secret admin atau kredensial database yang boleh disimpan di JavaScript publik.
+> Secret admin, token API, kredensial database, private key, dan data pribadi peserta tidak boleh disimpan di JavaScript publik atau repository.
 
 ## 📁 Struktur Project Utama
 
@@ -55,19 +58,36 @@ Tidak ada secret admin atau kredensial database yang boleh disimpan di JavaScrip
 ├── robots.txt
 ├── opensearch.xml
 │
-├── admin/
-│   ├── stats.html
-│   ├── stats.css
-│   └── stats.js
-├── assets/
-├── images/
+├── profil/
+│   ├── index.html
+│   └── profile.css
+│
 ├── portfolio/
+│   ├── ketahanan-pangan/
+│   │   ├── index.html
+│   │   ├── case-study.css
+│   │   └── assets/
 │   ├── aplikasi-pos/
 │   ├── sistem-administrasi/
 │   └── website-sekolah/
 │
-├── docs/
-│   └── archive/            # Historical engineering notes
+├── program/
+│   ├── README.md
+│   └── ketahanan-pangan/
+│       ├── index.html                 # Portal program
+│       ├── registrasi/                # Pendaftaran peserta
+│       ├── verifikasi/                # Cek status + sertifikat publik
+│       ├── peserta/                   # Login/aktivasi/dashboard peserta
+│       ├── dokumentasi/               # Dokumentasi publik program
+│       ├── admin/                     # Area administrasi
+│       ├── peserta-worker/            # Source/deployment helper layanan peserta
+│       ├── dokumen/                   # Dokumen publik terkait program
+│       └── assets/
+│
+├── admin/
+│   ├── stats.html
+│   ├── stats.css
+│   └── stats.js
 │
 ├── verify/
 │   ├── index.html
@@ -76,34 +96,55 @@ Tidak ada secret admin atau kredensial database yang boleh disimpan di JavaScrip
 │   ├── config.js
 │   ├── data/documents.json
 │   ├── worker/
-│   │   ├── worker.js
-│   │   └── wrangler.toml
 │   ├── README.md
-│   └── V30_VERIFICATION_SETUP.md
+│   ├── V30_VERIFICATION_SETUP.md
+│   └── V31_PUBLISHER_SECURITY.md
 │
 ├── README.md
-├── ANALYTICS-V4.md
 ├── DOCUMENTATION.md
-├── DOCUMENTATION_AUDIT_V11.6.md
+├── DOCUMENTATION_AUDIT_V11.8.md
 ├── CHANGELOG.md
+├── ROADMAP-SRILEXBUDITRA-2026-2027.md
+├── TRUST-AUTHORITY-V8.md
+├── ANALYTICS-V4.md
 ├── SECURITY.md
 ├── PRIVACY.md
 ├── TERMS.md
 ├── LICENSE.md
 ├── NOTICE.md
 ├── ACCESSIBILITY.md
-├── PUBLIC_REPOSITORY_AUDIT.md
-├── AUDIT_MENENGAH_V11.6.md
 └── CNAME
 ```
 
-Daftar dokumentasi teknis dan historis yang lebih lengkap tersedia di **[DOCUMENTATION.md](DOCUMENTATION.md)**.
+Daftar dokumentasi aktif dan historis tersedia di **[DOCUMENTATION.md](DOCUMENTATION.md)**.
+
+## 🌾 Flagship — Program Ketahanan Pangan
+
+Program Ketahanan Pangan menjadi flagship implementation karena menunjukkan penggunaan sistem nyata yang melibatkan beberapa modul digital yang saling terhubung.
+
+Titik masuk utama:
+
+- Portal program: `/program/ketahanan-pangan/`
+- Registrasi: `/program/ketahanan-pangan/registrasi/`
+- Verifikasi: `/program/ketahanan-pangan/verifikasi/`
+- Akun peserta: `/program/ketahanan-pangan/peserta/`
+- Sertifikat publik: `/program/ketahanan-pangan/verifikasi/sertifikat/`
+- Dokumentasi: `/program/ketahanan-pangan/dokumentasi/`
+- Case study: `/portfolio/ketahanan-pangan/`
+
+Dokumentasi internal folder program tersedia di **[program/ketahanan-pangan/README.md](program/ketahanan-pangan/README.md)**.
+
+## 👤 Trust & Authority
+
+Halaman `/profil/` memperkuat identitas publik Srilex Buditra melalui profil, kemampuan teknis, proof of work, flagship implementation, dan prinsip kepercayaan. Tahap ini tidak dimaksudkan untuk membuat klaim berlebihan; reputasi dibangun melalui implementasi yang dapat dilihat, dokumentasi, keamanan, dan konsistensi pengalaman pengguna.
+
+Dokumentasi tahap: **[TRUST-AUTHORITY-V8.md](TRUST-AUTHORITY-V8.md)**.
 
 ## 🧮 Project Cost Estimator & Print/PDF
 
-Estimator proyek pada website menyediakan alur pengisian kebutuhan proyek dan dokumen estimasi yang dapat dicetak/disimpan sebagai PDF A4. Pengembangan modul ini mencakup layout mobile, privacy consent, tanda tangan klien/penyedia, header branding resmi, informasi pembayaran, serta perbaikan konsistensi hasil print.
+Estimator proyek menyediakan alur pengisian kebutuhan project dan dokumen estimasi yang dapat dicetak/disimpan sebagai PDF A4. Pengembangan modul mencakup layout mobile, privacy consent, tanda tangan klien/penyedia, header branding, informasi pembayaran, serta konsistensi hasil print.
 
-Riwayat perubahan implementasi dicatat di **[CHANGELOG.md](CHANGELOG.md)** dan dokumentasi teknis terkait di **[DOCUMENTATION.md](DOCUMENTATION.md)**.
+Riwayat perubahan dicatat di **[CHANGELOG.md](CHANGELOG.md)**.
 
 ## 🔐 Secure Document & Verification
 
@@ -111,45 +152,46 @@ Folder `verify/` menyediakan sistem pemeriksaan keaslian dokumen melalui ID doku
 
 Dua mode yang tersedia:
 
-1. **Static registry** — data dokumen disimpan pada `verify/data/documents.json` dan dapat digunakan langsung di GitHub Pages.
-2. **Automatic publisher API** — menggunakan Cloudflare Worker + KV untuk penerbitan/verifikasi otomatis.
+1. **Static registry** — data dokumen disimpan pada `verify/data/documents.json`.
+2. **Automatic publisher API** — menggunakan Cloudflare Worker + KV untuk penerbitan/verifikasi otomatis sesuai konfigurasi deployment.
 
 Panduan teknis:
 
 - [verify/README.md](verify/README.md)
 - [verify/V30_VERIFICATION_SETUP.md](verify/V30_VERIFICATION_SETUP.md)
+- [verify/V31_PUBLISHER_SECURITY.md](verify/V31_PUBLISHER_SECURITY.md)
 - [VERIFY_DATABASE_README.md](VERIFY_DATABASE_README.md)
-
-> Jangan menaruh API secret, admin token, atau kredensial KV/database di repository publik atau JavaScript sisi klien.
 
 ## 🔎 Search, SEO & Accessibility
 
-Website menyediakan pencarian internal dengan suggestions, history/trending search, navigasi keyboard, dan atribut ARIA. Discoverability didukung oleh metadata halaman, canonical URL, structured data, sitemap, robots directives, OpenSearch, dan internal search index.
+Website menyediakan pencarian internal dengan suggestions, history/trending search, navigasi keyboard, dan atribut ARIA. Discoverability didukung metadata halaman, canonical URL, structured data, sitemap, robots directives, OpenSearch, serta internal search index.
 
-Komitmen dan catatan aksesibilitas tersedia di **[ACCESSIBILITY.md](ACCESSIBILITY.md)**.
+Komitmen aksesibilitas tersedia di **[ACCESSIBILITY.md](ACCESSIBILITY.md)**.
 
 ## 📊 Analytics V4
 
-Mulai V11.7, website memiliki Analytics V4 berbasis Cloudflare Workers + D1. Sistem menggunakan visitor ID anonim pada browser untuk membedakan kunjungan baru dan kunjungan kembali tanpa mengambil identitas akun sosial secara tersembunyi. Dashboard statistik tersedia pada `admin/stats.html` dan endpoint statistik dilindungi `STATS_API_KEY` yang disimpan sebagai Cloudflare Worker Secret.
+Analytics V4 menggunakan Cloudflare Workers + D1 dan visitor ID anonim pada browser untuk membedakan kunjungan baru dan kembali tanpa mengambil identitas akun sosial secara tersembunyi. Dashboard statistik tersedia pada `admin/stats.html`; kredensial akses harus tetap berada di secret server/Worker, bukan source publik.
 
 Dokumentasi teknis: **[ANALYTICS-V4.md](ANALYTICS-V4.md)**.
 
 ## 🚀 Menjalankan Secara Lokal
 
 1. Clone atau download repository.
-2. Buka folder project.
-3. Jalankan melalui local web server, misalnya Live Server.
-4. Buka `index.html` melalui browser.
-5. Untuk menguji alur verifikasi statis, buka halaman di folder `verify/` melalui server lokal, bukan hanya `file://`.
-6. Cloudflare Worker/KV hanya diperlukan jika mode publisher API otomatis digunakan.
+2. Jalankan folder project melalui local web server, misalnya Live Server.
+3. Buka `index.html` melalui browser.
+4. Untuk menguji route direktori dan asset path, gunakan HTTP server lokal, bukan hanya `file://`.
+5. Worker/KV/D1 hanya diperlukan untuk fitur yang memang bergantung pada layanan tersebut.
+6. Jangan memasukkan secret produksi ke repository lokal yang akan dipublikasikan.
 
 ## 📚 Dokumentasi
 
 Gunakan dokumen berikut sebagai titik awal:
 
-- **[DOCUMENTATION.md](DOCUMENTATION.md)** — indeks seluruh dokumentasi aktif dan historis.
-- **[CHANGELOG.md](CHANGELOG.md)** — riwayat versi dan perubahan.
-- **[SECURITY.md](SECURITY.md)** — kebijakan keamanan dan pelaporan kerentanan.
+- **[DOCUMENTATION.md](DOCUMENTATION.md)** — indeks dokumentasi aktif dan referensi.
+- **[DOCUMENTATION_AUDIT_V11.8.md](DOCUMENTATION_AUDIT_V11.8.md)** — audit dokumentasi terbaru.
+- **[CHANGELOG.md](CHANGELOG.md)** — histori perubahan.
+- **[ROADMAP-SRILEXBUDITRA-2026-2027.md](ROADMAP-SRILEXBUDITRA-2026-2027.md)** — prioritas pengembangan.
+- **[SECURITY.md](SECURITY.md)** — kebijakan keamanan.
 - **[PRIVACY.md](PRIVACY.md)** — kebijakan privasi.
 - **[TERMS.md](TERMS.md)** — ketentuan penggunaan.
 - **[LICENSE.md](LICENSE.md)** — ketentuan lisensi.
@@ -160,9 +202,9 @@ Informasi pelaporan kerentanan tersedia di **[SECURITY.md](SECURITY.md)**. Janga
 
 ## 📜 Lisensi
 
-Source code, desain, branding, konten, dan aset tertentu dalam repository dilindungi oleh ketentuan lisensi proyek. Repository publik tidak berarti seluruh isi proyek bebas digunakan ulang, disalin, atau didistribusikan tanpa izin.
+Source code, desain, branding, konten, dan aset tertentu dilindungi oleh ketentuan lisensi proyek. Repository publik tidak berarti seluruh isi bebas digunakan ulang, disalin, atau didistribusikan tanpa izin.
 
-Baca **[LICENSE.md](LICENSE.md)** dan **[NOTICE.md](NOTICE.md)** untuk detail.
+Baca **[LICENSE.md](LICENSE.md)** dan **[NOTICE.md](NOTICE.md)**.
 
 ## 👤 Pemilik & Pengembang
 

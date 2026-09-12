@@ -8,6 +8,28 @@ Dokumen ini menggunakan dua riwayat versi agar nomor versi website utama tidak t
 
 ## A. Versi Website Utama
 
+### V11.8 — Documentation Sync, Flagship & Trust Authority Baseline
+**13 September 2026**
+
+#### Dokumentasi
+- Menyinkronkan `README.md`, `DOCUMENTATION.md`, roadmap, dan README area program dengan struktur repository terbaru.
+- Menambahkan `DOCUMENTATION_AUDIT_V11.8.md` sebagai baseline audit dokumentasi terbaru tanpa menghapus audit V11.6.
+- Menghapus tautan aktif dari indeks dokumentasi ke enam file `docs/archive/` yang tidak terdapat pada snapshot repository terbaru.
+- Menetapkan `DOCUMENTATION.md` sebagai indeks aktif dan mempertahankan audit/dokumen versi lama sebagai histori.
+
+#### Flagship & Portfolio
+- Mencatat Program Ketahanan Pangan sebagai flagship implementation pada homepage.
+- Mencatat case study publik pada `/portfolio/ketahanan-pangan/` dengan visual flagship terpadu.
+- Mencatat hubungan portal, registrasi, verifikasi, akun peserta/dashboard, sertifikat QR, dan dokumentasi sebagai satu ekosistem layanan.
+
+#### Trust & Authority
+- Mencatat halaman `/profil/` sebagai profil publik dan rekam jejak Srilex Buditra.
+- Memperbarui roadmap agar Trust & Authority serta Knowledge Center dikerjakan sebelum ekspansi fitur engagement anggota.
+
+#### Prinsip Perubahan
+- Documentation Sync V11.8 tidak mengubah API, Worker, autentikasi, registrasi, dashboard, verifikasi, sertifikat, atau data peserta.
+- Dokumentasi diselaraskan dengan file yang benar-benar terdapat pada snapshot repository saat audit dilakukan.
+
 ### V11.7 — Analytics V4
 **4 September 2026**
 
