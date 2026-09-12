@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>Kartu Anggota Digital | Program Ketahanan Pangan</title>
+  <meta name="description" content="Kartu anggota digital peserta terverifikasi Program Ketahanan Pangan dengan QR verifikasi publik.">
+  <meta name="theme-color" content="#123f2b">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <link rel="canonical" href="https://srilexbuditra.work/program/ketahanan-pangan/peserta/kartu/">
+  <link rel="icon" href="/program/ketahanan-pangan/assets/brand/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="/program/ketahanan-pangan/assets/brand/apple-touch-icon.png">
+  <link rel="stylesheet" href="./style.css?v=12.2">
+</head>
+<body>
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <a class="brand" href="../">Program Ketahanan Pangan</a>
+    <nav class="topnav" aria-label="Navigasi kartu anggota">
+      <a href="../">← Dashboard</a>
+      <a href="../../verifikasi/">Verifikasi Publik</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="wrap hero-copy">
+      <span class="eyebrow">IDENTITAS DIGITAL PESERTA</span>
+      <h1>Kartu Anggota <span>Digital + QR</span></h1>
+      <p>Kartu digital hanya tersedia untuk peserta berstatus terverifikasi. QR mengarah ke halaman verifikasi publik tanpa menampilkan NIK, KK, nomor WhatsApp, email, atau dokumen identitas.</p>
+    </div>
+  </section>
+
+  <section class="content">
+    <div class="wrap">
+      <div id="loadingState" class="state-card" role="status" aria-live="polite">
+        <span class="loader" aria-hidden="true"></span>
+        <div><strong>Menyiapkan kartu anggota…</strong><p>Memeriksa sesi dan status peserta.</p></div>
+      </div>
+
+      <div id="errorState" class="state-card state-error" hidden>
+        <span class="state-icon" aria-hidden="true">!</span>
+        <div><strong id="errorTitle">Kartu belum dapat ditampilkan</strong><p id="errorText">Silakan kembali ke dashboard peserta.</p></div>
+        <a id="errorAction" class="btn primary" href="../">Kembali ke Dashboard</a>
+      </div>
+
+      <section id="cardView" class="card-view" hidden aria-labelledby="cardPageTitle">
+        <div class="card-toolbar">
+          <div>
+            <span class="badge">PESERTA TERVERIFIKASI</span>
+            <h2 id="cardPageTitle">Kartu Anggota Digital</h2>
+            <p>Gunakan kartu ini sebagai identitas digital peserta Program Ketahanan Pangan.</p>
+          </div>
+          <div class="toolbar-actions">
+            <button id="printBtn" class="btn primary" type="button">Cetak / Simpan PDF</button>
+            <button id="copyVerifyBtn" class="btn outline" type="button">Salin Link Verifikasi</button>
+          </div>
+        </div>
+
+        <div class="cards-stage" id="printArea">
+          <article class="member-card card-front" aria-label="Sisi depan kartu anggota digital">
+            <div class="card-tech-grid" aria-hidden="true"></div>
+            <div class="card-front-head">
+              <div class="logos" aria-label="Identitas program">
+                <img src="/program/ketahanan-pangan/registrasi/assets/logo-super-tani-indonesia.avif" alt="Super Tani Indonesia" width="128" height="128">
+                <img src="/program/ketahanan-pangan/registrasi/assets/logo-ay-group-agro-indonesia.avif" alt="AY Group Agro Indonesia" width="128" height="128">
+              </div>
+              <span class="live-chip"><i aria-hidden="true"></i> VERIFIED MEMBER</span>
+            </div>
+            <div class="card-title">
+              <small>PROGRAM KETAHANAN PANGAN</small>
+              <strong>KARTU ANGGOTA DIGITAL</strong>
+            </div>
+            <div class="identity-row">
+              <div class="avatar" id="memberInitials" aria-hidden="true">P</div>
+              <div class="identity-copy">
+                <span>NAMA PESERTA</span>
+                <strong id="memberName">-</strong>
+                <p id="memberRegion">-</p>
+              </div>
+            </div>
+            <div class="card-footer-row">
+              <div><span>NOMOR ANGGOTA</span><strong id="memberId">-</strong></div>
+              <div><span>STATUS</span><strong class="verified-text">TERVERIFIKASI</strong></div>
+            </div>
+          </article>
+
+          <article class="member-card card-back" aria-label="Sisi belakang kartu anggota digital">
+            <div class="card-tech-grid" aria-hidden="true"></div>
+            <div class="back-copy">
+              <span class="back-label">VERIFIKASI KEANGGOTAAN</span>
+              <h3>Pindai QR untuk memeriksa status peserta.</h3>
+              <p>QR membuka halaman verifikasi publik srilexbuditra.work dan memeriksa Nomor Registrasi pada sistem.</p>
+              <div class="member-meta">
+                <div><span>Terdaftar sejak</span><strong id="memberSince">-</strong></div>
+                <div><span>Nomor Registrasi</span><strong id="memberIdBack">-</strong></div>
+              </div>
+              <small>Keabsahan kartu mengikuti status terbaru pada sistem. Kartu ini tidak menampilkan data identitas sensitif peserta.</small>
+            </div>
+            <div class="qr-box">
+              <canvas id="memberQr" width="220" height="220" aria-label="QR verifikasi anggota"></canvas>
+              <strong>SCAN TO VERIFY</strong>
+              <span>srilexbuditra.work</span>
+            </div>
+          </article>
+        </div>
+
+        <div class="verification-panel">
+          <div>
+            <span class="badge">VERIFIKASI PUBLIK</span>
+            <h3>Keaslian kartu dapat diperiksa kapan saja.</h3>
+            <p>QR tidak menyimpan NIK atau data pribadi. QR hanya mengarahkan ke halaman verifikasi publik dengan Nomor Registrasi peserta.</p>
+          </div>
+          <a id="verifyLink" class="btn outline" href="../../verifikasi/" target="_blank" rel="noopener noreferrer">Buka Verifikasi ↗</a>
+        </div>
+      </section>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap footer-inner">
+    <div><strong>Program Ketahanan Pangan</strong><span>Kartu Anggota Digital</span></div>
+    <span>Integrated Digital Platform &amp; System Development · srilexbuditra.work</span>
+  </div>
+</footer>
+
+<script src="./local-qrcode.js"></script>
+<script src="./script.js?v=12.2"></script>
+<script src="/visitor-analytics.js" defer></script>
+</body>
+</html>
