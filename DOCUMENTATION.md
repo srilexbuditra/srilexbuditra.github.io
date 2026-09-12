@@ -2,7 +2,7 @@
 
 Dokumen ini adalah indeks dokumentasi aktif repository `srilexbuditra.github.io`. Gunakan indeks ini untuk membedakan dokumentasi operasional, panduan teknis, audit, dan referensi historis.
 
-**Current documentation baseline:** V12.0  
+**Current documentation baseline:** V12.1  
 **Last documentation sync:** 13 September 2026
 
 ## 1. Dokumentasi Utama
@@ -18,6 +18,7 @@ Dokumen ini adalah indeks dokumentasi aktif repository `srilexbuditra.github.io`
 | [TRUST-AUTHORITY-V8.md](TRUST-AUTHORITY-V8.md) | Active | Catatan implementasi tahap Trust & Authority. |
 | [KNOWLEDGE-CENTER-V11.9.md](KNOWLEDGE-CENTER-V11.9.md) | Active | Dokumentasi implementasi Knowledge Center / Insights dan prinsip editorial. |
 | [PROJECT-TIMELINE-V12.0.md](PROJECT-TIMELINE-V12.0.md) | Active | Dokumentasi halaman Development Timeline / Activity dan aturan status milestone publik. |
+| [DASHBOARD-PESERTA-V2.md](DASHBOARD-PESERTA-V2.md) | Active | Dokumentasi peningkatan Dashboard Peserta V2 dan batas perubahan frontend/backend. |
 | [ANALYTICS-V4.md](ANALYTICS-V4.md) | Active | Dokumentasi Analytics V4 berbasis Cloudflare Workers + D1. |
 
 ## 2. Program Ketahanan Pangan

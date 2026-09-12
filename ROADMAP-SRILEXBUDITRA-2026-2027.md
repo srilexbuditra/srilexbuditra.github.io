@@ -12,9 +12,9 @@ Status: **selesai sebagai fondasi; pertahankan dan iterasi hanya bila diperlukan
 - Internal search dan sitemap mengenali ekosistem program.
 - Portal, registrasi, verifikasi, akun peserta/dashboard, sertifikat QR, dan dokumentasi diposisikan sebagai satu perjalanan digital.
 
-## Fase 2 — Trust & Authority 🚧
+## Fase 2 — Trust & Authority ✅
 
-Status: **fase aktif saat ini.**
+Status: **fondasi selesai; monitoring Search Console dan pengembangan konten berlanjut secara berkala.**
 
 Sudah dilakukan:
 
@@ -27,18 +27,18 @@ Sudah dilakukan:
 
 Berikutnya:
 
-1. Search Console sebagai alat monitoring query, halaman, dan pertumbuhan brand.
+1. Search Console sebagai alat monitoring query, halaman, dan pertumbuhan brand. ✅
 2. Perluas artikel secara bertahap berdasarkan implementasi baru yang benar-benar terjadi.
 3. Testimoni/dukungan hanya bila ada izin dan sumber dapat diverifikasi.
 4. Persiapan Fase 3 tanpa mengganggu sistem anggota yang sudah live.
 
-## Fase 3 — Pengalaman Anggota
+## Fase 3 — Pengalaman Anggota 🚧
 
-Dilanjutkan setelah fondasi Trust & Authority lebih kuat.
+Status: **fase aktif saat ini.**
 
 Urutan rekomendasi:
 
-**Dashboard V2 → Kartu Anggota + QR → Sertifikat QR → Level/Poin → Misi → Referral → Benefit → Event/Aktivitas**
+**Dashboard V2 ✅ → Kartu Anggota + QR → Sertifikat QR → Level/Poin → Misi → Referral → Benefit → Event/Aktivitas**
 
 Prinsip:
 
@@ -76,5 +76,6 @@ Jangan mengejar klaim "dipercaya semua kalangan" melalui slogan. Bangun kepercay
 
 ---
 
-**Current phase:** Fase 2 — Trust & Authority  
-**Next milestone:** Search Console monitoring + persiapan Fase 3 (Dashboard V2 → Kartu Anggota + QR)
+**Current phase:** Fase 3 — Pengalaman Anggota  
+**Current milestone:** Dashboard Peserta V2 ✅  
+**Next milestone:** Kartu Anggota + QR

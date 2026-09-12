@@ -8,6 +8,25 @@ Dokumen ini menggunakan dua riwayat versi agar nomor versi website utama tidak t
 
 ## A. Versi Website Utama
 
+### V12.1 — Dashboard Peserta V2
+**13 September 2026**
+
+#### Ditingkatkan
+- Menyempurnakan dashboard peserta tanpa mengubah API, autentikasi, atau endpoint yang sudah berjalan.
+- Menambahkan ringkasan status keanggotaan, progres akun, dan akses layanan digital berbasis status peserta.
+- Menambahkan navigasi cepat dashboard dan area Ekosistem Keanggotaan.
+- Menampilkan Sertifikat Digital sebagai layanan aktif hanya untuk status terverifikasi.
+- Menampilkan Kartu Anggota + QR serta Aktivitas & Poin sebagai `NEXT`/`ROADMAP`, bukan sebagai fitur live.
+- Mempertahankan alur status, sinkronisasi, catatan admin, revisi data, sertifikat, dan dukungan IT existing.
+
+#### Dokumentasi
+- Menambahkan `DASHBOARD-PESERTA-V2.md`.
+- Memperbarui README, DOCUMENTATION, roadmap, dan README Program Ketahanan Pangan.
+
+#### Prinsip Perubahan
+- Tidak ada perubahan pada Worker/API, session cookie, database, token, registrasi, verifikasi publik, atau mekanisme penerbitan sertifikat.
+- Perubahan bersifat additive pada pengalaman dashboard dan tetap mobile-first.
+
 ### V12.0 — Development Timeline / Activity
 **13 September 2026**
 
