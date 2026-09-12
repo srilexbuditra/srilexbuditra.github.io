@@ -11,7 +11,7 @@ Tujuan arsitektur folder adalah menjaga layanan peserta, administrasi, dokumenta
 | Portal Program | `/program/ketahanan-pangan/` | Pintu masuk layanan peserta. |
 | Registrasi | `/program/ketahanan-pangan/registrasi/` | Pendaftaran dan pendataan peserta/usaha tani. |
 | Verifikasi | `/program/ketahanan-pangan/verifikasi/` | Pemeriksaan status pendaftaran. |
-| Akun Peserta | `/program/ketahanan-pangan/peserta/` | Aktivasi/login dan dashboard peserta. |
+| Akun Peserta | `/program/ketahanan-pangan/peserta/` | Aktivasi/login dan Dashboard Peserta V2. |
 | Sertifikat Publik | `/program/ketahanan-pangan/verifikasi/sertifikat/` | Verifikasi sertifikat peserta melalui route publik. |
 | Dokumentasi | `/program/ketahanan-pangan/dokumentasi/` | Dokumentasi publik sistem/program. |
 | Admin | `/program/ketahanan-pangan/admin/` | Area administrasi; bukan konten publik untuk indexing. |
@@ -71,4 +71,4 @@ Roadmap tingkat website/program dikelola pada:
 
 `/ROADMAP-SRILEXBUDITRA-2026-2027.md`
 
-Urutan saat ini memprioritaskan Trust & Authority/Knowledge Center sebelum ekspansi penuh pengalaman anggota seperti Kartu Anggota QR, Level/Poin, Misi, Referral, Benefit, dan Event.
+Fondasi Trust & Authority, Knowledge Center, Timeline publik, dan Search Console monitoring sudah dibangun. Fase aktif saat ini adalah pengalaman anggota: **Dashboard Peserta V2 selesai sebagai fondasi**, dilanjutkan dengan Kartu Anggota + QR, lalu Level/Poin, Misi, Referral, Benefit, dan Event.
