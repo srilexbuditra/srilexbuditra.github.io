@@ -12,6 +12,7 @@ Tujuan arsitektur folder adalah menjaga layanan peserta, administrasi, dokumenta
 | Registrasi | `/program/ketahanan-pangan/registrasi/` | Pendaftaran dan pendataan peserta/usaha tani. |
 | Verifikasi | `/program/ketahanan-pangan/verifikasi/` | Pemeriksaan status pendaftaran. |
 | Akun Peserta | `/program/ketahanan-pangan/peserta/` | Aktivasi/login dan Dashboard Peserta V2. |
+| Kartu Anggota Digital | `/program/ketahanan-pangan/peserta/kartu/` | Kartu anggota + QR untuk peserta terverifikasi; authenticated/noindex. |
 | Sertifikat Publik | `/program/ketahanan-pangan/verifikasi/sertifikat/` | Verifikasi sertifikat peserta melalui route publik. |
 | Dokumentasi | `/program/ketahanan-pangan/dokumentasi/` | Dokumentasi publik sistem/program. |
 | Admin | `/program/ketahanan-pangan/admin/` | Area administrasi; bukan konten publik untuk indexing. |
@@ -33,6 +34,7 @@ ketahanan-pangan/
 ├── verifikasi/
 │   └── sertifikat/
 ├── peserta/
+│   └── kartu/
 ├── peserta-worker/
 ├── dokumentasi/
 ├── dokumen/
@@ -43,7 +45,7 @@ ketahanan-pangan/
 
 Alur publik dirancang sebagai:
 
-**Portal → Registrasi → Verifikasi → Aktivasi/Login → Dashboard Peserta → Layanan lanjutan / Sertifikat sesuai status**
+**Portal → Registrasi → Verifikasi → Aktivasi/Login → Dashboard Peserta → Kartu Anggota Digital / Sertifikat sesuai status**
 
 Tidak semua fitur roadmap harus dianggap sudah live. Status fitur harus mengikuti implementasi yang benar-benar tersedia pada source dan deployment.
 
@@ -71,4 +73,4 @@ Roadmap tingkat website/program dikelola pada:
 
 `/ROADMAP-SRILEXBUDITRA-2026-2027.md`
 
-Fondasi Trust & Authority, Knowledge Center, Timeline publik, dan Search Console monitoring sudah dibangun. Fase aktif saat ini adalah pengalaman anggota: **Dashboard Peserta V2 selesai sebagai fondasi**, dilanjutkan dengan Kartu Anggota + QR, lalu Level/Poin, Misi, Referral, Benefit, dan Event.
+Fondasi Trust & Authority, Knowledge Center, Timeline publik, dan Search Console monitoring sudah dibangun. Fase aktif saat ini adalah pengalaman anggota: **Dashboard Peserta V2 dan Kartu Anggota Digital + QR sudah aktif**, Sertifikat QR existing tetap tersedia untuk peserta terverifikasi, dan milestone berikutnya adalah Level/Poin, lalu Misi, Referral, Benefit, dan Event.
