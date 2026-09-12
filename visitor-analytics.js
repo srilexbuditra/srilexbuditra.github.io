@@ -1,6 +1,6 @@
 /* =========================================================
    Global Visitor Analytics — Cloudflare Worker + D1 + GA4
-   V6.8.7 Global Folder Coverage + GA4 Registration, Status & Login Events
+   V6.8.8 Global Folder Coverage + GA4 Login Detection Fix
    ========================================================= */
 (() => {
   if (window.__SB_GLOBAL_VISITOR_ANALYTICS__) return;
@@ -86,10 +86,29 @@
      Tracks intent without changing navigation or visual behavior.
      ========================================================= */
   document.addEventListener('click', (event) => {
-    const link = event.target.closest?.('a[href]');
-    if (!link) return;
+    const clicked = event.target.closest?.('a[href], button, [role="button"], [onclick]');
+    if (!clicked) return;
 
-    const href = link.getAttribute('href') || '';
+    const link = clicked.closest?.('a[href]') || clicked;
+    const href = link.getAttribute?.('href') || '';
+
+    // Login/Aktivasi can be implemented as a button instead of an <a>.
+    // Detect the visible control before the generic link-target checks below.
+    const clickedText = (clicked.textContent || '').replace(/\s+/g, ' ').trim().toLowerCase();
+    const loginControl =
+      clickedText === 'login / aktivasi akun' ||
+      clickedText === 'login/aktivasi akun' ||
+      clickedText === 'login & aktivasi akun' ||
+      clickedText === 'login dan aktivasi akun';
+
+    if (loginControl && typeof window.gtag === 'function') {
+      window.gtag('event', 'login_start', {
+        event_category: 'ketahanan_pangan',
+        event_label: 'Login / Aktivasi Akun',
+        transport_type: 'beacon'
+      });
+      return;
+    }
 
     if (
       href === 'https://s.id/daftar_tani' ||
@@ -109,7 +128,7 @@
     let statusCheckTarget = false;
 
     try {
-      const targetUrl = new URL(link.href, window.location.href);
+      const targetUrl = new URL(link.href || href || window.location.href, window.location.href);
       const targetPath = targetUrl.pathname.replace(/\/+$/, '') || '/';
 
       statusCheckTarget =
@@ -146,7 +165,7 @@
     let loginTarget = false;
 
     try {
-      const targetUrl = new URL(link.href, window.location.href);
+      const targetUrl = new URL(link.href || href || window.location.href, window.location.href);
       const targetPath = targetUrl.pathname.replace(/\/+$/, '') || '/';
 
       loginTarget =
