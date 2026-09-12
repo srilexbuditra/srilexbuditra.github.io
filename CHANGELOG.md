@@ -8,6 +8,22 @@ Dokumen ini menggunakan dua riwayat versi agar nomor versi website utama tidak t
 
 ## A. Versi Website Utama
 
+### V11.9 — Knowledge Center / Insights Foundation
+**13 September 2026**
+
+#### Ditambahkan
+- Menambahkan Knowledge Center publik pada `/insights/`.
+- Menambahkan tiga artikel awal berbasis pengalaman implementasi: alur digital peserta, QR verification/sertifikat digital, dan responsive-first portal peserta.
+- Menambahkan section Insights pada homepage tanpa mengganti visual/fitur existing.
+- Menambahkan metadata Article, author linkage ke `/profil/`, internal search entries, dan sitemap route untuk Knowledge Center.
+
+#### Dokumentasi
+- Menambahkan `KNOWLEDGE-CENTER-V11.9.md`.
+- Memperbarui README, DOCUMENTATION, dan roadmap agar status Knowledge Center sinkron dengan implementasi.
+
+#### Prinsip Perubahan
+- V11.9 tidak mengubah API, Worker, autentikasi, registrasi, dashboard, verifikasi, sertifikat, atau data peserta.
+
 ### V11.8 — Documentation Sync, Flagship & Trust Authority Baseline
 **13 September 2026**
 

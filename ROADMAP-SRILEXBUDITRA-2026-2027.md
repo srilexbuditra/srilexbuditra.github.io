@@ -21,14 +21,15 @@ Sudah dilakukan:
 - Halaman `/profil/` untuk profil publik, capability map, proof of work, dan trust principles.
 - Hubungan yang lebih jelas antara Srilex Buditra, flagship implementation, dan layanan profesional.
 - Dokumentasi Trust & Authority V8.
+- **Knowledge Center / Insights V11.9** dengan hub dan tiga artikel awal berbasis implementasi nyata.
+- Struktur author artikel terhubung ke halaman `/profil/`.
 
 Berikutnya:
 
-1. **Knowledge Center / Insights** — artikel teknis dari implementasi nyata.
-2. Struktur author yang konsisten pada artikel dan halaman profil.
-3. Dokumentasi project timeline/activity yang aman untuk publik.
-4. Testimoni/dukungan hanya bila ada izin dan sumber dapat diverifikasi.
-5. Search Console sebagai alat monitoring query, halaman, dan pertumbuhan brand.
+1. Perluas artikel secara bertahap berdasarkan implementasi baru yang benar-benar terjadi.
+2. Dokumentasi project timeline/activity yang aman untuk publik.
+3. Testimoni/dukungan hanya bila ada izin dan sumber dapat diverifikasi.
+4. Search Console sebagai alat monitoring query, halaman, dan pertumbuhan brand.
 
 ## Fase 3 — Pengalaman Anggota
 
@@ -75,4 +76,4 @@ Jangan mengejar klaim "dipercaya semua kalangan" melalui slogan. Bangun kepercay
 ---
 
 **Current phase:** Fase 2 — Trust & Authority  
-**Next milestone:** Knowledge Center / Insights
+**Next milestone:** Project timeline/activity + Search Console monitoring, lalu persiapan Fase 3

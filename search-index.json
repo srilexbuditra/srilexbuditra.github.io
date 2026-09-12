@@ -1,5 +1,33 @@
 [
   {
+    "title": "Insights & Engineering Notes — Srilex Buditra",
+    "description": "Knowledge Center berisi catatan teknis dari implementasi sistem digital nyata.",
+    "url": "/insights/",
+    "content": "insights knowledge center engineering notes srilex buditra web application implementasi digital platform",
+    "category": "Insights"
+  },
+  {
+    "title": "Membangun Alur Digital Peserta dari Registrasi sampai Dashboard",
+    "description": "Menyusun portal, registrasi, verifikasi, akun peserta, dashboard, sertifikat, dan dokumentasi sebagai satu perjalanan pengguna.",
+    "url": "/insights/membangun-alur-digital-peserta/",
+    "content": "portal peserta registrasi verifikasi akun dashboard sertifikat participant journey arsitektur platform",
+    "category": "Insights"
+  },
+  {
+    "title": "QR Verification & Sertifikat Digital",
+    "description": "Prinsip verifikasi sertifikat digital yang jelas dan aman untuk publik.",
+    "url": "/insights/qr-verification-sertifikat-digital/",
+    "content": "qr verification sertifikat digital verifikasi dokumen trust keamanan publik",
+    "category": "Insights"
+  },
+  {
+    "title": "Responsive-First untuk Portal Peserta di Perangkat Mobile",
+    "description": "Pelajaran responsive design dari mobile normal sampai mode Situs desktop di browser HP.",
+    "url": "/insights/responsive-first-portal-peserta/",
+    "content": "responsive mobile ux situs desktop chrome android viewport image css portal peserta",
+    "category": "Insights"
+  },
+  {
     "title": "Srilex Buditra — Profil & Rekam Jejak Digital",
     "description": "Profil publik, kemampuan, identitas profesional, trust principles, dan flagship live implementation Srilex Buditra.",
     "url": "/profil/",

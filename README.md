@@ -2,14 +2,15 @@
 
 Website profesional **Srilex Buditra** yang berfungsi sebagai pusat personal branding, layanan pengembangan web, portfolio, studi kasus, profil publik, estimasi biaya proyek, verifikasi dokumen, serta dokumentasi implementasi sistem digital.
 
-**Documentation baseline:** V11.8 — Documentation Sync  
-**Current public direction:** Flagship Project + Trust & Authority  
+**Documentation baseline:** V11.9 — Knowledge Center Foundation  
+**Current public direction:** Flagship Project + Trust & Authority + Knowledge Center  
 **Website:** https://srilexbuditra.work
 
 ## ✨ Fitur Utama
 
 - Desain responsif untuk desktop, laptop, tablet, dan mobile.
 - Halaman **Profil & Rekam Jejak** pada `/profil/` untuk identitas publik, capability map, proof of work, dan trust principles.
+- **Knowledge Center / Insights** pada `/insights/` untuk artikel teknis berbasis implementasi nyata.
 - **Program Ketahanan Pangan** sebagai flagship implementation di homepage dan case study publik pada `/portfolio/ketahanan-pangan/`.
 - Portal Program Ketahanan Pangan yang menghubungkan registrasi, verifikasi, akun peserta/dashboard, sertifikat QR, dan dokumentasi.
 - Portfolio dan selected project samples dengan studi kasus terpisah.
@@ -62,6 +63,11 @@ Project utama menggunakan frontend statis dan layanan pendukung berbasis edge/cl
 │   ├── index.html
 │   └── profile.css
 │
+├── insights/
+│   ├── index.html
+│   ├── insights.css
+│   └── [artikel]/index.html
+│
 ├── portfolio/
 │   ├── ketahanan-pangan/
 │   │   ├── index.html
@@ -106,6 +112,7 @@ Project utama menggunakan frontend statis dan layanan pendukung berbasis edge/cl
 ├── CHANGELOG.md
 ├── ROADMAP-SRILEXBUDITRA-2026-2027.md
 ├── TRUST-AUTHORITY-V8.md
+├── KNOWLEDGE-CENTER-V11.9.md
 ├── ANALYTICS-V4.md
 ├── SECURITY.md
 ├── PRIVACY.md
@@ -139,6 +146,12 @@ Dokumentasi internal folder program tersedia di **[program/ketahanan-pangan/READ
 Halaman `/profil/` memperkuat identitas publik Srilex Buditra melalui profil, kemampuan teknis, proof of work, flagship implementation, dan prinsip kepercayaan. Tahap ini tidak dimaksudkan untuk membuat klaim berlebihan; reputasi dibangun melalui implementasi yang dapat dilihat, dokumentasi, keamanan, dan konsistensi pengalaman pengguna.
 
 Dokumentasi tahap: **[TRUST-AUTHORITY-V8.md](TRUST-AUTHORITY-V8.md)**.
+
+## 🧠 Knowledge Center / Insights
+
+Route `/insights/` menjadi pusat artikel teknis Srilex Buditra yang membahas keputusan dan pelajaran dari implementasi nyata. Artikel awal mencakup perjalanan digital peserta, QR verification/sertifikat digital, dan responsive-first pada portal peserta.
+
+Dokumentasi tahap: **[KNOWLEDGE-CENTER-V11.9.md](KNOWLEDGE-CENTER-V11.9.md)**.
 
 ## 🧮 Project Cost Estimator & Print/PDF
 
