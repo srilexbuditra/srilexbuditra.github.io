@@ -683,6 +683,23 @@ document.getElementById('activateForm').onsubmit = async e => {
     document.querySelector('[data-tab="login"]').click();
     document.querySelector('#loginForm [name="registration_id"]').value = registrationId;
     msg('ok', 'Akun berhasil diaktifkan. Silakan masuk menggunakan Nomor Registrasi dan password Anda.');
+
+    // GA4: aktivasi dinyatakan berhasil hanya setelah API /activate sukses
+    // dan pesan keberhasilan sudah ditampilkan kepada peserta.
+    const sendActivationSuccess = (attempt = 0) => {
+      if (typeof window.gtag === 'function') {
+        window.gtag('event', 'activation_success', {
+          event_category: 'ketahanan_pangan',
+          event_label: 'Aktivasi Akun Berhasil',
+          transport_type: 'beacon'
+        });
+        return;
+      }
+      if (attempt < 10) {
+        window.setTimeout(() => sendActivationSuccess(attempt + 1), 200);
+      }
+    };
+    sendActivationSuccess();
   } catch (x) {
     msg('error', x.message);
   } finally {
