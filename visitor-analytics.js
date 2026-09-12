@@ -1,6 +1,6 @@
 /* =========================================================
    Global Visitor Analytics — Cloudflare Worker + D1 + GA4
-   V6.8.1 Global Folder Coverage + Google Analytics 4
+   V6.8.5 Global Folder Coverage + GA4 Registration & Status Events
    ========================================================= */
 (() => {
   if (window.__SB_GLOBAL_VISITOR_ANALYTICS__) return;
@@ -90,6 +90,7 @@
     if (!link) return;
 
     const href = link.getAttribute('href') || '';
+
     if (
       href === 'https://s.id/daftar_tani' ||
       href.startsWith('https://s.id/daftar_tani?') ||
@@ -99,6 +100,21 @@
         window.gtag('event', 'registration_start', {
           event_category: 'ketahanan_pangan',
           event_label: 'Daftar Peserta',
+          transport_type: 'beacon'
+        });
+      }
+      return;
+    }
+
+    if (
+      href === 'https://s.id/validasi_tani' ||
+      href.startsWith('https://s.id/validasi_tani?') ||
+      href.startsWith('https://s.id/validasi_tani#')
+    ) {
+      if (typeof window.gtag === 'function') {
+        window.gtag('event', 'status_check_start', {
+          event_category: 'ketahanan_pangan',
+          event_label: 'Cek Status Pendaftaran',
           transport_type: 'beacon'
         });
       }
