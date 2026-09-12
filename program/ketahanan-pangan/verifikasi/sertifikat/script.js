@@ -109,7 +109,14 @@ function renderCertificate(certificate) {
     certificate.issued_at || certificate.created_at
   );
 
-  renderQrCode(qrCanvas, certificate.verification_url);
+  let verificationUrl = certificate.verification_url;
+  try {
+    const qrUrl = new URL(verificationUrl, window.location.origin);
+    qrUrl.searchParams.set('source', 'certificate_qr');
+    verificationUrl = qrUrl.toString();
+  } catch (_) {}
+
+  renderQrCode(qrCanvas, verificationUrl);
 
   requestAnimationFrame(() => {
     fitText(name, 19, 38);
