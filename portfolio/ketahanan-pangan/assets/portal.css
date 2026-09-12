@@ -115,15 +115,27 @@ footer {
   }
 }
 
-/* Desktop-site mode on phones / medium touch viewports:
-   keep the existing brochure, preserve its natural ratio, and avoid cropping. */
-@media (min-width: 481px) and (max-width: 1024px) {
-  .hero {
+/* Desktop-site mode on phones / touch devices:
+   Chrome Android may expose a desktop layout viewport wider than 1024px.
+   Target touch capability instead of relying only on viewport width.
+   Mobile normal <=480px and non-touch desktop/laptop remain unchanged. */
+@media (min-width: 481px) and (any-pointer: coarse),
+       (min-width: 481px) and (hover: none) {
+  .wrap {
+    width: min(720px, calc(100vw - 32px));
+  }
+  .card {
     width: 100%;
-    height: auto;
-    max-height: none;
-    object-fit: contain;
+  }
+  .hero {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    height: auto !important;
+    max-height: none !important;
+    object-fit: contain !important;
     object-position: center top;
+    aspect-ratio: auto;
   }
 }
 
