@@ -381,8 +381,40 @@ async function requestCameraStream() {
 
 
 function cameraLabel(camera, index) {
-  const label = String(camera && camera.label || '').trim();
-  return label || `Kamera ${index + 1}`;
+  const original = String(camera && camera.label || '').trim();
+  if (!original) return `Kamera ${index + 1}`;
+
+  const label = original.toLowerCase();
+
+  // Nama generik dari browser ponsel.
+  if (
+    /facing\s*back|back\s*camera|rear|environment|belakang/.test(label)
+  ) {
+    return 'Kamera Belakang';
+  }
+
+  if (
+    /facing\s*front|front\s*camera|user\s*camera|depan/.test(label)
+  ) {
+    return 'Kamera Depan';
+  }
+
+  // Nama umum pada Windows/laptop.
+  if (/integrated\s*(webcam|camera)/.test(label)) {
+    return 'Webcam Terintegrasi';
+  }
+
+  // Kamera virtual tetap diberi nama produk agar mudah dibedakan.
+  if (/youcam|virtual|obs|manycam|snap/.test(label)) {
+    return `Kamera Virtual — ${original}`;
+  }
+
+  // Terjemahkan kata-kata umum tanpa menghilangkan nama perangkat.
+  return original
+    .replace(/\bcamera\b/gi, 'Kamera')
+    .replace(/\bwebcam\b/gi, 'Webcam')
+    .replace(/\bfacing back\b/gi, 'Belakang')
+    .replace(/\bfacing front\b/gi, 'Depan');
 }
 
 function choosePreferredCamera(cameras) {
@@ -492,7 +524,7 @@ async function startHtml5Scanner(cameraId = '') {
   );
 
   scannerStatus.textContent =
-    `Kamera aktif: ${activeLabel}. Arahkan ke QR Code / barcode. Jika tampilan gelap, pilih kamera lain di atas.`;
+    `Kamera aktif: ${activeLabel}. Arahkan ke Kode QR / kode batang. Jika tampilan gelap, pilih kamera lain di atas.`;
 }
 
 async function startNativeScanner(availableDetector) {
@@ -513,7 +545,7 @@ async function startNativeScanner(availableDetector) {
 
   scanning = true;
   scanResultHandled = false;
-  scannerStatus.textContent = 'Kamera aktif. Arahkan ke QR Code / barcode.';
+  scannerStatus.textContent = 'Kamera aktif. Arahkan ke Kode QR / kode batang.';
   scanLoop();
 }
 
