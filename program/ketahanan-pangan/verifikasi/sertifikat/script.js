@@ -167,6 +167,23 @@ async function loadCertificate() {
     }
 
     renderCertificate(data.certificate);
+
+    // GA4: certificate_view hanya dikirim setelah API sertifikat berhasil,
+    // peserta eligible, dan sertifikat benar-benar berhasil dirender.
+    const sendCertificateView = (attempt = 0) => {
+      if (typeof window.gtag === 'function') {
+        window.gtag('event', 'certificate_view', {
+          event_category: 'ketahanan_pangan',
+          event_label: 'Kartu / Sertifikat Dibuka',
+          transport_type: 'beacon'
+        });
+        return;
+      }
+      if (attempt < 10) {
+        window.setTimeout(() => sendCertificateView(attempt + 1), 200);
+      }
+    };
+    sendCertificateView();
   } catch (_) {
     showError(
       'Tidak dapat terhubung ke layanan sertifikat. Periksa koneksi internet lalu coba kembali.'
