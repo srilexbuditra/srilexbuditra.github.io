@@ -280,3 +280,220 @@ button:disabled { opacity: .65; cursor: wait; }
   opacity: .8;
   white-space: nowrap;
 }
+
+
+/* =========================================================
+   Analytics V6.8.5 — Dashboard Layout Refinement
+   Visual-only update. Existing functions remain unchanged.
+   ========================================================= */
+
+body {
+  padding: 28px 18px;
+}
+
+.container {
+  width: min(100%, 1440px);
+  padding: clamp(20px, 2.5vw, 34px);
+}
+
+.page-head {
+  align-items: center;
+}
+
+.toolbar {
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.auto-refresh-badge {
+  margin-right: auto;
+}
+
+/* KPI cards stay balanced across large desktop/laptop widths. */
+.kpi-grid {
+  grid-template-columns: repeat(5, minmax(150px, 1fr));
+  gap: 14px;
+}
+.card {
+  min-width: 0;
+}
+.card small {
+  display: block;
+  margin-top: 8px;
+  color: #cbd5e1;
+  line-height: 1.45;
+}
+.number {
+  font-size: clamp(30px, 3vw, 42px);
+}
+
+/* Main statistics blocks keep equal widths and consistent spacing. */
+.cards {
+  align-items: start;
+}
+.stats-section {
+  min-width: 0;
+}
+.stats-section.wide-section {
+  width: 100%;
+}
+
+/* Top Pages / Traffic Sources long URLs remain readable. */
+.stats-row {
+  align-items: flex-start;
+}
+.stats-row span {
+  line-height: 1.45;
+}
+
+/* Recent Visits: organized fixed columns on desktop.
+   The wrapper remains horizontally scrollable on smaller screens. */
+.recent-wrap {
+  width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  border-radius: 12px;
+}
+.recent-table {
+  width: 100%;
+  min-width: 1160px;
+  table-layout: fixed;
+}
+.recent-table th,
+.recent-table td {
+  padding: 12px 10px;
+  line-height: 1.35;
+}
+.recent-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: #172338;
+}
+.recent-table th:nth-child(1),
+.recent-table td:nth-child(1) { width: 165px; }
+.recent-table th:nth-child(2),
+.recent-table td:nth-child(2) { width: 135px; }
+.recent-table th:nth-child(3),
+.recent-table td:nth-child(3) { width: 95px; }
+.recent-table th:nth-child(4),
+.recent-table td:nth-child(4) { width: 105px; }
+.recent-table th:nth-child(5),
+.recent-table td:nth-child(5) { width: auto; }
+.recent-table th:nth-child(6),
+.recent-table td:nth-child(6) { width: 105px; }
+.recent-table th:nth-child(7),
+.recent-table td:nth-child(7) { width: 105px; }
+.recent-table th:nth-child(8),
+.recent-table td:nth-child(8) {
+  width: 105px;
+  text-align: center;
+}
+
+.recent-page {
+  max-width: none;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+.recent-online,
+.recent-offline {
+  white-space: nowrap;
+  font-weight: 700;
+}
+.recent-online-count,
+.recent-offline-count {
+  text-align: center;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+.recent-online-count {
+  color: #86efac !important;
+}
+.recent-offline-count {
+  color: #94a3b8 !important;
+}
+
+/* Improve row scanning without changing the design language. */
+.recent-table tbody tr:hover td {
+  background: rgba(56, 189, 248, .045);
+}
+
+/* Online pages panel stays visually aligned with other wide sections. */
+#onlinePagesPanel {
+  margin-top: 18px;
+  margin-bottom: 14px;
+}
+
+/* Responsive layout tiers */
+@media (max-width: 1220px) {
+  .kpi-grid {
+    grid-template-columns: repeat(4, minmax(150px, 1fr));
+  }
+}
+
+@media (max-width: 980px) {
+  .container {
+    width: 100%;
+  }
+  .kpi-grid {
+    grid-template-columns: repeat(3, minmax(145px, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  body {
+    padding: 12px 8px;
+  }
+  .container {
+    padding: 14px;
+    border-radius: 12px;
+  }
+  .page-head {
+    display: block;
+  }
+  .toolbar {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+  .auto-refresh-badge {
+    grid-column: 1 / -1;
+    margin: 0 0 4px;
+  }
+  .kpi-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+  .card,
+  .stats-section {
+    padding: 16px;
+  }
+  .card > div:first-child {
+    font-size: 11px;
+  }
+  .number {
+    font-size: 30px;
+  }
+  .cards {
+    grid-template-columns: 1fr;
+  }
+  .recent-wrap {
+    margin-inline: -4px;
+    width: calc(100% + 8px);
+  }
+  .recent-table {
+    min-width: 1040px;
+  }
+}
+
+@media (max-width: 460px) {
+  .kpi-grid {
+    grid-template-columns: 1fr;
+  }
+  .toolbar {
+    grid-template-columns: 1fr;
+  }
+  .toolbar button,
+  .auto-refresh-badge {
+    grid-column: 1;
+  }
+}
