@@ -1,6 +1,6 @@
 /* =========================================================
    Global Visitor Analytics — Cloudflare Worker + D1 + GA4
-   V6.8.5 Global Folder Coverage + GA4 Registration & Status Events
+   V6.8.7 Global Folder Coverage + GA4 Registration, Status & Login Events
    ========================================================= */
 (() => {
   if (window.__SB_GLOBAL_VISITOR_ANALYTICS__) return;
@@ -106,15 +106,84 @@
       return;
     }
 
-    if (
-      href === 'https://s.id/validasi_tani' ||
-      href.startsWith('https://s.id/validasi_tani?') ||
-      href.startsWith('https://s.id/validasi_tani#')
-    ) {
+    let statusCheckTarget = false;
+
+    try {
+      const targetUrl = new URL(link.href, window.location.href);
+      const targetPath = targetUrl.pathname.replace(/\/+$/, '') || '/';
+
+      statusCheckTarget =
+        targetUrl.hostname === 's.id' &&
+        targetPath === '/validasi_tani';
+
+      if (
+        targetUrl.origin === window.location.origin &&
+        targetPath === '/program/ketahanan-pangan/verifikasi'
+      ) {
+        statusCheckTarget = true;
+      }
+    } catch (_) {
+      statusCheckTarget =
+        href === 'https://s.id/validasi_tani' ||
+        href.startsWith('https://s.id/validasi_tani?') ||
+        href.startsWith('https://s.id/validasi_tani#') ||
+        href === '/program/ketahanan-pangan/verifikasi/' ||
+        href.startsWith('/program/ketahanan-pangan/verifikasi/?') ||
+        href.startsWith('/program/ketahanan-pangan/verifikasi/#');
+    }
+
+    if (statusCheckTarget) {
       if (typeof window.gtag === 'function') {
         window.gtag('event', 'status_check_start', {
           event_category: 'ketahanan_pangan',
           event_label: 'Cek Status Pendaftaran',
+          transport_type: 'beacon'
+        });
+      }
+      return;
+    }
+
+    let loginTarget = false;
+
+    try {
+      const targetUrl = new URL(link.href, window.location.href);
+      const targetPath = targetUrl.pathname.replace(/\/+$/, '') || '/';
+
+      loginTarget =
+        targetUrl.hostname === 's.id' &&
+        targetPath === '/akun_tani';
+
+      if (
+        targetUrl.origin === window.location.origin &&
+        (
+          targetPath === '/program/ketahanan-pangan/peserta' ||
+          targetPath === '/program/ketahanan-pangan/login' ||
+          targetPath === '/program/ketahanan-pangan/akun'
+        )
+      ) {
+        loginTarget = true;
+      }
+    } catch (_) {
+      loginTarget =
+        href === 'https://s.id/akun_tani' ||
+        href.startsWith('https://s.id/akun_tani?') ||
+        href.startsWith('https://s.id/akun_tani#') ||
+        href === '/program/ketahanan-pangan/peserta/' ||
+        href.startsWith('/program/ketahanan-pangan/peserta/?') ||
+        href.startsWith('/program/ketahanan-pangan/peserta/#') ||
+        href === '/program/ketahanan-pangan/login/' ||
+        href.startsWith('/program/ketahanan-pangan/login/?') ||
+        href.startsWith('/program/ketahanan-pangan/login/#') ||
+        href === '/program/ketahanan-pangan/akun/' ||
+        href.startsWith('/program/ketahanan-pangan/akun/?') ||
+        href.startsWith('/program/ketahanan-pangan/akun/#');
+    }
+
+    if (loginTarget) {
+      if (typeof window.gtag === 'function') {
+        window.gtag('event', 'login_start', {
+          event_category: 'ketahanan_pangan',
+          event_label: 'Login / Aktivasi Akun',
           transport_type: 'beacon'
         });
       }
