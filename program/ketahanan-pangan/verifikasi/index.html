@@ -36,7 +36,7 @@
   <link itemprop="publisher" href="https://srilexbuditra.work/#person">
   <meta itemprop="description" content="Pendataan calon penerima dukungan pupuk untuk membantu produktivitas pertanian.">
   <link rel="search" type="application/opensearchdescription+xml" title="Srilex Buditra Search" href="/opensearch.xml">
-  <link rel="stylesheet" href="./style.css?v=4">
+  <link rel="stylesheet" href="./style.css?v=5">
 </head>
 <body>
   <main>
@@ -99,10 +99,12 @@
               <div><strong>Arahkan kamera ke QR Code / barcode</strong><span>Posisikan kode di tengah area kamera.</span></div>
               <button type="button" class="icon-btn" id="closeScanner" aria-label="Tutup kamera">×</button>
             </div>
-            <div class="video-wrap">
+            <div class="video-wrap" id="nativeVideoWrap">
               <video id="scannerVideo" playsinline muted></video>
               <div class="scan-frame" aria-hidden="true"></div>
             </div>
+            <div id="html5QrReader" class="html5-reader" hidden></div>
+            <div id="imageQrReader" class="image-reader-offscreen" aria-hidden="true"></div>
             <div id="scannerStatus" class="scanner-status" role="status" aria-live="polite">Menyiapkan kamera…</div>
           </div>
 
@@ -161,7 +163,13 @@
     </div>
   </footer>
 
-  <script src="./script.js?v=5" defer></script>
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"
+    integrity="sha512-r6rDA7W6ZeQhvl8S7yRVQUKVHdexq+GAlNkNNqVC7YyIV+NwqCTJe2hDWCiffTyRNOeGEzRRJ9ifvRm/HCzGYg=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+    defer></script>
+  <script src="./script.js?v=6" defer></script>
   
   <!-- Floating Text-to-Speech accessibility control -->
 <div class="tts-fab-wrap" id="ttsFabWrap" aria-label="Kontrol pembaca halaman">

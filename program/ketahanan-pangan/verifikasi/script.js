@@ -16,6 +16,9 @@ const scanBtn = document.getElementById('scanBtn');
 const scannerPanel = document.getElementById('scannerPanel');
 const closeScannerBtn = document.getElementById('closeScanner');
 const scannerVideo = document.getElementById('scannerVideo');
+const nativeVideoWrap = document.getElementById('nativeVideoWrap');
+const html5QrReader = document.getElementById('html5QrReader');
+const imageQrReader = document.getElementById('imageQrReader');
 const scannerStatus = document.getElementById('scannerStatus');
 const scanSupport = document.getElementById('scanSupport');
 const imageScanInput = document.getElementById('imageScanInput');
@@ -31,6 +34,8 @@ let stream = null;
 let detector = null;
 let scanFrameId = 0;
 let scanning = false;
+let html5Scanner = null;
+let scanResultHandled = false;
 let certificateVerifyTracked = false;
 
 function isCertificateQrSource() {
@@ -259,35 +264,70 @@ async function getDetector() {
   }
 }
 
+function hasHtml5Qrcode() {
+  return typeof window.Html5Qrcode === 'function';
+}
+
 async function stopScanner() {
   scanning = false;
+  scanResultHandled = false;
+
   if (scanFrameId) cancelAnimationFrame(scanFrameId);
   scanFrameId = 0;
+
+  if (html5Scanner) {
+    const activeScanner = html5Scanner;
+    html5Scanner = null;
+    try { await activeScanner.stop(); } catch (_) {}
+    try { activeScanner.clear(); } catch (_) {}
+  }
+
   if (stream) {
     stream.getTracks().forEach((track) => track.stop());
     stream = null;
   }
-  scannerVideo.srcObject = null;
+
+  if (scannerVideo) {
+    try { scannerVideo.pause(); } catch (_) {}
+    scannerVideo.srcObject = null;
+  }
+
+  if (nativeVideoWrap) nativeVideoWrap.hidden = false;
+  if (html5QrReader) {
+    html5QrReader.hidden = true;
+    html5QrReader.innerHTML = '';
+  }
   scannerPanel.hidden = true;
+}
+
+async function handleDecodedValue(rawValue) {
+  if (scanResultHandled) return;
+  const id = extractRegistrationId(rawValue);
+  if (!id || !/^KTPG-[0-9]{8}-[A-Z0-9-]+$/.test(id)) {
+    scannerStatus.textContent = 'Kode terbaca, tetapi Nomor Registrasi belum dikenali. Coba arahkan kamera lebih dekat.';
+    return;
+  }
+
+  scanResultHandled = true;
+  scannerStatus.textContent = 'Kode ditemukan. Memeriksa registrasi…';
+  await stopScanner();
+  input.value = id;
+  verifyRegistration(id);
 }
 
 async function scanLoop() {
   if (!scanning || !detector) return;
+
   if (scannerVideo.readyState >= 2) {
     try {
       const codes = await detector.detect(scannerVideo);
       if (codes && codes.length) {
-        const id = extractRegistrationId(codes[0].rawValue);
-        if (id) {
-          scannerStatus.textContent = 'Kode ditemukan. Memeriksa registrasi…';
-          await stopScanner();
-          input.value = id;
-          verifyRegistration(id);
-          return;
-        }
+        await handleDecodedValue(codes[0].rawValue);
+        if (scanResultHandled) return;
       }
     } catch (_) {}
   }
+
   scanFrameId = requestAnimationFrame(scanLoop);
 }
 
@@ -298,21 +338,18 @@ function setCameraRecovery(show) {
 function getCameraErrorMessage(error) {
   const name = String(error && error.name || '');
   if (name === 'NotAllowedError' || name === 'PermissionDeniedError') {
-    return 'Izin kamera belum diberikan atau diblokir. Izinkan Kamera untuk situs ini lalu tekan “Coba kamera lagi”. Jika halaman dibuka dari browser dalam aplikasi, coba buka tautan di Chrome. Anda juga dapat memakai “Ambil foto kode”.';
+    return 'Izin kamera belum diberikan atau diblokir. Izinkan Kamera untuk situs ini lalu tekan “Coba kamera lagi”. Jika halaman dibuka dari browser dalam aplikasi, coba buka tautan di Chrome atau Edge.';
   }
   if (name === 'NotFoundError' || name === 'DevicesNotFoundError') {
-    return 'Kamera tidak ditemukan pada perangkat ini. Gunakan “Ambil foto kode”, unggah gambar kode, atau masukkan nomor registrasi secara manual.';
+    return 'Kamera tidak ditemukan pada perangkat ini. Gunakan “Ambil foto kode”, “Unggah gambar kode”, atau masukkan Nomor Registrasi secara manual.';
   }
   if (name === 'NotReadableError' || name === 'TrackStartError') {
     return 'Kamera sedang tidak dapat digunakan, kemungkinan sedang dipakai aplikasi lain. Tutup aplikasi kamera/video lain lalu tekan “Coba kamera lagi”.';
   }
   if (name === 'SecurityError') {
-    return 'Browser memblokir akses kamera untuk halaman ini. Pastikan halaman dibuka melalui HTTPS dan, bila perlu, buka langsung di Chrome.';
+    return 'Browser memblokir akses kamera. Pastikan halaman dibuka melalui HTTPS dan izin Kamera untuk situs ini diaktifkan.';
   }
-  if (name === 'OverconstrainedError' || name === 'ConstraintNotSatisfiedError') {
-    return 'Pengaturan kamera perangkat tidak kompatibel. Sistem sudah mencoba mode kamera alternatif; gunakan “Ambil foto kode” atau input manual bila kamera tetap tidak terbuka.';
-  }
-  return 'Kamera belum dapat dibuka pada browser ini. Tekan “Coba kamera lagi”, gunakan “Ambil foto kode”, atau masukkan nomor registrasi secara manual.';
+  return 'Kamera belum dapat dibuka. Coba lagi, gunakan “Ambil foto kode”, “Unggah gambar kode”, atau input manual.';
 }
 
 async function requestCameraStream() {
@@ -337,44 +374,118 @@ async function requestCameraStream() {
   throw lastError || new Error('Camera unavailable');
 }
 
+async function startHtml5Scanner() {
+  await stopScanner();
+
+  scannerPanel.hidden = false;
+  if (nativeVideoWrap) nativeVideoWrap.hidden = true;
+  if (html5QrReader) html5QrReader.hidden = false;
+  scannerStatus.textContent = 'Meminta izin kamera…';
+
+  html5Scanner = new window.Html5Qrcode('html5QrReader');
+
+  let cameraConfig = { facingMode: 'environment' };
+  try {
+    const cameras = await window.Html5Qrcode.getCameras();
+    if (Array.isArray(cameras) && cameras.length) {
+      const preferred =
+        cameras.find((camera) => /back|rear|environment|belakang/i.test(camera.label || '')) ||
+        cameras[cameras.length - 1];
+      cameraConfig = preferred.id;
+    }
+  } catch (_) {
+    // start() masih dapat mencoba facingMode environment.
+  }
+
+  const qrbox = (viewfinderWidth, viewfinderHeight) => {
+    const size = Math.floor(Math.min(viewfinderWidth, viewfinderHeight) * 0.72);
+    return { width: Math.max(180, size), height: Math.max(180, size) };
+  };
+
+  scanning = true;
+  scanResultHandled = false;
+
+  await html5Scanner.start(
+    cameraConfig,
+    {
+      fps: 10,
+      qrbox,
+      disableFlip: false,
+      rememberLastUsedCamera: true
+    },
+    async (decodedText) => {
+      await handleDecodedValue(decodedText);
+    },
+    () => {
+      // Kesalahan frame normal diabaikan selama kamera mencari kode.
+    }
+  );
+
+  scannerStatus.textContent = 'Kamera aktif. Arahkan ke QR Code / barcode.';
+}
+
+async function startNativeScanner(availableDetector) {
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    throw new Error('Camera API unavailable');
+  }
+
+  await stopScanner();
+  detector = availableDetector;
+  scannerPanel.hidden = false;
+  if (nativeVideoWrap) nativeVideoWrap.hidden = false;
+  if (html5QrReader) html5QrReader.hidden = true;
+  scannerStatus.textContent = 'Meminta izin kamera…';
+
+  stream = await requestCameraStream();
+  scannerVideo.srcObject = stream;
+  await scannerVideo.play();
+
+  scanning = true;
+  scanResultHandled = false;
+  scannerStatus.textContent = 'Kamera aktif. Arahkan ke QR Code / barcode.';
+  scanLoop();
+}
+
 async function startScanner() {
   clearMessage();
   setCameraRecovery(false);
 
   if (!window.isSecureContext) {
-    setMessage('error', 'Kamera browser hanya dapat digunakan pada koneksi aman (HTTPS). Buka halaman verifikasi melalui HTTPS atau gunakan “Ambil foto kode”.');
-    setCameraRecovery(true);
-    return;
-  }
-
-  const availableDetector = await getDetector();
-  if (!availableDetector) {
-    setMessage('error', 'Scanner otomatis belum didukung browser ini. Gunakan input manual atau coba buka halaman di Chrome versi terbaru.');
-    setCameraRecovery(true);
-    return;
-  }
-  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-    setMessage('error', 'Akses kamera live tidak tersedia pada browser ini. Gunakan “Ambil foto kode” atau input manual.');
+    setMessage('error', 'Kamera browser hanya dapat digunakan pada koneksi aman (HTTPS).');
     setCameraRecovery(true);
     return;
   }
 
   scanBtn.disabled = true;
   scanBtn.textContent = 'Membuka kamera…';
+
   try {
-    await stopScanner();
-    scannerPanel.hidden = false;
-    scannerStatus.textContent = 'Meminta izin kamera…';
-    stream = await requestCameraStream();
-    scannerVideo.srcObject = stream;
-    await scannerVideo.play();
-    scanning = true;
-    scannerStatus.textContent = 'Kamera aktif. Arahkan ke QR Code / barcode.';
-    setCameraRecovery(false);
-    scanLoop();
+    // Prioritas: html5-qrcode untuk kompatibilitas Chrome/Edge/Firefox/Safari
+    // dan dukungan QR/barcode lintas perangkat.
+    if (hasHtml5Qrcode()) {
+      await startHtml5Scanner();
+      return;
+    }
+
+    // Fallback terakhir ke BarcodeDetector native bila tersedia.
+    const availableDetector = await getDetector();
+    if (availableDetector) {
+      await startNativeScanner(availableDetector);
+      return;
+    }
+
+    throw new Error('Scanner engine unavailable');
   } catch (error) {
     await stopScanner();
-    setMessage('error', getCameraErrorMessage(error));
+
+    if (!hasHtml5Qrcode() && !('BarcodeDetector' in window)) {
+      setMessage(
+        'error',
+        'Komponen pemindai belum tersedia pada browser ini. Pastikan koneksi internet aktif, muat ulang halaman, lalu coba lagi. Input manual tetap dapat digunakan.'
+      );
+    } else {
+      setMessage('error', getCameraErrorMessage(error));
+    }
     setCameraRecovery(true);
   } finally {
     scanBtn.disabled = false;
@@ -382,19 +493,22 @@ async function startScanner() {
   }
 }
 
-async function scanImageFile(file, inputElement) {
-  if (!file) return;
-  clearMessage();
-  setCameraRecovery(false);
-  const availableDetector = await getDetector();
-  if (!availableDetector) {
-    setMessage('error', 'Browser ini belum mendukung pembacaan QR/barcode dari gambar. Gunakan input manual atau coba Chrome versi terbaru.');
-    if (inputElement) inputElement.value = '';
-    return;
-  }
+async function scanImageWithHtml5Qrcode(file) {
+  if (!hasHtml5Qrcode()) return '';
 
+  const reader = new window.Html5Qrcode('imageQrReader');
+  try {
+    return await reader.scanFile(file, true);
+  } finally {
+    try { reader.clear(); } catch (_) {}
+    if (imageQrReader) imageQrReader.innerHTML = '';
+  }
+}
+
+async function scanImageWithNativeDetector(file, availableDetector) {
   let source = null;
   let objectUrl = '';
+
   try {
     if (typeof createImageBitmap === 'function') {
       source = await createImageBitmap(file);
@@ -409,22 +523,74 @@ async function scanImageFile(file, inputElement) {
     }
 
     const codes = await availableDetector.detect(source);
-    if (!codes || !codes.length) {
-      setMessage('error', 'QR Code / barcode tidak terdeteksi. Pastikan kode terlihat utuh, terang, dan tidak buram.');
-      return;
-    }
-    const id = extractRegistrationId(codes[0].rawValue);
-    if (!id) {
-      setMessage('error', 'Kode terbaca, tetapi nomor registrasi tidak dikenali.');
-      return;
-    }
-    input.value = id;
-    verifyRegistration(id);
-  } catch (_) {
-    setMessage('error', 'Gambar tidak dapat dipindai. Coba ambil gambar lebih dekat dan jelas, atau masukkan nomor registrasi secara manual.');
+    return codes && codes.length ? codes[0].rawValue : '';
   } finally {
     if (source && typeof source.close === 'function') source.close();
     if (objectUrl) URL.revokeObjectURL(objectUrl);
+  }
+}
+
+async function scanImageFile(file, inputElement) {
+  if (!file) return;
+
+  clearMessage();
+  setCameraRecovery(false);
+
+  if (!String(file.type || '').startsWith('image/')) {
+    setMessage('error', 'File harus berupa gambar QR Code / barcode.');
+    if (inputElement) inputElement.value = '';
+    return;
+  }
+
+  try {
+    // Pastikan kamera live berhenti sebelum pembacaan file.
+    if (scanning || html5Scanner || stream) {
+      await stopScanner();
+    }
+
+    let rawValue = '';
+
+    // html5-qrcode menjadi decoder utama untuk file/foto agar tetap berfungsi
+    // pada browser yang tidak memiliki BarcodeDetector.
+    if (hasHtml5Qrcode()) {
+      rawValue = await scanImageWithHtml5Qrcode(file);
+    } else {
+      const availableDetector = await getDetector();
+      if (availableDetector) {
+        rawValue = await scanImageWithNativeDetector(file, availableDetector);
+      }
+    }
+
+    if (!rawValue) {
+      setMessage(
+        'error',
+        'QR Code / barcode tidak terdeteksi. Pastikan kode terlihat utuh, terang, tidak terpotong, lalu coba lagi.'
+      );
+      return;
+    }
+
+    const id = extractRegistrationId(rawValue);
+    if (!id || !/^KTPG-[0-9]{8}-[A-Z0-9-]+$/.test(id)) {
+      setMessage('error', 'Kode terbaca, tetapi Nomor Registrasi tidak dikenali.');
+      return;
+    }
+
+    input.value = id;
+    setMessage('info', 'Kode berhasil dibaca. Memeriksa registrasi…');
+    await verifyRegistration(id);
+  } catch (error) {
+    const messageText = String(error && error.message || error || '');
+    if (/not found|no barcode|qr code parse error|scan failed/i.test(messageText)) {
+      setMessage('error', 'QR Code / barcode tidak terdeteksi pada gambar. Coba foto lebih dekat dan fokus.');
+    } else if (!hasHtml5Qrcode() && !('BarcodeDetector' in window)) {
+      setMessage(
+        'error',
+        'Komponen pembaca gambar belum tersedia. Muat ulang halaman dengan koneksi internet aktif atau gunakan input manual.'
+      );
+    } else {
+      setMessage('error', 'Gambar belum dapat dibaca. Coba gambar yang lebih jelas atau gunakan input manual.');
+    }
+  } finally {
     if (inputElement) inputElement.value = '';
   }
 }
@@ -455,9 +621,13 @@ if (cameraImageInput) {
 window.addEventListener('pagehide', stopScanner);
 
 (async function init() {
-  const canScan = Boolean(await getDetector());
-  if (!canScan) {
-    scanSupport.textContent = 'Browser ini belum mendukung scanner otomatis. Verifikasi manual tetap dapat digunakan.';
+  const nativeDetectorAvailable = Boolean(await getDetector());
+  if (hasHtml5Qrcode()) {
+    scanSupport.textContent = 'Pemindai QR/barcode siap. Gunakan kamera live, ambil foto, atau unggah gambar kode.';
+  } else if (nativeDetectorAvailable) {
+    scanSupport.textContent = 'Pemindai native browser siap digunakan. Kamera live dan gambar kode dapat dicoba.';
+  } else {
+    scanSupport.textContent = 'Komponen pemindai cadangan belum termuat. Verifikasi manual tetap dapat digunakan.';
   }
   const params = new URLSearchParams(location.search);
   const id = extractRegistrationId(params.get('registration_id'));

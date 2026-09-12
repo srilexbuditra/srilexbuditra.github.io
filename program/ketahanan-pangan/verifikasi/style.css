@@ -822,3 +822,35 @@ footer {
     width: 100%;
   }
 }
+
+/* Cross-browser QR/barcode fallback (html5-qrcode) */
+.html5-reader {
+  width: 100%;
+  min-height: 280px;
+  background: #07100b;
+  overflow: hidden;
+}
+.html5-reader[hidden] {
+  display: none !important;
+}
+.html5-reader video,
+.html5-reader canvas,
+.html5-reader img {
+  max-width: 100% !important;
+}
+.html5-reader > div {
+  border: 0 !important;
+}
+.image-reader-offscreen {
+  position: fixed !important;
+  left: -10000px !important;
+  top: 0 !important;
+  width: 360px !important;
+  min-height: 280px !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  z-index: -1 !important;
+}
+#nativeVideoWrap[hidden] {
+  display: none !important;
+}
