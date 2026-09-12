@@ -15,7 +15,8 @@
 .case-actions { display:flex;flex-wrap:wrap;gap:10px;margin-top:28px; }
 .case-role { margin:20px 0 0;color:#8da9bc;font-size:11px; }
 .case-role strong { color:#e3f0f7; }
-.case-hero-media { position:relative;max-width:390px;justify-self:end;border:1px solid rgba(255,181,27,.45);border-radius:24px;overflow:hidden;background:#fff;box-shadow:0 30px 70px rgba(0,0,0,.35); }
+.case-hero-media { position:relative;width:100%;max-width:540px;justify-self:end;border:1px solid rgba(255,181,27,.45);border-radius:24px;overflow:hidden;background:#041a2c;box-shadow:0 30px 70px rgba(0,0,0,.35); }
+.case-hero-picture { display:block;width:100%; }
 .case-hero-media img { display:block;width:100%;height:auto; }
 .case-hero-media span { position:absolute;left:14px;right:14px;bottom:14px;padding:8px 10px;border-radius:10px;background:rgba(1,12,22,.86);backdrop-filter:blur(8px);text-align:center;color:#eaf5fb;font-size:9px;font-weight:900;letter-spacing:1.5px; }
 .case-section { padding:82px 0; }
