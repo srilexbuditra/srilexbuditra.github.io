@@ -1,29 +1,40 @@
-# Super Tani Indonesia — Favicon Package
+# Program Area — srilexbuditra.work
 
-Paket favicon untuk seluruh area:
+Folder `program/` menjadi area untuk aplikasi/program khusus yang berdiri di bawah domain `srilexbuditra.work` tanpa mengubah positioning utama website sebagai portfolio dan pusat layanan Srilex Buditra.
+
+## Program Aktif
+
+Saat ini area utama adalah:
+
 `/program/ketahanan-pangan/`
 
-## Isi
-- favicon.ico
-- favicon-16x16.png
-- favicon-32x32.png
-- favicon-48x48.png
-- apple-touch-icon.png (180x180)
-- icon-192.png
-- icon-master.svg
-- head/registrasi-head.html
-- head/verifikasi-head.html
-- head/admin-head.html
+Dokumentasi modul tersedia di [ketahanan-pangan/README.md](ketahanan-pangan/README.md).
 
-## Prinsip
-Satu identitas favicon dipakai bersama oleh registrasi, verifikasi, dan admin.
-Tidak ada perubahan CSS, JavaScript, atau body layout.
+## Struktur & Identitas
 
-## Canonical
-Registrasi dan verifikasi menggunakan URL direktori tanpa `index.html`, dengan catatan server memang melayani URL tersebut.
+Program dapat memiliki:
 
-## Admin
-Admin menggunakan `noindex, nofollow, noarchive, nosnippet`. Perlindungan akses seperti Cloudflare Access tetap harus dipertahankan.
+- portal publik,
+- registrasi,
+- verifikasi,
+- akun/dashboard peserta,
+- dokumentasi,
+- area administrasi,
+- aset brand bersama,
+- dan layanan backend/Worker terpisah bila diperlukan.
 
-## Catatan keamanan
-Jangan menaruh NIK, KK, KTP, dokumen pribadi, token, atau kredensial di HTML/JS publik atau repository.
+Aset favicon/icon bersama Program Ketahanan Pangan berada di `ketahanan-pangan/assets/brand/` dan digunakan sesuai kebutuhan halaman terkait.
+
+## Prinsip Integrasi
+
+1. Program tetap berada di bawah domain `srilexbuditra.work` agar hubungan dukungan teknologi dapat ditelusuri.
+2. Identitas organisasi/program dan peran Srilex Buditra harus dibedakan dengan jelas.
+3. Halaman admin/private tidak dijadikan konten publik untuk indexing.
+4. Perubahan pada website utama tidak boleh merusak modul program yang sudah berjalan.
+5. Shared asset harus menggunakan path yang konsisten dan target file yang benar-benar ada.
+
+## Keamanan
+
+Jangan menyimpan NIK, nomor KK, KTP/KK, nomor WhatsApp peserta, email peserta, password, bearer token, API key, secret Worker, private key, atau kredensial database pada HTML/JS publik atau repository.
+
+Konfigurasi sensitif harus dikelola melalui secret/environment pada layanan backend yang sesuai.
