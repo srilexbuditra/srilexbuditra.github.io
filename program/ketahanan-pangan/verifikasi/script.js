@@ -592,7 +592,7 @@ async function startScanner() {
     setCameraRecovery(true);
   } finally {
     scanBtn.disabled = false;
-    scanBtn.textContent = '▣ Scan QR / Barcode';
+    scanBtn.textContent = '▣ Pindai Kode QR / Kode Batang';
   }
 }
 
@@ -640,7 +640,7 @@ async function scanImageFile(file, inputElement) {
   setCameraRecovery(false);
 
   if (!String(file.type || '').startsWith('image/')) {
-    setMessage('error', 'File harus berupa gambar QR Code / barcode.');
+    setMessage('error', 'File harus berupa gambar Kode QR / kode batang.');
     if (inputElement) inputElement.value = '';
     return;
   }
@@ -667,7 +667,7 @@ async function scanImageFile(file, inputElement) {
     if (!rawValue) {
       setMessage(
         'error',
-        'QR Code / barcode tidak terdeteksi. Pastikan kode terlihat utuh, terang, tidak terpotong, lalu coba lagi.'
+        'Kode QR / kode batang tidak terdeteksi. Pastikan kode terlihat utuh, terang, tidak terpotong, lalu coba lagi.'
       );
       return;
     }
@@ -684,7 +684,7 @@ async function scanImageFile(file, inputElement) {
   } catch (error) {
     const messageText = String(error && error.message || error || '');
     if (/not found|no barcode|qr code parse error|scan failed/i.test(messageText)) {
-      setMessage('error', 'QR Code / barcode tidak terdeteksi pada gambar. Coba foto lebih dekat dan fokus.');
+      setMessage('error', 'Kode QR / kode batang tidak terdeteksi pada gambar. Coba foto lebih dekat dan fokus.');
     } else if (!hasHtml5Qrcode() && !('BarcodeDetector' in window)) {
       setMessage(
         'error',
@@ -747,9 +747,9 @@ window.addEventListener('pagehide', stopScanner);
 (async function init() {
   const nativeDetectorAvailable = Boolean(await getDetector());
   if (hasHtml5Qrcode()) {
-    scanSupport.textContent = 'Pemindai QR/barcode siap. Gunakan kamera live, ambil foto, atau unggah gambar kode.';
+    scanSupport.textContent = 'Pemindai Kode QR / kode batang siap. Gunakan kamera langsung, ambil foto, atau unggah gambar kode.';
   } else if (nativeDetectorAvailable) {
-    scanSupport.textContent = 'Pemindai native browser siap digunakan. Kamera live dan gambar kode dapat dicoba.';
+    scanSupport.textContent = 'Pemindai bawaan browser siap digunakan. Kamera langsung dan gambar kode dapat dicoba.';
   } else {
     scanSupport.textContent = 'Komponen pemindai cadangan belum termuat. Verifikasi manual tetap dapat digunakan.';
   }

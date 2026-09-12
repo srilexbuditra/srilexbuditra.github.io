@@ -902,3 +902,77 @@ footer {
     width: 100%;
   }
 }
+
+
+/* V6.8.21 — preview kamera profesional untuk tampilan desktop/tablet.
+   Mobile portrait dipertahankan seperti V6.8.20 karena sudah tampil baik. */
+@media (min-width: 761px) {
+  .scanner-panel {
+    background: #07100b;
+  }
+
+  .html5-reader {
+    position: relative;
+    width: 100%;
+    min-height: 0;
+    aspect-ratio: 4 / 3;
+    background: #07100b;
+    overflow: hidden;
+  }
+
+  .html5-reader > div[id$="__scan_region"] {
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: #07100b !important;
+  }
+
+  .html5-reader video,
+  .html5-reader > div[id$="__scan_region"] video {
+    display: block !important;
+    width: 100% !important;
+    height: 100% !important;
+    max-width: none !important;
+    max-height: none !important;
+    margin: 0 !important;
+    object-fit: cover !important;
+    object-position: center center !important;
+    background: #07100b !important;
+  }
+
+  .html5-reader canvas,
+  .html5-reader img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+  }
+
+  .html5-reader > div[id$="__dashboard"] {
+    display: none !important;
+  }
+}
+
+/* Pada tampilan seluler asli, pertahankan rasio kamera natural agar depan/belakang
+   tetap nyaman seperti hasil uji V6.8.20. */
+@media (max-width: 760px) {
+  .html5-reader {
+    width: 100%;
+    min-height: 280px;
+    aspect-ratio: auto;
+  }
+
+  .html5-reader video,
+  .html5-reader > div[id$="__scan_region"] video {
+    display: block !important;
+    width: 100% !important;
+    height: auto !important;
+    max-width: 100% !important;
+    margin: 0 auto !important;
+    object-fit: contain !important;
+    object-position: center center !important;
+  }
+}
