@@ -1,0 +1,26 @@
+AUDIT KEAMANAN PERUBAHAN — FLAGSHIP V1
+Tanggal: 2026-09-13
+
+HASIL: PASS
+
+1. Seluruh 98 file existing di program/ketahanan-pangan/** dibandingkan dengan baseline SHA-256 dan TIDAK BERUBAH.
+2. File sistem utama berikut TIDAK BERUBAH:
+   - script.js
+   - visitor-analytics.js
+   - local-qrcode.js
+   - verify/config.js
+   - tts.js
+   - search-enhancer.js
+3. Tidak ada perubahan pada endpoint API, Worker, auth/token, CSP, registrasi, dashboard admin/peserta, verifikasi, atau sertifikat.
+4. Perubahan hanya bersifat additive/public presentation:
+   - index.html
+   - style.css (selector baru saja)
+   - search-index.json
+   - sitemap.xml
+   - portfolio/ketahanan-pangan/index.html (baru)
+   - portfolio/ketahanan-pangan/case-study.css (baru)
+
+CATATAN:
+- Program Ketahanan Pangan kini ditampilkan sebagai flagship live implementation di homepage.
+- Tiga project lama tetap dipertahankan tanpa menghapus isi atau visualnya.
+- Roadmap pada case study diberi label sebagai rencana pengembangan, bukan fitur aktif.

@@ -96,5 +96,47 @@
     "url": "/#tentang",
     "content": "full stack developer bengkulu srilex buditra",
     "category": "Info"
+  },
+  {
+    "title": "Program Ketahanan Pangan — Flagship Project",
+    "description": "Case study implementasi platform digital untuk registrasi, verifikasi, dashboard peserta, sertifikat QR, dokumentasi, dan integrasi API.",
+    "url": "/portfolio/ketahanan-pangan/",
+    "content": "program ketahanan pangan flagship project srilex buditra super tani ay group web application dashboard api qr sertifikat verifikasi",
+    "category": "Flagship"
+  },
+  {
+    "title": "Portal Program Ketahanan Pangan",
+    "description": "Portal layanan peserta Program Ketahanan Pangan.",
+    "url": "/program/ketahanan-pangan/",
+    "content": "portal peserta ketahanan pangan daftar cek status login aktivasi akun",
+    "category": "Program"
+  },
+  {
+    "title": "Registrasi Program Ketahanan Pangan",
+    "description": "Formulir registrasi peserta Program Ketahanan Pangan.",
+    "url": "/program/ketahanan-pangan/registrasi/",
+    "content": "registrasi daftar peserta pupuk ketahanan pangan super tani",
+    "category": "Program"
+  },
+  {
+    "title": "Verifikasi Registrasi Ketahanan Pangan",
+    "description": "Pemeriksaan status registrasi peserta melalui nomor registrasi atau kode.",
+    "url": "/program/ketahanan-pangan/verifikasi/",
+    "content": "verifikasi cek status registrasi qr barcode peserta",
+    "category": "Program"
+  },
+  {
+    "title": "Akun Peserta Program Ketahanan Pangan",
+    "description": "Aktivasi akun, login, dan dashboard pribadi peserta.",
+    "url": "/program/ketahanan-pangan/peserta/",
+    "content": "akun peserta login aktivasi dashboard ketahanan pangan",
+    "category": "Program"
+  },
+  {
+    "title": "Dokumentasi Sistem Digital Ketahanan Pangan",
+    "description": "Dokumentasi portal, registrasi, verifikasi, dashboard, API, data structure, dan pengelolaan dokumen.",
+    "url": "/program/ketahanan-pangan/dokumentasi/",
+    "content": "dokumentasi sistem digital api dashboard data ketahanan pangan srilex buditra",
+    "category": "Dokumentasi"
   }
 ]
