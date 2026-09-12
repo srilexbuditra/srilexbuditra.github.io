@@ -195,6 +195,22 @@ async function printCertificate() {
   const printable = document.getElementById('printableCertificate');
   if (!printable) return;
 
+  // GA4: tombol Cetak / Simpan PDF sudah ditekan dan area sertifikat tersedia.
+  const sendCertificatePrintStart = (attempt = 0) => {
+    if (typeof window.gtag === 'function') {
+      window.gtag('event', 'certificate_print_start', {
+        event_category: 'ketahanan_pangan',
+        event_label: 'Cetak / Simpan PDF Dimulai',
+        transport_type: 'beacon'
+      });
+      return;
+    }
+    if (attempt < 10) {
+      window.setTimeout(() => sendCertificatePrintStart(attempt + 1), 200);
+    }
+  };
+  sendCertificatePrintStart();
+
   const printRoot = document.createElement('div');
   printRoot.id = 'certificatePrintRoot';
   printRoot.className = 'certificate-print-root';
