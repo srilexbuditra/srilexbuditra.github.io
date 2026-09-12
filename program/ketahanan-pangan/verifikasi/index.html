@@ -36,7 +36,7 @@
   <link itemprop="publisher" href="https://srilexbuditra.work/#person">
   <meta itemprop="description" content="Pendataan calon penerima dukungan pupuk untuk membantu produktivitas pertanian.">
   <link rel="search" type="application/opensearchdescription+xml" title="Srilex Buditra Search" href="/opensearch.xml">
-  <link rel="stylesheet" href="./style.css?v=5">
+  <link rel="stylesheet" href="./style.css?v=6">
 </head>
 <body>
   <main>
@@ -98,6 +98,14 @@
             <div class="scanner-head">
               <div><strong>Arahkan kamera ke QR Code / barcode</strong><span>Posisikan kode di tengah area kamera.</span></div>
               <button type="button" class="icon-btn" id="closeScanner" aria-label="Tutup kamera">×</button>
+            </div>
+            <div class="camera-picker" id="cameraPicker" hidden>
+              <label for="cameraSelect">Pilih kamera</label>
+              <div class="camera-picker-row">
+                <select id="cameraSelect" aria-label="Pilih kamera"></select>
+                <button type="button" class="btn ghost compact" id="switchCameraBtn">Gunakan kamera</button>
+              </div>
+              <small>Jika layar gelap, coba kamera lain pada daftar ini.</small>
             </div>
             <div class="video-wrap" id="nativeVideoWrap">
               <video id="scannerVideo" playsinline muted></video>
@@ -169,7 +177,7 @@
     crossorigin="anonymous"
     referrerpolicy="no-referrer"
     defer></script>
-  <script src="./script.js?v=6" defer></script>
+  <script src="./script.js?v=7" defer></script>
   
   <!-- Floating Text-to-Speech accessibility control -->
 <div class="tts-fab-wrap" id="ttsFabWrap" aria-label="Kontrol pembaca halaman">

@@ -19,6 +19,9 @@ const scannerVideo = document.getElementById('scannerVideo');
 const nativeVideoWrap = document.getElementById('nativeVideoWrap');
 const html5QrReader = document.getElementById('html5QrReader');
 const imageQrReader = document.getElementById('imageQrReader');
+const cameraPicker = document.getElementById('cameraPicker');
+const cameraSelect = document.getElementById('cameraSelect');
+const switchCameraBtn = document.getElementById('switchCameraBtn');
 const scannerStatus = document.getElementById('scannerStatus');
 const scanSupport = document.getElementById('scanSupport');
 const imageScanInput = document.getElementById('imageScanInput');
@@ -36,6 +39,8 @@ let scanFrameId = 0;
 let scanning = false;
 let html5Scanner = null;
 let scanResultHandled = false;
+let availableCameras = [];
+let activeCameraId = '';
 let certificateVerifyTracked = false;
 
 function isCertificateQrSource() {
@@ -374,7 +379,56 @@ async function requestCameraStream() {
   throw lastError || new Error('Camera unavailable');
 }
 
-async function startHtml5Scanner() {
+
+function cameraLabel(camera, index) {
+  const label = String(camera && camera.label || '').trim();
+  return label || `Kamera ${index + 1}`;
+}
+
+function choosePreferredCamera(cameras) {
+  if (!Array.isArray(cameras) || !cameras.length) return null;
+
+  const saved = localStorage.getItem('sb_verification_camera_id');
+  if (saved) {
+    const savedCamera = cameras.find((camera) => camera.id === saved);
+    if (savedCamera) return savedCamera;
+  }
+
+  // Utamakan kamera fisik normal. Hindari kamera IR/virtual bila ada pilihan lain.
+  const normalPhysical = cameras.find((camera) => {
+    const label = String(camera.label || '');
+    return /(integrated|webcam|usb|camera)/i.test(label) &&
+      !/(ir|infrared|virtual|youcam|obs|snap|manycam)/i.test(label);
+  });
+  if (normalPhysical) return normalPhysical;
+
+  const environmentCamera = cameras.find((camera) =>
+    /(back|rear|environment|belakang)/i.test(String(camera.label || ''))
+  );
+  if (environmentCamera) return environmentCamera;
+
+  const nonVirtual = cameras.find((camera) =>
+    !/(ir|infrared|virtual|youcam|obs|snap|manycam)/i.test(String(camera.label || ''))
+  );
+  return nonVirtual || cameras[0];
+}
+
+function renderCameraPicker(cameras, selectedId) {
+  if (!cameraPicker || !cameraSelect) return;
+
+  cameraSelect.innerHTML = '';
+  cameras.forEach((camera, index) => {
+    const option = document.createElement('option');
+    option.value = camera.id;
+    option.textContent = cameraLabel(camera, index);
+    if (camera.id === selectedId) option.selected = true;
+    cameraSelect.appendChild(option);
+  });
+
+  cameraPicker.hidden = cameras.length < 2;
+}
+
+async function startHtml5Scanner(cameraId = '') {
   await stopScanner();
 
   scannerPanel.hidden = false;
@@ -385,15 +439,31 @@ async function startHtml5Scanner() {
   html5Scanner = new window.Html5Qrcode('html5QrReader');
 
   let cameraConfig = { facingMode: 'environment' };
+  let activeLabel = 'kamera perangkat';
+
   try {
-    const cameras = await window.Html5Qrcode.getCameras();
-    if (Array.isArray(cameras) && cameras.length) {
-      const preferred =
-        cameras.find((camera) => /back|rear|environment|belakang/i.test(camera.label || '')) ||
-        cameras[cameras.length - 1];
-      cameraConfig = preferred.id;
+    availableCameras = await window.Html5Qrcode.getCameras();
+
+    if (Array.isArray(availableCameras) && availableCameras.length) {
+      let selected =
+        (cameraId && availableCameras.find((camera) => camera.id === cameraId)) ||
+        choosePreferredCamera(availableCameras);
+
+      if (selected) {
+        cameraConfig = selected.id;
+        activeCameraId = selected.id;
+        activeLabel = cameraLabel(
+          selected,
+          Math.max(0, availableCameras.findIndex((camera) => camera.id === selected.id))
+        );
+        localStorage.setItem('sb_verification_camera_id', selected.id);
+        renderCameraPicker(availableCameras, selected.id);
+      }
     }
   } catch (_) {
+    availableCameras = [];
+    activeCameraId = '';
+    if (cameraPicker) cameraPicker.hidden = true;
     // start() masih dapat mencoba facingMode environment.
   }
 
@@ -421,7 +491,8 @@ async function startHtml5Scanner() {
     }
   );
 
-  scannerStatus.textContent = 'Kamera aktif. Arahkan ke QR Code / barcode.';
+  scannerStatus.textContent =
+    `Kamera aktif: ${activeLabel}. Arahkan ke QR Code / barcode. Jika tampilan gelap, pilih kamera lain di atas.`;
 }
 
 async function startNativeScanner(availableDetector) {
@@ -593,6 +664,27 @@ async function scanImageFile(file, inputElement) {
   } finally {
     if (inputElement) inputElement.value = '';
   }
+}
+
+if (switchCameraBtn && cameraSelect) {
+  switchCameraBtn.addEventListener('click', async () => {
+    const nextCameraId = cameraSelect.value;
+    if (!nextCameraId || nextCameraId === activeCameraId) return;
+
+    switchCameraBtn.disabled = true;
+    switchCameraBtn.textContent = 'Mengganti…';
+    clearMessage();
+
+    try {
+      await startHtml5Scanner(nextCameraId);
+    } catch (error) {
+      setMessage('error', getCameraErrorMessage(error));
+      setCameraRecovery(true);
+    } finally {
+      switchCameraBtn.disabled = false;
+      switchCameraBtn.textContent = 'Gunakan kamera';
+    }
+  });
 }
 
 scanBtn.addEventListener('click', startScanner);
