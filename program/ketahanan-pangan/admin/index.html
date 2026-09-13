@@ -426,6 +426,75 @@
           <button type="button" id="statusQuickClear" class="status-quick-clear">Tampilkan Semua</button>
         </div>
       </section>
+
+      <section id="adminEventManagement" class="admin-event-panel" hidden aria-labelledby="adminEventTitle">
+        <div class="admin-event-head">
+          <div>
+            <span class="eyebrow">AKTIVITAS &amp; EVENT — PENGELOLAAN ADMIN</span>
+            <h2 id="adminEventTitle">Agenda, Pendaftaran &amp; Kehadiran Peserta</h2>
+            <p>Buat agenda sebagai draft, publikasikan saat data sudah final, lalu verifikasi kehadiran peserta. Poin Aktivitas hanya masuk setelah status <strong>Hadir Terverifikasi</strong>.</p>
+          </div>
+          <div class="admin-event-actions">
+            <button id="adminEventRefresh" type="button" class="admin-event-button admin-event-button-secondary">↻ Perbarui</button>
+            <button id="adminEventCreateToggle" type="button" class="admin-event-button admin-event-button-primary">＋ Buat Event</button>
+          </div>
+        </div>
+
+        <div class="admin-event-kpis" aria-label="Ringkasan event">
+          <article><small>Event Dipublikasikan</small><strong id="adminEventKpiPublished">0</strong><span>Tampil di Dashboard Peserta</span></article>
+          <article><small>Draft</small><strong id="adminEventKpiDraft">0</strong><span>Belum dipublikasikan</span></article>
+          <article><small>Peserta Terdaftar</small><strong id="adminEventKpiRegistered">0</strong><span>Status terdaftar aktif</span></article>
+          <article><small>Hadir Terverifikasi</small><strong id="adminEventKpiAttended">0</strong><span>Berhak Poin Aktivitas</span></article>
+        </div>
+
+        <form id="adminEventForm" class="admin-event-form" hidden novalidate>
+          <div class="admin-event-form-head">
+            <div><strong id="adminEventFormTitle">Buat Event Baru</strong><span>Event baru selalu disimpan sebagai draft terlebih dahulu.</span></div>
+            <button id="adminEventFormClose" type="button" class="admin-event-close" aria-label="Tutup formulir">×</button>
+          </div>
+          <input id="adminEventEditingId" type="hidden">
+          <div class="admin-event-form-grid">
+            <label class="admin-event-field admin-event-field-wide"><span>Judul Event</span><input id="adminEventName" type="text" maxlength="160" required placeholder="Contoh: Pelatihan Budidaya Padi Berkelanjutan"></label>
+            <label class="admin-event-field admin-event-field-wide"><span>Ringkasan</span><textarea id="adminEventSummary" rows="3" maxlength="1200" placeholder="Jelaskan tujuan dan informasi penting event."></textarea></label>
+            <label class="admin-event-field"><span>Kategori</span><select id="adminEventCategory"><option value="event">Event</option><option value="pelatihan">Pelatihan</option><option value="sosialisasi">Sosialisasi</option><option value="pendampingan">Pendampingan</option><option value="webinar">Webinar</option><option value="pertemuan">Pertemuan</option></select></label>
+            <label class="admin-event-field"><span>Mode Pelaksanaan</span><select id="adminEventDelivery"><option value="offline">Offline</option><option value="online">Online</option><option value="hybrid">Hybrid</option></select></label>
+            <label class="admin-event-field admin-event-field-wide"><span>Lokasi / Link Informasi</span><input id="adminEventLocation" type="text" maxlength="250" placeholder="Lokasi kegiatan atau keterangan online"></label>
+            <label class="admin-event-field"><span>Mulai</span><input id="adminEventStart" type="datetime-local"></label>
+            <label class="admin-event-field"><span>Selesai</span><input id="adminEventEnd" type="datetime-local"></label>
+            <label class="admin-event-field"><span>Pendaftaran Dibuka</span><input id="adminEventRegOpen" type="datetime-local"></label>
+            <label class="admin-event-field"><span>Pendaftaran Ditutup</span><input id="adminEventRegClose" type="datetime-local"></label>
+            <label class="admin-event-field"><span>Kuota</span><input id="adminEventCapacity" type="number" min="0" max="100000" step="1" value="0"><small>0 = tanpa batas kuota.</small></label>
+            <label class="admin-event-field"><span>Minimal Level</span><select id="adminEventMinLevel"><option value="1">Level 1 — Tunas</option><option value="2">Level 2 — Tumbuh</option><option value="3">Level 3 — Berkembang</option><option value="4">Level 4 — Produktif</option><option value="5">Level 5 — Maju</option><option value="6">Level 6 — Unggul</option></select></label>
+            <label class="admin-event-field"><span>Poin Kehadiran</span><input id="adminEventPoints" type="number" min="0" max="1000" step="1" value="0"><small>Diberikan hanya setelah kehadiran diverifikasi admin.</small></label>
+            <label class="admin-event-check"><input id="adminEventVerifiedOnly" type="checkbox"><span>Wajib VERIFIED MEMBER</span></label>
+          </div>
+          <div class="admin-event-form-actions">
+            <button id="adminEventSave" type="submit" class="admin-event-button admin-event-button-primary">Simpan Draft</button>
+            <button id="adminEventCancelEdit" type="button" class="admin-event-button admin-event-button-secondary">Batal</button>
+          </div>
+          <p id="adminEventFormMessage" class="admin-event-message" aria-live="polite"></p>
+        </form>
+
+        <div class="admin-event-layout">
+          <div class="admin-event-list-wrap">
+            <div class="admin-event-subhead"><div><strong>Daftar Event</strong><span>Draft tidak terlihat oleh peserta sampai dipublikasikan.</span></div><span id="adminEventCount" class="admin-event-count">0 event</span></div>
+            <div id="adminEventList" class="admin-event-list" aria-live="polite"><div class="admin-event-empty">Belum ada event. Gunakan tombol <b>Buat Event</b> untuk membuat draft pertama.</div></div>
+          </div>
+
+          <div id="adminEventRegistrationsPanel" class="admin-event-registrations" hidden>
+            <div class="admin-event-subhead">
+              <div><strong id="adminEventRegistrationsTitle">Peserta Event</strong><span id="adminEventRegistrationsMeta">Pilih event untuk melihat pendaftaran.</span></div>
+              <button id="adminEventRegistrationsClose" type="button" class="admin-event-button admin-event-button-secondary">Tutup</button>
+            </div>
+            <div id="adminEventRegistrationsList" class="admin-event-registration-list"></div>
+          </div>
+        </div>
+
+        <div class="admin-event-note">
+          <strong>Aturan aman:</strong> membuat event atau mendaftarkan peserta tidak menambah poin. Poin Aktivitas baru tercatat ketika Admin menandai peserta sebagai <b>Hadir Terverifikasi</b>. Koreksi menjadi Terdaftar/Tidak Hadir akan menarik kembali poin event tersebut dari ledger.
+        </div>
+      </section>
+
       <section class="panel">
         <div class="panel-head">
           <div><span class="eyebrow">DATA PENDAFTAR</span>
@@ -620,6 +689,6 @@
     <script src="./local-qrcode.js?v=1" defer></script>
     <script src="./jszip.min.js?v=1" defer></script>
     <script src="./excel-engine-template.js?v=45" defer></script>
-    <script src="./script-a4-v45.js?v=17.16.1" defer></script>
+    <script src="./script-a4-v45.js?v=17.17.0" defer></script>
   </body>
 </html>

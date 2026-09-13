@@ -201,6 +201,9 @@ function applyDashboardRoleAccess(user) {
   const photoStatusOverview = document.getElementById('photoStatusOverview');
   if (photoStatusOverview) photoStatusOverview.hidden = marketing;
 
+  const adminEventManagement = document.getElementById('adminEventManagement');
+  if (adminEventManagement) adminEventManagement.hidden = marketing;
+
   const flow = document.querySelector('.flow');
   if (flow) flow.hidden = marketing;
 
@@ -264,6 +267,7 @@ function setAuthenticatedAdmin(user) {
 
   applyDashboardRoleAccess(user);
   initAccountSecurityForUser(user);
+  initAdminEventManagement(user);
 }
 
 function showAdminLogin() {
@@ -3702,3 +3706,416 @@ async function downloadMarketingXlsx() {
 }
 
 document.getElementById('marketingReportXlsx')?.addEventListener('click', downloadMarketingXlsx);
+
+/* =========================================================
+   V13.2.1 — ADMIN EVENT MANAGEMENT
+   Path /events* diarahkan ke Worker khusus Event Admin.
+   Session tetap memakai cookie kp_admin_session pada host admin-api.
+   ========================================================= */
+let adminEventCache = [];
+let adminEventSelectedId = '';
+
+function adminEventSetText(id, value) {
+  const node = document.getElementById(id);
+  if (node) node.textContent = String(value);
+}
+
+function canManageEvents() {
+  const role = currentAdminRole();
+  return role === 'super_admin' || role === 'admin';
+}
+
+function initAdminEventManagement(user) {
+  const section = document.getElementById('adminEventManagement');
+  if (!section) return;
+
+  if (!canManageEvents()) {
+    section.hidden = true;
+    return;
+  }
+  section.hidden = false;
+
+  if (section.dataset.initialized === '1') {
+    loadAdminEvents();
+    return;
+  }
+  section.dataset.initialized = '1';
+
+  document.getElementById('adminEventRefresh')?.addEventListener('click', loadAdminEvents);
+  document.getElementById('adminEventCreateToggle')?.addEventListener('click', () => openAdminEventForm());
+  document.getElementById('adminEventFormClose')?.addEventListener('click', closeAdminEventForm);
+  document.getElementById('adminEventCancelEdit')?.addEventListener('click', closeAdminEventForm);
+  document.getElementById('adminEventRegistrationsClose')?.addEventListener('click', () => {
+    const panel = document.getElementById('adminEventRegistrationsPanel');
+    if (panel) panel.hidden = true;
+    adminEventSelectedId = '';
+  });
+
+  document.getElementById('adminEventForm')?.addEventListener('submit', saveAdminEventForm);
+  document.getElementById('adminEventList')?.addEventListener('click', handleAdminEventListClick);
+  document.getElementById('adminEventRegistrationsList')?.addEventListener('click', handleAdminEventAttendanceClick);
+
+  loadAdminEvents();
+}
+
+function adminEventFormatDate(value) {
+  if (!value) return '—';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return String(value);
+  return date.toLocaleString('id-ID', {
+    day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
+  });
+}
+
+function adminEventLocalValue(value) {
+  if (!value) return '';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return '';
+  const pad = n => String(n).padStart(2, '0');
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+}
+
+function adminEventIsoFromInput(id) {
+  const value = document.getElementById(id)?.value || '';
+  if (!value) return null;
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? null : date.toISOString();
+}
+
+function adminEventStatusLabel(status) {
+  const map = {
+    draft: 'DRAFT',
+    published: 'DIPUBLIKASIKAN',
+    closed: 'DITUTUP',
+    cancelled: 'DIBATALKAN'
+  };
+  return map[String(status || '').toLowerCase()] || String(status || '-').toUpperCase();
+}
+
+function adminAttendanceLabel(status) {
+  const map = {
+    registered: 'TERDAFTAR',
+    attended: 'HADIR TERVERIFIKASI',
+    no_show: 'TIDAK HADIR',
+    cancelled: 'DIBATALKAN'
+  };
+  return map[String(status || '').toLowerCase()] || String(status || '-').toUpperCase();
+}
+
+async function adminEventRequest(path, options = {}) {
+  const response = await fetch(`${ADMIN_API_BASE}${path}`, {
+    credentials: 'include',
+    cache: 'no-store',
+    ...options,
+    headers: {
+      Accept: 'application/json',
+      ...(options.body ? { 'Content-Type': 'application/json' } : {}),
+      ...(options.headers || {})
+    }
+  });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok || data?.ok === false) {
+    const error = new Error(data?.message || `HTTP ${response.status}`);
+    error.status = response.status;
+    throw error;
+  }
+  return data;
+}
+
+async function loadAdminEvents() {
+  if (!canManageEvents()) return;
+  const list = document.getElementById('adminEventList');
+  const refresh = document.getElementById('adminEventRefresh');
+  if (refresh) refresh.disabled = true;
+  if (list && !adminEventCache.length) {
+    list.innerHTML = '<div class="admin-event-empty">Memuat data event dari server...</div>';
+  }
+  try {
+    const data = await adminEventRequest(`/events?_=${Date.now()}`);
+    adminEventCache = Array.isArray(data.events) ? data.events : [];
+    renderAdminEventSummary(data.summary || {});
+    renderAdminEventList(adminEventCache);
+    if (adminEventSelectedId) {
+      const stillExists = adminEventCache.some(x => x.event_id === adminEventSelectedId);
+      if (stillExists) await loadAdminEventRegistrations(adminEventSelectedId, { silent: true });
+    }
+  } catch (error) {
+    if (list) {
+      list.innerHTML = `<div class="admin-event-empty"><b>Pengelolaan event belum terhubung.</b><br>${escapeHtml(error.message || 'Periksa Worker route /events*.')}</div>`;
+    }
+    renderAdminEventSummary({});
+  } finally {
+    if (refresh) refresh.disabled = false;
+  }
+}
+
+function renderAdminEventSummary(summary) {
+  adminEventSetText('adminEventKpiPublished', Number(summary.published || 0));
+  adminEventSetText('adminEventKpiDraft', Number(summary.draft || 0));
+  adminEventSetText('adminEventKpiRegistered', Number(summary.registered || 0));
+  adminEventSetText('adminEventKpiAttended', Number(summary.attended || 0));
+  adminEventSetText('adminEventCount', `${Number(summary.total || adminEventCache.length || 0)} event`);
+}
+
+function renderAdminEventList(events) {
+  const list = document.getElementById('adminEventList');
+  if (!list) return;
+  if (!events.length) {
+    list.innerHTML = '<div class="admin-event-empty">Belum ada event. Gunakan tombol <b>Buat Event</b> untuk membuat draft pertama.</div>';
+    return;
+  }
+
+  list.innerHTML = events.map(event => {
+    const status = String(event.status || 'draft').toLowerCase();
+    const active = Number(event.active_count || 0);
+    const capacity = Number(event.capacity || 0);
+    const capacityText = capacity > 0 ? `${active} / ${capacity}` : `${active} / tanpa batas`;
+    const requirement = `${Number(event.min_level || 1) > 1 ? `Level ${Number(event.min_level || 1)}+` : 'Level 1+'}${Number(event.requires_verified_member || 0) === 1 ? ' · VERIFIED MEMBER' : ''}`;
+    const statusActions = status === 'published'
+      ? `<button type="button" class="admin-event-button admin-event-button-secondary" data-event-action="status" data-event-status="draft" data-event-id="${escapeHtml(event.event_id)}">Kembali Draft</button>
+         <button type="button" class="admin-event-button admin-event-button-secondary" data-event-action="status" data-event-status="closed" data-event-id="${escapeHtml(event.event_id)}">Tutup Event</button>`
+      : status === 'draft'
+        ? `<button type="button" class="admin-event-button admin-event-button-primary" data-event-action="status" data-event-status="published" data-event-id="${escapeHtml(event.event_id)}">Publikasikan</button>`
+        : `<button type="button" class="admin-event-button admin-event-button-secondary" data-event-action="status" data-event-status="draft" data-event-id="${escapeHtml(event.event_id)}">Jadikan Draft</button>`;
+
+    return `<article class="admin-event-card is-${escapeHtml(status)}">
+      <div class="admin-event-card-top">
+        <div class="admin-event-card-title">
+          <h3>${escapeHtml(event.title || 'Event Tanpa Judul')}</h3>
+          <p>${escapeHtml(event.summary || 'Belum ada ringkasan event.')}</p>
+        </div>
+        <div class="admin-event-badges">
+          <span class="admin-event-badge admin-event-badge--${escapeHtml(status)}">${escapeHtml(adminEventStatusLabel(status))}</span>
+          <span class="admin-event-badge">${escapeHtml(String(event.category || 'event').toUpperCase())}</span>
+          <span class="admin-event-badge">${escapeHtml(String(event.delivery_mode || 'offline').toUpperCase())}</span>
+        </div>
+      </div>
+      <div class="admin-event-meta">
+        <span><small>Jadwal</small><b>${escapeHtml(adminEventFormatDate(event.start_at))}</b></span>
+        <span><small>Lokasi</small><b>${escapeHtml(event.location_text || 'Belum ditentukan')}</b></span>
+        <span><small>Kuota Aktif</small><b>${escapeHtml(capacityText)}</b></span>
+        <span><small>Syarat / Poin</small><b>${escapeHtml(requirement)} · +${Number(event.attendance_points || 0)} poin</b></span>
+      </div>
+      <div class="admin-event-card-actions">
+        <button type="button" class="admin-event-button admin-event-button-secondary" data-event-action="edit" data-event-id="${escapeHtml(event.event_id)}">Edit</button>
+        <button type="button" class="admin-event-button admin-event-button-secondary" data-event-action="participants" data-event-id="${escapeHtml(event.event_id)}">Peserta (${Number(event.registered_count || 0) + Number(event.attended_count || 0) + Number(event.no_show_count || 0) + Number(event.cancelled_count || 0)})</button>
+        ${statusActions}
+        ${status !== 'cancelled' ? `<button type="button" class="admin-event-button admin-event-button-danger" data-event-action="status" data-event-status="cancelled" data-event-id="${escapeHtml(event.event_id)}">Batalkan Event</button>` : ''}
+      </div>
+    </article>`;
+  }).join('');
+}
+
+function resetAdminEventForm() {
+  const form = document.getElementById('adminEventForm');
+  form?.reset();
+  adminEventSetText('adminEventFormTitle', 'Buat Event Baru');
+  const editing = document.getElementById('adminEventEditingId');
+  if (editing) editing.value = '';
+  const capacity = document.getElementById('adminEventCapacity');
+  const level = document.getElementById('adminEventMinLevel');
+  const points = document.getElementById('adminEventPoints');
+  if (capacity) capacity.value = '0';
+  if (level) level.value = '1';
+  if (points) points.value = '0';
+  const message = document.getElementById('adminEventFormMessage');
+  if (message) { message.textContent = ''; message.className = 'admin-event-message'; }
+  const save = document.getElementById('adminEventSave');
+  if (save) save.textContent = 'Simpan Draft';
+}
+
+function openAdminEventForm(event = null) {
+  const form = document.getElementById('adminEventForm');
+  if (!form) return;
+  resetAdminEventForm();
+  form.hidden = false;
+
+  if (event) {
+    adminEventSetText('adminEventFormTitle', `Edit Event — ${event.event_id}`);
+    document.getElementById('adminEventEditingId').value = event.event_id || '';
+    document.getElementById('adminEventName').value = event.title || '';
+    document.getElementById('adminEventSummary').value = event.summary || '';
+    document.getElementById('adminEventCategory').value = event.category || 'event';
+    document.getElementById('adminEventDelivery').value = event.delivery_mode || 'offline';
+    document.getElementById('adminEventLocation').value = event.location_text || '';
+    document.getElementById('adminEventStart').value = adminEventLocalValue(event.start_at);
+    document.getElementById('adminEventEnd').value = adminEventLocalValue(event.end_at);
+    document.getElementById('adminEventRegOpen').value = adminEventLocalValue(event.registration_open_at);
+    document.getElementById('adminEventRegClose').value = adminEventLocalValue(event.registration_close_at);
+    document.getElementById('adminEventCapacity').value = String(Number(event.capacity || 0));
+    document.getElementById('adminEventMinLevel').value = String(Number(event.min_level || 1));
+    document.getElementById('adminEventPoints').value = String(Number(event.attendance_points || 0));
+    document.getElementById('adminEventVerifiedOnly').checked = Number(event.requires_verified_member || 0) === 1;
+    const save = document.getElementById('adminEventSave');
+    if (save) save.textContent = 'Simpan Perubahan';
+  }
+
+  form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function closeAdminEventForm() {
+  const form = document.getElementById('adminEventForm');
+  if (form) form.hidden = true;
+  resetAdminEventForm();
+}
+
+async function saveAdminEventForm(event) {
+  event.preventDefault();
+  if (!canManageEvents()) return;
+
+  const editingId = document.getElementById('adminEventEditingId')?.value || '';
+  const title = document.getElementById('adminEventName')?.value.trim() || '';
+  const message = document.getElementById('adminEventFormMessage');
+  const save = document.getElementById('adminEventSave');
+  if (title.length < 3) {
+    if (message) { message.textContent = 'Judul event minimal 3 karakter.'; message.className = 'admin-event-message is-error'; }
+    return;
+  }
+
+  const payload = {
+    title,
+    summary: document.getElementById('adminEventSummary')?.value.trim() || '',
+    category: document.getElementById('adminEventCategory')?.value || 'event',
+    delivery_mode: document.getElementById('adminEventDelivery')?.value || 'offline',
+    location_text: document.getElementById('adminEventLocation')?.value.trim() || '',
+    start_at: adminEventIsoFromInput('adminEventStart'),
+    end_at: adminEventIsoFromInput('adminEventEnd'),
+    registration_open_at: adminEventIsoFromInput('adminEventRegOpen'),
+    registration_close_at: adminEventIsoFromInput('adminEventRegClose'),
+    capacity: Number(document.getElementById('adminEventCapacity')?.value || 0),
+    min_level: Number(document.getElementById('adminEventMinLevel')?.value || 1),
+    attendance_points: Number(document.getElementById('adminEventPoints')?.value || 0),
+    requires_verified_member: Boolean(document.getElementById('adminEventVerifiedOnly')?.checked)
+  };
+
+  try {
+    if (save) { save.disabled = true; save.textContent = editingId ? 'Menyimpan...' : 'Membuat...'; }
+    if (message) { message.textContent = ''; message.className = 'admin-event-message'; }
+    const path = editingId ? `/events/${encodeURIComponent(editingId)}/update` : '/events';
+    const data = await adminEventRequest(path, { method: 'POST', body: JSON.stringify(payload) });
+    if (message) { message.textContent = data.message || 'Event berhasil disimpan.'; message.className = 'admin-event-message is-success'; }
+    showAdminToast('success', editingId ? 'Event Diperbarui' : 'Draft Event Dibuat', data.message || 'Data event tersimpan.');
+    await loadAdminEvents();
+    setTimeout(closeAdminEventForm, 550);
+  } catch (error) {
+    if (message) { message.textContent = error.message || 'Event belum dapat disimpan.'; message.className = 'admin-event-message is-error'; }
+    showAdminToast('error', 'Event Belum Disimpan', error.message || 'Silakan periksa data event.');
+  } finally {
+    if (save) { save.disabled = false; save.textContent = editingId ? 'Simpan Perubahan' : 'Simpan Draft'; }
+  }
+}
+
+async function handleAdminEventListClick(event) {
+  const button = event.target.closest('[data-event-action]');
+  if (!button) return;
+  const eventId = button.dataset.eventId || '';
+  const action = button.dataset.eventAction || '';
+  const eventData = adminEventCache.find(x => x.event_id === eventId);
+  if (!eventData) return;
+
+  if (action === 'edit') {
+    openAdminEventForm(eventData);
+    return;
+  }
+  if (action === 'participants') {
+    await loadAdminEventRegistrations(eventId);
+    return;
+  }
+  if (action === 'status') {
+    const nextStatus = button.dataset.eventStatus || '';
+    const labels = { published: 'mempublikasikan', draft: 'mengembalikan ke Draft', closed: 'menutup', cancelled: 'membatalkan' };
+    const ok = window.confirm(`Anda akan ${labels[nextStatus] || 'mengubah status'} event “${eventData.title}”. Lanjutkan?`);
+    if (!ok) return;
+    try {
+      button.disabled = true;
+      const data = await adminEventRequest(`/events/${encodeURIComponent(eventId)}/status`, {
+        method: 'POST', body: JSON.stringify({ status: nextStatus })
+      });
+      showAdminToast('success', 'Status Event Diperbarui', data.message || 'Status event berhasil diperbarui.');
+      await loadAdminEvents();
+    } catch (error) {
+      showAdminToast('error', 'Status Event Gagal', error.message || 'Status event belum dapat diubah.');
+    } finally {
+      button.disabled = false;
+    }
+  }
+}
+
+async function loadAdminEventRegistrations(eventId, options = {}) {
+  if (!eventId) return;
+  const panel = document.getElementById('adminEventRegistrationsPanel');
+  const list = document.getElementById('adminEventRegistrationsList');
+  const title = document.getElementById('adminEventRegistrationsTitle');
+  const meta = document.getElementById('adminEventRegistrationsMeta');
+  const eventData = adminEventCache.find(x => x.event_id === eventId);
+  adminEventSelectedId = eventId;
+  if (panel) panel.hidden = false;
+  if (title) title.textContent = eventData ? `Peserta — ${eventData.title}` : 'Peserta Event';
+  if (!options.silent && list) list.innerHTML = '<div class="admin-event-empty">Memuat peserta event...</div>';
+
+  try {
+    const data = await adminEventRequest(`/events/${encodeURIComponent(eventId)}/registrations?_=${Date.now()}`);
+    const registrations = Array.isArray(data.registrations) ? data.registrations : [];
+    if (meta) meta.textContent = `${registrations.length} pendaftaran · Poin hadir: +${Number(data.event?.attendance_points || 0)}`;
+    renderAdminEventRegistrations(eventId, registrations);
+    if (!options.silent) panel?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  } catch (error) {
+    if (list) list.innerHTML = `<div class="admin-event-empty">${escapeHtml(error.message || 'Daftar peserta event belum dapat dimuat.')}</div>`;
+  }
+}
+
+function renderAdminEventRegistrations(eventId, registrations) {
+  const list = document.getElementById('adminEventRegistrationsList');
+  if (!list) return;
+  if (!registrations.length) {
+    list.innerHTML = '<div class="admin-event-empty">Belum ada peserta yang mendaftar pada event ini.</div>';
+    return;
+  }
+
+  list.innerHTML = registrations.map(row => {
+    const status = String(row.status || 'registered').toLowerCase();
+    const wilayah = [row.kabupaten, row.provinsi].filter(Boolean).join(', ') || 'Wilayah tidak tersedia';
+    return `<article class="admin-event-registration-row" data-event-registration="${escapeHtml(row.registration_id || '')}">
+      <div class="admin-event-registration-main">
+        <strong>${escapeHtml(row.nama || 'Peserta')}</strong>
+        <span>${escapeHtml(row.registration_id || '-')} · ${escapeHtml(wilayah)}</span>
+      </div>
+      <div class="admin-event-registration-status">
+        <b>${escapeHtml(adminAttendanceLabel(status))}</b>
+        <small>${escapeHtml(adminEventFormatDate(row.attended_at || row.cancelled_at || row.registered_at))}</small>
+      </div>
+      <div class="admin-event-attendance-actions">
+        <button type="button" data-event-id="${escapeHtml(eventId)}" data-registration-id="${escapeHtml(row.registration_id || '')}" data-attendance-status="registered" class="${status === 'registered' ? 'is-active' : ''}">Terdaftar</button>
+        <button type="button" data-event-id="${escapeHtml(eventId)}" data-registration-id="${escapeHtml(row.registration_id || '')}" data-attendance-status="attended" class="${status === 'attended' ? 'is-active' : ''}">✓ Hadir</button>
+        <button type="button" data-event-id="${escapeHtml(eventId)}" data-registration-id="${escapeHtml(row.registration_id || '')}" data-attendance-status="no_show" class="${status === 'no_show' ? 'is-active' : ''}">Tidak Hadir</button>
+      </div>
+    </article>`;
+  }).join('');
+}
+
+async function handleAdminEventAttendanceClick(event) {
+  const button = event.target.closest('[data-attendance-status]');
+  if (!button) return;
+  const eventId = button.dataset.eventId || '';
+  const registrationId = button.dataset.registrationId || '';
+  const status = button.dataset.attendanceStatus || '';
+  if (!eventId || !registrationId || !status) return;
+
+  const label = adminAttendanceLabel(status);
+  const ok = window.confirm(`Ubah status ${registrationId} menjadi ${label}?`);
+  if (!ok) return;
+
+  try {
+    button.disabled = true;
+    const data = await adminEventRequest(`/events/${encodeURIComponent(eventId)}/registrations/${encodeURIComponent(registrationId)}/attendance`, {
+      method: 'POST', body: JSON.stringify({ status })
+    });
+    showAdminToast('success', 'Kehadiran Diperbarui', data.message || `${registrationId}: ${label}`);
+    await loadAdminEvents();
+    await loadAdminEventRegistrations(eventId, { silent: true });
+  } catch (error) {
+    showAdminToast('error', 'Kehadiran Gagal', error.message || 'Status kehadiran belum dapat diperbarui.');
+  } finally {
+    button.disabled = false;
+  }
+}
