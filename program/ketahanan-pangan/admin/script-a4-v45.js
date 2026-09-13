@@ -1019,6 +1019,101 @@ function renderRevisionHistory(revisions) {
   `;
 }
 
+async function fetchMemberVerification(registrationId) {
+  const response = await fetch(
+    `${ADMIN_API_BASE}/member-verifications/${encodeURIComponent(registrationId)}`,
+    { method:'GET', credentials:'include', headers:{Accept:'application/json'}, cache:'no-store' }
+  );
+  let data = {};
+  try { data = await response.json(); } catch (_) {}
+  if (!response.ok || !data?.ok) throw new Error(data?.message || `HTTP ${response.status}`);
+  return data;
+}
+
+function memberVerificationLabel(status) {
+  const s = String(status || 'not_submitted').toLowerCase();
+  return ({not_submitted:'Belum direkam',pending:'Menunggu review',approved:'VERIFIED MEMBER',rejected:'Perlu rekam ulang'})[s] || s;
+}
+
+function renderMemberVerificationAdminCard(registration, data, errorText = '') {
+  if (errorText) {
+    return `<section class="member-review-card member-review-card--error"><div><span class="member-review-kicker">VERIFIKASI ANGGOTA</span><h3>Status foto anggota</h3><p>${escapeHtml(errorText)}</p></div></section>`;
+  }
+  const mv = data?.member_verification || {status:'not_submitted',photo_available:0};
+  const status = String(mv.status || 'not_submitted').toLowerCase();
+  const canReview = String(registration.status || '').toLowerCase() === 'verified' && Number(mv.photo_available || 0) === 1 && status !== 'approved';
+  const photoUrl = `${ADMIN_API_BASE}/member-verifications/${encodeURIComponent(registration.registration_id)}/photo?v=${encodeURIComponent(mv.submitted_at || Date.now())}`;
+  const submitted = mv.submitted_at ? new Date(mv.submitted_at).toLocaleString('id-ID') : '-';
+  const reviewed = mv.reviewed_at ? new Date(mv.reviewed_at).toLocaleString('id-ID') : '-';
+  return `
+    <section class="member-review-card" data-member-status="${escapeHtml(status)}">
+      <div class="member-review-head">
+        <div><span class="member-review-kicker">VERIFIKASI ANGGOTA + FOTO</span><h3>${escapeHtml(memberVerificationLabel(status))}</h3><p>VERIFIED MEMBER aktif hanya setelah registrasi terverifikasi, foto kamera tersedia, dan review admin disetujui.</p></div>
+        <span class="member-review-status member-review-status--${escapeHtml(status)}">${escapeHtml(memberVerificationLabel(status))}</span>
+      </div>
+      <div class="member-review-grid">
+        <div class="member-photo-admin-wrap">
+          ${Number(mv.photo_available || 0) === 1 ? `<img class="member-photo-admin" data-member-photo-url="${escapeHtml(photoUrl)}" alt="Foto anggota ${escapeHtml(registration.nama || '')}" hidden><div class="member-photo-empty member-photo-loading">Memuat foto anggota...</div>` : `<div class="member-photo-empty">Foto anggota belum direkam.</div>`}
+        </div>
+        <div class="member-review-info">
+          <dl>
+            <div><dt>Status registrasi</dt><dd>${escapeHtml(formatAdminStatus(registration.status))}</dd></div>
+            <div><dt>Status anggota</dt><dd>${escapeHtml(memberVerificationLabel(status))}</dd></div>
+            <div><dt>Dikirim</dt><dd>${escapeHtml(submitted)}</dd></div>
+            <div><dt>Direview</dt><dd>${escapeHtml(reviewed)}</dd></div>
+            <div><dt>Reviewer</dt><dd>${escapeHtml(mv.reviewed_by || '-')}</dd></div>
+          </dl>
+          ${mv.review_note ? `<div class="member-review-existing-note"><strong>Catatan review terakhir</strong><p>${escapeHtml(mv.review_note)}</p></div>` : ''}
+          ${canReview ? `
+            <label class="member-review-note-label">Catatan review<textarea id="memberReviewNote" maxlength="1000" placeholder="Opsional untuk approval; disarankan saat menolak foto."></textarea></label>
+            <div class="member-review-actions">
+              <button type="button" class="member-review-button member-review-approve" data-member-decision="approved">Aktifkan VERIFIED MEMBER</button>
+              <button type="button" class="member-review-button member-review-reject" data-member-decision="rejected">Tolak / Minta Rekam Ulang</button>
+            </div>` : status === 'approved' ? `<div class="member-review-approved-note">✓ VERIFIED MEMBER sudah aktif. Foto ini digunakan pada Kartu Anggota Digital.</div>` : `<div class="member-review-wait-note">Belum ada foto yang dapat direview.</div>`}
+        </div>
+      </div>
+    </section>`;
+}
+
+async function hydrateMemberVerificationPhotos(container) {
+  const images = [...container.querySelectorAll('img[data-member-photo-url]')];
+  for (const image of images) {
+    const url = image.dataset.memberPhotoUrl || '';
+    const placeholder = image.nextElementSibling;
+    if (!url) continue;
+    try {
+      const response = await fetch(url, {
+        method:'GET',
+        credentials:'include',
+        headers:{Accept:'image/*'},
+        cache:'no-store'
+      });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const blob = await response.blob();
+      const objectUrl = URL.createObjectURL(blob);
+      image.src = objectUrl;
+      image.hidden = false;
+      if (placeholder) placeholder.remove();
+      image.onload = () => window.setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
+      image.onerror = () => { image.hidden = true; URL.revokeObjectURL(objectUrl); };
+    } catch (error) {
+      console.error('Ketahanan Pangan Admin: foto anggota gagal dimuat.', error);
+      if (placeholder) placeholder.textContent = 'Foto anggota belum dapat dimuat.';
+    }
+  }
+}
+
+async function reviewMemberVerification(registrationId, decision, reviewNote = '') {
+  const response = await fetch(
+    `${ADMIN_API_BASE}/member-verifications/${encodeURIComponent(registrationId)}/review`,
+    { method:'POST', credentials:'include', headers:{'Content-Type':'application/json','Accept':'application/json'}, body:JSON.stringify({decision,review_note:reviewNote}) }
+  );
+  let data = {};
+  try { data = await response.json(); } catch (_) {}
+  if (!response.ok || !data?.ok) throw new Error(data?.message || `HTTP ${response.status}`);
+  return data;
+}
+
 async function loadRegistrationDetail(registrationId) {
   if (isMarketingRole()) {
     showAdminToast('error', 'Akses Dibatasi', 'Role Pemasaran tidak memiliki akses ke detail identitas peserta.');
@@ -1056,6 +1151,15 @@ async function loadRegistrationDetail(registrationId) {
     } catch (error) {
       console.warn('Ketahanan Pangan Admin: riwayat perbaikan belum dapat dimuat.', error);
       revisionHistoryError = 'Riwayat perbaikan belum dapat dimuat. Detail registrasi tetap dapat diperiksa.';
+    }
+
+    let memberVerificationData = null;
+    let memberVerificationError = '';
+    try {
+      memberVerificationData = await fetchMemberVerification(registration.registration_id);
+    } catch (error) {
+      console.warn('Ketahanan Pangan Admin: verifikasi anggota belum dapat dimuat.', error);
+      memberVerificationError = error.message || 'Status verifikasi anggota belum dapat dimuat.';
     }
 
     const detailPanel =
@@ -1246,6 +1350,7 @@ async function loadRegistrationDetail(registrationId) {
           </tbody>
         </table>
       </div>
+      ${renderMemberVerificationAdminCard(registration, memberVerificationData, memberVerificationError)}
       ${renderDuplicateManagementCard(registration)}
       ${revisionHistoryError
         ? `<section class="revision-history-card revision-history-error"><strong>Riwayat Perbaikan Peserta</strong><p>${escapeHtml(revisionHistoryError)}</p></section>`
@@ -1299,6 +1404,31 @@ async function loadRegistrationDetail(registrationId) {
           );
         });
       });
+
+    await hydrateMemberVerificationPhotos(detailContent);
+
+    detailContent.querySelectorAll('.member-review-button').forEach((button) => {
+      button.addEventListener('click', async () => {
+        const decision = button.dataset.memberDecision || '';
+        const reviewNote = detailContent.querySelector('#memberReviewNote')?.value || '';
+        const label = decision === 'approved' ? 'mengaktifkan VERIFIED MEMBER' : 'menolak foto dan meminta rekam ulang';
+        if (!window.confirm(`Konfirmasi ${label} untuk ${registration.registration_id}?`)) return;
+        const buttons = [...detailContent.querySelectorAll('.member-review-button')];
+        buttons.forEach(item => item.disabled = true);
+        const original = button.textContent;
+        button.textContent = 'Memproses...';
+        try {
+          const result = await reviewMemberVerification(registration.registration_id, decision, reviewNote);
+          showAdminToast('success','Verifikasi Anggota',result.message || 'Status verifikasi anggota berhasil diperbarui.');
+          await loadRegistrationDetail(registration.registration_id);
+        } catch (error) {
+          console.error('Ketahanan Pangan Admin: review anggota gagal.', error);
+          showAdminToast('error','Verifikasi Anggota',error.message || 'Review anggota gagal diproses.');
+          buttons.forEach(item => item.disabled = false);
+          button.textContent = original;
+        }
+      });
+    });
 
     if (Number(registration.is_duplicate || 0) === 1) {
       detailContent.querySelectorAll('.status-button').forEach((button) => {
