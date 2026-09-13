@@ -165,7 +165,7 @@ async function loadStatus() {
 }
 
 function clampZoom(value) {
-  return Math.min(2, Math.max(1, Number(value) || 1));
+  return Math.min(2, Math.max(0.2, Number(value) || 1));
 }
 
 function applyZoom(value, announce = false) {
