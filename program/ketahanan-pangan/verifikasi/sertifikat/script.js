@@ -1,6 +1,7 @@
 const API_ENDPOINT =
   'https://ketahanan-pangan-registration-api.srilexbuditra.workers.dev';
 const CERTIFICATE_ENDPOINT = API_ENDPOINT + '/certificate';
+const PARTICIPANT_API = 'https://peserta-api.srilexbuditra.work';
 
 const loadingState = document.getElementById('loadingState');
 const errorState = document.getElementById('errorState');
@@ -29,6 +30,18 @@ function formatCertificateDate(value) {
     month: 'long',
     year: 'numeric'
   }).format(date);
+}
+
+async function recordParticipantMissionEvent(missionKey, registrationId) {
+  try {
+    await fetch(PARTICIPANT_API + '/missions/event', {
+      method: 'POST',
+      credentials: 'include',
+      cache: 'no-store',
+      headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
+      body: JSON.stringify({ mission_key: missionKey, registration_id: registrationId })
+    });
+  } catch (_) {}
 }
 
 function showError(message) {
@@ -174,6 +187,7 @@ async function loadCertificate() {
     }
 
     renderCertificate(data.certificate);
+    recordParticipantMissionEvent('certificate_open', registrationId);
 
     // GA4: certificate_view hanya dikirim setelah API sertifikat berhasil,
     // peserta eligible, dan sertifikat benar-benar berhasil dirender.
