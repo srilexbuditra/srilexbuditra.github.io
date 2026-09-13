@@ -4,3 +4,53 @@
 /* V12.5 — kamera depan/belakang + skala foto kepala hingga dada */
 .camera-tools{margin-top:12px;padding:13px;border:1px solid rgba(85,145,175,.34);border-radius:14px;background:rgba(2,21,33,.52);display:grid;gap:12px}.camera-facing{display:flex;align-items:center;justify-content:space-between;gap:12px}.camera-tools-label{color:#9fb8c7;font-size:10px;font-weight:850}.camera-facing-buttons{display:inline-flex;padding:3px;border:1px solid rgba(74,137,168,.42);border-radius:11px;background:#021723}.camera-choice{min-height:34px;padding:0 13px;border:0;border-radius:8px;background:transparent;color:#a9c2cf;font:inherit;font-size:10px;font-weight:900;cursor:pointer}.camera-choice.active{background:#ffbd2e;color:#251a02;box-shadow:0 6px 18px rgba(0,0,0,.18)}.camera-choice:disabled{opacity:.45;cursor:not-allowed}.camera-zoom{display:grid;gap:7px}.camera-zoom>span{display:flex;align-items:center;justify-content:space-between;gap:12px;color:#9fb8c7;font-size:10px;font-weight:850}.camera-zoom strong{color:#fff}.zoom-row{display:grid;grid-template-columns:38px 1fr 38px;align-items:center;gap:9px}.zoom-row input{width:100%;accent-color:#ffbd2e}.zoom-button{width:38px;height:36px;border:1px solid #31779a;border-radius:9px;background:rgba(4,31,49,.75);color:#fff;font:inherit;font-size:18px;font-weight:900;cursor:pointer}.camera-zoom small{color:#7898a9;font-size:9px;line-height:1.45}.camera-stage video{will-change:transform;transition:transform .16s ease}.camera-stage img{transform:none}.camera-stage[data-facing="environment"] video{transform:scale(var(--camera-zoom,1))}
 @media(max-width:560px){.camera-tools{padding:11px}.camera-facing{align-items:flex-start;flex-direction:column}.camera-facing-buttons{width:100%}.camera-choice{flex:1}.zoom-row{grid-template-columns:40px 1fr 40px}.guide{inset:6% 10% 9%}.guide-body{width:70%;height:42%}.guide span{font-size:8.5px}}
+
+
+/* V12.5.1 — perbaikan UX kamera HP: tombol Ambil Foto selalu terjangkau */
+@media (max-width:560px){
+  /* panel kontrol dibuat lebih ringkas agar area kamera tetap dominan */
+  .camera-tools{gap:9px;margin-top:10px;padding:10px}
+  .camera-facing{flex-direction:row;align-items:center;gap:8px}
+  .camera-tools-label{flex:0 0 auto}
+  .camera-facing-buttons{width:auto;flex:1}
+  .camera-choice{min-height:32px}
+  .camera-zoom{gap:5px}
+  .camera-zoom small{display:none}
+  .zoom-row{grid-template-columns:36px 1fr 36px;gap:7px}
+  .zoom-button{width:36px;height:34px}
+
+  /* ketika kamera hidup, Ambil Foto menjadi action bar tetap di bawah layar.
+     Jadi pengguna dapat melihat seluruh bingkai foto tanpa harus menggulir
+     sampai tombol keluar dari viewport. */
+  .camera-panel.camera-live{padding-bottom:92px}
+  .camera-panel.camera-live .controls{
+    position:fixed;
+    left:12px;
+    right:12px;
+    bottom:max(12px, env(safe-area-inset-bottom));
+    z-index:60;
+    display:block;
+    margin:0;
+    padding:7px;
+    border:1px solid rgba(91,154,184,.44);
+    border-radius:16px;
+    background:rgba(2,20,31,.88);
+    box-shadow:0 12px 38px rgba(0,0,0,.42);
+    backdrop-filter:blur(12px);
+    -webkit-backdrop-filter:blur(12px);
+  }
+  .camera-panel.camera-live #captureBtn{
+    display:flex;
+    width:100%;
+    min-height:54px;
+    border-radius:12px;
+    font-size:13px;
+  }
+  .camera-panel.camera-live #openCameraBtn,
+  .camera-panel.camera-live #retakeBtn{display:none!important}
+
+  /* browser HP dengan toolbar dinamis lebih stabil memakai dvh/svh. */
+  @supports (height:100dvh){
+    .camera-panel.camera-live .camera-stage{scroll-margin-top:78px}
+  }
+}

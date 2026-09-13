@@ -3,6 +3,7 @@ const video = document.getElementById('cameraVideo');
 const preview = document.getElementById('photoPreview');
 const canvas = document.getElementById('captureCanvas');
 const cameraStage = document.getElementById('cameraStage');
+const cameraPanel = document.querySelector('.camera-panel');
 const cameraTools = document.getElementById('cameraTools');
 const empty = document.getElementById('cameraEmpty');
 const openBtn = document.getElementById('openCameraBtn');
@@ -30,6 +31,15 @@ let activeFacingMode = 'user';
 let zoomLevel = 1;
 let cameraCount = 0;
 
+
+function setCameraLive(active) {
+  const isLive = Boolean(active);
+  cameraPanel?.classList.toggle('camera-live', isLive);
+  document.body.classList.toggle('member-camera-live', isLive);
+  // Saat kamera aktif tombol Buka Kamera tidak diperlukan dan hanya memakan ruang layar HP.
+  if (openBtn) openBtn.hidden = isLive;
+}
+
 function setMessage(type, text) {
   message.className = 'message ' + (type || '');
   message.textContent = text || '';
@@ -44,6 +54,8 @@ function revokePreviewUrl() {
 function beginSuccessRedirect(seconds = 5) {
   if (redirectTimer) window.clearInterval(redirectTimer);
   stopCamera();
+  setCameraLive(false);
+  openBtn.hidden = true;
   openBtn.disabled = true;
   captureBtn.disabled = true;
   retakeBtn.disabled = true;
@@ -213,6 +225,7 @@ async function openCamera(requestedFacing = facingMode) {
     preview.hidden = true;
     video.hidden = false;
     cameraTools.hidden = false;
+    setCameraLive(true);
     captureBtn.disabled = false;
     retakeBtn.hidden = true;
     capturedBlob = null;
@@ -220,6 +233,8 @@ async function openCamera(requestedFacing = facingMode) {
     setMessage('success', `Kamera ${activeFacingMode === 'user' ? 'depan' : 'belakang'} aktif. Atur skala lalu posisikan kepala hingga dada di dalam panduan.`);
   } catch (error) {
     console.error('Kamera gagal dibuka:', error);
+    setCameraLive(false);
+    openBtn.hidden = false;
     setMessage('error','Kamera tidak dapat dibuka. Pastikan izin kamera diberikan pada browser. Jika satu kamera gagal, coba pilih kamera lainnya.');
   }
 }
@@ -277,6 +292,8 @@ function capturePhoto() {
     preview.hidden = false;
     video.hidden = true;
     stopCamera();
+    setCameraLive(false);
+    openBtn.hidden = true;
     cameraTools.hidden = true;
     captureBtn.disabled = true;
     retakeBtn.hidden = false;
@@ -323,6 +340,8 @@ consentCheck.addEventListener('change',()=>{ submitBtn.disabled = !capturedBlob 
 submitBtn.addEventListener('click',submitPhoto);
 window.addEventListener('pagehide',()=>{ stopCamera(); revokePreviewUrl(); });
 window.addEventListener('beforeunload',()=>{ stopCamera(); revokePreviewUrl(); });
+setCameraLive(false);
+openBtn.hidden = false;
 applyZoom(1);
 updateFacingButtons();
 loadStatus();
