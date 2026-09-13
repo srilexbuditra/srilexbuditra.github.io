@@ -512,6 +512,9 @@ function renderMemberExperience(participant = {}) {
   const benefitService = document.getElementById('benefitService');
   const benefitServiceState = document.getElementById('benefitServiceState');
   const benefitServiceBadge = document.getElementById('benefitServiceBadge');
+  const activityService = document.getElementById('activityService');
+  const activityServiceState = document.getElementById('activityServiceState');
+  const activityServiceBadge = document.getElementById('activityServiceBadge');
 
   if (wrap) wrap.dataset.status = s || 'pending';
   if (label) label.textContent = experience.label;
@@ -698,6 +701,15 @@ function renderMemberExperience(participant = {}) {
     benefitServiceBadge.textContent = 'AKTIF';
   }
 
+  if (activityService && activityServiceState && activityServiceBadge) {
+    activityService.href = './aktivitas/';
+    activityService.classList.add('is-active');
+    activityService.classList.remove('is-locked', 'is-roadmap');
+    activityService.setAttribute('aria-disabled', 'false');
+    activityServiceState.textContent = 'Lihat agenda resmi, status pendaftaran, kehadiran terverifikasi, dan riwayat aktivitas.';
+    activityServiceBadge.textContent = 'AKTIF';
+  }
+
 }
 
 let engagementCardsRequest = 0;
@@ -718,6 +730,8 @@ async function refreshEngagementCards() {
     const referralServiceBadge = document.getElementById('referralServiceBadge');
     const benefitServiceState = document.getElementById('benefitServiceState');
     const benefitServiceBadge = document.getElementById('benefitServiceBadge');
+    const activityServiceState = document.getElementById('activityServiceState');
+    const activityServiceBadge = document.getElementById('activityServiceBadge');
     if (pointsServiceState) pointsServiceState.textContent = `${totalPoints} Total Poin · Level ${levelInfo.level} ${levelInfo.name}.`;
     if (pointsServiceBadge) pointsServiceBadge.textContent = `${totalPoints} POIN`;
     const completed = Number(points.completed_missions || 0);
@@ -736,6 +750,20 @@ async function refreshEngagementCards() {
         const benefit = benefitData.benefit;
         if (benefitServiceState) benefitServiceState.textContent = `${Number(benefit.unlocked_count || 0)}/${Number(benefit.total_benefits || 6)} benefit aktif · Level ${benefit.level?.level || levelInfo.level} ${benefit.level?.name || levelInfo.name}.`;
         if (benefitServiceBadge) benefitServiceBadge.textContent = `${Number(benefit.unlocked_count || 0)} AKTIF`;
+      }
+    } catch (_) {}
+    try {
+      const activityData = await request('/activity-events');
+      if (requestId === engagementCardsRequest && activityData?.activity) {
+        const activity = activityData.activity;
+        const published = Number(activity.published_events || 0);
+        const registered = Number(activity.registered_events || 0);
+        const attended = Number(activity.attended_events || 0);
+        const activityPoints = Number(activity.activity_points || 0);
+        if (activityServiceState) activityServiceState.textContent = published > 0
+          ? `${published} agenda tersedia · ${registered} terdaftar · ${attended} hadir · +${activityPoints} Poin Aktivitas.`
+          : `Belum ada agenda aktif · Riwayat dan Poin Aktivitas tetap tersimpan di server.`;
+        if (activityServiceBadge) activityServiceBadge.textContent = published > 0 ? `${published} AGENDA` : 'AKTIF';
       }
     } catch (_) {}
   } catch (_) {
