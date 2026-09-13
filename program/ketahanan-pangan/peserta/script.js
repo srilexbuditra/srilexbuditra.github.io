@@ -524,6 +524,9 @@ function renderMemberExperience(participant = {}) {
   const profileService = document.getElementById('profileService');
   const profileServiceState = document.getElementById('profileServiceState');
   const profileServiceBadge = document.getElementById('profileServiceBadge');
+  const securityService = document.getElementById('securityService');
+  const securityServiceState = document.getElementById('securityServiceState');
+  const securityServiceBadge = document.getElementById('securityServiceBadge');
 
   if (wrap) wrap.dataset.status = s || 'pending';
   if (label) label.textContent = experience.label;
@@ -744,6 +747,15 @@ function renderMemberExperience(participant = {}) {
     profileService.setAttribute('aria-disabled', 'false');
     profileServiceState.textContent = 'Lihat profil, atur preferensi notifikasi, perbarui password, dan cek riwayat aktivitas singkat.';
     profileServiceBadge.textContent = 'AKTIF';
+  }
+
+  if (securityService && securityServiceState && securityServiceBadge) {
+    securityService.href = './keamanan/';
+    securityService.classList.add('is-active');
+    securityService.classList.remove('is-locked', 'is-roadmap');
+    securityService.setAttribute('aria-disabled', 'false');
+    securityServiceState.textContent = 'Lihat perangkat aktif, riwayat login, dan keluarkan sesi perangkat lain dengan aman.';
+    securityServiceBadge.textContent = 'AKTIF';
   }
 
 }
