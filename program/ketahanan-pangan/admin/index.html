@@ -57,7 +57,7 @@
   <meta itemprop="inLanguage" content="id-ID">
 
   <link rel="stylesheet" href="./style.css?v=17.15.0">
-  <link rel="stylesheet" href="./style-verifikasi-tambahan.css?v=12.5">
+  <link rel="stylesheet" href="./style-verifikasi-tambahan.css?v=12.6">
 </head>
 <body>
     <header class="top">
@@ -325,6 +325,44 @@
         <article><small>Terverifikasi</small><strong>—</strong><span>Status verified</span></article>
         <article><small>Perlu Tindakan</small><strong>—</strong><span>Perbaikan / ditolak</span></article>
       </section>
+      <section id="photoStatusOverview" class="status-overview photo-status-overview" aria-labelledby="photoStatusOverviewTitle">
+        <div class="status-overview-head">
+          <div>
+            <span class="eyebrow">STATUS PEMERIKSAAN DATA</span>
+            <h2 id="photoStatusOverviewTitle">Ringkasan Status Peserta Rekam Foto</h2>
+            <p>Pantau antrean verifikasi foto anggota agar admin dan tim langsung mengetahui foto yang baru masuk, sedang diperiksa, perlu diperbaiki, atau sudah terverifikasi.</p>
+          </div>
+          <div class="status-progress-card" aria-live="polite">
+            <div class="status-progress-copy">
+              <span>Progres Foto Terverifikasi</span>
+              <strong id="photoVerifiedPercent">0%</strong>
+            </div>
+            <progress id="photoVerificationProgress" max="100" value="0">0%</progress>
+            <small id="photoProgressText">0 dari 0 foto terverifikasi</small>
+          </div>
+        </div>
+
+        <div class="photo-kpi-grid" aria-label="Ringkasan foto anggota">
+          <article class="photo-kpi-card photo-kpi-card--total"><small>Total Registrasi Foto</small><strong id="photoKpiTotal">0</strong><span>Peserta yang sudah mengirim foto</span></article>
+          <article class="photo-kpi-card photo-kpi-card--waiting"><small>Menunggu Verifikasi Foto</small><strong id="photoKpiWaiting">0</strong><span>Menunggu / diperiksa / pemeriksaan ulang</span></article>
+          <article class="photo-kpi-card photo-kpi-card--verified"><small>Foto Terverifikasi</small><strong id="photoKpiVerified">0</strong><span>VERIFIED MEMBER aktif</span></article>
+          <article class="photo-kpi-card photo-kpi-card--action"><small>Perlu Tindakan</small><strong id="photoKpiAction">0</strong><span>Perbaikan / ditolak / tindakan admin</span></article>
+        </div>
+
+        <div class="status-quick-grid photo-status-grid" aria-label="Status pemeriksaan foto anggota">
+          <article class="status-quick-card status-quick-card--waiting"><span class="status-quick-icon" aria-hidden="true">⏳</span><span><small>Menunggu Verifikasi</small><strong id="photoStatusPending">0</strong></span></article>
+          <article class="status-quick-card status-quick-card--checking"><span class="status-quick-icon" aria-hidden="true">⌕</span><span><small>Pemeriksaan Foto</small><strong id="photoStatusReviewing">0</strong></span></article>
+          <article class="status-quick-card status-quick-card--recheck"><span class="status-quick-icon" aria-hidden="true">↻</span><span><small>Pemeriksaan Ulang</small><strong id="photoStatusResubmitted">0</strong></span></article>
+          <article class="status-quick-card status-quick-card--verified"><span class="status-quick-icon" aria-hidden="true">✓</span><span><small>Terverifikasi</small><strong id="photoStatusApproved">0</strong></span></article>
+          <article class="status-quick-card status-quick-card--revision"><span class="status-quick-icon" aria-hidden="true">✎</span><span><small>Perlu Perbaikan</small><strong id="photoStatusRevision">0</strong></span></article>
+          <article class="status-quick-card status-quick-card--rejected"><span class="status-quick-icon" aria-hidden="true">×</span><span><small>Ditolak</small><strong id="photoStatusRejected">0</strong></span></article>
+          <article class="status-quick-card status-quick-card--action"><span class="status-quick-icon" aria-hidden="true">!</span><span><small>Perlu Tindakan</small><strong id="photoStatusNeedsAction">0</strong></span></article>
+        </div>
+        <div class="status-overview-foot">
+          <span id="photoStatusMeta">Ringkasan foto akan dimuat setelah admin terhubung.</span>
+          <button type="button" id="photoStatusRefresh" class="status-quick-clear">↻ Perbarui Status Foto</button>
+        </div>
+      </section>
       <section id="statusOverview" class="status-overview" aria-labelledby="statusOverviewTitle">
         <div class="status-overview-head">
           <div>
@@ -549,6 +587,6 @@
     <script src="./local-qrcode.js?v=1" defer></script>
     <script src="./jszip.min.js?v=1" defer></script>
     <script src="./excel-engine-template.js?v=45" defer></script>
-    <script src="./script-a4-v45.js?v=17.15.2" defer></script>
+    <script src="./script-a4-v45.js?v=17.16.0" defer></script>
   </body>
 </html>

@@ -24,3 +24,25 @@
 
 /* V12.5 — foto verifikasi selalu mengambil versi terbaru */
 .member-photo-refresh-button{width:100%;margin-top:9px;min-height:38px;border:1px solid #c8d8cf;border-radius:10px;background:#f7fbf8;color:#236242;font:inherit;font-size:.7rem;font-weight:900;cursor:pointer}.member-photo-refresh-button:hover{background:#edf7f0}.member-photo-refresh-button:disabled{opacity:.6;cursor:wait}.member-photo-fresh-note{display:block;margin-top:6px;color:#78877e;font-size:.63rem;line-height:1.45}.member-photo-admin{background:#eef3ef}
+
+
+/* V12.6 — Ringkasan status verifikasi foto anggota */
+.photo-status-overview{margin-top:18px}
+.photo-kpi-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:16px 0 12px}
+.photo-kpi-card{min-height:104px;padding:15px 16px;border:1px solid #dce8e0;border-radius:16px;background:#fff;box-shadow:0 8px 22px rgba(18,63,43,.045)}
+.photo-kpi-card small{display:block;font-size:.68rem;font-weight:900;letter-spacing:.02em;color:#66776d}
+.photo-kpi-card strong{display:block;margin:7px 0 5px;font-size:1.8rem;line-height:1;color:#173d2b}
+.photo-kpi-card span{display:block;font-size:.66rem;line-height:1.45;color:#7a887f}
+.photo-kpi-card--waiting{background:#fffaf0;border-color:#eadcae}.photo-kpi-card--verified{background:#f0faf4;border-color:#bdddc9}.photo-kpi-card--action{background:#fff5ee;border-color:#e5c9b7}
+.photo-status-grid .status-quick-card{cursor:default}
+.photo-status-grid .status-quick-card:hover{transform:none;box-shadow:none}
+.member-review-status--reviewing{background:#eaf5fb;color:#285f78}
+.member-review-status--resubmitted{background:#f0efff;color:#57538d}
+.member-review-status--revision{background:#fff4d2;color:#7c5a08}
+.member-review-status--needs_action{background:#fff0e6;color:#8d4c26}
+.member-review-process{background:#246780;color:#fff}
+.member-review-revision{background:#c78313;color:#fff}
+.member-review-action{background:#b45f2a;color:#fff}
+.member-review-hold-note{margin-top:12px;padding:12px;border-radius:12px;background:#fff7e8;color:#71580e;font-size:.75rem;line-height:1.5}
+@media(max-width:900px){.photo-kpi-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:520px){.photo-kpi-grid{grid-template-columns:1fr}.photo-kpi-card{min-height:auto}.photo-status-overview{margin-top:14px}}

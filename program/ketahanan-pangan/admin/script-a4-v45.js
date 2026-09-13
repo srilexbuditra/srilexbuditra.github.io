@@ -198,6 +198,9 @@ function applyDashboardRoleAccess(user) {
   const statusOverview = document.getElementById('statusOverview');
   if (statusOverview) statusOverview.hidden = marketing;
 
+  const photoStatusOverview = document.getElementById('photoStatusOverview');
+  if (photoStatusOverview) photoStatusOverview.hidden = marketing;
+
   const flow = document.querySelector('.flow');
   if (flow) flow.hidden = marketing;
 
@@ -426,6 +429,7 @@ if (statCards[2]) statCards[2].querySelector('strong').textContent = verified;
 if (statCards[3]) statCards[3].querySelector('strong').textContent = actionRequired;
 
 renderAdminStatusOverview(registrations);
+await loadMemberVerificationOverview();
 
 document.getElementById('adminLogin').hidden = true;
 const tableBody = document.querySelector('.table-wrap tbody');
@@ -1033,7 +1037,16 @@ async function fetchMemberVerification(registrationId) {
 
 function memberVerificationLabel(status) {
   const s = String(status || 'not_submitted').toLowerCase();
-  return ({not_submitted:'Belum direkam',pending:'Menunggu review',approved:'VERIFIED MEMBER',rejected:'Perlu rekam ulang'})[s] || s;
+  return ({
+    not_submitted:'Belum direkam',
+    pending:'Menunggu verifikasi',
+    reviewing:'Sedang proses pemeriksaan',
+    resubmitted:'Pemeriksaan ulang',
+    approved:'VERIFIED MEMBER',
+    revision:'Perlu perbaikan',
+    rejected:'Ditolak / rekam ulang',
+    needs_action:'Perlu tindakan'
+  })[s] || s;
 }
 
 function renderMemberVerificationAdminCard(registration, data, errorText = '') {
@@ -1042,7 +1055,10 @@ function renderMemberVerificationAdminCard(registration, data, errorText = '') {
   }
   const mv = data?.member_verification || {status:'not_submitted',photo_available:0};
   const status = String(mv.status || 'not_submitted').toLowerCase();
-  const canReview = String(registration.status || '').toLowerCase() === 'verified' && Number(mv.photo_available || 0) === 1 && status !== 'approved';
+  const reviewableStatuses = new Set(['pending','reviewing','resubmitted']);
+  const canReview = String(registration.status || '').toLowerCase() === 'verified' && Number(mv.photo_available || 0) === 1 && reviewableStatuses.has(status);
+  const canStartReview = canReview && status !== 'reviewing';
+  const waitingParticipant = ['revision','rejected','needs_action'].includes(status);
   const photoVersion = mv.submitted_at || mv.updated_at || Date.now();
   const photoUrl = `${ADMIN_API_BASE}/member-verifications/${encodeURIComponent(registration.registration_id)}/photo?v=${encodeURIComponent(photoVersion)}&fresh=${Date.now()}`;
   const submitted = mv.submitted_at ? new Date(mv.submitted_at).toLocaleString('id-ID') : '-';
@@ -1070,11 +1086,14 @@ function renderMemberVerificationAdminCard(registration, data, errorText = '') {
           </dl>
           ${mv.review_note ? `<div class="member-review-existing-note"><strong>Catatan review terakhir</strong><p>${escapeHtml(mv.review_note)}</p></div>` : ''}
           ${canReview ? `
-            <label class="member-review-note-label">Catatan review<textarea id="memberReviewNote" maxlength="1000" placeholder="Opsional untuk approval; disarankan saat menolak foto."></textarea></label>
+            <label class="member-review-note-label">Catatan pemeriksaan<textarea id="memberReviewNote" maxlength="1000" placeholder="Tuliskan catatan bila foto perlu diperbaiki, ditolak, atau memerlukan tindakan."></textarea></label>
             <div class="member-review-actions">
-              <button type="button" class="member-review-button member-review-approve" data-member-decision="approved">Aktifkan VERIFIED MEMBER</button>
-              <button type="button" class="member-review-button member-review-reject" data-member-decision="rejected">Tolak / Minta Rekam Ulang</button>
-            </div>` : status === 'approved' ? `<div class="member-review-approved-note">✓ VERIFIED MEMBER sudah aktif. Foto ini digunakan pada Kartu Anggota Digital.</div>` : `<div class="member-review-wait-note">Belum ada foto yang dapat direview.</div>`}
+              ${canStartReview ? `<button type="button" class="member-review-button member-review-process" data-member-decision="reviewing">Sedang Proses Pemeriksaan</button>` : `<button type="button" class="member-review-button member-review-process" disabled>✓ Sedang Diperiksa</button>`}
+              <button type="button" class="member-review-button member-review-approve" data-member-decision="approved">Verifikasi Foto</button>
+              <button type="button" class="member-review-button member-review-revision" data-member-decision="revision">Minta Perbaikan</button>
+              <button type="button" class="member-review-button member-review-reject" data-member-decision="rejected">Tolak Foto</button>
+              <button type="button" class="member-review-button member-review-action" data-member-decision="needs_action">Perlu Tindakan</button>
+            </div>` : status === 'approved' ? `<div class="member-review-approved-note">✓ VERIFIED MEMBER sudah aktif. Foto ini digunakan pada Kartu Anggota Digital.</div>` : waitingParticipant ? `<div class="member-review-hold-note">Menunggu peserta menindaklanjuti catatan admin dan mengirim foto perbaikan. Setelah foto baru dikirim, status otomatis menjadi <strong>Pemeriksaan Ulang</strong>.</div>` : `<div class="member-review-wait-note">Belum ada foto yang dapat direview.</div>`}
         </div>
       </div>
     </section>`;
@@ -1457,7 +1476,14 @@ async function loadRegistrationDetail(registrationId) {
       button.addEventListener('click', async () => {
         const decision = button.dataset.memberDecision || '';
         const reviewNote = detailContent.querySelector('#memberReviewNote')?.value || '';
-        const label = decision === 'approved' ? 'mengaktifkan VERIFIED MEMBER' : 'menolak foto dan meminta rekam ulang';
+        const decisionLabels = {
+          reviewing: 'menandai foto sedang dalam proses pemeriksaan',
+          approved: 'memverifikasi foto dan mengaktifkan VERIFIED MEMBER',
+          revision: 'meminta peserta memperbaiki foto',
+          rejected: 'menolak foto dan meminta rekam ulang',
+          needs_action: 'menandai foto memerlukan tindakan'
+        };
+        const label = decisionLabels[decision] || 'memperbarui status foto';
         if (!window.confirm(`Konfirmasi ${label} untuk ${registration.registration_id}?`)) return;
         const buttons = [...detailContent.querySelectorAll('.member-review-button')];
         buttons.forEach(item => item.disabled = true);
@@ -1467,6 +1493,7 @@ async function loadRegistrationDetail(registrationId) {
           const result = await reviewMemberVerification(registration.registration_id, decision, reviewNote);
           showAdminToast('success','Verifikasi Anggota',result.message || 'Status verifikasi anggota berhasil diperbarui.');
           await loadRegistrationDetail(registration.registration_id);
+          await loadMemberVerificationOverview();
         } catch (error) {
           console.error('Ketahanan Pangan Admin: review anggota gagal.', error);
           showAdminToast('error','Verifikasi Anggota',error.message || 'Review anggota gagal diproses.');
@@ -2616,6 +2643,88 @@ function initAdminParticipantFilters(registrations, options = {}) {
   setTimeout(() => applyAdminParticipantFilters({ preservePage: Boolean(options.preservePage) }), 0);
 }
 
+
+// =========================================================
+// V12.6 — RINGKASAN STATUS PEMERIKSAAN FOTO ANGGOTA
+// Menggunakan endpoint /member-verifications milik Admin API.
+// =========================================================
+const MEMBER_PHOTO_STATUS_ITEMS = [
+  ['pending','photoStatusPending'],
+  ['reviewing','photoStatusReviewing'],
+  ['resubmitted','photoStatusResubmitted'],
+  ['approved','photoStatusApproved'],
+  ['revision','photoStatusRevision'],
+  ['rejected','photoStatusRejected'],
+  ['needs_action','photoStatusNeedsAction']
+];
+
+async function loadMemberVerificationOverview() {
+  const section = document.getElementById('photoStatusOverview');
+  if (!section || isMarketingRole()) return;
+  const meta = document.getElementById('photoStatusMeta');
+  try {
+    if (meta) meta.textContent = 'Memuat ringkasan foto anggota…';
+    const response = await fetch(`${ADMIN_API_BASE}/member-verifications?_=${Date.now()}`, {
+      method:'GET', credentials:'include', headers:{Accept:'application/json'}, cache:'no-store'
+    });
+    let data = {};
+    try { data = await response.json(); } catch (_) {}
+    if (!response.ok || !data?.ok) throw new Error(data?.message || `HTTP ${response.status}`);
+    const rows = Array.isArray(data.member_verifications) ? data.member_verifications : [];
+    window.KETAHANAN_PANGAN_MEMBER_VERIFICATIONS = rows;
+    renderMemberVerificationOverview(rows);
+  } catch (error) {
+    console.warn('Ketahanan Pangan Admin: ringkasan foto belum dapat dimuat.', error);
+    if (meta) meta.textContent = 'Ringkasan foto belum dapat dimuat. Gunakan tombol Perbarui Status Foto untuk mencoba kembali.';
+  }
+}
+
+function renderMemberVerificationOverview(rows) {
+  const list = Array.isArray(rows) ? rows : [];
+  const counts = Object.fromEntries(MEMBER_PHOTO_STATUS_ITEMS.map(([status]) => [status,0]));
+  list.forEach((item) => {
+    const status = String(item?.status || 'pending').toLowerCase();
+    if (Object.prototype.hasOwnProperty.call(counts,status)) counts[status] += 1;
+  });
+  MEMBER_PHOTO_STATUS_ITEMS.forEach(([status,id]) => {
+    const node = document.getElementById(id);
+    if (node) node.textContent = counts[status] || 0;
+  });
+  const total = list.length;
+  const waiting = (counts.pending||0) + (counts.reviewing||0) + (counts.resubmitted||0);
+  const verified = counts.approved || 0;
+  const action = (counts.revision||0) + (counts.rejected||0) + (counts.needs_action||0);
+  const percent = total ? Math.round((verified/total)*100) : 0;
+  const setText = (id,value) => { const node=document.getElementById(id); if(node) node.textContent=String(value); };
+  setText('photoKpiTotal',total);
+  setText('photoKpiWaiting',waiting);
+  setText('photoKpiVerified',verified);
+  setText('photoKpiAction',action);
+  setText('photoVerifiedPercent',`${percent}%`);
+  const progress = document.getElementById('photoVerificationProgress');
+  if (progress) { progress.value=percent; progress.textContent=`${percent}%`; progress.setAttribute('aria-label',`Progres foto terverifikasi ${percent} persen`); }
+  setText('photoProgressText',`${verified} dari ${total} foto terverifikasi`);
+  const meta = document.getElementById('photoStatusMeta');
+  if (meta) meta.textContent = total
+    ? `${total} peserta sudah memiliki rekaman foto · ${waiting} menunggu pemeriksaan · ${action} perlu tindakan.`
+    : 'Belum ada peserta yang mengirim foto verifikasi anggota.';
+}
+
+function initMemberVerificationOverviewRefresh() {
+  const button = document.getElementById('photoStatusRefresh');
+  if (!button || button.dataset.ready) return;
+  button.dataset.ready='1';
+  button.addEventListener('click', async () => {
+    const original=button.textContent;
+    button.disabled=true;
+    button.textContent='Memperbarui…';
+    try { await loadMemberVerificationOverview(); showAdminToast('success','Status Foto','Ringkasan verifikasi foto telah diperbarui.'); }
+    catch (_) {}
+    finally { button.disabled=false; button.textContent=original; }
+  });
+}
+
+document.addEventListener('DOMContentLoaded', initMemberVerificationOverviewRefresh);
 
 // =========================================================
 // V3.5 — RINGKASAN STATUS PEMERIKSAAN + FILTER CEPAT
