@@ -54,3 +54,58 @@
     .camera-panel.camera-live .camera-stage{scroll-margin-top:78px}
   }
 }
+
+
+/* V12.5.3 — slider skala foto HP 0.2x–2.0x, drag stabil di Android */
+.zoom-row #zoomRange{
+  -webkit-appearance:none;
+  appearance:none;
+  width:100%;
+  height:38px;
+  margin:0;
+  padding:0;
+  border:0;
+  outline:0;
+  background:transparent;
+  cursor:pointer;
+  touch-action:none;
+  -webkit-tap-highlight-color:transparent;
+}
+.zoom-row #zoomRange::-webkit-slider-runnable-track{
+  height:7px;
+  border:1px solid rgba(173,191,200,.72);
+  border-radius:999px;
+  background:rgba(255,255,255,.28);
+}
+.zoom-row #zoomRange::-webkit-slider-thumb{
+  -webkit-appearance:none;
+  appearance:none;
+  width:28px;
+  height:28px;
+  margin-top:-11px;
+  border:2px solid #ffbd2e;
+  border-radius:50%;
+  background:#ffbd2e;
+  box-shadow:0 2px 9px rgba(0,0,0,.28);
+}
+.zoom-row #zoomRange::-moz-range-track{
+  height:7px;
+  border:1px solid rgba(173,191,200,.72);
+  border-radius:999px;
+  background:rgba(255,255,255,.28);
+}
+.zoom-row #zoomRange::-moz-range-thumb{
+  width:28px;
+  height:28px;
+  border:2px solid #ffbd2e;
+  border-radius:50%;
+  background:#ffbd2e;
+  box-shadow:0 2px 9px rgba(0,0,0,.28);
+}
+.zoom-limits{display:flex;justify-content:space-between;margin:-5px 46px 0;color:#7898a9;font-size:8px;font-weight:800;line-height:1}
+@media(max-width:560px){
+  .zoom-row #zoomRange{height:46px}
+  .zoom-row #zoomRange::-webkit-slider-thumb{width:30px;height:30px;margin-top:-12px}
+  .zoom-row #zoomRange::-moz-range-thumb{width:30px;height:30px}
+  .zoom-limits{margin:-8px 43px 0}
+}

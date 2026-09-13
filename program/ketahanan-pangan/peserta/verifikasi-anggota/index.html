@@ -68,9 +68,10 @@
             <span><span>Skala foto</span><strong id="zoomValue">1.0×</strong></span>
             <div class="zoom-row">
               <button id="zoomOutBtn" class="zoom-button" type="button" aria-label="Perkecil tampilan kamera">−</button>
-              <input id="zoomRange" type="range" min="0.2" max="2" step="0.05" value="1" aria-label="Skala atau zoom kamera">
+              <input id="zoomRange" type="range" min="0.2" max="2" step="0.1" value="1" aria-label="Skala atau zoom kamera" aria-valuemin="0.2" aria-valuemax="2" aria-valuenow="1">
               <button id="zoomInBtn" class="zoom-button" type="button" aria-label="Perbesar tampilan kamera">+</button>
             </div>
+            <div class="zoom-limits" aria-hidden="true"><span>0.2×</span><span>2.0×</span></div>
             <small>Atur hingga kepala sampai dada pas di dalam panduan sebelum mengambil foto.</small>
           </label>
         </div>

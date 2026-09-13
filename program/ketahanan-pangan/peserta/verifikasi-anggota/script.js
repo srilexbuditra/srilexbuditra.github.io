@@ -31,6 +31,10 @@ let activeFacingMode = 'user';
 let zoomLevel = 1;
 let cameraCount = 0;
 
+const ZOOM_MIN = 0.2;
+const ZOOM_MAX = 2.0;
+const ZOOM_STEP = 0.1;
+
 
 function setCameraLive(active) {
   const isLive = Boolean(active);
@@ -165,15 +169,69 @@ async function loadStatus() {
 }
 
 function clampZoom(value) {
-  return Math.min(2, Math.max(0.2, Number(value) || 1));
+  const numeric = Number(value);
+  const safe = Number.isFinite(numeric) ? numeric : 1;
+  const clamped = Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, safe));
+  return Math.round(clamped / ZOOM_STEP) * ZOOM_STEP;
 }
 
 function applyZoom(value, announce = false) {
   zoomLevel = clampZoom(value);
-  zoomRange.value = String(zoomLevel);
+  zoomRange.value = zoomLevel.toFixed(1);
+  zoomRange.setAttribute('aria-valuenow', zoomLevel.toFixed(1));
   zoomValue.textContent = `${zoomLevel.toFixed(1)}×`;
   cameraStage.style.setProperty('--camera-zoom', String(zoomLevel));
   if (announce && stream) setMessage('success', `Skala kamera ${zoomLevel.toFixed(1)}×. Posisikan kepala hingga dada di dalam panduan.`);
+}
+
+function zoomFromPointer(clientX) {
+  const rect = zoomRange.getBoundingClientRect();
+  if (!rect.width) return;
+  const ratio = Math.min(1, Math.max(0, (clientX - rect.left) / rect.width));
+  const raw = ZOOM_MIN + ratio * (ZOOM_MAX - ZOOM_MIN);
+  applyZoom(raw);
+}
+
+function bindZoomDrag() {
+  let pointerDragging = false;
+
+  // Android/Chrome tertentu membiarkan gesture horizontal range diambil alih
+  // oleh scroll halaman. Pointer handling ini membuat seluruh track dapat
+  // digeser sampai nilai minimum 0.2x, bukan berhenti di 1.0x.
+  if (window.PointerEvent) {
+    zoomRange.addEventListener('pointerdown', (event) => {
+      pointerDragging = true;
+      try { zoomRange.setPointerCapture(event.pointerId); } catch (_) {}
+      zoomFromPointer(event.clientX);
+      event.preventDefault();
+    });
+    zoomRange.addEventListener('pointermove', (event) => {
+      if (!pointerDragging) return;
+      zoomFromPointer(event.clientX);
+      event.preventDefault();
+    });
+    const finish = (event) => {
+      if (!pointerDragging) return;
+      pointerDragging = false;
+      try { zoomRange.releasePointerCapture(event.pointerId); } catch (_) {}
+      zoomFromPointer(event.clientX);
+      event.preventDefault();
+    };
+    zoomRange.addEventListener('pointerup', finish);
+    zoomRange.addEventListener('pointercancel', () => { pointerDragging = false; });
+  } else {
+    // Fallback untuk browser HP lama yang belum mendukung PointerEvent.
+    zoomRange.addEventListener('touchstart', (event) => {
+      if (!event.touches[0]) return;
+      zoomFromPointer(event.touches[0].clientX);
+      event.preventDefault();
+    }, {passive:false});
+    zoomRange.addEventListener('touchmove', (event) => {
+      if (!event.touches[0]) return;
+      zoomFromPointer(event.touches[0].clientX);
+      event.preventDefault();
+    }, {passive:false});
+  }
 }
 
 function updateFacingButtons() {
@@ -334,8 +392,9 @@ retakeBtn.addEventListener('click',()=>openCamera(facingMode));
 frontCameraBtn.addEventListener('click',()=>chooseCamera('user'));
 backCameraBtn.addEventListener('click',()=>chooseCamera('environment'));
 zoomRange.addEventListener('input',()=>applyZoom(zoomRange.value));
-zoomOutBtn.addEventListener('click',()=>applyZoom(zoomLevel - 0.1, true));
-zoomInBtn.addEventListener('click',()=>applyZoom(zoomLevel + 0.1, true));
+bindZoomDrag();
+zoomOutBtn.addEventListener('click',()=>applyZoom(zoomLevel - ZOOM_STEP, true));
+zoomInBtn.addEventListener('click',()=>applyZoom(zoomLevel + ZOOM_STEP, true));
 consentCheck.addEventListener('change',()=>{ submitBtn.disabled = !capturedBlob || !consentCheck.checked || currentStatus === 'approved'; });
 submitBtn.addEventListener('click',submitPhoto);
 window.addEventListener('pagehide',()=>{ stopCamera(); revokePreviewUrl(); });
