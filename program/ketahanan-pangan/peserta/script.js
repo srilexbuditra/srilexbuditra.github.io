@@ -509,6 +509,9 @@ function renderMemberExperience(participant = {}) {
   const referralService = document.getElementById('referralService');
   const referralServiceState = document.getElementById('referralServiceState');
   const referralServiceBadge = document.getElementById('referralServiceBadge');
+  const benefitService = document.getElementById('benefitService');
+  const benefitServiceState = document.getElementById('benefitServiceState');
+  const benefitServiceBadge = document.getElementById('benefitServiceBadge');
 
   if (wrap) wrap.dataset.status = s || 'pending';
   if (label) label.textContent = experience.label;
@@ -684,6 +687,17 @@ function renderMemberExperience(participant = {}) {
     referralServiceBadge.textContent = memberApproved ? 'AKTIF' : 'TERKUNCI';
   }
 
+  if (benefitService && benefitServiceState && benefitServiceBadge) {
+    benefitService.href = './benefit/';
+    benefitService.classList.add('is-active');
+    benefitService.classList.remove('is-locked', 'is-roadmap');
+    benefitService.setAttribute('aria-disabled', 'false');
+    benefitServiceState.textContent = memberApproved
+      ? 'Lihat hak akses yang terbuka berdasarkan level, total poin, dan VERIFIED MEMBER.'
+      : 'Lihat benefit dasar dan syarat untuk membuka akses berikutnya.';
+    benefitServiceBadge.textContent = 'AKTIF';
+  }
+
 }
 
 let engagementCardsRequest = 0;
@@ -702,6 +716,8 @@ async function refreshEngagementCards() {
     const missionServiceBadge = document.getElementById('missionServiceBadge');
     const referralServiceState = document.getElementById('referralServiceState');
     const referralServiceBadge = document.getElementById('referralServiceBadge');
+    const benefitServiceState = document.getElementById('benefitServiceState');
+    const benefitServiceBadge = document.getElementById('benefitServiceBadge');
     if (pointsServiceState) pointsServiceState.textContent = `${totalPoints} Total Poin · Level ${levelInfo.level} ${levelInfo.name}.`;
     if (pointsServiceBadge) pointsServiceBadge.textContent = `${totalPoints} POIN`;
     const completed = Number(points.completed_missions || 0);
@@ -714,6 +730,14 @@ async function refreshEngagementCards() {
     const referralRegistrations = Number(points.referral_registrations || 0);
     if (referralServiceState && referralRegistrations > 0) referralServiceState.textContent = `${referralRegistrations} pendaftaran referral · ${verifiedReferrals} terverifikasi · +${referralPoints} Poin Referral.`;
     if (referralServiceBadge && verifiedReferrals > 0) referralServiceBadge.textContent = `${verifiedReferrals} VERIFIED`;
+    try {
+      const benefitData = await request('/benefits');
+      if (requestId === engagementCardsRequest && benefitData?.benefit) {
+        const benefit = benefitData.benefit;
+        if (benefitServiceState) benefitServiceState.textContent = `${Number(benefit.unlocked_count || 0)}/${Number(benefit.total_benefits || 6)} benefit aktif · Level ${benefit.level?.level || levelInfo.level} ${benefit.level?.name || levelInfo.name}.`;
+        if (benefitServiceBadge) benefitServiceBadge.textContent = `${Number(benefit.unlocked_count || 0)} AKTIF`;
+      }
+    } catch (_) {}
   } catch (_) {
     // V12.8 fallback tetap dipertahankan bila endpoint engagement belum tersedia.
   }
