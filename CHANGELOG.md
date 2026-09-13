@@ -431,3 +431,20 @@ Dokumen ini menggunakan dua riwayat versi agar nomor versi website utama tidak t
 - Added statistik agregat referral tanpa mengekspos identitas peserta yang diundang.
 - Changed Total Poin menjadi Poin Dasar + Poin Misi + Poin Referral.
 - Preserved Kartu Anggota + QR, safe-area 5 mm, foto anggota, sertifikat, dan modul admin.
+
+## V13.3.0 — Marketplace & Ekosistem Peserta
+
+- Added halaman `peserta/marketplace/` sebagai katalog resmi dan pencatatan minat.
+- Added endpoint Marketplace server-side tanpa checkout/pembayaran otomatis.
+- Added syarat Level dan VERIFIED MEMBER untuk akses item katalog.
+- Preserved seluruh modul engagement dan identitas digital yang sudah stabil.
+
+## V13.4.0 — Notifikasi & Informasi Peserta
+
+- Added halaman `peserta/notifikasi/` sebagai pusat pemberitahuan peserta.
+- Added endpoint `GET /notifications` dan `POST /notifications/read`.
+- Added penyimpanan status dibaca di D1 melalui `participant_notifications`.
+- Added fondasi `participant_announcements` untuk informasi program pada tahap berikutnya.
+- Added notifikasi otomatis untuk registrasi terverifikasi, VERIFIED MEMBER, ledger poin, benefit, event, dan katalog Marketplace.
+- Added badge jumlah notifikasi belum dibaca pada Dashboard Peserta.
+- Preserved Kartu Anggota + QR, safe-area 5 mm, Sertifikat, Misi, Referral, Benefit, Aktivitas/Event, Marketplace, dan fungsi Admin existing.
