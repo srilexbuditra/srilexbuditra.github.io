@@ -12,7 +12,8 @@ Tujuan arsitektur folder adalah menjaga layanan peserta, administrasi, dokumenta
 | Registrasi | `/program/ketahanan-pangan/registrasi/` | Pendaftaran dan pendataan peserta/usaha tani. |
 | Verifikasi | `/program/ketahanan-pangan/verifikasi/` | Pemeriksaan status pendaftaran. |
 | Akun Peserta | `/program/ketahanan-pangan/peserta/` | Aktivasi/login dan Dashboard Peserta V2. |
-| Kartu Anggota Digital | `/program/ketahanan-pangan/peserta/kartu/` | Kartu anggota + QR untuk peserta terverifikasi; authenticated/noindex. |
+| Verifikasi Anggota + Foto | `/program/ketahanan-pangan/peserta/verifikasi-anggota/` | Rekam foto kamera untuk review manual VERIFIED MEMBER; authenticated/noindex. |
+| Kartu Anggota Digital | `/program/ketahanan-pangan/peserta/kartu/` | Kartu anggota + QR hanya setelah member verification disetujui; authenticated/noindex. |
 | Sertifikat Publik | `/program/ketahanan-pangan/verifikasi/sertifikat/` | Verifikasi sertifikat peserta melalui route publik. |
 | Dokumentasi | `/program/ketahanan-pangan/dokumentasi/` | Dokumentasi publik sistem/program. |
 | Admin | `/program/ketahanan-pangan/admin/` | Area administrasi; bukan konten publik untuk indexing. |
@@ -73,4 +74,4 @@ Roadmap tingkat website/program dikelola pada:
 
 `/ROADMAP-SRILEXBUDITRA-2026-2027.md`
 
-Fondasi Trust & Authority, Knowledge Center, Timeline publik, dan Search Console monitoring sudah dibangun. Fase aktif saat ini adalah pengalaman anggota: **Dashboard Peserta V2 dan Kartu Anggota Digital + QR sudah aktif**, Sertifikat QR existing tetap tersedia untuk peserta terverifikasi, dan milestone berikutnya adalah Level/Poin, lalu Misi, Referral, Benefit, dan Event.
+Fondasi Trust & Authority, Knowledge Center, Timeline publik, dan Search Console monitoring sudah dibangun. Fase aktif saat ini adalah pengalaman anggota: **Dashboard Peserta V2, Verifikasi Anggota + Foto, dan Kartu Anggota Digital + QR sudah dibangun**, Sertifikat QR existing tetap tersedia untuk peserta terverifikasi. Kartu anggota aktif setelah review foto disetujui admin, dan milestone berikutnya adalah Level/Poin, lalu Misi, Referral, Benefit, dan Event.
