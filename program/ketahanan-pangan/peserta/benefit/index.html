@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>Benefit Peserta | Program Ketahanan Pangan</title>
+  <meta name="description" content="Status Benefit Peserta berdasarkan level, poin, dan VERIFIED MEMBER Program Ketahanan Pangan.">
+  <meta name="theme-color" content="#123f2b">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <link rel="canonical" href="https://srilexbuditra.work/program/ketahanan-pangan/peserta/benefit/">
+  <link rel="icon" href="/program/ketahanan-pangan/assets/brand/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="/program/ketahanan-pangan/assets/brand/apple-touch-icon.png">
+  <link rel="stylesheet" href="./style.css?v=13.1.0">
+</head>
+<body>
+<header class="topbar"><div class="wrap topbar-inner"><a class="brand" href="../">Program Ketahanan Pangan</a><nav class="topnav" aria-label="Navigasi Benefit"><a href="../poin/">Level &amp; Poin</a><a href="../">← Dashboard</a></nav></div></header>
+<main>
+  <section class="hero"><div class="wrap hero-grid"><div><span class="eyebrow">ENGAGEMENT PESERTA · TAHAP 4</span><h1>Benefit <span>Peserta</span></h1><p>Benefit dibuka bertahap berdasarkan Total Poin, Level Peserta, status registrasi, dan VERIFIED MEMBER yang diperiksa oleh server.</p></div><aside class="hero-note"><strong>Hak akses bertingkat</strong><p>Semakin lengkap verifikasi dan engagement peserta, semakin banyak status akses yang terbuka.</p></aside></div></section>
+  <section class="content"><div class="wrap">
+    <div id="loadingState" class="state-card" role="status" aria-live="polite"><span class="loader" aria-hidden="true"></span><div><strong>Menyiapkan Benefit…</strong><p>Memeriksa level, poin, dan status keanggotaan dari server.</p></div></div>
+    <div id="errorState" class="state-card state-error" hidden><span class="state-icon" aria-hidden="true">!</span><div><strong id="errorTitle">Benefit belum dapat ditampilkan</strong><p id="errorText">Silakan kembali ke Dashboard Peserta.</p></div><a class="btn primary" href="../">Kembali ke Dashboard</a></div>
+
+    <section id="benefitView" hidden>
+      <article class="summary-card">
+        <div class="summary-head"><div><span class="section-kicker">RINGKASAN AKSES</span><h2 id="participantName">Peserta</h2><p id="summaryText">Status Benefit sedang diperiksa.</p></div><span id="memberBadge" class="member-badge">PESERTA</span></div>
+        <div class="score-grid">
+          <article class="score-main"><span>Benefit Aktif</span><strong><b id="unlockedCount">0</b> / <b id="totalBenefits">6</b></strong><small>Status akses yang sudah terbuka</small></article>
+          <article><span>Total Poin</span><strong id="totalPoints">0</strong><small>Tercatat oleh server</small></article>
+          <article><span>Level Peserta</span><strong id="levelName">-</strong><small id="levelCaption">-</small></article>
+        </div>
+        <div class="next-progress"><div><strong id="nextTitle">Status level</strong><span id="nextValue">-</span></div><div class="progress-track"><span id="progressBar"></span></div><p id="nextText">Memeriksa progres level.</p></div>
+      </article>
+
+      <article class="benefit-panel">
+        <div class="panel-head"><div><span class="section-kicker">STATUS BENEFIT</span><h3>Akses yang terbuka untuk akun Anda</h3></div><span class="panel-chip">SERVER VERIFIED</span></div>
+        <p class="panel-intro">Status berikut dihitung dari data akun dan poin yang tersimpan di server. Benefit yang terkunci akan menampilkan syarat pembukanya.</p>
+        <div id="benefitList" class="benefit-list"></div>
+      </article>
+
+      <article class="policy-card">
+        <div class="policy-icon" aria-hidden="true">i</div>
+        <div><span class="section-kicker">KETENTUAN BENEFIT</span><h3>Benefit bukan janji bantuan atau hadiah</h3><p id="benefitNote">Benefit adalah status akses/eligibility di platform. Realisasi program mengikuti ketersediaan dan ketentuan program.</p></div>
+      </article>
+
+      <article class="next-card"><div class="next-icon" aria-hidden="true">◈</div><div><span class="section-kicker">ROADMAP BERIKUTNYA</span><h3>Aktivitas &amp; Event</h3><p>Tahap berikutnya dapat menghubungkan kehadiran kegiatan, edukasi, atau event resmi dengan riwayat aktivitas peserta.</p></div><span class="next-badge">NEXT</span></article>
+
+      <div class="page-actions"><a class="btn primary" href="../">← Dashboard Peserta</a><a class="btn outline" href="../poin/">Level &amp; Poin</a><a class="btn outline" href="../referral/">Referral</a></div>
+    </section>
+  </div></section>
+</main>
+<footer><div class="wrap footer-inner"><div><strong>Program Ketahanan Pangan</strong><span>Benefit Peserta</span></div><span>Status akses dihitung oleh server</span></div></footer>
+<script src="./script.js?v=13.1.0"></script><script src="/visitor-analytics.js" defer></script>
+</body>
+</html>
