@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>Verifikasi Anggota + Foto | Program Ketahanan Pangan</title>
+  <meta name="description" content="Rekam foto anggota langsung dari kamera untuk aktivasi VERIFIED MEMBER Program Ketahanan Pangan.">
+  <meta name="theme-color" content="#123f2b">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <link rel="canonical" href="https://srilexbuditra.work/program/ketahanan-pangan/peserta/verifikasi-anggota/">
+  <link rel="icon" href="/program/ketahanan-pangan/assets/brand/favicon.ico">
+  <link rel="stylesheet" href="./style.css?v=12.3">
+</head>
+<body>
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <a class="brand" href="../">Program Ketahanan Pangan</a>
+    <a class="back" href="../">← Dashboard Peserta</a>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="wrap">
+      <span class="eyebrow">VERIFIKASI IDENTITAS ANGGOTA</span>
+      <h1>Rekam Foto <span>Anggota</span></h1>
+      <p>Foto diambil langsung melalui kamera untuk kebutuhan identitas kartu anggota. Tidak dilakukan pencocokan biometrik otomatis; keputusan aktivasi VERIFIED MEMBER dilakukan melalui review admin.</p>
+    </div>
+  </section>
+
+  <section class="content">
+    <div class="wrap layout">
+      <section class="panel camera-panel" aria-labelledby="cameraTitle">
+        <div class="panel-head">
+          <div>
+            <span class="badge">KAMERA LANGSUNG</span>
+            <h2 id="cameraTitle">Foto setengah badan</h2>
+            <p>Posisikan wajah, bahu, dan badan hingga sekitar pinggang di dalam panduan. Gunakan pencahayaan cukup dan jangan memakai foto dari galeri.</p>
+          </div>
+          <span id="memberStatusBadge" class="status-pill">MEMUAT</span>
+        </div>
+
+        <div id="cameraStage" class="camera-stage">
+          <video id="cameraVideo" playsinline muted></video>
+          <img id="photoPreview" alt="Pratinjau foto anggota" hidden>
+          <div class="guide" aria-hidden="true">
+            <div class="guide-head"></div>
+            <div class="guide-body"></div>
+            <span>Posisikan kepala hingga pinggang</span>
+          </div>
+          <div id="cameraEmpty" class="camera-empty">
+            <strong>Kamera belum aktif</strong>
+            <span>Tekan “Buka Kamera” dan izinkan akses kamera pada browser.</span>
+          </div>
+        </div>
+
+        <canvas id="captureCanvas" width="900" height="1200" hidden></canvas>
+
+        <div class="controls">
+          <button id="openCameraBtn" class="btn primary" type="button">Buka Kamera</button>
+          <button id="captureBtn" class="btn primary" type="button" disabled>Ambil Foto</button>
+          <button id="retakeBtn" class="btn outline" type="button" hidden>Ulangi Foto</button>
+        </div>
+
+        <label class="consent">
+          <input id="consentCheck" type="checkbox">
+          <span>Saya menyetujui foto ini disimpan secara privat untuk verifikasi identitas anggota dan ditampilkan pada Kartu Anggota Digital setelah disetujui admin.</span>
+        </label>
+
+        <button id="submitBtn" class="btn submit" type="button" disabled>Kirim untuk Verifikasi Anggota</button>
+        <div id="message" class="message" role="status" aria-live="polite"></div>
+      </section>
+
+      <aside class="panel status-panel">
+        <span class="badge">STATUS VERIFIED MEMBER</span>
+        <h2 id="statusTitle">Memeriksa status…</h2>
+        <p id="statusText">Status foto anggota sedang dimuat dari server.</p>
+        <dl>
+          <div><dt>Status registrasi</dt><dd id="registrationStatus">-</dd></div>
+          <div><dt>Status foto anggota</dt><dd id="memberStatus">-</dd></div>
+          <div><dt>Dikirim</dt><dd id="submittedAt">-</dd></div>
+          <div><dt>Direview</dt><dd id="reviewedAt">-</dd></div>
+        </dl>
+        <div id="reviewNoteWrap" class="review-note" hidden>
+          <strong>Catatan admin</strong>
+          <p id="reviewNote">-</p>
+        </div>
+        <div class="privacy-note">
+          <strong>Privasi foto</strong>
+          <p>Foto disimpan di penyimpanan private dan tidak dimasukkan ke QR, NIK, KK, WhatsApp, atau data publik lainnya.</p>
+        </div>
+        <a id="cardLink" class="btn outline full" href="../kartu/" hidden>Buka Kartu Anggota</a>
+      </aside>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap footer-inner">
+    <strong>Program Ketahanan Pangan</strong>
+    <span>Verifikasi Anggota · srilexbuditra.work</span>
+  </div>
+</footer>
+
+<script src="./script.js?v=12.3"></script>
+<script src="/visitor-analytics.js" defer></script>
+</body>
+</html>
