@@ -18,6 +18,7 @@ let currentAdminUser = null;
 let cachedAdminUsers = null;
 let adminLoginJustCompleted = false;
 let duplicateAuditByRegistrationId = new Map();
+let memberPhotoRefreshTimer = null;
 
 
 function stripLegacyAdminTokenFromUrl() {
@@ -1021,7 +1022,7 @@ function renderRevisionHistory(revisions) {
 
 async function fetchMemberVerification(registrationId) {
   const response = await fetch(
-    `${ADMIN_API_BASE}/member-verifications/${encodeURIComponent(registrationId)}`,
+    `${ADMIN_API_BASE}/member-verifications/${encodeURIComponent(registrationId)}?_=${Date.now()}`,
     { method:'GET', credentials:'include', headers:{Accept:'application/json'}, cache:'no-store' }
   );
   let data = {};
@@ -1042,7 +1043,8 @@ function renderMemberVerificationAdminCard(registration, data, errorText = '') {
   const mv = data?.member_verification || {status:'not_submitted',photo_available:0};
   const status = String(mv.status || 'not_submitted').toLowerCase();
   const canReview = String(registration.status || '').toLowerCase() === 'verified' && Number(mv.photo_available || 0) === 1 && status !== 'approved';
-  const photoUrl = `${ADMIN_API_BASE}/member-verifications/${encodeURIComponent(registration.registration_id)}/photo?v=${encodeURIComponent(mv.submitted_at || Date.now())}`;
+  const photoVersion = mv.submitted_at || mv.updated_at || Date.now();
+  const photoUrl = `${ADMIN_API_BASE}/member-verifications/${encodeURIComponent(registration.registration_id)}/photo?v=${encodeURIComponent(photoVersion)}&fresh=${Date.now()}`;
   const submitted = mv.submitted_at ? new Date(mv.submitted_at).toLocaleString('id-ID') : '-';
   const reviewed = mv.reviewed_at ? new Date(mv.reviewed_at).toLocaleString('id-ID') : '-';
   return `
@@ -1052,8 +1054,11 @@ function renderMemberVerificationAdminCard(registration, data, errorText = '') {
         <span class="member-review-status member-review-status--${escapeHtml(status)}">${escapeHtml(memberVerificationLabel(status))}</span>
       </div>
       <div class="member-review-grid">
-        <div class="member-photo-admin-wrap">
-          ${Number(mv.photo_available || 0) === 1 ? `<img class="member-photo-admin" data-member-photo-url="${escapeHtml(photoUrl)}" alt="Foto anggota ${escapeHtml(registration.nama || '')}" hidden><div class="member-photo-empty member-photo-loading">Memuat foto anggota...</div>` : `<div class="member-photo-empty">Foto anggota belum direkam.</div>`}
+        <div>
+          <div class="member-photo-admin-wrap">
+            ${Number(mv.photo_available || 0) === 1 ? `<img class="member-photo-admin" data-member-photo-url="${escapeHtml(photoUrl)}" alt="Foto anggota ${escapeHtml(registration.nama || '')}" hidden><div class="member-photo-empty member-photo-loading">Memuat foto anggota terbaru...</div>` : `<div class="member-photo-empty">Foto anggota belum direkam.</div>`}
+          </div>
+          ${Number(mv.photo_available || 0) === 1 ? `<button type="button" class="member-photo-refresh-button" data-member-photo-refresh>↻ Muat Foto Terbaru</button><small class="member-photo-fresh-note">Foto diperbarui otomatis tanpa cache. Gunakan tombol ini bila peserta baru saja mengirim ulang foto.</small>` : ''}
         </div>
         <div class="member-review-info">
           <dl>
@@ -1075,14 +1080,16 @@ function renderMemberVerificationAdminCard(registration, data, errorText = '') {
     </section>`;
 }
 
-async function hydrateMemberVerificationPhotos(container) {
+async function hydrateMemberVerificationPhotos(container, {silent = false} = {}) {
   const images = [...container.querySelectorAll('img[data-member-photo-url]')];
   for (const image of images) {
-    const url = image.dataset.memberPhotoUrl || '';
+    const baseUrl = image.dataset.memberPhotoUrl || '';
     const placeholder = image.nextElementSibling;
-    if (!url) continue;
+    if (!baseUrl) continue;
     try {
-      const response = await fetch(url, {
+      const url = new URL(baseUrl, window.location.href);
+      url.searchParams.set('fresh', String(Date.now()));
+      const response = await fetch(url.toString(), {
         method:'GET',
         credentials:'include',
         headers:{Accept:'image/*'},
@@ -1093,14 +1100,31 @@ async function hydrateMemberVerificationPhotos(container) {
       const objectUrl = URL.createObjectURL(blob);
       image.src = objectUrl;
       image.hidden = false;
-      if (placeholder) placeholder.remove();
-      image.onload = () => window.setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
+      image.dataset.memberPhotoLoadedAt = String(Date.now());
+      if (placeholder?.classList?.contains('member-photo-loading')) placeholder.remove();
+      image.onload = () => window.setTimeout(() => URL.revokeObjectURL(objectUrl), 1200);
       image.onerror = () => { image.hidden = true; URL.revokeObjectURL(objectUrl); };
     } catch (error) {
       console.error('Ketahanan Pangan Admin: foto anggota gagal dimuat.', error);
-      if (placeholder) placeholder.textContent = 'Foto anggota belum dapat dimuat.';
+      if (!silent && placeholder) placeholder.textContent = 'Foto anggota belum dapat dimuat.';
     }
   }
+}
+
+function stopMemberPhotoAutoRefresh() {
+  if (memberPhotoRefreshTimer) {
+    window.clearInterval(memberPhotoRefreshTimer);
+    memberPhotoRefreshTimer = null;
+  }
+}
+
+function startMemberPhotoAutoRefresh(container) {
+  stopMemberPhotoAutoRefresh();
+  memberPhotoRefreshTimer = window.setInterval(() => {
+    const panel = document.getElementById('registrationDetailPanel');
+    if (document.hidden || !container?.isConnected || !panel || panel.hidden) return;
+    hydrateMemberVerificationPhotos(container, {silent:true});
+  }, 12000);
 }
 
 async function reviewMemberVerification(registrationId, decision, reviewNote = '') {
@@ -1406,6 +1430,28 @@ async function loadRegistrationDetail(registrationId) {
       });
 
     await hydrateMemberVerificationPhotos(detailContent);
+    startMemberPhotoAutoRefresh(detailContent);
+
+    detailContent.querySelectorAll('[data-member-photo-refresh]').forEach((button) => {
+      button.addEventListener('click', async () => {
+        const original = button.textContent;
+        button.disabled = true;
+        button.textContent = 'Memuat foto terbaru…';
+        try {
+          stopMemberPhotoAutoRefresh();
+          await loadRegistrationDetail(registration.registration_id);
+          showAdminToast('success','Foto Anggota','Status dan foto terbaru sudah dimuat dari server.');
+          return;
+        } catch (_) {
+          showAdminToast('error','Foto Anggota','Status atau foto terbaru belum dapat dimuat.');
+        } finally {
+          if (button.isConnected) {
+            button.disabled = false;
+            button.textContent = original;
+          }
+        }
+      });
+    });
 
     detailContent.querySelectorAll('.member-review-button').forEach((button) => {
       button.addEventListener('click', async () => {
@@ -1897,6 +1943,7 @@ if (closeDetailButton) {
       document.getElementById('registrationDetailContent');
 
     detailPanel.hidden = true;
+    stopMemberPhotoAutoRefresh();
 
     detailContent.innerHTML =
       '<p>Memuat detail registrasi...</p>';
