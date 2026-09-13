@@ -503,6 +503,9 @@ function renderMemberExperience(participant = {}) {
   const pointsService = document.getElementById('pointsService');
   const pointsServiceState = document.getElementById('pointsServiceState');
   const pointsServiceBadge = document.getElementById('pointsServiceBadge');
+  const missionService = document.getElementById('missionService');
+  const missionServiceState = document.getElementById('missionServiceState');
+  const missionServiceBadge = document.getElementById('missionServiceBadge');
 
   if (wrap) wrap.dataset.status = s || 'pending';
   if (label) label.textContent = experience.label;
@@ -658,6 +661,41 @@ function renderMemberExperience(participant = {}) {
     pointsService.setAttribute('aria-label', `Buka Level dan Poin. Saat ini ${basePoints} Poin Dasar, Level ${levelInfo.level} ${levelInfo.name}.`);
   }
 
+  if (missionService && missionServiceState && missionServiceBadge) {
+    missionService.href = './misi/';
+    missionService.classList.add('is-active');
+    missionService.classList.remove('is-locked', 'is-roadmap');
+    missionService.setAttribute('aria-disabled', 'false');
+    missionServiceState.textContent = 'Selesaikan aktivitas untuk menambah Poin Misi.';
+    missionServiceBadge.textContent = 'AKTIF';
+  }
+
+}
+
+let engagementCardsRequest = 0;
+
+async function refreshEngagementCards() {
+  const requestId = ++engagementCardsRequest;
+  try {
+    const data = await request('/points');
+    if (requestId !== engagementCardsRequest || !data?.points) return;
+    const points = data.points;
+    const totalPoints = Number(points.total_points || 0);
+    const levelInfo = getPointLevel(totalPoints);
+    const pointsServiceState = document.getElementById('pointsServiceState');
+    const pointsServiceBadge = document.getElementById('pointsServiceBadge');
+    const missionServiceState = document.getElementById('missionServiceState');
+    const missionServiceBadge = document.getElementById('missionServiceBadge');
+    if (pointsServiceState) pointsServiceState.textContent = `${totalPoints} Total Poin · Level ${levelInfo.level} ${levelInfo.name}.`;
+    if (pointsServiceBadge) pointsServiceBadge.textContent = `${totalPoints} POIN`;
+    const completed = Number(points.completed_missions || 0);
+    const total = Number(points.total_missions || 5);
+    const missionPoints = Number(points.mission_points || 0);
+    if (missionServiceState) missionServiceState.textContent = `${completed}/${total} misi selesai · +${missionPoints} Poin Misi.`;
+    if (missionServiceBadge) missionServiceBadge.textContent = `${completed}/${total} MISI`;
+  } catch (_) {
+    // V12.8 fallback tetap dipertahankan bila endpoint engagement belum tersedia.
+  }
 }
 
 function showDashboard(p) {
@@ -744,6 +782,7 @@ function showDashboard(p) {
   lastKnownParticipantStatus = s;
   lastKnownAdminNote = normalizeNoticeText(p.admin_note);
   lastKnownStatusNote = normalizeNoticeText(p.status_note);
+  refreshEngagementCards();
 }
 
 function showAuth() {
