@@ -2,25 +2,44 @@ const API = 'https://peserta-api.srilexbuditra.work';
 const video = document.getElementById('cameraVideo');
 const preview = document.getElementById('photoPreview');
 const canvas = document.getElementById('captureCanvas');
+const cameraStage = document.getElementById('cameraStage');
+const cameraTools = document.getElementById('cameraTools');
 const empty = document.getElementById('cameraEmpty');
 const openBtn = document.getElementById('openCameraBtn');
 const captureBtn = document.getElementById('captureBtn');
 const retakeBtn = document.getElementById('retakeBtn');
+const frontCameraBtn = document.getElementById('frontCameraBtn');
+const backCameraBtn = document.getElementById('backCameraBtn');
+const zoomRange = document.getElementById('zoomRange');
+const zoomValue = document.getElementById('zoomValue');
+const zoomOutBtn = document.getElementById('zoomOutBtn');
+const zoomInBtn = document.getElementById('zoomInBtn');
 const submitBtn = document.getElementById('submitBtn');
 const consentCheck = document.getElementById('consentCheck');
 const message = document.getElementById('message');
 const successRedirect = document.getElementById('successRedirect');
 const redirectCountdown = document.getElementById('redirectCountdown');
+
 let stream = null;
 let capturedBlob = null;
+let previewObjectUrl = '';
 let currentStatus = 'not_submitted';
 let redirectTimer = null;
+let facingMode = 'user';
+let activeFacingMode = 'user';
+let zoomLevel = 1;
+let cameraCount = 0;
 
 function setMessage(type, text) {
   message.className = 'message ' + (type || '');
   message.textContent = text || '';
 }
 
+function revokePreviewUrl() {
+  if (!previewObjectUrl) return;
+  try { URL.revokeObjectURL(previewObjectUrl); } catch (_) {}
+  previewObjectUrl = '';
+}
 
 function beginSuccessRedirect(seconds = 5) {
   if (redirectTimer) window.clearInterval(redirectTimer);
@@ -28,6 +47,11 @@ function beginSuccessRedirect(seconds = 5) {
   openBtn.disabled = true;
   captureBtn.disabled = true;
   retakeBtn.disabled = true;
+  frontCameraBtn.disabled = true;
+  backCameraBtn.disabled = true;
+  zoomRange.disabled = true;
+  zoomOutBtn.disabled = true;
+  zoomInBtn.disabled = true;
   submitBtn.disabled = true;
   consentCheck.disabled = true;
   if (successRedirect) successRedirect.hidden = false;
@@ -62,7 +86,9 @@ function formatDate(value) {
 }
 
 async function api(path, options = {}) {
-  const response = await fetch(API + path, {credentials:'include',cache:'no-store',...options,headers:{Accept:'application/json',...(options.headers||{})}});
+  const separator = path.includes('?') ? '&' : '?';
+  const freshPath = `${path}${separator}_=${Date.now()}`;
+  const response = await fetch(API + freshPath, {credentials:'include',cache:'no-store',...options,headers:{Accept:'application/json',...(options.headers||{})}});
   let data = {};
   try { data = await response.json(); } catch (_) {}
   if (!response.ok) throw new Error(data.message || `Permintaan gagal (HTTP ${response.status}).`);
@@ -102,15 +128,15 @@ function renderStatus(data) {
     submitBtn.disabled = true;
   } else if (currentStatus === 'pending') {
     title.textContent = 'Menunggu review admin';
-    text.textContent = 'Foto sudah diterima. Anda dapat menunggu hasil review; rekam ulang hanya bila benar-benar diperlukan sebelum disetujui.';
+    text.textContent = 'Foto terbaru sudah diterima dan menunggu pemeriksaan admin.';
     openBtn.disabled = false;
   } else if (currentStatus === 'rejected') {
     title.textContent = 'Silakan rekam ulang foto';
-    text.textContent = 'Admin meminta foto baru. Perhatikan catatan admin lalu ulangi proses kamera.';
+    text.textContent = 'Admin meminta foto baru. Perhatikan catatan admin lalu rekam ulang menggunakan kepala hingga dada.';
     openBtn.disabled = false;
   } else {
     title.textContent = 'Foto anggota belum direkam';
-    text.textContent = 'Buka kamera, ambil foto setengah badan, lalu kirim untuk review admin.';
+    text.textContent = 'Buka kamera, posisikan kepala hingga dada, lalu kirim foto untuk review admin.';
     openBtn.disabled = false;
   }
 }
@@ -126,26 +152,75 @@ async function loadStatus() {
   }
 }
 
-async function openCamera() {
-  setMessage('', '');
+function clampZoom(value) {
+  return Math.min(2, Math.max(1, Number(value) || 1));
+}
+
+function applyZoom(value, announce = false) {
+  zoomLevel = clampZoom(value);
+  zoomRange.value = String(zoomLevel);
+  zoomValue.textContent = `${zoomLevel.toFixed(1)}×`;
+  cameraStage.style.setProperty('--camera-zoom', String(zoomLevel));
+  if (announce && stream) setMessage('success', `Skala kamera ${zoomLevel.toFixed(1)}×. Posisikan kepala hingga dada di dalam panduan.`);
+}
+
+function updateFacingButtons() {
+  const isFront = facingMode === 'user';
+  frontCameraBtn.classList.toggle('active', isFront);
+  backCameraBtn.classList.toggle('active', !isFront);
+  frontCameraBtn.setAttribute('aria-pressed', isFront ? 'true' : 'false');
+  backCameraBtn.setAttribute('aria-pressed', !isFront ? 'true' : 'false');
+  const oneCamera = cameraCount === 1;
+  frontCameraBtn.disabled = oneCamera && !isFront;
+  backCameraBtn.disabled = oneCamera && isFront;
+}
+
+async function countCameras() {
   try {
+    const devices = await navigator.mediaDevices.enumerateDevices();
+    cameraCount = devices.filter(device => device.kind === 'videoinput').length;
+  } catch (_) {
+    cameraCount = 0;
+  }
+  updateFacingButtons();
+}
+
+async function openCamera(requestedFacing = facingMode) {
+  setMessage('', '');
+  if (!navigator.mediaDevices?.getUserMedia) {
+    setMessage('error','Browser ini belum mendukung akses kamera. Gunakan browser terbaru pada HP.');
+    return;
+  }
+  try {
+    facingMode = requestedFacing === 'environment' ? 'environment' : 'user';
     stopCamera();
+    revokePreviewUrl();
+    applyZoom(1);
     stream = await navigator.mediaDevices.getUserMedia({
       audio:false,
-      video:{facingMode:'user',width:{ideal:1280},height:{ideal:1600}}
+      video:{facingMode:{ideal:facingMode},width:{ideal:1280},height:{ideal:1600}}
     });
+    const track = stream.getVideoTracks()[0];
+    const settings = track?.getSettings?.() || {};
+    activeFacingMode = ['user','environment'].includes(settings.facingMode) ? settings.facingMode : facingMode;
+    facingMode = activeFacingMode;
+    cameraStage.dataset.facing = activeFacingMode;
     video.srcObject = stream;
     await video.play();
+    await countCameras();
+    updateFacingButtons();
     empty.hidden = true;
     preview.hidden = true;
     video.hidden = false;
+    cameraTools.hidden = false;
     captureBtn.disabled = false;
     retakeBtn.hidden = true;
     capturedBlob = null;
     submitBtn.disabled = true;
-    setMessage('success','Kamera aktif. Posisikan kepala hingga pinggang di dalam panduan.');
+    setMessage('success', `Kamera ${activeFacingMode === 'user' ? 'depan' : 'belakang'} aktif. Atur skala lalu posisikan kepala hingga dada di dalam panduan.`);
   } catch (error) {
-    setMessage('error','Kamera tidak dapat dibuka. Pastikan izin kamera diberikan pada browser dan perangkat memiliki kamera aktif.');
+    console.error('Kamera gagal dibuka:', error);
+    setMessage('error','Kamera tidak dapat dibuka. Pastikan izin kamera diberikan pada browser. Jika satu kamera gagal, coba pilih kamera lainnya.');
   }
 }
 
@@ -155,31 +230,58 @@ function stopCamera() {
   video.srcObject = null;
 }
 
+async function chooseCamera(mode) {
+  if (mode === facingMode && stream) return;
+  facingMode = mode;
+  updateFacingButtons();
+  await openCamera(mode);
+}
+
 function capturePhoto() {
   if (!video.videoWidth || !video.videoHeight) return;
   const targetW = 900, targetH = 1200;
   const sourceRatio = video.videoWidth / video.videoHeight;
   const targetRatio = targetW / targetH;
   let sx=0, sy=0, sw=video.videoWidth, sh=video.videoHeight;
-  if (sourceRatio > targetRatio) { sw = video.videoHeight * targetRatio; sx = (video.videoWidth - sw) / 2; }
-  else { sh = video.videoWidth / targetRatio; sy = (video.videoHeight - sh) / 2; }
+  if (sourceRatio > targetRatio) {
+    sw = video.videoHeight * targetRatio;
+    sx = (video.videoWidth - sw) / 2;
+  } else {
+    sh = video.videoWidth / targetRatio;
+    sy = (video.videoHeight - sh) / 2;
+  }
+
+  // Digital zoom follows the exact scale shown in the live preview.
+  const baseSw = sw, baseSh = sh;
+  sw = baseSw / zoomLevel;
+  sh = baseSh / zoomLevel;
+  sx += (baseSw - sw) / 2;
+  sy += (baseSh - sh) / 2;
+
   const ctx = canvas.getContext('2d');
-  canvas.width = targetW; canvas.height = targetH;
+  canvas.width = targetW;
+  canvas.height = targetH;
   ctx.save();
-  ctx.translate(targetW,0); ctx.scale(-1,1);
+  if (activeFacingMode === 'user') {
+    ctx.translate(targetW,0);
+    ctx.scale(-1,1);
+  }
   ctx.drawImage(video,sx,sy,sw,sh,0,0,targetW,targetH);
   ctx.restore();
   canvas.toBlob(blob => {
     if (!blob) { setMessage('error','Foto gagal diproses. Silakan coba lagi.'); return; }
     capturedBlob = blob;
-    preview.src = URL.createObjectURL(blob);
+    revokePreviewUrl();
+    previewObjectUrl = URL.createObjectURL(blob);
+    preview.src = previewObjectUrl;
     preview.hidden = false;
     video.hidden = true;
     stopCamera();
+    cameraTools.hidden = true;
     captureBtn.disabled = true;
     retakeBtn.hidden = false;
     submitBtn.disabled = !consentCheck.checked;
-    setMessage('success','Foto berhasil diambil. Periksa hasil foto sebelum dikirim.');
+    setMessage('success','Foto berhasil diambil. Pastikan kepala hingga dada terlihat jelas sebelum dikirim.');
   },'image/jpeg',0.88);
 }
 
@@ -190,30 +292,37 @@ async function submitPhoto() {
   submitBtn.textContent = 'Mengirim Foto…';
   try {
     const form = new FormData();
-    form.append('photo', capturedBlob, 'member-camera.jpg');
+    form.append('photo', capturedBlob, `member-camera-${Date.now()}.jpg`);
     form.append('consent','yes');
     form.append('capture_method','camera');
-    const response = await fetch(API + '/member-photo',{method:'POST',credentials:'include',body:form,cache:'no-store',headers:{Accept:'application/json'}});
+    form.append('camera_facing', activeFacingMode);
+    form.append('camera_zoom', zoomLevel.toFixed(2));
+    const response = await fetch(`${API}/member-photo?_=${Date.now()}`,{method:'POST',credentials:'include',body:form,cache:'no-store',headers:{Accept:'application/json'}});
     let data={}; try { data=await response.json(); } catch (_) {}
     if (!response.ok) throw new Error(data.message || `Gagal mengirim foto (HTTP ${response.status}).`);
-    setMessage('success',data.message || 'Foto berhasil dikirim untuk review admin.');
+    setMessage('success',data.message || 'Foto terbaru berhasil dikirim untuk review admin.');
     await loadStatus();
     beginSuccessRedirect(5);
   } catch (error) {
     setMessage('error',error.message || 'Foto belum dapat dikirim.');
   } finally {
     submitBtn.textContent = 'Kirim untuk Verifikasi Anggota';
-    if (!redirectTimer) {
-      submitBtn.disabled = !capturedBlob || !consentCheck.checked || currentStatus === 'approved';
-    }
+    if (!redirectTimer) submitBtn.disabled = !capturedBlob || !consentCheck.checked || currentStatus === 'approved';
   }
 }
 
-openBtn.addEventListener('click',openCamera);
+openBtn.addEventListener('click',()=>openCamera(facingMode));
 captureBtn.addEventListener('click',capturePhoto);
-retakeBtn.addEventListener('click',openCamera);
+retakeBtn.addEventListener('click',()=>openCamera(facingMode));
+frontCameraBtn.addEventListener('click',()=>chooseCamera('user'));
+backCameraBtn.addEventListener('click',()=>chooseCamera('environment'));
+zoomRange.addEventListener('input',()=>applyZoom(zoomRange.value));
+zoomOutBtn.addEventListener('click',()=>applyZoom(zoomLevel - 0.1, true));
+zoomInBtn.addEventListener('click',()=>applyZoom(zoomLevel + 0.1, true));
 consentCheck.addEventListener('change',()=>{ submitBtn.disabled = !capturedBlob || !consentCheck.checked || currentStatus === 'approved'; });
 submitBtn.addEventListener('click',submitPhoto);
-window.addEventListener('pagehide',stopCamera);
-window.addEventListener('beforeunload',stopCamera);
+window.addEventListener('pagehide',()=>{ stopCamera(); revokePreviewUrl(); });
+window.addEventListener('beforeunload',()=>{ stopCamera(); revokePreviewUrl(); });
+applyZoom(1);
+updateFacingButtons();
 loadStatus();
