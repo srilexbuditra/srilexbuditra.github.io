@@ -1,0 +1,6 @@
+HOTFIX V13.6.4 - Missing centralized analytics asset
+
+Upload this path to the ROOT of the GitHub repository:
+assets/js/visitor-analytics.js
+
+Do not change HTML files again. After commit, rerun GitHub Actions.
