@@ -15,6 +15,7 @@ const zoomRange = document.getElementById('zoomRange');
 const zoomValue = document.getElementById('zoomValue');
 const zoomOutBtn = document.getElementById('zoomOutBtn');
 const zoomInBtn = document.getElementById('zoomInBtn');
+const zoomHint = document.getElementById('zoomHint');
 const submitBtn = document.getElementById('submitBtn');
 const consentCheck = document.getElementById('consentCheck');
 const message = document.getElementById('message');
@@ -30,6 +31,10 @@ let facingMode = 'user';
 let activeFacingMode = 'user';
 let zoomLevel = 1;
 let cameraCount = 0;
+let cameraTrack = null;
+let nativeZoomCaps = null;
+let nativeZoomValue = 1;
+let zoomSyncTimer = null;
 
 const ZOOM_MIN = 0.2;
 const ZOOM_MAX = 2.0;
@@ -175,13 +180,69 @@ function clampZoom(value) {
   return Math.round(clamped / ZOOM_STEP) * ZOOM_STEP;
 }
 
+function updateZoomHint() {
+  if (!zoomHint) return;
+  if (zoomLevel < 1) {
+    const nativeWide = nativeZoomCaps && Number.isFinite(nativeZoomCaps.min) && nativeZoomCaps.min < 1;
+    zoomHint.textContent = nativeWide
+      ? 'Mode sudut lebar kamera digunakan tanpa mengecilkan layar. Posisikan atas kepala hingga bahu/dada di dalam panduan.'
+      : 'Layar kamera tetap penuh. Kamera ini sudah memakai sudut terlebar yang tersedia; bila kepala hingga dada belum masuk, mundurkan HP sedikit.';
+  } else if (zoomLevel > 1) {
+    zoomHint.textContent = 'Perbesar seperlunya tanpa memotong kepala atau bahu/dada dari panduan.';
+  } else {
+    zoomHint.textContent = 'Tampilan asli kamera. Posisikan bagian atas kepala hingga bahu/dada di dalam panduan.';
+  }
+}
+
+function applyPreviewZoom() {
+  // Jangan pernah mengecilkan elemen video. Nilai < 1x berarti meminta
+  // bidang pandang terlebar kamera, bukan transform: scale(<1).
+  const digitalZoom = zoomLevel > 1 ? Math.max(1, zoomLevel / Math.max(1, nativeZoomValue || 1)) : 1;
+  cameraStage.style.setProperty('--camera-zoom', String(digitalZoom));
+}
+
+async function syncNativeZoom() {
+  if (!cameraTrack || !nativeZoomCaps || !Number.isFinite(nativeZoomCaps.min) || !Number.isFinite(nativeZoomCaps.max)) {
+    nativeZoomValue = 1;
+    applyPreviewZoom();
+    updateZoomHint();
+    return;
+  }
+  const min = nativeZoomCaps.min;
+  const max = nativeZoomCaps.max;
+  const step = Number(nativeZoomCaps.step) || 0.1;
+  let target = Math.min(max, Math.max(min, zoomLevel));
+  target = Math.round(target / step) * step;
+  try {
+    await cameraTrack.applyConstraints({advanced:[{zoom:target}]});
+    const settings = cameraTrack.getSettings?.() || {};
+    nativeZoomValue = Number(settings.zoom) || target || 1;
+  } catch (_) {
+    nativeZoomValue = 1;
+  }
+  applyPreviewZoom();
+  updateZoomHint();
+}
+
+function scheduleNativeZoomSync() {
+  if (zoomSyncTimer) window.clearTimeout(zoomSyncTimer);
+  zoomSyncTimer = window.setTimeout(() => { syncNativeZoom().catch(() => {}); }, 90);
+}
+
 function applyZoom(value, announce = false) {
   zoomLevel = clampZoom(value);
   zoomRange.value = zoomLevel.toFixed(1);
   zoomRange.setAttribute('aria-valuenow', zoomLevel.toFixed(1));
   zoomValue.textContent = `${zoomLevel.toFixed(1)}×`;
-  cameraStage.style.setProperty('--camera-zoom', String(zoomLevel));
-  if (announce && stream) setMessage('success', `Skala kamera ${zoomLevel.toFixed(1)}×. Posisikan kepala hingga dada di dalam panduan.`);
+  applyPreviewZoom();
+  updateZoomHint();
+  if (stream) scheduleNativeZoomSync();
+  if (announce && stream) {
+    const text = zoomLevel < 1
+      ? 'Bidang pandang terlebar aktif. Layar tetap penuh; posisikan atas kepala hingga bahu/dada di dalam panduan.'
+      : `Skala kamera ${zoomLevel.toFixed(1)}×. Posisikan atas kepala hingga bahu/dada di dalam panduan.`;
+    setMessage('success', text);
+  }
 }
 
 function zoomFromPointer(clientX) {
@@ -271,7 +332,11 @@ async function openCamera(requestedFacing = facingMode) {
       video:{facingMode:{ideal:facingMode},width:{ideal:1280},height:{ideal:1600}}
     });
     const track = stream.getVideoTracks()[0];
+    cameraTrack = track || null;
+    const caps = track?.getCapabilities?.() || {};
+    nativeZoomCaps = caps && caps.zoom && Number.isFinite(caps.zoom.min) && Number.isFinite(caps.zoom.max) ? caps.zoom : null;
     const settings = track?.getSettings?.() || {};
+    nativeZoomValue = Number(settings.zoom) || 1;
     activeFacingMode = ['user','environment'].includes(settings.facingMode) ? settings.facingMode : facingMode;
     facingMode = activeFacingMode;
     cameraStage.dataset.facing = activeFacingMode;
@@ -288,7 +353,8 @@ async function openCamera(requestedFacing = facingMode) {
     retakeBtn.hidden = true;
     capturedBlob = null;
     submitBtn.disabled = true;
-    setMessage('success', `Kamera ${activeFacingMode === 'user' ? 'depan' : 'belakang'} aktif. Atur skala lalu posisikan kepala hingga dada di dalam panduan.`);
+    updateZoomHint();
+    setMessage('success', `Kamera ${activeFacingMode === 'user' ? 'depan' : 'belakang'} aktif. Posisikan bagian atas kepala hingga bahu/dada di dalam panduan.`);
   } catch (error) {
     console.error('Kamera gagal dibuka:', error);
     setCameraLive(false);
@@ -298,8 +364,12 @@ async function openCamera(requestedFacing = facingMode) {
 }
 
 function stopCamera() {
+  if (zoomSyncTimer) { window.clearTimeout(zoomSyncTimer); zoomSyncTimer = null; }
   if (stream) stream.getTracks().forEach(track => track.stop());
   stream = null;
+  cameraTrack = null;
+  nativeZoomCaps = null;
+  nativeZoomValue = 1;
   video.srcObject = null;
 }
 
@@ -324,10 +394,15 @@ function capturePhoto() {
     sy = (video.videoHeight - sh) / 2;
   }
 
-  // Digital zoom follows the exact scale shown in the live preview.
+  // Kamera tidak boleh mengecil ketika nilai di bawah 1x.
+  // <1x meminta sudut terlebar native jika tersedia; bila tidak, gunakan
+  // bidang pandang asli kamera. Crop digital hanya dipakai untuk zoom-in.
+  const currentSettings = cameraTrack?.getSettings?.() || {};
+  const actualNativeZoom = Number(currentSettings.zoom) || nativeZoomValue || 1;
+  const digitalCropZoom = zoomLevel > 1 ? Math.max(1, zoomLevel / Math.max(1, actualNativeZoom)) : 1;
   const baseSw = sw, baseSh = sh;
-  sw = baseSw / zoomLevel;
-  sh = baseSh / zoomLevel;
+  sw = baseSw / digitalCropZoom;
+  sh = baseSh / digitalCropZoom;
   sx += (baseSw - sw) / 2;
   sy += (baseSh - sh) / 2;
 
