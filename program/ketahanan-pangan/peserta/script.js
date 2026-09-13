@@ -365,7 +365,7 @@ function getMemberExperience(status) {
     pending: { label: 'Dalam pemeriksaan', text: 'Data peserta sedang diperiksa oleh admin.', progress: 50, progressText: 'Pemeriksaan data sedang berlangsung.', access: 'Dashboard & verifikasi aktif', accessText: 'Pantau status dan catatan admin dari dashboard.' },
     revision: { label: 'Perlu perbaikan data', text: 'Ada bagian data yang perlu diperbaiki sebelum pemeriksaan dilanjutkan.', progress: 45, progressText: 'Perbaiki data yang diminta agar proses dapat dilanjutkan.', access: 'Dashboard & perbaikan aktif', accessText: 'Sertifikat belum tersedia selama perbaikan berlangsung.' },
     resubmitted: { label: 'Menunggu pemeriksaan ulang', text: 'Perbaikan telah terkirim dan menunggu pemeriksaan ulang.', progress: 60, progressText: 'Perbaikan diterima. Menunggu pemeriksaan ulang admin.', access: 'Dashboard & verifikasi aktif', accessText: 'Status akan diperbarui setelah pemeriksaan ulang selesai.' },
-    verified: { label: 'Peserta terverifikasi', text: 'Data peserta telah diverifikasi dan layanan digital utama tersedia.', progress: 100, progressText: 'Tahapan utama selesai. Kartu anggota dan sertifikat digital dapat diakses.', access: 'Kartu anggota & sertifikat aktif', accessText: 'Dashboard, kartu anggota QR, verifikasi publik, dan sertifikat digital tersedia.' },
+    verified: { label: 'Registrasi terverifikasi', text: 'Data registrasi telah diverifikasi. Sertifikat tersedia; VERIFIED MEMBER memerlukan rekam foto dan review admin.', progress: 85, progressText: 'Lanjutkan Verifikasi Anggota + Foto untuk mengaktifkan kartu anggota.', access: 'Sertifikat aktif · Kartu menunggu verifikasi anggota', accessText: 'Rekam foto langsung dari kamera lalu tunggu review admin untuk mengaktifkan VERIFIED MEMBER.' },
     approved: { label: 'Pendaftaran disetujui', text: 'Pendaftaran telah disetujui dan menunggu layanan lanjutan sesuai program.', progress: 90, progressText: 'Pendaftaran disetujui. Pantau informasi lanjutan di dashboard.', access: 'Dashboard & verifikasi aktif', accessText: 'Layanan lanjutan mengikuti status program.' },
     rejected: { label: 'Perlu tindak lanjut', text: 'Pendaftaran belum dapat disetujui. Baca catatan admin untuk informasi berikutnya.', progress: 40, progressText: 'Proses berhenti pada tahap pemeriksaan.', access: 'Dashboard informasi aktif', accessText: 'Baca catatan admin atau keterangan status yang tersedia.' }
   };
@@ -386,6 +386,9 @@ function renderMemberExperience(participant = {}) {
   const certificateService = document.getElementById('memberCertificateService');
   const certificateState = document.getElementById('memberCertificateState');
   const certificateBadge = document.getElementById('memberCertificateBadge');
+  const memberIdentityService = document.getElementById('memberIdentityService');
+  const memberIdentityState = document.getElementById('memberIdentityState');
+  const memberIdentityBadge = document.getElementById('memberIdentityBadge');
   const memberCardService = document.getElementById('memberCardService');
   const memberCardState = document.getElementById('memberCardState');
   const memberCardBadge = document.getElementById('memberCardBadge');
@@ -415,18 +418,58 @@ function renderMemberExperience(participant = {}) {
     }
   }
 
+  const memberStatus = String(participant.member_verification_status || 'not_submitted').toLowerCase();
+  const registrationVerified = s === 'verified';
+  const memberApproved = registrationVerified && memberStatus === 'approved';
+
+  if (memberIdentityService && memberIdentityState && memberIdentityBadge) {
+    const identityEnabled = registrationVerified && memberStatus !== 'approved';
+    memberIdentityService.classList.toggle('is-active', identityEnabled || memberApproved);
+    memberIdentityService.classList.toggle('is-locked', !registrationVerified);
+    memberIdentityService.setAttribute('aria-disabled', registrationVerified ? 'false' : 'true');
+    if (!registrationVerified) {
+      memberIdentityService.href = '#';
+      memberIdentityState.textContent = 'Tersedia setelah status registrasi Terverifikasi.';
+      memberIdentityBadge.textContent = 'TERKUNCI';
+    } else if (memberStatus === 'approved') {
+      memberIdentityService.href = './verifikasi-anggota/';
+      memberIdentityState.textContent = 'Foto anggota telah disetujui admin.';
+      memberIdentityBadge.textContent = 'DISETUJUI';
+    } else if (memberStatus === 'pending') {
+      memberIdentityService.href = './verifikasi-anggota/';
+      memberIdentityState.textContent = 'Foto sudah dikirim dan sedang menunggu review admin.';
+      memberIdentityBadge.textContent = 'REVIEW';
+    } else if (memberStatus === 'rejected') {
+      memberIdentityService.href = './verifikasi-anggota/';
+      memberIdentityState.textContent = participant.member_verification_review_note || 'Foto perlu direkam ulang sesuai catatan admin.';
+      memberIdentityBadge.textContent = 'ULANGI';
+    } else {
+      memberIdentityService.href = './verifikasi-anggota/';
+      memberIdentityState.textContent = 'Rekam foto setengah badan langsung dari kamera.';
+      memberIdentityBadge.textContent = 'REKAM';
+    }
+  }
+
   if (memberCardService && memberCardState && memberCardBadge) {
-    const isVerified = s === 'verified';
-    memberCardService.classList.toggle('is-active', isVerified);
-    memberCardService.classList.toggle('is-locked', !isVerified);
-    memberCardService.setAttribute('aria-disabled', isVerified ? 'false' : 'true');
-    if (isVerified) {
+    memberCardService.classList.toggle('is-active', memberApproved);
+    memberCardService.classList.toggle('is-locked', !memberApproved);
+    memberCardService.setAttribute('aria-disabled', memberApproved ? 'false' : 'true');
+    if (memberApproved) {
       memberCardService.href = './kartu/';
-      memberCardState.textContent = 'Kartu anggota digital dan QR verifikasi tersedia.';
+      memberCardState.textContent = 'VERIFIED MEMBER aktif. Kartu menampilkan foto anggota yang disetujui.';
       memberCardBadge.textContent = 'AKTIF';
+      if (label) label.textContent = 'VERIFIED MEMBER';
+      if (text) text.textContent = 'Registrasi dan foto anggota telah disetujui. Identitas digital anggota aktif.';
+      if (progressValue) progressValue.textContent = '100%';
+      if (progressBar) progressBar.style.width = '100%';
+      if (progressText) progressText.textContent = 'Verifikasi anggota selesai. Kartu Anggota + QR aktif.';
+      if (accessLabel) accessLabel.textContent = 'VERIFIED MEMBER aktif';
+      if (accessText) accessText.textContent = 'Kartu Anggota + QR, sertifikat digital, dan verifikasi publik tersedia.';
     } else {
       memberCardService.href = '#';
-      memberCardState.textContent = 'Tersedia setelah peserta terverifikasi.';
+      memberCardState.textContent = registrationVerified
+        ? 'Aktif setelah foto anggota disetujui admin.'
+        : 'Tersedia setelah registrasi dan verifikasi anggota selesai.';
       memberCardBadge.textContent = 'TERKUNCI';
     }
   }
@@ -576,6 +619,11 @@ bindCopyButton(document.getElementById('copyRegistrationAction'), 'action');
 const memberCertificateService = document.getElementById('memberCertificateService');
 if (memberCertificateService) memberCertificateService.addEventListener('click', event => {
   if (memberCertificateService.getAttribute('aria-disabled') === 'true') event.preventDefault();
+});
+
+const memberIdentityService = document.getElementById('memberIdentityService');
+if (memberIdentityService) memberIdentityService.addEventListener('click', event => {
+  if (memberIdentityService.getAttribute('aria-disabled') === 'true') event.preventDefault();
 });
 
 const memberCardService = document.getElementById('memberCardService');
