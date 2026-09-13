@@ -39,6 +39,7 @@ let zoomSyncTimer = null;
 const ZOOM_MIN = 0.2;
 const ZOOM_MAX = 2.0;
 const ZOOM_STEP = 0.1;
+const GUIDE_SCALE_AT_MIN_DISTANCE = 0.78;
 
 
 function setCameraLive(active) {
@@ -183,22 +184,35 @@ function clampZoom(value) {
 function updateZoomHint() {
   if (!zoomHint) return;
   if (zoomLevel < 1) {
-    const nativeWide = nativeZoomCaps && Number.isFinite(nativeZoomCaps.min) && nativeZoomCaps.min < 1;
-    zoomHint.textContent = nativeWide
-      ? 'Mode sudut lebar kamera digunakan tanpa mengecilkan layar. Posisikan atas kepala hingga bahu/dada di dalam panduan.'
-      : 'Layar kamera tetap penuh. Kamera ini sudah memakai sudut terlebar yang tersedia; bila kepala hingga dada belum masuk, mundurkan HP sedikit.';
+    zoomHint.textContent = 'Kamera tetap memenuhi bingkai. Nilai di bawah 1× hanya membantu jarak pengambilan: mundurkan HP sampai bagian atas kepala, kedua bahu, dan dada masuk di dalam panduan.';
   } else if (zoomLevel > 1) {
-    zoomHint.textContent = 'Perbesar seperlunya tanpa memotong kepala atau bahu/dada dari panduan.';
+    zoomHint.textContent = 'Zoom masuk aktif. Pastikan bagian atas kepala, kedua bahu, dan dada tidak terpotong dari panduan.';
   } else {
-    zoomHint.textContent = 'Tampilan asli kamera. Posisikan bagian atas kepala hingga bahu/dada di dalam panduan.';
+    zoomHint.textContent = 'Tampilan asli kamera. Posisikan bagian atas kepala, kedua bahu, dan dada di dalam panduan.';
   }
 }
 
+function updateGuideFraming() {
+  // Di bawah 1x kita tidak mengecilkan video dan tidak memaksa native zoom < 1.
+  // Slider menjadi bantuan jarak: panduan mengecil sedikit agar peserta
+  // terdorong memundurkan HP sampai kepala, bahu, dan dada masuk utuh.
+  let scale = 1;
+  if (zoomLevel < 1) {
+    const progress = (zoomLevel - ZOOM_MIN) / (1 - ZOOM_MIN);
+    scale = GUIDE_SCALE_AT_MIN_DISTANCE + Math.max(0, Math.min(1, progress)) * (1 - GUIDE_SCALE_AT_MIN_DISTANCE);
+  }
+  cameraStage.style.setProperty('--guide-scale', scale.toFixed(3));
+  cameraStage.dataset.distanceMode = zoomLevel < 1 ? 'far' : 'normal';
+}
+
 function applyPreviewZoom() {
-  // Jangan pernah mengecilkan elemen video. Nilai < 1x berarti meminta
-  // bidang pandang terlebar kamera, bukan transform: scale(<1).
-  const digitalZoom = zoomLevel > 1 ? Math.max(1, zoomLevel / Math.max(1, nativeZoomValue || 1)) : 1;
+  // Preview harus selalu memenuhi area kamera. Nilai < 1x TIDAK PERNAH
+  // memakai transform scale(<1), sehingga tidak muncul latar hitam dan
+  // hasil foto tidak menjadi thumbnail di tengah.
+  const nativeForDigital = Math.max(1, nativeZoomValue || 1);
+  const digitalZoom = zoomLevel > 1 ? Math.max(1, zoomLevel / nativeForDigital) : 1;
   cameraStage.style.setProperty('--camera-zoom', String(digitalZoom));
+  updateGuideFraming();
 }
 
 async function syncNativeZoom() {
@@ -208,11 +222,19 @@ async function syncNativeZoom() {
     updateZoomHint();
     return;
   }
-  const min = nativeZoomCaps.min;
-  const max = nativeZoomCaps.max;
+
+  const min = Number(nativeZoomCaps.min);
+  const max = Number(nativeZoomCaps.max);
   const step = Number(nativeZoomCaps.step) || 0.1;
-  let target = Math.min(max, Math.max(min, zoomLevel));
+
+  // Penting: jangan kirim zoom < 1 ke track kamera. Pada sebagian HP Android
+  // nilai native di bawah 1 membuat stream menjadi letterbox/mengecil dan
+  // menghasilkan area hitam. Untuk 0.2x-0.9x gunakan mode bantuan jarak saja.
+  const requested = zoomLevel > 1 ? zoomLevel : 1;
+  let target = Math.min(max, Math.max(min, requested));
   target = Math.round(target / step) * step;
+  target = Math.min(max, Math.max(min, target));
+
   try {
     await cameraTrack.applyConstraints({advanced:[{zoom:target}]});
     const settings = cameraTrack.getSettings?.() || {};
@@ -220,6 +242,7 @@ async function syncNativeZoom() {
   } catch (_) {
     nativeZoomValue = 1;
   }
+
   applyPreviewZoom();
   updateZoomHint();
 }
@@ -239,8 +262,8 @@ function applyZoom(value, announce = false) {
   if (stream) scheduleNativeZoomSync();
   if (announce && stream) {
     const text = zoomLevel < 1
-      ? 'Bidang pandang terlebar aktif. Layar tetap penuh; posisikan atas kepala hingga bahu/dada di dalam panduan.'
-      : `Skala kamera ${zoomLevel.toFixed(1)}×. Posisikan atas kepala hingga bahu/dada di dalam panduan.`;
+      ? `Mode jarak ${zoomLevel.toFixed(1)}×. Kamera tetap penuh; mundurkan HP sampai kepala, kedua bahu, dan dada masuk di panduan.`
+      : `Skala kamera ${zoomLevel.toFixed(1)}×. Posisikan atas kepala, kedua bahu, dan dada di dalam panduan.`;
     setMessage('success', text);
   }
 }
@@ -327,9 +350,18 @@ async function openCamera(requestedFacing = facingMode) {
     stopCamera();
     revokePreviewUrl();
     applyZoom(1);
+    const supported = navigator.mediaDevices.getSupportedConstraints?.() || {};
+    const videoConstraints = {
+      facingMode:{ideal:facingMode},
+      width:{ideal:1440},
+      height:{ideal:1920},
+      aspectRatio:{ideal:0.75}
+    };
+    if (supported.resizeMode) videoConstraints.resizeMode = 'none';
+
     stream = await navigator.mediaDevices.getUserMedia({
       audio:false,
-      video:{facingMode:{ideal:facingMode},width:{ideal:1280},height:{ideal:1600}}
+      video:videoConstraints
     });
     const track = stream.getVideoTracks()[0];
     cameraTrack = track || null;
@@ -342,6 +374,7 @@ async function openCamera(requestedFacing = facingMode) {
     cameraStage.dataset.facing = activeFacingMode;
     video.srcObject = stream;
     await video.play();
+    await syncNativeZoom();
     await countCameras();
     updateFacingButtons();
     empty.hidden = true;
@@ -354,7 +387,7 @@ async function openCamera(requestedFacing = facingMode) {
     capturedBlob = null;
     submitBtn.disabled = true;
     updateZoomHint();
-    setMessage('success', `Kamera ${activeFacingMode === 'user' ? 'depan' : 'belakang'} aktif. Posisikan bagian atas kepala hingga bahu/dada di dalam panduan.`);
+    setMessage('success', `Kamera ${activeFacingMode === 'user' ? 'depan' : 'belakang'} aktif. Posisikan bagian atas kepala, kedua bahu, dan dada di dalam panduan.`);
   } catch (error) {
     console.error('Kamera gagal dibuka:', error);
     setCameraLive(false);
@@ -394,9 +427,9 @@ function capturePhoto() {
     sy = (video.videoHeight - sh) / 2;
   }
 
-  // Kamera tidak boleh mengecil ketika nilai di bawah 1x.
-  // <1x meminta sudut terlebar native jika tersedia; bila tidak, gunakan
-  // bidang pandang asli kamera. Crop digital hanya dipakai untuk zoom-in.
+  // Kamera dan hasil foto tidak boleh mengecil pada nilai di bawah 1x.
+  // 0.2x-0.9x adalah bantuan jarak/framing; sumber gambar tetap 1x penuh.
+  // Crop digital hanya dipakai untuk zoom-in di atas 1x.
   const currentSettings = cameraTrack?.getSettings?.() || {};
   const actualNativeZoom = Number(currentSettings.zoom) || nativeZoomValue || 1;
   const digitalCropZoom = zoomLevel > 1 ? Math.max(1, zoomLevel / Math.max(1, actualNativeZoom)) : 1;

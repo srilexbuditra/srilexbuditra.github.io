@@ -109,4 +109,66 @@
   .zoom-row #zoomRange::-moz-range-thumb{width:30px;height:30px}
   .zoom-limits{margin:-8px 43px 0}
 }
-\n\n/* V12.5.4 — preview kamera tetap penuh; zoom-out tidak lagi mengecilkan video */\n.camera-stage video{\n  width:100%;\n  height:100%;\n  object-fit:cover;\n  object-position:50% 50%;\n  transform-origin:50% 50%;\n}\n.camera-stage[data-facing="user"] video{transform:scaleX(-1) scale(var(--camera-zoom,1))}\n.camera-stage[data-facing="environment"] video{transform:scale(var(--camera-zoom,1))}\n.camera-zoom small#zoomHint{display:block;color:#8faab8;font-size:9px;line-height:1.45}\n@media(max-width:560px){\n  .camera-zoom small#zoomHint{display:block;margin-top:2px;font-size:8.5px;line-height:1.35}\n}\n
+
+
+/* V12.5.4 — preview kamera tetap penuh; zoom-out tidak lagi mengecilkan video */
+.camera-stage video{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  object-position:50% 50%;
+  transform-origin:50% 50%;
+}
+.camera-stage[data-facing="user"] video{transform:scaleX(-1) scale(var(--camera-zoom,1))}
+.camera-stage[data-facing="environment"] video{transform:scale(var(--camera-zoom,1))}
+.camera-zoom small#zoomHint{display:block;color:#8faab8;font-size:9px;line-height:1.45}
+@media(max-width:560px){
+  .camera-zoom small#zoomHint{display:block;margin-top:2px;font-size:8.5px;line-height:1.35}
+}
+
+
+/* V12.5.5 — mode jarak: preview selalu penuh, tanpa letterbox saat nilai < 1x */
+.camera-stage{
+  --camera-zoom:1;
+  --guide-scale:1;
+}
+.camera-stage video{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  min-width:100%;
+  min-height:100%;
+  object-fit:cover;
+  object-position:50% 50%;
+  transform-origin:50% 50%;
+  background:transparent;
+}
+.camera-stage[data-facing="user"] video{
+  transform:scaleX(-1) scale(var(--camera-zoom,1));
+}
+.camera-stage[data-facing="environment"] video{
+  transform:scale(var(--camera-zoom,1));
+}
+.camera-stage .guide{
+  transform:scale(var(--guide-scale,1));
+  transform-origin:50% 52%;
+  transition:transform .16s ease;
+}
+.camera-stage[data-distance-mode="far"] .guide{
+  border-color:rgba(255,255,255,.70);
+}
+.camera-zoom small#zoomHint{
+  display:block;
+  color:#90adbb;
+  font-size:9px;
+  line-height:1.45;
+}
+@media(max-width:560px){
+  .camera-zoom small#zoomHint{
+    display:block;
+    margin-top:2px;
+    font-size:8.5px;
+    line-height:1.35;
+  }
+}
