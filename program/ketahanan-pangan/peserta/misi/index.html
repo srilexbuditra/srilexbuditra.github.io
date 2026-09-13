@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>Misi & Poin Aktivitas | Program Ketahanan Pangan</title>
+  <meta name="description" content="Misi peserta dan Poin Aktivitas Program Ketahanan Pangan.">
+  <meta name="theme-color" content="#123f2b">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <link rel="canonical" href="https://srilexbuditra.work/program/ketahanan-pangan/peserta/misi/">
+  <link rel="icon" href="/program/ketahanan-pangan/assets/brand/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="/program/ketahanan-pangan/assets/brand/apple-touch-icon.png">
+  <link rel="stylesheet" href="./style.css?v=12.9.0">
+</head>
+<body>
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <a class="brand" href="../">Program Ketahanan Pangan</a>
+    <nav class="topnav" aria-label="Navigasi Misi">
+      <a href="../poin/">Level & Poin</a>
+      <a href="../">← Dashboard</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <span class="eyebrow">ENGAGEMENT PESERTA · TAHAP 2</span>
+        <h1>Misi &amp; <span>Poin Aktivitas</span></h1>
+        <p>Selesaikan aktivitas yang tersedia untuk menambah poin. Poin Misi dicatat oleh server dan hanya diberikan satu kali untuk setiap misi.</p>
+      </div>
+      <aside class="hero-note">
+        <strong>Aman & terverifikasi</strong>
+        <p>Nilai poin tidak berasal dari browser. Server memeriksa syarat misi sebelum mencatat poin ke akun peserta.</p>
+      </aside>
+    </div>
+  </section>
+
+  <section class="content">
+    <div class="wrap">
+      <div id="loadingState" class="state-card" role="status" aria-live="polite">
+        <span class="loader" aria-hidden="true"></span>
+        <div><strong>Menyiapkan misi…</strong><p>Memeriksa sesi, poin, dan aktivitas yang tersedia.</p></div>
+      </div>
+
+      <div id="errorState" class="state-card state-error" hidden>
+        <span class="state-icon" aria-hidden="true">!</span>
+        <div><strong id="errorTitle">Misi belum dapat ditampilkan</strong><p id="errorText">Silakan kembali ke Dashboard Peserta.</p></div>
+        <a class="btn primary" href="../">Kembali ke Dashboard</a>
+      </div>
+
+      <section id="missionView" hidden>
+        <article class="summary-card">
+          <div class="summary-head">
+            <div>
+              <span class="section-kicker">PROGRES MISI</span>
+              <h2 id="participantName">Peserta</h2>
+              <p>Poin Dasar tetap berasal dari progres keanggotaan. Poin Misi berasal dari aktivitas di bawah.</p>
+            </div>
+            <span class="level-badge" id="missionProgressBadge">0 / 5 MISI</span>
+          </div>
+          <div class="points-grid">
+            <div class="point-box"><span>Poin Dasar</span><strong id="basePoints">0</strong></div>
+            <div class="point-box accent"><span>Poin Misi</span><strong id="missionPoints">0</strong></div>
+            <div class="point-box total"><span>Total Poin</span><strong id="totalPoints">0</strong></div>
+          </div>
+          <div class="progress-block">
+            <div class="progress-copy"><strong>Misi selesai</strong><span id="missionProgressText">0%</span></div>
+            <div class="progress-track" aria-hidden="true"><span id="missionProgressBar"></span></div>
+          </div>
+        </article>
+
+        <article class="mission-panel">
+          <div class="panel-head">
+            <div><span class="section-kicker">MISI AKTIF</span><h3>Aktivitas Peserta</h3></div>
+            <span class="panel-chip">MAKS. +150 POIN</span>
+          </div>
+          <p class="panel-intro">Misi yang sudah selesai tidak dapat diklaim ulang. Misi terkunci akan terbuka otomatis setelah syaratnya terpenuhi.</p>
+          <div id="missionList" class="mission-list"></div>
+        </article>
+
+        <article class="next-card">
+          <div class="next-icon" aria-hidden="true">↗</div>
+          <div>
+            <span class="section-kicker">ROADMAP BERIKUTNYA</span>
+            <h3>Referral & Benefit</h3>
+            <p>Setelah sistem Misi stabil, tahap berikutnya adalah Referral lalu Benefit. Fitur tersebut belum aktif pada versi ini.</p>
+          </div>
+          <span class="next-badge">ROADMAP</span>
+        </article>
+
+        <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+        <div class="page-actions">
+          <a class="btn primary" href="../poin/">← Level & Poin</a>
+          <a class="btn outline" href="../">Dashboard Peserta</a>
+        </div>
+      </section>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap footer-inner">
+    <div><strong>Program Ketahanan Pangan</strong><span>Misi & Poin Aktivitas Peserta</span></div>
+    <span>Poin aktivitas dicatat oleh server</span>
+  </div>
+</footer>
+
+<script src="./script.js?v=12.9.0"></script>
+<script src="/visitor-analytics.js" defer></script>
+</body>
+</html>
