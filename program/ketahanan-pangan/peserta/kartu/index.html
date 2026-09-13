@@ -10,7 +10,7 @@
   <link rel="canonical" href="https://srilexbuditra.work/program/ketahanan-pangan/peserta/kartu/">
   <link rel="icon" href="/program/ketahanan-pangan/assets/brand/favicon.ico">
   <link rel="apple-touch-icon" sizes="180x180" href="/program/ketahanan-pangan/assets/brand/apple-touch-icon.png">
-  <link rel="stylesheet" href="./style.css?v=12.2.2">
+  <link rel="stylesheet" href="./style.css?v=12.3">
 </head>
 <body>
 <header class="topbar">
@@ -28,7 +28,7 @@
     <div class="wrap hero-copy">
       <span class="eyebrow">IDENTITAS DIGITAL PESERTA</span>
       <h1>Kartu Anggota <span>Digital + QR</span></h1>
-      <p>Kartu digital hanya tersedia untuk peserta berstatus terverifikasi. QR mengarah ke halaman verifikasi publik tanpa menampilkan NIK, KK, nomor WhatsApp, email, atau dokumen identitas.</p>
+      <p>Kartu digital hanya tersedia setelah registrasi terverifikasi dan foto anggota disetujui admin. QR mengarah ke halaman verifikasi publik tanpa menampilkan NIK, KK, nomor WhatsApp, email, atau dokumen identitas.</p>
     </div>
   </section>
 
@@ -73,7 +73,10 @@
               <strong>KARTU ANGGOTA DIGITAL</strong>
             </div>
             <div class="identity-row">
-              <div class="avatar" id="memberInitials" aria-hidden="true">P</div>
+              <div class="avatar member-photo-frame">
+                <img id="memberPhoto" alt="Foto anggota terverifikasi" hidden>
+                <span id="memberInitials" aria-hidden="true">P</span>
+              </div>
               <div class="identity-copy">
                 <span>NAMA PESERTA</span>
                 <strong id="memberName">-</strong>
@@ -127,7 +130,7 @@
 </footer>
 
 <script src="./local-qrcode.js"></script>
-<script src="./script.js?v=12.2"></script>
+<script src="./script.js?v=12.3"></script>
 <script src="/visitor-analytics.js" defer></script>
 </body>
 </html>

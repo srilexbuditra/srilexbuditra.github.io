@@ -75,10 +75,34 @@ function showError(title, text, actionHref = '../', actionLabel = 'Kembali ke Da
   errorAction.textContent = actionLabel;
 }
 
-function showCard(participant) {
+async function showCard(participant) {
   const id = normalizeId(participant.registration_id);
   document.getElementById('memberName').textContent = participant.nama || 'Peserta';
   document.getElementById('memberInitials').textContent = initials(participant.nama);
+  const memberPhoto = document.getElementById('memberPhoto');
+  if (memberPhoto) {
+    memberPhoto.hidden = true;
+    try {
+      const photoResponse = await fetch(
+        API + '/member-photo?v=' + encodeURIComponent(participant.member_verification_reviewed_at || Date.now()),
+        { method: 'GET', credentials: 'include', cache: 'no-store', headers: { Accept: 'image/*' } }
+      );
+      if (!photoResponse.ok) throw new Error('Foto anggota belum dapat dimuat.');
+      const photoBlob = await photoResponse.blob();
+      const photoObjectUrl = URL.createObjectURL(photoBlob);
+      memberPhoto.src = photoObjectUrl;
+      memberPhoto.hidden = false;
+      memberPhoto.onload = () => {
+        window.setTimeout(() => URL.revokeObjectURL(photoObjectUrl), 1000);
+      };
+      memberPhoto.onerror = () => {
+        memberPhoto.hidden = true;
+        URL.revokeObjectURL(photoObjectUrl);
+      };
+    } catch (_) {
+      memberPhoto.hidden = true;
+    }
+  }
   document.getElementById('memberId').textContent = id || '-';
   document.getElementById('memberIdBack').textContent = id || '-';
   document.getElementById('memberSince').textContent = formatDate(participant.created_at);
@@ -133,11 +157,21 @@ document.getElementById('copyVerifyBtn').addEventListener('click', copyVerificat
       return;
     }
     const status = String(data.participant.status || '').toLowerCase();
+    const memberStatus = String(data.participant.member_verification_status || 'not_submitted').toLowerCase();
     if (status !== 'verified') {
-      showError('Kartu belum tersedia', 'Kartu Anggota Digital hanya tersedia setelah status peserta menjadi Terverifikasi. Status Anda akan mengikuti data terbaru pada dashboard.', '../', 'Lihat Dashboard');
+      showError('Kartu belum tersedia', 'Kartu Anggota Digital hanya tersedia setelah status registrasi menjadi Terverifikasi.', '../', 'Lihat Dashboard');
       return;
     }
-    showCard(data.participant);
+    if (memberStatus !== 'approved') {
+      const message = memberStatus === 'pending'
+        ? 'Foto anggota sudah dikirim dan sedang menunggu review admin.'
+        : memberStatus === 'rejected'
+          ? (data.participant.member_verification_review_note || 'Foto anggota perlu direkam ulang sesuai hasil review admin.')
+          : 'Rekam foto setengah badan langsung dari kamera dan tunggu persetujuan admin untuk mengaktifkan VERIFIED MEMBER.';
+      showError('VERIFIED MEMBER belum aktif', message, '../verifikasi-anggota/', memberStatus === 'pending' ? 'Lihat Status Verifikasi' : 'Rekam Foto Anggota');
+      return;
+    }
+    await showCard(data.participant);
   } catch (error) {
     showError('Kartu belum dapat ditampilkan', error?.message || 'Periksa koneksi internet lalu coba kembali melalui dashboard peserta.');
   }
