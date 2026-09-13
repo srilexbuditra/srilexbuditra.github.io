@@ -365,6 +365,19 @@
           <article class="status-quick-card status-quick-card--rejected"><span class="status-quick-icon" aria-hidden="true">×</span><span><small>Ditolak</small><strong id="photoStatusRejected">0</strong><em>Foto tidak dapat disetujui</em></span></article>
           <article class="status-quick-card status-quick-card--action"><span class="status-quick-icon" aria-hidden="true">!</span><span><small>Perlu Tindakan</small><strong id="photoStatusNeedsAction">0</strong><em>Butuh keputusan admin</em></span></article>
         </div>
+        <section id="photoWaitingQueue" class="admin-review-queue admin-review-queue--photo" aria-labelledby="photoWaitingQueueTitle">
+          <div class="admin-review-queue-head">
+            <div>
+              <span class="admin-review-queue-kicker">ANTREAN FOTO BELUM SELESAI</span>
+              <h3 id="photoWaitingQueueTitle">Nama &amp; Nomor Registrasi yang Perlu Dipantau</h3>
+              <p>Menampilkan peserta dengan foto yang masih menunggu verifikasi, sedang diperiksa, dikirim ulang, perlu perbaikan, atau perlu tindakan.</p>
+            </div>
+            <span id="photoWaitingQueueCount" class="admin-review-queue-count">0 peserta</span>
+          </div>
+          <div id="photoWaitingQueueList" class="admin-review-queue-list" aria-live="polite">
+            <div class="admin-review-queue-empty">Belum ada foto yang menunggu pemeriksaan.</div>
+          </div>
+        </section>
         <div class="status-overview-foot photo-overview-foot">
           <span id="photoStatusMeta">Ringkasan foto akan dimuat setelah admin terhubung.</span>
           <button type="button" id="photoStatusRefresh" class="status-quick-clear photo-refresh-button">↻ Perbarui Status Foto</button>
@@ -395,6 +408,19 @@
           <button type="button" class="status-quick-card status-quick-card--rejected" data-status="rejected" aria-pressed="false"><span class="status-quick-icon" aria-hidden="true">×</span><span><small>Ditolak</small><strong id="statusCountRejected">0</strong></span></button>
           <button type="button" class="status-quick-card status-quick-card--action" data-status="needs_action" aria-pressed="false"><span class="status-quick-icon" aria-hidden="true">!</span><span><small>Perlu Tindakan</small><strong id="statusCountNeedsAction">0</strong></span></button>
         </div>
+        <section id="participantWaitingQueue" class="admin-review-queue admin-review-queue--participant" aria-labelledby="participantWaitingQueueTitle">
+          <div class="admin-review-queue-head">
+            <div>
+              <span class="admin-review-queue-kicker">ANTREAN DATA PESERTA BELUM SELESAI</span>
+              <h3 id="participantWaitingQueueTitle">Nama &amp; Nomor Registrasi yang Perlu Dipantau</h3>
+              <p>Menampilkan peserta yang status registrasinya masih menunggu verifikasi, sedang diperiksa, diperiksa ulang, perlu perbaikan, atau perlu tindakan.</p>
+            </div>
+            <span id="participantWaitingQueueCount" class="admin-review-queue-count">0 peserta</span>
+          </div>
+          <div id="participantWaitingQueueList" class="admin-review-queue-list" aria-live="polite">
+            <div class="admin-review-queue-empty">Belum ada peserta yang menunggu pemeriksaan.</div>
+          </div>
+        </section>
         <div class="status-overview-foot">
           <span id="statusOverviewMeta">Belum ada data registrasi.</span>
           <button type="button" id="statusQuickClear" class="status-quick-clear">Tampilkan Semua</button>

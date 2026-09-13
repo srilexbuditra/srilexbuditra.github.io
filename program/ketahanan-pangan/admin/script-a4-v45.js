@@ -2679,8 +2679,108 @@ async function loadMemberVerificationOverview() {
   }
 }
 
+const MEMBER_PHOTO_QUEUE_STATUSES = new Set(['pending','reviewing','resubmitted','revision','needs_action']);
+const PARTICIPANT_QUEUE_STATUSES = new Set(['submitted','pending','resubmitted','revision','needs_action']);
+
+function adminQueueStatusMeta(status, type='participant') {
+  const photo = {
+    pending:['Menunggu Verifikasi','waiting'],
+    reviewing:['Pemeriksaan Foto','checking'],
+    resubmitted:['Pemeriksaan Ulang','recheck'],
+    revision:['Perlu Perbaikan','revision'],
+    needs_action:['Perlu Tindakan','action']
+  };
+  const participant = {
+    submitted:['Menunggu Verifikasi','waiting'],
+    pending:['Pemeriksaan Data','checking'],
+    resubmitted:['Pemeriksaan Ulang','recheck'],
+    revision:['Perlu Perbaikan','revision'],
+    needs_action:['Perlu Tindakan','action']
+  };
+  return (type === 'photo' ? photo : participant)[String(status || '').toLowerCase()] || ['Menunggu','neutral'];
+}
+
+function renderAdminReviewQueue(list, options = {}) {
+  const container = document.getElementById(options.listId || '');
+  const count = document.getElementById(options.countId || '');
+  if (!container) return;
+  const rows = Array.isArray(list) ? list : [];
+  if (count) count.textContent = `${rows.length} peserta`;
+  if (!rows.length) {
+    container.innerHTML = `<div class="admin-review-queue-empty">${escapeHtml(options.emptyText || 'Tidak ada antrean pemeriksaan.')}</div>`;
+    return;
+  }
+  container.innerHTML = rows.map((item, index) => {
+    const registrationId = String(item?.registration_id || '').trim();
+    const name = String(item?.nama || 'Nama belum tersedia').trim() || 'Nama belum tersedia';
+    const [label,tone] = adminQueueStatusMeta(item?.status, options.type);
+    return `
+      <article class="admin-review-person" data-queue-index="${index}">
+        <div class="admin-review-person-main">
+          <span class="admin-review-person-number" aria-hidden="true">${index + 1}</span>
+          <div class="admin-review-person-copy">
+            <strong>${escapeHtml(name)}</strong>
+            <span class="admin-review-registration-id">${escapeHtml(registrationId || '-')}</span>
+          </div>
+        </div>
+        <div class="admin-review-person-actions">
+          <span class="admin-review-status admin-review-status--${escapeHtml(tone)}">${escapeHtml(label)}</span>
+          ${registrationId ? `<button type="button" class="admin-review-open" data-admin-review-registration="${escapeHtml(registrationId)}">Periksa</button>` : ''}
+        </div>
+      </article>`;
+  }).join('');
+}
+
+function renderPhotoWaitingQueue(rows) {
+  const list = (Array.isArray(rows) ? rows : [])
+    .filter(item => MEMBER_PHOTO_QUEUE_STATUSES.has(String(item?.status || '').toLowerCase()))
+    .sort((a,b) => {
+      const order = {pending:0,resubmitted:1,reviewing:2,needs_action:3,revision:4};
+      const av = order[String(a?.status || '').toLowerCase()] ?? 9;
+      const bv = order[String(b?.status || '').toLowerCase()] ?? 9;
+      if (av !== bv) return av - bv;
+      return String(b?.submitted_at || b?.updated_at || '').localeCompare(String(a?.submitted_at || a?.updated_at || ''));
+    });
+  renderAdminReviewQueue(list, {
+    type:'photo', listId:'photoWaitingQueueList', countId:'photoWaitingQueueCount',
+    emptyText:'Tidak ada foto yang sedang menunggu atau memerlukan tindak lanjut.'
+  });
+}
+
+function renderParticipantWaitingQueue(registrations) {
+  const list = (Array.isArray(registrations) ? registrations : [])
+    .filter(item => Number(item?.is_duplicate || 0) !== 1)
+    .filter(item => PARTICIPANT_QUEUE_STATUSES.has(String(item?.status || '').toLowerCase()))
+    .sort((a,b) => {
+      const order = {submitted:0,resubmitted:1,pending:2,needs_action:3,revision:4};
+      const av = order[String(a?.status || '').toLowerCase()] ?? 9;
+      const bv = order[String(b?.status || '').toLowerCase()] ?? 9;
+      if (av !== bv) return av - bv;
+      return String(b?.created_at || '').localeCompare(String(a?.created_at || ''));
+    });
+  renderAdminReviewQueue(list, {
+    type:'participant', listId:'participantWaitingQueueList', countId:'participantWaitingQueueCount',
+    emptyText:'Tidak ada peserta aktif yang sedang menunggu atau memerlukan tindak lanjut.'
+  });
+}
+
+function initAdminReviewQueueActions() {
+  if (document.documentElement.dataset.adminReviewQueueReady) return;
+  document.documentElement.dataset.adminReviewQueueReady = '1';
+  document.addEventListener('click', (event) => {
+    const button = event.target.closest('[data-admin-review-registration]');
+    if (!button) return;
+    const registrationId = button.getAttribute('data-admin-review-registration') || '';
+    if (!registrationId) return;
+    loadRegistrationDetail(registrationId);
+  });
+}
+
+document.addEventListener('DOMContentLoaded', initAdminReviewQueueActions);
+
 function renderMemberVerificationOverview(rows) {
   const list = Array.isArray(rows) ? rows : [];
+  renderPhotoWaitingQueue(list);
   const counts = Object.fromEntries(MEMBER_PHOTO_STATUS_ITEMS.map(([status]) => [status,0]));
   list.forEach((item) => {
     const status = String(item?.status || 'pending').toLowerCase();
@@ -2751,6 +2851,7 @@ function syncAdminStatusQuickFilters() {
 
 function renderAdminStatusOverview(registrations) {
   const list = Array.isArray(registrations) ? registrations : [];
+  renderParticipantWaitingQueue(list);
   const active = list.filter(item => Number(item.is_duplicate || 0) !== 1);
   const duplicateCount = Math.max(0, list.length - active.length);
   const counts = Object.fromEntries(ADMIN_STATUS_OVERVIEW_ITEMS.map(([status]) => [status, 0]));
