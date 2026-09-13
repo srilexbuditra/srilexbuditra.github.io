@@ -1,3 +1,19 @@
+## V13.2.0 — Aktivitas & Event Peserta
+
+- Added halaman `peserta/aktivitas/` untuk agenda, pendaftaran event, status kehadiran, dan riwayat aktivitas.
+- Added tabel D1 `participant_events` dan `participant_event_registrations` yang dibuat otomatis oleh Worker.
+- Added endpoint `GET /activity-events`, `POST /activity-events/register`, dan `POST /activity-events/cancel`.
+- Added Poin Aktivitas/Event ke Total Poin.
+- Security: peserta tidak dapat menandai kehadiran sendiri; Poin Aktivitas hanya direkonsiliasi setelah status `attended` ditetapkan oleh proses pengelola.
+- Preserved Kartu Anggota + QR, safe-area 5 mm, sertifikat, Misi, Referral, Benefit, dan ledger poin yang sudah stabil.
+
+
+
+## V13.1.0 — Benefit Peserta
+- Menambahkan halaman Benefit Peserta berbasis status server.
+- Menambahkan endpoint peserta `GET /benefits`.
+- Benefit dibuka berdasarkan Level, Total Poin, Registrasi Terverifikasi, dan VERIFIED MEMBER.
+- Tidak mengubah Kartu Anggota + QR, safe-area 5 mm, Misi, Referral, atau ledger poin.
 
 ## V12.3.1 — VERIFIED MEMBER Photo CSP Compatibility
 - Memuat foto anggota melalui `fetch()` + Blob URL agar sesuai dengan kebijakan `img-src 'self' data: blob:`.
@@ -404,3 +420,14 @@ Dokumen ini menggunakan dua riwayat versi agar nomor versi website utama tidak t
 - Urutan entri pada setiap bagian disusun dari perubahan terbaru ke perubahan sebelumnya.
 - Dokumentasi teknis yang lebih rinci tersedia pada file dokumentasi terkait di repository.
 - Perubahan desain atau implementasi besar sebaiknya dicatat pada bagian versi yang sesuai agar riwayat repository tetap mudah diaudit.
+
+## V13.0.0 — Referral Peserta
+
+- Added halaman `peserta/referral/` khusus VERIFIED MEMBER.
+- Added kode dan tautan referral yang dibuat oleh server.
+- Added atribusi referral dari `registrations.source` tanpa mengubah Registration Worker.
+- Added +50 Poin Referral untuk setiap referral yang berstatus `verified`.
+- Added anti-self-referral berdasarkan NIK/WhatsApp yang sama.
+- Added statistik agregat referral tanpa mengekspos identitas peserta yang diundang.
+- Changed Total Poin menjadi Poin Dasar + Poin Misi + Poin Referral.
+- Preserved Kartu Anggota + QR, safe-area 5 mm, foto anggota, sertifikat, dan modul admin.

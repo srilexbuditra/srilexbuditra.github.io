@@ -38,7 +38,7 @@ Status: **fase aktif saat ini.**
 
 Urutan rekomendasi:
 
-**Dashboard V2 ✅ → Kartu Anggota + QR + Verified Member Foto ✅ → Sertifikat QR ✅ → Level/Poin → Misi → Referral → Benefit → Event/Aktivitas**
+**Dashboard V2 ✅ → Kartu Anggota + QR + Verified Member Foto ✅ → Sertifikat QR ✅ → Level/Poin ✅ → Misi ✅ → Referral V13.0 ✅ → Benefit V13.1 ✅ → Aktivitas & Event V13.2 ✅**
 
 Prinsip:
 
@@ -77,5 +77,16 @@ Jangan mengejar klaim "dipercaya semua kalangan" melalui slogan. Bangun kepercay
 ---
 
 **Current phase:** Fase 3 — Pengalaman Anggota  
-**Current milestone:** Dashboard Peserta V2 ✅ + Kartu Anggota Digital + QR ✅ + Sertifikat QR ✅  
-**Next milestone:** Level/Poin
+**Current milestone:** Dashboard Peserta V2 ✅ + Kartu Anggota Digital + QR ✅ + Sertifikat QR ✅ + Level/Poin ✅ + Misi ✅ + Referral ✅ + Benefit ✅ + Aktivitas & Event ✅  
+**Next milestone:** Marketplace & Ekosistem
+
+### V13.0 Referral
+Referral peserta aktif untuk VERIFIED MEMBER dengan poin server-side dan atribusi dari tautan registrasi resmi.
+
+
+### V13.1 Benefit Peserta
+Benefit peserta aktif sebagai status akses/eligibility bertingkat berdasarkan Total Poin, Level, Registrasi Terverifikasi, dan VERIFIED MEMBER. Benefit tidak menjadi janji bantuan, hadiah, dana, atau kuota program tertentu.
+
+
+### V13.2 Aktivitas & Event
+Modul Aktivitas & Event peserta aktif untuk agenda server-side, pendaftaran event, status kehadiran, riwayat aktivitas, dan Poin Aktivitas yang hanya diberikan setelah kehadiran terverifikasi.
