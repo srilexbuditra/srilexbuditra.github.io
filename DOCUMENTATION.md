@@ -153,3 +153,7 @@ File berikut adalah template operasional GitHub, bukan dokumentasi produk:
 
 - `DASHBOARD-PESERTA-V2.md` — baseline pengalaman dashboard peserta.
 - `KARTU-ANGGOTA-QR-V12.2.md` — implementasi kartu anggota authenticated, QR verifikasi publik, print/PDF, keamanan, dan batas data yang ditampilkan.
+
+
+## VERIFIED MEMBER + Foto
+- [VERIFIED-MEMBER-FOTO-V12.3.md](./VERIFIED-MEMBER-FOTO-V12.3.md) — alur kamera, penyimpanan foto private, review admin, dan aktivasi kartu anggota.

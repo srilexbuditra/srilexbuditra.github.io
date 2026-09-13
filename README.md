@@ -15,7 +15,7 @@ Website profesional **Srilex Buditra** yang berfungsi sebagai pusat personal bra
 - **Program Ketahanan Pangan** sebagai flagship implementation di homepage dan case study publik pada `/portfolio/ketahanan-pangan/`.
 - Portal Program Ketahanan Pangan yang menghubungkan registrasi, verifikasi, akun peserta/dashboard, sertifikat QR, dan dokumentasi.
 - **Dashboard Peserta V2** dengan ringkasan keanggotaan, progres akun, navigasi cepat, dan layanan digital berbasis status.
-- **Kartu Anggota Digital + QR** untuk peserta berstatus terverifikasi, dengan QR menuju verifikasi publik tanpa menampilkan data identitas sensitif.
+- **Kartu Anggota Digital + QR** untuk VERIFIED MEMBER setelah rekam foto kamera dan review admin, dengan QR menuju verifikasi publik tanpa menampilkan data identitas sensitif.
 - Portfolio dan selected project samples dengan studi kasus terpisah.
 - Project Cost Estimator dengan keluaran Print/PDF A4.
 - Tanda tangan penyedia dan klien pada dokumen estimasi.
@@ -246,3 +246,7 @@ Website: https://srilexbuditra.work
 ---
 
 © 2026 Srilex Buditra. All Rights Reserved.
+
+
+### VERIFIED MEMBER + Foto — V12.3
+Registrasi `verified` tidak otomatis mengaktifkan kartu anggota. Peserta harus merekam foto setengah badan dari kamera dan menunggu review admin. Setelah disetujui, badge VERIFIED MEMBER dan Kartu Anggota + QR menjadi aktif. Lihat `VERIFIED-MEMBER-FOTO-V12.3.md`.

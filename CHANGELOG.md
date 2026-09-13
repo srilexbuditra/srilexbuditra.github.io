@@ -1,3 +1,9 @@
+
+## V12.3.1 — VERIFIED MEMBER Photo CSP Compatibility
+- Memuat foto anggota melalui `fetch()` + Blob URL agar sesuai dengan kebijakan `img-src 'self' data: blob:`.
+- Tidak memperlebar CSP untuk domain API eksternal.
+- Migration D1 dan source Worker Cloudflare tidak disertakan dalam patch GitHub deployment.
+
 # CHANGELOG
 
 Semua perubahan penting pada website dan modul terkait **Srilex Buditra — Full Stack Developer** dicatat dalam dokumen ini.
@@ -5,6 +11,15 @@ Semua perubahan penting pada website dan modul terkait **Srilex Buditra — Full
 Dokumen ini menggunakan dua riwayat versi agar nomor versi website utama tidak tercampur dengan nomor versi pengembangan modul **Project Estimator & Secure Document**.
 
 ---
+
+
+## V12.3 — VERIFIED MEMBER + Foto (13 September 2026)
+- Memisahkan status registrasi `verified` dari status VERIFIED MEMBER.
+- Menambahkan rekam foto setengah badan langsung dari kamera pada area peserta.
+- Menambahkan review manual foto anggota pada Dashboard Admin.
+- Kartu Anggota + QR baru aktif setelah member verification berstatus `approved`.
+- Menampilkan foto anggota pada kartu setelah approval.
+- Foto disimpan private di R2; tidak ada face matching biometrik otomatis.
 
 ## A. Versi Website Utama
 

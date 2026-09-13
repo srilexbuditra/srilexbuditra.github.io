@@ -75,3 +75,6 @@ V12.2 tidak mengubah:
 ## Next Milestone
 
 **Level/Poin** — dibangun sebagai fondasi engagement setelah kartu anggota dan sertifikat QR dikunci sebagai layanan terverifikasi.
+
+
+> **V12.3:** Aktivasi Kartu Anggota sekarang memerlukan Verifikasi Anggota + Foto berstatus `approved`. Status registrasi `verified` saja tidak lagi mengaktifkan badge VERIFIED MEMBER.

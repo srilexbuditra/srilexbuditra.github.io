@@ -38,7 +38,7 @@ Status: **fase aktif saat ini.**
 
 Urutan rekomendasi:
 
-**Dashboard V2 ✅ → Kartu Anggota + QR ✅ → Sertifikat QR ✅ → Level/Poin → Misi → Referral → Benefit → Event/Aktivitas**
+**Dashboard V2 ✅ → Kartu Anggota + QR + Verified Member Foto ✅ → Sertifikat QR ✅ → Level/Poin → Misi → Referral → Benefit → Event/Aktivitas**
 
 Prinsip:
 
