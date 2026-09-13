@@ -12,6 +12,24 @@ let participantData = null;
 let pointsData = null;
 let activeFilter = 'all';
 
+const LEVELS = [
+  { level: 1, name: 'Tunas', min: 0 },
+  { level: 2, name: 'Tumbuh', min: 50 },
+  { level: 3, name: 'Berkembang', min: 100 },
+  { level: 4, name: 'Produktif', min: 250 },
+  { level: 5, name: 'Maju', min: 500 },
+  { level: 6, name: 'Unggul', min: 1000 }
+];
+
+function getLevel(points) {
+  const total = Number(points || 0);
+  let current = LEVELS[0];
+  for (const item of LEVELS) {
+    if (total >= item.min) current = item;
+  }
+  return current;
+}
+
 async function api(path, options = {}) {
   const response = await fetch(API + path, {
     ...options,
@@ -125,7 +143,7 @@ function renderSummary() {
   const unread = Number(centerData?.unread_count || 0);
   const total = Number(centerData?.total_count || 0);
   const totalPoints = Number(pointsData?.total_points || 0);
-  const level = pointsData?.level || { level: 1, name: 'Tunas' };
+  const level = getLevel(totalPoints);
   const memberApproved = String(participantData?.member_verification_status || '').toLowerCase() === 'approved';
 
   document.getElementById('participantName').textContent = participantData?.nama || 'Peserta';
