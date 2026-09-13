@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>Keamanan & Sesi Akun | Program Ketahanan Pangan</title>
+  <meta name="description" content="Kelola sesi perangkat dan riwayat keamanan akun peserta Program Ketahanan Pangan.">
+  <meta name="theme-color" content="#123f2b">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <link rel="canonical" href="https://srilexbuditra.work/program/ketahanan-pangan/peserta/keamanan/">
+  <link rel="icon" href="/program/ketahanan-pangan/assets/brand/favicon.ico">
+  <link rel="stylesheet" href="./style.css?v=13.6.0">
+</head>
+<body>
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <a class="brand" href="../">Program Ketahanan Pangan</a>
+    <nav class="topnav" aria-label="Navigasi Keamanan Peserta">
+      <a href="../profil/">Profil</a>
+      <a href="../notifikasi/">Notifikasi</a>
+      <a href="../">← Dashboard</a>
+    </nav>
+  </div>
+</header>
+<main>
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <span class="eyebrow">AKUN PESERTA · TAHAP 9</span>
+        <h1>Keamanan &amp; <span>Sesi</span></h1>
+        <p>Lihat perangkat yang masih login, waktu aktivitas terakhir, dan keluarkan sesi lain bila diperlukan tanpa menampilkan token sesi atau alamat IP lengkap.</p>
+      </div>
+      <aside class="hero-note">
+        <strong>Kontrol akun dari satu tempat</strong>
+        <p>Sesi aktif dibatasi maksimal 5 perangkat. Password tetap dikelola melalui Profil &amp; Pengaturan Akun.</p>
+      </aside>
+    </div>
+  </section>
+  <section class="content">
+    <div class="wrap">
+      <div id="loadingState" class="state-card" role="status" aria-live="polite"><span class="loader"></span><div><strong>Memeriksa keamanan akun…</strong><p>Membaca sesi aktif dan riwayat keamanan dari server.</p></div></div>
+      <div id="errorState" class="state-card state-error" hidden><span class="state-icon">!</span><div><strong id="errorTitle">Keamanan akun belum dapat ditampilkan</strong><p id="errorText">Silakan kembali ke Dashboard Peserta.</p></div><a class="btn primary" href="../">Dashboard</a></div>
+
+      <section id="securityView" hidden>
+        <article class="summary-card">
+          <div class="summary-head">
+            <div><span class="section-kicker">RINGKASAN KEAMANAN</span><h2>Akun Peserta</h2><p>Informasi perangkat disederhanakan agar mudah dikenali dan tetap menjaga privasi.</p></div>
+            <span class="security-badge">SERVER PROTECTED</span>
+          </div>
+          <div class="stats-grid">
+            <article class="accent"><span>Sesi Aktif</span><strong id="activeSessionCount">0</strong><small>Maksimal 5 perangkat</small></article>
+            <article><span>Login Terakhir</span><strong id="lastLoginText">-</strong><small>Catatan akun</small></article>
+            <article><span>Status Akun</span><strong id="accountStatus">Aktif</strong><small id="lockStatus">Tidak terkunci</small></article>
+            <article><span>Perangkat Saat Ini</span><strong id="currentDeviceText">-</strong><small id="currentBrowserText">-</small></article>
+          </div>
+        </article>
+
+        <article class="panel-card sessions-card">
+          <div class="panel-head">
+            <div><span class="section-kicker">SESI PERANGKAT</span><h3>Perangkat yang masih login</h3></div>
+            <button id="revokeOthersBtn" class="btn danger-outline" type="button">Keluar dari Perangkat Lain</button>
+          </div>
+          <p class="panel-intro">Sesi saat ini tidak dapat diakhiri dari daftar ini. Gunakan tombol Keluar pada Dashboard untuk mengakhiri perangkat yang sedang digunakan.</p>
+          <div id="sessionList" class="session-list"></div>
+          <div id="sessionEmpty" class="empty-card" hidden><strong>Tidak ada sesi aktif.</strong><p>Login ulang untuk membuat sesi baru.</p></div>
+          <span id="sessionStatus" class="form-status" aria-live="polite"></span>
+        </article>
+
+        <div class="two-col">
+          <article class="panel-card">
+            <div class="panel-head"><div><span class="section-kicker">RIWAYAT KEAMANAN</span><h3>Aktivitas keamanan terbaru</h3></div></div>
+            <div id="eventList" class="event-list"></div>
+            <div id="eventEmpty" class="empty-card" hidden><strong>Belum ada riwayat keamanan.</strong><p>Login baru, perubahan password, dan pengelolaan sesi akan tercatat di sini.</p></div>
+          </article>
+          <article class="panel-card guidance-card">
+            <div class="panel-head"><div><span class="section-kicker">PANDUAN AKUN</span><h3>Jika melihat perangkat asing</h3></div></div>
+            <ol>
+              <li>Keluarkan sesi perangkat yang tidak dikenal.</li>
+              <li>Buka Profil &amp; Pengaturan lalu ubah password.</li>
+              <li>Periksa Pusat Notifikasi untuk aktivitas login baru.</li>
+              <li>Jangan pernah membagikan password, OTP, atau data login.</li>
+            </ol>
+            <a class="btn outline" href="../profil/">Buka Profil &amp; Pengaturan</a>
+          </article>
+        </div>
+
+        <article class="policy-card"><div class="policy-icon">i</div><div><span class="section-kicker">PRIVASI KEAMANAN</span><h3>Token sesi tidak pernah ditampilkan</h3><p>Halaman ini hanya menampilkan label perangkat, browser, sistem operasi, negara secara umum, serta waktu aktivitas. Token sesi dan alamat IP lengkap tetap berada di sisi server.</p></div></article>
+        <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+        <div class="page-actions"><a class="btn primary" href="../">← Dashboard Peserta</a><a class="btn outline" href="../profil/">Profil &amp; Pengaturan</a><a class="btn outline" href="../notifikasi/">Notifikasi</a></div>
+      </section>
+    </div>
+  </section>
+</main>
+<footer><div class="wrap footer-inner"><div><strong>Program Ketahanan Pangan</strong><span>Keamanan &amp; Sesi Akun Peserta</span></div><span>Session token tidak pernah ditampilkan</span></div></footer>
+<script src="./script.js?v=13.6.0"></script>
+<script src="/visitor-analytics.js" defer></script>
+</body>
+</html>
