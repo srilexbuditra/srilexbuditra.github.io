@@ -515,6 +515,9 @@ function renderMemberExperience(participant = {}) {
   const activityService = document.getElementById('activityService');
   const activityServiceState = document.getElementById('activityServiceState');
   const activityServiceBadge = document.getElementById('activityServiceBadge');
+  const marketplaceService = document.getElementById('marketplaceService');
+  const marketplaceServiceState = document.getElementById('marketplaceServiceState');
+  const marketplaceServiceBadge = document.getElementById('marketplaceServiceBadge');
 
   if (wrap) wrap.dataset.status = s || 'pending';
   if (label) label.textContent = experience.label;
@@ -710,6 +713,15 @@ function renderMemberExperience(participant = {}) {
     activityServiceBadge.textContent = 'AKTIF';
   }
 
+  if (marketplaceService && marketplaceServiceState && marketplaceServiceBadge) {
+    marketplaceService.href = './marketplace/';
+    marketplaceService.classList.add('is-active');
+    marketplaceService.classList.remove('is-locked', 'is-roadmap');
+    marketplaceService.setAttribute('aria-disabled', 'false');
+    marketplaceServiceState.textContent = 'Lihat katalog resmi produk, layanan, dan mitra. Simpan minat tanpa checkout atau pembayaran otomatis.';
+    marketplaceServiceBadge.textContent = 'AKTIF';
+  }
+
 }
 
 let engagementCardsRequest = 0;
@@ -732,6 +744,8 @@ async function refreshEngagementCards() {
     const benefitServiceBadge = document.getElementById('benefitServiceBadge');
     const activityServiceState = document.getElementById('activityServiceState');
     const activityServiceBadge = document.getElementById('activityServiceBadge');
+    const marketplaceServiceState = document.getElementById('marketplaceServiceState');
+    const marketplaceServiceBadge = document.getElementById('marketplaceServiceBadge');
     if (pointsServiceState) pointsServiceState.textContent = `${totalPoints} Total Poin · Level ${levelInfo.level} ${levelInfo.name}.`;
     if (pointsServiceBadge) pointsServiceBadge.textContent = `${totalPoints} POIN`;
     const completed = Number(points.completed_missions || 0);
@@ -764,6 +778,18 @@ async function refreshEngagementCards() {
           ? `${published} agenda tersedia · ${registered} terdaftar · ${attended} hadir · +${activityPoints} Poin Aktivitas.`
           : `Belum ada agenda aktif · Riwayat dan Poin Aktivitas tetap tersimpan di server.`;
         if (activityServiceBadge) activityServiceBadge.textContent = published > 0 ? `${published} AGENDA` : 'AKTIF';
+      }
+    } catch (_) {}
+    try {
+      const marketplaceData = await request('/marketplace');
+      if (requestId === engagementCardsRequest && marketplaceData?.marketplace) {
+        const marketplace = marketplaceData.marketplace;
+        const publishedItems = Number(marketplace.published_items || 0);
+        const interestedItems = Number(marketplace.interested_items || 0);
+        if (marketplaceServiceState) marketplaceServiceState.textContent = publishedItems > 0
+          ? `${publishedItems} katalog tersedia · ${interestedItems} minat tersimpan · tanpa transaksi otomatis.`
+          : 'Fondasi Marketplace aktif · katalog resmi akan tampil setelah dipublikasikan pengelola.';
+        if (marketplaceServiceBadge) marketplaceServiceBadge.textContent = publishedItems > 0 ? `${publishedItems} KATALOG` : 'AKTIF';
       }
     } catch (_) {}
   } catch (_) {
