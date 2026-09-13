@@ -518,6 +518,9 @@ function renderMemberExperience(participant = {}) {
   const marketplaceService = document.getElementById('marketplaceService');
   const marketplaceServiceState = document.getElementById('marketplaceServiceState');
   const marketplaceServiceBadge = document.getElementById('marketplaceServiceBadge');
+  const notificationService = document.getElementById('notificationService');
+  const notificationServiceState = document.getElementById('notificationServiceState');
+  const notificationServiceBadge = document.getElementById('notificationServiceBadge');
 
   if (wrap) wrap.dataset.status = s || 'pending';
   if (label) label.textContent = experience.label;
@@ -722,6 +725,15 @@ function renderMemberExperience(participant = {}) {
     marketplaceServiceBadge.textContent = 'AKTIF';
   }
 
+  if (notificationService && notificationServiceState && notificationServiceBadge) {
+    notificationService.href = './notifikasi/';
+    notificationService.classList.add('is-active');
+    notificationService.classList.remove('is-locked', 'is-roadmap');
+    notificationService.setAttribute('aria-disabled', 'false');
+    notificationServiceState.textContent = 'Pemberitahuan akun, poin, benefit, agenda, katalog, dan informasi program dalam satu tempat.';
+    notificationServiceBadge.textContent = 'AKTIF';
+  }
+
 }
 
 let engagementCardsRequest = 0;
@@ -746,6 +758,9 @@ async function refreshEngagementCards() {
     const activityServiceBadge = document.getElementById('activityServiceBadge');
     const marketplaceServiceState = document.getElementById('marketplaceServiceState');
     const marketplaceServiceBadge = document.getElementById('marketplaceServiceBadge');
+    const notificationService = document.getElementById('notificationService');
+    const notificationServiceState = document.getElementById('notificationServiceState');
+    const notificationServiceBadge = document.getElementById('notificationServiceBadge');
     if (pointsServiceState) pointsServiceState.textContent = `${totalPoints} Total Poin · Level ${levelInfo.level} ${levelInfo.name}.`;
     if (pointsServiceBadge) pointsServiceBadge.textContent = `${totalPoints} POIN`;
     const completed = Number(points.completed_missions || 0);
@@ -790,6 +805,22 @@ async function refreshEngagementCards() {
           ? `${publishedItems} katalog tersedia · ${interestedItems} minat tersimpan · tanpa transaksi otomatis.`
           : 'Fondasi Marketplace aktif · katalog resmi akan tampil setelah dipublikasikan pengelola.';
         if (marketplaceServiceBadge) marketplaceServiceBadge.textContent = publishedItems > 0 ? `${publishedItems} KATALOG` : 'AKTIF';
+      }
+    } catch (_) {}
+    try {
+      const notificationData = await request('/notifications');
+      if (requestId === engagementCardsRequest && notificationData?.notifications) {
+        const center = notificationData.notifications;
+        const unread = Number(center.unread_count || 0);
+        const totalNotifications = Number(center.total_count || 0);
+        const latestUnread = Array.isArray(center.notifications)
+          ? center.notifications.find(item => !item.is_read)
+          : null;
+        if (notificationServiceState) notificationServiceState.textContent = unread > 0
+          ? `${unread} belum dibaca · ${latestUnread?.title || 'Ada pembaruan penting untuk akun Anda.'}`
+          : `${totalNotifications} notifikasi tersimpan · semua sudah dibaca.`;
+        if (notificationServiceBadge) notificationServiceBadge.textContent = unread > 0 ? `${unread} BARU` : 'AKTIF';
+        if (notificationService) notificationService.classList.toggle('has-unread', unread > 0);
       }
     } catch (_) {}
   } catch (_) {
