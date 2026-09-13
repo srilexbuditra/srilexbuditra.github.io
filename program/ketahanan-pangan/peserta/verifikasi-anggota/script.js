@@ -101,7 +101,7 @@ function beginSuccessRedirect(seconds = 7) {
 }
 
 function humanStatus(value) {
-  return ({not_submitted:'Belum direkam',pending:'Menunggu review admin',approved:'VERIFIED MEMBER',rejected:'Perlu rekam ulang'})[String(value || '').toLowerCase()] || String(value || '-');
+  return ({not_submitted:'Belum direkam',pending:'Menunggu verifikasi admin',reviewing:'Sedang diperiksa admin',resubmitted:'Pemeriksaan ulang',approved:'VERIFIED MEMBER',revision:'Perlu perbaikan',rejected:'Ditolak / rekam ulang',needs_action:'Perlu tindakan'})[String(value || '').toLowerCase()] || String(value || '-');
 }
 
 function humanRegistration(value) {
@@ -133,7 +133,8 @@ function renderStatus(data) {
   document.getElementById('submittedAt').textContent = formatDate(mv.submitted_at);
   document.getElementById('reviewedAt').textContent = formatDate(mv.reviewed_at);
   const badge = document.getElementById('memberStatusBadge');
-  badge.className = 'status-pill ' + (['pending','approved','rejected'].includes(currentStatus) ? currentStatus : '');
+  const badgeTone = ['pending','reviewing','resubmitted'].includes(currentStatus) ? 'pending' : (['revision','rejected','needs_action'].includes(currentStatus) ? 'rejected' : (currentStatus === 'approved' ? 'approved' : ''));
+  badge.className = 'status-pill ' + badgeTone;
   badge.textContent = currentStatus === 'approved' ? 'VERIFIED MEMBER' : humanStatus(currentStatus).toUpperCase();
   const noteWrap = document.getElementById('reviewNoteWrap');
   if (mv.review_note) {
@@ -156,13 +157,15 @@ function renderStatus(data) {
     openBtn.disabled = true;
     captureBtn.disabled = true;
     submitBtn.disabled = true;
-  } else if (currentStatus === 'pending') {
-    title.textContent = 'Menunggu review admin';
-    text.textContent = 'Foto terbaru sudah diterima dan menunggu pemeriksaan admin.';
-    openBtn.disabled = false;
-  } else if (currentStatus === 'rejected') {
-    title.textContent = 'Silakan rekam ulang foto';
-    text.textContent = 'Admin meminta foto baru. Perhatikan catatan admin lalu rekam ulang menggunakan kepala hingga dada.';
+  } else if (['pending','reviewing','resubmitted'].includes(currentStatus)) {
+    title.textContent = currentStatus === 'reviewing' ? 'Foto sedang diperiksa admin' : (currentStatus === 'resubmitted' ? 'Menunggu pemeriksaan ulang' : 'Menunggu verifikasi admin');
+    text.textContent = currentStatus === 'resubmitted' ? 'Foto perbaikan sudah diterima dan masuk antrean pemeriksaan ulang.' : 'Foto terbaru sudah diterima. Tunggu hasil pemeriksaan admin sebelum merekam ulang.';
+    openBtn.disabled = true;
+    captureBtn.disabled = true;
+    submitBtn.disabled = true;
+  } else if (['revision','rejected','needs_action'].includes(currentStatus)) {
+    title.textContent = currentStatus === 'needs_action' ? 'Foto memerlukan tindakan' : 'Silakan rekam ulang foto';
+    text.textContent = 'Perhatikan catatan admin lalu rekam ulang dengan posisi bagian atas kepala hingga bahu dan dada terlihat jelas.';
     openBtn.disabled = false;
   } else {
     title.textContent = 'Foto anggota belum direkam';
@@ -498,7 +501,7 @@ async function submitPhoto() {
     setMessage('error',error.message || 'Foto belum dapat dikirim.');
   } finally {
     submitBtn.textContent = 'Kirim untuk Verifikasi Anggota';
-    if (!redirectTimer) submitBtn.disabled = !capturedBlob || !consentCheck.checked || currentStatus === 'approved';
+    if (!redirectTimer) submitBtn.disabled = !capturedBlob || !consentCheck.checked || ['approved','pending','reviewing','resubmitted'].includes(currentStatus);
   }
 }
 
@@ -511,7 +514,7 @@ zoomRange.addEventListener('input',()=>applyZoom(zoomRange.value));
 bindZoomDrag();
 zoomOutBtn.addEventListener('click',()=>applyZoom(zoomLevel - ZOOM_STEP, true));
 zoomInBtn.addEventListener('click',()=>applyZoom(zoomLevel + ZOOM_STEP, true));
-consentCheck.addEventListener('change',()=>{ submitBtn.disabled = !capturedBlob || !consentCheck.checked || currentStatus === 'approved'; });
+consentCheck.addEventListener('change',()=>{ submitBtn.disabled = !capturedBlob || !consentCheck.checked || ['approved','pending','reviewing','resubmitted'].includes(currentStatus); });
 submitBtn.addEventListener('click',submitPhoto);
 window.addEventListener('pagehide',()=>{ stopCamera(); revokePreviewUrl(); });
 window.addEventListener('beforeunload',()=>{ stopCamera(); revokePreviewUrl(); });
