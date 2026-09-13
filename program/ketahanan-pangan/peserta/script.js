@@ -547,8 +547,14 @@ function renderMemberExperience(participant = {}) {
       }
       memberIdentityService.setAttribute('aria-label', 'Verifikasi Anggota + Foto sedang dalam proses pemeriksaan admin.');
       if (memberIdentityActionHint) {
-        memberIdentityActionHint.textContent = 'Lihat Status Foto →';
-        memberIdentityActionHint.hidden = false;
+        // V12.6.3: saat baru MENUNGGU VERIFIKASI, cukup tampilkan statusnya.
+        // Tautan bantuan tetap tersedia untuk tahap pemeriksaan aktif / pemeriksaan ulang.
+        if (memberStatus === 'pending') {
+          memberIdentityActionHint.hidden = true;
+        } else {
+          memberIdentityActionHint.textContent = 'Lihat Status Foto →';
+          memberIdentityActionHint.hidden = false;
+        }
       }
     } else if (['revision','rejected','needs_action'].includes(memberStatus)) {
       memberIdentityService.href = './verifikasi-anggota/';
