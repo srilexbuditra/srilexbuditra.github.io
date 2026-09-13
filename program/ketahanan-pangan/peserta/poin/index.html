@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>Level & Poin | Program Ketahanan Pangan</title>
+  <meta name="description" content="Level dan Poin Dasar peserta Program Ketahanan Pangan.">
+  <meta name="theme-color" content="#123f2b">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <link rel="canonical" href="https://srilexbuditra.work/program/ketahanan-pangan/peserta/poin/">
+  <link rel="icon" href="/program/ketahanan-pangan/assets/brand/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="/program/ketahanan-pangan/assets/brand/apple-touch-icon.png">
+  <link rel="stylesheet" href="./style.css?v=12.8.0">
+</head>
+<body>
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <a class="brand" href="../">Program Ketahanan Pangan</a>
+    <nav class="topnav" aria-label="Navigasi Level dan Poin">
+      <a href="../">← Dashboard Peserta</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <span class="eyebrow">ENGAGEMENT PESERTA · TAHAP 1</span>
+        <h1>Level &amp; <span>Poin</span></h1>
+        <p>Poin Dasar menunjukkan progres keanggotaan yang sudah tercatat dan terverifikasi oleh sistem. Poin ini menjadi fondasi untuk Misi, Referral, dan Benefit pada tahap berikutnya.</p>
+      </div>
+      <aside class="hero-note">
+        <strong>Poin Dasar</strong>
+        <p>Belum merupakan saldo hadiah dan belum dapat ditukar. Nilainya berasal dari milestone akun dan verifikasi peserta.</p>
+      </aside>
+    </div>
+  </section>
+
+  <section class="content">
+    <div class="wrap">
+      <div id="loadingState" class="state-card" role="status" aria-live="polite">
+        <span class="loader" aria-hidden="true"></span>
+        <div><strong>Menyiapkan Level &amp; Poin…</strong><p>Memeriksa sesi dan progres peserta.</p></div>
+      </div>
+
+      <div id="errorState" class="state-card state-error" hidden>
+        <span class="state-icon" aria-hidden="true">!</span>
+        <div><strong id="errorTitle">Level & Poin belum dapat ditampilkan</strong><p id="errorText">Silakan kembali ke dashboard peserta.</p></div>
+        <a class="btn primary" href="../">Kembali ke Dashboard</a>
+      </div>
+
+      <section id="pointsView" hidden>
+        <article class="summary-card">
+          <div class="summary-head">
+            <div>
+              <span class="section-kicker">RINGKASAN ANGGOTA</span>
+              <h2 id="participantName">Peserta</h2>
+              <p id="participantStatus">Poin diperbarui berdasarkan status sistem.</p>
+            </div>
+            <span class="level-badge" id="levelBadge">LEVEL 1 · TUNAS</span>
+          </div>
+
+          <div class="points-hero">
+            <div class="points-orb" aria-hidden="true">◎</div>
+            <div>
+              <span>Poin Dasar</span>
+              <strong><b id="pointsValue">0</b> Poin</strong>
+              <small id="levelCaption">Level 1 Tunas</small>
+            </div>
+          </div>
+
+          <div class="progress-block">
+            <div class="progress-copy"><strong id="progressTitle">Menuju level berikutnya</strong><span id="progressValue">0%</span></div>
+            <div class="progress-track" aria-hidden="true"><span id="progressBar"></span></div>
+            <p id="progressText">Memuat progres level…</p>
+          </div>
+        </article>
+
+        <div class="content-grid">
+          <article class="panel milestone-panel">
+            <div class="panel-head">
+              <div><span class="section-kicker">POIN DASAR</span><h3>Milestone Keanggotaan</h3></div>
+              <span class="panel-chip">MAKS. 100 POIN</span>
+            </div>
+            <p class="panel-intro">Poin berikut diberikan otomatis ketika milestone yang bersangkutan sudah benar-benar tercapai.</p>
+            <div id="milestoneList" class="milestone-list"></div>
+          </article>
+
+          <article class="panel level-panel">
+            <div class="panel-head">
+              <div><span class="section-kicker">JENJANG</span><h3>Level Peserta</h3></div>
+              <span class="panel-chip">6 LEVEL</span>
+            </div>
+            <p class="panel-intro">Level akan berkembang seiring bertambahnya poin dari aktivitas program pada tahap berikutnya.</p>
+            <div id="levelList" class="level-list"></div>
+          </article>
+        </div>
+
+        <article class="next-card">
+          <div class="next-icon" aria-hidden="true">★</div>
+          <div>
+            <span class="section-kicker">TAHAP BERIKUTNYA</span>
+            <h3>Misi &amp; Poin Aktivitas</h3>
+            <p>Misi akan menjadi sumber poin tambahan dari aktivitas yang benar-benar dilakukan peserta. Fitur ini belum aktif dan akan dibangun setelah fondasi Level &amp; Poin dikunci.</p>
+          </div>
+          <span class="next-badge">NEXT</span>
+        </article>
+
+        <div class="page-actions">
+          <a class="btn primary" href="../">← Kembali ke Dashboard</a>
+          <a id="cardLink" class="btn outline" href="../kartu/" hidden>Kartu Anggota + QR</a>
+        </div>
+      </section>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap footer-inner">
+    <div><strong>Program Ketahanan Pangan</strong><span>Level &amp; Poin Peserta</span></div>
+    <span>Fondasi engagement digital peserta</span>
+  </div>
+</footer>
+
+<script src="./script.js?v=12.8.0"></script>
+<script src="/visitor-analytics.js" defer></script>
+</body>
+</html>
