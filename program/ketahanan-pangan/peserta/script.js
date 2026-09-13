@@ -52,6 +52,34 @@ function clearMsg() {
   message.textContent = '';
 }
 
+
+const MEMBER_PHOTO_SUCCESS_KEY = 'memberPhotoUploadSuccess';
+
+function showPhotoUploadSuccessNotice() {
+  const notice = document.getElementById('photoUploadSuccessNotice');
+  const text = document.getElementById('photoUploadSuccessText');
+  if (!notice) return;
+
+  let payload = null;
+  try {
+    const raw = sessionStorage.getItem(MEMBER_PHOTO_SUCCESS_KEY);
+    sessionStorage.removeItem(MEMBER_PHOTO_SUCCESS_KEY);
+    if (raw) payload = JSON.parse(raw);
+  } catch (_) {}
+
+  if (!payload || !payload.at || (Date.now() - Number(payload.at) > 120000)) return;
+  if (text && payload.message) text.textContent = payload.message;
+  notice.hidden = false;
+  window.setTimeout(() => {
+    notice.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, 120);
+}
+
+function hidePhotoUploadSuccessNotice() {
+  const notice = document.getElementById('photoUploadSuccessNotice');
+  if (notice) notice.hidden = true;
+}
+
 document.querySelectorAll('.tab').forEach(b => b.onclick = () => {
   document.querySelectorAll('.tab').forEach(x => x.classList.toggle('active', x === b));
   document.querySelectorAll('.form').forEach(x => x.classList.toggle('active', x.dataset.panel === b.dataset.tab));
@@ -710,6 +738,15 @@ if (statusChangeActionBtn) statusChangeActionBtn.addEventListener('click', () =>
   target?.scrollIntoView({ behavior: 'smooth', block: 'center' });
 });
 
+const photoUploadSuccessActionBtn = document.getElementById('photoUploadSuccessActionBtn');
+if (photoUploadSuccessActionBtn) photoUploadSuccessActionBtn.addEventListener('click', () => {
+  const target = document.getElementById('memberIdentityService');
+  target?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+});
+
+const photoUploadSuccessDismiss = document.getElementById('photoUploadSuccessDismiss');
+if (photoUploadSuccessDismiss) photoUploadSuccessDismiss.addEventListener('click', hidePhotoUploadSuccessNotice);
+
 const statusChangeDismiss = document.getElementById('statusChangeDismiss');
 if (statusChangeDismiss) statusChangeDismiss.addEventListener('click', hideStatusChangeNotice);
 
@@ -991,6 +1028,7 @@ document.getElementById('logoutBtn').onclick = async () => {
       showDashboard(d.participant);
       hideStatusChangeNotice();
       hideAdminUpdateNotice();
+      showPhotoUploadSuccessNotice();
     } else showAuth();
   } catch {
     showAuth();

@@ -29,7 +29,7 @@
   <link itemprop="publisher" href="https://srilexbuditra.work/#person">
   <meta itemprop="description" content="Aktivasi akun, login, dan dashboard pribadi peserta Program Ketahanan Pangan.">
   <link rel="search" type="application/opensearchdescription+xml" title="Srilex Buditra Search" href="/opensearch.xml">
-  <link rel="stylesheet" href="./style.css?v=12.4">
+  <link rel="stylesheet" href="./style.css?v=12.5.6">
 </head>
 <body>
 <header class="topbar">
@@ -145,6 +145,17 @@
             </div>
           </div>
           <button id="logoutBtn" class="btn logout-btn" type="button">Keluar</button>
+        </section>
+
+        <section id="photoUploadSuccessNotice" class="status-change-notice photo-upload-success-notice" data-status="approved" hidden role="status" aria-live="assertive" aria-labelledby="photoUploadSuccessTitle">
+          <div class="status-change-icon" aria-hidden="true">✓</div>
+          <div class="status-change-copy">
+            <span class="section-kicker">FOTO BERHASIL DIKIRIM</span>
+            <h3 id="photoUploadSuccessTitle">Foto terbaru sudah diterima</h3>
+            <p id="photoUploadSuccessText">Foto anggota Anda berhasil dikirim dan sedang menunggu pemeriksaan admin.</p>
+          </div>
+          <button id="photoUploadSuccessActionBtn" class="status-change-action" type="button">Lihat status foto ↓</button>
+          <button id="photoUploadSuccessDismiss" class="status-change-dismiss" type="button" aria-label="Tutup pemberitahuan foto berhasil dikirim">×</button>
         </section>
 
         <section id="statusChangeNotice" class="status-change-notice" data-status="pending" hidden role="status" aria-live="polite" aria-labelledby="statusChangeTitle">
@@ -382,7 +393,7 @@
   </div>
 </footer>
 
-<script src="./script.js?v=12.4"></script>
+<script src="./script.js?v=12.5.6"></script>
 <div class="tts-fab-wrap" id="ttsFabWrap" aria-label="Kontrol pembaca halaman">
   <button class="tts-stop" id="ttsStop" type="button" aria-label="Hentikan pembacaan" title="Hentikan"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6h12v12H6z"/></svg></button>
   <button class="tts-fab" id="ttsFab" type="button" aria-label="Bacakan halaman" aria-pressed="false">

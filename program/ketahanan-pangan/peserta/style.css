@@ -430,3 +430,25 @@ footer{padding:24px 0}
   .member-review-reason strong{font-size:.73rem}
   .member-service-action-hint{font-size:.68rem}
 }
+
+
+/* V12.5.6 — notifikasi satu kali setelah foto anggota berhasil dikirim */
+.photo-upload-success-notice{
+  border-color:#a9dfbc;
+  border-left-color:#198754!important;
+  background:linear-gradient(135deg,#eaf8ef,#ffffff)!important;
+  box-shadow:0 14px 34px rgba(25,135,84,.14);
+  animation:photoUploadSuccessIn .32s ease both;
+}
+.photo-upload-success-notice .status-change-icon{
+  background:#d8f3e2!important;
+  color:#176d42!important;
+  font-size:1.35rem;
+}
+.photo-upload-success-notice .section-kicker{color:#176d42}
+.photo-upload-success-notice h3{color:#173c29}
+.photo-upload-success-notice p{color:#49665a}
+@keyframes photoUploadSuccessIn{
+  from{opacity:0;transform:translateY(-8px)}
+  to{opacity:1;transform:translateY(0)}
+}
