@@ -29,15 +29,15 @@
   <link itemprop="publisher" href="https://srilexbuditra.work/#person">
   <meta itemprop="description" content="Aktivasi akun, login, dan dashboard pribadi peserta Program Ketahanan Pangan.">
   <link rel="search" type="application/opensearchdescription+xml" title="Srilex Buditra Search" href="/opensearch.xml">
-  <link rel="stylesheet" href="./style.css?v=12.5.6">
+  <link rel="stylesheet" href="./style.css?v=12.6.1">
 </head>
 <body>
 <header class="topbar">
   <div class="wrap topbar-inner">
-    <a href="../" class="brand" aria-label="Kembali ke Portal Peserta Program Ketahanan Pangan">Program Ketahanan Pangan</a>
+    <a href="../" class="brand" aria-label="Kembali ke Portal Peserta Program Ketahanan Pangan" data-ga-event="participant_portal_open" data-ga-source="header_brand">Program Ketahanan Pangan</a>
     <nav class="topnav" aria-label="Navigasi akun peserta">
-      <a href="../" class="toplink portal-link">← Portal Peserta</a>
-      <a href="../verifikasi/" class="toplink">Verifikasi Publik</a>
+      <a href="../" class="toplink portal-link" data-ga-event="participant_portal_open" data-ga-source="header_nav">← Portal Peserta</a>
+      <a href="../verifikasi/" class="toplink" data-ga-event="participant_public_verify_open" data-ga-source="header_nav">Verifikasi Publik</a>
     </nav>
   </div>
 </header>
@@ -85,8 +85,8 @@
             <label>Password<div class="password-row"><input name="password" type="password" minlength="8" required autocomplete="current-password"><button type="button" class="showpass">Lihat</button></div></label>
             <button class="btn primary" type="submit">Masuk ke Dashboard</button>
             <div class="auth-links" aria-label="Bantuan akun peserta">
-              <a href="../registrasi/">Belum mendaftar? <strong>Daftar Peserta →</strong></a>
-              <a href="../verifikasi/">Lupa Nomor Registrasi? <strong>Cek Status Pendaftaran →</strong></a>
+              <a href="../registrasi/" data-ga-event="participant_register_open" data-ga-source="auth_help">Belum mendaftar? <strong>Daftar Peserta →</strong></a>
+              <a href="../verifikasi/" data-ga-event="participant_status_check_open" data-ga-source="login_help">Lupa Nomor Registrasi? <strong>Cek Status Pendaftaran →</strong></a>
             </div>
           </form>
           <form id="activateForm" class="form" data-panel="activate">
@@ -100,8 +100,8 @@
             <label>Ulangi Password<input name="password_confirm" type="password" minlength="8" maxlength="128" required autocomplete="new-password"></label>
             <button class="btn primary" type="submit">Aktifkan Akun</button>
             <div class="auth-links" aria-label="Bantuan aktivasi akun peserta">
-              <a href="../registrasi/">Belum mendaftar? <strong>Daftar Peserta →</strong></a>
-              <a href="../verifikasi/">Cek data pendaftaran? <strong>Cek Status →</strong></a>
+              <a href="../registrasi/" data-ga-event="participant_register_open" data-ga-source="auth_help">Belum mendaftar? <strong>Daftar Peserta →</strong></a>
+              <a href="../verifikasi/" data-ga-event="participant_status_check_open" data-ga-source="activation_help">Cek data pendaftaran? <strong>Cek Status →</strong></a>
             </div>
           </form>
           <div id="authMessage" class="message" role="status" aria-live="polite"></div>
@@ -125,7 +125,7 @@
               <div class="registration-line">
                 <span>Nomor Registrasi</span>
                 <code id="dashId">-</code>
-                <button id="copyRegistrationBtn" class="copy-inline" type="button" aria-label="Salin Nomor Registrasi">⧉ Salin</button>
+                <button id="copyRegistrationBtn" class="copy-inline" type="button" aria-label="Salin Nomor Registrasi" data-ga-event="participant_registration_copy" data-ga-source="summary">⧉ Salin</button>
               </div>
             </div>
           </div>
@@ -134,7 +134,7 @@
             <strong id="heroStatus">-</strong>
             <p id="heroStatusText">Status peserta sedang dimuat.</p>
             <div class="status-sync">
-              <button id="refreshParticipantBtn" class="status-sync-btn" type="button" aria-label="Perbarui status peserta dari server">↻ Perbarui status</button>
+              <button id="refreshParticipantBtn" class="status-sync-btn" type="button" aria-label="Perbarui status peserta dari server" data-ga-event="participant_status_refresh" data-ga-source="dashboard_header">↻ Perbarui status</button>
               <div class="status-sync-meta">
                 <span id="connectionState" class="connection-state" data-state="online" role="status" aria-live="polite" title="Status koneksi dashboard">
                   <span class="connection-dot" aria-hidden="true"></span>
@@ -144,7 +144,7 @@
               </div>
             </div>
           </div>
-          <button id="logoutBtn" class="btn logout-btn" type="button">Keluar</button>
+          <button id="logoutBtn" class="btn logout-btn" type="button" data-ga-event="participant_logout_click" data-ga-source="dashboard_header">Keluar</button>
         </section>
 
         <section id="photoUploadSuccessNotice" class="status-change-notice photo-upload-success-notice" data-status="approved" hidden role="status" aria-live="assertive" aria-labelledby="photoUploadSuccessTitle">
@@ -154,7 +154,7 @@
             <h3 id="photoUploadSuccessTitle">Foto terbaru sudah diterima</h3>
             <p id="photoUploadSuccessText">Foto anggota Anda berhasil dikirim dan sedang menunggu pemeriksaan admin.</p>
           </div>
-          <button id="photoUploadSuccessActionBtn" class="status-change-action" type="button">Lihat status foto ↓</button>
+          <button id="photoUploadSuccessActionBtn" class="status-change-action" type="button" data-ga-event="participant_notice_action" data-ga-source="photo_success_notice">Lihat status foto ↓</button>
           <button id="photoUploadSuccessDismiss" class="status-change-dismiss" type="button" aria-label="Tutup pemberitahuan foto berhasil dikirim">×</button>
         </section>
 
@@ -165,7 +165,7 @@
             <h3 id="statusChangeTitle">Status peserta diperbarui</h3>
             <p id="statusChangeText">Ada perubahan pada status pendaftaran Anda.</p>
           </div>
-          <button id="statusChangeActionBtn" class="status-change-action" type="button">Lihat langkah berikutnya ↓</button>
+          <button id="statusChangeActionBtn" class="status-change-action" type="button" data-ga-event="participant_notice_action" data-ga-source="status_change_notice">Lihat langkah berikutnya ↓</button>
           <button id="statusChangeDismiss" class="status-change-dismiss" type="button" aria-label="Tutup pemberitahuan perubahan status">×</button>
         </section>
 
@@ -176,16 +176,16 @@
             <h3 id="adminUpdateTitle">Ada informasi baru dari admin</h3>
             <p id="adminUpdateText">Admin memperbarui informasi pemeriksaan Anda.</p>
           </div>
-          <button id="adminUpdateActionBtn" class="status-change-action" type="button">Lihat informasi ↓</button>
+          <button id="adminUpdateActionBtn" class="status-change-action" type="button" data-ga-event="participant_notice_action" data-ga-source="admin_update_notice">Lihat informasi ↓</button>
           <button id="adminUpdateDismiss" class="status-change-dismiss" type="button" aria-label="Tutup pemberitahuan dari admin">×</button>
         </section>
 
         <nav class="dashboard-subnav" aria-label="Navigasi cepat dashboard peserta">
-          <a href="#memberOverview">Ringkasan</a>
-          <a href="#progressCard">Tahapan</a>
-          <a href="#memberServices">Layanan</a>
-          <a href="#participantInfoCard">Data Peserta</a>
-          <a href="#itSupportCard">Dukungan IT</a>
+          <a href="#memberOverview" data-ga-event="participant_section_nav" data-ga-source="ringkasan">Ringkasan</a>
+          <a href="#progressCard" data-ga-event="participant_section_nav" data-ga-source="tahapan">Tahapan</a>
+          <a href="#memberServices" data-ga-event="participant_section_nav" data-ga-source="layanan">Layanan</a>
+          <a href="#participantInfoCard" data-ga-event="participant_section_nav" data-ga-source="data_peserta">Data Peserta</a>
+          <a href="#itSupportCard" data-ga-event="participant_section_nav" data-ga-source="dukungan_it">Dukungan IT</a>
         </nav>
 
         <section class="next-action-card" id="nextActionCard" data-status="pending" aria-labelledby="nextActionTitle">
@@ -195,7 +195,7 @@
             <h3 id="nextActionTitle">Tunggu pemeriksaan admin</h3>
             <p id="nextActionText">Data Anda sedang diproses. Tidak ada tindakan yang perlu dilakukan saat ini.</p>
             <div class="next-action-cta-row">
-              <button id="nextActionPrimaryBtn" class="next-action-primary" type="button" data-action="refresh">↻ Cek Status Terbaru</button>
+              <button id="nextActionPrimaryBtn" class="next-action-primary" type="button" data-action="refresh" data-ga-event="participant_next_action" data-ga-source="next_action">↻ Cek Status Terbaru</button>
               <span id="nextActionHint" class="next-action-hint">Tidak ada tindakan wajib saat ini.</span>
             </div>
           </div>
@@ -257,9 +257,9 @@
             <span class="badge">AKSI PESERTA</span>
             <h3 id="quickActionsTitle">Akses Cepat</h3>
             <p class="card-intro">Gunakan menu berikut untuk kebutuhan utama akun Anda.</p>
-            <a id="certificateBtn" class="action-button action-primary" href="#" hidden><span class="action-icon" aria-hidden="true">▣</span><span><strong>Lihat Sertifikat Digital</strong><small>Buka sertifikat peserta terverifikasi</small></span><span class="action-arrow" aria-hidden="true">›</span></a>
-            <a class="action-button" href="../verifikasi/"><span class="action-icon" aria-hidden="true">⌕</span><span><strong>Verifikasi Publik</strong><small>Cek keabsahan nomor registrasi</small></span><span class="action-arrow" aria-hidden="true">›</span></a>
-            <button id="copyRegistrationAction" class="action-button" type="button"><span class="action-icon" aria-hidden="true">⧉</span><span><strong>Salin Nomor Registrasi</strong><small>Simpan nomor untuk digunakan kembali</small></span><span class="action-arrow" aria-hidden="true">›</span></button>
+            <a id="certificateBtn" class="action-button action-primary" href="#" hidden data-ga-event="participant_certificate_open" data-ga-source="quick_action"><span class="action-icon" aria-hidden="true">▣</span><span><strong>Lihat Sertifikat Digital</strong><small>Buka sertifikat peserta terverifikasi</small></span><span class="action-arrow" aria-hidden="true">›</span></a>
+            <a class="action-button" href="../verifikasi/" data-ga-event="participant_public_verify_open" data-ga-source="quick_action"><span class="action-icon" aria-hidden="true">⌕</span><span><strong>Verifikasi Publik</strong><small>Cek keabsahan nomor registrasi</small></span><span class="action-arrow" aria-hidden="true">›</span></a>
+            <button id="copyRegistrationAction" class="action-button" type="button" data-ga-event="participant_registration_copy" data-ga-source="quick_action"><span class="action-icon" aria-hidden="true">⧉</span><span><strong>Salin Nomor Registrasi</strong><small>Simpan nomor untuk digunakan kembali</small></span><span class="action-arrow" aria-hidden="true">›</span></button>
             <div id="statusNote" class="status-note">Status akun sedang dimuat.</div>
           </aside>
         </div>
@@ -274,17 +274,17 @@
             <span class="member-services-version">DASHBOARD V2</span>
           </div>
           <div class="member-services-grid">
-            <a id="memberCertificateService" class="member-service-card is-locked" href="#" aria-disabled="true">
+            <a id="memberCertificateService" class="member-service-card is-locked" href="#" aria-disabled="true" data-ga-event="participant_certificate_open" data-ga-source="service_card">
               <span class="member-service-icon" aria-hidden="true">▣</span>
               <span class="member-service-copy"><b>Sertifikat Digital</b><small id="memberCertificateState">Tersedia setelah peserta terverifikasi.</small></span>
               <span class="member-service-state" id="memberCertificateBadge">TERKUNCI</span>
             </a>
-            <a class="member-service-card is-active" href="../verifikasi/">
+            <a class="member-service-card is-active" href="../verifikasi/" data-ga-event="participant_public_verify_open" data-ga-source="service_card">
               <span class="member-service-icon" aria-hidden="true">⌕</span>
               <span class="member-service-copy"><b>Verifikasi Publik</b><small>Cek keabsahan nomor registrasi dan status publik.</small></span>
               <span class="member-service-state">AKTIF</span>
             </a>
-            <a id="memberIdentityService" class="member-service-card member-identity-service is-locked" href="#" aria-disabled="true">
+            <a id="memberIdentityService" class="member-service-card member-identity-service is-locked" href="#" aria-disabled="true" data-ga-event="participant_photo_verify_open" data-ga-source="service_card">
               <span class="member-service-icon" aria-hidden="true">◉</span>
               <span class="member-service-copy">
                 <b>Verifikasi Anggota + Foto</b>
@@ -297,7 +297,7 @@
               </span>
               <span class="member-service-state" id="memberIdentityBadge">TERKUNCI</span>
             </a>
-            <a id="memberCardService" class="member-service-card is-locked" href="#" aria-disabled="true">
+            <a id="memberCardService" class="member-service-card is-locked" href="#" aria-disabled="true" data-ga-event="participant_member_card_open" data-ga-source="service_card">
               <span class="member-service-icon" aria-hidden="true">▦</span>
               <span class="member-service-copy"><b>Kartu Anggota + QR</b><small id="memberCardState">Aktif setelah foto anggota disetujui admin.</small></span>
               <span class="member-service-state" id="memberCardBadge">TERKUNCI</span>
@@ -375,7 +375,7 @@
             </div>
           </div>
           <div class="it-support-actions">
-            <a class="btn primary it-support-link" href="https://srilexbuditra.work/" target="_blank" rel="noopener noreferrer" aria-label="Buka halaman konsultasi dan dukungan IT">
+            <a class="btn primary it-support-link" href="https://srilexbuditra.work/" target="_blank" rel="noopener noreferrer" aria-label="Buka halaman konsultasi dan dukungan IT" data-ga-event="participant_it_support_open" data-ga-source="support_card">
               Konsultasi IT <span aria-hidden="true">↗</span>
             </a>
           </div>
@@ -393,7 +393,7 @@
   </div>
 </footer>
 
-<script src="./script.js?v=12.5.6"></script>
+<script src="./script.js?v=12.6.1"></script>
 <div class="tts-fab-wrap" id="ttsFabWrap" aria-label="Kontrol pembaca halaman">
   <button class="tts-stop" id="ttsStop" type="button" aria-label="Hentikan pembacaan" title="Hentikan"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6h12v12H6z"/></svg></button>
   <button class="tts-fab" id="ttsFab" type="button" aria-label="Bacakan halaman" aria-pressed="false">

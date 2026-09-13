@@ -13,6 +13,57 @@ let participantSyncInFlight = false;
 let lastParticipantSyncRequestAt = 0;
 const AUTO_SYNC_MIN_INTERVAL_MS = 90 * 1000;
 
+
+// V12.6.1 — GA4 Dashboard Peserta
+// Melacak navigasi/aksi dashboard tanpa mengirim NIK, nomor registrasi, nama,
+// WhatsApp, email, catatan admin, atau data pribadi peserta.
+function sendParticipantGA4Event(eventName, params = {}, attempt = 0) {
+  const safeEvent = String(eventName || '').trim();
+  if (!safeEvent) return;
+
+  const payload = {
+    event_category: 'ketahanan_pangan_peserta',
+    participant_status: String(lastKnownParticipantStatus || 'unknown').toLowerCase(),
+    transport_type: 'beacon',
+    ...params
+  };
+
+  if (typeof window.gtag === 'function') {
+    window.gtag('event', safeEvent, payload);
+    return;
+  }
+
+  // visitor-analytics.js dimuat dengan defer. Beri waktu singkat agar gtag siap
+  // jika peserta mengetuk tautan segera setelah halaman dibuka.
+  if (attempt < 10) {
+    window.setTimeout(() => sendParticipantGA4Event(safeEvent, params, attempt + 1), 180);
+  }
+}
+
+function safeAnalyticsLinkTarget(element) {
+  const href = element?.getAttribute?.('href') || '';
+  if (!href || href === '#') return 'dashboard';
+  try {
+    const url = new URL(href, window.location.href);
+    return `${url.origin}${url.pathname}`;
+  } catch (_) {
+    return String(href).split(/[?#]/)[0].slice(0, 180);
+  }
+}
+
+document.addEventListener('click', (event) => {
+  const target = event.target.closest?.('[data-ga-event]');
+  if (!target) return;
+
+  sendParticipantGA4Event(target.dataset.gaEvent, {
+    event_label: target.dataset.gaSource || target.id || 'dashboard',
+    event_source: target.dataset.gaSource || 'dashboard',
+    action_name: target.dataset.action || '',
+    link_state: target.getAttribute('aria-disabled') === 'true' ? 'locked' : 'active',
+    link_target: safeAnalyticsLinkTarget(target)
+  });
+});
+
 // V5.3 — Status koneksi & pemulihan sinkronisasi peserta.
 function setConnectionState(state = 'online', label = '') {
   const wrap = document.getElementById('connectionState');
