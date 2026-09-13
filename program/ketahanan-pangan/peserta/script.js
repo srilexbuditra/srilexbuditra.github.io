@@ -524,14 +524,18 @@ function renderMemberExperience(participant = {}) {
       memberIdentityBadge.textContent = 'TERKUNCI';
       memberIdentityService.setAttribute('aria-label', 'Verifikasi Anggota + Foto terkunci. Tersedia setelah registrasi terverifikasi.');
     } else if (memberStatus === 'approved') {
-      memberIdentityService.href = './verifikasi-anggota/';
-      memberIdentityService.classList.add('is-member-approved');
+      // V12.6.6: status TERVERIFIKASI adalah tahap final.
+      // Kartu hanya menjadi informasi dan tidak lagi membuka halaman rekam foto.
+      memberIdentityService.removeAttribute('href');
+      memberIdentityService.classList.add('is-member-approved', 'is-status-only');
+      memberIdentityService.setAttribute('aria-disabled', 'true');
+      memberIdentityService.setAttribute('tabindex', '-1');
       memberIdentityState.textContent = 'Foto anggota telah disetujui admin. Verifikasi anggota selesai.';
       memberIdentityBadge.textContent = 'TERVERIFIKASI';
-      memberIdentityService.setAttribute('aria-label', 'Verifikasi Anggota + Foto terverifikasi. Buka detail verifikasi anggota.');
+      memberIdentityService.setAttribute('aria-label', 'Verifikasi Anggota + Foto terverifikasi. Tahap verifikasi foto telah selesai.');
       if (memberIdentityActionHint) {
-        memberIdentityActionHint.textContent = 'Lihat Verifikasi Foto →';
-        memberIdentityActionHint.hidden = false;
+        memberIdentityActionHint.textContent = '';
+        memberIdentityActionHint.hidden = true;
       }
     } else if (memberStatus === 'pending' || memberStatus === 'reviewing' || memberStatus === 'resubmitted') {
       // V12.6.5: status proses admin bersifat informasi saja.
