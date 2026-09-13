@@ -73,6 +73,7 @@ function render() {
   document.getElementById('participantName').textContent = participant?.nama || 'Peserta';
   document.getElementById('basePoints').textContent = Number(data.base_points || 0).toLocaleString('id-ID');
   document.getElementById('missionPoints').textContent = Number(data.mission_points || 0).toLocaleString('id-ID');
+  document.getElementById('referralPoints').textContent = Number(data.referral_points || 0).toLocaleString('id-ID');
   document.getElementById('totalPoints').textContent = Number(data.total_points || 0).toLocaleString('id-ID');
   document.getElementById('missionProgressBadge').textContent = `${completed} / ${total} MISI`;
   document.getElementById('missionProgressText').textContent = percent + '%';
