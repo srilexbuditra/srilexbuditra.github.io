@@ -5,12 +5,12 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <title>Kartu Anggota Digital | Program Ketahanan Pangan</title>
   <meta name="description" content="Kartu anggota digital peserta terverifikasi Program Ketahanan Pangan dengan QR verifikasi publik.">
-  <meta name="theme-color" content="#123f2b">
+  <meta name="theme-color" content="#0b3f2e">
   <meta name="robots" content="noindex,nofollow,noarchive">
   <link rel="canonical" href="https://srilexbuditra.work/program/ketahanan-pangan/peserta/kartu/">
   <link rel="icon" href="/program/ketahanan-pangan/assets/brand/favicon.ico">
   <link rel="apple-touch-icon" sizes="180x180" href="/program/ketahanan-pangan/assets/brand/apple-touch-icon.png">
-  <link rel="stylesheet" href="./style.css?v=12.3">
+  <link rel="stylesheet" href="./style.css?v=12.7.0">
 </head>
 <body>
 <header class="topbar">
@@ -28,7 +28,7 @@
     <div class="wrap hero-copy">
       <span class="eyebrow">IDENTITAS DIGITAL PESERTA</span>
       <h1>Kartu Anggota <span>Digital + QR</span></h1>
-      <p>Kartu digital hanya tersedia setelah registrasi terverifikasi dan foto anggota disetujui admin. QR mengarah ke halaman verifikasi publik tanpa menampilkan NIK, KK, nomor WhatsApp, email, atau dokumen identitas.</p>
+      <p>Kartu digital tersedia untuk peserta yang registrasinya telah terverifikasi dan foto anggotanya sudah disetujui admin. Background kartu dibuat sebagai aset visual terpisah; logo, teks, foto, data peserta, status, dan QR tetap dinamis melalui HTML/CSS.</p>
     </div>
   </section>
 
@@ -48,9 +48,9 @@
       <section id="cardView" class="card-view" hidden aria-labelledby="cardPageTitle">
         <div class="card-toolbar">
           <div>
-            <span class="badge">PESERTA TERVERIFIKASI</span>
+            <span class="badge">ANGGOTA TERVERIFIKASI</span>
             <h2 id="cardPageTitle">Kartu Anggota Digital</h2>
-            <p>Gunakan kartu ini sebagai identitas digital peserta Program Ketahanan Pangan.</p>
+            <p>Depan dan belakang menggunakan satu tema background. Seluruh data anggota tetap dinamis dan tidak menyatu ke gambar latar.</p>
           </div>
           <div class="toolbar-actions">
             <button id="printBtn" class="btn primary" type="button">Cetak / Simpan PDF</button>
@@ -58,53 +58,100 @@
           </div>
         </div>
 
+        <div class="card-spec-note" aria-label="Spesifikasi kartu">
+          <strong>Ukuran cetak: 53,98 × 85,60 mm</strong>
+          <span>Safe area konten 10 mm dari setiap sisi kartu · background dan border boleh memenuhi seluruh area kartu.</span>
+        </div>
+
         <div class="cards-stage" id="printArea">
-          <article class="member-card card-front" aria-label="Sisi depan kartu anggota digital">
-            <div class="card-tech-grid" aria-hidden="true"></div>
-            <div class="card-front-head">
-              <div class="logos" aria-label="Identitas program">
-                <img src="/program/ketahanan-pangan/registrasi/assets/logo-super-tani-indonesia.avif" alt="Super Tani Indonesia" width="128" height="128">
-                <img src="/program/ketahanan-pangan/registrasi/assets/logo-ay-group-agro-indonesia.avif" alt="AY Group Agro Indonesia" width="128" height="128">
+          <article class="member-card card-front" aria-label="Sisi depan Kartu Anggota Digital">
+            <div class="card-bg" aria-hidden="true"></div>
+            <div class="card-shade" aria-hidden="true"></div>
+            <div class="card-safe-area">
+              <header class="card-brand-row">
+                <img class="brand-logo brand-logo-super" src="./assets/logo-super-tani.webp" alt="Super Tani Indonesia">
+                <span class="brand-divider" aria-hidden="true"></span>
+                <img class="brand-logo brand-logo-ay" src="./assets/logo-ay-group.webp" alt="AY Group Agro Indonesia">
+              </header>
+
+              <div class="front-heading">
+                <span>PROGRAM KETAHANAN PANGAN</span>
+                <h3>KARTU ANGGOTA DIGITAL</h3>
+                <p>Identitas resmi anggota terverifikasi</p>
               </div>
-              <span class="live-chip"><i aria-hidden="true"></i> VERIFIED MEMBER</span>
-            </div>
-            <div class="card-title">
-              <small>PROGRAM KETAHANAN PANGAN</small>
-              <strong>KARTU ANGGOTA DIGITAL</strong>
-            </div>
-            <div class="identity-row">
-              <div class="avatar member-photo-frame">
-                <img id="memberPhoto" alt="Foto anggota terverifikasi" hidden>
-                <span id="memberInitials" aria-hidden="true">P</span>
+
+              <div class="member-core">
+                <div class="member-photo-frame">
+                  <img id="memberPhoto" alt="Foto anggota terverifikasi" hidden>
+                  <span id="memberInitials" aria-hidden="true">P</span>
+                </div>
+                <div class="member-data">
+                  <span class="data-label">Nama Peserta</span>
+                  <strong id="memberName">-</strong>
+                  <dl>
+                    <div><dt>Nomor Anggota</dt><dd id="memberId">-</dd></div>
+                    <div><dt>Wilayah</dt><dd id="memberRegion">-</dd></div>
+                    <div><dt>Status</dt><dd class="status-active">Aktif</dd></div>
+                  </dl>
+                </div>
               </div>
-              <div class="identity-copy">
-                <span>NAMA PESERTA</span>
-                <strong id="memberName">-</strong>
-                <p id="memberRegion">-</p>
+
+              <div class="front-bottom-row">
+                <div class="verified-seal" aria-label="Anggota terverifikasi">
+                  <span class="seal-check" aria-hidden="true">✓</span>
+                  <span>ANGGOTA<br>TERVERIFIKASI</span>
+                </div>
+                <div class="qr-mini">
+                  <canvas id="memberQr" width="300" height="300" aria-label="QR verifikasi anggota"></canvas>
+                  <span>SCAN QR<br>UNTUK VALIDASI</span>
+                </div>
               </div>
-            </div>
-            <div class="card-footer-row">
-              <div><span>NOMOR ANGGOTA</span><strong id="memberId">-</strong></div>
-              <div><span>STATUS</span><strong class="verified-text">TERVERIFIKASI</strong></div>
+
+              <p class="card-slogan">Petani Berdaya, Pangan Berjaya</p>
             </div>
           </article>
 
-          <article class="member-card card-back" aria-label="Sisi belakang kartu anggota digital">
-            <div class="card-tech-grid" aria-hidden="true"></div>
-            <div class="back-copy">
-              <span class="back-label">VERIFIKASI KEANGGOTAAN</span>
-              <h3>Pindai QR untuk memeriksa status peserta.</h3>
-              <p>QR membuka halaman verifikasi publik srilexbuditra.work dan memeriksa Nomor Registrasi pada sistem.</p>
-              <div class="member-meta">
-                <div><span>Terdaftar sejak</span><strong id="memberSince">-</strong></div>
-                <div><span>Nomor Registrasi</span><strong id="memberIdBack">-</strong></div>
+          <article class="member-card card-back" aria-label="Sisi belakang Kartu Anggota Digital">
+            <div class="card-bg" aria-hidden="true"></div>
+            <div class="card-shade" aria-hidden="true"></div>
+            <div class="card-safe-area">
+              <header class="card-brand-row back-brand-row">
+                <img class="brand-logo brand-logo-super" src="./assets/logo-super-tani.webp" alt="Super Tani Indonesia">
+                <span class="brand-divider" aria-hidden="true"></span>
+                <img class="brand-logo brand-logo-ay" src="./assets/logo-ay-group.webp" alt="AY Group Agro Indonesia">
+              </header>
+
+              <div class="back-heading">
+                <h3>INFO ANGGOTA</h3>
+                <p>Kartu Anggota Digital merupakan identitas peserta Program Ketahanan Pangan yang telah terverifikasi.</p>
               </div>
-              <small>Keabsahan kartu mengikuti status terbaru pada sistem. Kartu ini tidak menampilkan data identitas sensitif peserta.</small>
-            </div>
-            <div class="qr-box">
-              <canvas id="memberQr" width="220" height="220" aria-label="QR verifikasi anggota"></canvas>
-              <strong>SCAN TO VERIFY</strong>
-              <span>srilexbuditra.work</span>
+
+              <section class="benefit-grid" aria-label="Manfaat keanggotaan">
+                <div class="benefit-item"><span class="benefit-icon" aria-hidden="true">✦</span><div><strong>Akses Program</strong><small>Informasi dan layanan program.</small></div></div>
+                <div class="benefit-item"><span class="benefit-icon" aria-hidden="true">●</span><div><strong>Informasi Prioritas</strong><small>Pembaruan program dan peluang.</small></div></div>
+                <div class="benefit-item"><span class="benefit-icon" aria-hidden="true">◎</span><div><strong>Jaringan Komunitas</strong><small>Terhubung dengan peserta dan mitra.</small></div></div>
+                <div class="benefit-item"><span class="benefit-icon" aria-hidden="true">★</span><div><strong>Poin &amp; Apresiasi</strong><small>Fitur pengembangan bertahap.</small></div></div>
+              </section>
+
+              <div class="privacy-note">
+                <span aria-hidden="true">▣</span>
+                <p><strong>Jaga kerahasiaan data.</strong> Kartu bersifat pribadi dan digunakan untuk kepentingan program resmi.</p>
+              </div>
+
+              <div class="back-bottom-row">
+                <div class="member-meta">
+                  <span>TERDAFTAR SEJAK</span>
+                  <strong id="memberSince">-</strong>
+                  <span>NOMOR REGISTRASI</span>
+                  <strong id="memberIdBack">-</strong>
+                </div>
+                <div class="qr-mini back-qr">
+                  <canvas id="memberQrBack" width="300" height="300" aria-label="QR akses verifikasi anggota"></canvas>
+                  <span>SCAN UNTUK<br>VERIFIKASI</span>
+                </div>
+              </div>
+
+              <p class="card-slogan back-slogan">Pangan Kuat, Masa Depan Hebat</p>
             </div>
           </article>
         </div>
@@ -113,7 +160,7 @@
           <div>
             <span class="badge">VERIFIKASI PUBLIK</span>
             <h3>Keaslian kartu dapat diperiksa kapan saja.</h3>
-            <p>QR tidak menyimpan NIK atau data pribadi. QR hanya mengarahkan ke halaman verifikasi publik dengan Nomor Registrasi peserta.</p>
+            <p>QR tidak menyimpan NIK atau data pribadi. QR hanya mengarahkan ke halaman verifikasi publik menggunakan Nomor Registrasi peserta.</p>
           </div>
           <a id="verifyLink" class="btn outline" href="../../verifikasi/" target="_blank" rel="noopener noreferrer">Buka Verifikasi ↗</a>
         </div>
@@ -130,7 +177,7 @@
 </footer>
 
 <script src="./local-qrcode.js"></script>
-<script src="./script.js?v=12.3"></script>
+<script src="./script.js?v=12.7.0"></script>
 <script src="/visitor-analytics.js" defer></script>
 </body>
 </html>

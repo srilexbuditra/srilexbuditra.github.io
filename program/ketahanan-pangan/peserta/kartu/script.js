@@ -114,6 +114,8 @@ async function showCard(participant) {
   verificationUrl = url.toString();
   document.getElementById('verifyLink').href = verificationUrl;
   renderQr(document.getElementById('memberQr'), verificationUrl);
+  const backQr = document.getElementById('memberQrBack');
+  if (backQr) renderQr(backQr, verificationUrl);
 
   loadingState.hidden = true;
   errorState.hidden = true;
