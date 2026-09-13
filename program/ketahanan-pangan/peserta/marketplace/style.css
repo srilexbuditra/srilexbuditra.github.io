@@ -108,3 +108,6 @@ footer{border-top:1px solid #dbe4de;background:#fff;padding:20px 0}
   .policy-card,.ecosystem-card{padding:17px}
   .page-actions .btn{width:100%}
 }
+
+/* V13.4 */
+.ecosystem-badge{text-decoration:none}
