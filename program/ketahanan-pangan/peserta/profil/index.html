@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>Profil & Pengaturan Akun | Program Ketahanan Pangan</title>
+  <meta name="description" content="Profil, preferensi notifikasi, keamanan akun, dan riwayat aktivitas peserta Program Ketahanan Pangan.">
+  <meta name="theme-color" content="#123f2b">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <link rel="canonical" href="https://srilexbuditra.work/program/ketahanan-pangan/peserta/profil/">
+  <link rel="icon" href="/program/ketahanan-pangan/assets/brand/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="/program/ketahanan-pangan/assets/brand/apple-touch-icon.png">
+  <link rel="stylesheet" href="./style.css?v=13.5.0">
+</head>
+<body>
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <a class="brand" href="../">Program Ketahanan Pangan</a>
+    <nav class="topnav" aria-label="Navigasi Profil Peserta">
+      <a href="../notifikasi/">Notifikasi</a>
+      <a href="../poin/">Level &amp; Poin</a>
+      <a href="../">← Dashboard</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <span class="eyebrow">AKUN PESERTA · TAHAP 8</span>
+        <h1>Profil &amp; <span>Pengaturan</span></h1>
+        <p>Pusat akun untuk melihat data yang sudah tercatat, mengatur preferensi notifikasi, memperbarui password, dan melihat aktivitas engagement terbaru.</p>
+      </div>
+      <aside class="hero-note">
+        <strong>Data registrasi tetap terlindungi</strong>
+        <p>NIK, nomor KK, dokumen KTP/KK, dan credential tidak ditampilkan. Data registrasi inti tetap melalui alur pemeriksaan admin bila perlu diperbaiki.</p>
+      </aside>
+    </div>
+  </section>
+
+  <section class="content">
+    <div class="wrap">
+      <div id="loadingState" class="state-card" role="status" aria-live="polite">
+        <span class="loader" aria-hidden="true"></span>
+        <div><strong>Menyiapkan profil peserta…</strong><p>Membaca data akun dan preferensi dari server.</p></div>
+      </div>
+
+      <div id="errorState" class="state-card state-error" hidden>
+        <span class="state-icon" aria-hidden="true">!</span>
+        <div><strong id="errorTitle">Profil belum dapat ditampilkan</strong><p id="errorText">Silakan kembali ke Dashboard Peserta.</p></div>
+        <a class="btn primary" href="../">Kembali ke Dashboard</a>
+      </div>
+
+      <section id="profileView" hidden>
+        <article class="summary-card">
+          <div class="summary-head">
+            <div>
+              <span class="section-kicker">RINGKASAN AKUN</span>
+              <h2 id="participantName">Peserta</h2>
+              <p id="registrationText">Nomor registrasi sedang dimuat.</p>
+            </div>
+            <span id="memberBadge" class="member-badge">PESERTA</span>
+          </div>
+
+          <div class="stats-grid">
+            <article class="accent"><span>Total Poin</span><strong id="totalPoints">0 Poin</strong><small>Engagement peserta</small></article>
+            <article><span>Level</span><strong id="levelName">Level 1 Tunas</strong><small>Status level saat ini</small></article>
+            <article><span>Sesi Aktif</span><strong id="activeSessions">1</strong><small>Perangkat yang masih login</small></article>
+            <article><span>Status Akun</span><strong id="accountStatus">Aktif</strong><small id="lastSeenText">Terakhir aktif —</small></article>
+          </div>
+        </article>
+
+        <div class="two-col">
+          <article class="panel-card">
+            <div class="panel-head"><div><span class="section-kicker">DATA PESERTA</span><h3>Identitas akun</h3></div><span class="read-only-badge">READ ONLY</span></div>
+            <div class="detail-grid">
+              <div><span>Nomor Registrasi</span><strong id="registrationId">-</strong></div>
+              <div><span>Status Registrasi</span><strong id="registrationStatus">-</strong></div>
+              <div><span>Wilayah</span><strong id="regionText">-</strong></div>
+              <div><span>Status Pemohon</span><strong id="applicantStatus">-</strong></div>
+              <div><span>WhatsApp</span><strong id="whatsappMasked">-</strong></div>
+              <div><span>Email</span><strong id="emailMasked">-</strong></div>
+            </div>
+            <p id="profilePolicy" class="panel-note">Data registrasi inti tidak dapat diubah dari halaman ini.</p>
+          </article>
+
+          <article class="panel-card">
+            <div class="panel-head"><div><span class="section-kicker">DATA PERTANIAN</span><h3>Ringkasan profil program</h3></div></div>
+            <div class="detail-grid">
+              <div><span>Komoditas</span><strong id="commodityText">-</strong></div>
+              <div><span>Luas Lahan</span><strong id="landAreaText">-</strong></div>
+              <div><span>Status Lahan</span><strong id="landStatusText">-</strong></div>
+              <div><span>Kelompok Tani</span><strong id="farmerGroupText">-</strong></div>
+              <div><span>Jenis Pupuk</span><strong id="fertilizerText">-</strong></div>
+              <div><span>Kebutuhan</span><strong id="fertilizerNeedText">-</strong></div>
+            </div>
+          </article>
+        </div>
+
+        <article class="panel-card preferences-card">
+          <div class="panel-head">
+            <div><span class="section-kicker">PREFERENSI NOTIFIKASI</span><h3>Pilih pembaruan yang ingin ditampilkan</h3></div>
+            <span class="server-badge">SERVER SAVED</span>
+          </div>
+          <p class="panel-intro">Notifikasi sistem dan keamanan selalu aktif. Preferensi di bawah mengatur kategori informasi lain yang tampil di Pusat Notifikasi.</p>
+          <form id="preferencesForm" class="preference-grid">
+            <label class="preference-item"><span><b>Program &amp; Status</b><small>Pembaruan program, status registrasi, dan keanggotaan.</small></span><input id="notifyProgram" type="checkbox"></label>
+            <label class="preference-item"><span><b>Poin &amp; Misi</b><small>Perubahan Poin Dasar, Poin Misi, dan engagement.</small></span><input id="notifyPoints" type="checkbox"></label>
+            <label class="preference-item"><span><b>Referral</b><small>Referral terverifikasi dan Poin Referral.</small></span><input id="notifyReferral" type="checkbox"></label>
+            <label class="preference-item"><span><b>Benefit</b><small>Benefit baru yang terbuka sesuai level.</small></span><input id="notifyBenefit" type="checkbox"></label>
+            <label class="preference-item"><span><b>Aktivitas &amp; Event</b><small>Agenda baru dan Poin Aktivitas.</small></span><input id="notifyActivity" type="checkbox"></label>
+            <label class="preference-item"><span><b>Marketplace</b><small>Katalog resmi dan pembaruan ekosistem.</small></span><input id="notifyMarketplace" type="checkbox"></label>
+            <div class="form-actions"><button id="savePreferencesBtn" class="btn primary" type="submit">Simpan Preferensi</button><span id="preferencesStatus" class="form-status" aria-live="polite"></span></div>
+          </form>
+        </article>
+
+        <div class="two-col bottom-grid">
+          <article class="panel-card security-card">
+            <div class="panel-head"><div><span class="section-kicker">KEAMANAN AKUN</span><h3>Ubah password</h3></div><span class="security-badge">SECURE</span></div>
+            <p class="panel-intro">Password baru minimal 10 karakter dan memuat huruf besar, huruf kecil, serta angka. Setelah berhasil, sesi pada perangkat lain otomatis diakhiri.</p>
+            <form id="passwordForm" class="password-form" autocomplete="off">
+              <label><span>Password saat ini</span><input id="currentPassword" type="password" autocomplete="current-password" required maxlength="128"></label>
+              <label><span>Password baru</span><input id="newPassword" type="password" autocomplete="new-password" required minlength="10" maxlength="128"></label>
+              <label><span>Ulangi password baru</span><input id="confirmPassword" type="password" autocomplete="new-password" required minlength="10" maxlength="128"></label>
+              <button id="changePasswordBtn" class="btn primary" type="submit">Perbarui Password</button>
+              <span id="passwordStatus" class="form-status" aria-live="polite"></span>
+            </form>
+          </article>
+
+          <article class="panel-card activity-card">
+            <div class="panel-head"><div><span class="section-kicker">RIWAYAT SINGKAT</span><h3>Aktivitas engagement terbaru</h3></div></div>
+            <div id="activityList" class="activity-list"></div>
+            <div id="activityEmpty" class="empty-card" hidden><strong>Belum ada aktivitas engagement.</strong><p>Riwayat akan muncul saat poin atau aktivitas peserta tercatat di server.</p></div>
+          </article>
+        </div>
+
+        <article class="policy-card">
+          <div class="policy-icon" aria-hidden="true">i</div>
+          <div><span class="section-kicker">PERLINDUNGAN DATA</span><h3>Profil tidak menampilkan data identitas sensitif</h3><p>Halaman ini tidak menampilkan NIK, nomor KK, file KTP/KK, password, session token, atau credential lain. Kontak ditampilkan dalam bentuk tersamarkan.</p></div>
+        </article>
+
+        <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+        <div class="page-actions">
+          <a class="btn primary" href="../">← Dashboard Peserta</a>
+          <a class="btn outline" href="../notifikasi/">Notifikasi</a>
+          <a class="btn outline" href="../poin/">Level &amp; Poin</a>
+        </div>
+      </section>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap footer-inner">
+    <div><strong>Program Ketahanan Pangan</strong><span>Profil &amp; Pengaturan Akun Peserta</span></div>
+    <span>Data inti tetap melalui pemeriksaan admin</span>
+  </div>
+</footer>
+
+<script src="./script.js?v=13.5.0"></script>
+<script src="/visitor-analytics.js" defer></script>
+</body>
+</html>
