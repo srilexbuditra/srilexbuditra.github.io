@@ -454,3 +454,12 @@ footer{padding:24px 0}
   from{opacity:0;transform:translateY(-8px)}
   to{opacity:1;transform:translateY(0)}
 }
+
+
+/* =========================================================
+   V12.8.0 — Level & Poin dasar aktif di Dashboard Peserta
+   ========================================================= */
+.points-service-card{border-color:#d6c27c;background:linear-gradient(135deg,#fffdf5,#fff)}
+.points-service-card .member-service-icon{background:#fff4c9;color:#8a6500}
+.points-service-card .member-service-state{background:#fff0b8;color:#775600}
+.points-service-card:hover{border-color:#c7a94b;background:linear-gradient(135deg,#fff9e8,#fff)}

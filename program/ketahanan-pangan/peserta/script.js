@@ -259,6 +259,32 @@ function participantInitials(name) {
   return ((parts[0]?.[0] || 'P') + (parts.length > 1 ? parts[parts.length - 1][0] : '')).toUpperCase();
 }
 
+function getBasePoints(participant) {
+  const status = String(participant?.status || '').toLowerCase();
+  const memberStatus = String(participant?.member_verification_status || 'not_submitted').toLowerCase();
+  const registrationVerified = status === 'verified';
+  const memberApproved = registrationVerified && memberStatus === 'approved';
+
+  // V12.8.0 — Poin Dasar dihitung dari milestone yang sudah diverifikasi oleh sistem.
+  // Belum merupakan saldo transaksi/reward dan belum dapat ditukar.
+  let points = 10; // akun peserta aktif (sesi login valid)
+  if (registrationVerified) points += 30;
+  if (memberApproved) points += 30;
+  if (memberApproved) points += 20; // Kartu Anggota + QR aktif
+  if (registrationVerified) points += 10; // Sertifikat digital tersedia
+  return points;
+}
+
+function getPointLevel(points) {
+  const p = Number(points) || 0;
+  if (p >= 1000) return { level: 6, name: 'Unggul', min: 1000, next: null };
+  if (p >= 500) return { level: 5, name: 'Maju', min: 500, next: 1000 };
+  if (p >= 250) return { level: 4, name: 'Produktif', min: 250, next: 500 };
+  if (p >= 100) return { level: 3, name: 'Berkembang', min: 100, next: 250 };
+  if (p >= 50) return { level: 2, name: 'Tumbuh', min: 50, next: 100 };
+  return { level: 1, name: 'Tunas', min: 0, next: 50 };
+}
+
 function formatRefreshTime(value = new Date()) {
   const d = value instanceof Date ? value : new Date(value);
   if (Number.isNaN(d.getTime())) return '-';
@@ -474,6 +500,9 @@ function renderMemberExperience(participant = {}) {
   const memberCardService = document.getElementById('memberCardService');
   const memberCardState = document.getElementById('memberCardState');
   const memberCardBadge = document.getElementById('memberCardBadge');
+  const pointsService = document.getElementById('pointsService');
+  const pointsServiceState = document.getElementById('pointsServiceState');
+  const pointsServiceBadge = document.getElementById('pointsServiceBadge');
 
   if (wrap) wrap.dataset.status = s || 'pending';
   if (label) label.textContent = experience.label;
@@ -616,6 +645,19 @@ function renderMemberExperience(participant = {}) {
       memberCardBadge.textContent = 'TERKUNCI';
     }
   }
+
+  if (pointsService && pointsServiceState && pointsServiceBadge) {
+    const basePoints = getBasePoints(participant);
+    const levelInfo = getPointLevel(basePoints);
+    pointsService.href = './poin/';
+    pointsService.classList.add('is-active');
+    pointsService.classList.remove('is-locked', 'is-roadmap');
+    pointsService.setAttribute('aria-disabled', 'false');
+    pointsServiceState.textContent = `${basePoints} Poin Dasar · Level ${levelInfo.level} ${levelInfo.name}.`;
+    pointsServiceBadge.textContent = `${basePoints} POIN`;
+    pointsService.setAttribute('aria-label', `Buka Level dan Poin. Saat ini ${basePoints} Poin Dasar, Level ${levelInfo.level} ${levelInfo.name}.`);
+  }
+
 }
 
 function showDashboard(p) {

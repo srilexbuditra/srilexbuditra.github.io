@@ -29,7 +29,7 @@
   <link itemprop="publisher" href="https://srilexbuditra.work/#person">
   <meta itemprop="description" content="Aktivasi akun, login, dan dashboard pribadi peserta Program Ketahanan Pangan.">
   <link rel="search" type="application/opensearchdescription+xml" title="Srilex Buditra Search" href="/opensearch.xml">
-  <link rel="stylesheet" href="./style.css?v=12.6.1">
+  <link rel="stylesheet" href="./style.css?v=12.8.0">
 </head>
 <body>
 <header class="topbar">
@@ -302,13 +302,13 @@
               <span class="member-service-copy"><b>Kartu Anggota + QR</b><small id="memberCardState">Aktif setelah foto anggota disetujui admin.</small></span>
               <span class="member-service-state" id="memberCardBadge">TERKUNCI</span>
             </a>
-            <div class="member-service-card is-roadmap" aria-label="Aktivitas dan poin — roadmap">
+            <a id="pointsService" class="member-service-card is-active points-service-card" href="./poin/" data-ga-event="participant_points_open" data-ga-source="service_card" aria-label="Buka Level dan Poin Peserta">
               <span class="member-service-icon" aria-hidden="true">◎</span>
-              <span class="member-service-copy"><b>Aktivitas &amp; Poin</b><small>Fondasi engagement peserta untuk tahap pengembangan berikutnya.</small></span>
-              <span class="member-service-state">ROADMAP</span>
-            </div>
+              <span class="member-service-copy"><b>Level &amp; Poin</b><small id="pointsServiceState">Lihat poin dasar dari progres keanggotaan Anda.</small></span>
+              <span class="member-service-state" id="pointsServiceBadge">AKTIF</span>
+            </a>
           </div>
-          <p class="member-services-note">Fitur berlabel <strong>NEXT</strong> atau <strong>ROADMAP</strong> belum menjadi layanan aktif dan akan dikembangkan bertahap.</p>
+          <p class="member-services-note"><strong>Level &amp; Poin</strong> sudah aktif sebagai fondasi engagement. Fitur Misi, Referral, dan Benefit akan dikembangkan pada tahap berikutnya.</p>
         </section>
 
         <article id="revisionCard" class="card revision-card" hidden>
@@ -393,7 +393,7 @@
   </div>
 </footer>
 
-<script src="./script.js?v=12.6.6"></script>
+<script src="./script.js?v=12.8.0"></script>
 <div class="tts-fab-wrap" id="ttsFabWrap" aria-label="Kontrol pembaca halaman">
   <button class="tts-stop" id="ttsStop" type="button" aria-label="Hentikan pembacaan" title="Hentikan"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6h12v12H6z"/></svg></button>
   <button class="tts-fab" id="ttsFab" type="button" aria-label="Bacakan halaman" aria-pressed="false">
