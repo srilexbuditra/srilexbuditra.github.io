@@ -521,6 +521,9 @@ function renderMemberExperience(participant = {}) {
   const notificationService = document.getElementById('notificationService');
   const notificationServiceState = document.getElementById('notificationServiceState');
   const notificationServiceBadge = document.getElementById('notificationServiceBadge');
+  const profileService = document.getElementById('profileService');
+  const profileServiceState = document.getElementById('profileServiceState');
+  const profileServiceBadge = document.getElementById('profileServiceBadge');
 
   if (wrap) wrap.dataset.status = s || 'pending';
   if (label) label.textContent = experience.label;
@@ -732,6 +735,15 @@ function renderMemberExperience(participant = {}) {
     notificationService.setAttribute('aria-disabled', 'false');
     notificationServiceState.textContent = 'Pemberitahuan akun, poin, benefit, agenda, katalog, dan informasi program dalam satu tempat.';
     notificationServiceBadge.textContent = 'AKTIF';
+  }
+
+  if (profileService && profileServiceState && profileServiceBadge) {
+    profileService.href = './profil/';
+    profileService.classList.add('is-active');
+    profileService.classList.remove('is-locked', 'is-roadmap');
+    profileService.setAttribute('aria-disabled', 'false');
+    profileServiceState.textContent = 'Lihat profil, atur preferensi notifikasi, perbarui password, dan cek riwayat aktivitas singkat.';
+    profileServiceBadge.textContent = 'AKTIF';
   }
 
 }
