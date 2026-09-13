@@ -61,7 +61,7 @@ function revokePreviewUrl() {
   previewObjectUrl = '';
 }
 
-function beginSuccessRedirect(seconds = 5) {
+function beginSuccessRedirect(seconds = 7) {
   if (redirectTimer) window.clearInterval(redirectTimer);
   stopCamera();
   setCameraLive(false);
@@ -76,7 +76,15 @@ function beginSuccessRedirect(seconds = 5) {
   zoomInBtn.disabled = true;
   submitBtn.disabled = true;
   consentCheck.disabled = true;
+  document.body.classList.add('member-upload-success');
+  setMessage('success', 'Foto berhasil dikirim. Data terbaru sudah diterima dan sedang menunggu pemeriksaan admin.');
   if (successRedirect) successRedirect.hidden = false;
+  try {
+    sessionStorage.setItem('memberPhotoUploadSuccess', JSON.stringify({
+      at: Date.now(),
+      message: 'Foto terbaru berhasil dikirim dan sedang menunggu pemeriksaan admin.'
+    }));
+  } catch (_) {}
 
   let remaining = Math.max(1, Number(seconds) || 5);
   if (redirectCountdown) redirectCountdown.textContent = String(remaining);
@@ -485,7 +493,7 @@ async function submitPhoto() {
     if (!response.ok) throw new Error(data.message || `Gagal mengirim foto (HTTP ${response.status}).`);
     setMessage('success',data.message || 'Foto terbaru berhasil dikirim untuk review admin.');
     await loadStatus();
-    beginSuccessRedirect(5);
+    beginSuccessRedirect(7);
   } catch (error) {
     setMessage('error',error.message || 'Foto belum dapat dikirim.');
   } finally {
