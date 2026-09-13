@@ -481,22 +481,32 @@ function renderMemberExperience(participant = {}) {
         memberIdentityActionHint.textContent = 'Lihat Verifikasi Foto →';
         memberIdentityActionHint.hidden = false;
       }
-    } else if (memberStatus === 'pending') {
+    } else if (memberStatus === 'pending' || memberStatus === 'reviewing' || memberStatus === 'resubmitted') {
       memberIdentityService.href = './verifikasi-anggota/';
       memberIdentityService.classList.add('is-member-pending');
-      memberIdentityState.textContent = 'Foto sudah dikirim. Saat ini sedang diperiksa oleh admin.';
-      memberIdentityBadge.textContent = 'MENUNGGU VERIFIKASI';
-      memberIdentityService.setAttribute('aria-label', 'Verifikasi Anggota + Foto sedang menunggu pemeriksaan admin.');
+      if (memberStatus === 'reviewing') {
+        memberIdentityState.textContent = 'Foto sedang diperiksa oleh admin/tim.';
+        memberIdentityBadge.textContent = 'PEMERIKSAAN FOTO';
+      } else if (memberStatus === 'resubmitted') {
+        memberIdentityState.textContent = 'Foto perbaikan sudah diterima dan menunggu pemeriksaan ulang admin.';
+        memberIdentityBadge.textContent = 'PEMERIKSAAN ULANG';
+      } else {
+        memberIdentityState.textContent = 'Foto sudah dikirim dan menunggu verifikasi admin.';
+        memberIdentityBadge.textContent = 'MENUNGGU VERIFIKASI';
+      }
+      memberIdentityService.setAttribute('aria-label', 'Verifikasi Anggota + Foto sedang dalam proses pemeriksaan admin.');
       if (memberIdentityActionHint) {
         memberIdentityActionHint.textContent = 'Lihat Status Foto →';
         memberIdentityActionHint.hidden = false;
       }
-    } else if (memberStatus === 'rejected') {
+    } else if (['revision','rejected','needs_action'].includes(memberStatus)) {
       memberIdentityService.href = './verifikasi-anggota/';
       memberIdentityService.classList.add('is-member-rejected');
-      memberIdentityState.textContent = 'Foto belum dapat disetujui. Perbaiki sesuai catatan admin.';
-      memberIdentityBadge.textContent = 'PERLU DIPERBAIKI';
-      memberIdentityService.setAttribute('aria-label', 'Foto anggota perlu diperbaiki. Buka untuk membaca catatan admin dan mengirim ulang foto.');
+      memberIdentityState.textContent = memberStatus === 'needs_action'
+        ? 'Foto memerlukan tindakan. Baca catatan admin sebelum mengirim ulang.'
+        : 'Foto belum dapat disetujui. Perbaiki sesuai catatan admin.';
+      memberIdentityBadge.textContent = memberStatus === 'rejected' ? 'DITOLAK' : (memberStatus === 'needs_action' ? 'PERLU TINDAKAN' : 'PERLU DIPERBAIKI');
+      memberIdentityService.setAttribute('aria-label', 'Foto anggota perlu ditindaklanjuti. Buka untuk membaca catatan admin dan mengirim ulang foto.');
       if (memberIdentityReviewNote && memberIdentityReviewNoteText) {
         memberIdentityReviewNoteText.textContent = reviewNote || 'Admin meminta Anda mengambil dan mengirim ulang foto anggota.';
         memberIdentityReviewNote.hidden = false;
