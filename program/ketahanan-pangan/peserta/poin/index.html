@@ -10,7 +10,7 @@
   <link rel="canonical" href="https://srilexbuditra.work/program/ketahanan-pangan/peserta/poin/">
   <link rel="icon" href="/program/ketahanan-pangan/assets/brand/favicon.ico">
   <link rel="apple-touch-icon" sizes="180x180" href="/program/ketahanan-pangan/assets/brand/apple-touch-icon.png">
-  <link rel="stylesheet" href="./style.css?v=12.8.0">
+  <link rel="stylesheet" href="./style.css?v=12.9.0">
 </head>
 <body>
 <header class="topbar">
@@ -26,13 +26,13 @@
   <section class="hero">
     <div class="wrap hero-grid">
       <div>
-        <span class="eyebrow">ENGAGEMENT PESERTA · TAHAP 1</span>
+        <span class="eyebrow">ENGAGEMENT PESERTA · LEVEL & POIN</span>
         <h1>Level &amp; <span>Poin</span></h1>
-        <p>Poin Dasar menunjukkan progres keanggotaan yang sudah tercatat dan terverifikasi oleh sistem. Poin ini menjadi fondasi untuk Misi, Referral, dan Benefit pada tahap berikutnya.</p>
+        <p>Total Poin menggabungkan Poin Dasar dari progres keanggotaan dan Poin Misi dari aktivitas peserta yang sudah dicatat oleh server.</p>
       </div>
       <aside class="hero-note">
-        <strong>Poin Dasar</strong>
-        <p>Belum merupakan saldo hadiah dan belum dapat ditukar. Nilainya berasal dari milestone akun dan verifikasi peserta.</p>
+        <strong>Total Poin Peserta</strong>
+        <p>Poin Dasar + Poin Misi. Poin belum merupakan saldo hadiah dan belum dapat ditukar.</p>
       </aside>
     </div>
   </section>
@@ -64,10 +64,16 @@
           <div class="points-hero">
             <div class="points-orb" aria-hidden="true">◎</div>
             <div>
-              <span>Poin Dasar</span>
+              <span>Total Poin</span>
               <strong><b id="pointsValue">0</b> Poin</strong>
               <small id="levelCaption">Level 1 Tunas</small>
             </div>
+          </div>
+
+          <div class="points-breakdown" aria-label="Rincian poin">
+            <div><span>Poin Dasar</span><strong id="basePointsValue">0</strong></div>
+            <div><span>Poin Misi</span><strong id="missionPointsValue">0</strong></div>
+            <div><span>Misi Selesai</span><strong id="missionsDoneValue">0 / 5</strong></div>
           </div>
 
           <div class="progress-block">
@@ -97,15 +103,15 @@
           </article>
         </div>
 
-        <article class="next-card">
+        <a class="next-card next-card-active" href="../misi/">
           <div class="next-icon" aria-hidden="true">★</div>
           <div>
-            <span class="section-kicker">TAHAP BERIKUTNYA</span>
+            <span class="section-kicker">TAHAP 2 · SUDAH AKTIF</span>
             <h3>Misi &amp; Poin Aktivitas</h3>
-            <p>Misi akan menjadi sumber poin tambahan dari aktivitas yang benar-benar dilakukan peserta. Fitur ini belum aktif dan akan dibangun setelah fondasi Level &amp; Poin dikunci.</p>
+            <p>Selesaikan misi, klaim bonus yang memenuhi syarat, dan kumpulkan Poin Misi yang dicatat permanen oleh server.</p>
           </div>
-          <span class="next-badge">NEXT</span>
-        </article>
+          <span class="next-badge">BUKA MISI →</span>
+        </a>
 
         <div class="page-actions">
           <a class="btn primary" href="../">← Kembali ke Dashboard</a>
@@ -123,7 +129,7 @@
   </div>
 </footer>
 
-<script src="./script.js?v=12.8.0"></script>
+<script src="./script.js?v=12.9.0"></script>
 <script src="/visitor-analytics.js" defer></script>
 </body>
 </html>
