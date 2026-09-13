@@ -510,8 +510,9 @@ function renderMemberExperience(participant = {}) {
 
     memberIdentityService.classList.toggle('is-active', identityEnabled || memberApproved);
     memberIdentityService.classList.toggle('is-locked', !registrationVerified);
-    memberIdentityService.classList.remove('is-member-ready', 'is-member-pending', 'is-member-rejected', 'is-member-approved');
+    memberIdentityService.classList.remove('is-member-ready', 'is-member-pending', 'is-member-rejected', 'is-member-approved', 'is-status-only');
     memberIdentityService.setAttribute('aria-disabled', registrationVerified ? 'false' : 'true');
+    memberIdentityService.removeAttribute('tabindex');
 
     if (memberIdentityReviewNote) memberIdentityReviewNote.hidden = true;
     if (memberIdentityReviewNoteText) memberIdentityReviewNoteText.textContent = '';
@@ -533,8 +534,12 @@ function renderMemberExperience(participant = {}) {
         memberIdentityActionHint.hidden = false;
       }
     } else if (memberStatus === 'pending' || memberStatus === 'reviewing' || memberStatus === 'resubmitted') {
-      memberIdentityService.href = './verifikasi-anggota/';
-      memberIdentityService.classList.add('is-member-pending');
+      // V12.6.5: status proses admin bersifat informasi saja.
+      // Hapus navigasi tersembunyi agar seluruh kartu tidak lagi menjadi tautan.
+      memberIdentityService.removeAttribute('href');
+      memberIdentityService.classList.add('is-member-pending', 'is-status-only');
+      memberIdentityService.setAttribute('aria-disabled', 'true');
+      memberIdentityService.setAttribute('tabindex', '-1');
       if (memberStatus === 'reviewing') {
         memberIdentityState.textContent = 'Foto sedang diperiksa oleh admin/tim.';
         memberIdentityBadge.textContent = 'PEMERIKSAAN FOTO';
@@ -545,9 +550,9 @@ function renderMemberExperience(participant = {}) {
         memberIdentityState.textContent = 'Foto sudah dikirim dan menunggu verifikasi admin.';
         memberIdentityBadge.textContent = 'MENUNGGU VERIFIKASI';
       }
-      memberIdentityService.setAttribute('aria-label', 'Verifikasi Anggota + Foto sedang dalam proses pemeriksaan admin.');
+      memberIdentityService.setAttribute('aria-label', 'Status Verifikasi Anggota + Foto sedang dalam proses pemeriksaan admin. Tidak ada tindakan yang perlu dilakukan saat ini.');
       if (memberIdentityActionHint) {
-        // V12.6.4: pada seluruh tahap proses admin, cukup tampilkan status tanpa tautan tambahan.
+        // V12.6.5: pada seluruh tahap proses admin, status bersifat informatif dan kartu tidak dapat diklik.
         // Berlaku untuk MENUNGGU VERIFIKASI, PEMERIKSAAN FOTO, dan PEMERIKSAAN ULANG.
         memberIdentityActionHint.hidden = true;
       }

@@ -409,6 +409,8 @@ footer{padding:24px 0}
 .member-service-card.is-member-pending .member-service-icon{background:#fff0c9;color:#8a5b00}
 .member-service-card.is-member-pending .member-service-state{background:#fff0c9;color:#7d5200}
 .member-service-card.is-member-pending .member-service-action-hint{color:#825700}
+.member-service-card.is-status-only{cursor:default;pointer-events:none}
+.member-service-card.is-status-only:hover{transform:none}
 
 .member-service-card.is-member-rejected{border:1.5px solid #d88f8f;background:linear-gradient(135deg,#fff1f1,#fffafa 62%,#fff);box-shadow:0 10px 26px rgba(167,54,54,.09)}
 .member-service-card.is-member-rejected:hover{border-color:#c97070;background:linear-gradient(135deg,#ffeded,#fff8f8 62%,#fff)}
