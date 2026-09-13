@@ -1,3 +1,16 @@
+# V13.4.1 — Sinkronisasi Level Pusat Notifikasi
+
+## V13.6.0 — Keamanan & Sesi Akun Peserta
+- Menambahkan pusat keamanan dan daftar sesi/perangkat aktif.
+- Login mendukung maksimal 5 sesi aktif per akun.
+- Menambahkan pencabutan sesi perangkat lain dan riwayat keamanan server-side.
+- Menambahkan notifikasi login baru tanpa mengekspos session token atau alamat IP lengkap.
+- Perubahan password tetap mengakhiri sesi perangkat lain.
+
+
+- Memperbaiki ringkasan Level pada Pusat Notifikasi agar dihitung dari Total Poin yang sama dengan halaman Level & Poin.
+- Tidak mengubah Worker, ledger poin, notifikasi, Kartu Anggota, Misi, Referral, Benefit, Aktivitas/Event, atau Marketplace.
+
 ## V13.2.0 — Aktivitas & Event Peserta
 
 - Added halaman `peserta/aktivitas/` untuk agenda, pendaftaran event, status kehadiran, dan riwayat aktivitas.
@@ -448,3 +461,10 @@ Dokumen ini menggunakan dua riwayat versi agar nomor versi website utama tidak t
 - Added notifikasi otomatis untuk registrasi terverifikasi, VERIFIED MEMBER, ledger poin, benefit, event, dan katalog Marketplace.
 - Added badge jumlah notifikasi belum dibaca pada Dashboard Peserta.
 - Preserved Kartu Anggota + QR, safe-area 5 mm, Sertifikat, Misi, Referral, Benefit, Aktivitas/Event, Marketplace, dan fungsi Admin existing.
+
+## V13.5.0 — Profil & Pengaturan Akun Peserta
+- Menambahkan halaman `/program/ketahanan-pangan/peserta/profil/`.
+- Menambahkan preferensi notifikasi server-side.
+- Menambahkan perubahan password peserta dengan verifikasi password saat ini dan revokasi sesi perangkat lain.
+- Menambahkan ringkasan akun, data pertanian read-only, sesi aktif, dan riwayat engagement singkat.
+- Data registrasi inti tetap tidak dapat diedit dari halaman profil.

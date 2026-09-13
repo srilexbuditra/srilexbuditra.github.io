@@ -97,3 +97,11 @@ Marketplace tahap awal aktif sebagai katalog resmi dan pencatatan minat tanpa ch
 
 ### V13.4 Notifikasi & Informasi
 Pusat Notifikasi peserta aktif dengan status dibaca server-side dan sinkronisasi otomatis dari poin, referral, benefit, event, Marketplace, serta status akun.
+
+### V13.5.0 — Profil & Pengaturan Akun Peserta
+Status: implementasi fondasi akun peserta.
+Profil read-only, preferensi notifikasi, keamanan password, sesi aktif, dan riwayat engagement singkat terhubung ke Participant API.
+
+
+## V13.6.0 — Keamanan & Sesi
+Status: Implementasi fondasi selesai. Fokus pada kontrol sesi perangkat, riwayat keamanan, dan notifikasi login baru.
