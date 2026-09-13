@@ -29,7 +29,7 @@
   <link itemprop="publisher" href="https://srilexbuditra.work/#person">
   <meta itemprop="description" content="Aktivasi akun, login, dan dashboard pribadi peserta Program Ketahanan Pangan.">
   <link rel="search" type="application/opensearchdescription+xml" title="Srilex Buditra Search" href="/opensearch.xml">
-  <link rel="stylesheet" href="./style.css?v=12.1">
+  <link rel="stylesheet" href="./style.css?v=12.4">
 </head>
 <body>
 <header class="topbar">
@@ -273,9 +273,17 @@
               <span class="member-service-copy"><b>Verifikasi Publik</b><small>Cek keabsahan nomor registrasi dan status publik.</small></span>
               <span class="member-service-state">AKTIF</span>
             </a>
-            <a id="memberIdentityService" class="member-service-card is-locked" href="#" aria-disabled="true">
+            <a id="memberIdentityService" class="member-service-card member-identity-service is-locked" href="#" aria-disabled="true">
               <span class="member-service-icon" aria-hidden="true">◉</span>
-              <span class="member-service-copy"><b>Verifikasi Anggota + Foto</b><small id="memberIdentityState">Rekam foto kamera setelah registrasi terverifikasi.</small></span>
+              <span class="member-service-copy">
+                <b>Verifikasi Anggota + Foto</b>
+                <small id="memberIdentityState">Rekam foto kamera setelah registrasi terverifikasi.</small>
+                <span id="memberIdentityReviewNote" class="member-review-reason" hidden>
+                  <span class="member-review-reason-label">CATATAN ADMIN</span>
+                  <strong id="memberIdentityReviewNoteText">-</strong>
+                </span>
+                <span id="memberIdentityActionHint" class="member-service-action-hint" hidden>Kirim Ulang Foto →</span>
+              </span>
               <span class="member-service-state" id="memberIdentityBadge">TERKUNCI</span>
             </a>
             <a id="memberCardService" class="member-service-card is-locked" href="#" aria-disabled="true">
@@ -374,7 +382,7 @@
   </div>
 </footer>
 
-<script src="./script.js?v=12.2"></script>
+<script src="./script.js?v=12.4"></script>
 <div class="tts-fab-wrap" id="ttsFabWrap" aria-label="Kontrol pembaca halaman">
   <button class="tts-stop" id="ttsStop" type="button" aria-label="Hentikan pembacaan" title="Hentikan"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6h12v12H6z"/></svg></button>
   <button class="tts-fab" id="ttsFab" type="button" aria-label="Bacakan halaman" aria-pressed="false">

@@ -386,3 +386,47 @@ footer{padding:24px 0}
 @media(max-width:900px){.member-overview{grid-template-columns:repeat(2,minmax(0,1fr))}.member-overview-card:first-child{grid-column:1/-1}.member-services-grid{grid-template-columns:1fr}}
 @media(max-width:720px){.dashboard-subnav{top:6px;margin-inline:-2px}.member-overview{grid-template-columns:1fr}.member-overview-card:first-child{grid-column:auto}.member-services-head{flex-direction:column;gap:9px}.member-services-version{align-self:flex-start}}
 @media(max-width:580px){.dashboard-subnav{gap:5px;padding:6px;border-radius:13px}.dashboard-subnav a{min-height:32px;padding:6px 9px;font-size:.69rem}.member-overview{gap:9px;margin-bottom:13px}.member-overview-card{padding:14px;border-radius:15px}.member-overview-icon{width:38px;height:38px;flex-basis:38px;border-radius:11px}.member-services-card{margin-bottom:13px;padding:18px}.member-service-card{grid-template-columns:38px minmax(0,1fr);min-height:88px;padding:13px}.member-service-icon{width:38px;height:38px;border-radius:11px}.member-service-state{grid-column:2;justify-self:start;margin-top:-3px}.member-services-note{font-size:.67rem}}
+
+
+/* =========================================================
+   V12.4 — Status Verifikasi Foto lebih jelas di Dashboard
+   Membedakan siap, menunggu, ditolak/perlu diperbaiki, dan disetujui.
+   ========================================================= */
+.member-identity-service{align-items:start}
+.member-identity-service .member-service-copy{padding-top:1px}
+.member-identity-service .member-service-state{max-width:145px;text-align:center;justify-content:center;line-height:1.2}
+.member-service-action-hint{display:inline-flex;align-items:center;margin-top:9px;color:var(--green-2);font-size:.69rem;font-weight:900;letter-spacing:.015em}
+.member-review-reason{display:block;margin-top:10px;padding:10px 11px;border:1px solid #efc6c6;border-radius:11px;background:rgba(255,255,255,.72)}
+.member-review-reason[hidden],.member-service-action-hint[hidden]{display:none!important}
+.member-review-reason-label{display:block;color:#8b3434;font-size:.57rem;font-weight:950;letter-spacing:.09em}
+.member-review-reason strong{display:block;margin-top:3px;color:#712b2b;font-size:.76rem;line-height:1.45;overflow-wrap:anywhere}
+
+.member-service-card.is-member-ready{border-color:#a9d1bd;background:linear-gradient(135deg,#f1faf5,#fff)}
+.member-service-card.is-member-ready .member-service-icon{background:#e0f3e7;color:#176b45}
+.member-service-card.is-member-ready .member-service-state{background:#e5f4eb;color:#17643f}
+
+.member-service-card.is-member-pending{border-color:#e6cf92;background:linear-gradient(135deg,#fffaf0,#fff)}
+.member-service-card.is-member-pending .member-service-icon{background:#fff0c9;color:#8a5b00}
+.member-service-card.is-member-pending .member-service-state{background:#fff0c9;color:#7d5200}
+.member-service-card.is-member-pending .member-service-action-hint{color:#825700}
+
+.member-service-card.is-member-rejected{border:1.5px solid #d88f8f;background:linear-gradient(135deg,#fff1f1,#fffafa 62%,#fff);box-shadow:0 10px 26px rgba(167,54,54,.09)}
+.member-service-card.is-member-rejected:hover{border-color:#c97070;background:linear-gradient(135deg,#ffeded,#fff8f8 62%,#fff)}
+.member-service-card.is-member-rejected .member-service-icon{background:#ffe1e1;color:#9b3030}
+.member-service-card.is-member-rejected .member-service-copy>b{color:#6d2626}
+.member-service-card.is-member-rejected .member-service-copy>small{color:#7e5555}
+.member-service-card.is-member-rejected .member-service-state{background:#a73636;color:#fff;box-shadow:0 5px 12px rgba(167,54,54,.15)}
+.member-service-card.is-member-rejected .member-service-action-hint{color:#992f2f}
+
+.member-service-card.is-member-approved{border-color:#90c7a7;background:linear-gradient(135deg,#eef9f2,#fff)}
+.member-service-card.is-member-approved .member-service-icon{background:#daf1e3;color:#17683f}
+.member-service-card.is-member-approved .member-service-state{background:#dff3e7;color:#17663f}
+.member-service-card.is-member-approved .member-service-action-hint{color:#17663f}
+
+@media(max-width:580px){
+  .member-identity-service{grid-template-columns:38px minmax(0,1fr)}
+  .member-identity-service .member-service-state{grid-column:2;max-width:100%;justify-self:start;margin-top:1px}
+  .member-review-reason{margin-top:9px;padding:9px 10px}
+  .member-review-reason strong{font-size:.73rem}
+  .member-service-action-hint{font-size:.68rem}
+}

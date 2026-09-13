@@ -389,6 +389,9 @@ function renderMemberExperience(participant = {}) {
   const memberIdentityService = document.getElementById('memberIdentityService');
   const memberIdentityState = document.getElementById('memberIdentityState');
   const memberIdentityBadge = document.getElementById('memberIdentityBadge');
+  const memberIdentityReviewNote = document.getElementById('memberIdentityReviewNote');
+  const memberIdentityReviewNoteText = document.getElementById('memberIdentityReviewNoteText');
+  const memberIdentityActionHint = document.getElementById('memberIdentityActionHint');
   const memberCardService = document.getElementById('memberCardService');
   const memberCardState = document.getElementById('memberCardState');
   const memberCardBadge = document.getElementById('memberCardBadge');
@@ -424,29 +427,66 @@ function renderMemberExperience(participant = {}) {
 
   if (memberIdentityService && memberIdentityState && memberIdentityBadge) {
     const identityEnabled = registrationVerified && memberStatus !== 'approved';
+    const reviewNote = String(participant.member_verification_review_note || '').trim();
+
     memberIdentityService.classList.toggle('is-active', identityEnabled || memberApproved);
     memberIdentityService.classList.toggle('is-locked', !registrationVerified);
+    memberIdentityService.classList.remove('is-member-ready', 'is-member-pending', 'is-member-rejected', 'is-member-approved');
     memberIdentityService.setAttribute('aria-disabled', registrationVerified ? 'false' : 'true');
+
+    if (memberIdentityReviewNote) memberIdentityReviewNote.hidden = true;
+    if (memberIdentityReviewNoteText) memberIdentityReviewNoteText.textContent = '';
+    if (memberIdentityActionHint) memberIdentityActionHint.hidden = true;
+
     if (!registrationVerified) {
       memberIdentityService.href = '#';
       memberIdentityState.textContent = 'Tersedia setelah status registrasi Terverifikasi.';
       memberIdentityBadge.textContent = 'TERKUNCI';
+      memberIdentityService.setAttribute('aria-label', 'Verifikasi Anggota + Foto terkunci. Tersedia setelah registrasi terverifikasi.');
     } else if (memberStatus === 'approved') {
       memberIdentityService.href = './verifikasi-anggota/';
-      memberIdentityState.textContent = 'Foto anggota telah disetujui admin.';
-      memberIdentityBadge.textContent = 'DISETUJUI';
+      memberIdentityService.classList.add('is-member-approved');
+      memberIdentityState.textContent = 'Foto anggota telah disetujui admin. Verifikasi anggota selesai.';
+      memberIdentityBadge.textContent = 'TERVERIFIKASI';
+      memberIdentityService.setAttribute('aria-label', 'Verifikasi Anggota + Foto terverifikasi. Buka detail verifikasi anggota.');
+      if (memberIdentityActionHint) {
+        memberIdentityActionHint.textContent = 'Lihat Verifikasi Foto →';
+        memberIdentityActionHint.hidden = false;
+      }
     } else if (memberStatus === 'pending') {
       memberIdentityService.href = './verifikasi-anggota/';
-      memberIdentityState.textContent = 'Foto sudah dikirim dan sedang menunggu review admin.';
-      memberIdentityBadge.textContent = 'REVIEW';
+      memberIdentityService.classList.add('is-member-pending');
+      memberIdentityState.textContent = 'Foto sudah dikirim. Saat ini sedang diperiksa oleh admin.';
+      memberIdentityBadge.textContent = 'MENUNGGU VERIFIKASI';
+      memberIdentityService.setAttribute('aria-label', 'Verifikasi Anggota + Foto sedang menunggu pemeriksaan admin.');
+      if (memberIdentityActionHint) {
+        memberIdentityActionHint.textContent = 'Lihat Status Foto →';
+        memberIdentityActionHint.hidden = false;
+      }
     } else if (memberStatus === 'rejected') {
       memberIdentityService.href = './verifikasi-anggota/';
-      memberIdentityState.textContent = participant.member_verification_review_note || 'Foto perlu direkam ulang sesuai catatan admin.';
-      memberIdentityBadge.textContent = 'ULANGI';
+      memberIdentityService.classList.add('is-member-rejected');
+      memberIdentityState.textContent = 'Foto belum dapat disetujui. Perbaiki sesuai catatan admin.';
+      memberIdentityBadge.textContent = 'PERLU DIPERBAIKI';
+      memberIdentityService.setAttribute('aria-label', 'Foto anggota perlu diperbaiki. Buka untuk membaca catatan admin dan mengirim ulang foto.');
+      if (memberIdentityReviewNote && memberIdentityReviewNoteText) {
+        memberIdentityReviewNoteText.textContent = reviewNote || 'Admin meminta Anda mengambil dan mengirim ulang foto anggota.';
+        memberIdentityReviewNote.hidden = false;
+      }
+      if (memberIdentityActionHint) {
+        memberIdentityActionHint.textContent = 'Kirim Ulang Foto →';
+        memberIdentityActionHint.hidden = false;
+      }
     } else {
       memberIdentityService.href = './verifikasi-anggota/';
-      memberIdentityState.textContent = 'Rekam foto setengah badan langsung dari kamera.';
-      memberIdentityBadge.textContent = 'REKAM';
+      memberIdentityService.classList.add('is-member-ready');
+      memberIdentityState.textContent = 'Ambil foto setengah badan langsung dari kamera untuk verifikasi anggota.';
+      memberIdentityBadge.textContent = 'SIAP DIREKAM';
+      memberIdentityService.setAttribute('aria-label', 'Verifikasi Anggota + Foto siap dilakukan. Buka kamera untuk merekam foto.');
+      if (memberIdentityActionHint) {
+        memberIdentityActionHint.textContent = 'Mulai Verifikasi Foto →';
+        memberIdentityActionHint.hidden = false;
+      }
     }
   }
 
@@ -468,7 +508,11 @@ function renderMemberExperience(participant = {}) {
     } else {
       memberCardService.href = '#';
       memberCardState.textContent = registrationVerified
-        ? 'Aktif setelah foto anggota disetujui admin.'
+        ? (memberStatus === 'rejected'
+          ? 'Belum aktif karena foto anggota perlu diperbaiki dan dikirim ulang.'
+          : memberStatus === 'pending'
+            ? 'Belum aktif. Menunggu foto anggota disetujui admin.'
+            : 'Aktif otomatis setelah foto anggota disetujui admin.')
         : 'Tersedia setelah registrasi dan verifikasi anggota selesai.';
       memberCardBadge.textContent = 'TERKUNCI';
     }
