@@ -144,6 +144,22 @@ function renderStatus(data) {
   const title = document.getElementById('statusTitle');
   const text = document.getElementById('statusText');
   const cardLink = document.getElementById('cardLink');
+  const verifiedActions = document.getElementById('verifiedActions');
+  const dashboardLink = document.getElementById('dashboardLink');
+  const layout = document.querySelector('.layout');
+  const statusPanel = document.querySelector('.status-panel');
+  const heroTitle = document.querySelector('.hero h1');
+  const heroText = document.querySelector('.hero p');
+
+  // Reset tampilan final; status selain approved tetap memakai aturan lama tanpa perubahan.
+  document.body.classList.remove('member-verification-complete');
+  layout?.classList.remove('verified-complete-layout');
+  statusPanel?.classList.remove('verified-complete-panel');
+  if (cameraPanel) cameraPanel.hidden = false;
+  if (verifiedActions) verifiedActions.hidden = true;
+  if (heroTitle) heroTitle.innerHTML = 'Rekam Foto <span>Anggota</span>';
+  if (heroText) heroText.textContent = 'Foto diambil langsung melalui kamera untuk kebutuhan identitas kartu anggota. Tidak dilakukan pencocokan biometrik otomatis; keputusan aktivasi VERIFIED MEMBER dilakukan melalui review admin.';
+
   if (!data.eligible) {
     title.textContent = 'Registrasi belum terverifikasi';
     text.textContent = 'Rekam foto anggota baru tersedia setelah status registrasi menjadi Terverifikasi.';
@@ -151,9 +167,21 @@ function renderStatus(data) {
     captureBtn.disabled = true;
     submitBtn.disabled = true;
   } else if (currentStatus === 'approved') {
-    title.textContent = 'VERIFIED MEMBER aktif';
-    text.textContent = 'Foto anggota telah disetujui admin dan akan ditampilkan pada Kartu Anggota Digital.';
-    cardLink.hidden = false;
+    // V12.6.6: approved adalah status final. Jangan tampilkan kamera/rekam ulang lagi.
+    stopCamera();
+    setCameraLive(false);
+    revokePreviewUrl();
+    document.body.classList.add('member-verification-complete');
+    layout?.classList.add('verified-complete-layout');
+    statusPanel?.classList.add('verified-complete-panel');
+    if (cameraPanel) cameraPanel.hidden = true;
+    if (heroTitle) heroTitle.innerHTML = 'Verifikasi Foto <span>Selesai</span>';
+    if (heroText) heroText.textContent = 'Foto anggota telah disetujui oleh admin/tim. Tahap rekam foto sudah selesai dan tidak perlu dilakukan kembali.';
+    title.textContent = 'Verifikasi Foto Selesai';
+    text.textContent = 'Foto anggota telah disetujui admin/tim. Status Anda TERVERIFIKASI dan tahap berikutnya dapat dilanjutkan melalui Kartu Anggota.';
+    if (verifiedActions) verifiedActions.hidden = false;
+    if (cardLink) cardLink.hidden = false;
+    if (dashboardLink) dashboardLink.hidden = false;
     openBtn.disabled = true;
     captureBtn.disabled = true;
     submitBtn.disabled = true;
