@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>Marketplace & Ekosistem | Program Ketahanan Pangan</title>
+  <meta name="description" content="Katalog ekosistem, produk, layanan, dan minat peserta Program Ketahanan Pangan.">
+  <meta name="theme-color" content="#123f2b">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <link rel="canonical" href="https://srilexbuditra.work/program/ketahanan-pangan/peserta/marketplace/">
+  <link rel="icon" href="/program/ketahanan-pangan/assets/brand/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="/program/ketahanan-pangan/assets/brand/apple-touch-icon.png">
+  <link rel="stylesheet" href="./style.css?v=13.3.0">
+</head>
+<body>
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <a class="brand" href="../">Program Ketahanan Pangan</a>
+    <nav class="topnav" aria-label="Navigasi Marketplace">
+      <a href="../aktivitas/">Aktivitas &amp; Event</a>
+      <a href="../benefit/">Benefit</a>
+      <a href="../">← Dashboard</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <span class="eyebrow">EKOSISTEM PESERTA · TAHAP 6</span>
+        <h1>Marketplace &amp; <span>Ekosistem</span></h1>
+        <p>Katalog resmi untuk mempertemukan peserta dengan produk, layanan, mitra, dan peluang ekosistem yang dipublikasikan pengelola.</p>
+      </div>
+      <aside class="hero-note">
+        <strong>Katalog, bukan transaksi</strong>
+        <p>Pada tahap awal ini peserta dapat melihat katalog dan menyimpan minat. Belum ada checkout, pembayaran, atau pesanan otomatis.</p>
+      </aside>
+    </div>
+  </section>
+
+  <section class="content">
+    <div class="wrap">
+      <div id="loadingState" class="state-card" role="status" aria-live="polite">
+        <span class="loader" aria-hidden="true"></span>
+        <div><strong>Menyiapkan Marketplace…</strong><p>Memeriksa katalog dan status akses dari server.</p></div>
+      </div>
+
+      <div id="errorState" class="state-card state-error" hidden>
+        <span class="state-icon" aria-hidden="true">!</span>
+        <div><strong id="errorTitle">Marketplace belum dapat ditampilkan</strong><p id="errorText">Silakan kembali ke Dashboard Peserta.</p></div>
+        <a class="btn primary" href="../">Kembali ke Dashboard</a>
+      </div>
+
+      <section id="marketplaceView" hidden>
+        <article class="summary-card">
+          <div class="summary-head">
+            <div>
+              <span class="section-kicker">RINGKASAN EKOSISTEM</span>
+              <h2 id="participantName">Peserta</h2>
+              <p id="summaryText">Status katalog sedang diperiksa.</p>
+            </div>
+            <span id="memberBadge" class="member-badge">PESERTA</span>
+          </div>
+
+          <div class="stats-grid">
+            <article><span>Katalog Tersedia</span><strong id="publishedItems">0</strong><small>Item resmi yang dipublikasikan</small></article>
+            <article class="accent"><span>Minat Tersimpan</span><strong id="interestedItems">0</strong><small>Bukan pesanan atau transaksi</small></article>
+            <article><span>Total Poin</span><strong id="totalPoints">0</strong><small>Engagement peserta</small></article>
+            <article><span>Level</span><strong id="levelName">Level 1 Tunas</strong><small id="memberStatus">Peserta Aktif</small></article>
+          </div>
+        </article>
+
+        <article class="catalog-panel">
+          <div class="panel-head">
+            <div><span class="section-kicker">KATALOG RESMI</span><h3>Produk, layanan &amp; mitra ekosistem</h3></div>
+            <span class="panel-chip">SERVER MANAGED</span>
+          </div>
+          <p class="panel-intro">Item hanya tampil setelah dipublikasikan pengelola. Syarat Level dan VERIFIED MEMBER diperiksa oleh server sebelum peserta dapat menyimpan minat.</p>
+
+          <div id="categoryFilter" class="filter-row" aria-label="Filter kategori">
+            <button class="filter-chip is-active" type="button" data-category="all">Semua</button>
+          </div>
+
+          <div id="catalogList" class="catalog-list"></div>
+
+          <div id="catalogEmpty" class="empty-card" hidden>
+            <span class="empty-icon" aria-hidden="true">▦</span>
+            <div>
+              <strong>Belum ada katalog resmi yang dipublikasikan</strong>
+              <p>Fondasi Marketplace sudah aktif. Produk, layanan, dan mitra akan muncul otomatis setelah pengelola menyetujui dan mempublikasikan katalog resmi.</p>
+            </div>
+          </div>
+        </article>
+
+        <article class="policy-card">
+          <div class="policy-icon" aria-hidden="true">i</div>
+          <div>
+            <span class="section-kicker">KETENTUAN MARKETPLACE</span>
+            <h3>Minat bukan pesanan atau pembayaran</h3>
+            <p id="marketplaceNote">Marketplace tahap ini hanya katalog dan pencatatan minat. Menyimpan minat tidak membuat kewajiban transaksi, tidak menjamin stok, dan tidak mengurangi poin.</p>
+          </div>
+        </article>
+
+        <article class="ecosystem-card">
+          <div class="ecosystem-icon" aria-hidden="true">◎</div>
+          <div>
+            <span class="section-kicker">ROADMAP INTI TERCAPAI</span>
+            <h3>Fondasi ekosistem peserta sudah terhubung</h3>
+            <p>Dashboard, Kartu + QR, Sertifikat, Level &amp; Poin, Misi, Referral, Benefit, Aktivitas/Event, dan Marketplace kini berada dalam satu alur peserta. Fitur transaksi dapat dibahas terpisah bersama tim sebelum diaktifkan.</p>
+          </div>
+          <span class="ecosystem-badge">FOUNDATION</span>
+        </article>
+
+        <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+        <div class="page-actions">
+          <a class="btn primary" href="../">← Dashboard Peserta</a>
+          <a class="btn outline" href="../aktivitas/">Aktivitas &amp; Event</a>
+          <a class="btn outline" href="../benefit/">Benefit</a>
+        </div>
+      </section>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap footer-inner">
+    <div><strong>Program Ketahanan Pangan</strong><span>Marketplace &amp; Ekosistem Peserta</span></div>
+    <span>Katalog resmi · tanpa checkout/pembayaran otomatis</span>
+  </div>
+</footer>
+
+<script src="./script.js?v=13.3.0"></script>
+<script src="/visitor-analytics.js" defer></script>
+</body>
+</html>
