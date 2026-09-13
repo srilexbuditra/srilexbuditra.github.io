@@ -88,7 +88,8 @@ function render(participant, engagement = null) {
   const fallbackBase = basePointsFallback(participant);
   const basePoints = Number(engagement?.base_points ?? fallbackBase);
   const missionPoints = Number(engagement?.mission_points ?? 0);
-  const totalPoints = Number(engagement?.total_points ?? (basePoints + missionPoints));
+  const referralPoints = Number(engagement?.referral_points ?? 0);
+  const totalPoints = Number(engagement?.total_points ?? (basePoints + missionPoints + referralPoints));
   const completedMissions = Number(engagement?.completed_missions ?? 0);
   const totalMissions = Number(engagement?.total_missions ?? 5);
   const { current, next } = getLevel(totalPoints);
@@ -96,8 +97,10 @@ function render(participant, engagement = null) {
   const memberApproved = registrationVerified && String(participant.member_verification_status || '').toLowerCase() === 'approved';
 
   document.getElementById('participantName').textContent = participant.nama || 'Peserta';
-  document.getElementById('participantStatus').textContent = missionPoints > 0
-    ? `${basePoints} Poin Dasar + ${missionPoints} Poin Misi sudah tercatat.`
+  document.getElementById('participantStatus').textContent = referralPoints > 0
+    ? `${basePoints} Poin Dasar + ${missionPoints} Poin Misi + ${referralPoints} Poin Referral sudah tercatat.`
+    : missionPoints > 0
+      ? `${basePoints} Poin Dasar + ${missionPoints} Poin Misi sudah tercatat.`
     : memberApproved
       ? 'VERIFIED MEMBER aktif · Poin Dasar lengkap. Misi sekarang dapat menambah total poin.'
       : registrationVerified
@@ -106,6 +109,7 @@ function render(participant, engagement = null) {
   document.getElementById('pointsValue').textContent = totalPoints.toLocaleString('id-ID');
   document.getElementById('basePointsValue').textContent = basePoints.toLocaleString('id-ID');
   document.getElementById('missionPointsValue').textContent = missionPoints.toLocaleString('id-ID');
+  document.getElementById('referralPointsValue').textContent = referralPoints.toLocaleString('id-ID');
   document.getElementById('missionsDoneValue').textContent = `${completedMissions} / ${totalMissions}`;
   document.getElementById('levelBadge').textContent = `LEVEL ${current.level} · ${current.name.toUpperCase()}`;
   document.getElementById('levelCaption').textContent = `Level ${current.level} ${current.name}`;
@@ -118,7 +122,7 @@ function render(participant, engagement = null) {
     document.getElementById('progressTitle').textContent = `Menuju Level ${next.level} ${next.name}`;
     document.getElementById('progressValue').textContent = percent + '%';
     document.getElementById('progressBar').style.width = percent + '%';
-    document.getElementById('progressText').textContent = remaining.toLocaleString('id-ID') + ' poin lagi menuju level berikutnya. Selesaikan Misi untuk menambah poin aktivitas.';
+    document.getElementById('progressText').textContent = remaining.toLocaleString('id-ID') + ' poin lagi menuju level berikutnya. Selesaikan Misi dan Referral untuk menambah poin aktivitas.';
   } else {
     document.getElementById('progressTitle').textContent = 'Level tertinggi';
     document.getElementById('progressValue').textContent = '100%';
