@@ -9,7 +9,7 @@
   <meta name="robots" content="noindex,nofollow,noarchive">
   <link rel="canonical" href="https://srilexbuditra.work/program/ketahanan-pangan/peserta/verifikasi-anggota/">
   <link rel="icon" href="/program/ketahanan-pangan/assets/brand/favicon.ico">
-  <link rel="stylesheet" href="./style.css?v=12.3">
+  <link rel="stylesheet" href="./style.css?v=12.3.2">
 </head>
 <body>
 <header class="topbar">
@@ -69,6 +69,13 @@
 
         <button id="submitBtn" class="btn submit" type="button" disabled>Kirim untuk Verifikasi Anggota</button>
         <div id="message" class="message" role="status" aria-live="polite"></div>
+        <div id="successRedirect" class="success-redirect" role="status" aria-live="assertive" hidden>
+          <span class="redirect-spinner" aria-hidden="true"></span>
+          <div>
+            <strong>Foto berhasil dikirim</strong>
+            <p>Data foto sudah diterima dan menunggu review admin. Kembali ke Dashboard Peserta dalam <b id="redirectCountdown">5</b> detik…</p>
+          </div>
+        </div>
       </section>
 
       <aside class="panel status-panel">
@@ -102,7 +109,7 @@
   </div>
 </footer>
 
-<script src="./script.js?v=12.3"></script>
+<script src="./script.js?v=12.3.2"></script>
 <script src="/visitor-analytics.js" defer></script>
 </body>
 </html>

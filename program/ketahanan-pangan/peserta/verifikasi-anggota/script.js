@@ -9,13 +9,41 @@ const retakeBtn = document.getElementById('retakeBtn');
 const submitBtn = document.getElementById('submitBtn');
 const consentCheck = document.getElementById('consentCheck');
 const message = document.getElementById('message');
+const successRedirect = document.getElementById('successRedirect');
+const redirectCountdown = document.getElementById('redirectCountdown');
 let stream = null;
 let capturedBlob = null;
 let currentStatus = 'not_submitted';
+let redirectTimer = null;
 
 function setMessage(type, text) {
   message.className = 'message ' + (type || '');
   message.textContent = text || '';
+}
+
+
+function beginSuccessRedirect(seconds = 5) {
+  if (redirectTimer) window.clearInterval(redirectTimer);
+  stopCamera();
+  openBtn.disabled = true;
+  captureBtn.disabled = true;
+  retakeBtn.disabled = true;
+  submitBtn.disabled = true;
+  consentCheck.disabled = true;
+  if (successRedirect) successRedirect.hidden = false;
+
+  let remaining = Math.max(1, Number(seconds) || 5);
+  if (redirectCountdown) redirectCountdown.textContent = String(remaining);
+
+  redirectTimer = window.setInterval(() => {
+    remaining -= 1;
+    if (redirectCountdown) redirectCountdown.textContent = String(Math.max(remaining, 0));
+    if (remaining <= 0) {
+      window.clearInterval(redirectTimer);
+      redirectTimer = null;
+      window.location.replace('../');
+    }
+  }, 1000);
 }
 
 function humanStatus(value) {
@@ -170,11 +198,14 @@ async function submitPhoto() {
     if (!response.ok) throw new Error(data.message || `Gagal mengirim foto (HTTP ${response.status}).`);
     setMessage('success',data.message || 'Foto berhasil dikirim untuk review admin.');
     await loadStatus();
+    beginSuccessRedirect(5);
   } catch (error) {
     setMessage('error',error.message || 'Foto belum dapat dikirim.');
   } finally {
     submitBtn.textContent = 'Kirim untuk Verifikasi Anggota';
-    submitBtn.disabled = !capturedBlob || !consentCheck.checked || currentStatus === 'approved';
+    if (!redirectTimer) {
+      submitBtn.disabled = !capturedBlob || !consentCheck.checked || currentStatus === 'approved';
+    }
   }
 }
 
