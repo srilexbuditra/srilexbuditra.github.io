@@ -1040,7 +1040,7 @@ function memberVerificationLabel(status) {
   return ({
     not_submitted:'Belum direkam',
     pending:'Menunggu verifikasi',
-    reviewing:'Sedang proses pemeriksaan',
+    reviewing:'Sedang diperiksa',
     resubmitted:'Pemeriksaan ulang',
     approved:'VERIFIED MEMBER',
     revision:'Perlu perbaikan',
@@ -1088,7 +1088,7 @@ function renderMemberVerificationAdminCard(registration, data, errorText = '') {
           ${canReview ? `
             <label class="member-review-note-label">Catatan pemeriksaan<textarea id="memberReviewNote" maxlength="1000" placeholder="Tuliskan catatan bila foto perlu diperbaiki, ditolak, atau memerlukan tindakan."></textarea></label>
             <div class="member-review-actions">
-              ${canStartReview ? `<button type="button" class="member-review-button member-review-process" data-member-decision="reviewing">Sedang Proses Pemeriksaan</button>` : `<button type="button" class="member-review-button member-review-process" disabled>✓ Sedang Diperiksa</button>`}
+              ${canStartReview ? `<button type="button" class="member-review-button member-review-process" data-member-decision="reviewing">Mulai Pemeriksaan Foto</button>` : `<button type="button" class="member-review-button member-review-process" disabled>✓ Sedang Diperiksa</button>`}
               <button type="button" class="member-review-button member-review-approve" data-member-decision="approved">Verifikasi Foto</button>
               <button type="button" class="member-review-button member-review-revision" data-member-decision="revision">Minta Perbaikan</button>
               <button type="button" class="member-review-button member-review-reject" data-member-decision="rejected">Tolak Foto</button>
@@ -2675,7 +2675,7 @@ async function loadMemberVerificationOverview() {
     renderMemberVerificationOverview(rows);
   } catch (error) {
     console.warn('Ketahanan Pangan Admin: ringkasan foto belum dapat dimuat.', error);
-    if (meta) meta.textContent = 'Ringkasan foto belum dapat dimuat. Gunakan tombol Perbarui Status Foto untuk mencoba kembali.';
+    if (meta) meta.textContent = 'Ringkasan foto belum dapat dimuat. Tekan “Perbarui Status Foto” untuk mencoba kembali.';
   }
 }
 
@@ -2706,7 +2706,7 @@ function renderMemberVerificationOverview(rows) {
   setText('photoProgressText',`${verified} dari ${total} foto terverifikasi`);
   const meta = document.getElementById('photoStatusMeta');
   if (meta) meta.textContent = total
-    ? `${total} peserta sudah memiliki rekaman foto · ${waiting} menunggu pemeriksaan · ${action} perlu tindakan.`
+    ? `${total} foto masuk · ${waiting} masih dalam antrean pemeriksaan · ${verified} terverifikasi · ${action} perlu tindakan.`
     : 'Belum ada peserta yang mengirim foto verifikasi anggota.';
 }
 

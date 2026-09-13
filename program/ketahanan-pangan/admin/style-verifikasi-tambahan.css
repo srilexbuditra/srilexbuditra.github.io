@@ -46,3 +46,142 @@
 .member-review-hold-note{margin-top:12px;padding:12px;border-radius:12px;background:#fff7e8;color:#71580e;font-size:.75rem;line-height:1.5}
 @media(max-width:900px){.photo-kpi-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:520px){.photo-kpi-grid{grid-template-columns:1fr}.photo-kpi-card{min-height:auto}.photo-status-overview{margin-top:14px}}
+
+/* =========================================================
+   V12.6.1 — Visual clarity: Status Pemeriksaan Foto
+   Hanya mengubah presentasi/copy; ID dan fungsi tetap sama.
+   ========================================================= */
+.photo-status-overview{
+  position:relative;
+  overflow:hidden;
+  border-color:#cfe4d8;
+  background:linear-gradient(145deg,#ffffff 0%,#f6fbf8 58%,#eef8f2 100%);
+  box-shadow:0 14px 34px rgba(20,79,55,.08);
+}
+.photo-status-overview::before{
+  content:"";
+  position:absolute;
+  left:0;right:0;top:0;height:5px;
+  background:linear-gradient(90deg,#0b7b50,#22a06b,#d4a21f);
+}
+.photo-overview-head{padding-top:4px}
+.photo-overview-eyebrow{color:#0a7950!important;letter-spacing:.12em}
+.photo-status-overview h2{color:#123f31;font-size:1.35rem}
+.photo-status-overview .status-overview-head p{color:#536c5e;line-height:1.55}
+.photo-progress-card{
+  border-color:#cbe2d5;
+  background:linear-gradient(145deg,#f9fdfb,#eaf7f0);
+  box-shadow:inset 0 0 0 1px rgba(21,113,71,.03);
+}
+.photo-progress-card .status-progress-copy span{color:#315b48}
+.photo-progress-card .status-progress-copy strong{font-size:1.65rem;color:#08734e}
+
+.photo-kpi-grid{gap:12px;margin:18px 0 14px}
+.photo-kpi-card{
+  display:flex;
+  align-items:flex-start;
+  gap:12px;
+  min-height:112px;
+  padding:15px;
+  border-radius:15px;
+  box-shadow:0 7px 20px rgba(16,69,48,.055);
+}
+.photo-kpi-card>div{min-width:0}
+.photo-kpi-icon{
+  display:grid!important;
+  place-items:center;
+  flex:0 0 38px;
+  width:38px;height:38px;
+  border-radius:11px;
+  background:rgba(255,255,255,.82);
+  border:1px solid rgba(35,86,60,.10);
+  font-size:17px!important;
+  font-weight:950;
+  color:#17633f!important;
+  box-shadow:0 4px 12px rgba(18,63,43,.05);
+}
+.photo-kpi-card small{font-size:.69rem;line-height:1.25;color:#52695c}
+.photo-kpi-card strong{font-size:1.9rem;margin:7px 0 5px;color:#113e2f}
+.photo-kpi-card span:not(.photo-kpi-icon){font-size:.67rem;line-height:1.45;color:#64786c}
+.photo-kpi-card--total{background:linear-gradient(145deg,#fff,#f4f9f6);border-color:#d3e5dc}
+.photo-kpi-card--waiting .photo-kpi-icon{color:#8a6500!important}
+.photo-kpi-card--verified .photo-kpi-icon{color:#08734e!important}
+.photo-kpi-card--action .photo-kpi-icon{color:#9b4b22!important}
+
+.photo-status-guide{
+  display:flex;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:7px 10px;
+  margin:4px 0 13px;
+  padding:10px 12px;
+  border:1px solid #dbe9e2;
+  border-radius:12px;
+  background:rgba(255,255,255,.78);
+  color:#5b6f63;
+  font-size:.66rem;
+  line-height:1.4;
+}
+.photo-status-guide>strong{color:#155d40;font-size:.68rem}
+.photo-status-guide>span{padding-left:10px;border-left:1px solid #d8e5de}
+.photo-status-guide b{color:#315a48}
+
+.photo-status-grid{
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  gap:10px;
+}
+.photo-status-grid .status-quick-card{
+  min-height:82px;
+  padding:11px 12px;
+  align-items:flex-start;
+  cursor:default;
+}
+.photo-status-grid .status-quick-card>span:last-child{display:block;min-width:0}
+.photo-status-grid .status-quick-card small{font-size:.66rem;line-height:1.25}
+.photo-status-grid .status-quick-card strong{font-size:1.45rem;margin-top:4px}
+.photo-status-grid .status-quick-card em{
+  display:block;
+  margin-top:5px;
+  color:inherit;
+  opacity:.72;
+  font-size:.58rem;
+  font-style:normal;
+  font-weight:700;
+  line-height:1.3;
+}
+.photo-status-grid .status-quick-icon{margin-top:1px;flex-basis:30px;width:30px;height:30px}
+.photo-status-grid .status-quick-card:hover{transform:none;box-shadow:0 3px 10px rgba(18,63,43,.035)}
+.photo-overview-foot{
+  margin-top:15px;
+  padding:12px 13px 0;
+}
+.photo-overview-foot>span{font-size:.68rem;line-height:1.45;color:#546b5e}
+.photo-refresh-button{
+  min-height:36px;
+  padding:8px 12px;
+  background:#e9f6ef;
+  color:#0a704a;
+  border:1px solid #c9e2d5;
+}
+.photo-refresh-button:hover{background:#dff1e8}
+
+/* Perjelas bahwa kartu kedua adalah status registrasi, bukan status foto. */
+#statusOverview{border-color:#dce7e1;background:#fff}
+#statusOverview .eyebrow{color:#547067}
+
+@media(max-width:1050px){
+  .photo-status-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+}
+@media(max-width:900px){
+  .photo-kpi-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .photo-status-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .photo-status-guide{display:grid;grid-template-columns:1fr}
+  .photo-status-guide>span{padding-left:0;border-left:0}
+}
+@media(max-width:520px){
+  .photo-kpi-grid{grid-template-columns:1fr}
+  .photo-kpi-card{min-height:auto}
+  .photo-status-grid{grid-template-columns:1fr!important}
+  .photo-status-grid .status-quick-card{min-height:70px}
+  .photo-overview-foot{padding-left:0;padding-right:0}
+}
