@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>Notifikasi & Informasi | Program Ketahanan Pangan</title>
+  <meta name="description" content="Pusat notifikasi dan informasi peserta Program Ketahanan Pangan.">
+  <meta name="theme-color" content="#123f2b">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <link rel="canonical" href="https://srilexbuditra.work/program/ketahanan-pangan/peserta/notifikasi/">
+  <link rel="icon" href="/program/ketahanan-pangan/assets/brand/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="/program/ketahanan-pangan/assets/brand/apple-touch-icon.png">
+  <link rel="stylesheet" href="./style.css?v=13.4.0">
+</head>
+<body>
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <a class="brand" href="../">Program Ketahanan Pangan</a>
+    <nav class="topnav" aria-label="Navigasi Notifikasi">
+      <a href="../marketplace/">Marketplace</a>
+      <a href="../poin/">Level &amp; Poin</a>
+      <a href="../">← Dashboard</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <span class="eyebrow">PUSAT INFORMASI PESERTA · TAHAP 7</span>
+        <h1>Notifikasi &amp; <span>Informasi</span></h1>
+        <p>Pembaruan penting akun, poin, benefit, referral, event, Marketplace, dan informasi program dirangkum dalam satu pusat notifikasi yang tersimpan di server.</p>
+      </div>
+      <aside class="hero-note">
+        <strong>Informasi aman &amp; terpusat</strong>
+        <p>Notifikasi di halaman ini tidak meminta password, OTP, PIN, NIK lengkap, nomor KK, atau pembayaran.</p>
+      </aside>
+    </div>
+  </section>
+
+  <section class="content">
+    <div class="wrap">
+      <div id="loadingState" class="state-card" role="status" aria-live="polite">
+        <span class="loader" aria-hidden="true"></span>
+        <div><strong>Menyiapkan pusat notifikasi…</strong><p>Menyinkronkan pembaruan akun dan informasi dari server.</p></div>
+      </div>
+
+      <div id="errorState" class="state-card state-error" hidden>
+        <span class="state-icon" aria-hidden="true">!</span>
+        <div><strong id="errorTitle">Notifikasi belum dapat ditampilkan</strong><p id="errorText">Silakan kembali ke Dashboard Peserta.</p></div>
+        <a class="btn primary" href="../">Kembali ke Dashboard</a>
+      </div>
+
+      <section id="notificationView" hidden>
+        <article class="summary-card">
+          <div class="summary-head">
+            <div>
+              <span class="section-kicker">RINGKASAN NOTIFIKASI</span>
+              <h2 id="participantName">Peserta</h2>
+              <p id="summaryText">Status notifikasi sedang diperiksa.</p>
+            </div>
+            <span id="memberBadge" class="member-badge">PESERTA</span>
+          </div>
+
+          <div class="stats-grid">
+            <article class="accent"><span>Belum Dibaca</span><strong id="unreadCount">0</strong><small>Pemberitahuan yang perlu dilihat</small></article>
+            <article><span>Total Notifikasi</span><strong id="totalCount">0</strong><small>Tersimpan untuk akun Anda</small></article>
+            <article><span>Total Poin</span><strong id="totalPoints">0</strong><small>Engagement peserta</small></article>
+            <article><span>Level</span><strong id="levelName">Level 1 Tunas</strong><small id="memberStatus">Peserta Aktif</small></article>
+          </div>
+        </article>
+
+        <article class="notification-panel">
+          <div class="panel-head">
+            <div><span class="section-kicker">PEMBARUAN AKUN &amp; PROGRAM</span><h3>Notifikasi terbaru</h3></div>
+            <button id="markAllReadBtn" class="btn outline" type="button">Tandai Semua Dibaca</button>
+          </div>
+          <p class="panel-intro">Notifikasi dibuat dari perubahan yang dicatat server. Status dibaca tetap tersimpan setelah refresh maupun login ulang.</p>
+
+          <div id="filterRow" class="filter-row" aria-label="Filter notifikasi">
+            <button class="filter-chip is-active" type="button" data-filter="all">Semua</button>
+            <button class="filter-chip" type="button" data-filter="unread">Belum Dibaca</button>
+            <button class="filter-chip" type="button" data-filter="program">Program</button>
+            <button class="filter-chip" type="button" data-filter="poin">Poin</button>
+            <button class="filter-chip" type="button" data-filter="benefit">Benefit</button>
+            <button class="filter-chip" type="button" data-filter="event">Event</button>
+            <button class="filter-chip" type="button" data-filter="marketplace">Marketplace</button>
+          </div>
+
+          <div id="notificationList" class="notification-list"></div>
+
+          <div id="notificationEmpty" class="empty-card" hidden>
+            <span class="empty-icon" aria-hidden="true">✓</span>
+            <div>
+              <strong>Tidak ada notifikasi pada filter ini</strong>
+              <p>Pembaruan baru akan muncul otomatis ketika ada perubahan yang relevan untuk akun Anda.</p>
+            </div>
+          </div>
+        </article>
+
+        <article class="policy-card">
+          <div class="policy-icon" aria-hidden="true">i</div>
+          <div>
+            <span class="section-kicker">KEAMANAN INFORMASI</span>
+            <h3>Notifikasi tidak meminta data rahasia</h3>
+            <p id="notificationNote">Pusat Notifikasi hanya memuat informasi akun/program. Jangan pernah memberikan password, OTP, PIN, NIK lengkap, nomor KK, atau melakukan pembayaran karena sebuah notifikasi.</p>
+          </div>
+        </article>
+
+        <article class="ecosystem-card">
+          <div class="ecosystem-icon" aria-hidden="true">◎</div>
+          <div>
+            <span class="section-kicker">EKOSISTEM PESERTA TERHUBUNG</span>
+            <h3>Pembaruan penting kini berada dalam satu alur</h3>
+            <p>Referral terverifikasi, perubahan poin, benefit aktif, agenda baru, katalog Marketplace, dan informasi program dapat dirangkum otomatis tanpa mengubah fungsi modul yang sudah stabil.</p>
+          </div>
+          <span class="ecosystem-badge">SERVER SYNC</span>
+        </article>
+
+        <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+        <div class="page-actions">
+          <a class="btn primary" href="../">← Dashboard Peserta</a>
+          <a class="btn outline" href="../poin/">Level &amp; Poin</a>
+          <a class="btn outline" href="../marketplace/">Marketplace</a>
+        </div>
+      </section>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap footer-inner">
+    <div><strong>Program Ketahanan Pangan</strong><span>Notifikasi &amp; Informasi Peserta</span></div>
+    <span>Pemberitahuan akun dan program · tersimpan di server</span>
+  </div>
+</footer>
+
+<script src="./script.js?v=13.4.0"></script>
+<script src="/visitor-analytics.js" defer></script>
+</body>
+</html>
