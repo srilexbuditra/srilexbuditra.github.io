@@ -1,0 +1,50 @@
+V13.6.4 — FILE LAMA YANG BOLEH DIHAPUS SETELAH UPDATE
+
+Setelah semua HTML sudah memakai:
+/assets/js/visitor-analytics.js
+
+hapus salinan visitor-analytics.js lama berikut agar repository benar-benar rapi:
+
+admin/visitor-analytics.js
+aktivitas/visitor-analytics.js
+insights/visitor-analytics.js
+insights/membangun-alur-digital-peserta/visitor-analytics.js
+insights/qr-verification-sertifikat-digital/visitor-analytics.js
+insights/responsive-first-portal-peserta/visitor-analytics.js
+portfolio/visitor-analytics.js
+portfolio/aplikasi-pos/visitor-analytics.js
+portfolio/ketahanan-pangan/visitor-analytics.js
+portfolio/sistem-administrasi/visitor-analytics.js
+portfolio/website-sekolah/visitor-analytics.js
+portfolio/website-sekolah/tjkt-smkn1kotabengkulu/visitor-analytics.js
+portfolio/website-sekolah/v2/visitor-analytics.js
+profil/visitor-analytics.js
+program/ketahanan-pangan/visitor-analytics.js
+program/ketahanan-pangan/admin/visitor-analytics.js
+program/ketahanan-pangan/dokumen/pembagian-peran/visitor-analytics.js
+program/ketahanan-pangan/dokumentasi/visitor-analytics.js
+program/ketahanan-pangan/peserta/visitor-analytics.js
+program/ketahanan-pangan/peserta/aktivitas/visitor-analytics.js
+program/ketahanan-pangan/peserta/benefit/visitor-analytics.js
+program/ketahanan-pangan/peserta/kartu/visitor-analytics.js
+program/ketahanan-pangan/peserta/keamanan/visitor-analytics.js
+program/ketahanan-pangan/peserta/marketplace/visitor-analytics.js
+program/ketahanan-pangan/peserta/misi/visitor-analytics.js
+program/ketahanan-pangan/peserta/notifikasi/visitor-analytics.js
+program/ketahanan-pangan/peserta/poin/visitor-analytics.js
+program/ketahanan-pangan/peserta/profil/visitor-analytics.js
+program/ketahanan-pangan/peserta/referral/visitor-analytics.js
+program/ketahanan-pangan/peserta/verifikasi-anggota/visitor-analytics.js
+program/ketahanan-pangan/registrasi/visitor-analytics.js
+program/ketahanan-pangan/verifikasi/visitor-analytics.js
+program/ketahanan-pangan/verifikasi/sertifikat/visitor-analytics.js
+verify/visitor-analytics.js
+visitor-analytics.js
+
+Dokumentasi lama yang juga boleh dihapus:
+GA4-VISITOR-ANALYTICS-V13.6.3.md
+
+PENTING:
+- File BARU yang dipertahankan hanya: assets/js/visitor-analytics.js
+- Jika file lama belum dihapus, website tetap berfungsi karena sudah tidak direferensikan.
+- Penghapusan hanya untuk kerapian repository.

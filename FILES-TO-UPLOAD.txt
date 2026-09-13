@@ -1,0 +1,12 @@
+V13.6.4 — CENTRALIZED GA4 + VISITOR ANALYTICS
+
+UPLOAD / TIMPA:
+1. Semua file .html yang ada di patch ini.
+2. assets/js/visitor-analytics.js
+3. CHANGELOG.md (opsional dokumentasi)
+4. GA4-VISITOR-ANALYTICS-V13.6.4.md (opsional dokumentasi)
+
+SETELAH ITU:
+Baca DELETE-OLD-FILES-V13.6.4.txt untuk menghapus salinan visitor-analytics.js lama.
+
+Tidak ada Worker, D1, R2, API, login, poin, kartu anggota, atau fungsi program yang diubah pada patch ini.

@@ -468,3 +468,9 @@ Dokumen ini menggunakan dua riwayat versi agar nomor versi website utama tidak t
 - Menambahkan perubahan password peserta dengan verifikasi password saat ini dan revokasi sesi perangkat lain.
 - Menambahkan ringkasan akun, data pertanian read-only, sesi aktif, dan riwayat engagement singkat.
 - Data registrasi inti tetap tidak dapat diedit dari halaman profil.
+
+## V13.6.4 — Centralized GA4 & Visitor Analytics
+- `visitor-analytics.js` dipusatkan ke `/assets/js/visitor-analytics.js`.
+- Seluruh halaman HTML menggunakan satu tracker global.
+- Salinan tracker di folder-folder halaman dihapus.
+- Event GA4, privacy filter, Visitor Analytics, dan fungsi website V13.6.2 dipertahankan.
