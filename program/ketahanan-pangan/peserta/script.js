@@ -506,6 +506,9 @@ function renderMemberExperience(participant = {}) {
   const missionService = document.getElementById('missionService');
   const missionServiceState = document.getElementById('missionServiceState');
   const missionServiceBadge = document.getElementById('missionServiceBadge');
+  const referralService = document.getElementById('referralService');
+  const referralServiceState = document.getElementById('referralServiceState');
+  const referralServiceBadge = document.getElementById('referralServiceBadge');
 
   if (wrap) wrap.dataset.status = s || 'pending';
   if (label) label.textContent = experience.label;
@@ -670,6 +673,17 @@ function renderMemberExperience(participant = {}) {
     missionServiceBadge.textContent = 'AKTIF';
   }
 
+  if (referralService && referralServiceState && referralServiceBadge) {
+    referralService.classList.toggle('is-active', memberApproved);
+    referralService.classList.toggle('is-locked', !memberApproved);
+    referralService.setAttribute('aria-disabled', memberApproved ? 'false' : 'true');
+    referralService.href = memberApproved ? './referral/' : '#';
+    referralServiceState.textContent = memberApproved
+      ? 'Bagikan tautan undangan resmi dan dapatkan poin saat peserta referral terverifikasi.'
+      : 'Aktif setelah VERIFIED MEMBER disetujui admin/tim.';
+    referralServiceBadge.textContent = memberApproved ? 'AKTIF' : 'TERKUNCI';
+  }
+
 }
 
 let engagementCardsRequest = 0;
@@ -686,6 +700,8 @@ async function refreshEngagementCards() {
     const pointsServiceBadge = document.getElementById('pointsServiceBadge');
     const missionServiceState = document.getElementById('missionServiceState');
     const missionServiceBadge = document.getElementById('missionServiceBadge');
+    const referralServiceState = document.getElementById('referralServiceState');
+    const referralServiceBadge = document.getElementById('referralServiceBadge');
     if (pointsServiceState) pointsServiceState.textContent = `${totalPoints} Total Poin · Level ${levelInfo.level} ${levelInfo.name}.`;
     if (pointsServiceBadge) pointsServiceBadge.textContent = `${totalPoints} POIN`;
     const completed = Number(points.completed_missions || 0);
@@ -693,6 +709,11 @@ async function refreshEngagementCards() {
     const missionPoints = Number(points.mission_points || 0);
     if (missionServiceState) missionServiceState.textContent = `${completed}/${total} misi selesai · +${missionPoints} Poin Misi.`;
     if (missionServiceBadge) missionServiceBadge.textContent = `${completed}/${total} MISI`;
+    const referralPoints = Number(points.referral_points || 0);
+    const verifiedReferrals = Number(points.verified_referrals || 0);
+    const referralRegistrations = Number(points.referral_registrations || 0);
+    if (referralServiceState && referralRegistrations > 0) referralServiceState.textContent = `${referralRegistrations} pendaftaran referral · ${verifiedReferrals} terverifikasi · +${referralPoints} Poin Referral.`;
+    if (referralServiceBadge && verifiedReferrals > 0) referralServiceBadge.textContent = `${verifiedReferrals} VERIFIED`;
   } catch (_) {
     // V12.8 fallback tetap dipertahankan bila endpoint engagement belum tersedia.
   }
