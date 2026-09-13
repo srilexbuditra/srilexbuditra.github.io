@@ -65,6 +65,18 @@ function renderQr(canvas, value) {
   }
 }
 
+async function recordMissionEvent(missionKey) {
+  try {
+    await fetch(API + '/missions/event', {
+      method: 'POST',
+      credentials: 'include',
+      cache: 'no-store',
+      headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
+      body: JSON.stringify({ mission_key: missionKey })
+    });
+  } catch (_) {}
+}
+
 function showError(title, text, actionHref = '../', actionLabel = 'Kembali ke Dashboard') {
   loadingState.hidden = true;
   cardView.hidden = true;
@@ -174,6 +186,7 @@ document.getElementById('copyVerifyBtn').addEventListener('click', copyVerificat
       return;
     }
     await showCard(data.participant);
+    recordMissionEvent('member_card_open');
   } catch (error) {
     showError('Kartu belum dapat ditampilkan', error?.message || 'Periksa koneksi internet lalu coba kembali melalui dashboard peserta.');
   }
