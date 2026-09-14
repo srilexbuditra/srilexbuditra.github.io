@@ -1,6 +1,6 @@
 /* =========================================================
    Global Visitor Analytics — Cloudflare Worker + D1 + GA4
-   V6.10.2 Centralized Site-Wide + Reliable Public Source View/Copy Events
+   V6.10.3 Centralized Site-Wide + Public Source Inline Copy Analytics
    ========================================================= */
 (() => {
   if (window.__SB_GLOBAL_VISITOR_ANALYTICS__) return;
@@ -359,7 +359,8 @@
       button.textContent = 'Tersalin ✓';
 
       sendPublicSourceEvent('public_source_copy', {
-        copy_target: 'public_ref'
+        copy_target: 'public_ref',
+        copy_location: button.dataset.copyLocation || 'unknown'
       });
 
       window.setTimeout(() => {
