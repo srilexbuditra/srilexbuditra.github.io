@@ -15,6 +15,12 @@
   const publicSourceStatus = document.getElementById('publicSourceStatus');
   const PUBLIC_SOURCE_ISSUE_ENDPOINT = '/program/ketahanan-pangan/sumber/issue';
 
+  const notifyPublicSourceAnalytics = (name) => {
+    try {
+      window.dispatchEvent(new CustomEvent(`sb:public-source:${name}`));
+    } catch (_) {}
+  };
+
   const parseSuccessPayload = (raw) => {
     if (!raw) return null;
     try {
@@ -72,6 +78,7 @@
   const issuePublicSource = async (registrationIdValue) => {
     if (!publicSourcePanel || !publicReference || !publicSourceLink) return;
     try {
+      notifyPublicSourceAnalytics('issue-start');
       const response = await fetch(PUBLIC_SOURCE_ISSUE_ENDPOINT, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
@@ -86,11 +93,13 @@
       publicReference.textContent = result.public_ref;
       publicSourceLink.href = result.source_url;
       publicSourcePanel.hidden = false;
+      notifyPublicSourceAnalytics('issue-success');
 
       copyPublicReference?.addEventListener('click', async () => {
         if (publicSourceStatus) publicSourceStatus.textContent = '';
         try {
           await copyText(result.public_ref);
+          notifyPublicSourceAnalytics('copy');
           if (publicSourceStatus) publicSourceStatus.textContent = 'Kode referensi publik berhasil disalin.';
           copyPublicReference.textContent = 'Tersalin ✓';
           window.setTimeout(() => { copyPublicReference.textContent = 'Salin Kode Publik'; }, 1800);
