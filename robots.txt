@@ -2,3 +2,4 @@ User-agent: *
 Allow: /
 
 Sitemap: https://srilexbuditra.work/sitemap.xml
+Sitemap: https://srilexbuditra.work/program/ketahanan-pangan/sumber/sitemap.xml
