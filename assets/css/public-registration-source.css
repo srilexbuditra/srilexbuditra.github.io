@@ -82,3 +82,66 @@ h1{margin:12px 0 14px;color:var(--source-forest);font-size:clamp(34px,6vw,56px);
 @media (max-width:1040px){.source-topbar-inner{grid-template-columns:auto 1fr}.source-brand-lockup{display:none}.source-nav{justify-self:end}}
 @media (max-width:720px){.source-topbar-inner{width:min(100% - 22px,680px);grid-template-columns:1fr;gap:8px;padding:10px 0 12px}.source-mini-brand{min-width:0}.source-nav{justify-self:stretch;display:grid;grid-template-columns:1fr 1fr 1fr}.source-nav a{font-size:10px;padding:8px 6px}.wrap{width:min(100% - 22px,680px);padding:30px 0 46px}.card{border-radius:23px;padding:30px 18px}.facts{grid-template-columns:1fr}.form{padding:18px 14px}.actions{display:grid;grid-template-columns:1fr}.actions .btn{width:100%}}
 @media (max-width:430px){.source-mini-brand>span:last-child{font-size:12px}.source-nav{gap:4px}.source-nav a{font-size:9px}.check{width:68px;height:68px;font-size:34px}.card h1{font-size:34px}}
+.public-ref-heading{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:12px;
+  margin:12px 0 14px;
+  flex-wrap:wrap
+}
+.public-ref-heading h1{
+  margin:0
+}
+.public-ref-copy-inline{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+  min-height:42px;
+  padding:9px 12px;
+  border:1px solid #cfe1d0;
+  border-radius:12px;
+  background:#fff;
+  color:var(--source-forest);
+  font-size:12px;
+  font-weight:900;
+  cursor:pointer;
+  box-shadow:0 6px 18px rgba(18,63,43,.06);
+  transition:transform .15s ease,background .15s ease,border-color .15s ease
+}
+.public-ref-copy-inline:hover{
+  background:var(--source-leaf-soft);
+  border-color:#b9d4bb;
+  transform:translateY(-1px)
+}
+.public-ref-copy-inline:focus-visible{
+  outline:3px solid rgba(47,125,75,.22);
+  outline-offset:2px
+}
+.public-ref-copy-inline svg{
+  width:18px;
+  height:18px;
+  fill:currentColor;
+  flex:0 0 auto
+}
+#public-source-copy-status{
+  min-height:20px;
+  margin:10px 0 0;
+  text-align:center
+}
+@media (max-width:720px){
+  .public-ref-heading{
+    gap:9px
+  }
+  .public-ref-copy-inline{
+    min-height:40px;
+    padding:8px 11px
+  }
+}
+@media (max-width:430px){
+  .public-ref-heading{
+    display:grid;
+    justify-items:center
+  }
+}
