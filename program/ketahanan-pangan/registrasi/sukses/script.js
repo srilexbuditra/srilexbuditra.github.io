@@ -2,16 +2,16 @@
   'use strict';
 
   const STORAGE_KEY = 'kp_registration_success_v1';
+  const WINDOW_NAME_PREFIX = STORAGE_KEY + ':';
   const successCard = document.getElementById('successCard');
   const unavailableCard = document.getElementById('unavailableCard');
   const registrationId = document.getElementById('registrationId');
   const copyButton = document.getElementById('copyRegistration');
   const copyStatus = document.getElementById('copyStatus');
 
-  const readSuccess = () => {
+  const parseSuccessPayload = (raw) => {
+    if (!raw) return null;
     try {
-      const raw = sessionStorage.getItem(STORAGE_KEY);
-      if (!raw) return null;
       const parsed = JSON.parse(raw);
       const id = String(parsed?.registration_id || '').trim();
       if (!id || id.length > 100) return null;
@@ -19,6 +19,32 @@
     } catch (_) {
       return null;
     }
+  };
+
+  const readSuccess = () => {
+    let data = null;
+    try {
+      data = parseSuccessPayload(sessionStorage.getItem(STORAGE_KEY));
+    } catch (_) {
+      data = null;
+    }
+
+    if (!data) {
+      try {
+        if (typeof window.name === 'string' && window.name.startsWith(WINDOW_NAME_PREFIX)) {
+          data = parseSuccessPayload(window.name.slice(WINDOW_NAME_PREFIX.length));
+        }
+      } catch (_) {
+        data = null;
+      }
+    }
+
+    // Jangan biarkan fallback window.name membawa nomor registrasi ke navigasi berikutnya.
+    try {
+      if (typeof window.name === 'string' && window.name.startsWith(WINDOW_NAME_PREFIX)) window.name = '';
+    } catch (_) {}
+
+    return data;
   };
 
   const copyText = async (value) => {
