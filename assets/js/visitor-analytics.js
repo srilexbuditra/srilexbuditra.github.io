@@ -1,6 +1,6 @@
 /* =========================================================
    Global Visitor Analytics — Cloudflare Worker + D1 + GA4
-   V6.10.3 Centralized Site-Wide + Public Source Inline Copy Analytics
+   V6.10.3.1 Centralized Site-Wide + Public Source Copy Selector Hotfix
    ========================================================= */
 (() => {
   if (window.__SB_GLOBAL_VISITOR_ANALYTICS__) return;
@@ -344,10 +344,26 @@
     const button = event.target.closest?.('[data-public-source-copy]');
     if (!button) return;
 
-    const identifier = document.querySelector('[itemprop="identifier"]');
-    const publicRef = String(identifier?.textContent || '').trim();
+    // Prioritaskan identifier yang terlihat di halaman.
+    // <meta itemprop="identifier"> di <head> tidak memiliki textContent,
+    // sehingga selector lama dapat membuat proses copy berhenti dan
+    // clipboard tetap berisi nilai lama.
+    const identifier =
+      document.querySelector('.public-ref-heading [itemprop="identifier"]') ||
+      document.querySelector('article [itemprop="identifier"]') ||
+      document.querySelector('meta[itemprop="identifier"]');
 
-    if (!/^KP-PUB-[A-F0-9]{12}$/i.test(publicRef)) return;
+    const publicRef = String(
+      identifier?.textContent ||
+      identifier?.getAttribute?.('content') ||
+      ''
+    ).trim();
+
+    if (!/^KP-PUB-[A-F0-9]{12}$/i.test(publicRef)) {
+      const status = document.getElementById('public-source-copy-status');
+      if (status) status.textContent = 'Kode publik tidak ditemukan. Muat ulang halaman lalu coba lagi.';
+      return;
+    }
 
     const status = document.getElementById('public-source-copy-status');
     const originalText = button.textContent;
