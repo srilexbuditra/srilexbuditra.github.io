@@ -50,5 +50,72 @@ nextBtn.addEventListener('click',()=>{if(validatePanel())showStep(current+1)});p
 function normalizeWA(v){return String(v||'').replace(/[^0-9+]/g,'')}
 function resetUploads(){uploadInputs.forEach(clearPreview)}
 function submitMultipart(fd){return new Promise((resolve,reject)=>{const xhr=new XMLHttpRequest();xhr.open('POST',API_ENDPOINT,true);xhr.setRequestHeader('Accept','application/json');xhr.upload.addEventListener('progress',e=>{if(!e.lengthComputable)return;const pct=Math.round((e.loaded/e.total)*100);uploadInputs.forEach(i=>setUploadState(i.name,'uploading',pct<100?`Mengunggah… ${pct}%`:'Memproses berkas…',pct))});xhr.addEventListener('load',()=>{let out={};try{out=JSON.parse(xhr.responseText||'{}')}catch{}if(xhr.status>=200&&xhr.status<300)resolve(out);else reject(new Error(out.message||'Registrasi belum dapat diproses.'))});xhr.addEventListener('error',()=>reject(new Error('Koneksi terputus saat mengunggah dokumen.')));xhr.addEventListener('timeout',()=>reject(new Error('Waktu unggah habis. Silakan coba lagi.')));xhr.timeout=120000;xhr.send(fd)})}
-form.addEventListener('submit',async e=>{e.preventDefault();statusBox.className='status';if(!validatePanel())return;if(!validateUploads())return;const fd=new FormData(form);if(fd.get('website'))return;fd.set('whatsapp',normalizeWA(fd.get('whatsapp')));fd.set('source',location.href);fd.set('submitted_at',new Date().toISOString());submitBtn.disabled=true;submitBtn.textContent='Mengunggah…';try{const out=await submitMultipart(fd);uploadInputs.forEach(i=>setUploadState(i.name,'done','Berkas berhasil dikirim.',100));const id=out.registration_id||out.id||'-';setStatus('ok','✓ Registrasi dan dokumen berhasil dikirim. Nomor registrasi: <span class="result-id">'+String(id).replace(/[<>]/g,'')+'</span>. Simpan nomor ini untuk verifikasi.');if(typeof window.gtag==='function'){window.gtag('event','registration_success',{event_category:'ketahanan_pangan',event_label:'Registrasi Berhasil',transport_type:'beacon'});}form.reset();document.getElementById('provinsi').value='Bengkulu';resetUploads();showStep(0,false)}catch(err){uploadInputs.forEach(i=>setUploadState(i.name,'error','Upload belum berhasil. Coba kembali.',0));setStatus('err','Registrasi belum terkirim: '+err.message+' Endpoint Cloudflare Worker V7 harus mendukung multipart/form-data dan penyimpanan privat.')}finally{submitBtn.disabled=false;submitBtn.textContent='Kirim Registrasi →'}});
+const REGISTRATION_SUCCESS_KEY='kp_registration_success_v1';
+const REGISTRATION_SUCCESS_WINDOW_PREFIX=REGISTRATION_SUCCESS_KEY+':';
+function storeRegistrationSuccess(registrationId){
+  const payload=JSON.stringify({registration_id:registrationId,created_at:Date.now()});
+  let stored=false;
+  try{
+    sessionStorage.setItem(REGISTRATION_SUCCESS_KEY,payload);
+    stored=true;
+  }catch(_){
+    // Beberapa mode privasi/browser dapat menolak sessionStorage.
+  }
+  try{
+    // Fallback hanya untuk tab yang sama. Halaman sukses akan langsung membersihkannya.
+    window.name=REGISTRATION_SUCCESS_WINDOW_PREFIX+payload;
+    stored=true;
+  }catch(_){
+    // Redirect tetap dilakukan; halaman sukses akan menangani jika data tidak tersedia.
+  }
+  return stored;
+}
+form.addEventListener('submit',async e=>{
+  e.preventDefault();
+  statusBox.className='status';
+  if(!validatePanel())return;
+  if(!validateUploads())return;
+  const fd=new FormData(form);
+  if(fd.get('website'))return;
+  fd.set('whatsapp',normalizeWA(fd.get('whatsapp')));
+  fd.set('source',location.href);
+  fd.set('submitted_at',new Date().toISOString());
+  submitBtn.disabled=true;
+  submitBtn.textContent='Mengunggah…';
+  let redirecting=false;
+  try{
+    const out=await submitMultipart(fd);
+    uploadInputs.forEach(i=>setUploadState(i.name,'done','Berkas berhasil dikirim.',100));
+    const id=String(out.registration_id||out.id||'').trim().replace(/[<>]/g,'');
+    if(typeof window.gtag==='function'){
+      window.gtag('event','registration_success',{event_category:'ketahanan_pangan',event_label:'Registrasi Berhasil',transport_type:'beacon'});
+    }
+    if(id){
+      storeRegistrationSuccess(id);
+      setStatus('ok','✓ Registrasi dan dokumen berhasil dikirim. Nomor registrasi: <span class="result-id">'+id+'</span>. Mengalihkan ke halaman konfirmasi…');
+      form.reset();
+      document.getElementById('provinsi').value='Bengkulu';
+      resetUploads();
+      showStep(0,false);
+      redirecting=true;
+      submitBtn.textContent='Registrasi berhasil…';
+      const successUrl=new URL('./sukses/',window.location.href).href;
+      window.setTimeout(()=>window.location.replace(successUrl),650);
+      return;
+    }
+    setStatus('ok','✓ Registrasi dan dokumen berhasil dikirim. Nomor registrasi belum diterima dari server. Silakan simpan pesan ini dan hubungi pengelola bila diperlukan.');
+    form.reset();
+    document.getElementById('provinsi').value='Bengkulu';
+    resetUploads();
+    showStep(0,false);
+  }catch(err){
+    uploadInputs.forEach(i=>setUploadState(i.name,'error','Upload belum berhasil. Coba kembali.',0));
+    setStatus('err','Registrasi belum terkirim: '+err.message+' Endpoint Cloudflare Worker V7 harus mendukung multipart/form-data dan penyimpanan privat.');
+  }finally{
+    if(!redirecting){
+      submitBtn.disabled=false;
+      submitBtn.textContent='Kirim Registrasi →';
+    }
+  }
+});
 window.addEventListener('beforeunload',()=>{for(const url of objectUrls.values())URL.revokeObjectURL(url)});
