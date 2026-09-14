@@ -1,6 +1,6 @@
 /* =========================================================
    Global Visitor Analytics — Cloudflare Worker + D1 + GA4
-   V6.10.1 Centralized Site-Wide + POST-only Public Source GA4 Events
+   V6.10.2 Centralized Site-Wide + Reliable Public Source View/Copy Events
    ========================================================= */
 (() => {
   if (window.__SB_GLOBAL_VISITOR_ANALYTICS__) return;
@@ -223,7 +223,24 @@
   };
 
   if (isPublicSourceLanding) {
-    sendPublicSourceEvent('public_source_view');
+    let publicSourceViewSent = false;
+
+    const emitPublicSourceView = (navigationType = 'load') => {
+      if (navigationType === 'load' && publicSourceViewSent) return;
+      publicSourceViewSent = true;
+
+      sendPublicSourceEvent('public_source_view', {
+        navigation_type: navigationType
+      });
+    };
+
+    window.addEventListener('pageshow', (event) => {
+      emitPublicSourceView(event.persisted ? 'back_forward' : 'load');
+    }, { passive: true });
+
+    if (document.readyState === 'complete') {
+      setTimeout(() => emitPublicSourceView('load'), 0);
+    }
   }
 
   if (isPublicSourceDetail) {
@@ -300,8 +317,63 @@
     });
   });
 
+  const copyTextLocally = async (value) => {
+    const text = String(value || '').trim();
+    if (!text) throw new Error('empty');
+
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(text);
+      return;
+    }
+
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.setAttribute('readonly', '');
+    textarea.style.position = 'fixed';
+    textarea.style.opacity = '0';
+    textarea.style.pointerEvents = 'none';
+    document.body.appendChild(textarea);
+    textarea.select();
+
+    const copied = document.execCommand('copy');
+    textarea.remove();
+    if (!copied) throw new Error('copy_failed');
+  };
+
+  document.addEventListener('click', async (event) => {
+    const button = event.target.closest?.('[data-public-source-copy]');
+    if (!button) return;
+
+    const identifier = document.querySelector('[itemprop="identifier"]');
+    const publicRef = String(identifier?.textContent || '').trim();
+
+    if (!/^KP-PUB-[A-F0-9]{12}$/i.test(publicRef)) return;
+
+    const status = document.getElementById('public-source-copy-status');
+    const originalText = button.textContent;
+
+    try {
+      await copyTextLocally(publicRef);
+
+      if (status) status.textContent = 'Kode referensi publik berhasil disalin.';
+      button.textContent = 'Tersalin ✓';
+
+      sendPublicSourceEvent('public_source_copy', {
+        copy_target: 'public_ref'
+      });
+
+      window.setTimeout(() => {
+        button.textContent = originalText;
+      }, 2500);
+    } catch (_) {
+      if (status) status.textContent = 'Kode belum dapat disalin. Silakan salin secara manual.';
+    }
+  });
+
   window.addEventListener('sb:public-source:copy', () => {
-    sendPublicSourceEvent('public_source_copy');
+    sendPublicSourceEvent('public_source_copy', {
+      copy_target: 'public_ref'
+    });
   });
 
   document.addEventListener('click', (event) => {
