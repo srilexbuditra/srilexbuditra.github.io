@@ -1,6 +1,6 @@
 /* =========================================================
    Global Visitor Analytics — Cloudflare Worker + D1 + GA4
-   V6.10.0 Centralized Site-Wide + Public Source GA4 Events
+   V6.10.1 Centralized Site-Wide + POST-only Public Source GA4 Events
    ========================================================= */
 (() => {
   if (window.__SB_GLOBAL_VISITOR_ANALYTICS__) return;
@@ -208,7 +208,6 @@
      GA4 — Public Registration Source events
      Privacy rule: KTPG and KP-PUB values are never event parameters.
      ========================================================= */
-  const PUBLIC_SOURCE_ISSUE_FLAG = 'sb_public_source_issue_pending_v1';
   const normalizedCurrentPath = currentSafe.pathname.replace(/\/+$/, '') || '/';
   const normalizedPublicSourceBase = PUBLIC_SOURCE_BASE.replace(/\/+$/, '');
   const isPublicSourceLanding = normalizedCurrentPath === normalizedPublicSourceBase;
@@ -230,14 +229,21 @@
   if (isPublicSourceDetail) {
     sendPublicSourceEvent('public_source_open');
 
-    try {
-      if (sessionStorage.getItem(PUBLIC_SOURCE_ISSUE_FLAG) === '1') {
-        sessionStorage.removeItem(PUBLIC_SOURCE_ISSUE_FLAG);
-        sendPublicSourceEvent('public_source_issue_success', {
-          issue_origin: 'public_source_form'
-        });
-      }
-    } catch (_) {}
+    // #issued hanya ditambahkan Worker setelah POST /terbitkan benar-benar sukses.
+    // Fragment tidak dikirim ke server dan tidak berisi KTPG/KP-PUB.
+    if (window.location.hash === '#issued') {
+      sendPublicSourceEvent('public_source_issue_success', {
+        issue_origin: 'public_source_form'
+      });
+
+      try {
+        window.history.replaceState(
+          window.history.state,
+          document.title,
+          window.location.pathname + window.location.search
+        );
+      } catch (_) {}
+    }
   }
 
   document.addEventListener('submit', (event) => {
@@ -255,9 +261,17 @@
     const actionPath = action.pathname.replace(/\/+$/, '') || '/';
 
     if (
-      method === 'get' &&
-      actionPath === normalizedPublicSourceBase &&
-      form.querySelector('[name="ref"]')
+      (
+        method === 'post' &&
+        actionPath === `${normalizedPublicSourceBase}/buka` &&
+        form.querySelector('[name="public_ref"]')
+      ) ||
+      (
+        // Kompatibilitas dengan halaman lama yang mungkin masih berada di cache.
+        method === 'get' &&
+        actionPath === normalizedPublicSourceBase &&
+        form.querySelector('[name="ref"]')
+      )
     ) {
       sendPublicSourceEvent('public_source_lookup');
       return;
@@ -271,9 +285,6 @@
       sendPublicSourceEvent('public_source_issue_start', {
         issue_origin: 'public_source_form'
       });
-      try {
-        sessionStorage.setItem(PUBLIC_SOURCE_ISSUE_FLAG, '1');
-      } catch (_) {}
     }
   });
 
