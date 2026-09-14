@@ -1,6 +1,6 @@
 /* =========================================================
    Global Visitor Analytics — Cloudflare Worker + D1 + GA4
-   V6.9.1 Centralized Site-Wide + Privacy-Safe GA4 Link Events
+   V6.10.0 Centralized Site-Wide + Public Source GA4 Events
    ========================================================= */
 (() => {
   if (window.__SB_GLOBAL_VISITOR_ANALYTICS__) return;
@@ -52,6 +52,33 @@
   const referrerSafe = document.referrer ? safeUrl(document.referrer) : null;
 
   /* =========================================================
+     Public Registration Source privacy layer
+     - KP-PUB values are intentionally NOT sent to GA4 or Visitor Analytics.
+     - Public-source detail URLs are grouped under /:public-ref/.
+     ========================================================= */
+  const PUBLIC_SOURCE_BASE = '/program/ketahanan-pangan/sumber';
+  const PUBLIC_REF_PATH_RE =
+    /^\/program\/ketahanan-pangan\/sumber\/KP-PUB-[A-F0-9]{12}\/?$/i;
+
+  const sanitizeAnalyticsPath = (pathname) => {
+    const value = String(pathname || '/');
+    if (PUBLIC_REF_PATH_RE.test(value)) {
+      return `${PUBLIC_SOURCE_BASE}/:public-ref/`;
+    }
+    return value;
+  };
+
+  const currentAnalyticsPath = sanitizeAnalyticsPath(currentSafe.pathname);
+  const currentAnalyticsHref = `${currentSafe.origin}${currentAnalyticsPath}`;
+  const currentAnalyticsTitle = PUBLIC_REF_PATH_RE.test(currentSafe.pathname)
+    ? 'Sumber Resmi Registrasi | Program Ketahanan Pangan'
+    : document.title;
+
+  const referrerAnalyticsHref = referrerSafe
+    ? `${referrerSafe.origin}${sanitizeAnalyticsPath(referrerSafe.pathname)}`
+    : '';
+
+  /* =========================================================
      GA4 loader
      - Query string/hash are deliberately excluded from page_location/page_path.
      - No form values, NIK, KK, phone, email, password, token, or registration ID
@@ -63,10 +90,10 @@
     window.gtag = window.gtag || function () { window.dataLayer.push(arguments); };
     window.gtag('js', new Date());
     window.gtag('config', GA_MEASUREMENT_ID, {
-      page_path: currentSafe.pathname,
-      page_location: currentSafe.href,
-      page_referrer: referrerSafe ? referrerSafe.href : '',
-      page_title: document.title
+      page_path: currentAnalyticsPath,
+      page_location: currentAnalyticsHref,
+      page_referrer: referrerAnalyticsHref,
+      page_title: currentAnalyticsTitle
     });
 
     const gaScript = document.createElement('script');
@@ -79,7 +106,7 @@
   const sendGaEvent = (eventName, params = {}) => {
     if (typeof window.gtag !== 'function') return;
     window.gtag('event', eventName, {
-      source_path: currentSafe.pathname,
+      source_path: currentAnalyticsPath,
       ...params,
       transport_type: 'beacon'
     });
@@ -177,6 +204,95 @@
     }
   };
 
+  /* =========================================================
+     GA4 — Public Registration Source events
+     Privacy rule: KTPG and KP-PUB values are never event parameters.
+     ========================================================= */
+  const PUBLIC_SOURCE_ISSUE_FLAG = 'sb_public_source_issue_pending_v1';
+  const normalizedCurrentPath = currentSafe.pathname.replace(/\/+$/, '') || '/';
+  const normalizedPublicSourceBase = PUBLIC_SOURCE_BASE.replace(/\/+$/, '');
+  const isPublicSourceLanding = normalizedCurrentPath === normalizedPublicSourceBase;
+  const isPublicSourceDetail = PUBLIC_REF_PATH_RE.test(currentSafe.pathname);
+
+  const sendPublicSourceEvent = (eventName, extra = {}) => {
+    sendGaEvent(eventName, {
+      event_category: 'ketahanan_pangan',
+      event_label: 'Sumber Resmi Registrasi',
+      source_feature: 'public_registration_source',
+      ...extra
+    });
+  };
+
+  if (isPublicSourceLanding) {
+    sendPublicSourceEvent('public_source_view');
+  }
+
+  if (isPublicSourceDetail) {
+    sendPublicSourceEvent('public_source_open');
+
+    try {
+      if (sessionStorage.getItem(PUBLIC_SOURCE_ISSUE_FLAG) === '1') {
+        sessionStorage.removeItem(PUBLIC_SOURCE_ISSUE_FLAG);
+        sendPublicSourceEvent('public_source_issue_success', {
+          issue_origin: 'public_source_form'
+        });
+      }
+    } catch (_) {}
+  }
+
+  document.addEventListener('submit', (event) => {
+    const form = event.target;
+    if (!(form instanceof HTMLFormElement)) return;
+
+    let action = null;
+    try {
+      action = new URL(form.getAttribute('action') || window.location.href, window.location.href);
+    } catch (_) {
+      return;
+    }
+
+    const method = String(form.getAttribute('method') || 'get').toLowerCase();
+    const actionPath = action.pathname.replace(/\/+$/, '') || '/';
+
+    if (
+      method === 'get' &&
+      actionPath === normalizedPublicSourceBase &&
+      form.querySelector('[name="ref"]')
+    ) {
+      sendPublicSourceEvent('public_source_lookup');
+      return;
+    }
+
+    if (
+      method === 'post' &&
+      actionPath === `${normalizedPublicSourceBase}/terbitkan` &&
+      form.querySelector('[name="registration_id"]')
+    ) {
+      sendPublicSourceEvent('public_source_issue_start', {
+        issue_origin: 'public_source_form'
+      });
+      try {
+        sessionStorage.setItem(PUBLIC_SOURCE_ISSUE_FLAG, '1');
+      } catch (_) {}
+    }
+  });
+
+  window.addEventListener('sb:public-source:issue-start', () => {
+    sendPublicSourceEvent('public_source_issue_start', {
+      issue_origin: 'registration_success_auto'
+    });
+  });
+
+  window.addEventListener('sb:public-source:issue-success', () => {
+    sendPublicSourceEvent('public_source_issue_success', {
+      issue_origin: 'registration_success_auto'
+    });
+  });
+
+  window.addEventListener('sb:public-source:copy', () => {
+    sendPublicSourceEvent('public_source_copy');
+  });
+
   document.addEventListener('click', (event) => {
     const link = event.target.closest?.('a[href]');
     if (!link) return;
@@ -196,7 +312,7 @@
     }
 
     const linkType = classifyLink(link, target);
-    const targetPath = target?.pathname || '';
+    const targetPath = sanitizeAnalyticsPath(target?.pathname || '');
     const targetDomain = target?.hostname || '';
 
     sendGaEvent('site_link_click', {
@@ -230,7 +346,7 @@
       sendGaEvent('phone_click');
     } else if (linkType === 'anchor') {
       sendGaEvent('anchor_click', {
-        target_path: currentSafe.pathname
+        target_path: currentAnalyticsPath
       });
     }
 
@@ -252,7 +368,7 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           visitor_id: visitorId,
-          page: currentSafe.href
+          page: currentAnalyticsHref
         }),
         keepalive: true
       });
@@ -292,8 +408,8 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           visitor_id: savedVisitorId || null,
-          page: currentSafe.href,
-          referrer: referrerSafe ? referrerSafe.href : 'direct'
+          page: currentAnalyticsHref,
+          referrer: referrerAnalyticsHref || 'direct'
         }),
         keepalive: true
       });
