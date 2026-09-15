@@ -1,0 +1,186 @@
+/* =========================================================
+   Srilex Buditra — Privacy Consent UI
+   Consent Mode Basic V13.6.14
+   ========================================================= */
+
+.sb-privacy-consent,
+.sb-privacy-launcher {
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+.sb-privacy-consent *,
+.sb-privacy-launcher * {
+  box-sizing: border-box;
+}
+
+.sb-privacy-consent {
+  position: fixed;
+  left: 50%;
+  bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+  transform: translateX(-50%);
+  width: min(720px, calc(100vw - 24px));
+  z-index: 2147483000;
+  padding: 18px;
+  border: 1px solid rgba(18, 63, 43, 0.18);
+  border-radius: 18px;
+  background: #fffdf8;
+  color: #173f2d;
+  box-shadow: 0 18px 48px rgba(14, 46, 32, 0.18);
+}
+
+.sb-privacy-consent__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.sb-privacy-consent__title {
+  margin: 0;
+  font-size: 19px;
+  line-height: 1.25;
+  font-weight: 800;
+  color: #123f2b;
+}
+
+.sb-privacy-consent__close {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: #315d48;
+  font: inherit;
+  font-size: 28px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 8px;
+}
+
+.sb-privacy-consent__close:hover,
+.sb-privacy-consent__close:focus-visible {
+  background: #eef6ef;
+}
+
+.sb-privacy-consent__text {
+  margin: 10px 0 7px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #486657;
+}
+
+.sb-privacy-consent__status {
+  margin: 0 0 8px;
+  font-size: 12px;
+  line-height: 1.5;
+  font-weight: 700;
+  color: #315d48;
+}
+
+.sb-privacy-consent__link {
+  display: inline-block;
+  margin: 0 0 14px;
+  color: #176b3a;
+  font-size: 13px;
+  font-weight: 700;
+  text-underline-offset: 3px;
+}
+
+.sb-privacy-consent__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.sb-privacy-consent__button {
+  min-height: 44px;
+  padding: 10px 16px;
+  border-radius: 12px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.sb-privacy-consent__button--primary {
+  border: 1px solid #0f5135;
+  background: #0f5135;
+  color: #fff;
+}
+
+.sb-privacy-consent__button--primary:hover,
+.sb-privacy-consent__button--primary:focus-visible {
+  background: #0b412b;
+}
+
+.sb-privacy-consent__button--secondary {
+  border: 1px solid #bfd4c5;
+  background: #f4faf5;
+  color: #123f2b;
+}
+
+.sb-privacy-consent__button--secondary:hover,
+.sb-privacy-consent__button--secondary:focus-visible {
+  background: #e9f5eb;
+}
+
+.sb-privacy-launcher {
+  position: fixed;
+  left: 14px;
+  bottom: calc(14px + env(safe-area-inset-bottom, 0px));
+  z-index: 2147482990;
+  min-height: 36px;
+  padding: 7px 12px;
+  border: 1px solid rgba(18, 63, 43, 0.18);
+  border-radius: 999px;
+  background: rgba(255, 253, 248, 0.96);
+  color: #123f2b;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(14, 46, 32, 0.12);
+  backdrop-filter: blur(8px);
+}
+
+.sb-privacy-launcher:hover,
+.sb-privacy-launcher:focus-visible {
+  background: #eef6ef;
+}
+
+.sb-privacy-consent__button:focus-visible,
+.sb-privacy-launcher:focus-visible,
+.sb-privacy-consent__link:focus-visible {
+  outline: 3px solid rgba(23, 107, 58, 0.25);
+  outline-offset: 2px;
+}
+
+@media (max-width: 600px) {
+  .sb-privacy-consent {
+    bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+    width: calc(100vw - 16px);
+    padding: 16px;
+    border-radius: 16px;
+  }
+
+  .sb-privacy-consent__title {
+    font-size: 18px;
+  }
+
+  .sb-privacy-consent__actions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .sb-privacy-consent__button {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sb-privacy-consent,
+  .sb-privacy-launcher {
+    scroll-behavior: auto;
+  }
+}
