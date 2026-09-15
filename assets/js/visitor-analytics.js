@@ -1,6 +1,6 @@
 /* =========================================================
    Global Visitor Analytics — Cloudflare Worker + D1 + GA4
-   V6.10.3.1 Centralized Site-Wide + Public Source Copy Selector Hotfix
+   V6.11.0 Centralized Site-Wide + Consent Mode Basic
    ========================================================= */
 (() => {
   if (window.__SB_GLOBAL_VISITOR_ANALYTICS__) return;
@@ -16,6 +16,238 @@
 
   // Halaman privat/sensitif sengaja tidak dikirim ke GA4 maupun Visitor Analytics.
   if (PRIVATE_PATH) return;
+
+  /* =========================================================
+     Privacy Consent — Google Consent Mode (Basic)
+     - Google tag and Visitor Analytics are completely blocked
+       until the visitor grants analytics consent.
+     - Advertising consent remains denied even when analytics
+       consent is granted.
+     ========================================================= */
+  const CONSENT_STORAGE_KEY = 'sb_privacy_consent_v1';
+  const CONSENT_VERSION = 1;
+  const CONSENT_CSS_HREF = '/assets/css/privacy-consent.css?v=13.6.14';
+
+  const readConsent = () => {
+    try {
+      const raw = localStorage.getItem(CONSENT_STORAGE_KEY);
+      if (!raw) return null;
+      const parsed = JSON.parse(raw);
+      if (
+        !parsed ||
+        parsed.version !== CONSENT_VERSION ||
+        !['granted', 'denied'].includes(parsed.analytics)
+      ) return null;
+      return parsed.analytics;
+    } catch (_) {
+      return null;
+    }
+  };
+
+  const writeConsent = (analyticsState) => {
+    try {
+      localStorage.setItem(CONSENT_STORAGE_KEY, JSON.stringify({
+        version: CONSENT_VERSION,
+        analytics: analyticsState,
+        updated_at: new Date().toISOString()
+      }));
+    } catch (_) {}
+  };
+
+  const loadConsentStyles = () => {
+    if (document.querySelector('link[data-sb-consent-style]')) return;
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = CONSENT_CSS_HREF;
+    link.dataset.sbConsentStyle = '1';
+    document.head.appendChild(link);
+  };
+
+  const removeAnalyticsCookies = () => {
+    const names = document.cookie
+      .split(';')
+      .map(part => part.split('=')[0].trim())
+      .filter(name =>
+        name === '_ga' ||
+        name.startsWith('_ga_') ||
+        name === '_gid' ||
+        name.startsWith('_gat')
+      );
+
+    const domains = new Set(['']);
+    if (window.location.hostname) {
+      domains.add(window.location.hostname);
+      domains.add(`.${window.location.hostname}`);
+      if (window.location.hostname.endsWith('srilexbuditra.work')) {
+        domains.add('srilexbuditra.work');
+        domains.add('.srilexbuditra.work');
+      }
+    }
+
+    for (const name of names) {
+      for (const domain of domains) {
+        const domainPart = domain ? `; domain=${domain}` : '';
+        document.cookie = `${name}=; Max-Age=0; path=/${domainPart}; SameSite=Lax`;
+      }
+    }
+  };
+
+  const clearVisitorAnalyticsIdentity = () => {
+    try { localStorage.removeItem('sb_visitor_id'); } catch (_) {}
+  };
+
+  const onDomReady = (callback) => {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', callback, { once: true });
+    } else {
+      callback();
+    }
+  };
+
+  const removeConsentPanel = () => {
+    document.getElementById('sb-privacy-consent')?.remove();
+  };
+
+  const renderPrivacyLauncher = () => {
+    if (document.getElementById('sb-privacy-launcher')) return;
+
+    const button = document.createElement('button');
+    button.id = 'sb-privacy-launcher';
+    button.type = 'button';
+    button.className = 'sb-privacy-launcher';
+    button.textContent = 'Privasi';
+    button.setAttribute('aria-label', 'Buka pengaturan privasi dan analitik');
+    button.addEventListener('click', () => renderConsentPanel(true));
+    document.body.appendChild(button);
+  };
+
+  const denyAnalytics = () => {
+    const wasGranted = readConsent() === 'granted';
+    writeConsent('denied');
+
+    if (typeof window.gtag === 'function') {
+      window.gtag('consent', 'update', {
+        ad_storage: 'denied',
+        ad_user_data: 'denied',
+        ad_personalization: 'denied',
+        analytics_storage: 'denied',
+        functionality_storage: 'granted',
+        personalization_storage: 'denied',
+        security_storage: 'granted'
+      });
+    }
+
+    removeAnalyticsCookies();
+    clearVisitorAnalyticsIdentity();
+    removeConsentPanel();
+    renderPrivacyLauncher();
+
+    // Jika tag sudah pernah aktif pada halaman ini, reload agar Basic Mode
+    // kembali ke keadaan benar-benar tanpa Google tag.
+    if (wasGranted || window.__SB_GA4_LOADED__) {
+      window.setTimeout(() => window.location.reload(), 120);
+    }
+  };
+
+  const grantAnalytics = () => {
+    if (readConsent() === 'granted') {
+      removeConsentPanel();
+      renderPrivacyLauncher();
+      return;
+    }
+
+    writeConsent('granted');
+    // Basic Mode: muat ulang agar seluruh analytics mulai dari keadaan bersih
+    // setelah interaksi pengguna.
+    window.location.reload();
+  };
+
+  function renderConsentPanel(settingsMode = false) {
+    loadConsentStyles();
+    removeConsentPanel();
+
+    const current = readConsent();
+    const panel = document.createElement('section');
+    panel.id = 'sb-privacy-consent';
+    panel.className = 'sb-privacy-consent';
+    panel.setAttribute('role', 'region');
+    panel.setAttribute('aria-label', 'Privasi dan analitik');
+
+    const header = document.createElement('div');
+    header.className = 'sb-privacy-consent__header';
+
+    const heading = document.createElement('h2');
+    heading.className = 'sb-privacy-consent__title';
+    heading.textContent = settingsMode ? 'Pengaturan Privasi' : 'Privasi & Analitik';
+
+    header.appendChild(heading);
+
+    if (settingsMode && current) {
+      const close = document.createElement('button');
+      close.type = 'button';
+      close.className = 'sb-privacy-consent__close';
+      close.setAttribute('aria-label', 'Tutup pengaturan privasi');
+      close.textContent = '×';
+      close.addEventListener('click', () => removeConsentPanel());
+      header.appendChild(close);
+    }
+
+    const description = document.createElement('p');
+    description.className = 'sb-privacy-consent__text';
+    description.textContent =
+      'Kami menggunakan analitik untuk memahami penggunaan website dan meningkatkan layanan Program Ketahanan Pangan. Analitik hanya aktif jika Anda mengizinkannya.';
+
+    const status = document.createElement('p');
+    status.className = 'sb-privacy-consent__status';
+    if (current === 'granted') {
+      status.textContent = 'Status saat ini: Analitik diizinkan.';
+    } else if (current === 'denied') {
+      status.textContent = 'Status saat ini: Analitik ditolak.';
+    } else {
+      status.textContent = 'Pilih apakah Anda mengizinkan analitik.';
+    }
+
+    const privacyLink = document.createElement('a');
+    privacyLink.className = 'sb-privacy-consent__link';
+    privacyLink.href = '/privacy.html';
+    privacyLink.textContent = 'Baca Kebijakan Privasi';
+
+    const actions = document.createElement('div');
+    actions.className = 'sb-privacy-consent__actions';
+
+    const reject = document.createElement('button');
+    reject.type = 'button';
+    reject.className = 'sb-privacy-consent__button sb-privacy-consent__button--secondary';
+    reject.textContent = 'Tolak Analitik';
+    reject.addEventListener('click', denyAnalytics);
+
+    const accept = document.createElement('button');
+    accept.type = 'button';
+    accept.className = 'sb-privacy-consent__button sb-privacy-consent__button--primary';
+    accept.textContent = current === 'granted' ? 'Tetap Izinkan' : 'Terima Analitik';
+    accept.addEventListener('click', grantAnalytics);
+
+    actions.append(reject, accept);
+    panel.append(header, description, status, privacyLink, actions);
+    document.body.appendChild(panel);
+  }
+
+  loadConsentStyles();
+
+  const ANALYTICS_CONSENT = readConsent();
+
+  onDomReady(() => {
+    if (ANALYTICS_CONSENT === null) {
+      renderConsentPanel(false);
+      return;
+    }
+    renderPrivacyLauncher();
+  });
+
+  // Basic Consent Mode:
+  // - belum memilih: tidak muat Google tag / Visitor Analytics
+  // - ditolak: tidak muat Google tag / Visitor Analytics
+  if (ANALYTICS_CONSENT !== 'granted') return;
 
   const GA_MEASUREMENT_ID = 'G-W0S2WQ2P3T';
   const API_BASE = 'https://srilexbuditra-visitors-api.srilexbuditra.workers.dev';
@@ -88,6 +320,29 @@
     window.__SB_GA4_LOADED__ = true;
     window.dataLayer = window.dataLayer || [];
     window.gtag = window.gtag || function () { window.dataLayer.push(arguments); };
+
+    // Consent Mode Basic: setelah user memberi izin, Google tag memproses
+    // default state terlebih dahulu lalu update state sebelum konfigurasi GA4.
+    window.gtag('consent', 'default', {
+      ad_storage: 'denied',
+      ad_user_data: 'denied',
+      ad_personalization: 'denied',
+      analytics_storage: 'denied',
+      functionality_storage: 'granted',
+      personalization_storage: 'denied',
+      security_storage: 'granted'
+    });
+
+    window.gtag('consent', 'update', {
+      ad_storage: 'denied',
+      ad_user_data: 'denied',
+      ad_personalization: 'denied',
+      analytics_storage: 'granted',
+      functionality_storage: 'granted',
+      personalization_storage: 'denied',
+      security_storage: 'granted'
+    });
+
     window.gtag('js', new Date());
     window.gtag('config', GA_MEASUREMENT_ID, {
       page_path: currentAnalyticsPath,
