@@ -1,6 +1,6 @@
 /* =========================================================
    Global Visitor Analytics — Cloudflare Worker + D1 + GA4
-   V6.11.0.2 Centralized Site-Wide + Responsive Consent UI
+   V6.11.0.4 Centralized Site-Wide + Isolated Mobile Consent UI
    ========================================================= */
 (() => {
   if (window.__SB_GLOBAL_VISITOR_ANALYTICS__) return;
@@ -26,7 +26,7 @@
      ========================================================= */
   const CONSENT_STORAGE_KEY = 'sb_privacy_consent_v1';
   const CONSENT_VERSION = 1;
-  const CONSENT_CSS_HREF = '/assets/css/privacy-consent.css?v=13.6.14.2';
+  const CONSENT_CSS_HREF = '/assets/css/privacy-consent.css?v=13.6.14.4';
 
   const readConsent = () => {
     try {
@@ -169,7 +169,7 @@
     document.body?.classList.add('sb-consent-open');
 
     const current = readConsent();
-    const panel = document.createElement('section');
+    const panel = document.createElement('div');
     panel.id = 'sb-privacy-consent';
     panel.className = 'sb-privacy-consent';
     panel.setAttribute('role', 'region');
