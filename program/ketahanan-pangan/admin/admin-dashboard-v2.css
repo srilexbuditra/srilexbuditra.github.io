@@ -210,3 +210,94 @@ body.admin-v2-active main.wrap > section{animation:adminV2Fade .16s ease both}
 @media (prefers-reduced-motion:reduce){
   .admin-v2-nav button,.admin-v2-sidebar,.admin-v2-backdrop,body.admin-v2-active main.wrap > section{transition:none!important;animation:none!important}
 }
+
+/* =========================================================
+   V17.19.1 — Navigation Sync & Stability
+   UI-only hardening for Dashboard V2.
+   ========================================================= */
+html{scrollbar-gutter:stable}
+body.admin-v2-active{overflow-x:hidden}
+body.admin-v2-active > main.wrap{min-height:calc(100vh - 96px)}
+
+/* Sidebar is now made of real navigable links (?view=...), not hash placeholders. */
+.admin-v2-nav a{
+  width:100%;
+  color:rgba(255,255,255,.82);
+  min-height:44px;
+  display:grid;
+  grid-template-columns:32px 1fr auto;
+  align-items:center;
+  gap:7px;
+  text-align:left;
+  padding:9px 11px;
+  border-radius:11px;
+  font:inherit;
+  font-size:13px;
+  cursor:pointer;
+  text-decoration:none;
+  transition:background .16s ease,color .16s ease,box-shadow .16s ease;
+}
+.admin-v2-nav a:hover{background:rgba(255,255,255,.08);color:#fff}
+.admin-v2-nav a.is-active{background:linear-gradient(135deg,#12805a,#169265);color:#fff;box-shadow:0 8px 20px rgba(0,0,0,.16)}
+.admin-v2-nav a[hidden]{display:none!important}
+.admin-v2-nav a:focus-visible{outline:2px solid rgba(255,255,255,.88);outline-offset:2px}
+.admin-v2-nav a.is-active .admin-v2-nav-icon{background:rgba(255,255,255,.16)}
+
+/* Legacy button selector remains harmless; real nav links above take priority. */
+.admin-v2-nav button{display:none!important}
+
+/* Prevent visual horizontal/vertical "shake" when switching tall/short workspaces. */
+body.admin-v2-active main.wrap > section{animation:none!important}
+body.admin-v2-active .admin-v2-sidebar,
+body.admin-v2-active .admin-v2-backdrop{will-change:transform,opacity}
+
+/* The account panel is a workspace now, so its old collapse X would create an empty page. */
+body.admin-v2-active #accountSecurityCollapse{display:none!important}
+body.admin-v2-active #accountSecurityBody{display:block}
+
+/* Keep Manajemen Admin focused on user management. */
+body.admin-v2-active[data-admin-v2-view="manajemen"] #changeOwnPasswordToggle,
+body.admin-v2-active[data-admin-v2-view="manajemen"] #roleFunctionToggle{display:none!important}
+body.admin-v2-active[data-admin-v2-view="manajemen"] #userManagementToggle{display:flex!important}
+
+/* Pengaturan is for own password, role guide and IT support; account creation stays in Manajemen. */
+body.admin-v2-active[data-admin-v2-view="pengaturan"] #userManagementToggle{display:none!important}
+body.admin-v2-active[data-admin-v2-view="pengaturan"] #changeOwnPasswordToggle,
+body.admin-v2-active[data-admin-v2-view="pengaturan"] #roleFunctionToggle{display:flex!important}
+
+.admin-v2-action-card a{
+  justify-self:start;
+  display:inline-flex;
+  align-items:center;
+  min-height:34px;
+  border-radius:9px;
+  background:#e8f5ed;
+  color:#0a6b49;
+  font-weight:800;
+  font-size:11px;
+  padding:8px 11px;
+  text-decoration:none;
+}
+.admin-v2-action-card a:hover{background:#dff0e6}
+.admin-v2-action-card a:focus-visible{outline:2px solid #0e9a67;outline-offset:2px}
+
+/* Avoid width changes caused by nested tables/cards on management and settings. */
+body.admin-v2-active #accountSecurityPanel,
+body.admin-v2-active #accountSecurityBody,
+body.admin-v2-active .account-security-layout,
+body.admin-v2-active .account-security-content{min-width:0;max-width:100%}
+body.admin-v2-active .admin-users-list,
+body.admin-v2-active .role-function-panel{overflow-wrap:anywhere}
+
+@media(max-width:1120px){
+  .admin-v2-nav a{font-size:12px}
+}
+
+@media(max-width:900px){
+  html{scrollbar-gutter:auto}
+  body.admin-v2-active > main.wrap{min-height:calc(100vh - 70px)}
+}
+
+@media(prefers-reduced-motion:reduce){
+  .admin-v2-nav a{transition:none!important}
+}
