@@ -1,6 +1,6 @@
 /* =========================================================
    Global Visitor Analytics — Cloudflare Worker + D1 + GA4
-   V6.11.0.1 Centralized Site-Wide + Context-Aware Consent Copy
+   V6.11.0.2 Centralized Site-Wide + Responsive Consent UI
    ========================================================= */
 (() => {
   if (window.__SB_GLOBAL_VISITOR_ANALYTICS__) return;
@@ -26,7 +26,7 @@
      ========================================================= */
   const CONSENT_STORAGE_KEY = 'sb_privacy_consent_v1';
   const CONSENT_VERSION = 1;
-  const CONSENT_CSS_HREF = '/assets/css/privacy-consent.css?v=13.6.14';
+  const CONSENT_CSS_HREF = '/assets/css/privacy-consent.css?v=13.6.14.2';
 
   const readConsent = () => {
     try {
@@ -106,6 +106,7 @@
 
   const removeConsentPanel = () => {
     document.getElementById('sb-privacy-consent')?.remove();
+    document.body?.classList.remove('sb-consent-open');
   };
 
   const renderPrivacyLauncher = () => {
@@ -165,6 +166,7 @@
   function renderConsentPanel(settingsMode = false) {
     loadConsentStyles();
     removeConsentPanel();
+    document.body?.classList.add('sb-consent-open');
 
     const current = readConsent();
     const panel = document.createElement('section');
@@ -200,8 +202,8 @@
       window.location.pathname.startsWith('/program/ketahanan-pangan/');
 
     description.textContent = isKetahananPangan
-      ? 'Kami menggunakan analitik untuk memahami penggunaan layanan Program Ketahanan Pangan dan meningkatkan pengalaman peserta serta pengunjung. Analitik hanya aktif jika Anda mengizinkannya.'
-      : 'Kami menggunakan analitik untuk memahami penggunaan srilexbuditra.work dan meningkatkan pengalaman pengunjung. Analitik hanya aktif jika Anda mengizinkannya.';
+      ? 'Kami menggunakan analitik untuk memahami penggunaan layanan Program Ketahanan Pangan dan meningkatkan pengalaman peserta serta pengunjung. Analitik hanya aktif dengan izin Anda.'
+      : 'Kami menggunakan analitik untuk memahami penggunaan srilexbuditra.work dan meningkatkan pengalaman pengunjung. Analitik hanya aktif dengan izin Anda.';
 
     const status = document.createElement('p');
     status.className = 'sb-privacy-consent__status';
@@ -210,7 +212,7 @@
     } else if (current === 'denied') {
       status.textContent = 'Status saat ini: Analitik ditolak.';
     } else {
-      status.textContent = 'Pilih apakah Anda mengizinkan analitik.';
+      status.textContent = 'Pilih preferensi analitik Anda.';
     }
 
     const privacyLink = document.createElement('a');
