@@ -1,6 +1,6 @@
 /* =========================================================
    Global Visitor Analytics — Cloudflare Worker + D1 + GA4
-   V6.11.0.11 Centralized Site-Wide + Global Mobile Pinch Guard
+   V6.11.0.12 Centralized Site-Wide + Floating Controls Viewport Lock
    ========================================================= */
 (() => {
   if (window.__SB_GLOBAL_VISITOR_ANALYTICS__) return;
@@ -252,19 +252,48 @@
       const viewportWidth = Math.round(
         vv?.width || document.documentElement.clientWidth || window.innerWidth || 0
       );
-      const viewportOffsetLeft = Math.round(vv?.offsetLeft || 0);
-      const gutter = 12;
-      const buttonWidth = Math.ceil(button.getBoundingClientRect().width || 74);
-
-      const left = Math.max(
-        viewportOffsetLeft + gutter,
-        viewportOffsetLeft + viewportWidth - buttonWidth - gutter
+      const viewportHeight = Math.round(
+        vv?.height || document.documentElement.clientHeight || window.innerHeight || 0
       );
+      const viewportOffsetLeft = Math.round(vv?.offsetLeft || 0);
+      const viewportOffsetTop = Math.round(vv?.offsetTop || 0);
 
+      const privacyGutter = 12;
+      const ttsGutter = 12;
+
+      const buttonWidth = Math.ceil(button.getBoundingClientRect().width || 74);
+      const buttonHeight = Math.ceil(button.getBoundingClientRect().height || 42);
+
+      const privacyLeft = Math.max(
+        viewportOffsetLeft + privacyGutter,
+        viewportOffsetLeft + viewportWidth - buttonWidth - privacyGutter
+      );
+      const privacyTop =
+        viewportOffsetTop + viewportHeight - buttonHeight - privacyGutter;
+
+      // Privacy launcher: kunci kanan-bawah terhadap visual viewport.
       button.style.setProperty('position', 'fixed', 'important');
-      button.style.setProperty('left', `${Math.round(left)}px`, 'important');
+      button.style.setProperty('left', `${Math.round(privacyLeft)}px`, 'important');
       button.style.setProperty('right', 'auto', 'important');
+      button.style.setProperty('top', `${Math.round(privacyTop)}px`, 'important');
+      button.style.setProperty('bottom', 'auto', 'important');
       button.style.setProperty('transform', 'none', 'important');
+
+      // TTS: kunci kiri-bawah terhadap visual viewport.
+      const tts = document.getElementById('ttsFabWrap');
+      if (tts) {
+        const ttsHeight = Math.ceil(tts.getBoundingClientRect().height || 54);
+        const ttsTop =
+          viewportOffsetTop + viewportHeight - ttsHeight - ttsGutter;
+        const ttsLeft = viewportOffsetLeft + ttsGutter;
+
+        tts.style.setProperty('position', 'fixed', 'important');
+        tts.style.setProperty('left', `${Math.round(ttsLeft)}px`, 'important');
+        tts.style.setProperty('right', 'auto', 'important');
+        tts.style.setProperty('top', `${Math.round(ttsTop)}px`, 'important');
+        tts.style.setProperty('bottom', 'auto', 'important');
+        tts.style.setProperty('transform', 'none', 'important');
+      }
     };
 
     const requestSync = () => {
@@ -272,9 +301,23 @@
       rafId = requestAnimationFrame(sync);
     };
 
+    const resizeObserver =
+      typeof ResizeObserver === 'function'
+        ? new ResizeObserver(requestSync)
+        : null;
+
+    resizeObserver?.observe(button);
+    const tts = document.getElementById('ttsFabWrap');
+    if (tts) resizeObserver?.observe(tts);
+
     requestSync();
+
+    // Re-sync tidak hanya saat viewport berubah, tetapi juga saat halaman scroll.
+    // Ini menjaga kedua floating controls tetap pada titik layar yang sama
+    // ketika address bar browser mobile muncul / menghilang.
     window.visualViewport?.addEventListener('resize', requestSync, { passive: true });
     window.visualViewport?.addEventListener('scroll', requestSync, { passive: true });
+    window.addEventListener('scroll', requestSync, { passive: true });
     window.addEventListener('orientationchange', requestSync, { passive: true });
     window.addEventListener('resize', requestSync, { passive: true });
   };
