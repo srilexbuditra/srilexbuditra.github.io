@@ -1,6 +1,6 @@
 /* =========================================================
    Srilex Buditra — Privacy Consent UI
-   V13.6.14.7
+   V13.6.14.8
    Desktop: compact floating full-bottom bar
    Mobile: bottom sheet + temporary TTS hide while consent is open
    ========================================================= */
@@ -238,27 +238,15 @@
 /* Mobile: compact bottom sheet.
    TTS stays available normally, but is temporarily hidden while consent is open
    so the two floating interfaces never collide. */
-/* Mobile consent stability:
-   selama consent terbuka, halaman di belakang dibekukan supaya browser
-   tidak mengubah posisi card saat address bar / viewport berubah karena scroll. */
+/* Mobile:
+   halaman belakang tetap bisa di-scroll.
+   Panel consent tetap fixed terhadap visual viewport dan dapat di-scroll sendiri
+   bila tinggi kontennya melebihi layar. */
 @media (max-width: 600px) {
-  html.sb-consent-page-lock,
-  body.sb-consent-page-lock {
-    overflow: hidden !important;
-    overscroll-behavior: none !important;
-  }
-
-  body.sb-consent-page-lock {
-    touch-action: none;
-  }
-
-  body.sb-consent-page-lock .sb-privacy-consent {
-    touch-action: pan-y;
-  }
-
   .sb-privacy-consent {
     overscroll-behavior: contain;
     -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
   }
 }
 
