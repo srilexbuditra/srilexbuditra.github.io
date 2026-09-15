@@ -1,6 +1,6 @@
 /* =========================================================
    Global Visitor Analytics — Cloudflare Worker + D1 + GA4
-   V6.11.0.8 Centralized Site-Wide + Free Scroll Fixed Consent
+   V6.11.0.9 Centralized Site-Wide + Consent Pinch Guard
    ========================================================= */
 (() => {
   if (window.__SB_GLOBAL_VISITOR_ANALYTICS__) return;
@@ -191,9 +191,68 @@
     };
   };
 
+  let consentPinchGuardCleanup = null;
+
+  const disableConsentPinchZoom = () => {
+    if (typeof consentPinchGuardCleanup === 'function') {
+      consentPinchGuardCleanup();
+      consentPinchGuardCleanup = null;
+    }
+
+    const mobile = window.matchMedia?.('(max-width: 600px)');
+    if (mobile && !mobile.matches) return;
+
+    const preventMultiTouch = (event) => {
+      if (!document.getElementById('sb-privacy-consent')) return;
+      if (event.touches && event.touches.length > 1) {
+        event.preventDefault();
+      }
+    };
+
+    const preventGesture = (event) => {
+      if (!document.getElementById('sb-privacy-consent')) return;
+      event.preventDefault();
+    };
+
+    // Android/Chromium: block only multi-touch movement.
+    document.addEventListener('touchmove', preventMultiTouch, {
+      passive: false,
+      capture: true
+    });
+
+    // Safari/iOS/WebKit: block native pinch gesture events while consent is open.
+    document.addEventListener('gesturestart', preventGesture, {
+      passive: false,
+      capture: true
+    });
+    document.addEventListener('gesturechange', preventGesture, {
+      passive: false,
+      capture: true
+    });
+    document.addEventListener('gestureend', preventGesture, {
+      passive: false,
+      capture: true
+    });
+
+    consentPinchGuardCleanup = () => {
+      document.removeEventListener('touchmove', preventMultiTouch, true);
+      document.removeEventListener('gesturestart', preventGesture, true);
+      document.removeEventListener('gesturechange', preventGesture, true);
+      document.removeEventListener('gestureend', preventGesture, true);
+    };
+  };
+
+  const enableConsentPinchZoom = () => {
+    if (typeof consentPinchGuardCleanup === 'function') {
+      consentPinchGuardCleanup();
+    }
+    consentPinchGuardCleanup = null;
+  };
+
   const removeConsentPanel = () => {
     clearConsentViewportLock();
     unlockConsentPageScroll();
+    enableConsentPinchZoom();
     document.getElementById('sb-privacy-consent')?.remove();
     document.body?.classList.remove('sb-consent-open');
   };
@@ -329,6 +388,7 @@
     panel.append(header, description, status, privacyLink, actions);
     document.body.appendChild(panel);
     bindConsentToVisualViewport();
+    disableConsentPinchZoom();
   }
 
   loadConsentStyles();
