@@ -2764,7 +2764,7 @@ function renderParticipantAccountAudit(rows) {
         <td>${escapeHtml(formatAccountAuditDate(row.last_login_at))}</td>
         <td><div class="account-audit-actions">
           <button type="button" class="account-audit-detail" data-account-audit-detail="${escapeHtml(row.registration_id || '')}">Detail</button>
-          ${isSuperAdminRole() ? `<button type="button" class="account-audit-delete" data-account-audit-delete="${escapeHtml(row.registration_id || '')}">Hapus</button>` : ''}
+          ${isSuperAdminRole() && duplicate ? `<button type="button" class="account-audit-delete" data-account-audit-delete="${escapeHtml(row.registration_id || '')}">Hapus</button>` : ''}
         </div></td>
       </tr>`;
     }).join('');
@@ -2772,7 +2772,8 @@ function renderParticipantAccountAudit(rows) {
 
   const meta = document.getElementById('accountAuditMeta');
   if (meta) {
-    meta.textContent = `${filtered.length} ditampilkan dari ${allRows.length} data · ${verifiedInactive} terverifikasi belum aktivasi.`;
+    const duplicateCount = allRows.length - activeRows.length;
+    meta.textContent = `${filtered.length} ditampilkan dari ${allRows.length} data tersimpan · ${activeRows.length} peserta aktif · ${duplicateCount} duplikat · ${verifiedInactive} terverifikasi belum aktivasi.`;
   }
 
   bindParticipantAccountAuditControls();
@@ -2850,6 +2851,14 @@ function openParticipantDeleteModal(registrationId) {
   }
   const row = getParticipantAccountAuditEntry(registrationId);
   if (!row) return showAdminToast('error','Data Tidak Ditemukan','Data peserta untuk audit penghapusan belum tersedia.');
+  if (Number(row.is_duplicate || 0) !== 1) {
+    showAdminToast('error','Penghapusan Dibatasi','Hanya data yang sudah ditandai Duplikat / Tidak Aktif yang dapat dihapus permanen.');
+    return;
+  }
+  if (!String(row.primary_registration_id || '').trim()) {
+    showAdminToast('error','Registrasi Utama Belum Ada','Tetapkan registrasi utama terlebih dahulu sebelum menghapus data duplikat.');
+    return;
+  }
   participantDeleteTarget = row;
   const modal = document.getElementById('deleteParticipantModal');
   if (!modal) return;
