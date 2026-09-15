@@ -1,6 +1,6 @@
 /* =========================================================
    Global Visitor Analytics — Cloudflare Worker + D1 + GA4
-   V6.11.0.5 Centralized Site-Wide + Visual Viewport Consent Lock
+   V6.11.0.7 Centralized Site-Wide + Hard Mobile Consent Lock
    ========================================================= */
 (() => {
   if (window.__SB_GLOBAL_VISITOR_ANALYTICS__) return;
@@ -26,7 +26,7 @@
      ========================================================= */
   const CONSENT_STORAGE_KEY = 'sb_privacy_consent_v1';
   const CONSENT_VERSION = 1;
-  const CONSENT_CSS_HREF = '/assets/css/privacy-consent.css?v=13.6.14.5';
+  const CONSENT_CSS_HREF = '/assets/css/privacy-consent.css?v=13.6.14.6';
 
   const readConsent = () => {
     try {
@@ -105,6 +105,78 @@
   };
 
   let consentViewportCleanup = null;
+  let consentScrollState = null;
+
+  const lockConsentPageScroll = () => {
+    if (!document.body || consentScrollState) return;
+
+    const mobile = window.matchMedia?.('(max-width: 600px)');
+    if (mobile && !mobile.matches) return;
+
+    const y = Math.max(0, Math.round(window.scrollY || window.pageYOffset || 0));
+    const body = document.body;
+    const html = document.documentElement;
+
+    consentScrollState = {
+      y,
+      body: {
+        position: body.style.position,
+        top: body.style.top,
+        left: body.style.left,
+        right: body.style.right,
+        width: body.style.width,
+        overflow: body.style.overflow
+      },
+      html: {
+        overflow: html.style.overflow,
+        overscrollBehavior: html.style.overscrollBehavior
+      }
+    };
+
+    html.classList.add('sb-consent-page-lock');
+    body.classList.add('sb-consent-page-lock');
+
+    body.style.position = 'fixed';
+    body.style.top = `-${y}px`;
+    body.style.left = '0';
+    body.style.right = '0';
+    body.style.width = '100%';
+    body.style.overflow = 'hidden';
+
+    html.style.overflow = 'hidden';
+    html.style.overscrollBehavior = 'none';
+  };
+
+  const unlockConsentPageScroll = () => {
+    if (!consentScrollState) {
+      document.documentElement.classList.remove('sb-consent-page-lock');
+      document.body?.classList.remove('sb-consent-page-lock');
+      return;
+    }
+
+    const state = consentScrollState;
+    consentScrollState = null;
+    const body = document.body;
+    const html = document.documentElement;
+
+    if (body) {
+      body.style.position = state.body.position;
+      body.style.top = state.body.top;
+      body.style.left = state.body.left;
+      body.style.right = state.body.right;
+      body.style.width = state.body.width;
+      body.style.overflow = state.body.overflow;
+      body.classList.remove('sb-consent-page-lock');
+    }
+
+    html.style.overflow = state.html.overflow;
+    html.style.overscrollBehavior = state.html.overscrollBehavior;
+    html.classList.remove('sb-consent-page-lock');
+
+    requestAnimationFrame(() => {
+      window.scrollTo({ top: state.y, left: 0, behavior: 'auto' });
+    });
+  };
 
   const clearConsentViewportLock = () => {
     if (typeof consentViewportCleanup === 'function') {
@@ -128,13 +200,14 @@
       const vv = window.visualViewport;
       const viewportWidth =
         Math.round(vv?.width || document.documentElement.clientWidth || window.innerWidth || 0);
+      const viewportHeight =
+        Math.round(vv?.height || document.documentElement.clientHeight || window.innerHeight || 0);
       const viewportOffsetLeft = Math.round(vv?.offsetLeft || 0);
+      const viewportOffsetTop = Math.round(vv?.offsetTop || 0);
       const gutter = 8;
       const width = Math.max(240, viewportWidth - (gutter * 2));
+      const maxHeight = Math.max(220, viewportHeight - (gutter * 2));
 
-      // Gunakan visible viewport aktual, bukan layout viewport halaman.
-      // Ini tetap presisi walaupun homepage memiliki elemen yang membuat
-      // layout viewport lebih lebar pada browser mobile tertentu.
       panel.style.setProperty('position', 'fixed', 'important');
       panel.style.setProperty('left', `${viewportOffsetLeft + gutter}px`, 'important');
       panel.style.setProperty('right', 'auto', 'important');
@@ -143,14 +216,30 @@
       panel.style.setProperty('width', `${width}px`, 'important');
       panel.style.setProperty('max-width', `${width}px`, 'important');
       panel.style.setProperty('min-width', '0', 'important');
+      panel.style.setProperty('max-height', `${maxHeight}px`, 'important');
       panel.style.setProperty('margin', '0', 'important');
       panel.style.setProperty('transform', 'none', 'important');
+
+      const panelHeight = Math.min(
+        Math.ceil(panel.getBoundingClientRect().height || 0),
+        maxHeight
+      );
+      const top = viewportOffsetTop + Math.max(gutter, viewportHeight - panelHeight - gutter);
+      panel.style.setProperty('top', `${Math.round(top)}px`, 'important');
+      panel.style.setProperty('bottom', 'auto', 'important');
     };
 
     const requestSync = () => {
       if (rafId) cancelAnimationFrame(rafId);
       rafId = requestAnimationFrame(sync);
     };
+
+    const resizeObserver =
+      typeof ResizeObserver === 'function'
+        ? new ResizeObserver(requestSync)
+        : null;
+    const consentPanel = document.getElementById('sb-privacy-consent');
+    if (consentPanel) resizeObserver?.observe(consentPanel);
 
     requestSync();
     window.visualViewport?.addEventListener('resize', requestSync, { passive: true });
@@ -160,6 +249,7 @@
 
     consentViewportCleanup = () => {
       if (rafId) cancelAnimationFrame(rafId);
+      resizeObserver?.disconnect();
       window.visualViewport?.removeEventListener('resize', requestSync);
       window.visualViewport?.removeEventListener('scroll', requestSync);
       window.removeEventListener('orientationchange', requestSync);
@@ -169,6 +259,7 @@
 
   const removeConsentPanel = () => {
     clearConsentViewportLock();
+    unlockConsentPageScroll();
     document.getElementById('sb-privacy-consent')?.remove();
     document.body?.classList.remove('sb-consent-open');
   };
@@ -231,6 +322,7 @@
     loadConsentStyles();
     removeConsentPanel();
     document.body?.classList.add('sb-consent-open');
+    lockConsentPageScroll();
 
     const current = readConsent();
     const panel = document.createElement('div');
