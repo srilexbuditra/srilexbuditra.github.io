@@ -1,6 +1,6 @@
 /* =========================================================
    Global Visitor Analytics — Cloudflare Worker + D1 + GA4
-   V6.11.0.9 Centralized Site-Wide + Consent Pinch Guard
+   V6.11.0.11 Centralized Site-Wide + Global Mobile Pinch Guard
    ========================================================= */
 (() => {
   if (window.__SB_GLOBAL_VISITOR_ANALYTICS__) return;
@@ -26,7 +26,7 @@
      ========================================================= */
   const CONSENT_STORAGE_KEY = 'sb_privacy_consent_v1';
   const CONSENT_VERSION = 1;
-  const CONSENT_CSS_HREF = '/assets/css/privacy-consent.css?v=13.6.14.8';
+  const CONSENT_CSS_HREF = '/assets/css/privacy-consent.css?v=13.6.14.11';
 
   const readConsent = () => {
     try {
@@ -191,36 +191,36 @@
     };
   };
 
-  let consentPinchGuardCleanup = null;
+  let mobilePinchGuardInstalled = false;
 
-  const disableConsentPinchZoom = () => {
-    if (typeof consentPinchGuardCleanup === 'function') {
-      consentPinchGuardCleanup();
-      consentPinchGuardCleanup = null;
-    }
+  const installGlobalMobilePinchGuard = () => {
+    if (mobilePinchGuardInstalled) return;
 
     const mobile = window.matchMedia?.('(max-width: 600px)');
     if (mobile && !mobile.matches) return;
 
     const preventMultiTouch = (event) => {
-      if (!document.getElementById('sb-privacy-consent')) return;
       if (event.touches && event.touches.length > 1) {
         event.preventDefault();
       }
     };
 
     const preventGesture = (event) => {
-      if (!document.getElementById('sb-privacy-consent')) return;
       event.preventDefault();
     };
 
-    // Android/Chromium: block only multi-touch movement.
+    // Blok pinch zoom dua jari di seluruh halaman mobile,
+    // tetapi biarkan sentuhan satu jari tetap bekerja untuk scroll.
+    document.addEventListener('touchstart', preventMultiTouch, {
+      passive: false,
+      capture: true
+    });
     document.addEventListener('touchmove', preventMultiTouch, {
       passive: false,
       capture: true
     });
 
-    // Safari/iOS/WebKit: block native pinch gesture events while consent is open.
+    // Dukungan WebKit/iOS untuk gesture pinch.
     document.addEventListener('gesturestart', preventGesture, {
       passive: false,
       capture: true
@@ -234,25 +234,54 @@
       capture: true
     });
 
-    consentPinchGuardCleanup = () => {
-      document.removeEventListener('touchmove', preventMultiTouch, true);
-      document.removeEventListener('gesturestart', preventGesture, true);
-      document.removeEventListener('gesturechange', preventGesture, true);
-      document.removeEventListener('gestureend', preventGesture, true);
-    };
+    mobilePinchGuardInstalled = true;
   };
 
-  const enableConsentPinchZoom = () => {
-    if (typeof consentPinchGuardCleanup === 'function') {
-      consentPinchGuardCleanup();
-    }
-    consentPinchGuardCleanup = null;
+  const bindPrivacyLauncherToVisualViewport = (button) => {
+    if (!button) return;
+
+    const mobile = window.matchMedia?.('(max-width: 600px)');
+    if (mobile && !mobile.matches) return;
+
+    let rafId = 0;
+
+    const sync = () => {
+      if (!button.isConnected) return;
+
+      const vv = window.visualViewport;
+      const viewportWidth = Math.round(
+        vv?.width || document.documentElement.clientWidth || window.innerWidth || 0
+      );
+      const viewportOffsetLeft = Math.round(vv?.offsetLeft || 0);
+      const gutter = 12;
+      const buttonWidth = Math.ceil(button.getBoundingClientRect().width || 74);
+
+      const left = Math.max(
+        viewportOffsetLeft + gutter,
+        viewportOffsetLeft + viewportWidth - buttonWidth - gutter
+      );
+
+      button.style.setProperty('position', 'fixed', 'important');
+      button.style.setProperty('left', `${Math.round(left)}px`, 'important');
+      button.style.setProperty('right', 'auto', 'important');
+      button.style.setProperty('transform', 'none', 'important');
+    };
+
+    const requestSync = () => {
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(sync);
+    };
+
+    requestSync();
+    window.visualViewport?.addEventListener('resize', requestSync, { passive: true });
+    window.visualViewport?.addEventListener('scroll', requestSync, { passive: true });
+    window.addEventListener('orientationchange', requestSync, { passive: true });
+    window.addEventListener('resize', requestSync, { passive: true });
   };
 
   const removeConsentPanel = () => {
     clearConsentViewportLock();
     unlockConsentPageScroll();
-    enableConsentPinchZoom();
     document.getElementById('sb-privacy-consent')?.remove();
     document.body?.classList.remove('sb-consent-open');
   };
@@ -268,6 +297,7 @@
     button.setAttribute('aria-label', 'Buka pengaturan privasi dan analitik');
     button.addEventListener('click', () => renderConsentPanel(true));
     document.body.appendChild(button);
+    bindPrivacyLauncherToVisualViewport(button);
   };
 
   const denyAnalytics = () => {
@@ -388,10 +418,10 @@
     panel.append(header, description, status, privacyLink, actions);
     document.body.appendChild(panel);
     bindConsentToVisualViewport();
-    disableConsentPinchZoom();
   }
 
   loadConsentStyles();
+  installGlobalMobilePinchGuard();
 
   const ANALYTICS_CONSENT = readConsent();
 
