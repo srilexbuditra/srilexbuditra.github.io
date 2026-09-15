@@ -1,6 +1,6 @@
 /* =========================================================
    Srilex Buditra — Privacy Consent UI
-   V13.6.14.8
+   V13.6.14.10
    Desktop: compact floating full-bottom bar
    Mobile: bottom sheet + temporary TTS hide while consent is open
    ========================================================= */
@@ -185,9 +185,10 @@
 
 .sb-privacy-launcher {
   position: fixed;
-  left: 14px;
+  left: auto;
+  right: max(14px, env(safe-area-inset-right, 14px));
   bottom: calc(14px + env(safe-area-inset-bottom, 0px));
-  z-index: 2147482990;
+  z-index: 2147482995;
   min-height: 36px;
   padding: 7px 12px;
   border: 1px solid rgba(18, 63, 43, 0.18);
