@@ -1,6 +1,6 @@
 /* =========================================================
    Global Visitor Analytics — Cloudflare Worker + D1 + GA4
-   V6.11.0 Centralized Site-Wide + Consent Mode Basic
+   V6.11.0.1 Centralized Site-Wide + Context-Aware Consent Copy
    ========================================================= */
 (() => {
   if (window.__SB_GLOBAL_VISITOR_ANALYTICS__) return;
@@ -194,8 +194,14 @@
 
     const description = document.createElement('p');
     description.className = 'sb-privacy-consent__text';
-    description.textContent =
-      'Kami menggunakan analitik untuk memahami penggunaan website dan meningkatkan layanan Program Ketahanan Pangan. Analitik hanya aktif jika Anda mengizinkannya.';
+
+    const isKetahananPangan =
+      window.location.pathname === '/program/ketahanan-pangan' ||
+      window.location.pathname.startsWith('/program/ketahanan-pangan/');
+
+    description.textContent = isKetahananPangan
+      ? 'Kami menggunakan analitik untuk memahami penggunaan layanan Program Ketahanan Pangan dan meningkatkan pengalaman peserta serta pengunjung. Analitik hanya aktif jika Anda mengizinkannya.'
+      : 'Kami menggunakan analitik untuk memahami penggunaan srilexbuditra.work dan meningkatkan pengalaman pengunjung. Analitik hanya aktif jika Anda mengizinkannya.';
 
     const status = document.createElement('p');
     status.className = 'sb-privacy-consent__status';
