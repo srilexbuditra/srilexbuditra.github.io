@@ -1,6 +1,6 @@
 /* =========================================================
    Srilex Buditra — Privacy Consent UI
-   V13.6.14.2
+   V13.6.14.3
    Desktop: compact floating full-bottom bar
    Mobile: bottom sheet + temporary TTS hide while consent is open
    ========================================================= */
@@ -247,10 +247,19 @@
   }
 
   .sb-privacy-consent {
+    /* Mobile viewport-safe positioning:
+       jangan warisi left:50% + translateX(-50%) dari desktop. */
+    left: max(8px, env(safe-area-inset-left, 8px));
+    right: max(8px, env(safe-area-inset-right, 8px));
     bottom: calc(8px + env(safe-area-inset-bottom, 0px));
-    width: calc(100vw - 16px);
+    width: auto;
+    max-width: none;
+    margin: 0;
+    transform: none;
+
     max-height: calc(100dvh - 24px);
     overflow-y: auto;
+    overflow-x: hidden;
 
     display: grid;
     grid-template-columns: 1fr;
