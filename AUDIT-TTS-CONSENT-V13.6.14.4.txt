@@ -1,0 +1,42 @@
+AUDIT TTS + CONSENT — PROJECT 2026-09-15
+
+Temuan utama penyebab posisi consent mobile belum konsisten:
+1. visitor-analytics.js masih memanggil:
+   /assets/css/privacy-consent.css?v=13.6.14.2
+   sehingga browser dapat tetap memakai CSS cache lama walaupun file produksi
+   sudah ditimpa dengan V13.6.14.3.
+2. Panel consent dibuat sebagai elemen <section>.
+   style.css halaman utama memiliki aturan mobile global untuk `section`,
+   sehingga panel consent ikut masuk ke sistem layout halaman utama.
+3. V13.6.14.4 mengisolasi panel menjadi <div role="region"> dan memakai
+   viewport lock khusus mobile.
+
+Audit HTML:
+- 58 file HTML diperiksa.
+- 18 halaman memuat /tts.js dan visitor-analytics.js.
+- 12 halaman memiliki kontrol TTS nyata (#ttsFabWrap):
+  404.html
+  index.html
+  privacy.html
+  search.html
+  security.html
+  term.html
+  terms.html
+  program/ketahanan-pangan/index.html
+  program/ketahanan-pangan/dokumen/pembagian-peran/index.html
+  program/ketahanan-pangan/peserta/index.html
+  program/ketahanan-pangan/registrasi/index.html
+  program/ketahanan-pangan/verifikasi/index.html
+
+- 6 halaman memuat /tts.js tetapi TIDAK memiliki #ttsFabWrap, sehingga tts.js
+  berhenti tanpa menampilkan tombol:
+  aktivitas/index.html
+  insights/index.html
+  insights/membangun-alur-digital-peserta/index.html
+  insights/qr-verification-sertifikat-digital/index.html
+  insights/responsive-first-portal-peserta/index.html
+  portfolio/ketahanan-pangan/index.html
+
+Catatan:
+Enam halaman terakhir belum diubah oleh patch ini karena itu isu TTS terpisah.
+Patch V13.6.14.4 hanya memperbaiki Consent UI secara global dan aman.
