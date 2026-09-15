@@ -1,6 +1,6 @@
 /* =========================================================
    Global Visitor Analytics — Cloudflare Worker + D1 + GA4
-   V6.11.0.4 Centralized Site-Wide + Isolated Mobile Consent UI
+   V6.11.0.5 Centralized Site-Wide + Visual Viewport Consent Lock
    ========================================================= */
 (() => {
   if (window.__SB_GLOBAL_VISITOR_ANALYTICS__) return;
@@ -26,7 +26,7 @@
      ========================================================= */
   const CONSENT_STORAGE_KEY = 'sb_privacy_consent_v1';
   const CONSENT_VERSION = 1;
-  const CONSENT_CSS_HREF = '/assets/css/privacy-consent.css?v=13.6.14.4';
+  const CONSENT_CSS_HREF = '/assets/css/privacy-consent.css?v=13.6.14.5';
 
   const readConsent = () => {
     try {
@@ -104,7 +104,71 @@
     }
   };
 
+  let consentViewportCleanup = null;
+
+  const clearConsentViewportLock = () => {
+    if (typeof consentViewportCleanup === 'function') {
+      consentViewportCleanup();
+    }
+    consentViewportCleanup = null;
+  };
+
+  const bindConsentToVisualViewport = () => {
+    clearConsentViewportLock();
+
+    const media = window.matchMedia?.('(max-width: 600px)');
+    if (media && !media.matches) return;
+
+    let rafId = 0;
+
+    const sync = () => {
+      const panel = document.getElementById('sb-privacy-consent');
+      if (!panel) return;
+
+      const vv = window.visualViewport;
+      const viewportWidth =
+        Math.round(vv?.width || document.documentElement.clientWidth || window.innerWidth || 0);
+      const viewportOffsetLeft = Math.round(vv?.offsetLeft || 0);
+      const gutter = 8;
+      const width = Math.max(240, viewportWidth - (gutter * 2));
+
+      // Gunakan visible viewport aktual, bukan layout viewport halaman.
+      // Ini tetap presisi walaupun homepage memiliki elemen yang membuat
+      // layout viewport lebih lebar pada browser mobile tertentu.
+      panel.style.setProperty('position', 'fixed', 'important');
+      panel.style.setProperty('left', `${viewportOffsetLeft + gutter}px`, 'important');
+      panel.style.setProperty('right', 'auto', 'important');
+      panel.style.setProperty('inset-inline-start', `${viewportOffsetLeft + gutter}px`, 'important');
+      panel.style.setProperty('inset-inline-end', 'auto', 'important');
+      panel.style.setProperty('width', `${width}px`, 'important');
+      panel.style.setProperty('max-width', `${width}px`, 'important');
+      panel.style.setProperty('min-width', '0', 'important');
+      panel.style.setProperty('margin', '0', 'important');
+      panel.style.setProperty('transform', 'none', 'important');
+    };
+
+    const requestSync = () => {
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(sync);
+    };
+
+    requestSync();
+    window.visualViewport?.addEventListener('resize', requestSync, { passive: true });
+    window.visualViewport?.addEventListener('scroll', requestSync, { passive: true });
+    window.addEventListener('orientationchange', requestSync, { passive: true });
+    window.addEventListener('resize', requestSync, { passive: true });
+
+    consentViewportCleanup = () => {
+      if (rafId) cancelAnimationFrame(rafId);
+      window.visualViewport?.removeEventListener('resize', requestSync);
+      window.visualViewport?.removeEventListener('scroll', requestSync);
+      window.removeEventListener('orientationchange', requestSync);
+      window.removeEventListener('resize', requestSync);
+    };
+  };
+
   const removeConsentPanel = () => {
+    clearConsentViewportLock();
     document.getElementById('sb-privacy-consent')?.remove();
     document.body?.classList.remove('sb-consent-open');
   };
@@ -238,6 +302,7 @@
     actions.append(reject, accept);
     panel.append(header, description, status, privacyLink, actions);
     document.body.appendChild(panel);
+    bindConsentToVisualViewport();
   }
 
   loadConsentStyles();
