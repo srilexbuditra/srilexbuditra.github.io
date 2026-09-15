@@ -1,6 +1,6 @@
 /* =========================================================
    Global Visitor Analytics — Cloudflare Worker + D1 + GA4
-   V6.11.0.7 Centralized Site-Wide + Hard Mobile Consent Lock
+   V6.11.0.8 Centralized Site-Wide + Free Scroll Fixed Consent
    ========================================================= */
 (() => {
   if (window.__SB_GLOBAL_VISITOR_ANALYTICS__) return;
@@ -26,7 +26,7 @@
      ========================================================= */
   const CONSENT_STORAGE_KEY = 'sb_privacy_consent_v1';
   const CONSENT_VERSION = 1;
-  const CONSENT_CSS_HREF = '/assets/css/privacy-consent.css?v=13.6.14.6';
+  const CONSENT_CSS_HREF = '/assets/css/privacy-consent.css?v=13.6.14.8';
 
   const readConsent = () => {
     try {
@@ -105,78 +105,12 @@
   };
 
   let consentViewportCleanup = null;
-  let consentScrollState = null;
 
-  const lockConsentPageScroll = () => {
-    if (!document.body || consentScrollState) return;
-
-    const mobile = window.matchMedia?.('(max-width: 600px)');
-    if (mobile && !mobile.matches) return;
-
-    const y = Math.max(0, Math.round(window.scrollY || window.pageYOffset || 0));
-    const body = document.body;
-    const html = document.documentElement;
-
-    consentScrollState = {
-      y,
-      body: {
-        position: body.style.position,
-        top: body.style.top,
-        left: body.style.left,
-        right: body.style.right,
-        width: body.style.width,
-        overflow: body.style.overflow
-      },
-      html: {
-        overflow: html.style.overflow,
-        overscrollBehavior: html.style.overscrollBehavior
-      }
-    };
-
-    html.classList.add('sb-consent-page-lock');
-    body.classList.add('sb-consent-page-lock');
-
-    body.style.position = 'fixed';
-    body.style.top = `-${y}px`;
-    body.style.left = '0';
-    body.style.right = '0';
-    body.style.width = '100%';
-    body.style.overflow = 'hidden';
-
-    html.style.overflow = 'hidden';
-    html.style.overscrollBehavior = 'none';
-  };
-
-  const unlockConsentPageScroll = () => {
-    if (!consentScrollState) {
-      document.documentElement.classList.remove('sb-consent-page-lock');
-      document.body?.classList.remove('sb-consent-page-lock');
-      return;
-    }
-
-    const state = consentScrollState;
-    consentScrollState = null;
-    const body = document.body;
-    const html = document.documentElement;
-
-    if (body) {
-      body.style.position = state.body.position;
-      body.style.top = state.body.top;
-      body.style.left = state.body.left;
-      body.style.right = state.body.right;
-      body.style.width = state.body.width;
-      body.style.overflow = state.body.overflow;
-      body.classList.remove('sb-consent-page-lock');
-    }
-
-    html.style.overflow = state.html.overflow;
-    html.style.overscrollBehavior = state.html.overscrollBehavior;
-    html.classList.remove('sb-consent-page-lock');
-
-    requestAnimationFrame(() => {
-      window.scrollTo({ top: state.y, left: 0, behavior: 'auto' });
-    });
-  };
+  // V13.6.14.8:
+  // Halaman tetap boleh di-scroll saat consent terbuka.
+  // Stabilitas panel ditangani oleh visualViewport, bukan dengan membekukan body.
+  const lockConsentPageScroll = () => {};
+  const unlockConsentPageScroll = () => {};
 
   const clearConsentViewportLock = () => {
     if (typeof consentViewportCleanup === 'function') {
