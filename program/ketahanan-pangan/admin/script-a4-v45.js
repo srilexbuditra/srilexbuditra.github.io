@@ -181,6 +181,10 @@ function isMarketingRole() {
   return currentAdminRole() === 'pemasaran';
 }
 
+function isSuperAdminRole() {
+  return currentAdminRole() === 'super_admin';
+}
+
 function applyDashboardRoleAccess(user) {
   const role = user?.role || 'admin';
   const marketing = role === 'pemasaran';
@@ -200,6 +204,9 @@ function applyDashboardRoleAccess(user) {
 
   const photoStatusOverview = document.getElementById('photoStatusOverview');
   if (photoStatusOverview) photoStatusOverview.hidden = marketing;
+
+  const accountActivationAudit = document.getElementById('accountActivationAudit');
+  if (accountActivationAudit) accountActivationAudit.hidden = marketing;
 
   const adminEventManagement = document.getElementById('adminEventManagement');
   if (adminEventManagement) adminEventManagement.hidden = marketing;
@@ -434,6 +441,7 @@ if (statCards[3]) statCards[3].querySelector('strong').textContent = actionRequi
 
 renderAdminStatusOverview(registrations);
 await loadMemberVerificationOverview();
+await loadParticipantAccountAudit();
 
 document.getElementById('adminLogin').hidden = true;
 const tableBody = document.querySelector('.table-wrap tbody');
@@ -1239,6 +1247,15 @@ async function loadRegistrationDetail(registrationId) {
       statusLabel = 'Perlu Tindakan';
     }
 
+    const accountAuditEntry = getParticipantAccountAuditEntry(registration.registration_id);
+    const accountAuditKnown = Boolean(accountAuditEntry);
+    const participantAccountActive = accountAuditEntry?.account_status === 'active';
+    const accountAuditStatusLabel = !accountAuditKnown
+      ? 'Belum dimuat'
+      : (participantAccountActive ? 'Akun Aktif' : 'Belum Aktivasi');
+    const accountActivatedLabel = formatAccountAuditDate(accountAuditEntry?.activated_at);
+    const accountLastLoginLabel = formatAccountAuditDate(accountAuditEntry?.last_login_at);
+
     detailContent.innerHTML = `
       <div class="detail-table-wrapper">
         <table class="detail-table">
@@ -1255,6 +1272,18 @@ async function loadRegistrationDetail(registrationId) {
             <tr>
               <th>Status</th>
               <td>${renderRegistrationStatusBadge(registration.status)}</td>
+            </tr>
+            <tr>
+              <th>Status Akun Peserta</th>
+              <td><span class="account-status-badge ${participantAccountActive ? 'account-status-badge--active' : 'account-status-badge--inactive'}">${escapeHtml(accountAuditStatusLabel)}</span></td>
+            </tr>
+            <tr>
+              <th>Aktivasi Akun</th>
+              <td>${escapeHtml(accountActivatedLabel)}</td>
+            </tr>
+            <tr>
+              <th>Login Terakhir</th>
+              <td>${escapeHtml(accountLastLoginLabel)}</td>
             </tr>
             <tr>
               <th>Nama Lengkap</th>
@@ -2647,6 +2676,265 @@ function initAdminParticipantFilters(registrations, options = {}) {
   setTimeout(() => applyAdminParticipantFilters({ preservePage: Boolean(options.preservePage) }), 0);
 }
 
+
+
+// =========================================================
+// V17.18 — AUDIT AKTIVASI AKUN PESERTA + HAPUS SUPER ADMIN
+// Status akun dibaca dari participant_accounts oleh Admin API.
+// Hapus peserta dilindungi dua lapis: UI role + requireSuperAdmin di Worker.
+// =========================================================
+let participantAccountAuditFilter = 'all';
+let participantDeleteTarget = null;
+
+function formatAccountAuditDate(value) {
+  if (!value) return '-';
+  const raw = String(value);
+  const parsed = new Date(raw.includes('T') ? raw : raw.replace(' ', 'T') + 'Z');
+  if (Number.isNaN(parsed.getTime())) return raw;
+  return new Intl.DateTimeFormat('id-ID', {
+    day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit'
+  }).format(parsed);
+}
+
+function getParticipantAccountAuditEntry(registrationId) {
+  const map = window.KETAHANAN_PANGAN_ACCOUNT_AUDIT_MAP;
+  if (!map || !registrationId) return null;
+  return map[String(registrationId)] || null;
+}
+
+function participantAccountAuditMatches(row, filter) {
+  const active = String(row?.account_status || '') === 'active';
+  const verified = String(row?.status || '') === 'verified';
+  if (filter === 'inactive') return !active;
+  if (filter === 'active') return active;
+  if (filter === 'verified-inactive') return verified && !active;
+  if (filter === 'verified-active') return verified && active;
+  return true;
+}
+
+function renderParticipantAccountAudit(rows) {
+  const section = document.getElementById('accountActivationAudit');
+  if (!section || isMarketingRole()) return;
+  const allRows = Array.isArray(rows) ? rows : [];
+  window.KETAHANAN_PANGAN_ACCOUNT_AUDIT = allRows;
+  window.KETAHANAN_PANGAN_ACCOUNT_AUDIT_MAP = Object.fromEntries(
+    allRows.filter(row => row?.registration_id).map(row => [String(row.registration_id), row])
+  );
+
+  const activeRows = allRows.filter(row => Number(row.is_duplicate || 0) !== 1);
+  const active = activeRows.filter(row => row.account_status === 'active').length;
+  const inactive = activeRows.length - active;
+  const verifiedInactive = activeRows.filter(row => row.status === 'verified' && row.account_status !== 'active').length;
+  const verifiedActive = activeRows.filter(row => row.status === 'verified' && row.account_status === 'active').length;
+
+  const values = {
+    accountAuditTotal: activeRows.length,
+    accountAuditActive: active,
+    accountAuditInactive: inactive,
+    accountAuditVerifiedInactive: verifiedInactive,
+    accountAuditVerifiedActive: verifiedActive
+  };
+  Object.entries(values).forEach(([id,value]) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = String(value);
+  });
+
+  const filtered = allRows.filter(row => participantAccountAuditMatches(row, participantAccountAuditFilter));
+  const body = document.getElementById('accountAuditTableBody');
+  if (!body) return;
+
+  if (!filtered.length) {
+    body.innerHTML = '<tr><td colspan="7"><div class="empty"><strong>Tidak ada peserta pada filter ini.</strong></div></td></tr>';
+  } else {
+    body.innerHTML = filtered.map(row => {
+      const accountActive = row.account_status === 'active';
+      const verifiedInactiveRow = row.status === 'verified' && !accountActive && Number(row.is_duplicate || 0) !== 1;
+      const duplicate = Number(row.is_duplicate || 0) === 1;
+      const rowClass = duplicate ? 'account-audit-row--duplicate' : (verifiedInactiveRow ? 'account-audit-row--priority' : '');
+      const accountLabel = accountActive ? 'Akun Aktif' : 'Belum Aktivasi';
+      const statusCell = duplicate
+        ? '<span class="status-duplicate-label">Duplikat / Tidak Aktif</span>'
+        : renderRegistrationStatusBadge(row.status);
+      return `<tr class="${rowClass}">
+        <td><strong>${escapeHtml(row.registration_id || '-')}</strong></td>
+        <td>${escapeHtml(row.nama || '-')}</td>
+        <td>${statusCell}</td>
+        <td><span class="account-status-badge ${accountActive ? 'account-status-badge--active' : 'account-status-badge--inactive'}">${escapeHtml(accountLabel)}</span></td>
+        <td>${escapeHtml(formatAccountAuditDate(row.activated_at))}</td>
+        <td>${escapeHtml(formatAccountAuditDate(row.last_login_at))}</td>
+        <td><div class="account-audit-actions">
+          <button type="button" class="account-audit-detail" data-account-audit-detail="${escapeHtml(row.registration_id || '')}">Detail</button>
+          ${isSuperAdminRole() ? `<button type="button" class="account-audit-delete" data-account-audit-delete="${escapeHtml(row.registration_id || '')}">Hapus</button>` : ''}
+        </div></td>
+      </tr>`;
+    }).join('');
+  }
+
+  const meta = document.getElementById('accountAuditMeta');
+  if (meta) {
+    meta.textContent = `${filtered.length} ditampilkan dari ${allRows.length} data · ${verifiedInactive} terverifikasi belum aktivasi.`;
+  }
+
+  bindParticipantAccountAuditControls();
+}
+
+function bindParticipantAccountAuditControls() {
+  const filters = document.getElementById('accountAuditFilters');
+  if (filters && !filters.dataset.ready) {
+    filters.dataset.ready = '1';
+    filters.addEventListener('click', event => {
+      const button = event.target.closest('[data-account-audit-filter]');
+      if (!button) return;
+      participantAccountAuditFilter = button.dataset.accountAuditFilter || 'all';
+      filters.querySelectorAll('[data-account-audit-filter]').forEach(item => {
+        const active = item === button;
+        item.classList.toggle('is-active', active);
+        item.setAttribute('aria-pressed', active ? 'true' : 'false');
+      });
+      renderParticipantAccountAudit(window.KETAHANAN_PANGAN_ACCOUNT_AUDIT || []);
+    });
+  }
+
+  const refresh = document.getElementById('accountAuditRefresh');
+  if (refresh && !refresh.dataset.ready) {
+    refresh.dataset.ready = '1';
+    refresh.addEventListener('click', () => loadParticipantAccountAudit({ manual:true }));
+  }
+
+  const body = document.getElementById('accountAuditTableBody');
+  if (body && !body.dataset.ready) {
+    body.dataset.ready = '1';
+    body.addEventListener('click', event => {
+      const detail = event.target.closest('[data-account-audit-detail]');
+      if (detail) {
+        loadRegistrationDetail(detail.dataset.accountAuditDetail || '');
+        return;
+      }
+      const remove = event.target.closest('[data-account-audit-delete]');
+      if (remove) openParticipantDeleteModal(remove.dataset.accountAuditDelete || '');
+    });
+  }
+}
+
+async function loadParticipantAccountAudit(options = {}) {
+  const section = document.getElementById('accountActivationAudit');
+  if (!section || isMarketingRole()) return;
+  const refresh = document.getElementById('accountAuditRefresh');
+  const meta = document.getElementById('accountAuditMeta');
+  if (refresh) refresh.disabled = true;
+  if (meta) meta.textContent = 'Memuat status aktivasi akun…';
+  try {
+    const response = await fetch(`${ADMIN_API_BASE}/participant-account-audit?_=${Date.now()}`, {
+      method:'GET', credentials:'include', headers:{Accept:'application/json'}, cache:'no-store'
+    });
+    let data = {};
+    try { data = await response.json(); } catch (_) {}
+    if (!response.ok || !data?.ok || !Array.isArray(data.accounts)) {
+      throw new Error(data?.message || `HTTP ${response.status}`);
+    }
+    renderParticipantAccountAudit(data.accounts);
+    if (options.manual) showAdminToast('success','Audit Akun Diperbarui',`${data.accounts.length} data status akun berhasil dimuat.`);
+  } catch (error) {
+    console.error('Ketahanan Pangan Admin: audit aktivasi akun gagal dimuat.', error);
+    if (meta) meta.textContent = 'Status aktivasi akun belum dapat dimuat. Pastikan endpoint Admin API V17.18 sudah aktif.';
+    if (options.manual) showAdminToast('error','Audit Akun Gagal',error.message || 'Status aktivasi akun belum dapat dimuat.');
+  } finally {
+    if (refresh) refresh.disabled = false;
+  }
+}
+
+function openParticipantDeleteModal(registrationId) {
+  if (!isSuperAdminRole()) {
+    showAdminToast('error','Akses Dibatasi','Hapus peserta hanya tersedia untuk SYSTEM DEVELOPER / Super Admin.');
+    return;
+  }
+  const row = getParticipantAccountAuditEntry(registrationId);
+  if (!row) return showAdminToast('error','Data Tidak Ditemukan','Data peserta untuk audit penghapusan belum tersedia.');
+  participantDeleteTarget = row;
+  const modal = document.getElementById('deleteParticipantModal');
+  if (!modal) return;
+  document.getElementById('deleteParticipantName').textContent = row.nama || '-';
+  document.getElementById('deleteParticipantRegistrationId').textContent = row.registration_id || '-';
+  const duplicateNote = document.getElementById('deleteParticipantDuplicateNote');
+  if (duplicateNote) duplicateNote.textContent = Number(row.is_duplicate || 0) === 1
+    ? 'Data ini sudah ditandai sebagai duplikat / tidak aktif.'
+    : 'PERHATIAN: data ini belum ditandai sebagai duplikat.';
+  const reason = document.getElementById('deleteParticipantReason');
+  const confirmId = document.getElementById('deleteParticipantConfirmId');
+  if (reason) reason.value = Number(row.is_duplicate || 0) === 1 ? 'Pendaftaran ganda / duplikat.' : '';
+  if (confirmId) confirmId.value = '';
+  modal.hidden = false;
+  modal.setAttribute('aria-hidden','false');
+  document.body.classList.add('participant-delete-open');
+  bindParticipantDeleteModal();
+  validateParticipantDeleteForm();
+  setTimeout(() => confirmId?.focus(), 50);
+}
+
+function closeParticipantDeleteModal() {
+  const modal = document.getElementById('deleteParticipantModal');
+  if (!modal) return;
+  modal.hidden = true;
+  modal.setAttribute('aria-hidden','true');
+  document.body.classList.remove('participant-delete-open');
+  participantDeleteTarget = null;
+}
+
+function validateParticipantDeleteForm() {
+  const button = document.getElementById('deleteParticipantConfirmButton');
+  if (!button) return;
+  const expected = String(participantDeleteTarget?.registration_id || '');
+  const typed = String(document.getElementById('deleteParticipantConfirmId')?.value || '').trim();
+  const reason = String(document.getElementById('deleteParticipantReason')?.value || '').trim();
+  button.disabled = !isSuperAdminRole() || !expected || typed !== expected || reason.length < 5;
+}
+
+function bindParticipantDeleteModal() {
+  const modal = document.getElementById('deleteParticipantModal');
+  if (!modal || modal.dataset.ready) return;
+  modal.dataset.ready = '1';
+  modal.querySelectorAll('[data-delete-close]').forEach(button => button.addEventListener('click', closeParticipantDeleteModal));
+  document.getElementById('deleteParticipantReason')?.addEventListener('input', validateParticipantDeleteForm);
+  document.getElementById('deleteParticipantConfirmId')?.addEventListener('input', validateParticipantDeleteForm);
+  document.getElementById('deleteParticipantConfirmButton')?.addEventListener('click', deleteParticipantPermanently);
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && !modal.hidden) closeParticipantDeleteModal();
+  });
+}
+
+async function deleteParticipantPermanently() {
+  if (!isSuperAdminRole() || !participantDeleteTarget) return;
+  const registrationId = String(participantDeleteTarget.registration_id || '');
+  const reason = String(document.getElementById('deleteParticipantReason')?.value || '').trim();
+  const typed = String(document.getElementById('deleteParticipantConfirmId')?.value || '').trim();
+  if (typed !== registrationId || reason.length < 5) {
+    validateParticipantDeleteForm();
+    return;
+  }
+  if (!window.confirm(`HAPUS PERMANEN peserta ${registrationId}? Tindakan ini tidak dapat dibatalkan.`)) return;
+
+  const button = document.getElementById('deleteParticipantConfirmButton');
+  const original = button?.textContent || 'Hapus Permanen';
+  if (button) { button.disabled = true; button.textContent = 'Menghapus…'; }
+  try {
+    const response = await fetch(`${ADMIN_API_BASE}/registrations/${encodeURIComponent(registrationId)}/delete`, {
+      method:'POST', credentials:'include', headers:{'Content-Type':'application/json','Accept':'application/json'},
+      body:JSON.stringify({confirm_registration_id:registrationId, reason})
+    });
+    let data = {};
+    try { data = await response.json(); } catch (_) {}
+    if (!response.ok || !data?.ok) throw new Error(data?.message || `HTTP ${response.status}`);
+    closeParticipantDeleteModal();
+    const detailPanel = document.getElementById('registrationDetailPanel');
+    if (detailPanel) detailPanel.hidden = true;
+    showAdminToast('success','Peserta Dihapus',data.message || `${registrationId} berhasil dihapus.`);
+    await loadRegistrations({ manual:false });
+  } catch (error) {
+    console.error('Ketahanan Pangan Admin: hapus peserta gagal.', error);
+    showAdminToast('error','Hapus Peserta Gagal',error.message || 'Peserta belum berhasil dihapus.');
+    if (button) { button.disabled = false; button.textContent = original; }
+  }
+}
 
 // =========================================================
 // V12.6 — RINGKASAN STATUS PEMERIKSAAN FOTO ANGGOTA

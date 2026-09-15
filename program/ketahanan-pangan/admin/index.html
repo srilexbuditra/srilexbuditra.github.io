@@ -56,7 +56,7 @@
   <meta itemprop="image" content="https://srilexbuditra.work/program/ketahanan-pangan/admin/assets/og-admin-dashboard-v17.3.3.jpg">
   <meta itemprop="inLanguage" content="id-ID">
 
-  <link rel="stylesheet" href="./style.css?v=17.15.0">
+  <link rel="stylesheet" href="./style.css?v=17.18.0">
   <link rel="stylesheet" href="./style-verifikasi-tambahan.css?v=12.6.1">
 </head>
 <body>
@@ -324,6 +324,45 @@
         <article><small>Menunggu Verifikasi</small><strong>—</strong><span>Belum selesai diperiksa admin</span></article>
         <article><small>Terverifikasi</small><strong>—</strong><span>Data peserta sudah disetujui</span></article>
         <article><small>Perlu Tindakan</small><strong>—</strong><span>Perlu perbaikan atau keputusan admin</span></article>
+      </section>
+      <section id="accountActivationAudit" class="account-audit-panel" hidden aria-labelledby="accountActivationAuditTitle">
+        <div class="account-audit-head">
+          <div>
+            <span class="eyebrow">AUDIT AKUN PESERTA</span>
+            <h2 id="accountActivationAuditTitle">Status Aktivasi Akun</h2>
+            <p>Memisahkan status registrasi dari status akun agar tim dapat mengetahui peserta yang sudah terverifikasi tetapi belum mengaktifkan akun.</p>
+          </div>
+          <button id="accountAuditRefresh" type="button" class="account-audit-refresh">↻ Perbarui Audit</button>
+        </div>
+
+        <div class="account-audit-kpis" aria-label="Ringkasan aktivasi akun peserta">
+          <article><small>Total Registrasi</small><strong id="accountAuditTotal">0</strong><span>Data registrasi dalam audit</span></article>
+          <article><small>Sudah Aktivasi</small><strong id="accountAuditActive">0</strong><span>Akun peserta sudah dibuat</span></article>
+          <article><small>Belum Aktivasi</small><strong id="accountAuditInactive">0</strong><span>Belum membuat akun peserta</span></article>
+          <article class="account-audit-priority"><small>Terverifikasi Belum Aktivasi</small><strong id="accountAuditVerifiedInactive">0</strong><span>Prioritas tindak lanjut tim</span></article>
+          <article><small>Terverifikasi + Aktif</small><strong id="accountAuditVerifiedActive">0</strong><span>Registrasi dan akun sudah siap</span></article>
+        </div>
+
+        <div id="accountAuditFilters" class="account-audit-filters" aria-label="Filter status aktivasi akun">
+          <button type="button" class="is-active" data-account-audit-filter="all" aria-pressed="true">Semua</button>
+          <button type="button" data-account-audit-filter="inactive" aria-pressed="false">Belum Aktivasi</button>
+          <button type="button" data-account-audit-filter="active" aria-pressed="false">Sudah Aktif</button>
+          <button type="button" data-account-audit-filter="verified-inactive" aria-pressed="false">Terverifikasi Belum Aktivasi</button>
+          <button type="button" data-account-audit-filter="verified-active" aria-pressed="false">Terverifikasi &amp; Aktif</button>
+        </div>
+
+        <div class="account-audit-table-wrap">
+          <table class="account-audit-table">
+            <thead>
+              <tr><th>Nomor Registrasi</th><th>Nama</th><th>Status Registrasi</th><th>Status Akun</th><th>Aktivasi</th><th>Login Terakhir</th><th>Aksi</th></tr>
+            </thead>
+            <tbody id="accountAuditTableBody"><tr><td colspan="7">Audit aktivasi akun akan dimuat setelah admin terhubung.</td></tr></tbody>
+          </table>
+        </div>
+        <div class="account-audit-foot">
+          <span id="accountAuditMeta">Belum ada data audit akun.</span>
+          <span class="account-audit-security">Hapus peserta hanya tersedia untuk SYSTEM DEVELOPER / Super Admin.</span>
+        </div>
       </section>
       <section id="photoStatusOverview" class="status-overview photo-status-overview" aria-labelledby="photoStatusOverviewTitle">
         <div class="status-overview-head photo-overview-head">
@@ -682,6 +721,32 @@
       </section>
 
     </main>
+
+    <div id="deleteParticipantModal" class="participant-delete-modal" hidden aria-hidden="true">
+      <div class="participant-delete-backdrop" data-delete-close></div>
+      <section class="participant-delete-dialog" role="dialog" aria-modal="true" aria-labelledby="deleteParticipantTitle">
+        <div class="participant-delete-head">
+          <div><span class="eyebrow">KHUSUS SYSTEM DEVELOPER</span><h2 id="deleteParticipantTitle">Hapus Peserta</h2></div>
+          <button type="button" class="participant-delete-close" data-delete-close aria-label="Tutup">×</button>
+        </div>
+        <div class="participant-delete-warning">
+          <strong>Tindakan permanen.</strong> Data registrasi, akun peserta, sesi peserta, riwayat perbaikan, dan data verifikasi foto inti akan dihapus dari database registrasi. Gunakan hanya untuk data ganda atau data yang memang harus dibersihkan.
+        </div>
+        <div class="participant-delete-target">
+          <small>Peserta yang akan dihapus</small>
+          <strong id="deleteParticipantName">-</strong>
+          <code id="deleteParticipantRegistrationId">-</code>
+          <span id="deleteParticipantDuplicateNote"></span>
+        </div>
+        <label class="participant-delete-field"><span>Alasan penghapusan</span><textarea id="deleteParticipantReason" maxlength="500" placeholder="Contoh: pendaftaran ganda, data uji, atau alasan audit lainnya."></textarea></label>
+        <label class="participant-delete-field"><span>Ketik ulang nomor registrasi untuk konfirmasi</span><input id="deleteParticipantConfirmId" type="text" autocomplete="off" spellcheck="false" placeholder="Ketik nomor registrasi persis"></label>
+        <div class="participant-delete-actions">
+          <button type="button" class="participant-delete-cancel" data-delete-close>Batal</button>
+          <button id="deleteParticipantConfirmButton" type="button" class="participant-delete-confirm" disabled>Hapus Permanen</button>
+        </div>
+      </section>
+    </div>
+
     <div id="adminToastRegion" class="admin-toast-region" aria-live="polite" aria-atomic="true"></div>
     <footer>
       <div class="wrap"><strong>Program Ketahanan Pangan</strong><span>Administrasi & Verifikasi Digital</span><small>Integrated Digital Platform & System Development · srilexbuditra.work</small></div>
@@ -689,7 +754,7 @@
     <script src="./local-qrcode.js?v=1" defer></script>
     <script src="./jszip.min.js?v=1" defer></script>
     <script src="./excel-engine-template.js?v=45" defer></script>
-    <script src="./script-a4-v45.js?v=17.17.0" defer></script>
+    <script src="./script-a4-v45.js?v=17.18.0" defer></script>
     <script src="/assets/js/visitor-analytics.js" defer></script>
 </body>
 </html>
