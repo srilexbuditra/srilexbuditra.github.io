@@ -1,6 +1,8 @@
 /* =========================================================
    Srilex Buditra — Privacy Consent UI
-   Consent Mode Basic V13.6.14
+   V13.6.14.2
+   Desktop: compact floating full-bottom bar
+   Mobile: bottom sheet + temporary TTS hide while consent is open
    ========================================================= */
 
 .sb-privacy-consent,
@@ -17,40 +19,75 @@
 .sb-privacy-consent {
   position: fixed;
   left: 50%;
-  bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+  bottom: calc(22px + env(safe-area-inset-bottom, 0px));
   transform: translateX(-50%);
-  width: min(720px, calc(100vw - 24px));
+  width: min(1180px, calc(100vw - 48px));
   z-index: 2147483000;
-  padding: 18px;
-  border: 1px solid rgba(18, 63, 43, 0.18);
-  border-radius: 18px;
-  background: #fffdf8;
+
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    "header actions"
+    "text actions"
+    "status actions"
+    "link actions";
+  column-gap: 28px;
+  row-gap: 4px;
+  align-items: center;
+
+  padding: 18px 20px 17px 22px;
+  border: 1px solid rgba(18, 91, 57, 0.18);
+  border-radius: 20px;
+  background: rgba(255, 253, 248, 0.985);
   color: #173f2d;
-  box-shadow: 0 18px 48px rgba(14, 46, 32, 0.18);
+  box-shadow:
+    0 18px 52px rgba(8, 35, 24, 0.18),
+    0 2px 10px rgba(8, 35, 24, 0.06);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
 }
 
 .sb-privacy-consent__header {
+  grid-area: header;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 14px;
+  justify-content: flex-start;
+  gap: 10px;
+  min-width: 0;
+}
+
+.sb-privacy-consent__header::before {
+  content: "✓";
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  background: #e8f5ec;
+  border: 1px solid #c5dfce;
+  color: #0f603b;
+  font-size: 14px;
+  font-weight: 900;
 }
 
 .sb-privacy-consent__title {
   margin: 0;
-  font-size: 19px;
-  line-height: 1.25;
-  font-weight: 800;
   color: #123f2b;
+  font-size: 18px;
+  line-height: 1.25;
+  font-weight: 850;
+  letter-spacing: -0.01em;
 }
 
 .sb-privacy-consent__close {
   appearance: none;
+  margin-left: 2px;
   border: 0;
   background: transparent;
   color: #315d48;
   font: inherit;
-  font-size: 28px;
+  font-size: 24px;
   line-height: 1;
   cursor: pointer;
   padding: 2px 6px;
@@ -63,55 +100,75 @@
 }
 
 .sb-privacy-consent__text {
-  margin: 10px 0 7px;
-  font-size: 14px;
-  line-height: 1.6;
+  grid-area: text;
+  margin: 2px 0 0 38px;
+  max-width: 760px;
   color: #486657;
+  font-size: 13px;
+  line-height: 1.5;
 }
 
 .sb-privacy-consent__status {
-  margin: 0 0 8px;
-  font-size: 12px;
-  line-height: 1.5;
-  font-weight: 700;
+  grid-area: status;
+  margin: 2px 0 0 38px;
   color: #315d48;
+  font-size: 11px;
+  line-height: 1.4;
+  font-weight: 750;
 }
 
 .sb-privacy-consent__link {
+  grid-area: link;
   display: inline-block;
-  margin: 0 0 14px;
+  width: fit-content;
+  margin: 2px 0 0 38px;
   color: #176b3a;
-  font-size: 13px;
-  font-weight: 700;
+  font-size: 12px;
+  font-weight: 750;
   text-underline-offset: 3px;
 }
 
 .sb-privacy-consent__actions {
+  grid-area: actions;
   display: flex;
+  align-items: center;
   justify-content: flex-end;
   gap: 10px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
 }
 
 .sb-privacy-consent__button {
-  min-height: 44px;
-  padding: 10px 16px;
+  min-height: 46px;
+  padding: 10px 18px;
   border-radius: 12px;
+  white-space: nowrap;
   font: inherit;
-  font-size: 14px;
+  font-size: 13px;
+  line-height: 1;
   font-weight: 800;
   cursor: pointer;
+  transition:
+    transform 140ms ease,
+    box-shadow 140ms ease,
+    background-color 140ms ease,
+    border-color 140ms ease;
+}
+
+.sb-privacy-consent__button:hover {
+  transform: translateY(-1px);
 }
 
 .sb-privacy-consent__button--primary {
-  border: 1px solid #0f5135;
-  background: #0f5135;
+  border: 1px solid #0f5b39;
+  background: #0f5b39;
   color: #fff;
+  box-shadow: 0 7px 18px rgba(15, 91, 57, 0.16);
 }
 
 .sb-privacy-consent__button--primary:hover,
 .sb-privacy-consent__button--primary:focus-visible {
-  background: #0b412b;
+  background: #0b492e;
+  border-color: #0b492e;
 }
 
 .sb-privacy-consent__button--secondary {
@@ -123,6 +180,7 @@
 .sb-privacy-consent__button--secondary:hover,
 .sb-privacy-consent__button--secondary:focus-visible {
   background: #e9f5eb;
+  border-color: #a9c8b3;
 }
 
 .sb-privacy-launcher {
@@ -142,6 +200,7 @@
   cursor: pointer;
   box-shadow: 0 8px 24px rgba(14, 46, 32, 0.12);
   backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
 .sb-privacy-launcher:hover,
@@ -156,31 +215,111 @@
   outline-offset: 2px;
 }
 
-@media (max-width: 600px) {
+/* Tablet: keep the full-bottom character, but allow controls to wrap neatly. */
+@media (max-width: 920px) and (min-width: 601px) {
   .sb-privacy-consent {
-    bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+    width: calc(100vw - 28px);
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "header"
+      "text"
+      "status"
+      "link"
+      "actions";
+    row-gap: 6px;
+  }
+
+  .sb-privacy-consent__actions {
+    margin-top: 7px;
+    justify-content: flex-end;
+  }
+}
+
+/* Mobile: compact bottom sheet.
+   TTS stays available normally, but is temporarily hidden while consent is open
+   so the two floating interfaces never collide. */
+@media (max-width: 600px) {
+  body.sb-consent-open #ttsFabWrap,
+  body.sb-consent-open .tts-fab-wrap {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+
+  .sb-privacy-consent {
+    bottom: calc(8px + env(safe-area-inset-bottom, 0px));
     width: calc(100vw - 16px);
-    padding: 16px;
-    border-radius: 16px;
+    max-height: calc(100dvh - 24px);
+    overflow-y: auto;
+
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "header"
+      "text"
+      "status"
+      "link"
+      "actions";
+    row-gap: 7px;
+
+    padding: 15px;
+    border-radius: 18px;
+    box-shadow: 0 14px 42px rgba(8, 35, 24, 0.2);
+  }
+
+  .sb-privacy-consent__header {
+    gap: 9px;
+  }
+
+  .sb-privacy-consent__header::before {
+    width: 26px;
+    height: 26px;
+    font-size: 13px;
   }
 
   .sb-privacy-consent__title {
     font-size: 18px;
   }
 
+  .sb-privacy-consent__text,
+  .sb-privacy-consent__status,
+  .sb-privacy-consent__link {
+    margin-left: 0;
+  }
+
+  .sb-privacy-consent__text {
+    margin-top: 2px;
+    font-size: 13.5px;
+    line-height: 1.55;
+  }
+
+  .sb-privacy-consent__status {
+    margin-top: 1px;
+    font-size: 12px;
+  }
+
+  .sb-privacy-consent__link {
+    margin-top: 1px;
+    font-size: 12.5px;
+  }
+
   .sb-privacy-consent__actions {
     display: grid;
     grid-template-columns: 1fr;
+    gap: 9px;
+    margin-top: 7px;
   }
 
   .sb-privacy-consent__button {
     width: 100%;
+    min-height: 48px;
+    padding: 11px 15px;
+    font-size: 14px;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .sb-privacy-consent,
-  .sb-privacy-launcher {
-    scroll-behavior: auto;
+  .sb-privacy-consent__button {
+    transition: none;
   }
 }
