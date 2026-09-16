@@ -1632,6 +1632,10 @@ function renderCertificate(certificate) {
   const content = document.getElementById('certificateContent');
   if (!panel || !content) return;
 
+  // V17.19.7: certificate can be issued from Peserta, Aktivasi, Verifikasi,
+  // or Kartu workspace. Remove a stale routing class before opening.
+  panel.classList.remove('admin-v2-view-hidden');
+
   const wilayah = [certificate.kabupaten, certificate.provinsi]
     .filter(Boolean).join(', ') || '-';
   const issuedDate = formatCertificateDate(
@@ -1894,7 +1898,7 @@ async function downloadRegistrationDocument(
   registrationId,
   documentType
 ) {
-  if (!adminToken) {
+  if (!currentAdminUser) {
     alert('Session Admin tidak tersedia. Silakan login ulang.');
     return;
   }
@@ -1904,90 +1908,79 @@ async function downloadRegistrationDocument(
     return;
   }
 
-  try {
-    const baseUrl =
-      API_URL.replace(/\/registrations\/?$/, '');
+  const baseUrl = API_URL.replace(/\/registrations\/?$/, '');
+  const documentUrl =
+    `${baseUrl}/documents/${encodeURIComponent(registrationId)}/${encodeURIComponent(documentType)}`;
 
-    const response = await fetch(
-      `${baseUrl}/documents/${encodeURIComponent(registrationId)}/${encodeURIComponent(documentType)}`,
-      {
-        method: 'GET',
-        credentials: 'include',
-        headers: {
-          Accept: '*/*'
-        },
-        cache: 'no-store'
-      }
-    );
+  // V17.19.7: first validate the protected document using the existing
+  // HttpOnly session. Then open the returned object URL in a browser-native
+  // viewer. This is more reliable across desktop, Android and iOS than
+  // relying only on the HTML download attribute for a cross-origin blob.
+  try {
+    const response = await fetch(documentUrl, {
+      method: 'GET',
+      credentials: 'include',
+      headers: { Accept: '*/*' },
+      cache: 'no-store'
+    });
 
     if (!response.ok) {
-      let message = `Gagal mengunduh dokumen (HTTP ${response.status}).`;
-
+      let message = `Gagal membuka dokumen (HTTP ${response.status}).`;
       try {
         const data = await response.json();
-
-        if (data && data.message) {
-          message = data.message;
-        }
+        if (data?.message) message = data.message;
       } catch (_) {}
-
       throw new Error(message);
     }
 
     const blob = await response.blob();
+    if (!blob || blob.size === 0) throw new Error('File dokumen kosong.');
 
-    if (!blob || blob.size === 0) {
-      throw new Error('File dokumen kosong.');
-    }
-
-    const contentType =
-      (response.headers.get('Content-Type') || '').toLowerCase();
-
+    const contentType = (response.headers.get('Content-Type') || '').toLowerCase();
     let extension = '';
+    if (contentType.includes('image/jpeg')) extension = '.jpg';
+    else if (contentType.includes('image/png')) extension = '.png';
+    else if (contentType.includes('image/webp')) extension = '.webp';
+    else if (contentType.includes('application/pdf')) extension = '.pdf';
 
-    if (contentType.includes('image/jpeg')) {
-      extension = '.jpg';
-    } else if (contentType.includes('image/png')) {
-      extension = '.png';
-    } else if (contentType.includes('image/webp')) {
-      extension = '.webp';
-    } else if (contentType.includes('application/pdf')) {
-      extension = '.pdf';
-    }
-
-    const documentLabel =
-      documentType === 'ktp' ? 'KTP' : 'KK';
-
-    const safeRegistrationId =
-      String(registrationId).replace(/[^a-zA-Z0-9_-]/g, '_');
-
-    const fileName =
-      `${documentLabel}-${safeRegistrationId}${extension}`;
-
+    const label = documentType === 'ktp' ? 'KTP' : 'KK';
+    const safeRegistrationId = String(registrationId).replace(/[^a-zA-Z0-9_-]/g, '_');
+    const fileName = `${label}-${safeRegistrationId}${extension}`;
     const objectUrl = URL.createObjectURL(blob);
 
+    const isTouchDevice = window.matchMedia?.('(pointer: coarse)')?.matches ||
+      /Android|iPhone|iPad|iPod/i.test(navigator.userAgent || '');
+
+    if (isTouchDevice) {
+      // Native viewer is the most consistent path on phones/tablets. From the
+      // viewer the user can save/download using the device's normal controls.
+      const opened = window.open(objectUrl, '_blank', 'noopener,noreferrer');
+      if (!opened) {
+        const link = document.createElement('a');
+        link.href = objectUrl;
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+      }
+      window.setTimeout(() => URL.revokeObjectURL(objectUrl), 60000);
+      return;
+    }
+
+    // Desktop: keep the familiar direct-download behavior.
     const link = document.createElement('a');
     link.href = objectUrl;
     link.download = fileName;
+    link.rel = 'noopener';
     link.style.display = 'none';
-
     document.body.appendChild(link);
     link.click();
     link.remove();
-
-    window.setTimeout(() => {
-      URL.revokeObjectURL(objectUrl);
-    }, 1000);
+    window.setTimeout(() => URL.revokeObjectURL(objectUrl), 5000);
   } catch (error) {
-    console.error(
-      'Ketahanan Pangan Admin: gagal mengunduh dokumen.',
-      error
-    );
-
-    alert(
-      error.message ||
-      'Gagal mengunduh dokumen.'
-    );
+    console.error('Ketahanan Pangan Admin: gagal membuka dokumen.', error);
+    alert(error.message || 'Gagal membuka dokumen.');
   }
 }
 

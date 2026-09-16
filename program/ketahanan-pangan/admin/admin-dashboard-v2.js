@@ -216,7 +216,7 @@
 
     assign($(':scope > section.flow', main), ['peserta']);
     assign($('#registrationDetailPanel'), ['peserta','aktivasi','verifikasi','kartu']);
-    assign($('#certificatePanel'), ['peserta','kartu']);
+    assign($('#certificatePanel'), ['peserta','aktivasi','verifikasi','kartu']);
     assign($(':scope > section.it-support-panel', main), ['pengaturan']);
     assign($('#adminV2CardLanding'), ['kartu']);
     assign($('#adminV2AnalyticsPanel'), ['analytics']);
@@ -604,6 +604,9 @@
   function activateModal(item) {
     const node = getTarget(item.id);
     if (!node || node.hidden) return;
+    // V17.19.7: action/detail modal must stay visible even when it was
+    // previously hidden by the current workspace routing class.
+    node.classList.remove('admin-v2-view-hidden');
     node.classList.add('admin-v2-unified-modal');
     node.dataset.adminV2ModalOrder = String(++openSequence);
     node.setAttribute('role','dialog');
