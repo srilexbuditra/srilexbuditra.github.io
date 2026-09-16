@@ -5050,6 +5050,7 @@ document.getElementById('marketingReportXlsx')?.addEventListener('click', downlo
    ========================================================= */
 let adminEventCache = [];
 let adminEventSelectedId = '';
+let adminEventSaveInFlight = false;
 
 function adminEventSetText(id, value) {
   const node = document.getElementById(id);
@@ -5088,6 +5089,16 @@ function initAdminEventManagement(user) {
   });
 
   document.getElementById('adminEventForm')?.addEventListener('submit', saveAdminEventForm);
+  const adminEventSaveButton = document.getElementById('adminEventSave');
+  if (adminEventSaveButton && adminEventSaveButton.dataset.directSaveReady !== '1') {
+    adminEventSaveButton.dataset.directSaveReady = '1';
+    adminEventSaveButton.addEventListener('click', async (clickEvent) => {
+      // Fixed-modal fallback: handle Save explicitly instead of relying only on
+      // the browser's implicit submit dispatch. preventDefault avoids double submit.
+      clickEvent.preventDefault();
+      await saveAdminEventForm(clickEvent);
+    });
+  }
   document.getElementById('adminEventList')?.addEventListener('click', handleAdminEventListClick);
   document.getElementById('adminEventRegistrationsList')?.addEventListener('click', handleAdminEventAttendanceClick);
 
@@ -5296,8 +5307,8 @@ function closeAdminEventForm() {
 }
 
 async function saveAdminEventForm(event) {
-  event.preventDefault();
-  if (!canManageEvents()) return;
+  event?.preventDefault?.();
+  if (!canManageEvents() || adminEventSaveInFlight) return;
 
   const editingId = document.getElementById('adminEventEditingId')?.value || '';
   const title = document.getElementById('adminEventName')?.value.trim() || '';
@@ -5324,9 +5335,28 @@ async function saveAdminEventForm(event) {
     requires_verified_member: Boolean(document.getElementById('adminEventVerifiedOnly')?.checked)
   };
 
+  const startMs = payload.start_at ? new Date(payload.start_at).getTime() : null;
+  const endMs = payload.end_at ? new Date(payload.end_at).getTime() : null;
+  const openMs = payload.registration_open_at ? new Date(payload.registration_open_at).getTime() : null;
+  const closeMs = payload.registration_close_at ? new Date(payload.registration_close_at).getTime() : null;
+  let validationMessage = '';
+  if (startMs !== null && endMs !== null && endMs <= startMs) {
+    validationMessage = 'Waktu selesai harus setelah waktu mulai.';
+  } else if (openMs !== null && closeMs !== null && closeMs <= openMs) {
+    validationMessage = 'Penutupan pendaftaran harus setelah pembukaan.';
+  } else if (closeMs !== null && startMs !== null && closeMs > startMs) {
+    validationMessage = 'Penutupan pendaftaran tidak boleh setelah event dimulai.';
+  }
+  if (validationMessage) {
+    if (message) { message.textContent = validationMessage; message.className = 'admin-event-message is-error'; }
+    showAdminToast('error', 'Data Event Perlu Diperiksa', validationMessage);
+    return;
+  }
+
   try {
+    adminEventSaveInFlight = true;
     if (save) { save.disabled = true; save.textContent = editingId ? 'Menyimpan...' : 'Membuat...'; }
-    if (message) { message.textContent = ''; message.className = 'admin-event-message'; }
+    if (message) { message.textContent = editingId ? 'Menyimpan perubahan event…' : 'Membuat draft event…'; message.className = 'admin-event-message'; }
     const path = editingId ? `/events/${encodeURIComponent(editingId)}/update` : '/events';
     const data = await adminEventRequest(path, { method: 'POST', body: JSON.stringify(payload) });
     if (message) { message.textContent = data.message || 'Event berhasil disimpan.'; message.className = 'admin-event-message is-success'; }
@@ -5337,6 +5367,7 @@ async function saveAdminEventForm(event) {
     if (message) { message.textContent = error.message || 'Event belum dapat disimpan.'; message.className = 'admin-event-message is-error'; }
     showAdminToast('error', 'Event Belum Disimpan', error.message || 'Silakan periksa data event.');
   } finally {
+    adminEventSaveInFlight = false;
     if (save) { save.disabled = false; save.textContent = editingId ? 'Simpan Perubahan' : 'Simpan Draft'; }
   }
 }
