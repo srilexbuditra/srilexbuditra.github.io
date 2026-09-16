@@ -3,6 +3,30 @@ const loadingState = document.getElementById('loadingState');
 const errorState = document.getElementById('errorState');
 const activityView = document.getElementById('activityView');
 const toast = document.getElementById('toast');
+const PUBLIC_EVENT_META_API = '/program/ketahanan-pangan/event/api/list';
+let publicEventMetaById = new Map();
+
+function sendActivityGA4Event(eventName, params = {}, attempt = 0) {
+  const safeName = String(eventName || '').trim();
+  if (!safeName) return;
+  const payload = { event_category: 'ketahanan_pangan_event', event_source: 'participant_activity', ...params };
+  if (typeof window.gtag === 'function') { window.gtag('event', safeName, payload); return; }
+  if (attempt < 12) window.setTimeout(() => sendActivityGA4Event(safeName, params, attempt + 1), 200);
+}
+
+async function loadPublicEventMeta() {
+  try {
+    const response = await fetch(PUBLIC_EVENT_META_API + '?_=' + Date.now(), { cache: 'no-store', credentials: 'same-origin', headers: { Accept: 'application/json' } });
+    const data = await response.json().catch(() => ({}));
+    const rows = Array.isArray(data?.events) ? data.events : [];
+    publicEventMetaById = new Map(rows.map(row => [String(row.event_id || ''), row]));
+  } catch (_) { publicEventMetaById = new Map(); }
+}
+
+function enrichEvent(event) {
+  const meta = publicEventMetaById.get(String(event?.event_id || '')) || {};
+  return { ...event, public_url: meta.public_url || '', image_url: meta.image_url || '', image_alt: meta.image_alt || event?.title || 'Gambar event' };
+}
 
 async function api(path, options = {}) {
   const response = await fetch(API + path, {
@@ -75,7 +99,8 @@ function renderEvents(events) {
     return;
   }
   empty.hidden = true;
-  list.innerHTML = events.map(event => {
+  list.innerHTML = events.map(rawEvent => {
+    const event = enrichEvent(rawEvent);
     const status = String(event.participant_status || 'not_registered').toLowerCase();
     const registered = status === 'registered';
     const attended = status === 'attended';
@@ -94,9 +119,17 @@ function renderEvents(events) {
     } else {
       action = `<button class="btn primary event-register" type="button" data-event-id="${escapeHtml(event.event_id)}" ${event.can_register ? '' : 'disabled'}>${event.can_register ? 'Daftar Event' : 'Belum Tersedia'}</button>`;
     }
+    const publicDetail = event.public_url
+      ? `<a class="btn outline event-detail-link" href="${escapeHtml(event.public_url)}" target="_blank" rel="noopener noreferrer" data-event-id="${escapeHtml(event.event_id)}">Lihat Detail</a>`
+      : '';
+    const cover = event.image_url
+      ? `<a class="event-cover-link" href="${escapeHtml(event.public_url || '#')}" ${event.public_url ? 'target="_blank" rel="noopener noreferrer"' : ''} data-event-id="${escapeHtml(event.event_id)}"><img class="event-cover-image" src="${escapeHtml(event.image_url)}" alt="${escapeHtml(event.image_alt || event.title || 'Gambar event')}" loading="lazy" decoding="async"></a>`
+      : '';
     return `
       <article class="event-card ${cardClass}">
-        <div>
+        ${cover}
+        <div class="event-card-body">
+          <div>
           <div class="event-top">
             <span class="event-chip">${escapeHtml(deliveryLabel(event.delivery_mode))}</span>
             <span class="event-chip gold">LEVEL ${Number(event.min_level || 1)}</span>
@@ -112,7 +145,8 @@ function renderEvents(events) {
           </div>
           <div class="event-status">${escapeHtml(statusLabel(status))} · ${escapeHtml(event.requirement_text || '')}</div>
         </div>
-        <div class="event-actions">${action}</div>
+        <div class="event-actions">${publicDetail}${action}</div>
+        </div>
       </article>`;
   }).join('');
 }
@@ -187,6 +221,10 @@ async function reload() {
 }
 
 document.addEventListener('click', async event => {
+  const detailLink = event.target.closest('.event-detail-link, .event-cover-link');
+  if (detailLink) {
+    sendActivityGA4Event('event_detail_click', { program_event_id: detailLink.dataset.eventId || '', event_label: 'Lihat Detail Event' });
+  }
   const registerButton = event.target.closest('.event-register');
   const cancelButton = event.target.closest('.event-cancel');
   const button = registerButton || cancelButton;
@@ -197,13 +235,17 @@ document.addEventListener('click', async event => {
   const original = button.textContent;
   button.textContent = registerButton ? 'Mendaftarkan…' : 'Membatalkan…';
   try {
+    if (registerButton) sendActivityGA4Event('event_registration_start', { program_event_id: eventId });
+    else sendActivityGA4Event('event_registration_cancel_start', { program_event_id: eventId });
     const path = registerButton ? '/activity-events/register' : '/activity-events/cancel';
     const data = await api(path, { method: 'POST', body: JSON.stringify({ event_id: eventId }) });
+    sendActivityGA4Event(registerButton ? 'event_registration_success' : 'event_registration_cancel', { program_event_id: eventId });
     showToast(data.message || (registerButton ? 'Pendaftaran event berhasil.' : 'Pendaftaran dibatalkan.'));
     render({ activity: data.activity, participant: {
       nama: document.getElementById('participantName').textContent
     }});
   } catch (error) {
+    sendActivityGA4Event(registerButton ? 'event_registration_error' : 'event_registration_cancel_error', { program_event_id: eventId, error_message: String(error?.message || '').slice(0, 100) });
     showToast(error?.message || 'Permintaan belum dapat diproses.');
     button.disabled = false;
     button.textContent = original;
@@ -212,7 +254,9 @@ document.addEventListener('click', async event => {
 
 (async function init() {
   try {
+    await Promise.all([loadPublicEventMeta(), Promise.resolve()]);
     await reload();
+    sendActivityGA4Event('activity_event_hub_view');
   } catch (error) {
     showError(error?.status === 401 ? 'Sesi login diperlukan' : 'Aktivitas & Event belum dapat ditampilkan', error?.message || 'Periksa koneksi internet lalu coba kembali.');
   }
