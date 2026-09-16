@@ -29,7 +29,7 @@
   <link itemprop="publisher" href="https://srilexbuditra.work/#person">
   <meta itemprop="description" content="Aktivasi akun, login, dan dashboard pribadi peserta Program Ketahanan Pangan.">
   <link rel="search" type="application/opensearchdescription+xml" title="Srilex Buditra Search" href="/opensearch.xml">
-  <link rel="stylesheet" href="./style.css?v=13.6.15.0">
+  <link rel="stylesheet" href="./style.css?v=13.6.15.1">
 </head>
 <body>
 <header class="topbar">
@@ -55,11 +55,13 @@
         <small>LANGKAH SINGKAT</small>
         <ol class="account-steps">
           <li><span class="step-number">1</span><div><strong>Daftar Peserta</strong><small>Dapatkan Nomor Registrasi</small></div></li>
-          <li><span class="step-number">2</span><div><strong>Aktivasi &amp; Login</strong><small>Buat password dan masuk ke akun</small></div></li>
-          <li><span class="step-number">3</span><div><strong>Pemeriksaan Data</strong><small>Pantau status dari dashboard</small></div></li>
-          <li><span class="step-number">4</span><div><strong>Rekam Foto</strong><small>Setelah registrasi terverifikasi</small></div></li>
-          <li><span class="step-number">5</span><div><strong>VERIFIED MEMBER</strong><small>Menunggu persetujuan foto admin</small></div></li>
-          <li><span class="step-number">6</span><div><strong>Kartu &amp; Sertifikat</strong><small>Akses identitas dan dokumen digital</small></div></li>
+          <li><span class="step-number">2</span><div><strong>Pemeriksaan Data</strong><small>Admin memeriksa data dan dokumen</small></div></li>
+          <li><span class="step-number">3</span><div><strong>Verifikasi Data</strong><small>Pendaftaran dinyatakan terverifikasi</small></div></li>
+          <li><span class="step-number">4</span><div><strong>Aktivasi &amp; Login</strong><small>Aktifkan akun dan masuk ke dashboard</small></div></li>
+          <li><span class="step-number">5</span><div><strong>Rekam Foto</strong><small>Lengkapi Verifikasi Anggota + Foto</small></div></li>
+          <li><span class="step-number">6</span><div><strong>VERIFIED MEMBER</strong><small>Foto disetujui admin</small></div></li>
+          <li><span class="step-number">7</span><div><strong>Kartu Anggota + QR</strong><small>Identitas digital anggota aktif</small></div></li>
+          <li><span class="step-number">8</span><div><strong>Sertifikat Digital</strong><small>Dokumen digital peserta tetap tersedia sesuai status</small></div></li>
         </ol>
       </aside>
     </div>
@@ -195,7 +197,7 @@
           <div class="next-action-content">
             <div class="next-action-heading-row">
               <span class="section-kicker">LANGKAH BERIKUTNYA</span>
-              <span id="journeyStageBadge" class="journey-stage-badge">TAHAP - DARI 7</span>
+              <span id="journeyStageBadge" class="journey-stage-badge">TAHAP - DARI 8</span>
             </div>
             <h3 id="nextActionTitle">Tunggu pemeriksaan admin</h3>
             <p id="nextActionText">Data Anda sedang diproses. Tidak ada tindakan yang perlu dilakukan saat ini.</p>
@@ -245,12 +247,13 @@
               </div>
               <ol id="participantTimeline" class="participant-timeline participant-journey-timeline">
                 <li data-stage="received"><span class="timeline-dot">1</span><div><strong>Pendaftaran</strong><small>Data pendaftaran sudah masuk ke sistem.</small><span class="timeline-state">Menunggu</span></div></li>
-                <li data-stage="account"><span class="timeline-dot">2</span><div><strong>Aktivasi Akun</strong><small>Akun aktif dan dapat digunakan untuk login.</small><span class="timeline-state">Menunggu</span></div></li>
-                <li data-stage="review"><span class="timeline-dot">3</span><div><strong>Pemeriksaan Data</strong><small>Admin memeriksa data dan dokumen peserta.</small><span class="timeline-state">Menunggu</span></div></li>
-                <li data-stage="verified"><span class="timeline-dot">4</span><div><strong>Verifikasi Data</strong><small>Data registrasi dinyatakan terverifikasi.</small><span class="timeline-state">Menunggu</span></div></li>
+                <li data-stage="review"><span class="timeline-dot">2</span><div><strong>Pemeriksaan Data</strong><small>Admin memeriksa data dan dokumen peserta.</small><span class="timeline-state">Menunggu</span></div></li>
+                <li data-stage="verified"><span class="timeline-dot">3</span><div><strong>Verifikasi Data</strong><small>Data registrasi dinyatakan terverifikasi.</small><span class="timeline-state">Menunggu</span></div></li>
+                <li data-stage="account"><span class="timeline-dot">4</span><div><strong>Aktivasi Akun</strong><small>Akun aktif dan dapat digunakan untuk login.</small><span class="timeline-state">Menunggu</span></div></li>
                 <li data-stage="photo"><span class="timeline-dot">5</span><div><strong>Rekam Foto</strong><small>Ambil foto anggota langsung dari kamera.</small><span class="timeline-state">Menunggu</span></div></li>
                 <li data-stage="member"><span class="timeline-dot">6</span><div><strong>VERIFIED MEMBER</strong><small>Foto disetujui dan identitas anggota aktif.</small><span class="timeline-state">Menunggu</span></div></li>
-                <li data-stage="card"><span class="timeline-dot">7</span><div><strong>Kartu &amp; Dokumen</strong><small>Kartu Anggota + QR dan dokumen digital dapat digunakan.</small><span class="timeline-state">Menunggu</span></div></li>
+                <li data-stage="card"><span class="timeline-dot">7</span><div><strong>Kartu Anggota + QR</strong><small>Identitas digital anggota aktif setelah foto disetujui.</small><span class="timeline-state">Menunggu</span></div></li>
+                <li data-stage="certificate"><span class="timeline-dot">8</span><div><strong>Sertifikat Digital</strong><small>Sertifikat yang sudah tersedia tetap dapat digunakan.</small><span class="timeline-state">Menunggu</span></div></li>
               </ol>
               <div id="progressAlert" class="progress-alert" hidden></div>
             </article>
@@ -279,7 +282,7 @@
               <h3 id="memberServicesTitle">Layanan Peserta</h3>
               <p>Layanan aktif ditampilkan sesuai status akun. Fitur yang belum tersedia diberi label roadmap agar tidak membingungkan peserta.</p>
             </div>
-            <span class="member-services-version">DASHBOARD V2 · V13.6.15</span>
+            <span class="member-services-version">DASHBOARD V2 · V13.6.15.1</span>
           </div>
           <div class="member-services-grid">
             <div class="member-services-group-title"><strong>Fitur Utama Keanggotaan</strong><span>Selesaikan jalur utama sesuai petunjuk pada Langkah Berikutnya.</span></div>
@@ -443,7 +446,7 @@
   </div>
 </footer>
 
-<script src="./script.js?v=13.6.15.0"></script>
+<script src="./script.js?v=13.6.15.1"></script>
 <div class="tts-fab-wrap" id="ttsFabWrap" aria-label="Kontrol pembaca halaman">
   <button class="tts-stop" id="ttsStop" type="button" aria-label="Hentikan pembacaan" title="Hentikan"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6h12v12H6z"/></svg></button>
   <button class="tts-fab" id="ttsFab" type="button" aria-label="Bacakan halaman" aria-pressed="false">

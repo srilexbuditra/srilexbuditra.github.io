@@ -191,7 +191,7 @@ function getStatusPresentation(status) {
       icon: '✓',
       hero: 'Data registrasi Anda telah diverifikasi. Lanjutkan tahapan keanggotaan sesuai Langkah Berikutnya.',
       title: 'Lanjutkan tahapan keanggotaan',
-      text: 'Sertifikat digital tersedia. Kartu Anggota + QR aktif setelah Verifikasi Anggota + Foto disetujui admin.'
+      text: 'Sertifikat Digital yang sudah tersedia tetap dapat digunakan. Selesaikan Verifikasi Anggota + Foto untuk mengaktifkan Kartu Anggota + QR.'
     },
     approved: {
       icon: '✓',
@@ -228,121 +228,118 @@ function getParticipantJourney(participant = {}) {
   const memberApproved = registrationVerified && memberStatus === 'approved';
 
   const base = {
-    stage: 3,
-    total: 7,
-    progress: 43,
+    stage: 2,
+    total: 8,
+    progress: 25,
     icon: '⌕',
     title: 'Pemeriksaan data sedang berlangsung',
     text: 'Data Anda sedang diperiksa. Tidak ada tindakan wajib kecuali admin meminta perbaikan.',
     action: 'refresh',
     actionLabel: '↻ Cek Status Terbaru',
     hint: 'Tidak perlu mendaftar atau mengirim data ulang selama pemeriksaan berlangsung.',
-    summary: 'Tahap 3 dari 7 · Pemeriksaan Data'
+    summary: 'Tahap 2 dari 8 · Pemeriksaan Data'
   };
 
   if (status === 'submitted' || status === 'pending' || !status) return base;
 
   if (status === 'revision') return {
     ...base,
-    progress: 43,
     icon: '!',
     title: 'Perbaiki data yang diminta admin',
     text: 'Baca Catatan dari Admin, lalu lakukan perbaikan data agar proses dapat dilanjutkan.',
     action: 'revision',
     actionLabel: '✎ Perbaiki Data Sekarang',
     hint: 'Tindakan Anda diperlukan sebelum admin dapat melanjutkan pemeriksaan.',
-    summary: 'Tahap 3 dari 7 · Perlu Perbaikan Data'
+    summary: 'Tahap 2 dari 8 · Perlu Perbaikan Data'
   };
 
   if (status === 'resubmitted') return {
     ...base,
-    progress: 43,
     icon: '↻',
     title: 'Perbaikan sudah diterima',
     text: 'Perbaikan Anda sudah masuk dan sedang menunggu pemeriksaan ulang admin.',
     action: 'refresh',
     actionLabel: '↻ Cek Status Terbaru',
     hint: 'Jangan mengirim ulang kecuali diminta admin.',
-    summary: 'Tahap 3 dari 7 · Pemeriksaan Ulang Data'
+    summary: 'Tahap 2 dari 8 · Pemeriksaan Ulang Data'
   };
 
   if (status === 'rejected') return {
     ...base,
-    progress: 43,
     icon: '×',
     title: 'Periksa informasi dari admin',
     text: 'Pendaftaran belum dapat disetujui. Baca alasan atau petunjuk yang tersedia pada dashboard.',
     action: String(participant.admin_note || '').trim() ? 'admin-note' : 'status-note',
     actionLabel: String(participant.admin_note || '').trim() ? 'i Lihat Catatan Admin' : '⌕ Lihat Keterangan Status',
     hint: 'Gunakan informasi admin sebagai acuan sebelum mengambil tindakan berikutnya.',
-    summary: 'Tahap 3 dari 7 · Perlu Tindak Lanjut'
+    summary: 'Tahap 2 dari 8 · Perlu Tindak Lanjut'
   };
 
   if (status === 'approved') return {
     ...base,
-    stage: 4,
-    progress: 57,
+    stage: 3,
+    progress: 38,
     icon: '✓',
     title: 'Pendaftaran telah disetujui',
     text: 'Pantau dashboard untuk layanan dan informasi lanjutan yang tersedia.',
     action: 'refresh',
     actionLabel: '↻ Cek Status Terbaru',
     hint: 'Status layanan lanjutan mengikuti kebijakan program.',
-    summary: 'Tahap 4 dari 7 · Pendaftaran Disetujui'
+    summary: 'Tahap 3 dari 8 · Pendaftaran Disetujui'
   };
 
   if (!registrationVerified) return base;
 
   if (memberApproved) return {
     ...base,
-    stage: 7,
+    stage: 8,
     progress: 100,
     icon: '✓',
-    title: 'Keanggotaan Anda sudah aktif',
-    text: 'Verifikasi anggota selesai. Kartu Anggota + QR dan dokumen digital Anda sudah dapat digunakan.',
-    action: 'member-card',
-    actionLabel: '▦ Lihat Kartu Anggota',
-    hint: 'VERIFIED MEMBER aktif. Simpan atau cetak kartu sesuai kebutuhan.',
-    summary: 'Tahap 7 dari 7 · Keanggotaan Lengkap'
+    title: 'Keanggotaan dan Sertifikat Digital lengkap',
+    text: 'VERIFIED MEMBER aktif. Kartu Anggota + QR dan Sertifikat Digital Anda sudah dapat digunakan.',
+    action: 'certificate',
+    actionLabel: '▣ Lihat Sertifikat Digital',
+    hint: 'Kartu Anggota + QR juga tetap aktif pada Layanan Peserta.',
+    summary: 'Tahap 8 dari 8 · Sertifikat Digital Tersedia'
   };
 
   if (memberStatus === 'pending' || memberStatus === 'reviewing' || memberStatus === 'resubmitted') return {
     ...base,
     stage: 6,
-    progress: 86,
+    progress: 75,
     icon: '◷',
     title: memberStatus === 'reviewing' ? 'Foto sedang diperiksa' : (memberStatus === 'resubmitted' ? 'Foto perbaikan sedang diperiksa ulang' : 'Foto sudah diterima'),
     text: 'Tidak ada tindakan yang perlu dilakukan saat ini. Tunggu admin menyelesaikan pemeriksaan foto.',
     action: 'photo-status',
     actionLabel: '◉ Lihat Status Foto',
-    hint: 'Jangan merekam atau mengirim ulang foto selama pemeriksaan berlangsung.',
-    summary: 'Tahap 6 dari 7 · Pemeriksaan Verifikasi Anggota'
+    hint: 'Sertifikat Digital yang sudah tersedia tetap dapat digunakan selama pemeriksaan foto berlangsung.',
+    summary: 'Tahap 6 dari 8 · Pemeriksaan Verifikasi Anggota'
   };
 
   if (['revision', 'rejected', 'needs_action'].includes(memberStatus)) return {
     ...base,
     stage: 5,
-    progress: 71,
+    progress: 63,
     icon: '!',
     title: 'Foto anggota perlu diperbaiki',
     text: 'Baca catatan admin pada Verifikasi Anggota + Foto, lalu rekam ulang foto sesuai petunjuk.',
     action: 'photo',
     actionLabel: '◉ Rekam Ulang Foto',
-    hint: 'Perbaiki foto terlebih dahulu agar proses VERIFIED MEMBER dapat dilanjutkan.',
-    summary: 'Tahap 5 dari 7 · Perbaikan Foto Diperlukan'
+    hint: 'Sertifikat Digital yang sudah tersedia tidak dicabut; perbaiki foto agar Kartu Anggota dapat diaktifkan.',
+    summary: 'Tahap 5 dari 8 · Perbaikan Foto Diperlukan'
   };
 
   return {
     ...base,
     stage: 5,
-    progress: 71,
+    progress: 63,
     icon: '◉',
     title: 'Rekam foto untuk Verifikasi Anggota',
-    text: 'Akun dan registrasi Anda sudah aktif/terverifikasi. Lanjutkan dengan rekam foto setengah badan agar VERIFIED MEMBER dan Kartu Anggota dapat diaktifkan.',
+    text: 'Akun dan registrasi Anda sudah aktif/terverifikasi. Lanjutkan rekam foto setengah badan agar VERIFIED MEMBER dan Kartu Anggota dapat diaktifkan.',
     action: 'photo',
     actionLabel: '◉ Rekam Foto Sekarang',
-    hint: 'Gunakan kamera perangkat dan ikuti panduan foto pada halaman Verifikasi Anggota.',
-    summary: 'Tahap 5 dari 7 · Rekam Foto Anggota'
+    hint: 'Sertifikat Digital yang sudah tersedia tetap dapat digunakan sambil Anda menyelesaikan Verifikasi Anggota.',
+    summary: 'Tahap 5 dari 8 · Rekam Foto Anggota'
   };
 }
 
@@ -423,6 +420,7 @@ function updateTimelineStates(items) {
     const state = item.querySelector('.timeline-state');
     if (!state) return;
     if (item.classList.contains('stopped')) state.textContent = 'Perlu tindakan';
+    else if (item.classList.contains('available-existing')) state.textContent = 'Sudah tersedia';
     else if (item.classList.contains('done')) state.textContent = 'Selesai';
     else if (item.classList.contains('active')) state.textContent = 'Sedang berjalan';
     else state.textContent = 'Menunggu';
@@ -440,20 +438,23 @@ function renderParticipantTimeline(participant = {}) {
   timeline.dataset.status = status || 'pending';
   const byStage = name => timeline.querySelector(`[data-stage="${name}"]`);
   const items = [...timeline.querySelectorAll('li')];
-  items.forEach(item => item.classList.remove('done', 'active', 'stopped'));
+  items.forEach(item => item.classList.remove('done', 'active', 'stopped', 'available-existing'));
   alert.hidden = true;
   alert.className = 'progress-alert';
   alert.textContent = '';
 
   // Peserta yang dapat melihat dashboard sudah memiliki akun aktif.
+  // Posisi Aktivasi tetap Tahap 4, tetapi kondisi aktual akun tetap ditandai selesai.
   byStage('received')?.classList.add('done');
   byStage('account')?.classList.add('done');
 
   const review = byStage('review');
   const verified = byStage('verified');
+  const account = byStage('account');
   const photo = byStage('photo');
   const member = byStage('member');
   const card = byStage('card');
+  const certificate = byStage('certificate');
 
   if (status === 'verified' || status === 'approved') {
     review?.classList.add('done');
@@ -465,6 +466,10 @@ function renderParticipantTimeline(participant = {}) {
   }
 
   if (status === 'verified') {
+    // Kompatibilitas sertifikat lama: sertifikat yang sudah tersedia berdasarkan
+    // status registrasi terverifikasi tidak disembunyikan oleh Journey baru.
+    certificate?.classList.add(memberStatus === 'approved' ? 'done' : 'available-existing');
+
     if (memberStatus === 'approved') {
       photo?.classList.add('done');
       member?.classList.add('done');
@@ -496,17 +501,25 @@ function renderParticipantTimeline(participant = {}) {
   } else if (status === 'verified' && ['revision', 'rejected', 'needs_action'].includes(memberStatus)) {
     alert.hidden = false;
     alert.classList.add('revision');
-    alert.textContent = 'Foto anggota perlu diperbaiki. Buka Verifikasi Anggota + Foto dan ikuti catatan admin.';
+    alert.textContent = 'Foto anggota perlu diperbaiki. Sertifikat Digital yang sudah tersedia tetap dapat digunakan; perbaiki foto untuk melanjutkan Kartu Anggota + QR.';
   } else if (status === 'verified' && ['pending', 'reviewing', 'resubmitted'].includes(memberStatus)) {
     alert.hidden = false;
-    alert.textContent = 'Foto sudah diterima. Tidak ada tindakan wajib sampai pemeriksaan admin selesai.';
+    alert.textContent = 'Foto sudah diterima. Sertifikat Digital yang sudah tersedia tetap dapat digunakan sambil menunggu pemeriksaan admin.';
   } else if (status === 'verified' && memberStatus === 'approved') {
     alert.hidden = false;
     alert.classList.add('journey-complete');
-    alert.textContent = 'VERIFIED MEMBER aktif. Kartu Anggota + QR dan layanan digital utama sudah tersedia.';
+    alert.textContent = 'Perjalanan keanggotaan inti selesai. VERIFIED MEMBER, Kartu Anggota + QR, dan Sertifikat Digital tersedia.';
+  } else if (status === 'verified') {
+    alert.hidden = false;
+    alert.classList.add('certificate-existing');
+    alert.textContent = 'Sertifikat Digital Anda sudah tersedia. Lanjutkan Rekam Foto untuk mengaktifkan VERIFIED MEMBER dan Kartu Anggota + QR.';
   }
 
   updateTimelineStates(items);
+
+  const accountState = account?.querySelector('.timeline-state');
+  if (accountState) accountState.textContent = 'Akun aktif';
+
   if (status === 'verified' && ['pending', 'reviewing', 'resubmitted'].includes(memberStatus)) {
     const memberState = member?.querySelector('.timeline-state');
     if (memberState) memberState.textContent = memberStatus === 'reviewing' ? 'Pemeriksaan foto' : (memberStatus === 'resubmitted' ? 'Pemeriksaan ulang' : 'Menunggu verifikasi');
@@ -514,6 +527,8 @@ function renderParticipantTimeline(participant = {}) {
   if (status === 'verified' && memberStatus === 'approved') {
     const cardState = card?.querySelector('.timeline-state');
     if (cardState) cardState.textContent = 'Aktif';
+    const certificateState = certificate?.querySelector('.timeline-state');
+    if (certificateState) certificateState.textContent = 'Tersedia';
   }
 }
 
@@ -693,7 +708,7 @@ function renderMemberExperience(participant = {}) {
     certificateService.setAttribute('aria-disabled', isVerified ? 'false' : 'true');
     if (isVerified && participant.registration_id) {
       certificateService.href = '../verifikasi/sertifikat/?registration_id=' + encodeURIComponent(participant.registration_id);
-      certificateState.textContent = 'Sertifikat digital tersedia untuk peserta terverifikasi.';
+      certificateState.textContent = memberApproved ? 'Tahap 8 selesai. Sertifikat Digital tersedia.' : 'Sertifikat Digital yang sudah tersedia tetap dapat digunakan sambil menyelesaikan Verifikasi Anggota.';
       certificateBadge.textContent = 'AKTIF';
     } else {
       certificateService.href = '#';
@@ -816,9 +831,9 @@ function renderMemberExperience(participant = {}) {
       if (text) text.textContent = 'Registrasi dan foto anggota telah disetujui. Identitas digital anggota aktif.';
       if (progressValue) progressValue.textContent = '100%';
       if (progressBar) progressBar.style.width = '100%';
-      if (progressText) progressText.textContent = 'Verifikasi anggota selesai. Kartu Anggota + QR aktif.';
+      if (progressText) progressText.textContent = 'Tahap 8 dari 8 · VERIFIED MEMBER, Kartu Anggota + QR, dan Sertifikat Digital tersedia.';
       if (accessLabel) accessLabel.textContent = 'VERIFIED MEMBER aktif';
-      if (accessText) accessText.textContent = 'Kartu Anggota + QR, sertifikat digital, dan verifikasi publik tersedia.';
+      if (accessText) accessText.textContent = 'Kartu Anggota + QR, Sertifikat Digital, dan verifikasi publik tersedia.';
     } else {
       memberCardService.href = '#';
       memberCardState.textContent = registrationVerified
@@ -1084,8 +1099,8 @@ function showDashboard(p) {
   cert.hidden = true;
   if (s === 'verified') {
     note.textContent = String(p.member_verification_status || '').toLowerCase() === 'approved'
-      ? 'VERIFIED MEMBER aktif. Sertifikat digital dan Kartu Anggota + QR tersedia.'
-      : 'Pendaftaran terverifikasi. Sertifikat digital tersedia; lanjutkan Verifikasi Anggota + Foto untuk mengaktifkan Kartu Anggota + QR.';
+      ? 'VERIFIED MEMBER aktif. Kartu Anggota + QR dan Sertifikat Digital tersedia.'
+      : 'Pendaftaran terverifikasi. Sertifikat Digital yang sudah tersedia tetap dapat digunakan; lanjutkan Verifikasi Anggota + Foto untuk mengaktifkan Kartu Anggota + QR.';
     cert.href = '../verifikasi/sertifikat/?registration_id=' + encodeURIComponent(p.registration_id);
     cert.hidden = false;
   } else if (s === 'revision') {
