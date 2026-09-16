@@ -1124,3 +1124,36 @@ footer {
   .public-progress-step b { width: 27px; height: 27px; }
   .public-progress-line { margin-top: 13px; }
 }
+
+
+/* V13.6.15.8 — Status tone + revision action */
+.status-dot.is-neutral {
+  background: #36a268;
+  box-shadow: 0 0 0 6px #e9f6ee;
+}
+.status-dot.is-processing {
+  background: #2f9d68;
+  box-shadow: 0 0 0 6px #e8f5ed;
+}
+.status-dot.is-success {
+  background: #187a4f;
+  box-shadow: 0 0 0 6px #e4f2ea;
+}
+.status-dot.is-attention {
+  background: #c68a16;
+  box-shadow: 0 0 0 6px #fff3d6;
+}
+.status-dot.is-danger {
+  background: #bd3d3d;
+  box-shadow: 0 0 0 6px #fde8e8;
+}
+.next-step-box .next-step-link {
+  width: fit-content;
+  padding: 9px 12px;
+  border: 1px solid #b9d9c7;
+  border-radius: 10px;
+  background: #fff;
+}
+.next-step-box .next-step-link:hover {
+  background: var(--green-3);
+}

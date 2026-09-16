@@ -9,6 +9,7 @@ const message = document.getElementById('message');
 const resultEmpty = document.getElementById('resultEmpty');
 const resultContent = document.getElementById('resultContent');
 const resultStatus = document.getElementById('resultStatus');
+const statusDot = document.getElementById('statusDot');
 const resultRegistrationId = document.getElementById('resultRegistrationId');
 const resultName = document.getElementById('resultName');
 const resultDate = document.getElementById('resultDate');
@@ -148,7 +149,8 @@ function setPublicJourney(registration) {
     setPublicProgress(2, true);
     setNextStep(
       'Data perlu diperbaiki',
-      'Ikuti catatan atau petunjuk perbaikan dari Admin, kemudian kirim kembali data yang diminta.'
+      'Masuk ke Dashboard Peserta untuk melihat catatan Admin dan mengirim perbaikan yang diminta.',
+      'Perbaiki Data Sekarang'
     );
     return;
   }
@@ -166,7 +168,8 @@ function setPublicJourney(registration) {
     setPublicProgress(2, true);
     setNextStep(
       'Pendaftaran tidak disetujui',
-      'Periksa informasi atau catatan yang diberikan pengelola. Hubungi pengelola program bila memerlukan penjelasan lebih lanjut.'
+      'Masuk ke Dashboard Peserta untuk melihat informasi atau catatan pengelola. Hubungi pengelola program bila memerlukan penjelasan lebih lanjut.',
+      'Lihat Informasi di Dashboard'
     );
     return;
   }
@@ -308,10 +311,22 @@ async function prepareCertificateAccess(registration) {
   }
 }
 
+function setStatusTone(status) {
+  if (!statusDot) return;
+  const value = String(status || '').toLowerCase();
+  statusDot.className = 'status-dot';
+  if (value === 'revision') statusDot.classList.add('is-attention');
+  else if (value === 'rejected') statusDot.classList.add('is-danger');
+  else if (value === 'pending' || value === 'resubmitted') statusDot.classList.add('is-processing');
+  else if (value === 'verified' || value === 'approved') statusDot.classList.add('is-success');
+  else statusDot.classList.add('is-neutral');
+}
+
 function showResult(registration) {
   resultRegistrationId.textContent = registration.registration_id || '-';
   resultName.textContent = registration.nama || '-';
   resultStatus.textContent = statusLabel(registration.status);
+  setStatusTone(registration.status);
   resultDate.textContent = formatDate(registration.created_at);
   resultEmpty.hidden = true;
   resultContent.hidden = false;
@@ -360,7 +375,7 @@ async function verifyRegistration(registrationId, options = {}) {
     }
 
     showResult(data.registration);
-    setMessage('info', 'Nomor registrasi ditemukan dan berhasil diverifikasi.');
+    setMessage('info', 'Data pendaftaran berhasil ditemukan.');
 
     // GA4: cek status dinyatakan berhasil hanya setelah API verifikasi
     // menemukan registrasi dan hasil berhasil ditampilkan.
