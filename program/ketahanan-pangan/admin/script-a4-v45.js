@@ -5051,6 +5051,8 @@ document.getElementById('marketingReportXlsx')?.addEventListener('click', downlo
 let adminEventCache = [];
 let adminEventSelectedId = '';
 let adminEventSaveInFlight = false;
+let adminEventImageObjectUrl = '';
+let adminEventImageRemoveRequested = false;
 
 function adminEventSetText(id, value) {
   const node = document.getElementById(id);
@@ -5089,6 +5091,54 @@ function initAdminEventManagement(user) {
   });
 
   document.getElementById('adminEventForm')?.addEventListener('submit', saveAdminEventForm);
+
+const adminEventSeoWatchIds = ['adminEventName','adminEventSummary','adminEventSlug','adminEventSeoTitle','adminEventMetaDescription','adminEventImageAlt'];
+adminEventSeoWatchIds.forEach(id => {
+  document.getElementById(id)?.addEventListener('input', () => {
+    if (id === 'adminEventName') {
+      const editingId = document.getElementById('adminEventEditingId')?.value || '';
+      const slugInput = document.getElementById('adminEventSlug');
+      if (!editingId && slugInput && !slugInput.dataset.userEdited) slugInput.value = adminEventSlugify(document.getElementById('adminEventName')?.value || '');
+    }
+    if (id === 'adminEventSlug') {
+      const slugInput = document.getElementById('adminEventSlug');
+      if (slugInput) {
+        slugInput.dataset.userEdited = '1';
+        const normalized = adminEventSlugify(slugInput.value);
+        if (slugInput.value !== normalized) slugInput.value = normalized;
+      }
+    }
+    adminEventSyncSeoPreview();
+  });
+});
+document.getElementById('adminEventSeoTitle')?.addEventListener('blur', adminEventSyncSeoPreview);
+document.getElementById('adminEventMetaDescription')?.addEventListener('blur', adminEventSyncSeoPreview);
+document.getElementById('adminEventImageFile')?.addEventListener('change', event => {
+  const input = event.currentTarget;
+  const file = input?.files?.[0] || null;
+  const message = document.getElementById('adminEventFormMessage');
+  try {
+    if (file) adminEventPreviewSelectedImage(file);
+    adminEventImageRemoveRequested = false;
+    if (message && file) { message.textContent = 'Gambar siap diunggah saat Simpan Perubahan ditekan.'; message.className = 'admin-event-message'; }
+  } catch (error) {
+    if (input) input.value = '';
+    adminEventShowImagePreview('', false);
+    if (message) { message.textContent = error.message; message.className = 'admin-event-message is-error'; }
+    showAdminToast('error', 'Gambar Event Tidak Valid', error.message);
+  }
+});
+document.getElementById('adminEventImageRemove')?.addEventListener('click', () => {
+  const editingId = document.getElementById('adminEventEditingId')?.value || '';
+  const input = document.getElementById('adminEventImageFile');
+  if (input) input.value = '';
+  adminEventClearImageObjectUrl();
+  adminEventShowImagePreview('', false);
+  adminEventImageRemoveRequested = Boolean(editingId);
+  const message = document.getElementById('adminEventFormMessage');
+  if (message) { message.textContent = editingId ? 'Gambar akan dihapus saat Simpan Perubahan ditekan.' : 'Gambar dibatalkan.'; message.className = 'admin-event-message'; }
+});
+
   const adminEventSaveButton = document.getElementById('adminEventSave');
   if (adminEventSaveButton && adminEventSaveButton.dataset.directSaveReady !== '1') {
     adminEventSaveButton.dataset.directSaveReady = '1';
@@ -5253,7 +5303,124 @@ function renderAdminEventList(events) {
   }).join('');
 }
 
+function adminEventSlugify(value) {
+  return String(value || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .replace(/-{2,}/g, '-')
+    .slice(0, 120);
+}
+
+function adminEventSeoTextFallback() {
+  const title = document.getElementById('adminEventName')?.value.trim() || '';
+  const summary = document.getElementById('adminEventSummary')?.value.trim() || '';
+  const slugInput = document.getElementById('adminEventSlug');
+  const seoTitleInput = document.getElementById('adminEventSeoTitle');
+  const metaInput = document.getElementById('adminEventMetaDescription');
+  const altInput = document.getElementById('adminEventImageAlt');
+  if (slugInput && !slugInput.value.trim()) slugInput.value = adminEventSlugify(title);
+  if (seoTitleInput && !seoTitleInput.value.trim()) seoTitleInput.value = title.slice(0, 70);
+  if (metaInput && !metaInput.value.trim()) metaInput.value = summary.slice(0, 160);
+  if (altInput && !altInput.value.trim() && title) altInput.value = `${title} - Program Ketahanan Pangan`.slice(0, 180);
+}
+
+function adminEventSyncSeoPreview() {
+  const title = document.getElementById('adminEventSeoTitle')?.value.trim()
+    || document.getElementById('adminEventName')?.value.trim()
+    || 'Judul Event';
+  const description = document.getElementById('adminEventMetaDescription')?.value.trim()
+    || document.getElementById('adminEventSummary')?.value.trim()
+    || 'Ringkasan event akan tampil di sini.';
+  const slug = adminEventSlugify(document.getElementById('adminEventSlug')?.value || document.getElementById('adminEventName')?.value || '');
+  adminEventSetText('adminEventPreviewTitle', title);
+  adminEventSetText('adminEventPreviewDescription', description);
+  adminEventSetText('adminEventPublicUrlPreview', `https://srilexbuditra.work/program/ketahanan-pangan/event/${slug || '...'}/`);
+  adminEventSetText('adminEventSeoTitleCount', String(document.getElementById('adminEventSeoTitle')?.value.length || 0));
+  adminEventSetText('adminEventMetaDescriptionCount', String(document.getElementById('adminEventMetaDescription')?.value.length || 0));
+}
+
+function adminEventClearImageObjectUrl() {
+  if (adminEventImageObjectUrl) {
+    try { URL.revokeObjectURL(adminEventImageObjectUrl); } catch (_) {}
+    adminEventImageObjectUrl = '';
+  }
+}
+
+function adminEventShowImagePreview(url = '', hasImage = false) {
+  const img = document.getElementById('adminEventImagePreview');
+  const placeholder = document.getElementById('adminEventImagePlaceholder');
+  const remove = document.getElementById('adminEventImageRemove');
+  if (img) {
+    if (url) {
+      img.src = url;
+      img.hidden = false;
+    } else {
+      img.removeAttribute('src');
+      img.hidden = true;
+    }
+  }
+  if (placeholder) placeholder.hidden = Boolean(url);
+  if (remove) remove.hidden = !hasImage;
+}
+
+async function adminEventLoadStoredImagePreview(eventId, hasImage) {
+  adminEventClearImageObjectUrl();
+  if (!eventId || !hasImage) {
+    adminEventShowImagePreview('', false);
+    return;
+  }
+  try {
+    const response = await fetch(`${ADMIN_API_BASE}/events/${encodeURIComponent(eventId)}/image?_=${Date.now()}`, {
+      credentials: 'include', cache: 'no-store', headers: { Accept: 'image/avif,image/webp,image/jpeg,image/png,*/*' }
+    });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const blob = await response.blob();
+    adminEventImageObjectUrl = URL.createObjectURL(blob);
+    adminEventShowImagePreview(adminEventImageObjectUrl, true);
+  } catch (_) {
+    adminEventShowImagePreview('', true);
+  }
+}
+
+function adminEventPreviewSelectedImage(file) {
+  adminEventClearImageObjectUrl();
+  if (!file) {
+    adminEventShowImagePreview('', false);
+    return;
+  }
+  const allowed = new Set(['image/avif','image/webp','image/jpeg','image/png']);
+  if (!allowed.has(file.type)) throw new Error('Gambar event harus AVIF, WEBP, JPG, atau PNG.');
+  if (file.size > 2 * 1024 * 1024) throw new Error('Ukuran gambar event maksimal 2 MB.');
+  adminEventImageObjectUrl = URL.createObjectURL(file);
+  adminEventShowImagePreview(adminEventImageObjectUrl, true);
+}
+
+async function adminEventUploadImage(eventId, file) {
+  const formData = new FormData();
+  formData.append('image', file);
+  const response = await fetch(`${ADMIN_API_BASE}/events/${encodeURIComponent(eventId)}/image`, {
+    method: 'POST', credentials: 'include', cache: 'no-store', headers: { Accept: 'application/json' }, body: formData
+  });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok || data?.ok === false) throw new Error(data?.message || `Upload gambar gagal (HTTP ${response.status}).`);
+  return data;
+}
+
+async function adminEventDeleteImage(eventId) {
+  const response = await fetch(`${ADMIN_API_BASE}/events/${encodeURIComponent(eventId)}/image`, {
+    method: 'DELETE', credentials: 'include', cache: 'no-store', headers: { Accept: 'application/json' }
+  });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok || data?.ok === false) throw new Error(data?.message || `Hapus gambar gagal (HTTP ${response.status}).`);
+  return data;
+}
+
 function resetAdminEventForm() {
+  adminEventClearImageObjectUrl();
+  adminEventImageRemoveRequested = false;
   const form = document.getElementById('adminEventForm');
   form?.reset();
   adminEventSetText('adminEventFormTitle', 'Buat Event Baru');
@@ -5265,6 +5432,20 @@ function resetAdminEventForm() {
   if (capacity) capacity.value = '0';
   if (level) level.value = '1';
   if (points) points.value = '0';
+  const slug = document.getElementById('adminEventSlug');
+  const seoTitle = document.getElementById('adminEventSeoTitle');
+  const metaDescription = document.getElementById('adminEventMetaDescription');
+  const imageAlt = document.getElementById('adminEventImageAlt');
+  const seoIndex = document.getElementById('adminEventSeoIndex');
+  const imageFile = document.getElementById('adminEventImageFile');
+  if (slug) { slug.value = ''; delete slug.dataset.userEdited; }
+  if (seoTitle) seoTitle.value = '';
+  if (metaDescription) metaDescription.value = '';
+  if (imageAlt) imageAlt.value = '';
+  if (seoIndex) seoIndex.checked = true;
+  if (imageFile) imageFile.value = '';
+  adminEventShowImagePreview('', false);
+  adminEventSyncSeoPreview();
   const message = document.getElementById('adminEventFormMessage');
   if (message) { message.textContent = ''; message.className = 'admin-event-message'; }
   const save = document.getElementById('adminEventSave');
@@ -5293,6 +5474,13 @@ function openAdminEventForm(event = null) {
     document.getElementById('adminEventMinLevel').value = String(Number(event.min_level || 1));
     document.getElementById('adminEventPoints').value = String(Number(event.attendance_points || 0));
     document.getElementById('adminEventVerifiedOnly').checked = Number(event.requires_verified_member || 0) === 1;
+    document.getElementById('adminEventSlug').value = event.slug || adminEventSlugify(event.title || '');
+    document.getElementById('adminEventSeoTitle').value = event.seo_title || event.title || '';
+    document.getElementById('adminEventMetaDescription').value = event.meta_description || String(event.summary || '').slice(0, 160);
+    document.getElementById('adminEventImageAlt').value = event.image_alt || (event.title ? `${event.title} - Program Ketahanan Pangan`.slice(0, 180) : '');
+    document.getElementById('adminEventSeoIndex').checked = Number(event.seo_index ?? 1) === 1;
+    adminEventSyncSeoPreview();
+    void adminEventLoadStoredImagePreview(event.event_id || '', Number(event.has_image || 0) === 1 || Boolean(event.image_mime));
     const save = document.getElementById('adminEventSave');
     if (save) save.textContent = 'Simpan Perubahan';
   }
@@ -5332,7 +5520,12 @@ async function saveAdminEventForm(event) {
     capacity: Number(document.getElementById('adminEventCapacity')?.value || 0),
     min_level: Number(document.getElementById('adminEventMinLevel')?.value || 1),
     attendance_points: Number(document.getElementById('adminEventPoints')?.value || 0),
-    requires_verified_member: Boolean(document.getElementById('adminEventVerifiedOnly')?.checked)
+    requires_verified_member: Boolean(document.getElementById('adminEventVerifiedOnly')?.checked),
+    slug: adminEventSlugify(document.getElementById('adminEventSlug')?.value || title),
+    seo_title: document.getElementById('adminEventSeoTitle')?.value.trim() || title,
+    meta_description: document.getElementById('adminEventMetaDescription')?.value.trim() || (document.getElementById('adminEventSummary')?.value.trim() || '').slice(0, 160),
+    image_alt: document.getElementById('adminEventImageAlt')?.value.trim() || `${title} - Program Ketahanan Pangan`.slice(0, 180),
+    seo_index: Boolean(document.getElementById('adminEventSeoIndex')?.checked)
   };
 
   const startMs = payload.start_at ? new Date(payload.start_at).getTime() : null;
@@ -5353,19 +5546,36 @@ async function saveAdminEventForm(event) {
     return;
   }
 
+  let eventDataSaved = false;
   try {
     adminEventSaveInFlight = true;
     if (save) { save.disabled = true; save.textContent = editingId ? 'Menyimpan...' : 'Membuat...'; }
     if (message) { message.textContent = editingId ? 'Menyimpan perubahan event…' : 'Membuat draft event…'; message.className = 'admin-event-message'; }
     const path = editingId ? `/events/${encodeURIComponent(editingId)}/update` : '/events';
     const data = await adminEventRequest(path, { method: 'POST', body: JSON.stringify(payload) });
-    if (message) { message.textContent = data.message || 'Event berhasil disimpan.'; message.className = 'admin-event-message is-success'; }
-    showAdminToast('success', editingId ? 'Event Diperbarui' : 'Draft Event Dibuat', data.message || 'Data event tersimpan.');
+    eventDataSaved = true;
+    const savedEventId = data?.event?.event_id || editingId;
+    const imageFile = document.getElementById('adminEventImageFile')?.files?.[0] || null;
+
+    if (savedEventId && adminEventImageRemoveRequested && !imageFile) {
+      if (message) { message.textContent = 'Data tersimpan. Menghapus gambar event…'; message.className = 'admin-event-message'; }
+      await adminEventDeleteImage(savedEventId);
+    }
+    if (savedEventId && imageFile) {
+      if (message) { message.textContent = 'Data tersimpan. Mengunggah gambar utama event…'; message.className = 'admin-event-message'; }
+      await adminEventUploadImage(savedEventId, imageFile);
+    }
+
+    if (message) { message.textContent = 'Data event, SEO, dan tampilan publik berhasil disimpan.'; message.className = 'admin-event-message is-success'; }
+    showAdminToast('success', editingId ? 'Event Diperbarui' : 'Draft Event Dibuat', 'Data event, SEO, dan gambar berhasil disinkronkan.');
     await loadAdminEvents();
-    setTimeout(closeAdminEventForm, 550);
+    setTimeout(closeAdminEventForm, 650);
   } catch (error) {
-    if (message) { message.textContent = error.message || 'Event belum dapat disimpan.'; message.className = 'admin-event-message is-error'; }
-    showAdminToast('error', 'Event Belum Disimpan', error.message || 'Silakan periksa data event.');
+    const detail = eventDataSaved
+      ? `Data event sudah tersimpan, tetapi proses gambar belum selesai: ${error.message || 'gagal memproses gambar.'}`
+      : (error.message || 'Event belum dapat disimpan.');
+    if (message) { message.textContent = detail; message.className = 'admin-event-message is-error'; }
+    showAdminToast('error', eventDataSaved ? 'Gambar Event Belum Tersimpan' : 'Event Belum Disimpan', detail);
   } finally {
     adminEventSaveInFlight = false;
     if (save) { save.disabled = false; save.textContent = editingId ? 'Simpan Perubahan' : 'Simpan Draft'; }

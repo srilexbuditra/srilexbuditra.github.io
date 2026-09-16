@@ -58,7 +58,7 @@
 
   <link rel="stylesheet" href="./style.css?v=17.18.0">
   <link rel="stylesheet" href="./style-verifikasi-tambahan.css?v=12.6.1">
-  <link rel="stylesheet" href="./admin-dashboard-v2.css?v=17.19.11">
+  <link rel="stylesheet" href="./admin-dashboard-v2.css?v=17.19.13">
 </head>
 <body>
     <header class="top">
@@ -507,6 +507,76 @@
             <label class="admin-event-field"><span>Minimal Level</span><select id="adminEventMinLevel"><option value="1">Level 1 — Tunas</option><option value="2">Level 2 — Tumbuh</option><option value="3">Level 3 — Berkembang</option><option value="4">Level 4 — Produktif</option><option value="5">Level 5 — Maju</option><option value="6">Level 6 — Unggul</option></select></label>
             <label class="admin-event-field"><span>Poin Kehadiran</span><input id="adminEventPoints" type="number" min="0" max="1000" step="1" value="0"><small>Diberikan hanya setelah kehadiran diverifikasi admin.</small></label>
             <label class="admin-event-check"><input id="adminEventVerifiedOnly" type="checkbox"><span>Wajib VERIFIED MEMBER</span></label>
+
+            <section class="admin-event-seo-section admin-event-field-wide" aria-labelledby="adminEventSeoHeading">
+              <div class="admin-event-seo-head">
+                <div>
+                  <span class="admin-event-seo-kicker">SEO &amp; TAMPILAN PUBLIK</span>
+                  <strong id="adminEventSeoHeading">Siapkan event untuk Google, WhatsApp &amp; halaman publik</strong>
+                  <small>Draft tetap noindex. Metadata ini mulai digunakan pada halaman publik setelah event dipublikasikan.</small>
+                </div>
+                <span class="admin-event-seo-badge">Draft = noindex</span>
+              </div>
+
+              <div class="admin-event-seo-grid">
+                <label class="admin-event-field admin-event-field-wide">
+                  <span>Slug URL</span>
+                  <div class="admin-event-slug-input">
+                    <span>.../event/</span>
+                    <input id="adminEventSlug" type="text" maxlength="120" inputmode="url" autocomplete="off" placeholder="urban-farming-super-tani-indonesia-bengkulu">
+                  </div>
+                  <small>Gunakan huruf kecil dan tanda hubung. Jika kosong, sistem membuat slug otomatis dari Judul Event.</small>
+                </label>
+
+                <label class="admin-event-field">
+                  <span>Judul SEO</span>
+                  <input id="adminEventSeoTitle" type="text" maxlength="70" placeholder="Judul yang tampil pada hasil pencarian">
+                  <small><span id="adminEventSeoTitleCount">0</span>/70 karakter</small>
+                </label>
+
+                <label class="admin-event-field">
+                  <span>Alt Text Gambar</span>
+                  <input id="adminEventImageAlt" type="text" maxlength="180" placeholder="Contoh: Urban Farming Super Tani Indonesia di Bengkulu">
+                  <small>Jelaskan isi gambar secara singkat untuk aksesibilitas dan image SEO.</small>
+                </label>
+
+                <label class="admin-event-field admin-event-field-wide">
+                  <span>Meta Description</span>
+                  <textarea id="adminEventMetaDescription" rows="3" maxlength="160" placeholder="Ringkasan singkat event untuk Google dan social preview."></textarea>
+                  <small><span id="adminEventMetaDescriptionCount">0</span>/160 karakter</small>
+                </label>
+
+                <div class="admin-event-field admin-event-field-wide">
+                  <span>Gambar Utama Event</span>
+                  <div class="admin-event-image-actions">
+                    <label class="admin-event-image-picker">
+                      <input id="adminEventImageFile" type="file" accept="image/avif,image/webp,image/jpeg,image/png">
+                      <span>Pilih / Ganti Gambar</span>
+                    </label>
+                    <button id="adminEventImageRemove" type="button" class="admin-event-button admin-event-button-secondary" hidden>Hapus Gambar</button>
+                  </div>
+                  <small>Disarankan 1200×630 px (1.91:1), AVIF/WEBP/JPG/PNG, maksimal 2 MB. Gambar digunakan untuk kartu event dan social preview.</small>
+                </div>
+
+                <label class="admin-event-check admin-event-seo-index">
+                  <input id="adminEventSeoIndex" type="checkbox" checked>
+                  <span>Izinkan Google mengindeks setelah event dipublikasikan</span>
+                </label>
+              </div>
+
+              <div class="admin-event-public-preview" aria-live="polite">
+                <div class="admin-event-public-preview-image">
+                  <img id="adminEventImagePreview" alt="Preview gambar event" hidden>
+                  <span id="adminEventImagePlaceholder">Belum ada gambar utama</span>
+                </div>
+                <div class="admin-event-public-preview-copy">
+                  <small>PREVIEW PUBLIK</small>
+                  <strong id="adminEventPreviewTitle">Judul Event</strong>
+                  <p id="adminEventPreviewDescription">Ringkasan event akan tampil di sini.</p>
+                  <code id="adminEventPublicUrlPreview">https://srilexbuditra.work/program/ketahanan-pangan/event/...</code>
+                </div>
+              </div>
+            </section>
           </div>
           <div class="admin-event-form-actions">
             <button id="adminEventSave" type="submit" class="admin-event-button admin-event-button-primary">Simpan Draft</button>
@@ -864,7 +934,7 @@
     <script src="./local-qrcode.js?v=1" defer></script>
     <script src="./jszip.min.js?v=1" defer></script>
     <script src="./excel-engine-template.js?v=45" defer></script>
-    <script src="./script-a4-v45.js?v=17.19.12" defer></script>
+    <script src="./script-a4-v45.js?v=17.19.13" defer></script>
     <script src="./admin-dashboard-v2.js?v=17.19.7" defer></script>
     <script src="/assets/js/visitor-analytics.js" defer></script>
 </body>
