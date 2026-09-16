@@ -40,3 +40,7 @@
 .source-link:hover{background:var(--forest-2)}
 #publicSourceStatus{display:block;min-height:20px;margin-top:8px;color:var(--ok);font-weight:800;font-size:12px}
 @media (max-width:560px){.public-source-actions{display:grid;grid-template-columns:1fr}.public-source-actions>*{width:100%}}
+
+
+/* V13.6.16.0 — success page follows participant journey */
+.journey-next ol{margin:8px 0 10px;padding-left:22px;color:var(--muted)}.journey-next li{margin:7px 0;line-height:1.5}.activation-lock{display:flex;align-items:center;gap:12px;margin:18px 0;padding:15px 17px;border:1px solid #ead5a8;border-radius:16px;background:#fff9eb;text-align:left}.activation-lock>span{width:38px;height:38px;display:grid;place-items:center;border-radius:50%;background:#f2dfad}.activation-lock strong{display:block;color:#73540f}.activation-lock small{display:block;margin-top:3px;color:var(--muted);line-height:1.45}.success-actions.single-primary{grid-template-columns:1fr}.success-actions.single-primary .success-btn.ghost{grid-column:auto}
