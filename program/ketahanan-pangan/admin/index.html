@@ -58,7 +58,7 @@
 
   <link rel="stylesheet" href="./style.css?v=17.18.0">
   <link rel="stylesheet" href="./style-verifikasi-tambahan.css?v=12.6.1">
-  <link rel="stylesheet" href="./admin-dashboard-v2.css?v=17.19.6">
+  <link rel="stylesheet" href="./admin-dashboard-v2.css?v=17.19.9">
 </head>
 <body>
     <header class="top">
@@ -723,6 +723,75 @@
 
     </main>
 
+    <div id="participantCommunicationModal" class="participant-communication-modal" hidden aria-hidden="true">
+      <div class="participant-communication-backdrop" data-communication-close></div>
+      <section class="participant-communication-dialog" role="dialog" aria-modal="true" aria-labelledby="participantCommunicationTitle">
+        <div class="participant-communication-head">
+          <div>
+            <span class="eyebrow">KOMUNIKASI PESERTA</span>
+            <h2 id="participantCommunicationTitle">Hubungi via WhatsApp</h2>
+          </div>
+          <button type="button" class="participant-communication-close" data-communication-close aria-label="Tutup">×</button>
+        </div>
+
+        <div class="participant-communication-summary">
+          <div><span>Peserta</span><strong id="participantCommunicationName">-</strong></div>
+          <div><span>No. Registrasi</span><strong id="participantCommunicationRegistration">-</strong></div>
+          <div><span>WhatsApp</span><strong id="participantCommunicationPhone">-</strong></div>
+          <div><span>Saran Sistem</span><strong id="participantCommunicationSuggestion">-</strong></div>
+        </div>
+
+        <div class="participant-communication-form">
+          <label class="participant-communication-field">
+            <span>Jenis Pesan</span>
+            <select id="participantCommunicationType">
+              <option value="registration_received">Pendaftaran Sudah Tercatat</option>
+              <option value="under_review">Sedang Dalam Pemeriksaan</option>
+              <option value="activation_reminder">Belum Aktivasi Akun</option>
+              <option value="account_active">Akun Sudah Aktif</option>
+              <option value="verified">Pendaftaran Terverifikasi</option>
+              <option value="revision">Perlu Perbaikan Data</option>
+              <option value="rejected">Pendaftaran Ditolak</option>
+              <option value="member_verification">Verifikasi Foto / VERIFIED MEMBER</option>
+              <option value="event">Undangan Event / Pameran</option>
+              <option value="announcement">Berita / Pengumuman Penting</option>
+              <option value="manual">Pesan Manual</option>
+            </select>
+          </label>
+
+          <label id="participantCommunicationExtraWrap" class="participant-communication-field participant-communication-field--full" hidden>
+            <span id="participantCommunicationExtraLabel">Informasi Tambahan</span>
+            <textarea id="participantCommunicationExtra" maxlength="1200" rows="3" placeholder="Tuliskan informasi tambahan..."></textarea>
+            <small id="participantCommunicationExtraHelp"></small>
+          </label>
+
+          <div id="participantCommunicationEventFields" class="participant-communication-event-fields" hidden>
+            <label class="participant-communication-field"><span>Nama Event / Pameran</span><input id="participantCommunicationEventName" type="text" maxlength="160" placeholder="Contoh: Pameran Pertanian 2026"></label>
+            <label class="participant-communication-field"><span>Tanggal</span><input id="participantCommunicationEventDate" type="date"></label>
+            <label class="participant-communication-field"><span>Waktu</span><input id="participantCommunicationEventTime" type="time"></label>
+            <label class="participant-communication-field"><span>Lokasi</span><input id="participantCommunicationEventLocation" type="text" maxlength="220" placeholder="Lokasi kegiatan"></label>
+            <label class="participant-communication-field participant-communication-field--full"><span>Link / Informasi Event</span><input id="participantCommunicationEventLink" type="url" maxlength="500" placeholder="https://..."></label>
+          </div>
+
+          <label class="participant-communication-field participant-communication-field--full participant-communication-preview-field">
+            <span class="participant-communication-preview-label">Preview Pesan <button id="participantCommunicationRegenerate" type="button">Buat Ulang dari Template</button></span>
+            <textarea id="participantCommunicationMessage" rows="12" maxlength="4000" placeholder="Pesan WhatsApp akan muncul di sini..."></textarea>
+            <small>Pesan dapat diedit sebelum WhatsApp dibuka.</small>
+          </label>
+        </div>
+
+        <div id="participantCommunicationValidation" class="participant-communication-validation" hidden></div>
+        <div class="participant-communication-notice">
+          Pesan tidak dikirim otomatis. Dashboard hanya menyiapkan pesan dan membuka WhatsApp; Admin tetap menekan tombol Kirim di WhatsApp.
+        </div>
+        <div class="participant-communication-actions">
+          <button type="button" class="participant-communication-cancel" data-communication-close>Batal</button>
+          <button id="participantCommunicationCopy" type="button" class="participant-communication-copy">Salin Pesan</button>
+          <button id="participantCommunicationOpenWhatsapp" type="button" class="participant-communication-whatsapp">Buka WhatsApp</button>
+        </div>
+      </section>
+    </div>
+
     <div id="deleteParticipantModal" class="participant-delete-modal" hidden aria-hidden="true">
       <div class="participant-delete-backdrop" data-delete-close></div>
       <section class="participant-delete-dialog" role="dialog" aria-modal="true" aria-labelledby="deleteParticipantTitle">
@@ -755,7 +824,7 @@
     <script src="./local-qrcode.js?v=1" defer></script>
     <script src="./jszip.min.js?v=1" defer></script>
     <script src="./excel-engine-template.js?v=45" defer></script>
-    <script src="./script-a4-v45.js?v=17.19.8" defer></script>
+    <script src="./script-a4-v45.js?v=17.19.9" defer></script>
     <script src="./admin-dashboard-v2.js?v=17.19.7" defer></script>
     <script src="/assets/js/visitor-analytics.js" defer></script>
 </body>

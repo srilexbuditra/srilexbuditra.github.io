@@ -638,3 +638,103 @@ body.admin-v2-active #certificatePanel.admin-v2-unified-modal{
     width:calc(100vw - 12px)!important;padding:14px!important
   }
 }
+
+
+/* =========================================================
+   V17.19.9 — Pusat Komunikasi Peserta / WhatsApp
+   ========================================================= */
+body.participant-communication-modal-open{overflow:hidden!important}
+.participant-whatsapp-cell{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.participant-whatsapp-button{
+  display:inline-flex;align-items:center;justify-content:center;gap:7px;
+  min-height:38px;padding:8px 13px;border:0;border-radius:10px;
+  background:#128c57;color:#fff;font-weight:800;cursor:pointer;
+  box-shadow:0 6px 18px rgba(18,140,87,.18)
+}
+.participant-whatsapp-button:hover{background:#0d7a4b}
+.participant-whatsapp-button:focus-visible{outline:3px solid rgba(18,140,87,.22);outline-offset:2px}
+.participant-whatsapp-button:disabled{opacity:.5;cursor:not-allowed;box-shadow:none}
+.participant-communication-modal[hidden]{display:none!important}
+.participant-communication-modal{position:fixed;inset:0;z-index:7000}
+.participant-communication-backdrop{
+  position:absolute;inset:0;background:rgba(5,34,25,.58);
+  backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)
+}
+.participant-communication-dialog{
+  position:absolute;z-index:1;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:min(900px,calc(100vw - 32px));max-height:calc(100dvh - 32px);overflow:auto;
+  overscroll-behavior:contain;scrollbar-gutter:stable;
+  background:#fff;border:1px solid #cfe2d9;border-radius:20px;
+  box-shadow:0 28px 90px rgba(3,42,30,.36);padding:20px
+}
+.participant-communication-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:14px}
+.participant-communication-head h2{margin:3px 0 0;color:#123f32}
+.participant-communication-close{
+  width:40px;height:40px;flex:0 0 40px;border:1px solid #d9e7e1;border-radius:12px;
+  background:#f6faf8;color:#264b40;font-size:25px;line-height:1;cursor:pointer
+}
+.participant-communication-summary{
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;
+  padding:12px;border:1px solid #dceae4;border-radius:14px;background:#f7fbf9;margin-bottom:16px
+}
+.participant-communication-summary div{min-width:0}
+.participant-communication-summary span{display:block;color:#668077;font-size:12px;font-weight:700;margin-bottom:3px}
+.participant-communication-summary strong{display:block;color:#153f33;overflow-wrap:anywhere}
+.participant-communication-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.participant-communication-field{display:grid;gap:6px;min-width:0}
+.participant-communication-field--full,.participant-communication-event-fields{grid-column:1/-1}
+.participant-communication-field>span,.participant-communication-preview-label{font-weight:800;color:#234b3f;font-size:13px}
+.participant-communication-field input,
+.participant-communication-field select,
+.participant-communication-field textarea{
+  width:100%;box-sizing:border-box;border:1px solid #cbded6;border-radius:11px;background:#fff;
+  color:#173e33;font:inherit;padding:10px 11px;resize:vertical
+}
+.participant-communication-field select{appearance:auto;-webkit-appearance:menulist;min-height:43px}
+.participant-communication-field input:focus,
+.participant-communication-field select:focus,
+.participant-communication-field textarea:focus{
+  outline:none;border-color:#0e9a67;box-shadow:0 0 0 3px rgba(14,154,103,.11)
+}
+.participant-communication-field small{color:#6a8079;line-height:1.45}
+.participant-communication-event-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;padding:12px;border:1px dashed #c9ddd5;border-radius:13px;background:#fbfdfc}
+.participant-communication-event-fields[hidden]{display:none!important}
+.participant-communication-preview-field textarea{min-height:240px;line-height:1.5;white-space:pre-wrap}
+.participant-communication-preview-label{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.participant-communication-preview-label button{
+  border:1px solid #cfe0d9;background:#f5faf8;color:#176044;border-radius:9px;padding:6px 9px;font-weight:800;cursor:pointer
+}
+.participant-communication-validation{
+  margin-top:12px;padding:10px 12px;border:1px solid #efc7c7;border-radius:11px;background:#fff5f5;color:#a23535;font-weight:700
+}
+.participant-communication-notice{
+  margin-top:12px;padding:10px 12px;border:1px solid #d8e6df;border-radius:11px;background:#f7faf8;color:#526c63;font-size:13px;line-height:1.5
+}
+.participant-communication-actions{
+  position:sticky;bottom:-20px;z-index:2;display:flex;justify-content:flex-end;gap:9px;
+  margin:16px -20px -20px;padding:12px 20px;background:rgba(255,255,255,.97);
+  border-top:1px solid #e2ece7;backdrop-filter:blur(8px)
+}
+.participant-communication-actions button{min-height:42px;padding:9px 15px;border-radius:10px;font-weight:850;cursor:pointer}
+.participant-communication-cancel{border:1px solid #cfded8;background:#fff;color:#36564d}
+.participant-communication-copy{border:1px solid #a9cabc;background:#eef8f3;color:#126143}
+.participant-communication-whatsapp{border:0;background:#128c57;color:#fff;box-shadow:0 7px 20px rgba(18,140,87,.2)}
+.participant-communication-whatsapp:hover{background:#0d7a4b}
+
+@media(max-width:760px){
+  .participant-whatsapp-cell{align-items:stretch}
+  .participant-whatsapp-button{width:100%}
+  .participant-communication-dialog{width:calc(100vw - 12px);max-height:calc(100dvh - 12px);padding:14px;border-radius:16px}
+  .participant-communication-summary{grid-template-columns:1fr 1fr}
+  .participant-communication-form{grid-template-columns:1fr}
+  .participant-communication-event-fields{grid-template-columns:1fr}
+  .participant-communication-field--full,.participant-communication-event-fields{grid-column:1}
+  .participant-communication-preview-label{align-items:flex-start;flex-direction:column}
+  .participant-communication-preview-label button{width:100%}
+  .participant-communication-actions{bottom:-14px;margin:14px -14px -14px;padding:10px 14px;display:grid;grid-template-columns:1fr}
+  .participant-communication-actions button{width:100%}
+}
+
+@media(max-width:460px){
+  .participant-communication-summary{grid-template-columns:1fr}
+}
