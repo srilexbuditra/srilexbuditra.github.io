@@ -1,6 +1,6 @@
 'use strict';
 
-// Dashboard Admin V2 — Management Select Stability + Logout (V17.19.3)
+// Dashboard Admin V2 — Mobile Navigation + Logout Stability (V17.19.4)
 // Presentation/navigation layer only. Core admin logic remains in script-a4-v45.js.
 (() => {
   const STORAGE_KEY = 'kp_admin_v2_view';
@@ -78,7 +78,10 @@
   }
 
   function injectShell() {
-    if ($('#adminV2Sidebar')) return;
+    if ($('#adminV2Sidebar')) {
+      bindDirectShellControls();
+      return;
+    }
 
     const sidebar = document.createElement('aside');
     sidebar.id = 'adminV2Sidebar';
@@ -87,7 +90,8 @@
     sidebar.innerHTML = `
       <div class="admin-v2-brand">
         <img src="/program/ketahanan-pangan/assets/brand/favicon-192x192.png" alt="">
-        <div><strong>Program Ketahanan Pangan</strong><span>DASHBOARD ADMIN V2 · V17.19.3</span></div>
+        <div><strong>Program Ketahanan Pangan</strong><span>DASHBOARD ADMIN V2 · V17.19.4</span></div>
+        <button id="adminV2SidebarClose" class="admin-v2-sidebar-close" type="button" aria-label="Tutup menu navigasi">×</button>
       </div>
       <nav class="admin-v2-nav" id="adminV2Nav"></nav>
       <div class="admin-v2-sidebar-foot">
@@ -125,6 +129,7 @@
     injectHelperPanels();
     assignViews();
     bindShellEvents();
+    bindDirectShellControls();
   }
 
   function renderNav() {
@@ -339,6 +344,114 @@
     return event.button === 0 && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey;
   }
 
+  let v2LogoutBusy = false;
+
+  function handleMenuToggle(event) {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+    document.body.classList.contains('admin-v2-sidebar-open') ? closeDrawer() : openDrawer();
+  }
+
+  function handleSidebarClose(event) {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+    closeDrawer();
+  }
+
+  async function handleV2Logout(event) {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+    if (v2LogoutBusy) return;
+
+    const button = $('#adminV2LogoutButton');
+    const label = button?.querySelector('strong');
+    const originalLabel = label?.textContent || 'Keluar Akun';
+    v2LogoutBusy = true;
+    closeDrawer();
+
+    if (button) {
+      button.disabled = true;
+      button.setAttribute('aria-busy', 'true');
+    }
+    if (label) label.textContent = 'Keluar...';
+
+    try {
+      // Prefer the stable legacy logout function already used by the dashboard.
+      if (typeof window.logoutAdmin === 'function') {
+        await window.logoutAdmin();
+      } else {
+        const legacyLogout = $('#adminLogoutButton');
+        if (!legacyLogout || legacyLogout.disabled) throw new Error('Logout handler unavailable');
+        legacyLogout.click();
+      }
+    } catch (error) {
+      console.error('Dashboard V2 logout error:', error);
+      v2LogoutBusy = false;
+      if (button) {
+        button.disabled = false;
+        button.removeAttribute('aria-busy');
+      }
+      if (label) label.textContent = originalLabel;
+      return;
+    }
+
+    // logoutAdmin normally redirects in ~900 ms. Re-enable only if redirect did not happen.
+    window.setTimeout(() => {
+      if (!document.documentElement.contains(button)) return;
+      v2LogoutBusy = false;
+      if (button) {
+        button.disabled = false;
+        button.removeAttribute('aria-busy');
+      }
+      if (label) label.textContent = originalLabel;
+    }, 2200);
+  }
+
+  function bindDirectShellControls() {
+    const menuToggle = $('#adminV2MenuToggle');
+    if (menuToggle && menuToggle.dataset.adminV2DirectBound !== '1') {
+      menuToggle.dataset.adminV2DirectBound = '1';
+      menuToggle.addEventListener('click', handleMenuToggle, true);
+    }
+
+    const sidebarClose = $('#adminV2SidebarClose');
+    if (sidebarClose && sidebarClose.dataset.adminV2DirectBound !== '1') {
+      sidebarClose.dataset.adminV2DirectBound = '1';
+      sidebarClose.addEventListener('click', handleSidebarClose, true);
+    }
+
+    const backdrop = $('#adminV2Backdrop');
+    if (backdrop && backdrop.dataset.adminV2DirectBound !== '1') {
+      backdrop.dataset.adminV2DirectBound = '1';
+      backdrop.addEventListener('click', handleSidebarClose, true);
+    }
+
+    const logout = $('#adminV2LogoutButton');
+    if (logout && logout.dataset.adminV2DirectBound !== '1') {
+      logout.dataset.adminV2DirectBound = '1';
+      logout.addEventListener('click', handleV2Logout, true);
+    }
+
+    // Bind sidebar links directly so mobile navigation still works even if another
+    // component stops click propagation before it reaches the document delegate.
+    $$('[data-admin-v2-view]').forEach(link => {
+      if (link.dataset.adminV2DirectBound === '1') return;
+      link.dataset.adminV2DirectBound = '1';
+      link.addEventListener('click', event => {
+        if (link.hidden || !isPlainLeftClick(event)) return;
+        event.preventDefault();
+        event.stopPropagation();
+        setView(link.dataset.adminV2View, { history:'push' });
+      }, true);
+    });
+  }
+
   function bindShellEvents() {
     if (document.body.dataset.adminV2Bound === '1') return;
     document.body.dataset.adminV2Bound = '1';
@@ -359,20 +472,16 @@
       }
 
       if (event.target.closest('#adminV2MenuToggle')) {
-        event.preventDefault();
-        document.body.classList.contains('admin-v2-sidebar-open') ? closeDrawer() : openDrawer();
+        handleMenuToggle(event);
         return;
       }
 
       if (event.target.closest('#adminV2LogoutButton')) {
-        event.preventDefault();
-        closeDrawer();
-        const legacyLogout = $('#adminLogoutButton');
-        if (legacyLogout && !legacyLogout.disabled) legacyLogout.click();
+        handleV2Logout(event);
         return;
       }
 
-      if (event.target.closest('#adminV2Backdrop')) closeDrawer();
+      if (event.target.closest('#adminV2Backdrop')) handleSidebarClose(event);
     });
 
     // Existing status quick cards keep their original filter logic, then switch to

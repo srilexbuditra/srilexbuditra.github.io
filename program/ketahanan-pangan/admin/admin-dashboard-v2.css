@@ -441,3 +441,52 @@ body.admin-v2-active #createAdminUserForm:not([hidden]){
   }
   .admin-fixed-select-popover{display:none!important}
 }
+
+
+/* =========================================================
+   V17.19.4 — Mobile drawer + logout interaction stability
+   Keeps the V17.19.3 desktop fixed Role/Status popover unchanged.
+   ========================================================= */
+.admin-v2-menu-toggle,
+.admin-v2-sidebar-close,
+.admin-v2-logout{
+  touch-action:manipulation;
+  -webkit-tap-highlight-color:transparent;
+}
+.admin-v2-menu-toggle{
+  position:relative;
+  z-index:1255;
+  pointer-events:auto!important;
+}
+.admin-v2-sidebar-close{
+  display:none;
+  margin-left:auto;
+  width:38px;
+  height:38px;
+  flex:0 0 38px;
+  place-items:center;
+  border:1px solid rgba(255,255,255,.16);
+  border-radius:10px;
+  background:rgba(255,255,255,.08);
+  color:#fff;
+  font:inherit;
+  font-size:22px;
+  line-height:1;
+  cursor:pointer;
+}
+.admin-v2-sidebar-close:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.admin-v2-logout:disabled{opacity:.72;cursor:wait}
+
+@media(max-width:900px){
+  body.admin-v2-active .admin-v2-sidebar{
+    height:100dvh;
+    max-height:100dvh;
+    -webkit-overflow-scrolling:touch;
+    overscroll-behavior:contain;
+  }
+  body.admin-v2-active.admin-v2-sidebar-open{overflow:hidden}
+  body.admin-v2-active .admin-v2-sidebar-close{display:grid}
+  body.admin-v2-active .admin-v2-menu-toggle{display:grid!important}
+  body.admin-v2-active .admin-v2-backdrop{touch-action:none}
+  .admin-v2-sidebar-foot{padding-bottom:max(18px,env(safe-area-inset-bottom))}
+}
