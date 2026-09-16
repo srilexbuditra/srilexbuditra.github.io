@@ -5312,7 +5312,7 @@ function renderAdminEventList(events) {
       <div class="admin-event-card-top">
         <div class="admin-event-card-title">
           <h3>${escapeHtml(event.title || 'Event Tanpa Judul')}</h3>
-          <p>${escapeHtml(event.summary || 'Belum ada ringkasan event.')}</p>
+          <p>${escapeHtml(adminEventPlainText(event.summary || 'Belum ada ringkasan event.', 900))}</p>
         </div>
         <div class="admin-event-badges">
           <span class="admin-event-badge admin-event-badge--${escapeHtml(status)}">${escapeHtml(adminEventStatusLabel(status))}</span>
@@ -5572,7 +5572,7 @@ function openAdminEventForm(event = null) {
     document.getElementById('adminEventVerifiedOnly').checked = Number(event.requires_verified_member || 0) === 1;
     document.getElementById('adminEventSlug').value = event.slug || adminEventSlugify(event.title || '');
     document.getElementById('adminEventSeoTitle').value = event.seo_title || event.title || '';
-    document.getElementById('adminEventMetaDescription').value = event.meta_description || String(event.summary || '').slice(0, 160);
+    document.getElementById('adminEventMetaDescription').value = adminEventPlainText(event.meta_description || event.summary || '', 160);
     document.getElementById('adminEventImageAlt').value = event.image_alt || (event.title ? `${event.title} - Program Ketahanan Pangan`.slice(0, 180) : '');
     document.getElementById('adminEventSeoIndex').checked = Number(event.seo_index ?? 1) === 1;
     adminEventSyncSeoPreview();
@@ -5619,7 +5619,7 @@ async function saveAdminEventForm(event) {
     requires_verified_member: Boolean(document.getElementById('adminEventVerifiedOnly')?.checked),
     slug: adminEventSlugify(document.getElementById('adminEventSlug')?.value || title),
     seo_title: document.getElementById('adminEventSeoTitle')?.value.trim() || title,
-    meta_description: document.getElementById('adminEventMetaDescription')?.value.trim() || (document.getElementById('adminEventSummary')?.value.trim() || '').slice(0, 160),
+    meta_description: adminEventPlainText(document.getElementById('adminEventMetaDescription')?.value.trim() || document.getElementById('adminEventSummary')?.value.trim() || '', 160),
     image_alt: document.getElementById('adminEventImageAlt')?.value.trim() || `${title} - Program Ketahanan Pangan`.slice(0, 180),
     seo_index: Boolean(document.getElementById('adminEventSeoIndex')?.checked)
   };
