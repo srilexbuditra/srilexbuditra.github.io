@@ -34,6 +34,12 @@ const certificateLink = document.getElementById('certificateLink');
 const certificateAccessIcon = document.getElementById('certificateAccessIcon');
 const certificateAccessTitle = document.getElementById('certificateAccessTitle');
 const certificateAccessNote = document.getElementById('certificateAccessNote');
+const nextStepBox = document.getElementById('nextStepBox');
+const nextStepTitle = document.getElementById('nextStepTitle');
+const nextStepNote = document.getElementById('nextStepNote');
+const nextStepLink = document.getElementById('nextStepLink');
+const publicProgressLabel = document.getElementById('publicProgressLabel');
+const publicProgressSteps = Array.from(document.querySelectorAll('[data-public-step]'));
 
 
 let stream = null;
@@ -89,13 +95,126 @@ function formatDate(value) {
 
 function statusLabel(status) {
   const map = {
-    submitted: 'Registrasi diterima',
+    submitted: 'Pendaftaran Diterima',
+    pending: 'Sedang Diperiksa',
+    resubmitted: 'Pemeriksaan Ulang',
+    revision: 'Perlu Perbaikan',
     verified: 'Terverifikasi',
     approved: 'Disetujui',
-    rejected: 'Tidak disetujui',
-    pending: 'Dalam proses'
+    rejected: 'Tidak Disetujui'
   };
   return map[String(status || '').toLowerCase()] || String(status || 'Terdaftar');
+}
+
+function setNextStep(title, note, linkLabel = '') {
+  if (!nextStepBox) return;
+  if (nextStepTitle) nextStepTitle.textContent = title || 'Lihat perkembangan pendaftaran';
+  if (nextStepNote) nextStepNote.textContent = note || 'Ikuti petunjuk sesuai status pendaftaran Anda.';
+  if (nextStepLink) {
+    if (linkLabel) {
+      nextStepLink.textContent = linkLabel;
+      nextStepLink.hidden = false;
+    } else {
+      nextStepLink.hidden = true;
+    }
+  }
+}
+
+function setPublicProgress(stage, attention = false) {
+  const safeStage = Math.max(1, Math.min(3, Number(stage) || 1));
+  if (publicProgressLabel) publicProgressLabel.textContent = `Tahap ${safeStage} dari 3`;
+  publicProgressSteps.forEach((step) => {
+    const number = Number(step.dataset.publicStep || 0);
+    step.classList.toggle('is-complete', number < safeStage || (safeStage === 3 && number === 3));
+    step.classList.toggle('is-current', number === safeStage && !(safeStage === 3));
+    step.classList.toggle('is-attention', Boolean(attention) && number === safeStage);
+  });
+}
+
+function setPublicJourney(registration) {
+  const status = String(registration?.status || '').toLowerCase();
+
+  if (status === 'verified' || status === 'approved') {
+    setPublicProgress(3);
+    setNextStep(
+      'Pendaftaran Anda sudah Terverifikasi',
+      'Masuk ke Dashboard Peserta untuk melihat tahapan keanggotaan berikutnya.',
+      'Masuk Dashboard Peserta'
+    );
+    return;
+  }
+
+  if (status === 'revision') {
+    setPublicProgress(2, true);
+    setNextStep(
+      'Data perlu diperbaiki',
+      'Ikuti catatan atau petunjuk perbaikan dari Admin, kemudian kirim kembali data yang diminta.'
+    );
+    return;
+  }
+
+  if (status === 'resubmitted') {
+    setPublicProgress(2);
+    setNextStep(
+      'Perbaikan sedang diperiksa ulang',
+      'Perbaikan Anda sudah diterima. Tidak ada tindakan tambahan sampai Admin menyelesaikan pemeriksaan ulang.'
+    );
+    return;
+  }
+
+  if (status === 'rejected') {
+    setPublicProgress(2, true);
+    setNextStep(
+      'Pendaftaran tidak disetujui',
+      'Periksa informasi atau catatan yang diberikan pengelola. Hubungi pengelola program bila memerlukan penjelasan lebih lanjut.'
+    );
+    return;
+  }
+
+  if (status === 'pending') {
+    setPublicProgress(2);
+    setNextStep(
+      'Data sedang diperiksa Admin',
+      'Tidak ada tindakan yang perlu dilakukan saat ini. Silakan tunggu hasil pemeriksaan.'
+    );
+    return;
+  }
+
+  setPublicProgress(1);
+  setNextStep(
+    'Menunggu pemeriksaan Admin',
+    'Pendaftaran Anda sudah tercatat. Tidak ada tindakan yang perlu dilakukan saat ini.'
+  );
+}
+
+function refineVerifiedJourneyFromEligibility(eligibility, certificateAvailable = false) {
+  if (certificateAvailable) {
+    setNextStep(
+      'Tahapan keanggotaan sudah lengkap',
+      'VERIFIED MEMBER, Kartu Anggota + QR, dan Sertifikat Digital sudah tersedia.',
+      'Masuk Dashboard Peserta'
+    );
+    return;
+  }
+
+  if (!eligibility || typeof eligibility !== 'object') return;
+
+  if (!eligibility.account_activated) {
+    setNextStep(
+      'Aktivasi akun peserta',
+      'Pendaftaran sudah Terverifikasi. Langkah berikutnya adalah mengaktifkan akun peserta lalu masuk ke Dashboard.',
+      'Aktivasi / Login Akun'
+    );
+    return;
+  }
+
+  if (!eligibility.member_verified) {
+    setNextStep(
+      'Rekam Foto Verifikasi Anggota',
+      'Akun Anda sudah aktif. Masuk ke Dashboard Peserta dan selesaikan Rekam Foto agar VERIFIED MEMBER dapat diaktifkan.',
+      'Rekam Foto di Dashboard'
+    );
+  }
 }
 
 function hideCertificateAccess() {
@@ -169,6 +288,7 @@ async function prepareCertificateAccess(registration) {
 
     if (response.ok && data.ok && data.eligible && data.certificate) {
       showCertificateAvailable(id);
+      refineVerifiedJourneyFromEligibility(null, true);
       return;
     }
 
@@ -176,6 +296,7 @@ async function prepareCertificateAccess(registration) {
       showCertificateLocked(
         data.message || 'Selesaikan Aktivasi Akun, Rekam Foto, dan VERIFIED MEMBER terlebih dahulu.'
       );
+      refineVerifiedJourneyFromEligibility(data.eligibility || null, false);
       return;
     }
 
@@ -194,6 +315,7 @@ function showResult(registration) {
   resultDate.textContent = formatDate(registration.created_at);
   resultEmpty.hidden = true;
   resultContent.hidden = false;
+  setPublicJourney(registration);
   prepareCertificateAccess(registration);
 }
 
@@ -287,7 +409,7 @@ async function verifyRegistration(registrationId, options = {}) {
     setMessage('error', 'Tidak dapat terhubung ke layanan verifikasi. Periksa koneksi internet lalu coba kembali.');
   } finally {
     verifyBtn.disabled = false;
-    verifyBtn.textContent = 'Verifikasi';
+    verifyBtn.textContent = 'Cek Status';
   }
 }
 

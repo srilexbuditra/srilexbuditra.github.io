@@ -995,3 +995,132 @@ footer {
 .certificate-link[hidden] {
   display: none !important;
 }
+
+
+/* V13.6.15.7 — Cek Status Pendaftaran + Langkah Berikutnya */
+.next-step-box {
+  margin-top: 18px;
+  padding: 15px 16px;
+  border: 1px solid #cfe2d6;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #f1f8f4, #ffffff);
+}
+.next-step-box small,
+.next-step-box strong,
+.next-step-box span {
+  display: block;
+}
+.next-step-box small {
+  color: var(--green-2);
+  font-size: .7rem;
+  font-weight: 900;
+  letter-spacing: .09em;
+}
+.next-step-box strong {
+  margin-top: 4px;
+  color: var(--green);
+  font-size: 1rem;
+}
+.next-step-box span {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: .88rem;
+}
+.next-step-link {
+  display: inline-flex;
+  margin-top: 11px;
+  color: var(--green-2);
+  font-size: .86rem;
+  font-weight: 850;
+  text-decoration: none;
+}
+.next-step-link[hidden] { display: none !important; }
+
+.public-progress {
+  margin-top: 18px;
+  padding: 15px 16px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: #fff;
+}
+.public-progress-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 13px;
+}
+.public-progress-head small {
+  color: var(--green-2);
+  font-size: .7rem;
+  font-weight: 900;
+  letter-spacing: .09em;
+}
+.public-progress-head span {
+  color: var(--muted);
+  font-size: .78rem;
+  font-weight: 800;
+}
+.public-progress-track {
+  display: grid;
+  grid-template-columns: minmax(0,1fr) 30px minmax(0,1fr) 30px minmax(0,1fr);
+  align-items: start;
+}
+.public-progress-step {
+  min-width: 0;
+  text-align: center;
+  color: #829087;
+  font-size: .72rem;
+  font-weight: 750;
+}
+.public-progress-step b {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  margin: 0 auto 7px;
+  border: 1px solid #cbd9d1;
+  border-radius: 50%;
+  background: #f6f8f7;
+  color: #68766e;
+}
+.public-progress-step span { display: block; line-height: 1.25; }
+.public-progress-step.is-complete { color: var(--green); }
+.public-progress-step.is-complete b {
+  background: var(--green-2);
+  border-color: var(--green-2);
+  color: #fff;
+}
+.public-progress-step.is-current { color: var(--green); }
+.public-progress-step.is-current b {
+  border-color: var(--green-2);
+  background: var(--green-3);
+  color: var(--green);
+  box-shadow: 0 0 0 4px rgba(29,106,72,.08);
+}
+.public-progress-step.is-attention { color: #7a5f19; }
+.public-progress-step.is-attention b {
+  border-color: #d9bd6e;
+  background: #fff8e5;
+  color: #7a5f19;
+}
+.public-progress-line {
+  height: 2px;
+  margin-top: 14px;
+  background: #dfe8e2;
+}
+.public-progress-note {
+  margin: 12px 0 0;
+  color: var(--muted);
+  font-size: .76rem;
+  line-height: 1.45;
+}
+
+@media (max-width: 520px) {
+  .public-progress-track {
+    grid-template-columns: minmax(0,1fr) 14px minmax(0,1fr) 14px minmax(0,1fr);
+  }
+  .public-progress-step { font-size: .65rem; }
+  .public-progress-step b { width: 27px; height: 27px; }
+  .public-progress-line { margin-top: 13px; }
+}
