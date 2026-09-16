@@ -36,8 +36,8 @@
 <link itemprop="publisher" href="https://srilexbuditra.work/#person">
 <meta itemprop="description" content="Formulir registrasi Program Ketahanan Pangan yang dipelopori PT Super Tani Indonesia dengan dukungan AY Group Agro Indonesia sebagai support system marketing nasional dan internasional.">
 <link rel="search" type="application/opensearchdescription+xml" title="Srilex Buditra Search" href="/opensearch.xml">
-<link rel="preload" href="./style.css?v=12" as="style">
-<link rel="stylesheet" href="./style.css?v=12">
+<link rel="preload" href="./style.css?v=13.6.16.0" as="style">
+<link rel="stylesheet" href="./style.css?v=13.6.16.0">
 </head>
 <body>
 <header class="topbar topbar-v87">
@@ -96,6 +96,10 @@
       <div class="progress-step" data-progress="2"><div class="step-num">3</div>Kebutuhan</div>
       <div class="progress-step" data-progress="3"><div class="step-num">4</div>Konfirmasi</div>
     </div>
+    <div class="wizard-status" id="wizardStatus" aria-live="polite">
+      <strong>Langkah 1 dari 4 — Identitas Pemohon</strong>
+      <span>Lengkapi data identitas dan dokumen sebelum melanjutkan.</span>
+    </div>
     <div class="form-wrap"><div class="form-main">
       <section class="panel active" data-step="0"><div class="panel-title"><div class="panel-icon">01</div><div><h3>Identitas Pemohon</h3><p>Data dasar untuk proses verifikasi calon penerima.</p></div></div><div class="fields">
         <div class="field"><label for="nama">Nama Lengkap <span class="req">*</span></label><input id="nama" class="input" name="nama" autocomplete="name" required maxlength="100" placeholder="Nama sesuai identitas"></div>
@@ -144,7 +148,18 @@
         <div class="field"><label for="kebutuhan_kg">Perkiraan Kebutuhan (kg) <span class="req">*</span></label><input id="kebutuhan_kg" class="input" name="kebutuhan_kg" type="number" required min="1" max="100000" step="1" placeholder="Contoh: 100"></div>
         <div class="field full"><label for="keterangan">Keterangan Tambahan</label><textarea id="keterangan" name="keterangan" maxlength="500" placeholder="Contoh: kondisi lahan, jadwal tanam, atau informasi lain yang mendukung verifikasi"></textarea></div>
       </div></section>
-      <section class="panel" data-step="3"><div class="panel-title"><div class="panel-icon">04</div><div><h3>Pernyataan & Persetujuan</h3><p>Pastikan seluruh informasi yang diberikan benar sebelum dikirim.</p></div></div><div class="consent-box">
+      <section class="panel" data-step="3"><div class="panel-title"><div class="panel-icon">04</div><div><h3>Pernyataan & Persetujuan</h3><p>Pastikan seluruh informasi yang diberikan benar sebelum dikirim.</p></div></div>
+      <div class="review-summary" id="reviewSummary" aria-live="polite">
+        <strong>Ringkasan sebelum dikirim</strong>
+        <div class="review-grid">
+          <span data-review="identity">○ Identitas belum diperiksa</span>
+          <span data-review="documents">○ Dokumen belum diperiksa</span>
+          <span data-review="farm">○ Data usaha tani belum diperiksa</span>
+          <span data-review="needs">○ Kebutuhan belum diperiksa</span>
+        </div>
+        <small>Periksa kembali data Anda. NIK, nomor KK, dan isi dokumen tidak ditampilkan ulang pada ringkasan ini.</small>
+      </div>
+      <div class="consent-box">
         <label class="check"><input type="checkbox" name="pernyataan" required><span>Saya menyatakan bahwa data yang saya isi benar dan dapat dipertanggungjawabkan. Saya bersedia mengikuti proses verifikasi dan memahami bahwa pendaftaran tidak menjamin penerimaan pupuk gratis.</span></label>
         <label class="check"><input type="checkbox" name="privasi" required><span>Saya menyetujui pemrosesan data dan dokumen KTP/KK yang saya berikan untuk keperluan registrasi, verifikasi, komunikasi, dan administrasi program ketahanan pangan.</span></label>
       </div></section>
@@ -159,9 +174,21 @@
   </form>
   <div class="disclaimer"><strong>Catatan penting:</strong> halaman ini merupakan sarana pendataan dan registrasi digital. Pengisian formulir tidak otomatis berarti persetujuan atau penerimaan bantuan. Penetapan mengikuti proses verifikasi, kriteria program, dan ketersediaan.</div>
 </div></section>
+
+<div class="submit-overlay" id="submitOverlay" hidden role="dialog" aria-modal="true" aria-labelledby="submitOverlayTitle">
+  <div class="submit-overlay-card">
+    <div class="submit-spinner" id="submitSpinner" aria-hidden="true"></div>
+    <div class="submit-success-icon" id="submitSuccessIcon" hidden aria-hidden="true">✓</div>
+    <span class="submit-kicker" id="submitKicker">Mengirim registrasi</span>
+    <h2 id="submitOverlayTitle">Data dan dokumen sedang dikirim</h2>
+    <p id="submitOverlayText">Jangan tutup atau memuat ulang halaman sampai proses selesai.</p>
+    <div class="submit-countdown" id="submitCountdown" hidden>Halaman hasil akan dibuka dalam <strong id="countdownSeconds">7</strong> detik.</div>
+    <button class="btn primary submit-now" id="openSuccessNow" type="button" hidden>Buka Halaman Hasil Sekarang</button>
+  </div>
+</div>
 </main>
 <footer class="footer"><div class="wrap footer-v8"><div class="footer-org"><strong>PT Super Tani Indonesia</strong><span>Pelopor Program Ketahanan Pangan</span></div><div class="footer-org"><strong>AY Group Agro Indonesia</strong><span>Support System Marketing Nasional & Internasional</span></div><div class="footer-credit"><span>Technology &amp; System Development</span><strong>Srilex Buditra</strong><small>Full Stack Developer</small><a href="https://srilexbuditra.work/">srilexbuditra.work</a></div></div></footer>
-<script src="./script.js?v=13.6.6"></script>
+<script src="./script.js?v=13.6.16.0"></script>
 
 <!-- Floating Text-to-Speech accessibility control -->
 <div class="tts-fab-wrap" id="ttsFabWrap" aria-label="Kontrol pembaca halaman">
