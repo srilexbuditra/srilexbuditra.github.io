@@ -613,8 +613,10 @@ function showStatusChangeNotice(previousStatus, nextStatus) {
     targetId = 'revisionCard';
     actionLabel = 'Buka perbaikan data ↓';
   } else if (next === 'verified') {
-    targetId = 'certificateBtn';
-    actionLabel = 'Buka sertifikat ↓';
+    // V13.6.15.9: status registrasi Terverifikasi belum berarti Sertifikat siap.
+    // Arahkan peserta ke Langkah Berikutnya (Rekam Foto / VERIFIED MEMBER).
+    targetId = 'nextActionCard';
+    actionLabel = 'Lihat langkah berikutnya ↓';
   } else if (next === 'rejected') {
     targetId = 'adminNoteCard';
     actionLabel = 'Lihat catatan admin ↓';
@@ -655,6 +657,14 @@ function renderMemberExperience(participant = {}) {
   const certificateService = document.getElementById('memberCertificateService');
   const certificateState = document.getElementById('memberCertificateState');
   const certificateBadge = document.getElementById('memberCertificateBadge');
+  const certificateQuick = document.getElementById('certificateBtn');
+  const certificateQuickIcon = document.getElementById('certificateQuickIcon');
+  const certificateQuickLabel = document.getElementById('certificateQuickLabel');
+  const certificateQuickText = document.getElementById('certificateQuickText');
+  const memberCardQuick = document.getElementById('memberCardQuickBtn');
+  const memberCardQuickIcon = document.getElementById('memberCardQuickIcon');
+  const memberCardQuickLabel = document.getElementById('memberCardQuickLabel');
+  const memberCardQuickText = document.getElementById('memberCardQuickText');
   const memberIdentityService = document.getElementById('memberIdentityService');
   const memberIdentityState = document.getElementById('memberIdentityState');
   const memberIdentityBadge = document.getElementById('memberIdentityBadge');
@@ -720,6 +730,52 @@ function renderMemberExperience(participant = {}) {
         ? 'Menunggu VERIFIED MEMBER. Selesaikan Verifikasi Anggota + Foto terlebih dahulu.'
         : 'Tersedia setelah registrasi terverifikasi dan VERIFIED MEMBER selesai.';
       certificateBadge.textContent = 'TERKUNCI';
+    }
+  }
+
+  // V13.6.15.9 — Sinkronkan Akses Cepat dengan gate Journey yang sama.
+  // Sertifikat dan Kartu tidak boleh terlihat aktif sebelum VERIFIED MEMBER.
+  if (certificateQuick && certificateQuickLabel && certificateQuickText) {
+    certificateQuick.classList.toggle('action-primary', memberApproved);
+    certificateQuick.classList.toggle('is-locked', !memberApproved);
+    certificateQuick.setAttribute('aria-disabled', memberApproved ? 'false' : 'true');
+
+    if (memberApproved && participant.registration_id) {
+      certificateQuick.href = '../verifikasi/sertifikat/?registration_id=' + encodeURIComponent(participant.registration_id);
+      certificateQuickLabel.textContent = 'Lihat Sertifikat Digital';
+      certificateQuickText.textContent = 'Tahap 8 selesai. Buka Sertifikat Digital Anda.';
+      if (certificateQuickIcon) certificateQuickIcon.textContent = '▣';
+    } else {
+      certificateQuick.href = '#';
+      certificateQuickLabel.textContent = 'Sertifikat Digital Belum Tersedia';
+      certificateQuickText.textContent = s === 'revision'
+        ? 'Selesaikan perbaikan data terlebih dahulu.'
+        : registrationVerified
+          ? 'Selesaikan Verifikasi Anggota + Foto hingga VERIFIED MEMBER.'
+          : 'Selesaikan verifikasi data dan tahapan keanggotaan terlebih dahulu.';
+      if (certificateQuickIcon) certificateQuickIcon.textContent = '🔒';
+    }
+  }
+
+  if (memberCardQuick && memberCardQuickLabel && memberCardQuickText) {
+    memberCardQuick.classList.toggle('action-primary', memberApproved);
+    memberCardQuick.classList.toggle('is-locked', !memberApproved);
+    memberCardQuick.setAttribute('aria-disabled', memberApproved ? 'false' : 'true');
+
+    if (memberApproved) {
+      memberCardQuick.href = './kartu/';
+      memberCardQuickLabel.textContent = 'Lihat Kartu Anggota + QR';
+      memberCardQuickText.textContent = 'VERIFIED MEMBER aktif. Identitas digital anggota tersedia.';
+      if (memberCardQuickIcon) memberCardQuickIcon.textContent = '▦';
+    } else {
+      memberCardQuick.href = '#';
+      memberCardQuickLabel.textContent = 'Kartu Anggota + QR Belum Tersedia';
+      memberCardQuickText.textContent = s === 'revision'
+        ? 'Selesaikan perbaikan data sebelum melanjutkan ke Verifikasi Anggota.'
+        : registrationVerified
+          ? 'Aktif setelah foto disetujui dan VERIFIED MEMBER aktif.'
+          : 'Aktif setelah Verifikasi Data dan VERIFIED MEMBER selesai.';
+      if (memberCardQuickIcon) memberCardQuickIcon.textContent = '🔒';
     }
   }
 
@@ -1098,18 +1154,13 @@ function showDashboard(p) {
     }
   }
 
-  cert.hidden = true;
+  // V13.6.15.9: status Akses Cepat Sertifikat/Kartu diatur hanya oleh renderMemberExperience()
+  // agar tidak ada state ganda yang bisa membuat tombol tampak aktif sebelum VERIFIED MEMBER.
   if (s === 'verified') {
     const memberApproved = String(p.member_verification_status || '').toLowerCase() === 'approved';
     note.textContent = memberApproved
       ? 'VERIFIED MEMBER aktif. Kartu Anggota + QR dan Sertifikat Digital tersedia.'
       : 'Pendaftaran terverifikasi. Lanjutkan Verifikasi Anggota + Foto untuk mengaktifkan VERIFIED MEMBER, Kartu Anggota + QR, dan Sertifikat Digital.';
-    if (memberApproved) {
-      cert.href = '../verifikasi/sertifikat/?registration_id=' + encodeURIComponent(p.registration_id);
-      cert.hidden = false;
-    } else {
-      cert.removeAttribute('href');
-    }
   } else if (s === 'revision') {
     note.textContent = p.status_note || 'Pendaftaran memerlukan perbaikan. Silakan mengikuti petunjuk dari pengelola program.';
   } else if (s === 'resubmitted') {
@@ -1180,6 +1231,16 @@ function bindCopyButton(button, mode = 'compact') {
 bindCopyButton(document.getElementById('copyRegistrationBtn'));
 bindCopyButton(document.getElementById('copyRegistrationAction'), 'action');
 
+
+const certificateQuickAction = document.getElementById('certificateBtn');
+if (certificateQuickAction) certificateQuickAction.addEventListener('click', event => {
+  if (certificateQuickAction.getAttribute('aria-disabled') === 'true') event.preventDefault();
+});
+
+const memberCardQuickAction = document.getElementById('memberCardQuickBtn');
+if (memberCardQuickAction) memberCardQuickAction.addEventListener('click', event => {
+  if (memberCardQuickAction.getAttribute('aria-disabled') === 'true') event.preventDefault();
+});
 
 const memberCertificateService = document.getElementById('memberCertificateService');
 if (memberCertificateService) memberCertificateService.addEventListener('click', event => {
