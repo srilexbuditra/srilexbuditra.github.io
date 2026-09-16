@@ -140,14 +140,14 @@
             <div class="privacy-box">🔒 Data sensitif seperti NIK, nomor KK, WhatsApp, dan dokumen identitas tidak ditampilkan pada halaman ini.</div>
 
             <div class="certificate-access" id="certificateAccess" hidden>
-              <div class="certificate-access-icon" aria-hidden="true">✓</div>
+              <div class="certificate-access-icon" id="certificateAccessIcon" aria-hidden="true">✓</div>
               <div class="certificate-access-copy">
                 <small>SERTIFIKAT DIGITAL</small>
-                <strong>Kartu / Sertifikat peserta tersedia</strong>
-                <span>Sertifikat hanya tersedia untuk peserta dengan status Terverifikasi.</span>
+                <strong id="certificateAccessTitle">Sertifikat Digital tersedia</strong>
+                <span id="certificateAccessNote">Sertifikat tersedia setelah tahapan keanggotaan selesai.</span>
               </div>
-              <a class="btn certificate-link" id="certificateLink" href="#" rel="noopener">
-                Lihat Kartu / Sertifikat Digital
+              <a class="btn certificate-link" id="certificateLink" href="#" rel="noopener" hidden>
+                Lihat Sertifikat Digital
               </a>
             </div>
           </div>
@@ -177,7 +177,7 @@
     crossorigin="anonymous"
     referrerpolicy="no-referrer"
     defer></script>
-  <script src="./script.js?v=9" defer></script>
+  <script src="./script.js?v=13.6.15.2" defer></script>
   
   <!-- Floating Text-to-Speech accessibility control -->
 <div class="tts-fab-wrap" id="ttsFabWrap" aria-label="Kontrol pembaca halaman">

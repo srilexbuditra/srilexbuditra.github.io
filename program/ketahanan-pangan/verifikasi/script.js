@@ -31,6 +31,9 @@ const retryCameraBtn = document.getElementById('retryCameraBtn');
 const manualFocusBtn = document.getElementById('manualFocusBtn');
 const certificateAccess = document.getElementById('certificateAccess');
 const certificateLink = document.getElementById('certificateLink');
+const certificateAccessIcon = document.getElementById('certificateAccessIcon');
+const certificateAccessTitle = document.getElementById('certificateAccessTitle');
+const certificateAccessNote = document.getElementById('certificateAccessNote');
 
 
 let stream = null;
@@ -96,19 +99,60 @@ function statusLabel(status) {
 }
 
 function hideCertificateAccess() {
-  if (certificateAccess) certificateAccess.hidden = true;
-  if (certificateLink) certificateLink.removeAttribute('href');
+  if (certificateAccess) {
+    certificateAccess.hidden = true;
+    certificateAccess.classList.remove('is-locked', 'is-available');
+  }
+  if (certificateLink) {
+    certificateLink.hidden = true;
+    certificateLink.removeAttribute('href');
+  }
+}
+
+function showCertificateLocked(message) {
+  if (!certificateAccess) return;
+  certificateAccess.hidden = false;
+  certificateAccess.classList.add('is-locked');
+  certificateAccess.classList.remove('is-available');
+  if (certificateAccessIcon) certificateAccessIcon.textContent = '🔒';
+  if (certificateAccessTitle) certificateAccessTitle.textContent = 'Sertifikat Digital belum tersedia';
+  if (certificateAccessNote) {
+    certificateAccessNote.textContent = message ||
+      'Selesaikan tahapan keanggotaan terlebih dahulu.';
+  }
+  if (certificateLink) {
+    certificateLink.hidden = true;
+    certificateLink.removeAttribute('href');
+  }
+}
+
+function showCertificateAvailable(id) {
+  if (!certificateAccess) return;
+  certificateAccess.hidden = false;
+  certificateAccess.classList.add('is-available');
+  certificateAccess.classList.remove('is-locked');
+  if (certificateAccessIcon) certificateAccessIcon.textContent = '✓';
+  if (certificateAccessTitle) certificateAccessTitle.textContent = 'Sertifikat Digital tersedia';
+  if (certificateAccessNote) {
+    certificateAccessNote.textContent =
+      'Tahapan keanggotaan telah selesai dan Sertifikat Digital dapat dibuka.';
+  }
+  if (certificateLink) {
+    certificateLink.href = './sertifikat/?registration_id=' + encodeURIComponent(id);
+    certificateLink.hidden = false;
+  }
 }
 
 async function prepareCertificateAccess(registration) {
   hideCertificateAccess();
 
+  const id = normalizeRegistrationId(registration?.registration_id);
+  if (!id) return;
+
   if (String(registration?.status || '').toLowerCase() !== 'verified') {
+    showCertificateLocked('Pendaftaran belum Terverifikasi. Sertifikat belum dapat dibuka.');
     return;
   }
-
-  const id = normalizeRegistrationId(registration.registration_id);
-  if (!id) return;
 
   try {
     const response = await fetch(
@@ -123,18 +167,23 @@ async function prepareCertificateAccess(registration) {
     let data = {};
     try { data = await response.json(); } catch (_) {}
 
-    if (!response.ok || !data.ok || !data.eligible || !data.certificate) {
+    if (response.ok && data.ok && data.eligible && data.certificate) {
+      showCertificateAvailable(id);
       return;
     }
 
-    if (certificateLink) {
-      certificateLink.href =
-        './sertifikat/?registration_id=' + encodeURIComponent(id);
+    if (response.status === 403 && data && data.found !== false) {
+      showCertificateLocked(
+        data.message || 'Selesaikan Aktivasi Akun, Rekam Foto, dan VERIFIED MEMBER terlebih dahulu.'
+      );
+      return;
     }
-    if (certificateAccess) certificateAccess.hidden = false;
+
+    hideCertificateAccess();
   } catch (_) {
-    // Status verifikasi tetap dapat ditampilkan meskipun layanan sertifikat
-    // sedang tidak tersedia. Tombol sertifikat cukup disembunyikan.
+    // Status registrasi tetap dapat diperiksa bila layanan sertifikat
+    // sementara tidak tersedia.
+    hideCertificateAccess();
   }
 }
 

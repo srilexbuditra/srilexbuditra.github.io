@@ -738,8 +738,8 @@ footer {
 
 
 /* =========================================================
-   V2 — AKSES SERTIFIKAT PUBLIK
-   Hanya tampil setelah endpoint publik memastikan status verified.
+   V13.6.15.2 — AKSES SERTIFIKAT PUBLIK
+   Endpoint publik menentukan eligibility berdasarkan Journey peserta.
    ========================================================= */
 .certificate-access {
   margin-top: 20px;
@@ -975,4 +975,23 @@ footer {
     object-fit: contain !important;
     object-position: center center !important;
   }
+}
+
+
+/* V13.6.15.2 — keadaan Sertifikat Digital terkunci */
+.certificate-access.is-locked {
+  border-color: #e8ddbd;
+  background: linear-gradient(135deg, #fffaf0, #ffffff);
+}
+.certificate-access.is-locked .certificate-access-icon {
+  background: #8a6d1f;
+}
+.certificate-access.is-locked .certificate-access-copy small {
+  color: #7a5f19;
+}
+.certificate-access.is-locked .certificate-access-copy strong {
+  color: #4b3a10;
+}
+.certificate-link[hidden] {
+  display: none !important;
 }
