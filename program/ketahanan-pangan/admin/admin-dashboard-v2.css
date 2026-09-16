@@ -836,3 +836,47 @@ body.participant-communication-modal-open{overflow:hidden!important}
 .admin-event-public-url-actions .is-disabled{pointer-events:none;opacity:.48}
 .admin-event-public-url-state{display:inline-flex;align-items:center;min-height:30px;color:#63746b;font-size:.66rem;font-weight:800}
 @media(max-width:560px){.admin-event-public-url-actions{display:grid;grid-template-columns:1fr 1fr}.admin-event-public-url-actions .admin-event-button{width:100%}.admin-event-public-url-state{grid-column:1/-1}}
+
+
+/* =========================================================
+   V17.19.13B.4 — Compact Public Event URL card
+   ========================================================= */
+.admin-event-public-url{
+  display:grid;
+  grid-template-columns:auto minmax(0,1fr);
+  align-items:center;
+  gap:7px 10px;
+  width:min(100%,760px);
+  margin-top:9px;
+  padding:8px 10px;
+  border:1px solid #d8e6df;
+  border-radius:10px;
+  background:#f6faf8;
+  color:#365c4d;
+}
+.admin-event-public-url small{
+  color:#5f746b;
+  font-size:8px;
+  font-weight:900;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+  white-space:nowrap;
+}
+.admin-event-public-url a,
+.admin-event-public-url span{
+  min-width:0;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  color:#176b3a;
+  font-size:9px;
+  font-weight:800;
+  text-decoration:none;
+}
+.admin-event-public-url a:hover{text-decoration:underline}
+.admin-event-public-url.is-locked{background:#fbfaf5;border-color:#eadfbf}
+.admin-event-public-url.is-locked span{color:#7b6a38}
+@media(max-width:680px){
+  .admin-event-public-url{grid-template-columns:1fr;gap:4px;width:100%}
+  .admin-event-public-url a,.admin-event-public-url span{font-size:8.5px}
+}
