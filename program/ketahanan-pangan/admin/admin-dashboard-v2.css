@@ -490,3 +490,38 @@ body.admin-v2-active #createAdminUserForm:not([hidden]){
   body.admin-v2-active .admin-v2-backdrop{touch-action:none}
   .admin-v2-sidebar-foot{padding-bottom:max(18px,env(safe-area-inset-bottom))}
 }
+
+/* =========================================================
+   V17.19.5 — Desktop Kelola akun sebagai fixed modal
+   Panel Kelola tetap di viewport dan halaman belakang tidak ikut scroll.
+   Mobile <=760px mempertahankan V17.19.4.
+   ========================================================= */
+@media (min-width:761px){
+  body.admin-v2-manage-modal-open{overflow:hidden!important}
+  .admin-v2-manage-backdrop{
+    position:fixed;inset:0;z-index:6450;
+    background:rgba(5,34,25,.44);backdrop-filter:blur(2px)
+  }
+  body.admin-v2-active .admin-user-card.is-managing > .admin-user-edit-panel{
+    position:fixed!important;z-index:6500!important;
+    top:50%!important;left:50%!important;right:auto!important;bottom:auto!important;
+    transform:translate(-50%,-50%)!important;
+    width:min(720px,calc(100vw - 44px))!important;
+    max-height:calc(100dvh - 44px)!important;
+    overflow:auto!important;overscroll-behavior:contain;
+    margin:0!important;padding:18px!important;
+    border:1px solid #cfe2d9!important;border-radius:16px!important;
+    background:#fff!important;box-shadow:0 24px 70px rgba(6,52,37,.28)!important;
+    scrollbar-gutter:stable
+  }
+  body.admin-v2-active .admin-user-card.is-managing > .admin-user-edit-panel::before{
+    content:"Kelola Akun";display:block;margin:0 0 12px;
+    color:#103f31;font-size:14px;font-weight:900;letter-spacing:.01em
+  }
+  body.admin-v2-active .admin-user-card.is-managing > .admin-user-edit-panel .admin-user-controls{margin-top:0}
+  body.admin-v2-active .admin-user-card.is-managing > .admin-user-edit-panel .admin-user-card-actions{
+    position:sticky;bottom:-18px;z-index:2;
+    margin:14px -18px -18px;padding:12px 18px;
+    background:rgba(255,255,255,.97);border-top:1px solid #e4eee9;backdrop-filter:blur(8px)
+  }
+}

@@ -3806,6 +3806,83 @@ if (!window.__adminFixedSelectGlobalBound) {
   });
 }
 
+
+if (!window.__adminManageModalGlobalBound) {
+  window.__adminManageModalGlobalBound = true;
+  document.addEventListener('keydown', event => {
+    if (event.key !== 'Escape') return;
+    const panel = document.querySelector('.admin-user-card.is-managing .admin-user-edit-panel:not([hidden])');
+    if (!panel || activeAdminFixedSelect) return;
+    const card = panel.closest('.admin-user-card');
+    const toggle = card?.querySelector('.user-manage-toggle');
+    panel.hidden = true;
+    if (toggle) {
+      toggle.setAttribute('aria-expanded','false');
+      toggle.textContent='Kelola ▾';
+      toggle.focus({ preventScroll:true });
+    }
+    removeAdminManageModalState();
+  });
+  window.addEventListener('resize', () => {
+    const panel = document.querySelector('.admin-user-edit-panel:not([hidden])');
+    const card = panel?.closest('.admin-user-card');
+    if (!panel || !card) {
+      removeAdminManageModalState();
+      return;
+    }
+    syncAdminManageModalState(card, panel, true);
+  });
+}
+
+function removeAdminManageModalState() {
+  closeAdminFixedSelect();
+  document.body.classList.remove('admin-v2-manage-modal-open');
+  document.getElementById('adminV2ManageBackdrop')?.remove();
+  document.querySelectorAll('.admin-user-card.is-managing').forEach(card => card.classList.remove('is-managing'));
+}
+
+function ensureAdminManageBackdrop() {
+  let backdrop = document.getElementById('adminV2ManageBackdrop');
+  if (backdrop) return backdrop;
+  backdrop = document.createElement('div');
+  backdrop.id = 'adminV2ManageBackdrop';
+  backdrop.className = 'admin-v2-manage-backdrop';
+  backdrop.setAttribute('aria-hidden','true');
+  backdrop.addEventListener('click', () => {
+    const panel = document.querySelector('.admin-user-card.is-managing .admin-user-edit-panel:not([hidden])');
+    const card = panel?.closest('.admin-user-card');
+    const button = card?.querySelector('.user-manage-toggle');
+    if (panel) panel.hidden = true;
+    if (button) {
+      button.setAttribute('aria-expanded','false');
+      button.textContent='Kelola ▾';
+      button.focus({ preventScroll:true });
+    }
+    removeAdminManageModalState();
+  });
+  document.body.appendChild(backdrop);
+  return backdrop;
+}
+
+function syncAdminManageModalState(card, panel, open) {
+  const desktop = !window.matchMedia('(max-width:760px)').matches;
+  if (!desktop || !open) {
+    removeAdminManageModalState();
+    return;
+  }
+  document.querySelectorAll('.admin-user-card.is-managing').forEach(other => {
+    if (other !== card) other.classList.remove('is-managing');
+  });
+  card?.classList.add('is-managing');
+  document.body.classList.add('admin-v2-manage-modal-open');
+  ensureAdminManageBackdrop();
+  panel?.setAttribute('role','dialog');
+  panel?.setAttribute('aria-modal','true');
+  window.requestAnimationFrame(() => {
+    panel?.querySelector('input:not([readonly]), .admin-fixed-select-trigger:not(:disabled), button:not(:disabled)')?.focus({ preventScroll:true });
+  });
+}
+
 function toggleUserManagePanel(event) {
   const card = event.currentTarget.closest('.admin-user-card');
   const panel = card?.querySelector('.admin-user-edit-panel');
@@ -3814,13 +3891,16 @@ function toggleUserManagePanel(event) {
   document.querySelectorAll('.admin-user-edit-panel:not([hidden])').forEach(other => {
     if (other !== panel) {
       other.hidden = true;
-      const otherButton = other.closest('.admin-user-card')?.querySelector('.user-manage-toggle');
+      const otherCard = other.closest('.admin-user-card');
+      otherCard?.classList.remove('is-managing');
+      const otherButton = otherCard?.querySelector('.user-manage-toggle');
       if (otherButton) { otherButton.setAttribute('aria-expanded','false'); otherButton.textContent='Kelola ▾'; }
     }
   });
   panel.hidden = !open;
   event.currentTarget.setAttribute('aria-expanded', open ? 'true' : 'false');
   event.currentTarget.textContent = open ? 'Kelola ▴' : 'Kelola ▾';
+  syncAdminManageModalState(card, panel, open);
 }
 
 function closeUserManagePanel(event) {
@@ -3830,6 +3910,8 @@ function closeUserManagePanel(event) {
   const toggle = card?.querySelector('.user-manage-toggle');
   if (panel) panel.hidden = true;
   if (toggle) { toggle.setAttribute('aria-expanded','false'); toggle.textContent='Kelola ▾'; }
+  removeAdminManageModalState();
+  toggle?.focus({ preventScroll:true });
 }
 
 function roleManagerFallbackDirectory() {
