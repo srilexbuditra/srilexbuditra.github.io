@@ -829,3 +829,10 @@ body.participant-communication-modal-open{overflow:hidden!important}
   .admin-event-public-preview{grid-template-columns:1fr}
   .admin-event-public-preview-image{width:100%}
 }
+
+/* V17.19.13B — Public Event URL */
+.admin-event-public-url-actions{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:10px}
+.admin-event-public-url-actions .admin-event-button{min-height:34px;padding:6px 10px;font-size:.68rem;text-decoration:none}
+.admin-event-public-url-actions .is-disabled{pointer-events:none;opacity:.48}
+.admin-event-public-url-state{display:inline-flex;align-items:center;min-height:30px;color:#63746b;font-size:.66rem;font-weight:800}
+@media(max-width:560px){.admin-event-public-url-actions{display:grid;grid-template-columns:1fr 1fr}.admin-event-public-url-actions .admin-event-button{width:100%}.admin-event-public-url-state{grid-column:1/-1}}

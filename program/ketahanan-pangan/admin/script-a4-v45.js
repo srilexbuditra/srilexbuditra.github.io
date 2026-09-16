@@ -5114,6 +5114,18 @@ adminEventSeoWatchIds.forEach(id => {
 document.getElementById('adminEventSeoTitle')?.addEventListener('blur', adminEventSyncSeoPreview);
 document.getElementById('adminEventMetaDescription')?.addEventListener('blur', adminEventSyncSeoPreview);
 
+document.getElementById('adminEventCopyPublicUrl')?.addEventListener('click', async () => {
+  const button = document.getElementById('adminEventCopyPublicUrl');
+  const url = button?.dataset.publicUrl || '';
+  if (!url) return;
+  const copied = await adminEventCopyText(url);
+  showAdminToast(copied ? 'success' : 'error', copied ? 'Link Event Disalin' : 'Link Belum Disalin', copied ? url : 'Salin URL dari kolom alamat browser.');
+});
+
+document.getElementById('adminEventOpenPublicUrl')?.addEventListener('click', event => {
+  if (event.currentTarget?.getAttribute('aria-disabled') === 'true') event.preventDefault();
+});
+
 // V17.19.13A.1 — gunakan tombol eksplisit untuk membuka file picker.
 // Pola label+input transparan sebelumnya dapat gagal menerima klik pada beberapa
 // kombinasi modal/viewport browser. Handler ini berjalan langsung dari gesture user.
@@ -5317,6 +5329,10 @@ function renderAdminEventList(events) {
       <div class="admin-event-card-actions">
         <button type="button" class="admin-event-button admin-event-button-secondary" data-event-action="edit" data-event-id="${escapeHtml(event.event_id)}">Edit</button>
         <button type="button" class="admin-event-button admin-event-button-secondary" data-event-action="participants" data-event-id="${escapeHtml(event.event_id)}">Peserta (${Number(event.registered_count || 0) + Number(event.attended_count || 0) + Number(event.no_show_count || 0) + Number(event.cancelled_count || 0)})</button>
+        ${adminEventIsPublic(event)
+          ? `<button type="button" class="admin-event-button admin-event-button-secondary" data-event-action="copy-public" data-event-id="${escapeHtml(event.event_id)}">Salin Link</button>
+             <button type="button" class="admin-event-button admin-event-button-secondary" data-event-action="open-public" data-event-id="${escapeHtml(event.event_id)}">Lihat Publik</button>`
+          : `<button type="button" class="admin-event-button admin-event-button-secondary" disabled title="Link publik aktif setelah event dipublikasikan">🔒 Link Publik</button>`}
         ${statusActions}
         ${status !== 'cancelled' ? `<button type="button" class="admin-event-button admin-event-button-danger" data-event-action="status" data-event-status="cancelled" data-event-id="${escapeHtml(event.event_id)}">Batalkan Event</button>` : ''}
       </div>
@@ -5335,6 +5351,48 @@ function adminEventSlugify(value) {
     .slice(0, 120);
 }
 
+function adminEventPlainText(value, max = 160) {
+  return String(value || '')
+    .replace(/```[\s\S]*?```/g, ' ')
+    .replace(/`([^`]+)`/g, '$1')
+    .replace(/!\[[^\]]*\]\([^)]*\)/g, ' ')
+    .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')
+    .replace(/^\s{0,3}#{1,6}\s+/gm, '')
+    .replace(/[*_~>#]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .slice(0, max);
+}
+
+function adminEventPublicUrl(eventDataOrSlug) {
+  const slug = typeof eventDataOrSlug === 'string'
+    ? adminEventSlugify(eventDataOrSlug)
+    : adminEventSlugify(eventDataOrSlug?.slug || eventDataOrSlug?.title || '');
+  return slug ? `https://srilexbuditra.work/program/ketahanan-pangan/event/${slug}/` : '';
+}
+
+function adminEventIsPublic(eventData) {
+  return Boolean(eventData?.slug) && ['published', 'closed', 'cancelled'].includes(String(eventData?.status || '').toLowerCase());
+}
+
+async function adminEventCopyText(value) {
+  const text = String(value || '').trim();
+  if (!text) return false;
+  try { await navigator.clipboard.writeText(text); return true; } catch (_) {}
+  try {
+    const input = document.createElement('textarea');
+    input.value = text;
+    input.setAttribute('readonly', '');
+    input.style.position = 'fixed';
+    input.style.opacity = '0';
+    document.body.appendChild(input);
+    input.select();
+    const ok = document.execCommand('copy');
+    input.remove();
+    return ok;
+  } catch (_) { return false; }
+}
+
 function adminEventSeoTextFallback() {
   const title = document.getElementById('adminEventName')?.value.trim() || '';
   const summary = document.getElementById('adminEventSummary')?.value.trim() || '';
@@ -5344,7 +5402,7 @@ function adminEventSeoTextFallback() {
   const altInput = document.getElementById('adminEventImageAlt');
   if (slugInput && !slugInput.value.trim()) slugInput.value = adminEventSlugify(title);
   if (seoTitleInput && !seoTitleInput.value.trim()) seoTitleInput.value = title.slice(0, 70);
-  if (metaInput && !metaInput.value.trim()) metaInput.value = summary.slice(0, 160);
+  if (metaInput && !metaInput.value.trim()) metaInput.value = adminEventPlainText(summary, 160);
   if (altInput && !altInput.value.trim() && title) altInput.value = `${title} - Program Ketahanan Pangan`.slice(0, 180);
 }
 
@@ -5352,13 +5410,30 @@ function adminEventSyncSeoPreview() {
   const title = document.getElementById('adminEventSeoTitle')?.value.trim()
     || document.getElementById('adminEventName')?.value.trim()
     || 'Judul Event';
-  const description = document.getElementById('adminEventMetaDescription')?.value.trim()
-    || document.getElementById('adminEventSummary')?.value.trim()
-    || 'Ringkasan event akan tampil di sini.';
+  const description = adminEventPlainText(
+    document.getElementById('adminEventMetaDescription')?.value.trim()
+      || document.getElementById('adminEventSummary')?.value.trim()
+      || 'Ringkasan event akan tampil di sini.',
+    160
+  );
   const slug = adminEventSlugify(document.getElementById('adminEventSlug')?.value || document.getElementById('adminEventName')?.value || '');
   adminEventSetText('adminEventPreviewTitle', title);
   adminEventSetText('adminEventPreviewDescription', description);
-  adminEventSetText('adminEventPublicUrlPreview', `https://srilexbuditra.work/program/ketahanan-pangan/event/${slug || '...'}/`);
+  const url = slug ? adminEventPublicUrl(slug) : 'https://srilexbuditra.work/program/ketahanan-pangan/event/.../';
+  adminEventSetText('adminEventPublicUrlPreview', url);
+  const editingId = document.getElementById('adminEventEditingId')?.value || '';
+  const editingEvent = adminEventCache.find(item => item.event_id === editingId) || null;
+  const active = adminEventIsPublic(editingEvent);
+  const copyButton = document.getElementById('adminEventCopyPublicUrl');
+  const openLink = document.getElementById('adminEventOpenPublicUrl');
+  const state = document.getElementById('adminEventPublicUrlState');
+  if (copyButton) { copyButton.disabled = !active; copyButton.dataset.publicUrl = active ? url : ''; }
+  if (openLink) {
+    openLink.href = active ? url : '#';
+    openLink.setAttribute('aria-disabled', active ? 'false' : 'true');
+    openLink.classList.toggle('is-disabled', !active);
+  }
+  if (state) state.textContent = active ? '✓ Link publik aktif dan dapat dibagikan.' : '🔒 Link publik aktif setelah event dipublikasikan.';
   adminEventSetText('adminEventSeoTitleCount', String(document.getElementById('adminEventSeoTitle')?.value.length || 0));
   adminEventSetText('adminEventMetaDescriptionCount', String(document.getElementById('adminEventMetaDescription')?.value.length || 0));
 }
@@ -5617,6 +5692,17 @@ async function handleAdminEventListClick(event) {
   }
   if (action === 'participants') {
     await loadAdminEventRegistrations(eventId);
+    return;
+  }
+  if (action === 'copy-public') {
+    const url = adminEventPublicUrl(eventData);
+    const copied = await adminEventCopyText(url);
+    showAdminToast(copied ? 'success' : 'error', copied ? 'Link Event Disalin' : 'Link Belum Disalin', copied ? url : 'Salin URL dari kolom alamat browser.');
+    return;
+  }
+  if (action === 'open-public') {
+    const url = adminEventPublicUrl(eventData);
+    if (url) window.open(url, '_blank', 'noopener,noreferrer');
     return;
   }
   if (action === 'status') {
