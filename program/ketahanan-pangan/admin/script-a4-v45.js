@@ -5113,6 +5113,27 @@ adminEventSeoWatchIds.forEach(id => {
 });
 document.getElementById('adminEventSeoTitle')?.addEventListener('blur', adminEventSyncSeoPreview);
 document.getElementById('adminEventMetaDescription')?.addEventListener('blur', adminEventSyncSeoPreview);
+
+// V17.19.13A.1 — gunakan tombol eksplisit untuk membuka file picker.
+// Pola label+input transparan sebelumnya dapat gagal menerima klik pada beberapa
+// kombinasi modal/viewport browser. Handler ini berjalan langsung dari gesture user.
+const adminEventImageChooseButton = document.getElementById('adminEventImageChoose');
+const adminEventImageFileInput = document.getElementById('adminEventImageFile');
+if (adminEventImageChooseButton && adminEventImageFileInput && adminEventImageChooseButton.dataset.pickerReady !== '1') {
+  adminEventImageChooseButton.dataset.pickerReady = '1';
+  adminEventImageChooseButton.addEventListener('click', () => {
+    try {
+      if (typeof adminEventImageFileInput.showPicker === 'function') {
+        adminEventImageFileInput.showPicker();
+      } else {
+        adminEventImageFileInput.click();
+      }
+    } catch (_) {
+      adminEventImageFileInput.click();
+    }
+  });
+}
+
 document.getElementById('adminEventImageFile')?.addEventListener('change', event => {
   const input = event.currentTarget;
   const file = input?.files?.[0] || null;

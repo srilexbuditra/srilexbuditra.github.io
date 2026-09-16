@@ -58,7 +58,7 @@
 
   <link rel="stylesheet" href="./style.css?v=17.18.0">
   <link rel="stylesheet" href="./style-verifikasi-tambahan.css?v=12.6.1">
-  <link rel="stylesheet" href="./admin-dashboard-v2.css?v=17.19.13">
+  <link rel="stylesheet" href="./admin-dashboard-v2.css?v=17.19.13.1">
 </head>
 <body>
     <header class="top">
@@ -549,10 +549,8 @@
                 <div class="admin-event-field admin-event-field-wide">
                   <span>Gambar Utama Event</span>
                   <div class="admin-event-image-actions">
-                    <label class="admin-event-image-picker">
-                      <input id="adminEventImageFile" type="file" accept="image/avif,image/webp,image/jpeg,image/png">
-                      <span>Pilih / Ganti Gambar</span>
-                    </label>
+                    <input id="adminEventImageFile" class="admin-event-image-file-input" type="file" accept="image/avif,image/webp,image/jpeg,image/png" hidden>
+                    <button id="adminEventImageChoose" type="button" class="admin-event-image-picker">Pilih / Ganti Gambar</button>
                     <button id="adminEventImageRemove" type="button" class="admin-event-button admin-event-button-secondary" hidden>Hapus Gambar</button>
                   </div>
                   <small>Disarankan 1200×630 px (1.91:1), AVIF/WEBP/JPG/PNG, maksimal 2 MB. Gambar digunakan untuk kartu event dan social preview.</small>
@@ -934,7 +932,7 @@
     <script src="./local-qrcode.js?v=1" defer></script>
     <script src="./jszip.min.js?v=1" defer></script>
     <script src="./excel-engine-template.js?v=45" defer></script>
-    <script src="./script-a4-v45.js?v=17.19.13" defer></script>
+    <script src="./script-a4-v45.js?v=17.19.13.1" defer></script>
     <script src="./admin-dashboard-v2.js?v=17.19.7" defer></script>
     <script src="/assets/js/visitor-analytics.js" defer></script>
 </body>
