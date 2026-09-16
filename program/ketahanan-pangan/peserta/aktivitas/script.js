@@ -1,3 +1,4 @@
+// V17.19.13B.2 — Clean participant event card summary
 const API = 'https://peserta-api.srilexbuditra.work';
 const loadingState = document.getElementById('loadingState');
 const errorState = document.getElementById('errorState');
@@ -53,7 +54,7 @@ function escapeHtml(value) {
 
 
 function cleanEventDisplayText(value, max = 1200) {
-  return String(value ?? '')
+  const cleanText = String(value ?? '')
     .replace(/```[\s\S]*?```/g, ' ')
     .replace(/`([^`]+)`/g, '$1')
     .replace(/!\[[^\]]*\]\([^)]*\)/g, ' ')
@@ -61,8 +62,9 @@ function cleanEventDisplayText(value, max = 1200) {
     .replace(/^\s{0,3}#{1,6}\s+/gm, '')
     .replace(/[*_~>#]/g, ' ')
     .replace(/\s+/g, ' ')
-    .trim()
-    .slice(0, max);
+    .trim();
+  if (cleanText.length <= max) return cleanText;
+  return `${cleanText.slice(0, Math.max(0, max - 1)).trimEnd()}…`;
 }
 
 function formatDate(value, withTime = true) {
@@ -150,7 +152,7 @@ function renderEvents(events) {
             ${event.requires_verified_member ? '<span class="event-chip">VERIFIED MEMBER</span>' : ''}
           </div>
           <h4>${escapeHtml(event.title || 'Event')}</h4>
-          <p>${escapeHtml(cleanEventDisplayText(event.summary || 'Informasi kegiatan akan diperbarui oleh pengelola.', 1200))}</p>
+          <p>${escapeHtml(cleanEventDisplayText(event.summary || 'Informasi kegiatan akan diperbarui oleh pengelola.', 360))}</p>
           <div class="event-meta">
             <span>◷ ${escapeHtml(formatDate(event.start_at))}</span>
             <span>⌖ ${escapeHtml(event.location_text || deliveryLabel(event.delivery_mode))}</span>
