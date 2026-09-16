@@ -3615,6 +3615,7 @@ async function loadAdminUsers() {
 }
 
 function renderAdminUsers(users) {
+  closeAdminFixedSelect();
   const list = document.getElementById('adminUsersList');
   if (!list) return;
   renderRoleFunctionPanel(currentAdminUser, users);
@@ -3665,6 +3666,144 @@ function renderAdminUsers(users) {
   list.querySelectorAll('.user-manage-close').forEach(btn => btn.addEventListener('click', closeUserManagePanel));
   list.querySelectorAll('.save-user-button').forEach(btn=>btn.addEventListener('click', updateAdminUser));
   list.querySelectorAll('.reset-user-password').forEach(btn=>btn.addEventListener('click', resetAdminUserPassword));
+  enhanceAdminManagementSelects(list);
+}
+
+// V17.19.3 — Role/Status popover dibuat fixed ke viewport pada desktop.
+// Tujuan: daftar pilihan tidak terpotong/tergeser ketika workspace Manajemen Admin di-scroll.
+let activeAdminFixedSelect = null;
+
+function closeAdminFixedSelect() {
+  document.getElementById('adminFixedSelectPopover')?.remove();
+  if (activeAdminFixedSelect?.trigger) activeAdminFixedSelect.trigger.setAttribute('aria-expanded','false');
+  activeAdminFixedSelect = null;
+}
+
+function syncAdminFixedSelectTrigger(select, trigger) {
+  const option = select?.options?.[select.selectedIndex];
+  if (trigger) trigger.textContent = option?.textContent || select?.value || 'Pilih';
+}
+
+function positionAdminFixedSelect(popover, trigger) {
+  const rect = trigger.getBoundingClientRect();
+  const viewportWidth = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+  const viewportHeight = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+  const width = Math.min(Math.max(rect.width, 150), Math.max(150, viewportWidth - 16));
+  const left = Math.max(8, Math.min(rect.left, viewportWidth - width - 8));
+
+  popover.style.width = `${width}px`;
+  popover.style.left = `${left}px`;
+  popover.style.top = '8px';
+  popover.style.visibility = 'hidden';
+
+  const desiredHeight = Math.min(popover.scrollHeight || 180, 260, Math.max(100, viewportHeight - 24));
+  const below = viewportHeight - rect.bottom - 8;
+  const above = rect.top - 8;
+  const openBelow = below >= Math.min(desiredHeight, 130) || below >= above;
+  const top = openBelow
+    ? Math.min(rect.bottom + 6, viewportHeight - desiredHeight - 8)
+    : Math.max(8, rect.top - desiredHeight - 6);
+
+  popover.style.top = `${Math.max(8, top)}px`;
+  popover.style.maxHeight = `${Math.max(90, Math.min(260, viewportHeight - Math.max(8, top) - 8))}px`;
+  popover.style.visibility = 'visible';
+}
+
+function openAdminFixedSelect(select, trigger) {
+  if (!select || !trigger || select.disabled || window.matchMedia('(max-width:760px)').matches) return;
+  closeAdminFixedSelect();
+
+  const popover = document.createElement('div');
+  popover.id = 'adminFixedSelectPopover';
+  popover.className = 'admin-fixed-select-popover';
+  popover.setAttribute('role','listbox');
+  popover.setAttribute('aria-label', select.classList.contains('user-role') ? 'Pilih role akun' : 'Pilih status akun');
+
+  Array.from(select.options || []).forEach(option => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = `admin-fixed-select-option${option.value === select.value ? ' is-selected' : ''}`;
+    button.textContent = option.textContent || option.value;
+    button.dataset.value = option.value;
+    button.setAttribute('role','option');
+    button.setAttribute('aria-selected', option.value === select.value ? 'true' : 'false');
+    button.addEventListener('click', event => {
+      event.preventDefault();
+      event.stopPropagation();
+      select.value = option.value;
+      select.dispatchEvent(new Event('input', { bubbles:true }));
+      select.dispatchEvent(new Event('change', { bubbles:true }));
+      syncAdminFixedSelectTrigger(select, trigger);
+      closeAdminFixedSelect();
+      trigger.focus({ preventScroll:true });
+    });
+    popover.appendChild(button);
+  });
+
+  document.body.appendChild(popover);
+  trigger.setAttribute('aria-expanded','true');
+  activeAdminFixedSelect = { select, trigger, popover };
+  positionAdminFixedSelect(popover, trigger);
+
+  const selected = popover.querySelector('.admin-fixed-select-option.is-selected');
+  (selected || popover.querySelector('.admin-fixed-select-option'))?.focus({ preventScroll:true });
+}
+
+function enhanceAdminManagementSelects(root = document) {
+  if (window.matchMedia('(max-width:760px)').matches) return;
+  root.querySelectorAll('.admin-user-edit-panel select.user-role, .admin-user-edit-panel select.user-active').forEach(select => {
+    if (select.dataset.fixedSelectBound === '1') return;
+    select.dataset.fixedSelectBound = '1';
+    select.classList.add('admin-fixed-select-native');
+
+    const wrap = document.createElement('div');
+    wrap.className = 'admin-fixed-select-wrap';
+    select.parentNode.insertBefore(wrap, select);
+    wrap.appendChild(select);
+
+    const trigger = document.createElement('button');
+    trigger.type = 'button';
+    trigger.className = 'admin-fixed-select-trigger';
+    trigger.disabled = select.disabled;
+    trigger.setAttribute('aria-haspopup','listbox');
+    trigger.setAttribute('aria-expanded','false');
+    syncAdminFixedSelectTrigger(select, trigger);
+    wrap.appendChild(trigger);
+
+    select.addEventListener('change', () => syncAdminFixedSelectTrigger(select, trigger));
+    trigger.addEventListener('click', event => {
+      event.preventDefault();
+      event.stopPropagation();
+      if (activeAdminFixedSelect?.trigger === trigger) closeAdminFixedSelect();
+      else openAdminFixedSelect(select, trigger);
+    });
+    trigger.addEventListener('keydown', event => {
+      if (['Enter',' ','ArrowDown'].includes(event.key)) {
+        event.preventDefault();
+        openAdminFixedSelect(select, trigger);
+      }
+    });
+  });
+}
+
+if (!window.__adminFixedSelectGlobalBound) {
+  window.__adminFixedSelectGlobalBound = true;
+  document.addEventListener('click', event => {
+    if (!activeAdminFixedSelect) return;
+    if (event.target.closest('#adminFixedSelectPopover') || event.target.closest('.admin-fixed-select-trigger')) return;
+    closeAdminFixedSelect();
+  });
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && activeAdminFixedSelect) {
+      const trigger = activeAdminFixedSelect.trigger;
+      closeAdminFixedSelect();
+      trigger?.focus({ preventScroll:true });
+    }
+  });
+  window.addEventListener('resize', () => {
+    closeAdminFixedSelect();
+    if (!window.matchMedia('(max-width:760px)').matches) enhanceAdminManagementSelects(document.getElementById('adminUsersList') || document);
+  });
 }
 
 function toggleUserManagePanel(event) {
@@ -3685,6 +3824,7 @@ function toggleUserManagePanel(event) {
 }
 
 function closeUserManagePanel(event) {
+  closeAdminFixedSelect();
   const card = event.currentTarget.closest('.admin-user-card');
   const panel = card?.querySelector('.admin-user-edit-panel');
   const toggle = card?.querySelector('.user-manage-toggle');

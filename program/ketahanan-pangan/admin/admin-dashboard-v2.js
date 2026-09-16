@@ -1,6 +1,6 @@
 'use strict';
 
-// Dashboard Admin V2 — Navigation Sync & Stability + Admin Management Fix (V17.19.2)
+// Dashboard Admin V2 — Management Select Stability + Logout (V17.19.3)
 // Presentation/navigation layer only. Core admin logic remains in script-a4-v45.js.
 (() => {
   const STORAGE_KEY = 'kp_admin_v2_view';
@@ -87,7 +87,7 @@
     sidebar.innerHTML = `
       <div class="admin-v2-brand">
         <img src="/program/ketahanan-pangan/assets/brand/favicon-192x192.png" alt="">
-        <div><strong>Program Ketahanan Pangan</strong><span>DASHBOARD ADMIN V2 · V17.19.2</span></div>
+        <div><strong>Program Ketahanan Pangan</strong><span>DASHBOARD ADMIN V2 · V17.19.3</span></div>
       </div>
       <nav class="admin-v2-nav" id="adminV2Nav"></nav>
       <div class="admin-v2-sidebar-foot">
@@ -95,6 +95,9 @@
           <span id="adminV2Avatar" class="admin-v2-avatar">AD</span>
           <div><strong id="adminV2UserName">Administrator</strong><span id="adminV2UserRole">ADMIN</span></div>
         </div>
+        <button id="adminV2LogoutButton" class="admin-v2-logout" type="button">
+          <span aria-hidden="true">↪</span><strong>Keluar Akun</strong>
+        </button>
         <small class="admin-v2-sidebar-note">Navigasi V2 mengatur ruang kerja. Hak akses final tetap mengikuti session dan server.</small>
       </div>`;
 
@@ -358,6 +361,14 @@
       if (event.target.closest('#adminV2MenuToggle')) {
         event.preventDefault();
         document.body.classList.contains('admin-v2-sidebar-open') ? closeDrawer() : openDrawer();
+        return;
+      }
+
+      if (event.target.closest('#adminV2LogoutButton')) {
+        event.preventDefault();
+        closeDrawer();
+        const legacyLogout = $('#adminLogoutButton');
+        if (legacyLogout && !legacyLogout.disabled) legacyLogout.click();
         return;
       }
 
