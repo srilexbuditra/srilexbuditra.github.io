@@ -1,3 +1,4 @@
+// V17.19.13B.2 — Admin Public Link + Clean Event Card
 'use strict';
 
 const API_URL =
@@ -5312,7 +5313,7 @@ function renderAdminEventList(events) {
       <div class="admin-event-card-top">
         <div class="admin-event-card-title">
           <h3>${escapeHtml(event.title || 'Event Tanpa Judul')}</h3>
-          <p>${escapeHtml(adminEventPlainText(event.summary || 'Belum ada ringkasan event.', 900))}</p>
+          <p>${escapeHtml(adminEventCardText(event.summary || 'Belum ada ringkasan event.', 320))}</p>
         </div>
         <div class="admin-event-badges">
           <span class="admin-event-badge admin-event-badge--${escapeHtml(status)}">${escapeHtml(adminEventStatusLabel(status))}</span>
@@ -5326,6 +5327,7 @@ function renderAdminEventList(events) {
         <span><small>Kuota Aktif</small><b>${escapeHtml(capacityText)}</b></span>
         <span><small>Syarat / Poin</small><b>${escapeHtml(requirement)} · +${Number(event.attendance_points || 0)} poin</b></span>
       </div>
+      ${adminEventIsPublic(event) ? `<div class="admin-event-public-url"><small>URL Publik</small><a href="${escapeHtml(adminEventPublicUrl(event))}" target="_blank" rel="noopener noreferrer">${escapeHtml(adminEventPublicUrl(event))}</a></div>` : `<div class="admin-event-public-url is-locked"><small>URL Publik</small><span>🔒 Aktif setelah event dipublikasikan</span></div>`}
       <div class="admin-event-card-actions">
         <button type="button" class="admin-event-button admin-event-button-secondary" data-event-action="edit" data-event-id="${escapeHtml(event.event_id)}">Edit</button>
         <button type="button" class="admin-event-button admin-event-button-secondary" data-event-action="participants" data-event-id="${escapeHtml(event.event_id)}">Peserta (${Number(event.registered_count || 0) + Number(event.attended_count || 0) + Number(event.no_show_count || 0) + Number(event.cancelled_count || 0)})</button>
@@ -5362,6 +5364,12 @@ function adminEventPlainText(value, max = 160) {
     .replace(/\s+/g, ' ')
     .trim()
     .slice(0, max);
+}
+
+function adminEventCardText(value, max = 320) {
+  const cleanText = adminEventPlainText(value, 5000);
+  if (cleanText.length <= max) return cleanText;
+  return `${cleanText.slice(0, Math.max(0, max - 1)).trimEnd()}…`;
 }
 
 function adminEventPublicUrl(eventDataOrSlug) {
