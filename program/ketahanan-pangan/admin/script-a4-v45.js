@@ -3750,39 +3750,20 @@ function openAdminFixedSelect(select, trigger) {
 }
 
 function enhanceAdminManagementSelects(root = document) {
-  if (window.matchMedia('(max-width:760px)').matches) return;
+  // V17.19.6: Role dan Status memakai <select> native di semua perangkat.
+  // Modal Kelola sudah fixed ke viewport, sehingga dropdown native tidak lagi
+  // terpotong oleh card/scroll container dan lebih andal untuk mouse, touch,
+  // keyboard, serta accessibility browser.
+  closeAdminFixedSelect();
   root.querySelectorAll('.admin-user-edit-panel select.user-role, .admin-user-edit-panel select.user-active').forEach(select => {
-    if (select.dataset.fixedSelectBound === '1') return;
-    select.dataset.fixedSelectBound = '1';
-    select.classList.add('admin-fixed-select-native');
-
-    const wrap = document.createElement('div');
-    wrap.className = 'admin-fixed-select-wrap';
-    select.parentNode.insertBefore(wrap, select);
-    wrap.appendChild(select);
-
-    const trigger = document.createElement('button');
-    trigger.type = 'button';
-    trigger.className = 'admin-fixed-select-trigger';
-    trigger.disabled = select.disabled;
-    trigger.setAttribute('aria-haspopup','listbox');
-    trigger.setAttribute('aria-expanded','false');
-    syncAdminFixedSelectTrigger(select, trigger);
-    wrap.appendChild(trigger);
-
-    select.addEventListener('change', () => syncAdminFixedSelectTrigger(select, trigger));
-    trigger.addEventListener('click', event => {
-      event.preventDefault();
-      event.stopPropagation();
-      if (activeAdminFixedSelect?.trigger === trigger) closeAdminFixedSelect();
-      else openAdminFixedSelect(select, trigger);
-    });
-    trigger.addEventListener('keydown', event => {
-      if (['Enter',' ','ArrowDown'].includes(event.key)) {
-        event.preventDefault();
-        openAdminFixedSelect(select, trigger);
-      }
-    });
+    select.dataset.fixedSelectBound = 'native';
+    select.classList.remove('admin-fixed-select-native');
+    const wrap = select.closest('.admin-fixed-select-wrap');
+    if (wrap) {
+      const parent = wrap.parentNode;
+      if (parent) parent.insertBefore(select, wrap);
+      wrap.remove();
+    }
   });
 }
 
@@ -3865,8 +3846,8 @@ function ensureAdminManageBackdrop() {
 }
 
 function syncAdminManageModalState(card, panel, open) {
-  const desktop = !window.matchMedia('(max-width:760px)').matches;
-  if (!desktop || !open) {
+  // V17.19.6: modal Kelola berlaku konsisten pada desktop, tablet, dan HP.
+  if (!open) {
     removeAdminManageModalState();
     return;
   }

@@ -1,6 +1,6 @@
 'use strict';
 
-// Dashboard Admin V2 — Mobile Navigation + Logout Stability (V17.19.4)
+// Dashboard Admin V2 — Unified Modal + Native Select Stability (V17.19.6)
 // Presentation/navigation layer only. Core admin logic remains in script-a4-v45.js.
 (() => {
   const STORAGE_KEY = 'kp_admin_v2_view';
@@ -551,5 +551,115 @@
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init, { once:true });
+  else init();
+})();
+
+
+// =========================================================
+// V17.19.6 — Unified modal presentation for secondary actions
+// Keeps the main sidebar workspaces as pages, while action/detail features
+// open in a stable viewport modal on desktop, tablet, and mobile.
+// =========================================================
+(() => {
+  const TARGETS = [
+    { id:'createAdminUserForm', close:'#cancelCreateAdminUser, #cancelCreateAdminUserBottom' },
+    { id:'changeOwnPasswordForm', close:'#cancelOwnPassword' },
+    { id:'adminEventForm', close:'#adminEventFormClose, #adminEventCancelEdit' },
+    { id:'adminEventRegistrationsPanel', close:'#adminEventRegistrationsClose' },
+    { id:'registrationDetailPanel', close:'#closeDetailButton' },
+    { id:'certificatePanel', close:'#closeCertificateButton' }
+  ];
+
+  let initialized = false;
+  let openSequence = 0;
+
+  function getTarget(id) { return document.getElementById(id); }
+  function visibleTargets() {
+    return TARGETS.map(item => ({...item, node:getTarget(item.id)}))
+      .filter(item => item.node && !item.node.hidden && item.node.classList.contains('admin-v2-unified-modal'));
+  }
+  function ensureBackdrop() {
+    let backdrop = document.getElementById('adminV2UnifiedModalBackdrop');
+    if (!backdrop) {
+      backdrop = document.createElement('div');
+      backdrop.id = 'adminV2UnifiedModalBackdrop';
+      backdrop.className = 'admin-v2-unified-modal-backdrop';
+      backdrop.setAttribute('aria-hidden','true');
+      backdrop.addEventListener('click', () => closeTopModal());
+      document.body.appendChild(backdrop);
+    }
+    return backdrop;
+  }
+  function syncStack() {
+    const open = visibleTargets().sort((a,b) => Number(a.node.dataset.adminV2ModalOrder||0) - Number(b.node.dataset.adminV2ModalOrder||0));
+    document.body.classList.toggle('admin-v2-unified-modal-open', open.length > 0);
+    const backdrop = open.length ? ensureBackdrop() : document.getElementById('adminV2UnifiedModalBackdrop');
+    if (!open.length) {
+      backdrop?.remove();
+      return;
+    }
+    open.forEach((item,index) => item.node.style.setProperty('--admin-v2-modal-z', String(6710 + index * 4)));
+    backdrop.style.zIndex = String(6700 + Math.max(0, open.length - 1) * 4);
+  }
+  function activateModal(item) {
+    const node = getTarget(item.id);
+    if (!node || node.hidden) return;
+    node.classList.add('admin-v2-unified-modal');
+    node.dataset.adminV2ModalOrder = String(++openSequence);
+    node.setAttribute('role','dialog');
+    node.setAttribute('aria-modal','true');
+    syncStack();
+    window.requestAnimationFrame(() => {
+      const focusable = node.querySelector('[autofocus], button:not(:disabled), input:not(:disabled), select:not(:disabled), textarea:not(:disabled), a[href]');
+      focusable?.focus({preventScroll:true});
+    });
+  }
+  function deactivateModal(item) {
+    const node = getTarget(item.id);
+    if (!node) return;
+    node.classList.remove('admin-v2-unified-modal');
+    node.style.removeProperty('--admin-v2-modal-z');
+    delete node.dataset.adminV2ModalOrder;
+    syncStack();
+  }
+  function topModal() {
+    return visibleTargets().sort((a,b) => Number(b.node.dataset.adminV2ModalOrder||0) - Number(a.node.dataset.adminV2ModalOrder||0))[0] || null;
+  }
+  function closeTopModal() {
+    const item = topModal();
+    if (!item) return;
+    const button = item.node.querySelector(item.close);
+    if (button) {
+      button.click();
+      return;
+    }
+    item.node.hidden = true;
+    deactivateModal(item);
+  }
+  function bindTarget(item) {
+    const node = getTarget(item.id);
+    if (!node || node.dataset.adminV2UnifiedModalBound === '1') return;
+    node.dataset.adminV2UnifiedModalBound = '1';
+    new MutationObserver(() => {
+      if (node.hidden) deactivateModal(item);
+      else activateModal(item);
+    }).observe(node, {attributes:true, attributeFilter:['hidden']});
+    if (!node.hidden) activateModal(item);
+  }
+  function init() {
+    if (initialized) return;
+    initialized = true;
+    TARGETS.forEach(bindTarget);
+    // Panels are static in this dashboard, but this observer also covers any
+    // future late-rendered target with the same stable ID.
+    new MutationObserver(() => TARGETS.forEach(bindTarget)).observe(document.body, {childList:true, subtree:true});
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape' && topModal()) {
+        event.preventDefault();
+        closeTopModal();
+      }
+    });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init, {once:true});
   else init();
 })();

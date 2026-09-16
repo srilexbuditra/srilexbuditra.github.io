@@ -525,3 +525,116 @@ body.admin-v2-active #createAdminUserForm:not([hidden]){
     background:rgba(255,255,255,.97);border-top:1px solid #e4eee9;backdrop-filter:blur(8px)
   }
 }
+
+
+/* =========================================================
+   V17.19.6 — Unified fixed modal system + reliable native selects
+   ========================================================= */
+body.admin-v2-manage-modal-open,
+body.admin-v2-unified-modal-open{overflow:hidden!important}
+
+/* Kelola Akun: same fixed-dialog behavior on every device. */
+.admin-v2-manage-backdrop{
+  position:fixed;inset:0;z-index:6450;
+  background:rgba(5,34,25,.44);backdrop-filter:blur(2px)
+}
+body.admin-v2-active .admin-user-card.is-managing > .admin-user-edit-panel{
+  position:fixed!important;z-index:6500!important;
+  top:50%!important;left:50%!important;right:auto!important;bottom:auto!important;
+  transform:translate(-50%,-50%)!important;
+  width:min(720px,calc(100vw - 28px))!important;
+  max-height:calc(100dvh - 28px)!important;
+  overflow:auto!important;overscroll-behavior:contain;
+  margin:0!important;padding:18px!important;
+  border:1px solid #cfe2d9!important;border-radius:16px!important;
+  background:#fff!important;box-shadow:0 24px 70px rgba(6,52,37,.28)!important;
+  scrollbar-gutter:stable
+}
+body.admin-v2-active .admin-user-card.is-managing > .admin-user-edit-panel::before{
+  content:"Kelola Akun";display:block;margin:0 0 12px;
+  color:#103f31;font-size:14px;font-weight:900;letter-spacing:.01em
+}
+body.admin-v2-active .admin-user-card.is-managing > .admin-user-edit-panel .admin-user-card-actions{
+  position:sticky;bottom:-18px;z-index:2;
+  margin:14px -18px -18px;padding:12px 18px;
+  background:rgba(255,255,255,.97);border-top:1px solid #e4eee9;backdrop-filter:blur(8px)
+}
+
+/* Role/Status return to native browser selects. This is intentionally simpler
+   and more reliable now that the editor itself is fixed to the viewport. */
+body.admin-v2-active .admin-user-edit-panel select.user-role,
+body.admin-v2-active .admin-user-edit-panel select.user-active{
+  display:block!important;position:static!important;
+  width:100%!important;height:auto!important;min-height:42px!important;
+  margin:0!important;padding:8px 34px 8px 10px!important;
+  opacity:1!important;pointer-events:auto!important;
+  overflow:visible!important;clip:auto!important;white-space:normal!important;
+  border:1px solid #c7ddd4!important;border-radius:10px!important;
+  background:#fff!important;color:#173f33!important;
+  font:inherit!important;cursor:pointer!important;
+  appearance:auto!important;-webkit-appearance:menulist!important
+}
+body.admin-v2-active .admin-user-edit-panel select.user-role:focus,
+body.admin-v2-active .admin-user-edit-panel select.user-active:focus{
+  outline:none!important;border-color:#0e9a67!important;
+  box-shadow:0 0 0 3px rgba(14,154,103,.12)!important
+}
+
+/* Shared modal visual for action/detail features. Main sidebar workspaces stay
+   as pages; only secondary actions/details use this overlay pattern. */
+.admin-v2-unified-modal-backdrop{
+  position:fixed;inset:0;background:rgba(5,34,25,.44);
+  backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px)
+}
+body.admin-v2-active .admin-v2-unified-modal{
+  position:fixed!important;
+  z-index:var(--admin-v2-modal-z,6710)!important;
+  top:50%!important;left:50%!important;right:auto!important;bottom:auto!important;
+  transform:translate(-50%,-50%)!important;
+  width:min(1080px,calc(100vw - 36px))!important;
+  max-height:calc(100dvh - 36px)!important;
+  overflow:auto!important;overscroll-behavior:contain;
+  margin:0!important;
+  border:1px solid #cfe2d9!important;border-radius:18px!important;
+  background:#fff!important;box-shadow:0 26px 80px rgba(6,52,37,.30)!important;
+  scrollbar-gutter:stable
+}
+body.admin-v2-active #createAdminUserForm.admin-v2-unified-modal,
+body.admin-v2-active #changeOwnPasswordForm.admin-v2-unified-modal{
+  width:min(820px,calc(100vw - 36px))!important;padding:18px!important
+}
+body.admin-v2-active #adminEventForm.admin-v2-unified-modal,
+body.admin-v2-active #adminEventRegistrationsPanel.admin-v2-unified-modal{
+  width:min(1000px,calc(100vw - 36px))!important;padding:18px!important
+}
+body.admin-v2-active #registrationDetailPanel.admin-v2-unified-modal,
+body.admin-v2-active #certificatePanel.admin-v2-unified-modal{
+  padding:18px!important
+}
+
+@media(max-width:760px){
+  body.admin-v2-active .admin-user-card.is-managing > .admin-user-edit-panel,
+  body.admin-v2-active .admin-v2-unified-modal{
+    width:calc(100vw - 12px)!important;
+    max-height:calc(100dvh - 12px)!important;
+    border-radius:16px!important
+  }
+  body.admin-v2-active .admin-user-card.is-managing > .admin-user-edit-panel{
+    padding:14px!important
+  }
+  body.admin-v2-active .admin-user-card.is-managing > .admin-user-edit-panel .admin-user-controls{
+    grid-template-columns:1fr!important
+  }
+  body.admin-v2-active .admin-user-card.is-managing > .admin-user-edit-panel .admin-user-card-actions{
+    bottom:-14px;margin:12px -14px -14px;padding:10px 14px;
+    display:grid!important;grid-template-columns:1fr!important;gap:8px!important
+  }
+  body.admin-v2-active #createAdminUserForm.admin-v2-unified-modal,
+  body.admin-v2-active #changeOwnPasswordForm.admin-v2-unified-modal,
+  body.admin-v2-active #adminEventForm.admin-v2-unified-modal,
+  body.admin-v2-active #adminEventRegistrationsPanel.admin-v2-unified-modal,
+  body.admin-v2-active #registrationDetailPanel.admin-v2-unified-modal,
+  body.admin-v2-active #certificatePanel.admin-v2-unified-modal{
+    width:calc(100vw - 12px)!important;padding:14px!important
+  }
+}
