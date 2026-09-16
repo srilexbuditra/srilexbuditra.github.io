@@ -22,6 +22,7 @@ let memberPhotoRefreshTimer = null;
 let participantCommunicationContext = null;
 let participantCommunicationPreviewDirty = false;
 let participantCommunicationHistoryState = null;
+let participantCommunicationTypeDirty = false;
 
 
 function stripLegacyAdminTokenFromUrl() {
@@ -2035,19 +2036,93 @@ function formatParticipantCommunicationDate(value) {
   return parsed.toLocaleDateString('id-ID', { day:'2-digit', month:'long', year:'numeric' });
 }
 
+function participantCommunicationWasSent(type) {
+  const history = Array.isArray(participantCommunicationHistoryState?.history)
+    ? participantCommunicationHistoryState.history
+    : [];
+  return history.some(row => row?.action === 'whatsapp_opened' && row?.message_type === type);
+}
+
 function getParticipantCommunicationRecommendation(context) {
   const registration = context?.registration || {};
   const status = String(registration.status || '').toLowerCase();
   const accountKnown = Boolean(context?.accountAuditEntry);
   const accountActive = context?.accountAuditEntry?.account_status === 'active';
-  if (status === 'revision') return { type:'revision', label:'Perlu Perbaikan Data' };
-  if (status === 'rejected') return { type:'rejected', label:'Pendaftaran Ditolak' };
-  if (status === 'submitted') return { type:'registration_received', label:'Pendaftaran Sudah Tercatat' };
-  if (status === 'pending') return { type:'under_review', label:'Sedang Dalam Pemeriksaan' };
-  if (status === 'verified' && accountKnown && !accountActive) return { type:'activation_reminder', label:'Belum Aktivasi Akun' };
-  if (status === 'verified' && accountActive) return { type:'verified', label:'Pendaftaran Terverifikasi' };
-  if (status === 'verified') return { type:'verified', label:'Pendaftaran Terverifikasi' };
-  return { type:'registration_received', label:'Pendaftaran Sudah Tercatat' };
+  const mv = context?.memberVerificationData?.member_verification || {};
+  const mvStatus = String(mv.status || 'not_submitted').toLowerCase();
+  const photoAvailable = Number(mv.photo_available || 0) === 1;
+
+  if (status === 'revision') {
+    return { type:'revision', label:'Perlu Perbaikan Data', reason:'Pendaftaran sedang menunggu perbaikan data dari peserta.' };
+  }
+  if (status === 'rejected') {
+    return { type:'rejected', label:'Pendaftaran Ditolak', reason:'Status registrasi saat ini Ditolak.' };
+  }
+  if (status === 'needs_action') {
+    return { type:'urgent_action', label:'Perlu Tindakan Segera', reason:'Registrasi ditandai membutuhkan tindakan lanjutan.' };
+  }
+  if (status === 'submitted') {
+    return { type:'registration_received', label:'Pendaftaran Sudah Tercatat', reason:'Pendaftaran baru tercatat dan belum masuk pemeriksaan.' };
+  }
+  if (['pending','resubmitted'].includes(status)) {
+    return { type:'under_review', label:'Sedang Dalam Pemeriksaan', reason:'Data registrasi sedang diperiksa atau diperiksa ulang.' };
+  }
+
+  if (status === 'verified' && accountKnown && !accountActive) {
+    return { type:'activation_reminder', label:'Belum Aktivasi Akun', reason:'Pendaftaran sudah Terverifikasi, tetapi akun peserta belum aktif.' };
+  }
+
+  if (status === 'verified' && accountActive) {
+    if (mvStatus === 'not_submitted' || !photoAvailable) {
+      return { type:'account_active_photo_missing', label:'Akun Aktif — Belum Rekam Foto', reason:'Akun peserta aktif, tetapi rekam foto Verifikasi Anggota belum dilakukan.' };
+    }
+    if (['pending','reviewing','resubmitted'].includes(mvStatus)) {
+      return { type:'photo_under_review', label:'Foto Sedang Diverifikasi', reason:'Foto sudah dikirim dan masih berada pada proses pemeriksaan admin.' };
+    }
+    if (['revision','rejected','needs_action'].includes(mvStatus)) {
+      return { type:'photo_revision', label:'Foto Perlu Perbaikan', reason:'Hasil review foto membutuhkan perbaikan atau rekam ulang dari peserta.' };
+    }
+    if (mvStatus === 'approved') {
+      if (!participantCommunicationWasSent('member_verified')) {
+        return { type:'member_verified', label:'Foto Terverifikasi / VERIFIED MEMBER', reason:'Foto sudah disetujui dan VERIFIED MEMBER telah aktif.' };
+      }
+      if (!participantCommunicationWasSent('card_ready')) {
+        return { type:'card_ready', label:'Kartu Anggota + QR Siap', reason:'VERIFIED MEMBER sudah diinformasikan; tahap berikutnya Kartu Anggota + QR.' };
+      }
+      if (!participantCommunicationWasSent('certificate_ready')) {
+        return { type:'certificate_ready', label:'Sertifikat Digital Siap', reason:'Kartu Anggota sudah diinformasikan; Sertifikat Digital kini dapat diberitahukan.' };
+      }
+      return { type:'certificate_ready', label:'Sertifikat Digital Siap', reason:'Journey keanggotaan inti sudah lengkap.' };
+    }
+    return { type:'account_active', label:'Akun Sudah Aktif', reason:'Akun peserta sudah aktif.' };
+  }
+
+  if (status === 'verified') {
+    return { type:'verified', label:'Pendaftaran Terverifikasi', reason:'Pendaftaran sudah Terverifikasi. Status akun peserta belum tersedia pada ringkasan audit.' };
+  }
+
+  return { type:'registration_received', label:'Pendaftaran Sudah Tercatat', reason:'Gunakan template umum sampai status peserta terbaca lebih lengkap.' };
+}
+
+function isParticipantCommunicationEventType(type) {
+  return ['event','event_invitation','event_reminder','event_change','event_cancel'].includes(type);
+}
+
+function applyParticipantCommunicationRecommendation(context, options = {}) {
+  const recommendation = getParticipantCommunicationRecommendation(context);
+  const suggestionEl = document.getElementById('participantCommunicationSuggestion');
+  const reasonEl = document.getElementById('participantCommunicationSuggestionReason');
+  const typeEl = document.getElementById('participantCommunicationType');
+  if (suggestionEl) suggestionEl.textContent = recommendation.label;
+  if (reasonEl) reasonEl.textContent = recommendation.reason || 'Saran disesuaikan dengan posisi Journey peserta.';
+
+  if (typeEl && (!participantCommunicationTypeDirty || options.force)) {
+    typeEl.value = recommendation.type;
+    participantCommunicationPreviewDirty = false;
+    updateParticipantCommunicationConditionalFields();
+    regenerateParticipantCommunicationMessage(true);
+  }
+  return recommendation;
 }
 
 function participantCommunicationTemplateLabel(type) {
@@ -2056,12 +2131,26 @@ function participantCommunicationTemplateLabel(type) {
     under_review:'Sedang Dalam Pemeriksaan',
     activation_reminder:'Belum Aktivasi Akun',
     account_active:'Akun Sudah Aktif',
+    account_active_photo_missing:'Akun Aktif — Belum Rekam Foto',
     verified:'Pendaftaran Terverifikasi',
     revision:'Perlu Perbaikan Data',
     rejected:'Pendaftaran Ditolak',
+    document_revision:'KTP/KK Perlu Diperbaiki',
+    photo_under_review:'Foto Sedang Diverifikasi',
+    photo_revision:'Foto Perlu Perbaikan',
+    member_verified:'Foto Terverifikasi / VERIFIED MEMBER',
+    card_ready:'Kartu Anggota + QR Siap',
+    certificate_ready:'Sertifikat Digital Siap',
+    event_invitation:'Undangan Event / Pameran',
+    event_reminder:'Pengingat Event',
+    event_change:'Perubahan Jadwal / Lokasi Event',
+    event_cancel:'Pembatalan Event',
+    announcement:'Berita / Pengumuman Penting',
+    urgent_action:'Perlu Tindakan Segera',
+    follow_up:'Konfirmasi / Follow-up Peserta',
+    // Legacy audit labels retained for historical rows.
     member_verification:'Verifikasi Foto / VERIFIED MEMBER',
     event:'Undangan Event / Pameran',
-    announcement:'Berita / Pengumuman Penting',
     manual:'Pesan Manual'
   };
   return labels[type] || 'Komunikasi Peserta';
@@ -2075,23 +2164,43 @@ function updateParticipantCommunicationConditionalFields() {
   const eventFields = document.getElementById('participantCommunicationEventFields');
   const extra = document.getElementById('participantCommunicationExtra');
 
-  const needsExtra = ['revision','rejected','member_verification','announcement'].includes(type);
+  const extraTypes = [
+    'revision','rejected','document_revision','photo_revision',
+    'announcement','urgent_action','follow_up','event_change','event_cancel',
+    // Legacy template remains supported.
+    'member_verification'
+  ];
+  const needsExtra = extraTypes.includes(type);
   if (extraWrap) extraWrap.hidden = !needsExtra;
-  if (eventFields) eventFields.hidden = type !== 'event';
+  if (eventFields) eventFields.hidden = !isParticipantCommunicationEventType(type);
 
   if (extraLabel) {
-    extraLabel.textContent = type === 'revision' ? 'Catatan Perbaikan'
+    extraLabel.textContent = type === 'revision' ? 'Catatan Perbaikan Data'
       : type === 'rejected' ? 'Alasan Penolakan'
+      : type === 'document_revision' ? 'Catatan Perbaikan KTP/KK'
+      : type === 'photo_revision' ? 'Alasan / Catatan Perbaikan Foto'
+      : type === 'urgent_action' ? 'Tindakan yang Harus Dilakukan'
+      : type === 'follow_up' ? 'Hal yang Perlu Dikonfirmasi'
+      : type === 'event_change' ? 'Keterangan Perubahan Event'
+      : type === 'event_cancel' ? 'Keterangan Pembatalan Event'
       : type === 'member_verification' ? 'Informasi Verifikasi Foto'
       : 'Isi Pengumuman / Informasi Penting';
   }
   if (extraHelp) {
-    extraHelp.textContent = ['revision','rejected'].includes(type)
-      ? 'Wajib diisi agar peserta mengetahui alasan atau perbaikan yang diperlukan.'
+    const required = ['revision','rejected','document_revision','photo_revision','urgent_action'].includes(type);
+    extraHelp.textContent = required
+      ? 'Wajib diisi agar peserta mengetahui alasan atau tindakan yang diperlukan.'
       : 'Informasi ini akan dimasukkan ke dalam template pesan.';
   }
-  if (extra && needsExtra && !extra.value && ['revision','rejected'].includes(type)) {
-    extra.value = participantCommunicationContext?.adminNote || '';
+
+  if (extra && needsExtra && !extra.value) {
+    if (['revision','rejected','document_revision'].includes(type)) {
+      extra.value = participantCommunicationContext?.adminNote || '';
+    } else if (type === 'photo_revision') {
+      extra.value = participantCommunicationContext?.memberVerificationData?.member_verification?.review_note
+        || participantCommunicationContext?.adminNote
+        || '';
+    }
   }
 }
 
@@ -2105,32 +2214,56 @@ function buildParticipantCommunicationMessage() {
   const footer = 'Terima kasih.\n\nSalam,\nTim Program Ketahanan Pangan';
   const extra = String(document.getElementById('participantCommunicationExtra')?.value || '').trim();
   const accountLink = 'https://s.id/akun_tani';
+  const statusLink = 'https://s.id/validasi_tani';
+  const cardLink = 'https://srilexbuditra.work/program/ketahanan-pangan/peserta/kartu/';
 
   if (type === 'registration_received') {
-    return `${greeting}\n\nKami menginformasikan bahwa pendaftaran Program Ketahanan Pangan Anda telah tercatat dengan nomor registrasi *${registrationId}*.\n\nData akan diproses sesuai tahapan pemeriksaan. Mohon simpan nomor registrasi tersebut untuk pengecekan status.\n\n${footer}`;
+    return `${greeting}\n\nKami menginformasikan bahwa pendaftaran Program Ketahanan Pangan Anda telah tercatat dengan nomor registrasi *${registrationId}*.\n\nData akan diproses sesuai tahapan pemeriksaan. Mohon simpan nomor registrasi tersebut untuk pengecekan status.\n\nCek status: ${statusLink}\n\n${footer}`;
   }
   if (type === 'under_review') {
-    return `${greeting}\n\nPendaftaran Program Ketahanan Pangan dengan nomor *${registrationId}* sedang dalam proses pemeriksaan data dan dokumen.\n\nMohon menunggu informasi berikutnya melalui portal peserta atau pemberitahuan resmi dari tim.\n\n${footer}`;
+    return `${greeting}\n\nPendaftaran Program Ketahanan Pangan dengan nomor *${registrationId}* sedang dalam proses pemeriksaan data dan dokumen.\n\nMohon menunggu informasi berikutnya. Tidak perlu mengirim ulang data kecuali sistem atau Admin meminta perbaikan.\n\nCek status: ${statusLink}\n\n${footer}`;
   }
   if (type === 'activation_reminder') {
-    return `${greeting}\n\nPendaftaran Program Ketahanan Pangan dengan nomor *${registrationId}* telah tercatat/terverifikasi, namun akun peserta belum diaktivasi.\n\nSilakan melakukan aktivasi atau login melalui:\n${accountLink}\n\nJika mengalami kendala, silakan membalas pesan ini.\n\n${footer}`;
+    return `${greeting}\n\nPendaftaran Program Ketahanan Pangan dengan nomor *${registrationId}* sudah *TERVERIFIKASI*, namun akun peserta belum diaktivasi.\n\nSilakan melakukan aktivasi atau login melalui:\n${accountLink}\n\nSetelah akun aktif, ikuti Langkah Berikutnya pada Dashboard Peserta.\n\n${footer}`;
   }
   if (type === 'account_active') {
-    return `${greeting}\n\nKami menginformasikan bahwa akun peserta untuk nomor registrasi *${registrationId}* sudah aktif dan dapat digunakan.\n\nSilakan masuk melalui:\n${accountLink}\n\nJaga kerahasiaan informasi login akun Anda.\n\n${footer}`;
+    return `${greeting}\n\nKami menginformasikan bahwa akun peserta untuk nomor registrasi *${registrationId}* sudah aktif dan dapat digunakan.\n\nSilakan masuk melalui:\n${accountLink}\n\nIkuti bagian *Langkah Berikutnya* pada Dashboard Peserta untuk melanjutkan proses keanggotaan. Jaga kerahasiaan informasi login akun Anda.\n\n${footer}`;
+  }
+  if (type === 'account_active_photo_missing') {
+    return `${greeting}\n\nAkun peserta Program Ketahanan Pangan dengan nomor *${registrationId}* sudah aktif. Namun, proses *Rekam Foto / Verifikasi Anggota* belum dilakukan.\n\nSilakan login melalui:\n${accountLink}\n\nSetelah masuk, buka menu *Verifikasi Anggota + Foto*, lakukan rekam foto sesuai petunjuk, lalu kirim untuk pemeriksaan Admin.\n\nSetelah foto disetujui, status *VERIFIED MEMBER* akan aktif dan Kartu Anggota + QR dapat digunakan.\n\n${footer}`;
   }
   if (type === 'verified') {
-    return `${greeting}\n\nData pendaftaran Program Ketahanan Pangan dengan nomor *${registrationId}* telah *TERVERIFIKASI*.\n\nSilakan masuk ke akun peserta untuk melihat informasi keanggotaan dan layanan yang tersedia.\n${accountLink}\n\n${footer}`;
+    return `${greeting}\n\nData pendaftaran Program Ketahanan Pangan dengan nomor *${registrationId}* telah *TERVERIFIKASI*.\n\nSilakan masuk ke akun peserta untuk melanjutkan tahapan keanggotaan sesuai *Langkah Berikutnya* yang tampil pada Dashboard.\n${accountLink}\n\n${footer}`;
   }
   if (type === 'revision') {
-    return `${greeting}\n\nBerdasarkan pemeriksaan pendaftaran *${registrationId}*, terdapat data/dokumen yang perlu diperbaiki.\n\n*Catatan perbaikan:*\n${extra || '[Tuliskan catatan perbaikan]'}\n\nSilakan lakukan perbaikan sesuai petunjuk pada portal peserta. Setelah diperbaiki, data akan diperiksa kembali.\n\n${footer}`;
+    return `${greeting}\n\nBerdasarkan pemeriksaan pendaftaran *${registrationId}*, terdapat data yang perlu diperbaiki.\n\n*Catatan perbaikan:*\n${extra || '[Tuliskan catatan perbaikan]'}\n\nSilakan lakukan perbaikan sesuai petunjuk pada portal peserta. Setelah diperbaiki, data akan diperiksa kembali.\n\n${footer}`;
+  }
+  if (type === 'document_revision') {
+    return `${greeting}\n\nBerdasarkan pemeriksaan pendaftaran *${registrationId}*, dokumen KTP/KK perlu diperbaiki atau dilengkapi.\n\n*Catatan dokumen:*\n${extra || '[Tuliskan dokumen dan perbaikan yang diperlukan]'}\n\nPastikan dokumen terlihat jelas, tidak terpotong, dan sesuai dengan data pendaftaran. Ikuti petunjuk perbaikan pada portal peserta.\n\n${footer}`;
   }
   if (type === 'rejected') {
     return `${greeting}\n\nKami menginformasikan bahwa pendaftaran Program Ketahanan Pangan dengan nomor *${registrationId}* belum dapat dilanjutkan.\n\n*Alasan:*\n${extra || '[Tuliskan alasan penolakan]'}\n\nJika membutuhkan penjelasan lebih lanjut, silakan membalas pesan ini.\n\n${footer}`;
   }
+  if (type === 'photo_under_review') {
+    return `${greeting}\n\nFoto Verifikasi Anggota untuk nomor registrasi *${registrationId}* sudah diterima dan sedang dalam proses pemeriksaan Admin.\n\nSaat ini tidak ada tindakan tambahan yang perlu dilakukan. Mohon tidak mengirim ulang foto kecuali sistem atau Admin meminta perbaikan.\n\nHasil pemeriksaan dapat dilihat melalui Dashboard Peserta:\n${accountLink}\n\n${footer}`;
+  }
+  if (type === 'photo_revision') {
+    return `${greeting}\n\nFoto Verifikasi Anggota untuk nomor registrasi *${registrationId}* memerlukan perbaikan / rekam ulang.\n\n*Catatan pemeriksaan foto:*\n${extra || '[Tuliskan alasan atau perbaikan foto]'}\n\nSilakan login ke Dashboard Peserta, buka *Verifikasi Anggota + Foto*, lalu rekam ulang foto sesuai petunjuk.\n${accountLink}\n\n${footer}`;
+  }
+  if (type === 'member_verified') {
+    return `${greeting}\n\nFoto Verifikasi Anggota untuk nomor registrasi *${registrationId}* telah disetujui. Status *VERIFIED MEMBER* Anda sekarang aktif.\n\nTahap berikutnya, Kartu Anggota + QR dapat dibuka melalui Dashboard Peserta.\n${accountLink}\n\n${footer}`;
+  }
+  if (type === 'card_ready') {
+    return `${greeting}\n\nKartu Anggota Digital + QR untuk nomor registrasi *${registrationId}* sudah tersedia.\n\nSilakan buka melalui:\n${cardLink}\n\nQR pada kartu digunakan untuk verifikasi publik keanggotaan. Simpan dan gunakan kartu sesuai kebutuhan program.\n\n${footer}`;
+  }
+  if (type === 'certificate_ready') {
+    return `${greeting}\n\nTahapan keanggotaan inti untuk nomor registrasi *${registrationId}* telah selesai dan *Sertifikat Digital* sudah tersedia.\n\nSilakan login ke Dashboard Peserta untuk membuka Sertifikat Digital melalui layanan resmi:\n${accountLink}\n\n${footer}`;
+  }
+  // Legacy template retained for old workflow compatibility.
   if (type === 'member_verification') {
     return `${greeting}\n\nAda informasi terkait Verifikasi Foto / VERIFIED MEMBER untuk nomor registrasi *${registrationId}*.\n\n${extra || 'Silakan periksa kembali status verifikasi anggota pada Dashboard Peserta dan ikuti petunjuk yang tersedia.'}\n\n${footer}`;
   }
-  if (type === 'event') {
+  if (isParticipantCommunicationEventType(type)) {
     const eventName = String(document.getElementById('participantCommunicationEventName')?.value || '').trim();
     const eventDate = formatParticipantCommunicationDate(document.getElementById('participantCommunicationEventDate')?.value || '');
     const eventTime = String(document.getElementById('participantCommunicationEventTime')?.value || '').trim();
@@ -2142,10 +2275,26 @@ function buildParticipantCommunicationMessage() {
       eventLocation ? `Lokasi: *${eventLocation}*` : '',
       eventLink ? `Informasi: ${eventLink}` : ''
     ].filter(Boolean).join('\n');
+
+    if (type === 'event_reminder') {
+      return `${greeting}\n\nPengingat kegiatan untuk peserta Program Ketahanan Pangan (No. Registrasi *${registrationId}*): *${eventName || '[Nama Event]'}*.\n\n${detailLines || '[Lengkapi tanggal, waktu, lokasi, atau link kegiatan]'}\n\nMohon mempersiapkan kehadiran sesuai informasi kegiatan.\n\n${footer}`;
+    }
+    if (type === 'event_change') {
+      return `${greeting}\n\nTerdapat *perubahan informasi kegiatan* untuk peserta Program Ketahanan Pangan (No. Registrasi *${registrationId}*): *${eventName || '[Nama Event]'}*.\n\n${detailLines || '[Lengkapi jadwal/lokasi terbaru]'}${extra ? `\n\n*Keterangan perubahan:*\n${extra}` : ''}\n\nMohon menggunakan informasi terbaru ini sebagai acuan.\n\n${footer}`;
+    }
+    if (type === 'event_cancel') {
+      return `${greeting}\n\nKami menginformasikan bahwa kegiatan *${eventName || '[Nama Event]'}* untuk peserta Program Ketahanan Pangan (No. Registrasi *${registrationId}*) *DIBATALKAN*.${extra ? `\n\n*Keterangan:*\n${extra}` : ''}\n\nApabila terdapat jadwal pengganti, informasi akan disampaikan melalui kanal resmi.\n\n${footer}`;
+    }
     return `${greeting}\n\nKami mengundang Anda sebagai peserta Program Ketahanan Pangan (No. Registrasi *${registrationId}*) untuk mengikuti *${eventName || '[Nama Event / Pameran]'}*.\n\n${detailLines || '[Lengkapi tanggal, waktu, lokasi, atau link kegiatan]'}\n\nKami menantikan kehadiran Anda.\n\n${footer}`;
   }
   if (type === 'announcement') {
     return `${greeting}\n\nKami menyampaikan informasi penting untuk peserta Program Ketahanan Pangan dengan nomor registrasi *${registrationId}*.\n\n${extra || '[Tuliskan berita atau pengumuman penting]'}\n\n${footer}`;
+  }
+  if (type === 'urgent_action') {
+    return `${greeting}\n\nNomor registrasi *${registrationId}* saat ini memerlukan tindakan dari peserta.\n\n*Tindakan yang diperlukan:*\n${extra || '[Tuliskan tindakan yang harus dilakukan]'}\n\nSilakan menindaklanjuti melalui Dashboard Peserta atau balas pesan ini bila membutuhkan penjelasan.\n${accountLink}\n\n${footer}`;
+  }
+  if (type === 'follow_up') {
+    return `${greeting}\n\nKami melakukan follow-up terkait Program Ketahanan Pangan untuk nomor registrasi *${registrationId}*.\n\n${extra || 'Mohon konfirmasi apakah informasi sebelumnya sudah diterima dan langkah yang diminta sudah selesai dilakukan.'}\n\nSilakan membalas pesan ini untuk konfirmasi.\n\n${footer}`;
   }
   return '';
 }
@@ -2161,8 +2310,18 @@ function validateParticipantCommunication() {
   let error = '';
   if (!phone) error = 'Nomor WhatsApp peserta tidak valid atau belum tersedia.';
   else if (!message) error = 'Pesan WhatsApp masih kosong.';
-  else if (['revision','rejected'].includes(type) && !extra) error = type === 'revision' ? 'Catatan perbaikan wajib diisi.' : 'Alasan penolakan wajib diisi.';
-  else if (type === 'event' && !eventName) error = 'Nama event / pameran wajib diisi.';
+  else if (['revision','rejected','document_revision','photo_revision','urgent_action'].includes(type) && !extra) {
+    const requiredLabels = {
+      revision:'Catatan perbaikan data wajib diisi.',
+      rejected:'Alasan penolakan wajib diisi.',
+      document_revision:'Catatan perbaikan KTP/KK wajib diisi.',
+      photo_revision:'Catatan perbaikan foto wajib diisi.',
+      urgent_action:'Tindakan yang harus dilakukan peserta wajib diisi.'
+    };
+    error = requiredLabels[type] || 'Informasi tambahan wajib diisi.';
+  } else if (isParticipantCommunicationEventType(type) && !eventName) {
+    error = 'Nama event / pameran wajib diisi.';
+  }
 
   const box = document.getElementById('participantCommunicationValidation');
   if (box) {
@@ -2379,25 +2538,21 @@ function openParticipantCommunicationModal(context) {
   if (!modal || !context?.registration) return;
   participantCommunicationContext = context;
   participantCommunicationPreviewDirty = false;
+  participantCommunicationTypeDirty = false;
+  participantCommunicationHistoryState = null;
 
   const registration = context.registration;
-  const recommendation = getParticipantCommunicationRecommendation(context);
   const phone = normalizeParticipantWhatsapp(registration.whatsapp);
   const nameEl = document.getElementById('participantCommunicationName');
   const regEl = document.getElementById('participantCommunicationRegistration');
   const phoneEl = document.getElementById('participantCommunicationPhone');
-  const suggestionEl = document.getElementById('participantCommunicationSuggestion');
-  const typeEl = document.getElementById('participantCommunicationType');
   const extra = document.getElementById('participantCommunicationExtra');
 
   if (nameEl) nameEl.textContent = registration.nama || '-';
   if (regEl) regEl.textContent = registration.registration_id || '-';
   if (phoneEl) phoneEl.textContent = phone ? `+${phone}` : (registration.whatsapp || 'Tidak tersedia');
-  if (suggestionEl) suggestionEl.textContent = recommendation.label;
-  if (typeEl) typeEl.value = recommendation.type;
-  if (extra) extra.value = context.adminNote || '';
+  if (extra) extra.value = '';
 
-  participantCommunicationHistoryState = null;
   renderParticipantCommunicationHistory({ current_status:'not_contacted', history:[] });
   const auditStatus = document.getElementById('participantCommunicationAuditStatus');
   const auditLast = document.getElementById('participantCommunicationAuditLast');
@@ -2412,12 +2567,20 @@ function openParticipantCommunicationModal(context) {
     if (input) input.value = '';
   });
 
-  updateParticipantCommunicationConditionalFields();
-  regenerateParticipantCommunicationMessage(true);
+  applyParticipantCommunicationRecommendation(context, { force:true });
   modal.hidden = false;
   modal.setAttribute('aria-hidden','false');
   document.body.classList.add('participant-communication-modal-open');
+
   loadParticipantCommunicationHistory(registration.registration_id, { updateDetail:true, silent:true })
+    .then(() => {
+      // Sesudah riwayat audit termuat, rekomendasi untuk VERIFIED MEMBER dapat
+      // maju berurutan: hasil foto -> kartu -> sertifikat. Jangan menimpa
+      // pilihan jika Admin sudah mengganti Jenis Pesan secara manual.
+      if (!participantCommunicationTypeDirty) {
+        applyParticipantCommunicationRecommendation(context);
+      }
+    })
     .catch(() => {
       const auditStatus = document.getElementById('participantCommunicationAuditStatus');
       const auditLast = document.getElementById('participantCommunicationAuditLast');
@@ -2427,7 +2590,7 @@ function openParticipantCommunicationModal(context) {
       }
       if (auditLast) auditLast.textContent = 'Pastikan migrasi D1 dan Worker komunikasi sudah diterapkan.';
     });
-  window.requestAnimationFrame(() => typeEl?.focus({preventScroll:true}));
+  window.requestAnimationFrame(() => document.getElementById('participantCommunicationType')?.focus({preventScroll:true}));
 }
 
 function closeParticipantCommunicationModal() {
@@ -2439,6 +2602,7 @@ function closeParticipantCommunicationModal() {
   participantCommunicationContext = null;
   participantCommunicationPreviewDirty = false;
   participantCommunicationHistoryState = null;
+  participantCommunicationTypeDirty = false;
   const validation = document.getElementById('participantCommunicationValidation');
   if (validation) { validation.hidden = true; validation.textContent = ''; }
 }
@@ -2476,7 +2640,7 @@ function openParticipantWhatsapp() {
 
   const registrationId = participantCommunicationContext?.registration?.registration_id || '';
   const messageType = document.getElementById('participantCommunicationType')?.value || 'manual';
-  const eventName = messageType === 'event'
+  const eventName = isParticipantCommunicationEventType(messageType)
     ? String(document.getElementById('participantCommunicationEventName')?.value || '').trim()
     : '';
 
@@ -2518,6 +2682,7 @@ function initParticipantCommunicationModal() {
 
   modal.querySelectorAll('[data-communication-close]').forEach(button => button.addEventListener('click', closeParticipantCommunicationModal));
   type?.addEventListener('change', () => {
+    participantCommunicationTypeDirty = true;
     participantCommunicationPreviewDirty = false;
     updateParticipantCommunicationConditionalFields();
     regenerateParticipantCommunicationMessage(true);

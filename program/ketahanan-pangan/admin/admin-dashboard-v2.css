@@ -680,6 +680,8 @@ body.participant-communication-modal-open{overflow:hidden!important}
 .participant-communication-summary div{min-width:0}
 .participant-communication-summary span{display:block;color:#668077;font-size:12px;font-weight:700;margin-bottom:3px}
 .participant-communication-summary strong{display:block;color:#153f33;overflow-wrap:anywhere}
+.participant-communication-suggestion-box small{display:block;margin-top:5px;color:#6a8079;font-size:11px;line-height:1.4;font-weight:600}
+.participant-communication-field select optgroup{font-weight:800;color:#234b3f}
 .participant-communication-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
 .participant-communication-field{display:grid;gap:6px;min-width:0}
 .participant-communication-field--full,.participant-communication-event-fields{grid-column:1/-1}

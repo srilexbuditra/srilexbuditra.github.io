@@ -58,7 +58,7 @@
 
   <link rel="stylesheet" href="./style.css?v=17.18.0">
   <link rel="stylesheet" href="./style-verifikasi-tambahan.css?v=12.6.1">
-  <link rel="stylesheet" href="./admin-dashboard-v2.css?v=17.19.10">
+  <link rel="stylesheet" href="./admin-dashboard-v2.css?v=17.19.11">
 </head>
 <body>
     <header class="top">
@@ -738,7 +738,7 @@
           <div><span>Peserta</span><strong id="participantCommunicationName">-</strong></div>
           <div><span>No. Registrasi</span><strong id="participantCommunicationRegistration">-</strong></div>
           <div><span>WhatsApp</span><strong id="participantCommunicationPhone">-</strong></div>
-          <div><span>Saran Sistem</span><strong id="participantCommunicationSuggestion">-</strong></div>
+          <div class="participant-communication-suggestion-box"><span>Saran Sistem</span><strong id="participantCommunicationSuggestion">-</strong><small id="participantCommunicationSuggestionReason">Sistem akan menyesuaikan saran dengan posisi Journey peserta.</small></div>
         </div>
 
         <section class="participant-communication-audit" aria-label="Riwayat komunikasi peserta">
@@ -764,17 +764,38 @@
           <label class="participant-communication-field">
             <span>Jenis Pesan</span>
             <select id="participantCommunicationType">
-              <option value="registration_received">Pendaftaran Sudah Tercatat</option>
-              <option value="under_review">Sedang Dalam Pemeriksaan</option>
-              <option value="activation_reminder">Belum Aktivasi Akun</option>
-              <option value="account_active">Akun Sudah Aktif</option>
-              <option value="verified">Pendaftaran Terverifikasi</option>
-              <option value="revision">Perlu Perbaikan Data</option>
-              <option value="rejected">Pendaftaran Ditolak</option>
-              <option value="member_verification">Verifikasi Foto / VERIFIED MEMBER</option>
-              <option value="event">Undangan Event / Pameran</option>
-              <option value="announcement">Berita / Pengumuman Penting</option>
-              <option value="manual">Pesan Manual</option>
+              <optgroup label="Pendaftaran">
+                <option value="registration_received">Pendaftaran Sudah Tercatat</option>
+                <option value="under_review">Sedang Dalam Pemeriksaan</option>
+                <option value="verified">Pendaftaran Terverifikasi</option>
+                <option value="revision">Perlu Perbaikan Data</option>
+                <option value="rejected">Pendaftaran Ditolak</option>
+              </optgroup>
+              <optgroup label="Akun & Keanggotaan">
+                <option value="activation_reminder">Belum Aktivasi Akun</option>
+                <option value="account_active">Akun Sudah Aktif</option>
+                <option value="account_active_photo_missing">Akun Aktif — Belum Rekam Foto</option>
+                <option value="member_verified">Foto Terverifikasi / VERIFIED MEMBER</option>
+                <option value="card_ready">Kartu Anggota + QR Siap</option>
+                <option value="certificate_ready">Sertifikat Digital Siap</option>
+              </optgroup>
+              <optgroup label="Dokumen & Foto">
+                <option value="document_revision">KTP/KK Perlu Diperbaiki</option>
+                <option value="photo_under_review">Foto Sedang Diverifikasi</option>
+                <option value="photo_revision">Foto Perlu Perbaikan</option>
+              </optgroup>
+              <optgroup label="Event & Informasi">
+                <option value="event_invitation">Undangan Event / Pameran</option>
+                <option value="event_reminder">Pengingat Event</option>
+                <option value="event_change">Perubahan Jadwal / Lokasi Event</option>
+                <option value="event_cancel">Pembatalan Event</option>
+                <option value="announcement">Berita / Pengumuman Penting</option>
+              </optgroup>
+              <optgroup label="Lainnya">
+                <option value="urgent_action">Perlu Tindakan Segera</option>
+                <option value="follow_up">Konfirmasi / Follow-up Peserta</option>
+                <option value="manual">Pesan Manual</option>
+              </optgroup>
             </select>
           </label>
 
@@ -843,7 +864,7 @@
     <script src="./local-qrcode.js?v=1" defer></script>
     <script src="./jszip.min.js?v=1" defer></script>
     <script src="./excel-engine-template.js?v=45" defer></script>
-    <script src="./script-a4-v45.js?v=17.19.10" defer></script>
+    <script src="./script-a4-v45.js?v=17.19.11" defer></script>
     <script src="./admin-dashboard-v2.js?v=17.19.7" defer></script>
     <script src="/assets/js/visitor-analytics.js" defer></script>
 </body>
