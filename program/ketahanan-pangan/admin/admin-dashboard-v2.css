@@ -301,3 +301,23 @@ body.admin-v2-active .role-function-panel{overflow-wrap:anywhere}
 @media(prefers-reduced-motion:reduce){
   .admin-v2-nav a{transition:none!important}
 }
+
+
+/* V17.19.2 — Manajemen Admin: tombol form harus stabil & dapat diklik. */
+body.admin-v2-active #createAdminUserForm .account-form-actions button,
+body.admin-v2-active #createAdminUserToggle,
+body.admin-v2-active #cancelCreateAdminUser,
+body.admin-v2-active #cancelCreateAdminUserBottom{
+  position:relative;
+  z-index:3;
+  pointer-events:auto!important;
+}
+body.admin-v2-active #cancelCreateAdminUser{
+  display:grid!important;
+  visibility:visible!important;
+  opacity:1!important;
+}
+body.admin-v2-active #createAdminUserForm:not([hidden]){
+  position:relative;
+  isolation:isolate;
+}

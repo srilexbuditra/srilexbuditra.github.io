@@ -1,6 +1,6 @@
 'use strict';
 
-// Dashboard Admin V2 — Navigation Sync & Stability (V17.19.1)
+// Dashboard Admin V2 — Navigation Sync & Stability + Admin Management Fix (V17.19.2)
 // Presentation/navigation layer only. Core admin logic remains in script-a4-v45.js.
 (() => {
   const STORAGE_KEY = 'kp_admin_v2_view';
@@ -87,7 +87,7 @@
     sidebar.innerHTML = `
       <div class="admin-v2-brand">
         <img src="/program/ketahanan-pangan/assets/brand/favicon-192x192.png" alt="">
-        <div><strong>Program Ketahanan Pangan</strong><span>DASHBOARD ADMIN V2 · V17.19.1</span></div>
+        <div><strong>Program Ketahanan Pangan</strong><span>DASHBOARD ADMIN V2 · V17.19.2</span></div>
       </div>
       <nav class="admin-v2-nav" id="adminV2Nav"></nav>
       <div class="admin-v2-sidebar-foot">

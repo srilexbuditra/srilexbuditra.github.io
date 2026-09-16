@@ -3544,11 +3544,35 @@ function bindAccountSecurityEvents() {
   cancelCreateBottom?.addEventListener('click', closeCreateForm);
   refresh?.addEventListener('click', loadAdminUsers);
   createForm?.addEventListener('submit', createAdminUser);
+
+  // V17.19.2: fallback eksplisit untuk tombol kecil Tambah Akun pada workspace V2.
+  // Default submit dicegah agar request tidak terkirim dua kali. Enter tetap memakai event submit form.
+  const createSubmit = createForm?.querySelector('button[type="submit"]');
+  if (createSubmit && createSubmit.dataset.createBound !== '1') {
+    createSubmit.dataset.createBound = '1';
+    createSubmit.addEventListener('click', (event) => {
+      event.preventDefault();
+      if (!createForm) return;
+      createAdminUser({ preventDefault() {}, currentTarget: createForm });
+    });
+  }
 }
 
 function validV171Password(password) {
-  return String(password || '').length >= 10 && /[a-z]/.test(password) && /[A-Z]/.test(password) && /\d/.test(password) && /[^A-Za-z0-9]/.test(password);
+  const value = String(password || '');
+  return value.length >= 4 && value.length <= 15 &&
+    /[a-z]/.test(value) &&
+    /[A-Z]/.test(value) &&
+    /\d/.test(value) &&
+    /[^A-Za-z0-9]/.test(value);
 }
+
+function focusInvalidAdminPassword(input) {
+  if (!input) return;
+  input.focus({ preventScroll: true });
+  try { input.select(); } catch (_) {}
+}
+
 
 async function submitOwnPasswordChange(event) {
   event.preventDefault();
@@ -3557,6 +3581,11 @@ async function submitOwnPasswordChange(event) {
   const newPassword = document.getElementById('newAccountPassword')?.value || '';
   const confirmPassword = document.getElementById('confirmAccountPassword')?.value || '';
   if (!currentPassword || !newPassword || !confirmPassword) return showAdminToast('error','Password Belum Lengkap','Lengkapi password saat ini, password baru, dan konfirmasi.');
+  if (!validV171Password(newPassword)) {
+    showAdminToast('error','Format Password Belum Sesuai','Gunakan 4–15 karakter yang memuat huruf besar, huruf kecil, angka, dan simbol.');
+    focusInvalidAdminPassword(document.getElementById('newAccountPassword'));
+    return;
+  }
   if (newPassword !== confirmPassword) return showAdminToast('error','Password Tidak Sama','Konfirmasi password baru tidak sama.');
   const submit = form.querySelector('button[type="submit"]');
   try {
@@ -3755,18 +3784,60 @@ function renderRoleFunctionPanel(user, users = null) {
 }
 
 async function createAdminUser(event) {
-  event.preventDefault();
-  const form=event.currentTarget, submit=form.querySelector('button[type="submit"]');
-  const payload={ username:document.getElementById('newAdminUsername')?.value||'', display_name:document.getElementById('newAdminDisplayName')?.value||'', role:document.getElementById('newAdminRole')?.value||'admin', password:document.getElementById('newAdminInitialPassword')?.value||'' };
-  if (!payload.password) return showAdminToast('error','Password Wajib Diisi','Masukkan password awal untuk akun baru.');
+  event?.preventDefault?.();
+  const form = event?.currentTarget || document.getElementById('createAdminUserForm');
+  if (!form || form.dataset.submitting === '1') return;
+
+  const submit = form.querySelector('button[type="submit"]');
+  const usernameInput = document.getElementById('newAdminUsername');
+  const displayNameInput = document.getElementById('newAdminDisplayName');
+  const roleInput = document.getElementById('newAdminRole');
+  const passwordInput = document.getElementById('newAdminInitialPassword');
+
+  const payload = {
+    username: String(usernameInput?.value || '').trim().toLowerCase(),
+    display_name: String(displayNameInput?.value || '').trim(),
+    role: roleInput?.value || 'admin',
+    password: passwordInput?.value || ''
+  };
+
+  if (!payload.username || !payload.display_name || !payload.password) {
+    showAdminToast('error','Data Belum Lengkap','Username, nama tampilan, role, dan password wajib diisi.');
+    (!payload.username ? usernameInput : !payload.display_name ? displayNameInput : passwordInput)?.focus({ preventScroll:true });
+    return;
+  }
+
+  if (!validV171Password(payload.password)) {
+    showAdminToast('error','Format Password Belum Sesuai','Gunakan 4–15 karakter yang memuat huruf besar, huruf kecil, angka, dan simbol.');
+    focusInvalidAdminPassword(passwordInput);
+    return;
+  }
+
+  const originalText = submit?.textContent || '＋ Tambah Akun';
   try {
-    if(submit) submit.disabled=true;
-    const response=await fetch(`${ADMIN_API_BASE}/auth/users`,{method:'POST',credentials:'include',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify(payload)});
-    const data=await response.json().catch(()=>({}));
-    if(!response.ok||!data.ok) throw new Error(data.message||'Gagal membuat akun.');
-    form.reset(); form.hidden = true; showAdminToast('success','Akun Berhasil Dibuat',`${data.user?.display_name||payload.username} siap digunakan.`); await loadAdminUsers();
-  } catch(error){showAdminToast('error','Gagal Membuat Akun',error.message||'Silakan coba kembali.');}
-  finally{if(submit) submit.disabled=false;}
+    form.dataset.submitting = '1';
+    if (submit) { submit.disabled = true; submit.textContent = 'Menyimpan...'; }
+    const response = await fetch(`${ADMIN_API_BASE}/auth/users`, {
+      method:'POST',
+      credentials:'include',
+      headers:{'Content-Type':'application/json','Accept':'application/json'},
+      body:JSON.stringify(payload)
+    });
+    const data = await response.json().catch(()=>({}));
+    if (!response.ok || !data.ok) throw new Error(data.message || 'Gagal membuat akun.');
+
+    form.reset();
+    form.hidden = true;
+    showAdminToast('success','Akun Berhasil Dibuat',`${data.user?.display_name || payload.username} siap digunakan.`);
+    await loadAdminUsers();
+  } catch (error) {
+    showAdminToast('error','Gagal Membuat Akun', error.message || 'Silakan coba kembali.');
+    // Pertahankan isian agar pengguna dapat memperbaiki data tanpa mengulang dari awal.
+    if (/password/i.test(String(error.message || ''))) focusInvalidAdminPassword(passwordInput);
+  } finally {
+    delete form.dataset.submitting;
+    if (submit) { submit.disabled = false; submit.textContent = originalText; }
+  }
 }
 
 async function updateAdminUser(event) {
@@ -3786,8 +3857,12 @@ async function resetAdminUserPassword(event) {
   const card=event.currentTarget.closest('.admin-user-card'); if(!card) return;
   const name=card.querySelector('.admin-user-summary strong')?.textContent||'akun ini';
   const newPassword=window.prompt(`Masukkan password baru untuk ${name}.\
-Minimal 10 karakter: huruf besar, huruf kecil, angka, dan simbol.`);
+4–15 karakter: huruf besar, huruf kecil, angka, dan simbol.`);
   if(newPassword===null) return;
+  if(!validV171Password(newPassword)) {
+    showAdminToast('error','Format Password Belum Sesuai','Gunakan 4–15 karakter yang memuat huruf besar, huruf kecil, angka, dan simbol.');
+    return;
+  }
   if(!window.confirm(`Reset password ${name}? Semua session akun tersebut akan dicabut.`)) return;
   try {
     event.currentTarget.disabled=true;
