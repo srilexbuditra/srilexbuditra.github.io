@@ -1417,7 +1417,7 @@ async function loadRegistrationDetail(registrationId) {
             <tr class="certificate-row">
               <th>Kartu / Sertifikat</th>
               <td>
-                <button type="button" class="certificate-button" id="issueCertificateButton">
+                <button type="button" class="certificate-button" id="issueCertificateButton" data-registration-id="${escapeHtml(registration.registration_id)}">
                   Terbitkan Kartu / Sertifikat
                 </button>
               </td>
@@ -1568,14 +1568,9 @@ async function loadRegistrationDetail(registrationId) {
       });
     });
 
-    const issueCertificateButton =
-      detailContent.querySelector('#issueCertificateButton');
-
-    if (issueCertificateButton) {
-      issueCertificateButton.addEventListener('click', async () => {
-        await loadCertificate(registration.registration_id);
-      });
-    }
+    // V17.19.8: certificate issue action is handled by one delegated
+    // document-level listener below. This remains reliable after V2 modal
+    // routing and dynamic detail re-rendering on desktop/mobile.
 
     detailPanel.hidden = false;
 
@@ -1594,7 +1589,7 @@ async function loadRegistrationDetail(registrationId) {
 }
 
 async function loadCertificate(registrationId) {
-  if (!adminToken) {
+  if (!currentAdminUser) {
     alert('Session Admin tidak tersedia. Silakan login ulang.');
     return;
   }
@@ -1632,8 +1627,15 @@ function renderCertificate(certificate) {
   const content = document.getElementById('certificateContent');
   if (!panel || !content) return;
 
-  // V17.19.7: certificate can be issued from Peserta, Aktivasi, Verifikasi,
-  // or Kartu workspace. Remove a stale routing class before opening.
+  // V17.19.8 desktop/mobile stability: certificate replaces the open Detail
+  // modal instead of stacking beneath/above it. The Detail modal is restored
+  // when the certificate is closed.
+  const detailPanel = document.getElementById('registrationDetailPanel');
+  if (detailPanel && !detailPanel.hidden) {
+    detailPanel.dataset.reopenAfterCertificate = '1';
+    detailPanel.hidden = true;
+  }
+
   panel.classList.remove('admin-v2-view-hidden');
 
   const wilayah = [certificate.kabupaten, certificate.provinsi]
@@ -1670,7 +1672,11 @@ function renderCertificate(certificate) {
   });
 
   panel.hidden = false;
-  panel.scrollIntoView({behavior:'smooth', block:'start'});
+  requestAnimationFrame(() => {
+    panel.classList.remove('admin-v2-view-hidden');
+    panel.setAttribute('tabindex', '-1');
+    try { panel.focus({preventScroll:true}); } catch (_) {}
+  });
 }
 
 function fitCertificateName(el) {
@@ -1912,10 +1918,21 @@ async function downloadRegistrationDocument(
   const documentUrl =
     `${baseUrl}/documents/${encodeURIComponent(registrationId)}/${encodeURIComponent(documentType)}`;
 
-  // V17.19.7: first validate the protected document using the existing
-  // HttpOnly session. Then open the returned object URL in a browser-native
-  // viewer. This is more reliable across desktop, Android and iOS than
-  // relying only on the HTML download attribute for a cross-origin blob.
+  // V17.19.8: reserve a native browser window synchronously while the click
+  // still has user activation. Desktop Chrome/Edge can otherwise block an
+  // async blob download after fetch() has completed. The same path is used on
+  // laptop, tablet and phone for consistent behavior.
+  let viewerWindow = null;
+  try {
+    viewerWindow = window.open('about:blank', '_blank');
+    if (viewerWindow) {
+      try {
+        viewerWindow.document.title = 'Memuat dokumen…';
+        viewerWindow.document.body.innerHTML = '<p style="font:16px system-ui;padding:24px">Memuat dokumen…</p>';
+      } catch (_) {}
+    }
+  } catch (_) {}
+
   try {
     const response = await fetch(documentUrl, {
       method: 'GET',
@@ -1936,52 +1953,59 @@ async function downloadRegistrationDocument(
     const blob = await response.blob();
     if (!blob || blob.size === 0) throw new Error('File dokumen kosong.');
 
-    const contentType = (response.headers.get('Content-Type') || '').toLowerCase();
-    let extension = '';
-    if (contentType.includes('image/jpeg')) extension = '.jpg';
-    else if (contentType.includes('image/png')) extension = '.png';
-    else if (contentType.includes('image/webp')) extension = '.webp';
-    else if (contentType.includes('application/pdf')) extension = '.pdf';
-
-    const label = documentType === 'ktp' ? 'KTP' : 'KK';
-    const safeRegistrationId = String(registrationId).replace(/[^a-zA-Z0-9_-]/g, '_');
-    const fileName = `${label}-${safeRegistrationId}${extension}`;
     const objectUrl = URL.createObjectURL(blob);
 
-    const isTouchDevice = window.matchMedia?.('(pointer: coarse)')?.matches ||
-      /Android|iPhone|iPad|iPod/i.test(navigator.userAgent || '');
-
-    if (isTouchDevice) {
-      // Native viewer is the most consistent path on phones/tablets. From the
-      // viewer the user can save/download using the device's normal controls.
-      const opened = window.open(objectUrl, '_blank', 'noopener,noreferrer');
-      if (!opened) {
-        const link = document.createElement('a');
-        link.href = objectUrl;
-        link.target = '_blank';
-        link.rel = 'noopener noreferrer';
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
-      }
-      window.setTimeout(() => URL.revokeObjectURL(objectUrl), 60000);
-      return;
+    if (viewerWindow && !viewerWindow.closed) {
+      viewerWindow.location.replace(objectUrl);
+    } else {
+      const link = document.createElement('a');
+      link.href = objectUrl;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      link.style.display = 'none';
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
     }
 
-    // Desktop: keep the familiar direct-download behavior.
-    const link = document.createElement('a');
-    link.href = objectUrl;
-    link.download = fileName;
-    link.rel = 'noopener';
-    link.style.display = 'none';
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-    window.setTimeout(() => URL.revokeObjectURL(objectUrl), 5000);
+    // Keep the blob alive long enough for the browser viewer/save control.
+    window.setTimeout(() => URL.revokeObjectURL(objectUrl), 120000);
   } catch (error) {
+    if (viewerWindow && !viewerWindow.closed) {
+      try { viewerWindow.close(); } catch (_) {}
+    }
     console.error('Ketahanan Pangan Admin: gagal membuka dokumen.', error);
     alert(error.message || 'Gagal membuka dokumen.');
   }
+}
+
+
+// V17.19.8: one delegated certificate action survives dynamic Detail renders
+// and unified-modal routing on every device.
+if (!document.documentElement.dataset.certificateIssueBound) {
+  document.documentElement.dataset.certificateIssueBound = '1';
+  document.addEventListener('click', async (event) => {
+    const button = event.target.closest('#issueCertificateButton');
+    if (!button) return;
+    event.preventDefault();
+    event.stopPropagation();
+    const registrationId = String(button.dataset.registrationId || '').trim();
+    if (!registrationId) {
+      alert('Nomor registrasi sertifikat tidak tersedia.');
+      return;
+    }
+    const original = button.textContent;
+    button.disabled = true;
+    button.textContent = 'Menyiapkan...';
+    try {
+      await loadCertificate(registrationId);
+    } finally {
+      if (button.isConnected) {
+        button.disabled = false;
+        button.textContent = original;
+      }
+    }
+  }, true);
 }
 
 const closeDetailButton =
@@ -2009,6 +2033,12 @@ if (closeCertificateButton) {
   closeCertificateButton.addEventListener('click', () => {
     const panel = document.getElementById('certificatePanel');
     if (panel) panel.hidden = true;
+    const detailPanel = document.getElementById('registrationDetailPanel');
+    if (detailPanel?.dataset.reopenAfterCertificate === '1') {
+      delete detailPanel.dataset.reopenAfterCertificate;
+      detailPanel.classList.remove('admin-v2-view-hidden');
+      detailPanel.hidden = false;
+    }
   });
 }
 
