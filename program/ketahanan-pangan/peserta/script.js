@@ -165,7 +165,7 @@ function statusLabel(s) {
   return ({
     submitted: 'Registrasi diterima',
     pending: 'Dalam proses',
-    verified: 'Terverifikasi',
+    verified: 'Pendaftaran Terverifikasi',
     revision: 'Perlu perbaikan',
     resubmitted: 'Menunggu pemeriksaan ulang',
     rejected: 'Tidak disetujui',
@@ -190,8 +190,8 @@ function getStatusPresentation(status) {
     },
     verified: {
       icon: '✓',
-      hero: 'Data registrasi Anda telah diverifikasi. Lanjutkan tahapan keanggotaan sesuai Langkah Berikutnya.',
-      title: 'Lanjutkan tahapan keanggotaan',
+      hero: 'Data pendaftaran Anda telah terverifikasi. Lanjutkan tahapan keanggotaan sesuai Langkah Berikutnya.',
+      title: 'Lanjutkan Verifikasi Anggota',
       text: 'Selesaikan Verifikasi Anggota + Foto. Setelah VERIFIED MEMBER aktif, Kartu Anggota + QR dan Sertifikat Digital akan tersedia sesuai alur.'
     },
     approved: {
@@ -336,7 +336,7 @@ function getParticipantJourney(participant = {}) {
     progress: 63,
     icon: '◉',
     title: 'Rekam foto untuk Verifikasi Anggota',
-    text: 'Akun dan registrasi Anda sudah aktif/terverifikasi. Lanjutkan rekam foto setengah badan agar VERIFIED MEMBER dan Kartu Anggota dapat diaktifkan.',
+    text: 'Data pendaftaran Anda telah terverifikasi dan akun peserta sudah aktif. Lanjutkan rekam foto setengah badan untuk menyelesaikan Verifikasi Anggota dan mengaktifkan VERIFIED MEMBER.',
     action: 'photo',
     actionLabel: '◉ Rekam Foto Sekarang',
     hint: 'Rekam foto terlebih dahulu. Kartu Anggota + QR dan Sertifikat Digital akan tersedia setelah VERIFIED MEMBER disetujui.',
@@ -512,7 +512,7 @@ function renderParticipantTimeline(participant = {}) {
   } else if (status === 'verified') {
     alert.hidden = false;
     alert.classList.add('certificate-existing');
-    alert.textContent = 'Registrasi sudah terverifikasi. Lanjutkan Rekam Foto untuk mengaktifkan VERIFIED MEMBER, Kartu Anggota + QR, dan Sertifikat Digital.';
+    alert.textContent = 'Pendaftaran sudah terverifikasi. Lanjutkan Rekam Foto untuk mengaktifkan VERIFIED MEMBER, Kartu Anggota + QR, dan Sertifikat Digital.';
   }
 
   updateTimelineStates(items);
@@ -635,7 +635,7 @@ function getMemberExperience(status) {
     pending: { label: 'Dalam pemeriksaan', text: 'Data peserta sedang diperiksa oleh admin.', progress: 50, progressText: 'Pemeriksaan data sedang berlangsung.', access: 'Dashboard & verifikasi aktif', accessText: 'Pantau status dan catatan admin dari dashboard.' },
     revision: { label: 'Perlu perbaikan data', text: 'Ada bagian data yang perlu diperbaiki sebelum pemeriksaan dilanjutkan.', progress: 45, progressText: 'Perbaiki data yang diminta agar proses dapat dilanjutkan.', access: 'Dashboard & perbaikan aktif', accessText: 'Sertifikat belum tersedia selama perbaikan berlangsung.' },
     resubmitted: { label: 'Menunggu pemeriksaan ulang', text: 'Perbaikan telah terkirim dan menunggu pemeriksaan ulang.', progress: 60, progressText: 'Perbaikan diterima. Menunggu pemeriksaan ulang admin.', access: 'Dashboard & verifikasi aktif', accessText: 'Status akan diperbarui setelah pemeriksaan ulang selesai.' },
-    verified: { label: 'Registrasi terverifikasi', text: 'Data registrasi telah diverifikasi. Lanjutkan Verifikasi Anggota + Foto sesuai Langkah Berikutnya.', progress: 57, progressText: 'Tahap berikutnya mengikuti status Verifikasi Anggota + Foto.', access: 'Verifikasi Anggota tersedia', accessText: 'Kartu Anggota + QR dan Sertifikat Digital aktif setelah foto anggota disetujui admin.' },
+    verified: { label: 'Pendaftaran Terverifikasi', text: 'Data pendaftaran telah terverifikasi. Lanjutkan Verifikasi Anggota + Foto sesuai Langkah Berikutnya.', progress: 57, progressText: 'Tahap berikutnya mengikuti status Verifikasi Anggota + Foto.', access: 'Verifikasi Anggota tersedia', accessText: 'Kartu Anggota + QR dan Sertifikat Digital aktif setelah foto anggota disetujui admin.' },
     approved: { label: 'Pendaftaran disetujui', text: 'Pendaftaran telah disetujui dan menunggu layanan lanjutan sesuai program.', progress: 90, progressText: 'Pendaftaran disetujui. Pantau informasi lanjutan di dashboard.', access: 'Dashboard & verifikasi aktif', accessText: 'Layanan lanjutan mengikuti status program.' },
     rejected: { label: 'Perlu tindak lanjut', text: 'Pendaftaran belum dapat disetujui. Baca catatan admin untuk informasi berikutnya.', progress: 40, progressText: 'Proses berhenti pada tahap pemeriksaan.', access: 'Dashboard informasi aktif', accessText: 'Baca catatan admin atau keterangan status yang tersedia.' }
   };
@@ -788,7 +788,7 @@ function renderMemberExperience(participant = {}) {
       if (text) text.textContent = 'Buka Verifikasi Anggota + Foto dan ikuti catatan admin untuk mengirim ulang foto.';
     } else {
       if (label) label.textContent = 'Siap Verifikasi Anggota';
-      if (text) text.textContent = 'Data registrasi sudah terverifikasi. Langkah berikutnya adalah rekam foto anggota.';
+      if (text) text.textContent = 'Data pendaftaran sudah terverifikasi. Langkah berikutnya adalah rekam foto anggota.';
     }
   }
 
@@ -808,7 +808,7 @@ function renderMemberExperience(participant = {}) {
 
     if (!registrationVerified) {
       memberIdentityService.href = '#';
-      memberIdentityState.textContent = 'Tersedia setelah status registrasi Terverifikasi.';
+      memberIdentityState.textContent = 'Tersedia setelah status Pendaftaran Terverifikasi.';
       memberIdentityBadge.textContent = 'TERKUNCI';
       memberIdentityService.setAttribute('aria-label', 'Verifikasi Anggota + Foto terkunci. Tersedia setelah registrasi terverifikasi.');
     } else if (memberStatus === 'approved') {
@@ -819,8 +819,8 @@ function renderMemberExperience(participant = {}) {
       memberIdentityService.setAttribute('aria-disabled', 'true');
       memberIdentityService.setAttribute('tabindex', '-1');
       memberIdentityState.textContent = 'Foto anggota telah disetujui admin. Verifikasi anggota selesai.';
-      memberIdentityBadge.textContent = 'TERVERIFIKASI';
-      memberIdentityService.setAttribute('aria-label', 'Verifikasi Anggota + Foto terverifikasi. Tahap verifikasi foto telah selesai.');
+      memberIdentityBadge.textContent = 'VERIFIED MEMBER';
+      memberIdentityService.setAttribute('aria-label', 'VERIFIED MEMBER aktif. Tahap verifikasi foto telah selesai.');
       if (memberIdentityActionHint) {
         memberIdentityActionHint.textContent = '';
         memberIdentityActionHint.hidden = true;
