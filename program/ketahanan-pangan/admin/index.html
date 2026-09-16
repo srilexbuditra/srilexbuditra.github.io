@@ -58,7 +58,7 @@
 
   <link rel="stylesheet" href="./style.css?v=17.18.0">
   <link rel="stylesheet" href="./style-verifikasi-tambahan.css?v=12.6.1">
-  <link rel="stylesheet" href="./admin-dashboard-v2.css?v=17.19.9">
+  <link rel="stylesheet" href="./admin-dashboard-v2.css?v=17.19.10">
 </head>
 <body>
     <header class="top">
@@ -741,6 +741,25 @@
           <div><span>Saran Sistem</span><strong id="participantCommunicationSuggestion">-</strong></div>
         </div>
 
+        <section class="participant-communication-audit" aria-label="Riwayat komunikasi peserta">
+          <div class="participant-communication-audit-head">
+            <div>
+              <span class="participant-communication-audit-eyebrow">STATUS KOMUNIKASI</span>
+              <div class="participant-communication-audit-status-row">
+                <span id="participantCommunicationAuditStatus" class="participant-communication-status-badge participant-communication-status-badge--loading">Memuat…</span>
+                <small id="participantCommunicationAuditLast">Riwayat komunikasi sedang dimuat.</small>
+              </div>
+            </div>
+            <button id="participantCommunicationFollowupToggle" type="button" class="participant-communication-followup-button" data-current-status="not_contacted">Tandai Perlu Follow-up</button>
+          </div>
+          <div>
+            <h3>Riwayat Komunikasi</h3>
+            <div id="participantCommunicationHistory" class="participant-communication-history">
+              <div class="participant-communication-history-empty">Belum ada riwayat komunikasi.</div>
+            </div>
+          </div>
+        </section>
+
         <div class="participant-communication-form">
           <label class="participant-communication-field">
             <span>Jenis Pesan</span>
@@ -824,7 +843,7 @@
     <script src="./local-qrcode.js?v=1" defer></script>
     <script src="./jszip.min.js?v=1" defer></script>
     <script src="./excel-engine-template.js?v=45" defer></script>
-    <script src="./script-a4-v45.js?v=17.19.9" defer></script>
+    <script src="./script-a4-v45.js?v=17.19.10" defer></script>
     <script src="./admin-dashboard-v2.js?v=17.19.7" defer></script>
     <script src="/assets/js/visitor-analytics.js" defer></script>
 </body>

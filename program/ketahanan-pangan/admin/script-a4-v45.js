@@ -21,6 +21,7 @@ let duplicateAuditByRegistrationId = new Map();
 let memberPhotoRefreshTimer = null;
 let participantCommunicationContext = null;
 let participantCommunicationPreviewDirty = false;
+let participantCommunicationHistoryState = null;
 
 
 function stripLegacyAdminTokenFromUrl() {
@@ -1311,6 +1312,15 @@ async function loadRegistrationDetail(registrationId) {
               </td>
             </tr>
             <tr>
+              <th>Komunikasi</th>
+              <td>
+                <div class="participant-communication-detail-state">
+                  <span id="participantCommunicationDetailStatus" class="participant-communication-status-badge participant-communication-status-badge--loading">Memuat…</span>
+                  <small id="participantCommunicationDetailLast">Riwayat komunikasi sedang diperiksa.</small>
+                </div>
+              </td>
+            </tr>
+            <tr>
               <th>Email</th>
               <td>${escapeHtml(registration.email || '-')}</td>
             </tr>
@@ -1500,6 +1510,9 @@ async function loadRegistrationDetail(registrationId) {
         adminNote: liveAdminNote
       });
     });
+
+    loadParticipantCommunicationHistory(registration.registration_id, { updateDetail:true, silent:true })
+      .catch(() => {});
 
     await hydrateMemberVerificationPhotos(detailContent);
     startMemberPhotoAutoRefresh(detailContent);
@@ -2174,6 +2187,193 @@ function regenerateParticipantCommunicationMessage(force = false) {
   validateParticipantCommunication();
 }
 
+function formatParticipantCommunicationTimestamp(value) {
+  if (!value) return '-';
+  const raw = String(value).trim();
+  const iso = raw.includes('T') ? raw : `${raw.replace(' ', 'T')}Z`;
+  const parsed = new Date(iso);
+  if (Number.isNaN(parsed.getTime())) return raw;
+  return parsed.toLocaleString('id-ID', {
+    day:'2-digit', month:'short', year:'numeric',
+    hour:'2-digit', minute:'2-digit'
+  });
+}
+
+function participantCommunicationStatusLabel(status) {
+  if (status === 'follow_up') return 'Perlu Follow-up';
+  if (status === 'contacted') return 'Sudah Dihubungi';
+  return 'Belum Dihubungi';
+}
+
+function participantCommunicationStatusClass(status) {
+  if (status === 'follow_up') return 'participant-communication-status-badge--follow-up';
+  if (status === 'contacted') return 'participant-communication-status-badge--contacted';
+  return 'participant-communication-status-badge--new';
+}
+
+function participantCommunicationActionLabel(action) {
+  const labels = {
+    whatsapp_opened:'WhatsApp Dibuka',
+    follow_up_marked:'Ditandai Perlu Follow-up',
+    follow_up_cleared:'Follow-up Selesai'
+  };
+  return labels[action] || 'Aktivitas Komunikasi';
+}
+
+function renderParticipantCommunicationHistory(data, options = {}) {
+  const state = data || { current_status:'not_contacted', history:[] };
+  participantCommunicationHistoryState = state;
+
+  const status = String(state.current_status || 'not_contacted');
+  const label = participantCommunicationStatusLabel(status);
+  const lastContact = state.last_contact_at
+    ? `Kontak terakhir: ${formatParticipantCommunicationTimestamp(state.last_contact_at)}`
+    : 'Belum ada WhatsApp yang dibuka dari dashboard.';
+
+  const modalStatus = document.getElementById('participantCommunicationAuditStatus');
+  const modalLast = document.getElementById('participantCommunicationAuditLast');
+  const followup = document.getElementById('participantCommunicationFollowupToggle');
+  const history = document.getElementById('participantCommunicationHistory');
+
+  if (modalStatus) {
+    modalStatus.className = `participant-communication-status-badge ${participantCommunicationStatusClass(status)}`;
+    modalStatus.textContent = label;
+  }
+  if (modalLast) modalLast.textContent = lastContact;
+  if (followup) {
+    followup.dataset.currentStatus = status;
+    followup.textContent = status === 'follow_up' ? 'Selesaikan Follow-up' : 'Tandai Perlu Follow-up';
+    followup.classList.toggle('is-active', status === 'follow_up');
+  }
+
+  if (history) {
+    const rows = Array.isArray(state.history) ? state.history.slice(0, 8) : [];
+    if (!rows.length) {
+      history.innerHTML = '<div class="participant-communication-history-empty">Belum ada riwayat komunikasi.</div>';
+    } else {
+      history.innerHTML = rows.map(row => {
+        const messageLabel = row.message_label || participantCommunicationTemplateLabel(row.message_type);
+        const meta = [
+          row.admin_username ? `oleh ${escapeHtml(row.admin_username)}` : '',
+          formatParticipantCommunicationTimestamp(row.created_at)
+        ].filter(Boolean).join(' • ');
+        const eventText = row.event_name ? `<small>Event: ${escapeHtml(row.event_name)}</small>` : '';
+        return `<div class="participant-communication-history-item">
+          <div><strong>${escapeHtml(participantCommunicationActionLabel(row.action))}</strong><span>${escapeHtml(messageLabel || '-')}</span>${eventText}</div>
+          <time>${meta}</time>
+        </div>`;
+      }).join('');
+    }
+  }
+
+  if (options.updateDetail) {
+    const detailStatus = document.getElementById('participantCommunicationDetailStatus');
+    const detailLast = document.getElementById('participantCommunicationDetailLast');
+    if (detailStatus) {
+      detailStatus.className = `participant-communication-status-badge ${participantCommunicationStatusClass(status)}`;
+      detailStatus.textContent = label;
+    }
+    if (detailLast) detailLast.textContent = lastContact;
+  }
+}
+
+async function loadParticipantCommunicationHistory(registrationId, options = {}) {
+  const id = String(registrationId || '').trim();
+  if (!id) return null;
+
+  try {
+    const response = await fetch(
+      `${ADMIN_API_BASE}/registrations/${encodeURIComponent(id)}/communications?_=${Date.now()}`,
+      {
+        method:'GET',
+        credentials:'include',
+        headers:{'Accept':'application/json'},
+        cache:'no-store'
+      }
+    );
+    let data = {};
+    try { data = await response.json(); } catch (_) {}
+    if (!response.ok || !data?.ok) throw new Error(data?.message || `HTTP ${response.status}`);
+    renderParticipantCommunicationHistory(data, options);
+    return data;
+  } catch (error) {
+    if (options.updateDetail) {
+      const detailStatus = document.getElementById('participantCommunicationDetailStatus');
+      const detailLast = document.getElementById('participantCommunicationDetailLast');
+      if (detailStatus) {
+        detailStatus.className = 'participant-communication-status-badge participant-communication-status-badge--unavailable';
+        detailStatus.textContent = 'Belum Tersedia';
+      }
+      if (detailLast) detailLast.textContent = 'Riwayat komunikasi belum dapat dimuat.';
+    }
+    if (!options.silent) {
+      showAdminToast('error','Riwayat Komunikasi',error.message || 'Riwayat komunikasi belum dapat dimuat.');
+    }
+    throw error;
+  }
+}
+
+async function recordParticipantCommunicationAction(registrationId, action, options = {}) {
+  const id = String(registrationId || '').trim();
+  if (!id) throw new Error('Nomor registrasi tidak tersedia.');
+
+  const payload = {
+    action,
+    message_type: options.messageType || 'manual',
+    event_name: options.eventName || ''
+  };
+
+  const response = await fetch(
+    `${ADMIN_API_BASE}/registrations/${encodeURIComponent(id)}/communications`,
+    {
+      method:'POST',
+      credentials:'include',
+      headers:{'Content-Type':'application/json','Accept':'application/json'},
+      body:JSON.stringify(payload),
+      keepalive:Boolean(options.keepalive)
+    }
+  );
+  let data = {};
+  try { data = await response.json(); } catch (_) {}
+  if (!response.ok || !data?.ok) throw new Error(data?.message || `HTTP ${response.status}`);
+  renderParticipantCommunicationHistory(data, { updateDetail:true });
+  return data;
+}
+
+async function toggleParticipantCommunicationFollowup() {
+  const registrationId = participantCommunicationContext?.registration?.registration_id;
+  if (!registrationId) return;
+
+  const button = document.getElementById('participantCommunicationFollowupToggle');
+  const currentStatus = button?.dataset.currentStatus || participantCommunicationHistoryState?.current_status || 'not_contacted';
+  const action = currentStatus === 'follow_up' ? 'follow_up_cleared' : 'follow_up_marked';
+  const original = button?.textContent || '';
+
+  if (button) {
+    button.disabled = true;
+    button.textContent = action === 'follow_up_marked' ? 'Menandai…' : 'Menyelesaikan…';
+  }
+  try {
+    await recordParticipantCommunicationAction(registrationId, action, {
+      messageType: document.getElementById('participantCommunicationType')?.value || 'manual'
+    });
+    showAdminToast(
+      'success',
+      'Status Komunikasi',
+      action === 'follow_up_marked'
+        ? 'Peserta ditandai perlu follow-up.'
+        : 'Follow-up peserta ditandai selesai.'
+    );
+  } catch (error) {
+    showAdminToast('error','Status Komunikasi',error.message || 'Status follow-up belum dapat diperbarui.');
+  } finally {
+    if (button) {
+      button.disabled = false;
+      if (button.textContent.includes('…')) button.textContent = original;
+    }
+  }
+}
+
 function openParticipantCommunicationModal(context) {
   const modal = document.getElementById('participantCommunicationModal');
   if (!modal || !context?.registration) return;
@@ -2197,6 +2397,16 @@ function openParticipantCommunicationModal(context) {
   if (typeEl) typeEl.value = recommendation.type;
   if (extra) extra.value = context.adminNote || '';
 
+  participantCommunicationHistoryState = null;
+  renderParticipantCommunicationHistory({ current_status:'not_contacted', history:[] });
+  const auditStatus = document.getElementById('participantCommunicationAuditStatus');
+  const auditLast = document.getElementById('participantCommunicationAuditLast');
+  if (auditStatus) {
+    auditStatus.className = 'participant-communication-status-badge participant-communication-status-badge--loading';
+    auditStatus.textContent = 'Memuat…';
+  }
+  if (auditLast) auditLast.textContent = 'Riwayat komunikasi sedang dimuat.';
+
   ['participantCommunicationEventName','participantCommunicationEventDate','participantCommunicationEventTime','participantCommunicationEventLocation','participantCommunicationEventLink'].forEach(id => {
     const input = document.getElementById(id);
     if (input) input.value = '';
@@ -2207,6 +2417,16 @@ function openParticipantCommunicationModal(context) {
   modal.hidden = false;
   modal.setAttribute('aria-hidden','false');
   document.body.classList.add('participant-communication-modal-open');
+  loadParticipantCommunicationHistory(registration.registration_id, { updateDetail:true, silent:true })
+    .catch(() => {
+      const auditStatus = document.getElementById('participantCommunicationAuditStatus');
+      const auditLast = document.getElementById('participantCommunicationAuditLast');
+      if (auditStatus) {
+        auditStatus.className = 'participant-communication-status-badge participant-communication-status-badge--unavailable';
+        auditStatus.textContent = 'Belum Tersedia';
+      }
+      if (auditLast) auditLast.textContent = 'Pastikan migrasi D1 dan Worker komunikasi sudah diterapkan.';
+    });
   window.requestAnimationFrame(() => typeEl?.focus({preventScroll:true}));
 }
 
@@ -2218,6 +2438,7 @@ function closeParticipantCommunicationModal() {
   document.body.classList.remove('participant-communication-modal-open');
   participantCommunicationContext = null;
   participantCommunicationPreviewDirty = false;
+  participantCommunicationHistoryState = null;
   const validation = document.getElementById('participantCommunicationValidation');
   if (validation) { validation.hidden = true; validation.textContent = ''; }
 }
@@ -2252,11 +2473,35 @@ async function copyParticipantCommunicationMessage() {
 function openParticipantWhatsapp() {
   const result = validateParticipantCommunication();
   if (!result.ok) return;
+
+  const registrationId = participantCommunicationContext?.registration?.registration_id || '';
+  const messageType = document.getElementById('participantCommunicationType')?.value || 'manual';
+  const eventName = messageType === 'event'
+    ? String(document.getElementById('participantCommunicationEventName')?.value || '').trim()
+    : '';
+
+  const auditPromise = registrationId
+    ? recordParticipantCommunicationAction(registrationId, 'whatsapp_opened', {
+        messageType,
+        eventName,
+        keepalive:true
+      })
+    : Promise.resolve(null);
+
   const url = `https://wa.me/${encodeURIComponent(result.phone)}?text=${encodeURIComponent(result.message)}`;
   const opened = window.open(url, '_blank', 'noopener,noreferrer');
   if (!opened) {
     window.location.href = url;
   }
+
+  auditPromise.catch(error => {
+    console.warn('Ketahanan Pangan Admin: WhatsApp dibuka tetapi audit komunikasi gagal.', error);
+    showAdminToast(
+      'error',
+      'Audit Komunikasi',
+      'WhatsApp sudah dibuka, tetapi riwayat komunikasi belum berhasil dicatat.'
+    );
+  });
 }
 
 function initParticipantCommunicationModal() {
@@ -2269,6 +2514,7 @@ function initParticipantCommunicationModal() {
   const regenerate = document.getElementById('participantCommunicationRegenerate');
   const copy = document.getElementById('participantCommunicationCopy');
   const open = document.getElementById('participantCommunicationOpenWhatsapp');
+  const followup = document.getElementById('participantCommunicationFollowupToggle');
 
   modal.querySelectorAll('[data-communication-close]').forEach(button => button.addEventListener('click', closeParticipantCommunicationModal));
   type?.addEventListener('change', () => {
@@ -2290,6 +2536,7 @@ function initParticipantCommunicationModal() {
   });
   copy?.addEventListener('click', copyParticipantCommunicationMessage);
   open?.addEventListener('click', openParticipantWhatsapp);
+  followup?.addEventListener('click', toggleParticipantCommunicationFollowup);
 
   document.addEventListener('keydown', event => {
     if (event.key === 'Escape' && !modal.hidden) {

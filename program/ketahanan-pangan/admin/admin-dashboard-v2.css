@@ -738,3 +738,50 @@ body.participant-communication-modal-open{overflow:hidden!important}
 @media(max-width:460px){
   .participant-communication-summary{grid-template-columns:1fr}
 }
+
+/* =========================================================
+   V17.19.10 — Riwayat Komunikasi + Follow-up
+   ========================================================= */
+.participant-communication-detail-state{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.participant-communication-detail-state small{color:#6d7e78;line-height:1.4}
+.participant-communication-status-badge{
+  display:inline-flex;align-items:center;justify-content:center;min-height:28px;padding:5px 9px;
+  border-radius:999px;font-size:12px;font-weight:850;line-height:1.2;border:1px solid transparent;white-space:nowrap
+}
+.participant-communication-status-badge--new{background:#f3f6f5;color:#52665f;border-color:#d7e0dc}
+.participant-communication-status-badge--contacted{background:#ecf8f2;color:#0f6a47;border-color:#b9dfcf}
+.participant-communication-status-badge--follow-up{background:#fff7e8;color:#9a6413;border-color:#f0d19b}
+.participant-communication-status-badge--loading{background:#f2f5f4;color:#73827c;border-color:#dce4e1}
+.participant-communication-status-badge--unavailable{background:#fff4f4;color:#9a3c3c;border-color:#ebcaca}
+.participant-communication-audit{
+  display:grid;gap:12px;margin:0 0 16px;padding:13px;border:1px solid #dce9e3;border-radius:14px;background:#fbfdfc
+}
+.participant-communication-audit-head{display:flex;align-items:center;justify-content:space-between;gap:14px}
+.participant-communication-audit-eyebrow{display:block;color:#6c8178;font-size:11px;font-weight:850;letter-spacing:.08em;margin-bottom:6px}
+.participant-communication-audit-status-row{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.participant-communication-audit-status-row small{color:#6b7c76}
+.participant-communication-followup-button{
+  border:1px solid #d0ddd8;background:#fff;color:#315a4e;border-radius:10px;padding:8px 11px;font-weight:800;cursor:pointer
+}
+.participant-communication-followup-button:hover{background:#f4faf7}
+.participant-communication-followup-button.is-active{background:#fff5df;border-color:#eac98f;color:#8b5a0f}
+.participant-communication-followup-button:disabled{opacity:.6;cursor:wait}
+.participant-communication-audit h3{margin:0 0 8px;font-size:14px;color:#234b3f}
+.participant-communication-history{display:grid;gap:7px;max-height:210px;overflow:auto;overscroll-behavior:contain;padding-right:2px}
+.participant-communication-history-empty{padding:9px 10px;border:1px dashed #d7e4df;border-radius:10px;color:#71827c;background:#fff;font-size:13px}
+.participant-communication-history-item{
+  display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:start;
+  padding:9px 10px;border:1px solid #e0eae6;border-radius:10px;background:#fff
+}
+.participant-communication-history-item>div{display:grid;gap:2px;min-width:0}
+.participant-communication-history-item strong{color:#214b3e;font-size:13px}
+.participant-communication-history-item span{color:#536d64;font-size:12px;overflow-wrap:anywhere}
+.participant-communication-history-item small{color:#6e7e78;font-size:11px;overflow-wrap:anywhere}
+.participant-communication-history-item time{color:#73827d;font-size:11px;text-align:right;white-space:nowrap}
+
+@media(max-width:760px){
+  .participant-communication-audit-head{align-items:stretch;flex-direction:column}
+  .participant-communication-followup-button{width:100%}
+  .participant-communication-history-item{grid-template-columns:1fr}
+  .participant-communication-history-item time{text-align:left;white-space:normal}
+}
