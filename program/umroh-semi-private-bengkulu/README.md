@@ -79,3 +79,12 @@ Dokumen Saya telah ditambahkan di `/jamaah/dokumen/`.
 - Progress status disimpan lokal dengan key `umroh-documents-status-v1` dan tersinkron ke Dashboard Jemaah.
 - V2.3 tidak menerima upload berkas dan tidak menyimpan data pribadi ke repository/static hosting.
 - Verifikasi dokumen resmi menunggu autentikasi, backend, dan penyimpanan aman.
+
+
+## Pengumuman Jemaah V2.4
+
+- Path: `/program/umroh-semi-private-bengkulu/jamaah/pengumuman/`
+- Menampilkan informasi simulasi per kategori.
+- Status dibaca tersimpan lokal di browser/perangkat.
+- Dashboard Jemaah menampilkan tiga pengumuman terbaru dan jumlah yang belum dibaca.
+- Belum menjadi kanal operasional resmi sampai backend/admin publishing diaktifkan.

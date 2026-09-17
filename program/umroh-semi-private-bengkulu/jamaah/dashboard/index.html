@@ -25,7 +25,7 @@
 <a class="nav-item" data-nav-item="" href="../checklist/index.html"><span class="nav-icon"><span aria-hidden="true" class="ui-icon icon-checklist"></span></span><span class="nav-label">Checklist</span></a>
 <a class="nav-item" data-nav-item="" href="../agenda/index.html"><span class="nav-icon"><span aria-hidden="true" class="ui-icon icon-calendar"></span></span><span class="nav-label">Agenda &amp; Perjalanan</span></a>
 <a class="nav-item" data-nav-item="" href="../dokumen/index.html"><span class="nav-icon"><span aria-hidden="true" class="ui-icon icon-file"></span></span><span class="nav-label">Dokumen Saya</span></a>
-<a class="nav-item" data-nav-item="" href="#pengumuman"><span class="nav-icon"><span aria-hidden="true" class="ui-icon icon-megaphone"></span></span><span class="nav-label">Pengumuman</span></a>
+<a class="nav-item" data-nav-item="" href="../pengumuman/index.html"><span class="nav-icon"><span aria-hidden="true" class="ui-icon icon-megaphone"></span></span><span class="nav-label">Pengumuman</span></a>
 <a class="nav-item" data-nav-item="" href="#bantuan"><span class="nav-icon"><span aria-hidden="true" class="ui-icon icon-help"></span></span><span class="nav-label">Bantuan</span></a>
 <div class="nav-section-label">Akun</div>
 <a class="nav-item" data-nav-item="" href="#profil"><span class="nav-icon"><span aria-hidden="true" class="ui-icon icon-user"></span></span><span class="nav-label">Profil Saya</span></a>
@@ -38,11 +38,11 @@
 <button aria-label="Buka menu" class="mobile-menu" data-mobile-menu="">☰</button>
 <div class="search-box"><span aria-hidden="true"><span aria-hidden="true" class="ui-icon icon-search"></span></span><input placeholder="Cari materi, agenda, informasi..." type="search"/></div>
 <div class="topbar-spacer"></div>
-<button aria-label="Notifikasi" class="icon-button"><span aria-hidden="true" class="ui-icon icon-bell"></span><span class="notification-dot">2</span></button>
+<button aria-label="Notifikasi" class="icon-button" onclick="location.href='../pengumuman/index.html'"><span aria-hidden="true" class="ui-icon icon-bell"></span><span class="notification-dot" data-announcement-unread-count>4</span></button>
 <div class="user-chip"><div class="avatar">AR</div><div class="user-copy"><strong>Ahmad Rasyid</strong><span>Jemaah · Data simulasi</span></div></div>
 </header>
 <main class="page-wrap" id="beranda">
-<div class="prototype-note"><strong>Prototype Dashboard V1.3.</strong> Nama dan progress keseluruhan masih data simulasi. Manasik, Checklist, dan status Dokumen sudah aktif secara lokal; Agenda &amp; Perjalanan V2.2 terhubung dengan data jadwal simulasi.</div>
+<div class="prototype-note"><strong>Prototype Dashboard V1.3.</strong> Nama dan progress keseluruhan masih data simulasi. Manasik, Checklist, status Dokumen, dan Pengumuman V2.4 sudah aktif secara lokal; Agenda &amp; Perjalanan V2.2 terhubung dengan data jadwal simulasi.</div>
 <section class="journey-hero">
 <div class="journey-copy"><span>Perjalanan Ibadah</span><h1>Persiapan yang tenang,<br/>langkah yang terarah.</h1><p>Semua informasi penting untuk manasik, checklist, agenda, dan perjalanan Anda disusun dalam satu tempat yang mudah dipahami.</p></div>
 <div class="departure-card"><small>Rencana Keberangkatan</small><strong data-departure-date>30 September 2026</strong><span data-departure-countdown>13 hari lagi</span></div>
@@ -59,11 +59,7 @@
 <a class="card quick-card" href="../dokumen/index.html"><div class="quick-icon"><span aria-hidden="true" class="ui-icon icon-file"></span></div><div><strong>Dokumen Saya</strong><span data-documents-summary>Belum diperiksa</span></div><div class="quick-arrow">›</div></a>
 </section>
 <section class="jamaah-lower">
-<article class="card card-pad" id="pengumuman"><div class="section-title"><h2>Pengumuman Terbaru</h2><button>Lihat semua →</button></div><div class="announcement-list">
-<div class="announcement"><div class="announcement-icon"><span aria-hidden="true" class="ui-icon icon-info"></span></div><div><strong>Manasik lanjutan</strong><span>Informasi waktu dan lokasi akan ditampilkan pada Agenda setelah dikonfirmasi.</span></div><time>Hari ini</time></div>
-<div class="announcement"><div class="announcement-icon"><span aria-hidden="true" class="ui-icon icon-info"></span></div><div><strong>Persiapan dokumen perjalanan</strong><span>Pastikan data identitas dan dokumen sesuai arahan resmi pengelola.</span></div><time>16 Sep</time></div>
-<div class="announcement"><div class="announcement-icon"><span aria-hidden="true" class="ui-icon icon-info"></span></div><div><strong>Pembagian rombongan</strong><span>Informasi rombongan akan tersedia setelah penetapan final.</span></div><time>15 Sep</time></div>
-</div></article>
+<article class="card card-pad" id="pengumuman"><div class="section-title"><h2>Pengumuman Terbaru</h2><a href="../pengumuman/index.html">Lihat semua →</a></div><div class="announcement-list" data-dashboard-announcements></div></article>
 <article class="card card-pad" id="bantuan"><div class="section-title"><h2>Kontak Penting</h2></div><div class="contact-list">
 <div class="contact"><div class="contact-icon"><span aria-hidden="true" class="ui-icon icon-user"></span></div><div><strong>Pembimbing Manasik</strong><span>Ust. Abdurahman Dody</span></div><button aria-label="Hubungi pembimbing" class="contact-action"><span aria-hidden="true" class="ui-icon icon-phone"></span></button></div>
 <div class="contact"><div class="contact-icon"><span aria-hidden="true" class="ui-icon icon-user"></span></div><div><strong>Tour Leader</strong><span>Hj. Prapti Kanthi Rahayu, S.I.Kom</span></div><button aria-label="Hubungi tour leader" class="contact-action"><span aria-hidden="true" class="ui-icon icon-phone"></span></button></div>
@@ -81,5 +77,7 @@
 <script src="../../assets/js/agenda-data.js"></script>
 <script src="../../assets/js/jamaah-agenda-summary.js"></script>
 <script src="../../assets/js/jamaah-documents-summary.js"></script>
+<script src="../../assets/js/announcement-data.js"></script>
+<script src="../../assets/js/jamaah-announcements-summary.js"></script>
 </body>
 </html>
