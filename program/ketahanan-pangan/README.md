@@ -15,6 +15,8 @@ Tujuan arsitektur folder adalah menjaga layanan peserta, administrasi, dokumenta
 | Verifikasi Anggota + Foto | `/program/ketahanan-pangan/peserta/verifikasi-anggota/` | Rekam foto kamera untuk review manual VERIFIED MEMBER; authenticated/noindex. |
 | Kartu Anggota Digital | `/program/ketahanan-pangan/peserta/kartu/` | Kartu anggota + QR hanya setelah member verification disetujui; authenticated/noindex. |
 | Sertifikat Publik | `/program/ketahanan-pangan/verifikasi/sertifikat/` | Verifikasi sertifikat peserta melalui route publik. |
+| Aktivitas & Event Peserta | `/program/ketahanan-pangan/peserta/aktivitas/` | Agenda resmi, pendaftaran event, status kehadiran, riwayat aktivitas, dan Poin Aktivitas. |
+| Detail Event Publik | `/program/ketahanan-pangan/event/<slug>/` | Halaman publik dinamis untuk event yang dipublikasikan, termasuk gambar, detail, dan aksi berbagi. |
 | Dokumentasi | `/program/ketahanan-pangan/dokumentasi/` | Dokumentasi publik sistem/program. |
 | Admin | `/program/ketahanan-pangan/admin/` | Area administrasi; bukan konten publik untuk indexing. |
 
@@ -35,7 +37,8 @@ ketahanan-pangan/
 ├── verifikasi/
 │   └── sertifikat/
 ├── peserta/
-│   └── kartu/
+│   ├── kartu/
+│   └── aktivitas/
 ├── peserta-worker/
 ├── dokumentasi/
 ├── dokumen/
@@ -46,7 +49,7 @@ ketahanan-pangan/
 
 Alur publik dirancang sebagai:
 
-**Portal → Registrasi → Verifikasi → Aktivasi/Login → Dashboard Peserta → Kartu Anggota Digital / Sertifikat sesuai status**
+**Portal → Registrasi → Verifikasi → Aktivasi/Login → Dashboard Peserta → Kartu Anggota / Sertifikat / Aktivitas & Event sesuai status**
 
 Tidak semua fitur roadmap harus dianggap sudah live. Status fitur harus mengikuti implementasi yang benar-benar tersedia pada source dan deployment.
 
@@ -67,6 +70,7 @@ Identitas program dan organisasi terkait harus ditampilkan sesuai peran aktual. 
 - [registrasi/README.md](registrasi/README.md)
 - [registrasi/README-V7-UPLOAD.md](registrasi/README-V7-UPLOAD.md)
 - [dokumentasi/README-INSTALL.md](dokumentasi/README-INSTALL.md)
+- [../../AKTIVITAS-EVENT-PUBLIC-V17.19.13B.md](../../AKTIVITAS-EVENT-PUBLIC-V17.19.13B.md)
 
 ## Roadmap
 
@@ -74,4 +78,4 @@ Roadmap tingkat website/program dikelola pada:
 
 `/ROADMAP-SRILEXBUDITRA-2026-2027.md`
 
-Fondasi Trust & Authority, Knowledge Center, Timeline publik, dan Search Console monitoring sudah dibangun. Fase aktif saat ini adalah pengalaman anggota: **Dashboard Peserta V2, Verifikasi Anggota + Foto, dan Kartu Anggota Digital + QR sudah dibangun**, Sertifikat QR existing tetap tersedia untuk peserta terverifikasi. Kartu anggota aktif setelah review foto disetujui admin, dan milestone berikutnya adalah Level/Poin, lalu Misi, Referral, Benefit, dan Event.
+Fondasi Trust & Authority, Knowledge Center, Timeline publik, dan Search Console monitoring sudah dibangun. Fase pengalaman anggota pada repository saat ini telah mencakup **Dashboard Peserta V2, Verifikasi Anggota + Foto, Kartu Anggota Digital + QR, Sertifikat QR, Level/Poin, Misi, Referral, Benefit, Aktivitas & Event, Marketplace, serta Notifikasi & Informasi**. Event kini dapat dikelola dari Dashboard Admin, dipublikasikan dengan gambar dan slug publik, ditampilkan pada Dashboard Peserta, serta dibuka melalui halaman detail publik yang dilayani Cloudflare Worker. Implementasi OG/WhatsApp, Schema.org Event, dan GA4 Event Analytics masih menjalani pengujian akhir sebelum baseline Public Event di-LOCK. Arah milestone berikut mengikuti keputusan tim dan roadmap aktif.
