@@ -1,0 +1,35 @@
+# Umroh Semi Private Bengkulu — Digital Platform
+
+Lokasi: `/program/umroh-semi-private-bengkulu/`
+
+## Tujuan
+
+Membangun pusat informasi, manasik digital, persiapan perjalanan, agenda, dokumen, dan pendampingan jemaah dalam satu platform yang terstruktur di bawah `srilexbuditra.work` tanpa mengubah positioning website utama sebagai portfolio Srilex Buditra.
+
+## Identitas & Peran
+
+- Identitas utama: **Umroh Semi Private Bengkulu**.
+- Pembimbing Manasik: **Ust. Abdurahman Dody**.
+- Tour Leader: **Hj. Prapti Kanthi Rahayu, S.I.Kom**.
+- Srilex Buditra ditempatkan sebagai **Pengembangan Sistem & Dukungan Teknologi** pada bagian yang relevan.
+- Identitas pengembang teknologi tidak menggantikan identitas organisasi/program.
+
+## Tahap Saat Ini
+
+**Prototype V1 — Design System dan Dashboard Shell**
+
+- `/admin/` — Adaptive Workspace untuk Admin.
+- `/jamaah/dashboard/` — Journey Dashboard untuk Jemaah.
+- `assets/css/tokens.css` — design tokens bersama.
+- `assets/css/dashboard-shell.css` — shell responsif bersama.
+- `DASHBOARD-DESIGN-SYSTEM.md` — aturan visual proyek.
+
+Semua data pada prototype adalah simulasi. Tidak ada autentikasi, API, database, atau data jemaah asli pada tahap ini.
+
+## Prinsip Teknis
+
+1. Aset Umroh berada di folder program Umroh sendiri dan tidak bergantung pada CSS/JS Program Ketahanan Pangan.
+2. Admin dan Jemaah berbagi design tokens dan shell, tetapi memiliki pengalaman pengguna berbeda.
+3. Halaman private memakai `noindex,nofollow,noarchive`.
+4. Loading, empty, error, permission denied, dan expired session harus memiliki tampilan yang konsisten saat backend dikembangkan.
+5. Backend, autentikasi, dan API baru dibuat setelah Visual V1 dikunci.
