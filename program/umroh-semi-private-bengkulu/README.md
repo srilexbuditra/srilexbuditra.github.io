@@ -46,3 +46,15 @@ Progress baca pada V1 disimpan lokal di browser/perangkat dan belum terhubung ke
 
 ## Visual Asset System V1
 Icon dan aturan gambar global berada di `VISUAL-ASSET-SYSTEM.md`. Icon SVG disimpan lokal di `assets/icons/` agar konsisten dengan CSP dan satu gaya visual. Foto asli Pembimbing Manasik/Tour Leader hanya digunakan jika aset diberikan dan diizinkan.
+
+## Checklist Persiapan Jemaah V2.1 — 2026-09-17
+
+Checklist Persiapan Jemaah telah ditambahkan di `/jamaah/checklist/`.
+
+- 12 item bersumber dari materi “Persiapan Sebelum Berangkat”.
+- Kelompok: Dokumen, Perlengkapan, dan Kesiapan Ibadah.
+- Setiap item dapat ditandai `Siap` atau `Tidak berlaku`.
+- Progress disimpan lokal di browser/perangkat dengan key `umroh-checklist-progress-v1`.
+- Ringkasan Checklist tersinkron ke Dashboard Jemaah.
+- Belum terhubung ke akun, API, atau database.
+

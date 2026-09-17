@@ -1,0 +1,16 @@
+UMROH SEMI PRIVATE BENGKULU — CHECKLIST JEMAAH V2.1
+
+Cara upload dengan GitHub Desktop:
+1. Extract ZIP ini.
+2. Copy folder `program` ke root repository lokal `srilexbuditra.github.io`.
+3. Pilih Replace/Merge bila Windows meminta konfirmasi.
+4. GitHub Desktop seharusnya menampilkan 7 changed files.
+5. Summary commit yang disarankan:
+   Add Jamaah preparation checklist V2.1
+6. Commit to main -> Push origin.
+
+Uji setelah deploy:
+- /program/umroh-semi-private-bengkulu/jamaah/checklist/
+- Tandai beberapa item Siap/Tidak berlaku.
+- Kembali ke Dashboard Jemaah.
+- Kartu Checklist harus mengikuti progress yang sama.
