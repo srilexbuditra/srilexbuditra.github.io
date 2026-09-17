@@ -16,7 +16,7 @@ Membangun pusat informasi, manasik digital, persiapan perjalanan, agenda, dokume
 
 ## Tahap Saat Ini
 
-**Prototype V1 — Design System dan Dashboard Shell**
+**Prototype V1.3 — Final Polish Design System dan Dashboard Shell**
 
 - `/admin/` — Adaptive Workspace untuk Admin.
 - `/jamaah/dashboard/` — Journey Dashboard untuk Jemaah.

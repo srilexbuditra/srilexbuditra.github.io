@@ -1,6 +1,6 @@
 # Dashboard Design System — Umroh Semi Private Bengkulu
 
-Status: **V1 Prototype — belum locked**
+Status: **V1.3 Final Polish — kandidat Visual V1 Locked setelah uji pengguna**
 
 ## 1. Model Dashboard
 
