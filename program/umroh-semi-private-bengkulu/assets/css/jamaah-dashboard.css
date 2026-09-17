@@ -4,3 +4,19 @@
 @media(max-width:520px){.quick-grid{grid-template-columns:1fr}.journey-copy h1{font-size:30px}.departure-card{grid-template-columns:1fr auto}.departure-card small{grid-column:1/-1}.announcement,.contact{grid-template-columns:34px 1fr}.announcement time,.contact-action{grid-column:2}}
 /* V1.2 journey refinement */
 @media(min-width:761px){.journey-hero{min-height:168px;padding:24px 26px}.journey-copy h1{font-size:clamp(28px,3.35vw,40px);max-width:650px}.journey-copy p{max-width:590px}.departure-card{top:20px;right:20px;padding:14px;min-width:164px}}
+/* V1.3 final readability polish */
+.journey-copy span{font-size:10px}
+.journey-copy p{font-size:13px}
+.departure-card small,.departure-card span{font-size:10px}
+.welcome-strip h2{font-size:14px}
+.welcome-strip p{font-size:11px}
+.progress-head strong{font-size:14px}
+.progress-card small{font-size:10px}
+.next-action span{font-size:10px}
+.next-action strong{font-size:14px}
+.next-action p{font-size:10px}
+.primary-action{font-size:11px}
+.quick-card strong{font-size:12px}
+.quick-card span{font-size:10px}
+.announcement strong,.contact strong{font-size:11px}
+.announcement span,.contact span,.announcement time{font-size:9px}

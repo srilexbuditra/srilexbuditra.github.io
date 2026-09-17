@@ -43,3 +43,24 @@ body.sidebar-compact .app-sidebar{width:var(--sidebar-compact)}body.sidebar-comp
 /* V1.2 shared refinement */
 .prototype-note{margin-bottom:14px}
 @media(min-width:901px){.app-topbar{gap:12px}.icon-button{width:40px;height:40px}.user-chip{border-radius:13px}.avatar{width:34px;height:34px}}
+/* V1.3 final readability polish — candidate for Visual V1 lock */
+@media(min-width:901px){
+  .page-wrap{max-width:1720px;padding-left:28px;padding-right:28px}
+  .search-box input{font-size:13px}
+  .user-chip strong{font-size:12px}
+  .user-chip span{font-size:10px}
+}
+.brand-copy span{font-size:10px}
+.nav-section-label{font-size:10px}
+.nav-label{font-size:12.5px}
+.tech-credit small{font-size:9px}
+.tech-credit strong{font-size:12px}
+.tech-credit a{font-size:10px}
+.page-kicker{font-size:10px}
+.page-head p{font-size:13px;max-width:780px}
+.page-date{font-size:11px}
+.section-title h2,.section-title h3{font-size:15px}
+.section-title a,.section-title button{font-size:11px}
+.stat-card span{font-size:11px}
+.badge{font-size:10px}
+.prototype-toast{font-size:11px}

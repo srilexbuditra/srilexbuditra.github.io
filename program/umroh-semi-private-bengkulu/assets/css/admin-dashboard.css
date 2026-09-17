@@ -7,3 +7,10 @@
 .legend-dot.is-danger{background:var(--danger)}
 .legend-dot.is-muted{background:#aab4be}
 @media(min-width:901px){body.admin-dashboard .app-topbar{padding-left:20px;padding-right:20px}body.admin-dashboard .search-box{max-width:390px}body.admin-dashboard .user-chip{padding-top:4px;padding-bottom:4px}}
+/* V1.3 final readability polish */
+.attention-row strong,.agenda-row strong,.activity-row strong{font-size:12px}
+.attention-row span,.agenda-row span,.activity-row span{font-size:10px}
+.legend-row,.legend-row strong{font-size:10px}
+.donut-center span{font-size:10px}
+.context-tab{font-size:11px}
+.prototype-note{font-size:11px}
