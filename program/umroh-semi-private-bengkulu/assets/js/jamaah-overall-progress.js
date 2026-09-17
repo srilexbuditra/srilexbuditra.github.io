@@ -39,13 +39,18 @@
     const documents = readObject(keys.documents);
     const agenda = readObject(keys.agenda);
 
-    const manasikFraction = fraction(manasikIds.filter(id => !!manasik[id]).length, manasikIds.length);
-    const checklistFraction = fraction(Object.values(checklist).filter(value => checklistValid.has(value)).length, 12);
+    const manasikDone = manasikIds.filter(id => !!manasik[id]).length;
+    const checklistDone = Object.values(checklist).filter(value => checklistValid.has(value)).length;
+    const documentsReady = documentIds.filter(id => documents[id] === 'ready').length;
+    const agendaRead = agendaIds.filter(id => agenda[id] === true).length;
+
+    const manasikFraction = fraction(manasikDone, manasikIds.length);
+    const checklistFraction = fraction(checklistDone, 12);
 
     // Hanya dokumen berstatus "Sudah disiapkan" yang menambah kesiapan.
     // Status "Menunggu" tetap tercatat di modul Dokumen, tetapi belum dianggap siap.
-    const documentsFraction = fraction(documentIds.filter(id => documents[id] === 'ready').length, documentIds.length);
-    const agendaFraction = fraction(agendaIds.filter(id => agenda[id] === true).length, agendaIds.length);
+    const documentsFraction = fraction(documentsReady, documentIds.length);
+    const agendaFraction = fraction(agendaRead, agendaIds.length);
 
     const weighted =
       manasikFraction * weights.manasik +
@@ -60,6 +65,12 @@
         checklist: pct(checklistFraction),
         documents: pct(documentsFraction),
         agenda: pct(agendaFraction)
+      },
+      counts: {
+        manasik: { done: manasikDone, total: manasikIds.length },
+        checklist: { done: checklistDone, total: 12 },
+        documents: { ready: documentsReady, total: documentIds.length },
+        agenda: { done: agendaRead, total: agendaIds.length }
       }
     };
   };
@@ -76,10 +87,14 @@
     document.querySelectorAll('[data-overall-checklist]').forEach(el => el.textContent = `${result.parts.checklist}%`);
     document.querySelectorAll('[data-overall-documents]').forEach(el => el.textContent = `${result.parts.documents}%`);
     document.querySelectorAll('[data-overall-agenda]').forEach(el => el.textContent = `${result.parts.agenda}%`);
+    document.querySelectorAll('[data-overall-manasik-count]').forEach(el => el.textContent = `${result.counts.manasik.done} dari ${result.counts.manasik.total} selesai`);
+    document.querySelectorAll('[data-overall-checklist-count]').forEach(el => el.textContent = `${result.counts.checklist.done} dari ${result.counts.checklist.total} diperiksa`);
+    document.querySelectorAll('[data-overall-documents-count]').forEach(el => el.textContent = `${result.counts.documents.ready} dari ${result.counts.documents.total} siap`);
+    document.querySelectorAll('[data-overall-agenda-count]').forEach(el => el.textContent = `${result.counts.agenda.done} dari ${result.counts.agenda.total} dibaca`);
 
     const copy = document.querySelector('[data-overall-progress-copy]');
     if (copy) {
-      copy.textContent = 'Bobot: Manasik 35% · Checklist 35% · Dokumen siap 20% · Agenda dibaca 10%. Progress tersimpan lokal di browser dan belum terhubung ke akun jemaah.';
+      copy.textContent = 'Progress tersimpan lokal di browser ini dan belum terhubung ke akun jemaah.';
     }
   };
 

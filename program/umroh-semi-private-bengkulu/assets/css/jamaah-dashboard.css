@@ -29,9 +29,18 @@
 .contact-action .ui-icon{width:1rem;height:1rem}
 .mobile-bottom-nav .ui-icon{width:1.15rem;height:1.15rem}
 
-/* V2.5 Overall Preparation Progress */
-.progress-breakdown{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:10px 0 9px}
-.progress-breakdown span{display:grid;gap:2px;padding:8px 9px;border:1px solid var(--line);border-radius:10px;background:var(--surface-soft)}
-.progress-breakdown b{font-size:12px;color:var(--brand-800)}
-.progress-breakdown small{font-size:8px;color:var(--ink-600)}
-@media(max-width:760px){.progress-breakdown{grid-template-columns:repeat(2,minmax(0,1fr))}}
+/* V2.5.1 Overall Preparation Progress clarity polish */
+.progress-breakdown{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:12px 0 9px}
+.progress-part{display:grid;grid-template-columns:30px minmax(0,1fr) auto;gap:8px;align-items:center;padding:9px 10px;border:1px solid var(--line);border-radius:11px;background:var(--surface-soft)}
+.progress-part-icon{width:30px;height:30px;display:grid;place-items:center;border-radius:9px;background:var(--gold-100);color:var(--gold-700)}
+.progress-part-icon.success{background:var(--success-soft);color:var(--success)}
+.progress-part-icon.info{background:var(--info-soft);color:var(--info)}
+.progress-part-icon .ui-icon{width:15px;height:15px}
+.progress-part-copy{display:grid;gap:2px;min-width:0}
+.progress-part-copy strong{font-size:10px;color:var(--ink-900)}
+.progress-part-copy small{font-size:8px;color:var(--ink-600);line-height:1.35}
+.progress-part>b{font-size:13px;color:var(--brand-800);white-space:nowrap}
+.progress-formula{display:flex;flex-wrap:wrap;gap:4px 8px;align-items:center;margin:0 0 8px;padding:7px 9px;border-radius:9px;background:#fffaf0;border:1px solid #f0e4be;font-size:8px;color:var(--ink-600)}
+.progress-formula strong{color:var(--gold-700)}
+@media(max-width:1040px){.progress-breakdown{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:520px){.progress-breakdown{grid-template-columns:1fr}.progress-part-copy strong{font-size:11px}.progress-part-copy small,.progress-formula{font-size:9px}}
