@@ -150,15 +150,28 @@
       auditList.innerHTML = logs.map((log) => {
         let details = {};
         try { details = JSON.parse(log.details_json || '{}'); } catch (_) {}
+        const actor = log.actor_name || log.actor_username || 'System';
         const target = log.target_name || log.target_username || 'akun';
+        const isSelfAction = Boolean(
+          log.actor_username &&
+          log.target_username &&
+          log.actor_username === log.target_username
+        );
         const description = {
           account_created: `membuat akun ${target}`,
           account_updated: `memperbarui akun ${target}`,
           password_reset_requested: `mereset akses ${target}`,
-          account_activated: `mengaktifkan akun ${target}`
+          account_activated: isSelfAction ? 'mengaktifkan akun' : `mengaktifkan akun ${target}`
         }[log.action] || `${log.action} · ${target}`;
 
-        return `<div class="audit-row"><div><strong>${esc(log.actor_name || log.actor_username || 'System')} ${esc(description)}</strong><span>${esc(log.action)}${details.role ? ` · role: ${esc(details.role)}` : ''}</span></div><time>${esc(fmt(log.created_at))}</time></div>`;
+        const meta = {
+          account_created: details.role ? `role: ${details.role}` : '',
+          account_updated: 'perubahan akun',
+          password_reset_requested: 'reset akses',
+          account_activated: details.role ? `role: ${details.role} · aktivasi mandiri` : 'aktivasi mandiri'
+        }[log.action] || log.action;
+
+        return `<div class="audit-row"><div><strong>${esc(actor)} ${esc(description)}</strong><span>${esc(meta)}</span></div><time>${esc(fmt(log.created_at))}</time></div>`;
       }).join('');
     } catch (_) {
       auditList.innerHTML = '<div class="table-state">Audit log belum dapat dimuat.</div>';

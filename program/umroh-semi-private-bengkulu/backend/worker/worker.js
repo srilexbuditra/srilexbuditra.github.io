@@ -1,4 +1,4 @@
-const API_VERSION = "3.3";
+const API_VERSION = "3.3.1";
 const COOKIE_NAME = "umroh_session";
 const DEFAULT_SESSION_AGE = 60 * 60 * 24 * 7;
 const PASSWORD_ITERATIONS = 100000;
@@ -200,9 +200,9 @@ async function activateAccount(request, env) {
     env.DB.prepare(`
       UPDATE umroh_accounts
       SET password_hash = ?, account_status = 'active',
-          password_changed_at = ?, updated_at = ?
+          password_changed_at = ?, last_login_at = ?, updated_at = ?
       WHERE id = ?
-    `).bind(passwordHash, now, now, account.id),
+    `).bind(passwordHash, now, now, now, account.id),
     env.DB.prepare(`
       UPDATE umroh_activation_codes
       SET used_at = ?
