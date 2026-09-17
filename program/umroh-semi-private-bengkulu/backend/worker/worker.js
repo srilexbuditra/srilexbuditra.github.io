@@ -1,4 +1,4 @@
-const API_VERSION = "3.1";
+const API_VERSION = "3.1.1";
 const COOKIE_NAME = "umroh_session";
 const DEFAULT_SESSION_AGE = 60 * 60 * 24 * 7;
 const PASSWORD_ITERATIONS = 100000;
