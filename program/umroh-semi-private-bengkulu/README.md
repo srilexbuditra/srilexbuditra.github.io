@@ -16,15 +16,33 @@ Membangun pusat informasi, manasik digital, persiapan perjalanan, agenda, dokume
 
 ## Tahap Saat Ini
 
-**Prototype V1.3 — Final Polish Design System dan Dashboard Shell**
+**Frontend Foundation Stable — V2.5.1**
+
+Fondasi frontend telah melewati pengujian modul utama dan dikunci sebagai acuan sebelum autentikasi/backend dikembangkan.
+
+Status stabil:
 
 - `/admin/` — Adaptive Workspace untuk Admin.
 - `/jamaah/dashboard/` — Journey Dashboard untuk Jemaah.
-- `assets/css/tokens.css` — design tokens bersama.
-- `assets/css/dashboard-shell.css` — shell responsif bersama.
-- `DASHBOARD-DESIGN-SYSTEM.md` — aturan visual proyek.
+- `/manasik/` — 11 materi Manasik Digital + progress lokal.
+- `/jamaah/checklist/` — Checklist Persiapan Jemaah + progress lokal.
+- `/jamaah/agenda/` — Agenda & Perjalanan V2.2 dengan data jadwal simulasi.
+- `/jamaah/dokumen/` — Status Dokumen V2.3 tanpa upload berkas pribadi.
+- `/jamaah/pengumuman/` — Pengumuman V2.4 + status dibaca lokal.
+- Dashboard V2.5.1 — progress persiapan keseluruhan dinamis.
 
-Semua data pada prototype adalah simulasi. Tidak ada autentikasi, API, database, atau data jemaah asli pada tahap ini.
+Design System V1 dan Visual Asset System V1 berstatus **LOCKED**. Perubahan berikutnya tidak boleh membongkar shell, pola navigasi, atau identitas visual tanpa kebutuhan besar yang tervalidasi.
+
+Progress keseluruhan saat ini menggunakan bobot:
+
+- Manasik: 35%
+- Checklist: 35%
+- Dokumen siap: 20%
+- Agenda dibaca: 10%
+
+Pengumuman tidak masuk bobot kesiapan karena bersifat informasi.
+
+Seluruh progress masih tersimpan lokal di browser/perangkat dan belum terhubung ke akun jemaah.
 
 ## Prinsip Teknis
 
@@ -88,3 +106,8 @@ Dokumen Saya telah ditambahkan di `/jamaah/dokumen/`.
 - Status dibaca tersimpan lokal di browser/perangkat.
 - Dashboard Jemaah menampilkan tiga pengumuman terbaru dan jumlah yang belum dibaca.
 - Belum menjadi kanal operasional resmi sampai backend/admin publishing diaktifkan.
+
+
+## Checkpoint Frontend Foundation — 2026-09-18
+
+Frontend dinyatakan stabil untuk masuk ke fase autentikasi dan backend. Detail checkpoint tersedia di `FRONTEND-FOUNDATION-STATUS.md`. Rancangan awal integrasi akun/backend tersedia di `BACKEND-AUTH-ARCHITECTURE.md`.

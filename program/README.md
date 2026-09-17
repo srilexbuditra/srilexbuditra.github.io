@@ -35,16 +35,27 @@ Modul yang telah tersedia:
 - Agenda & Perjalanan Jemaah
 - Dokumen Saya / Status Dokumen Jemaah
 - Pengumuman Jemaah
+- Progress Persiapan Keseluruhan V2.5.1
 
 Catatan:
 - Agenda & Perjalanan sudah tersedia sebagai modul V2.2 dan saat ini masih menggunakan data jadwal simulasi sampai sumber data operasional/backend resmi diaktifkan.
 - Dokumen Saya sudah tersedia sebagai modul V2.3 untuk pencatatan status kesiapan dokumen secara lokal. Modul ini belum menerima upload dan tidak menyimpan berkas pribadi pada halaman statis.
 - Pengumuman Jemaah sudah tersedia sebagai modul V2.4. Status dibaca masih tersimpan lokal dan isi pengumuman saat ini masih berupa data simulasi sampai sumber operasional resmi/backend diaktifkan.
+- Progress Persiapan Keseluruhan V2.5.1 sudah aktif dan menghitung bobot Manasik 35%, Checklist 35%, Dokumen 20%, dan Agenda 10%. Pengumuman tidak menjadi komponen penilaian kesiapan.
+
+Status frontend:
+
+- **Frontend Foundation Stable — V2.5.1**
+- Design System V1 dan Visual Asset System V1 dikunci sebagai fondasi visual.
+- Progress keseluruhan dihitung dari Manasik, Checklist, Dokumen, dan Agenda.
+- Data aktivitas masih tersimpan lokal di browser/perangkat sampai akun/backend diaktifkan.
 
 Modul dalam pengembangan:
 
-- Progress persiapan keseluruhan berbasis data modul
-- Integrasi akun, autentikasi, backend, dan database
+- Integrasi akun dan autentikasi jemaah
+- Backend/API dan database
+- Sinkronisasi progress lintas perangkat
+- Kanal operasional Admin untuk agenda, dokumen, dan pengumuman
 
 Dokumentasi modul tersedia di [umroh-semi-private-bengkulu/README.md](umroh-semi-private-bengkulu/README.md).
 
