@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html class="auth-pending" lang="id">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<meta content="noindex,nofollow,noarchive" name="robots"/>
+<meta content="#0b2830" name="theme-color"/>
+<title>Jemaah | Admin Umroh Semi Private Bengkulu</title>
+<link href="../../assets/css/tokens.css" rel="stylesheet"/>
+<link href="../../assets/css/dashboard-shell.css" rel="stylesheet"/>
+<link href="../../assets/css/admin-dashboard.css" rel="stylesheet"/>
+<link href="../../assets/css/visual-assets.css" rel="stylesheet"/>
+<link href="../../assets/css/admin-auth.css" rel="stylesheet"/>
+<link href="../../assets/css/admin-jamaah.css" rel="stylesheet"/>
+</head>
+<body class="dashboard-app admin-dashboard admin-jamaah-page">
+<aside aria-label="Navigasi admin" class="app-sidebar">
+<div class="sidebar-brand">
+<div aria-hidden="true" class="brand-mark"><svg fill="none" viewBox="0 0 24 24"><path d="M6 9h12v11H6V9Zm2-5h8v5H8V4Zm4-2v2" stroke="currentColor" stroke-width="1.8"></path><path d="M9 13h6M9 16h6" stroke="currentColor" stroke-width="1.4"></path></svg></div>
+<div class="brand-copy"><strong>UMROH SEMI PRIVATE<br/>BENGKULU</strong><span>Digital Platform</span></div>
+<button aria-label="Ringkas sidebar" class="sidebar-collapse" data-sidebar-collapse="">‹</button>
+</div>
+<nav class="sidebar-nav">
+<div class="nav-section-label">Operasional</div>
+<a class="nav-item" data-rbac="super_admin admin tour_leader pendamping" href="../"><span class="nav-icon"><span aria-hidden="true" class="ui-icon icon-home"></span></span><span class="nav-label">Ringkasan</span></a>
+<a class="nav-item is-active" data-rbac="super_admin admin tour_leader pendamping" href="./"><span class="nav-icon"><span aria-hidden="true" class="ui-icon icon-users"></span></span><span class="nav-label">Jemaah</span></a>
+<a class="nav-item" data-rbac="super_admin admin tour_leader" href="../#manasik"><span class="nav-icon"><span aria-hidden="true" class="ui-icon icon-book"></span></span><span class="nav-label">Manasik</span></a>
+<a class="nav-item" data-rbac="super_admin admin tour_leader pendamping" href="../#agenda"><span class="nav-icon"><span aria-hidden="true" class="ui-icon icon-calendar"></span></span><span class="nav-label">Agenda &amp; Perjalanan</span></a>
+<a class="nav-item" data-rbac="super_admin admin tour_leader" href="../#dokumen"><span class="nav-icon"><span aria-hidden="true" class="ui-icon icon-file"></span></span><span class="nav-label">Dokumen</span></a>
+<a class="nav-item" data-rbac="super_admin admin tour_leader pendamping" href="../#pengumuman"><span class="nav-icon"><span aria-hidden="true" class="ui-icon icon-megaphone"></span></span><span class="nav-label">Pengumuman</span></a>
+<a class="nav-item" data-rbac="super_admin admin" href="../#laporan"><span class="nav-icon"><span aria-hidden="true" class="ui-icon icon-chart"></span></span><span class="nav-label">Laporan</span></a>
+<div class="nav-section-label">Sistem</div>
+<a class="nav-item" data-super-admin-only data-rbac="super_admin" href="../manajemen-admin/"><span class="nav-icon"><span aria-hidden="true" class="ui-icon icon-admin"></span></span><span class="nav-label">Manajemen Admin</span></a>
+<a class="nav-item" data-rbac="super_admin admin" href="../#pengaturan"><span class="nav-icon"><span aria-hidden="true" class="ui-icon icon-settings"></span></span><span class="nav-label">Pengaturan</span></a>
+</nav>
+<div class="sidebar-foot"><div class="tech-credit"><small>Pengembangan Sistem &amp; Dukungan Teknologi</small><strong>Srilex Buditra</strong><a href="https://srilexbuditra.work/">srilexbuditra.work</a></div></div>
+</aside>
+<div class="sidebar-backdrop" data-sidebar-backdrop=""></div>
+
+<div class="app-main">
+<header class="app-topbar">
+<button aria-label="Buka menu" class="mobile-menu" data-mobile-menu="">☰</button>
+<div class="topbar-title"><strong>Jemaah</strong><span>Data resmi dari Cloudflare D1</span></div>
+<div class="topbar-spacer"></div>
+<div class="user-chip"><div class="avatar" data-auth-avatar>SB</div><div class="user-copy"><strong data-auth-name>Srilex Buditra</strong><span data-auth-role>Senior Full Stack Developer · Platform Architect</span></div></div>
+<button class="auth-logout" data-admin-logout type="button">Keluar</button>
+</header>
+
+<main class="page-wrap">
+<div class="prototype-note"><strong>Jemaah Registry V3.4.0.</strong> Halaman ini sudah membaca data jemaah nyata dari D1. Tahap ini bersifat <strong>read-only</strong>; tambah/ubah akun jemaah dan aktivasi jemaah akan diaktifkan pada fase berikutnya setelah alur autentikasi jemaah siap.</div>
+
+<div class="page-head">
+<div>
+<span class="page-kicker">Operational Data · D1</span>
+<h1>Data Jemaah</h1>
+<p>Gunakan daftar ini sebagai sumber data resmi jemaah. Tidak ada data simulasi yang ditambahkan otomatis.</p>
+</div>
+<div class="jamaah-source-badge">LIVE · D1</div>
+</div>
+
+<section class="jamaah-stats" aria-label="Statistik jemaah">
+<article class="card jamaah-stat"><span>Total Jemaah</span><strong data-jamaah-total>—</strong></article>
+<article class="card jamaah-stat"><span>Aktif</span><strong data-jamaah-active>—</strong></article>
+<article class="card jamaah-stat"><span>Menunggu Aktivasi</span><strong data-jamaah-pending>—</strong></article>
+<article class="card jamaah-stat"><span>Perlu Tindakan</span><strong data-jamaah-attention>—</strong></article>
+</section>
+
+<section class="card card-pad jamaah-card">
+<div class="jamaah-toolbar">
+<div class="jamaah-search">
+<span aria-hidden="true" class="ui-icon icon-search"></span>
+<input data-jamaah-search type="search" placeholder="Cari nama, nomor jemaah, email, WhatsApp, grup..."/>
+</div>
+<select data-jamaah-status aria-label="Filter status">
+<option value="">Semua Status</option>
+<option value="active">Aktif</option>
+<option value="pending_activation">Menunggu Aktivasi</option>
+<option value="suspended">Ditangguhkan</option>
+<option value="disabled">Dinonaktifkan</option>
+</select>
+<button data-jamaah-refresh type="button">Muat ulang</button>
+</div>
+
+<div class="jamaah-table-wrap">
+<table class="jamaah-table">
+<thead>
+<tr>
+<th>Jemaah</th>
+<th>Nomor Jemaah</th>
+<th>Kontak</th>
+<th>Grup / Batch</th>
+<th>Status</th>
+<th>Login Terakhir</th>
+<th>Dibuat</th>
+</tr>
+</thead>
+<tbody data-jamaah-body>
+<tr><td colspan="7" class="table-state">Memuat data jemaah...</td></tr>
+</tbody>
+</table>
+</div>
+<div class="jamaah-footnote"><span data-jamaah-count>0</span> data ditampilkan · sumber: <strong>umroh_accounts + umroh_jamaah_profiles</strong></div>
+</section>
+</main>
+</div>
+
+<script src="../../assets/js/admin-auth-guard.js?v=3.4.0"></script>
+<script src="../../assets/js/dashboard-shell.js"></script>
+<script src="../../assets/js/admin-jamaah.js?v=3.4.0"></script>
+</body>
+</html>

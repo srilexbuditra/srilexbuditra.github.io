@@ -1,4 +1,4 @@
-const API_VERSION = "3.3.1";
+const API_VERSION = "3.4.0";
 const COOKIE_NAME = "umroh_session";
 const DEFAULT_SESSION_AGE = 60 * 60 * 24 * 7;
 const PASSWORD_ITERATIONS = 100000;
@@ -44,6 +44,14 @@ export default {
         return me(request, env);
       }
 
+
+      if (request.method === "GET" && path === "/admin/jamaah/stats") {
+        return getAdminJamaahStats(request, env);
+      }
+
+      if (request.method === "GET" && path === "/admin/jamaah") {
+        return listAdminJamaah(request, env);
+      }
 
       if (request.method === "GET" && path === "/admin/accounts") {
         return listAdminAccounts(request, env);
@@ -401,6 +409,115 @@ function publicAccount(account) {
   };
 }
 
+
+
+async function requireStaffRole(request, env, allowedRoles = ["super_admin", "admin", "tour_leader", "pendamping"]) {
+  const account = await authenticatedAccount(request, env);
+  if (!account) {
+    return { response: json(request, env, { ok: false, error: "unauthorized" }, 401) };
+  }
+  if (!allowedRoles.includes(account.role)) {
+    return { response: json(request, env, { ok: false, error: "forbidden" }, 403) };
+  }
+  return { account };
+}
+
+async function getAdminJamaahStats(request, env) {
+  const gate = await requireStaffRole(request, env);
+  if (gate.response) return gate.response;
+
+  const row = await env.DB.prepare(`
+    SELECT
+      COUNT(*) AS total,
+      SUM(CASE WHEN account_status = 'active' THEN 1 ELSE 0 END) AS active,
+      SUM(CASE WHEN account_status = 'pending_activation' THEN 1 ELSE 0 END) AS pending_activation,
+      SUM(CASE WHEN account_status = 'suspended' THEN 1 ELSE 0 END) AS suspended,
+      SUM(CASE WHEN account_status = 'disabled' THEN 1 ELSE 0 END) AS disabled
+    FROM umroh_accounts
+    WHERE role = 'jamaah'
+  `).first();
+
+  return json(request, env, {
+    ok: true,
+    summary: {
+      total: Number(row?.total || 0),
+      active: Number(row?.active || 0),
+      pending_activation: Number(row?.pending_activation || 0),
+      suspended: Number(row?.suspended || 0),
+      disabled: Number(row?.disabled || 0),
+    },
+  });
+}
+
+async function listAdminJamaah(request, env) {
+  const gate = await requireStaffRole(request, env);
+  if (gate.response) return gate.response;
+
+  const url = new URL(request.url);
+  const search = String(url.searchParams.get("search") || "").trim().toLowerCase();
+  const status = String(url.searchParams.get("status") || "").trim();
+  const allowedStatus = new Set(["active", "pending_activation", "suspended", "disabled"]);
+  const limitRaw = Number(url.searchParams.get("limit") || 100);
+  const limit = Math.min(Math.max(Number.isFinite(limitRaw) ? Math.floor(limitRaw) : 100, 1), 200);
+
+  const where = ["a.role = 'jamaah'"];
+  const binds = [];
+
+  if (search) {
+    where.push(`(
+      lower(COALESCE(p.full_name, '')) LIKE ?
+      OR lower(COALESCE(a.member_no, '')) LIKE ?
+      OR lower(COALESCE(a.email, '')) LIKE ?
+      OR lower(COALESCE(a.whatsapp, '')) LIKE ?
+      OR lower(COALESCE(p.group_name, '')) LIKE ?
+      OR lower(COALESCE(p.departure_batch, '')) LIKE ?
+    )`);
+    const pattern = `%${search}%`;
+    binds.push(pattern, pattern, pattern, pattern, pattern, pattern);
+  }
+
+  if (allowedStatus.has(status)) {
+    where.push("a.account_status = ?");
+    binds.push(status);
+  }
+
+  binds.push(limit);
+
+  const result = await env.DB.prepare(`
+    SELECT
+      a.account_uuid,
+      a.member_no,
+      a.email,
+      a.whatsapp,
+      a.account_status,
+      a.last_login_at,
+      a.created_at,
+      a.updated_at,
+      p.full_name,
+      p.group_name,
+      p.departure_batch
+    FROM umroh_accounts a
+    LEFT JOIN umroh_jamaah_profiles p ON p.account_id = a.id
+    WHERE ${where.join(" AND ")}
+    ORDER BY
+      CASE a.account_status
+        WHEN 'pending_activation' THEN 1
+        WHEN 'active' THEN 2
+        WHEN 'suspended' THEN 3
+        WHEN 'disabled' THEN 4
+        ELSE 9
+      END,
+      COALESCE(p.full_name, a.member_no) COLLATE NOCASE
+    LIMIT ?
+  `).bind(...binds).all();
+
+  return json(request, env, {
+    ok: true,
+    jamaah: result.results || [],
+    count: (result.results || []).length,
+    filtered: Boolean(search || allowedStatus.has(status)),
+  });
+}
 
 async function requireSuperAdmin(request, env) {
   const account = await authenticatedAccount(request, env);
