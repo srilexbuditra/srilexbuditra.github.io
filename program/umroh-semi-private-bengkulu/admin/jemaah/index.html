@@ -5,7 +5,7 @@
 <meta content="width=device-width,initial-scale=1" name="viewport"/>
 <meta content="noindex,nofollow,noarchive" name="robots"/>
 <meta content="#0b2830" name="theme-color"/>
-<title>Jemaah | Admin Umroh Semi Private Bengkulu</title>
+<title>Manajemen Jemaah | Admin Umroh Semi Private Bengkulu</title>
 <link href="../../assets/css/tokens.css" rel="stylesheet"/>
 <link href="../../assets/css/dashboard-shell.css" rel="stylesheet"/>
 <link href="../../assets/css/admin-dashboard.css" rel="stylesheet"/>
@@ -47,15 +47,15 @@
 </header>
 
 <main class="page-wrap">
-<div class="prototype-note"><strong>Jemaah Registry V3.4.0.</strong> Halaman ini sudah membaca data jemaah nyata dari D1. Tahap ini bersifat <strong>read-only</strong>; tambah/ubah akun jemaah dan aktivasi jemaah akan diaktifkan pada fase berikutnya setelah alur autentikasi jemaah siap.</div>
+<div class="prototype-note"><strong>Jemaah Management V3.4.1.</strong> Data berasal dari D1. Super Admin dan Admin dapat menambah/mengubah data serta mereset akses. Tour Leader dan Pendamping tetap read-only. Password dibuat sendiri oleh jemaah melalui aktivasi.</div>
 
 <div class="page-head">
 <div>
 <span class="page-kicker">Operational Data · D1</span>
 <h1>Data Jemaah</h1>
-<p>Gunakan daftar ini sebagai sumber data resmi jemaah. Tidak ada data simulasi yang ditambahkan otomatis.</p>
+<p>Kelola data resmi jemaah dan akses akun tanpa menyimpan password di sisi Admin.</p>
 </div>
-<div class="jamaah-source-badge">LIVE · D1</div>
+<div class="jamaah-head-actions"><div class="jamaah-source-badge">LIVE · D1</div><button class="jamaah-primary" data-open-jamaah-form hidden type="button">+ Tambah Jemaah</button></div>
 </div>
 
 <section class="jamaah-stats" aria-label="Statistik jemaah">
@@ -92,10 +92,11 @@
 <th>Status</th>
 <th>Login Terakhir</th>
 <th>Dibuat</th>
+<th>Aksi</th>
 </tr>
 </thead>
 <tbody data-jamaah-body>
-<tr><td colspan="7" class="table-state">Memuat data jemaah...</td></tr>
+<tr><td colspan="8" class="table-state">Memuat data jemaah...</td></tr>
 </tbody>
 </table>
 </div>
@@ -104,8 +105,41 @@
 </main>
 </div>
 
-<script src="../../assets/js/admin-auth-guard.js?v=3.4.0"></script>
+
+<div class="jamaah-modal" data-jamaah-modal hidden>
+<div class="jamaah-modal-backdrop" data-close-jamaah-form></div>
+<section class="jamaah-dialog" role="dialog" aria-modal="true" aria-labelledby="jamaahDialogTitle">
+<div class="jamaah-dialog-head"><div><span class="page-kicker">Data Jemaah</span><h2 id="jamaahDialogTitle" data-jamaah-form-title>Tambah Jemaah</h2></div><button aria-label="Tutup" data-close-jamaah-form type="button">×</button></div>
+<form class="jamaah-form" data-jamaah-form>
+<input name="account_uuid" type="hidden"/>
+<label>Nomor Jemaah<input name="member_no" maxlength="40" required placeholder="Contoh: USB-0001"/></label>
+<label>Nama Lengkap<input name="full_name" maxlength="160" required placeholder="Nama sesuai data resmi"/></label>
+<label>Email <span>(opsional)</span><input name="email" type="email" maxlength="160" placeholder="nama@example.com"/></label>
+<label>WhatsApp <span>(opsional)</span><input name="whatsapp" maxlength="24" placeholder="+62812..."/></label>
+<label>Grup <span>(opsional)</span><input name="group_name" maxlength="120" placeholder="Contoh: Grup A"/></label>
+<label>Batch Keberangkatan <span>(opsional)</span><input name="departure_batch" maxlength="120" placeholder="Contoh: September 2026"/></label>
+<label class="form-wide">Catatan Internal <span>(opsional)</span><textarea name="notes" maxlength="1000" rows="4" placeholder="Catatan operasional untuk tim"></textarea></label>
+<p class="jamaah-form-note form-wide" data-jamaah-create-note>Akun baru akan berstatus <strong>Menunggu Aktivasi</strong>. Sistem menampilkan kode aktivasi satu kali untuk dibagikan secara aman kepada jemaah.</p>
+<div class="jamaah-form-message form-wide" data-jamaah-form-message hidden></div>
+<div class="jamaah-form-actions form-wide"><button class="secondary" data-close-jamaah-form type="button">Batal</button><button class="primary" data-jamaah-submit type="submit">Simpan Jemaah</button></div>
+</form>
+</section>
+</div>
+
+<div class="jamaah-modal" data-jamaah-activation-modal hidden>
+<div class="jamaah-modal-backdrop" data-close-jamaah-activation></div>
+<section class="jamaah-dialog jamaah-activation-dialog" role="dialog" aria-modal="true" aria-labelledby="jamaahActivationTitle">
+<div class="jamaah-dialog-head"><div><span class="page-kicker">Kode Sekali Tampil</span><h2 id="jamaahActivationTitle">Kode Aktivasi Jemaah</h2></div><button aria-label="Tutup" data-close-jamaah-activation type="button">×</button></div>
+<p>Kode mentah tidak disimpan di database. Salin sekarang dan kirim kepada jemaah melalui kanal yang aman.</p>
+<div class="jamaah-activation-code" data-jamaah-activation-code>—</div>
+<div class="jamaah-activation-expiry">Berlaku sampai <strong data-jamaah-activation-expiry>—</strong></div>
+<div class="jamaah-activation-url">Halaman aktivasi: <strong>/program/umroh-semi-private-bengkulu/jamaah/aktivasi/</strong></div>
+<button class="jamaah-primary jamaah-copy-code" data-copy-jamaah-code type="button">Salin Kode</button>
+</section>
+</div>
+
+<script src="../../assets/js/admin-auth-guard.js?v=3.4.1"></script>
 <script src="../../assets/js/dashboard-shell.js"></script>
-<script src="../../assets/js/admin-jamaah.js?v=3.4.0"></script>
+<script src="../../assets/js/admin-jamaah.js?v=3.4.1"></script>
 </body>
 </html>

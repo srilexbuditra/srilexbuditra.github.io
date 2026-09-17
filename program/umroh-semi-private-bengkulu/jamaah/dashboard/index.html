@@ -10,7 +10,8 @@
 <link href="../../assets/css/tokens.css" rel="stylesheet"/>
 <link href="../../assets/css/dashboard-shell.css" rel="stylesheet"/>
 <link href="../../assets/css/jamaah-dashboard.css" rel="stylesheet"/>
-<link href="../../assets/css/visual-assets.css" rel="stylesheet"/></head>
+<link href="../../assets/css/visual-assets.css" rel="stylesheet"/>
+<link href="../../assets/css/jamaah-auth.css" rel="stylesheet"/></head>
 <body class="dashboard-app">
 <aside aria-label="Navigasi jemaah" class="app-sidebar">
 <div class="sidebar-brand">
@@ -39,15 +40,15 @@
 <div class="search-box"><span aria-hidden="true"><span aria-hidden="true" class="ui-icon icon-search"></span></span><input placeholder="Cari materi, agenda, informasi..." type="search"/></div>
 <div class="topbar-spacer"></div>
 <button aria-label="Notifikasi" class="icon-button" onclick="location.href='../pengumuman/index.html'"><span aria-hidden="true" class="ui-icon icon-bell"></span><span class="notification-dot" data-announcement-unread-count>4</span></button>
-<div class="user-chip"><div class="avatar">AR</div><div class="user-copy"><strong>Ahmad Rasyid</strong><span>Jemaah · Data simulasi</span></div></div>
+<div class="user-chip"><div class="avatar" data-jamaah-auth-avatar>J</div><div class="user-copy"><strong data-jamaah-auth-name>Jemaah</strong><span data-jamaah-auth-member>Jemaah</span></div></div><button class="jamaah-logout" data-jamaah-logout type="button">Keluar</button>
 </header>
 <main class="page-wrap" id="beranda">
-<div class="prototype-note"><strong>Dashboard Prototype V2.5.1.</strong> Nama jemaah dan jadwal Agenda masih data simulasi. Progress persiapan sekarang dihitung otomatis dari aktivitas lokal Manasik, Checklist, Dokumen, dan Agenda di browser ini.</div>
+<div class="prototype-note"><strong>Jemaah Auth V3.4.1 aktif.</strong> Identitas dan session akun sudah berasal dari backend D1. Progress Manasik, Checklist, Dokumen, dan Agenda masih menggunakan penyimpanan lokal sampai modul progress dipindahkan ke backend.</div>
 <section class="journey-hero">
 <div class="journey-copy"><span>Perjalanan Ibadah</span><h1>Persiapan yang tenang,<br/>langkah yang terarah.</h1><p>Semua informasi penting untuk manasik, checklist, agenda, dan perjalanan Anda disusun dalam satu tempat yang mudah dipahami.</p></div>
 <div class="departure-card"><small>Rencana Keberangkatan</small><strong data-departure-date>30 September 2026</strong><span data-departure-countdown>13 hari lagi</span></div>
 </section>
-<section class="card welcome-strip"><div class="avatar">AR</div><div><h2>Assalamu'alaikum, Ahmad Rasyid</h2><p>Terus lengkapi persiapan Anda. Jika ada informasi yang belum jelas, gunakan menu Bantuan atau hubungi pendamping.</p></div></section>
+<section class="card welcome-strip"><div class="avatar" data-jamaah-auth-avatar>J</div><div><h2>Assalamu'alaikum, <span data-jamaah-auth-name>Jemaah</span></h2><p>Terus lengkapi persiapan Anda. Jika ada informasi yang belum jelas, gunakan menu Bantuan atau hubungi pendamping.</p></div></section>
 <section class="journey-progress-grid">
 <article class="card progress-card"><div class="progress-head"><strong>Progress Persiapan Umroh Anda</strong><b data-overall-progress-percent>0%</b></div><div class="progress-track"><i data-overall-progress-bar></i></div><div class="progress-breakdown" aria-label="Rincian kesiapan per modul"><span class="progress-part"><span class="progress-part-icon"><span aria-hidden="true" class="ui-icon icon-book"></span></span><span class="progress-part-copy"><strong>Manasik</strong><small data-overall-manasik-count>0 dari 11 selesai</small></span><b data-overall-manasik>0%</b></span><span class="progress-part"><span class="progress-part-icon success"><span aria-hidden="true" class="ui-icon icon-checklist"></span></span><span class="progress-part-copy"><strong>Checklist</strong><small data-overall-checklist-count>0 dari 12 diperiksa</small></span><b data-overall-checklist>0%</b></span><span class="progress-part"><span class="progress-part-icon"><span aria-hidden="true" class="ui-icon icon-file"></span></span><span class="progress-part-copy"><strong>Dokumen</strong><small data-overall-documents-count>0 dari 4 siap</small></span><b data-overall-documents>0%</b></span><span class="progress-part"><span class="progress-part-icon info"><span aria-hidden="true" class="ui-icon icon-calendar"></span></span><span class="progress-part-copy"><strong>Agenda</strong><small data-overall-agenda-count>0 dari 4 dibaca</small></span><b data-overall-agenda>0%</b></span></div><div class="progress-formula"><strong>Bobot perhitungan</strong><span>Manasik 35% · Checklist 35% · Dokumen 20% · Agenda 10%</span></div><small data-overall-progress-copy>Progress tersimpan lokal di browser ini dan belum terhubung ke akun jemaah.</small></article>
 <article class="card next-action" data-manasik-next><span>Tahap Berikutnya</span><strong data-manasik-next-title>Manasik — Persiapan Sebelum Berangkat</strong><p data-manasik-next-copy>Lanjutkan materi pertama agar progress Manasik mulai tercatat.</p><a class="primary-action" data-manasik-next-link href="/program/umroh-semi-private-bengkulu/manasik/persiapan/">Lanjutkan →</a></article>
@@ -71,6 +72,7 @@
 <nav aria-label="Navigasi cepat mobile" class="mobile-bottom-nav">
 <a class="is-active" href="#beranda"><span><span aria-hidden="true" class="ui-icon icon-home"></span></span><span>Beranda</span></a><a href="/program/umroh-semi-private-bengkulu/manasik/"><span><span aria-hidden="true" class="ui-icon icon-book"></span></span><span>Manasik</span></a><a href="../agenda/index.html"><span><span aria-hidden="true" class="ui-icon icon-calendar"></span></span><span>Agenda</span></a><a href="#bantuan"><span><span aria-hidden="true" class="ui-icon icon-help"></span></span><span>Bantuan</span></a><a href="#profil"><span><span aria-hidden="true" class="ui-icon icon-user"></span></span><span>Profil</span></a>
 </nav>
+<script src="../../assets/js/jamaah-auth-guard.js?v=3.4.1"></script>
 <script src="../../assets/js/dashboard-shell.js"></script>
 <script src="../../assets/js/jamaah-progress.js"></script>
 <script src="../../assets/js/jamaah-checklist-progress.js"></script>

@@ -1,4 +1,4 @@
-const API_VERSION = "3.4.0";
+const API_VERSION = "3.4.1";
 const COOKIE_NAME = "umroh_session";
 const DEFAULT_SESSION_AGE = 60 * 60 * 24 * 7;
 const PASSWORD_ITERATIONS = 100000;
@@ -28,8 +28,16 @@ export default {
         return bootstrapSuperAdmin(request, env);
       }
 
+      if (request.method === "POST" && path === "/auth/jamaah/activate") {
+        return activateAccount(request, env, "jamaah");
+      }
+
       if (request.method === "POST" && path === "/auth/activate") {
         return activateAccount(request, env);
+      }
+
+      if (request.method === "POST" && path === "/auth/jamaah/login") {
+        return loginJamaah(request, env);
       }
 
       if (request.method === "POST" && path === "/auth/login") {
@@ -51,6 +59,20 @@ export default {
 
       if (request.method === "GET" && path === "/admin/jamaah") {
         return listAdminJamaah(request, env);
+      }
+
+      if (request.method === "POST" && path === "/admin/jamaah") {
+        return createAdminJamaah(request, env);
+      }
+
+      const jamaahMatch = path.match(/^\/admin\/jamaah\/([0-9a-f-]{36})$/i);
+      if (jamaahMatch && request.method === "PATCH") {
+        return updateAdminJamaah(request, env, jamaahMatch[1]);
+      }
+
+      const jamaahResetMatch = path.match(/^\/admin\/jamaah\/([0-9a-f-]{36})\/reset-access$/i);
+      if (jamaahResetMatch && request.method === "POST") {
+        return resetJamaahAccess(request, env, jamaahResetMatch[1]);
       }
 
       if (request.method === "GET" && path === "/admin/accounts") {
@@ -147,7 +169,7 @@ async function bootstrapSuperAdmin(request, env) {
   }, 201);
 }
 
-async function activateAccount(request, env) {
+async function activateAccount(request, env, expectedRole = null) {
   requireSecrets(env);
   const body = await readJson(request);
   const identifier = String(body.identifier || "").trim();
@@ -163,7 +185,11 @@ async function activateAccount(request, env) {
   }
 
   const account = await findAccountByIdentifier(env.DB, identifier);
-  if (!account || account.account_status !== "pending_activation") {
+  if (
+    !account ||
+    account.account_status !== "pending_activation" ||
+    (expectedRole && account.role !== expectedRole)
+  ) {
     return json(request, env, { ok: false, error: "activation_failed" }, 400);
   }
 
@@ -230,7 +256,7 @@ async function activateAccount(request, env) {
     ),
   ];
 
-  if (["admin", "tour_leader", "pendamping"].includes(account.role)) {
+  if (["jamaah", "admin", "tour_leader", "pendamping"].includes(account.role)) {
     statements.push(
       env.DB.prepare(`
         INSERT INTO umroh_admin_audit_log
@@ -269,6 +295,61 @@ async function login(request, env) {
 
   if (
     !account ||
+    account.account_status !== "active" ||
+    !account.password_hash ||
+    !(await verifyPassword(password, account.password_hash, env.AUTH_PEPPER))
+  ) {
+    return json(request, env, { ok: false, error: "invalid_credentials" }, 401);
+  }
+
+  const now = new Date().toISOString();
+  const session = await createSessionMaterial(env);
+  const userAgent = truncate(request.headers.get("User-Agent") || "", 500);
+
+  await env.DB.batch([
+    env.DB.prepare(`
+      INSERT INTO umroh_sessions
+        (account_id, token_hash, expires_at, last_seen_at, user_agent, created_at)
+      VALUES (?, ?, ?, ?, ?, ?)
+    `).bind(
+      account.id,
+      session.tokenHash,
+      session.expiresAt,
+      now,
+      userAgent || null,
+      now
+    ),
+    env.DB.prepare(`
+      UPDATE umroh_accounts
+      SET last_login_at = ?, updated_at = ?
+      WHERE id = ?
+    `).bind(now, now, account.id),
+  ]);
+
+  return json(request, env, {
+    ok: true,
+    account: publicAccount(account),
+  }, 200, {
+    "Set-Cookie": sessionCookie(session.rawToken, env),
+  });
+}
+
+
+async function loginJamaah(request, env) {
+  requireSecrets(env);
+  const body = await readJson(request);
+  const identifier = String(body.identifier || "").trim();
+  const password = String(body.password || "");
+
+  if (!identifier || !password) {
+    return json(request, env, { ok: false, error: "invalid_credentials" }, 401);
+  }
+
+  const account = await findAccountByIdentifier(env.DB, identifier);
+
+  if (
+    !account ||
+    account.role !== "jamaah" ||
     account.account_status !== "active" ||
     !account.password_hash ||
     !(await verifyPassword(password, account.password_hash, env.AUTH_PEPPER))
@@ -490,12 +571,14 @@ async function listAdminJamaah(request, env) {
       a.email,
       a.whatsapp,
       a.account_status,
+      CASE WHEN a.password_hash IS NOT NULL THEN 1 ELSE 0 END AS has_password,
       a.last_login_at,
       a.created_at,
       a.updated_at,
       p.full_name,
       p.group_name,
-      p.departure_batch
+      p.departure_batch,
+      p.notes
     FROM umroh_accounts a
     LEFT JOIN umroh_jamaah_profiles p ON p.account_id = a.id
     WHERE ${where.join(" AND ")}
@@ -516,6 +599,365 @@ async function listAdminJamaah(request, env) {
     jamaah: result.results || [],
     count: (result.results || []).length,
     filtered: Boolean(search || allowedStatus.has(status)),
+  });
+}
+
+
+async function createAdminJamaah(request, env) {
+  requireSecrets(env);
+  const gate = await requireStaffRole(request, env, ["super_admin", "admin"]);
+  if (gate.response) return gate.response;
+
+  const body = await readJson(request);
+  const memberNo = normalizeMemberNo(body.member_no);
+  const fullName = truncate(String(body.full_name || "").trim(), 160);
+  const email = normalizeEmail(body.email || "");
+  const whatsapp = normalizePhone(body.whatsapp || "");
+  const groupName = truncate(String(body.group_name || "").trim(), 120);
+  const departureBatch = truncate(String(body.departure_batch || "").trim(), 120);
+  const notes = truncate(String(body.notes || "").trim(), 1000);
+
+  if (!isValidMemberNo(memberNo)) {
+    return json(request, env, { ok: false, error: "invalid_member_no" }, 400);
+  }
+  if (!fullName) {
+    return json(request, env, { ok: false, error: "full_name_required" }, 400);
+  }
+  if (email && !isValidEmail(email)) {
+    return json(request, env, { ok: false, error: "invalid_email" }, 400);
+  }
+  if (whatsapp && !isValidPhone(whatsapp)) {
+    return json(request, env, { ok: false, error: "invalid_whatsapp" }, 400);
+  }
+
+  const duplicate = await env.DB.prepare(`
+    SELECT member_no, email, whatsapp
+    FROM umroh_accounts
+    WHERE member_no = ?
+       OR (? <> '' AND lower(email) = ?)
+       OR (? <> '' AND whatsapp = ?)
+    LIMIT 1
+  `).bind(memberNo, email, email, whatsapp, whatsapp).first();
+
+  if (duplicate) {
+    return json(request, env, { ok: false, error: "jamaah_exists" }, 409);
+  }
+
+  const accountUuid = crypto.randomUUID();
+  const activationCode = generateActivationCode(10);
+  const codeHash = await hashActivationCode(activationCode, accountUuid, env.AUTH_PEPPER);
+  const now = new Date().toISOString();
+  const expiresAt = new Date(Date.now() + STAFF_ACTIVATION_AGE * 1000).toISOString();
+
+  const insert = await env.DB.prepare(`
+    INSERT INTO umroh_accounts
+      (account_uuid, role, member_no, email, whatsapp, password_hash, account_status,
+       created_at, updated_at)
+    VALUES (?, 'jamaah', ?, ?, ?, NULL, 'pending_activation', ?, ?)
+  `).bind(
+    accountUuid,
+    memberNo,
+    email || null,
+    whatsapp || null,
+    now,
+    now
+  ).run();
+
+  const targetId = Number(insert.meta?.last_row_id || 0);
+
+  await env.DB.batch([
+    env.DB.prepare(`
+      INSERT INTO umroh_jamaah_profiles
+        (account_id, full_name, group_name, departure_batch, notes, created_at, updated_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?)
+    `).bind(
+      targetId,
+      fullName,
+      groupName || null,
+      departureBatch || null,
+      notes || null,
+      now,
+      now
+    ),
+    env.DB.prepare(`
+      INSERT INTO umroh_activation_codes
+        (account_id, code_hash, expires_at, failed_attempts, created_at)
+      VALUES (?, ?, ?, 0, ?)
+    `).bind(targetId, codeHash, expiresAt, now),
+    env.DB.prepare(`
+      INSERT INTO umroh_admin_audit_log
+        (actor_account_id, action, target_account_id, details_json, created_at)
+      VALUES (?, 'jamaah_created', ?, ?, ?)
+    `).bind(
+      gate.account.id,
+      targetId,
+      JSON.stringify({
+        member_no: memberNo,
+        full_name: fullName,
+        group_name: groupName || null,
+        departure_batch: departureBatch || null,
+      }),
+      now
+    ),
+  ]);
+
+  return json(request, env, {
+    ok: true,
+    jamaah: {
+      account_uuid: accountUuid,
+      member_no: memberNo,
+      full_name: fullName,
+      email: email || null,
+      whatsapp: whatsapp || null,
+      group_name: groupName || null,
+      departure_batch: departureBatch || null,
+      notes: notes || null,
+      account_status: "pending_activation",
+    },
+    activation: {
+      code: activationCode,
+      expires_at: expiresAt,
+      one_time_display: true,
+    },
+  }, 201);
+}
+
+async function updateAdminJamaah(request, env, accountUuid) {
+  const gate = await requireStaffRole(request, env, ["super_admin", "admin"]);
+  if (gate.response) return gate.response;
+
+  const target = await env.DB.prepare(`
+    SELECT
+      a.id, a.account_uuid, a.member_no, a.email, a.whatsapp,
+      a.account_status, a.password_hash,
+      p.full_name, p.group_name, p.departure_batch, p.notes
+    FROM umroh_accounts a
+    JOIN umroh_jamaah_profiles p ON p.account_id = a.id
+    WHERE a.account_uuid = ? AND a.role = 'jamaah'
+    LIMIT 1
+  `).bind(accountUuid).first();
+
+  if (!target) {
+    return json(request, env, { ok: false, error: "jamaah_not_found" }, 404);
+  }
+
+  const body = await readJson(request);
+  const accountUpdates = [];
+  const accountBinds = [];
+  const profileUpdates = [];
+  const profileBinds = [];
+  const changes = {};
+
+  if (Object.prototype.hasOwnProperty.call(body, "member_no")) {
+    const value = normalizeMemberNo(body.member_no);
+    if (!isValidMemberNo(value)) {
+      return json(request, env, { ok: false, error: "invalid_member_no" }, 400);
+    }
+    const duplicate = await env.DB.prepare(`
+      SELECT id FROM umroh_accounts WHERE member_no = ? AND id <> ? LIMIT 1
+    `).bind(value, target.id).first();
+    if (duplicate) return json(request, env, { ok: false, error: "member_no_exists" }, 409);
+    accountUpdates.push("member_no = ?");
+    accountBinds.push(value);
+    changes.member_no = { from: target.member_no, to: value };
+  }
+
+  if (Object.prototype.hasOwnProperty.call(body, "email")) {
+    const value = normalizeEmail(body.email || "");
+    if (value && !isValidEmail(value)) {
+      return json(request, env, { ok: false, error: "invalid_email" }, 400);
+    }
+    if (value) {
+      const duplicate = await env.DB.prepare(`
+        SELECT id FROM umroh_accounts WHERE lower(email) = ? AND id <> ? LIMIT 1
+      `).bind(value, target.id).first();
+      if (duplicate) return json(request, env, { ok: false, error: "email_exists" }, 409);
+    }
+    accountUpdates.push("email = ?");
+    accountBinds.push(value || null);
+    changes.email = { from: target.email || null, to: value || null };
+  }
+
+  if (Object.prototype.hasOwnProperty.call(body, "whatsapp")) {
+    const value = normalizePhone(body.whatsapp || "");
+    if (value && !isValidPhone(value)) {
+      return json(request, env, { ok: false, error: "invalid_whatsapp" }, 400);
+    }
+    if (value) {
+      const duplicate = await env.DB.prepare(`
+        SELECT id FROM umroh_accounts WHERE whatsapp = ? AND id <> ? LIMIT 1
+      `).bind(value, target.id).first();
+      if (duplicate) return json(request, env, { ok: false, error: "whatsapp_exists" }, 409);
+    }
+    accountUpdates.push("whatsapp = ?");
+    accountBinds.push(value || null);
+    changes.whatsapp = { from: target.whatsapp || null, to: value || null };
+  }
+
+  if (Object.prototype.hasOwnProperty.call(body, "account_status")) {
+    const value = String(body.account_status || "").trim();
+    if (!new Set(["active", "suspended", "disabled"]).has(value)) {
+      return json(request, env, { ok: false, error: "invalid_status" }, 400);
+    }
+    if (value === "active" && !target.password_hash) {
+      return json(request, env, { ok: false, error: "activation_required" }, 409);
+    }
+    accountUpdates.push("account_status = ?");
+    accountBinds.push(value);
+    changes.account_status = { from: target.account_status, to: value };
+  }
+
+  if (Object.prototype.hasOwnProperty.call(body, "full_name")) {
+    const value = truncate(String(body.full_name || "").trim(), 160);
+    if (!value) return json(request, env, { ok: false, error: "full_name_required" }, 400);
+    profileUpdates.push("full_name = ?");
+    profileBinds.push(value);
+    changes.full_name = { from: target.full_name, to: value };
+  }
+
+  if (Object.prototype.hasOwnProperty.call(body, "group_name")) {
+    const value = truncate(String(body.group_name || "").trim(), 120);
+    profileUpdates.push("group_name = ?");
+    profileBinds.push(value || null);
+    changes.group_name = { from: target.group_name || null, to: value || null };
+  }
+
+  if (Object.prototype.hasOwnProperty.call(body, "departure_batch")) {
+    const value = truncate(String(body.departure_batch || "").trim(), 120);
+    profileUpdates.push("departure_batch = ?");
+    profileBinds.push(value || null);
+    changes.departure_batch = { from: target.departure_batch || null, to: value || null };
+  }
+
+  if (Object.prototype.hasOwnProperty.call(body, "notes")) {
+    const value = truncate(String(body.notes || "").trim(), 1000);
+    profileUpdates.push("notes = ?");
+    profileBinds.push(value || null);
+    changes.notes = { from: target.notes || null, to: value || null };
+  }
+
+  if (!accountUpdates.length && !profileUpdates.length) {
+    return json(request, env, { ok: false, error: "no_changes" }, 400);
+  }
+
+  const now = new Date().toISOString();
+  const statements = [];
+
+  if (accountUpdates.length) {
+    accountUpdates.push("updated_at = ?");
+    accountBinds.push(now, target.id);
+    statements.push(
+      env.DB.prepare(`
+        UPDATE umroh_accounts
+        SET ${accountUpdates.join(", ")}
+        WHERE id = ?
+      `).bind(...accountBinds)
+    );
+  }
+
+  if (profileUpdates.length) {
+    profileUpdates.push("updated_at = ?");
+    profileBinds.push(now, target.id);
+    statements.push(
+      env.DB.prepare(`
+        UPDATE umroh_jamaah_profiles
+        SET ${profileUpdates.join(", ")}
+        WHERE account_id = ?
+      `).bind(...profileBinds)
+    );
+  }
+
+  if (changes.account_status && changes.account_status.to !== "active") {
+    statements.push(
+      env.DB.prepare(`
+        UPDATE umroh_sessions
+        SET revoked_at = ?
+        WHERE account_id = ? AND revoked_at IS NULL
+      `).bind(now, target.id)
+    );
+  }
+
+  statements.push(
+    env.DB.prepare(`
+      INSERT INTO umroh_admin_audit_log
+        (actor_account_id, action, target_account_id, details_json, created_at)
+      VALUES (?, 'jamaah_updated', ?, ?, ?)
+    `).bind(gate.account.id, target.id, JSON.stringify(changes), now)
+  );
+
+  await env.DB.batch(statements);
+  return json(request, env, { ok: true });
+}
+
+async function resetJamaahAccess(request, env, accountUuid) {
+  requireSecrets(env);
+  const gate = await requireStaffRole(request, env, ["super_admin", "admin"]);
+  if (gate.response) return gate.response;
+
+  const target = await env.DB.prepare(`
+    SELECT a.id, a.account_uuid, a.member_no, p.full_name
+    FROM umroh_accounts a
+    JOIN umroh_jamaah_profiles p ON p.account_id = a.id
+    WHERE a.account_uuid = ? AND a.role = 'jamaah'
+    LIMIT 1
+  `).bind(accountUuid).first();
+
+  if (!target) {
+    return json(request, env, { ok: false, error: "jamaah_not_found" }, 404);
+  }
+
+  const activationCode = generateActivationCode(10);
+  const codeHash = await hashActivationCode(
+    activationCode,
+    target.account_uuid,
+    env.AUTH_PEPPER
+  );
+  const now = new Date().toISOString();
+  const expiresAt = new Date(Date.now() + STAFF_ACTIVATION_AGE * 1000).toISOString();
+
+  await env.DB.batch([
+    env.DB.prepare(`
+      UPDATE umroh_activation_codes
+      SET used_at = COALESCE(used_at, ?)
+      WHERE account_id = ? AND used_at IS NULL
+    `).bind(now, target.id),
+    env.DB.prepare(`
+      INSERT INTO umroh_activation_codes
+        (account_id, code_hash, expires_at, failed_attempts, created_at)
+      VALUES (?, ?, ?, 0, ?)
+    `).bind(target.id, codeHash, expiresAt, now),
+    env.DB.prepare(`
+      UPDATE umroh_accounts
+      SET password_hash = NULL,
+          account_status = 'pending_activation',
+          password_changed_at = NULL,
+          updated_at = ?
+      WHERE id = ?
+    `).bind(now, target.id),
+    env.DB.prepare(`
+      UPDATE umroh_sessions
+      SET revoked_at = ?
+      WHERE account_id = ? AND revoked_at IS NULL
+    `).bind(now, target.id),
+    env.DB.prepare(`
+      INSERT INTO umroh_admin_audit_log
+        (actor_account_id, action, target_account_id, details_json, created_at)
+      VALUES (?, 'jamaah_reset_access', ?, ?, ?)
+    `).bind(
+      gate.account.id,
+      target.id,
+      JSON.stringify({ member_no: target.member_no, full_name: target.full_name }),
+      now
+    ),
+  ]);
+
+  return json(request, env, {
+    ok: true,
+    activation: {
+      code: activationCode,
+      expires_at: expiresAt,
+      one_time_display: true,
+    },
   });
 }
 
@@ -829,14 +1271,17 @@ async function listAdminAuditLog(request, env) {
       l.action,
       l.details_json,
       l.created_at,
+      actor.account_uuid AS actor_account_uuid,
       actor.username AS actor_username,
-      COALESCE(actor.display_name, actor.username) AS actor_name,
+      COALESCE(actor.display_name, actor_profile.full_name, actor.username, actor.member_no) AS actor_name,
       target.account_uuid AS target_account_uuid,
       target.username AS target_username,
-      COALESCE(target.display_name, target.username) AS target_name
+      COALESCE(target.display_name, target_profile.full_name, target.username, target.member_no) AS target_name
     FROM umroh_admin_audit_log l
     LEFT JOIN umroh_accounts actor ON actor.id = l.actor_account_id
+    LEFT JOIN umroh_jamaah_profiles actor_profile ON actor_profile.account_id = actor.id
     LEFT JOIN umroh_accounts target ON target.id = l.target_account_id
+    LEFT JOIN umroh_jamaah_profiles target_profile ON target_profile.account_id = target.id
     ORDER BY l.id DESC
     LIMIT 50
   `).all();
@@ -1035,6 +1480,24 @@ function normalizePhone(value) {
   if (!raw) return "";
   const plus = raw.startsWith("+") ? "+" : "";
   return plus + raw.replace(/\D/g, "");
+}
+
+
+function normalizeMemberNo(value) {
+  return String(value || "").trim().toUpperCase();
+}
+
+function isValidMemberNo(value) {
+  return /^[A-Z0-9][A-Z0-9._/-]{2,39}$/.test(value);
+}
+
+function isValidEmail(value) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+}
+
+function isValidPhone(value) {
+  const digits = String(value || "").replace(/\D/g, "");
+  return digits.length >= 8 && digits.length <= 16;
 }
 
 function isValidUsername(value) {

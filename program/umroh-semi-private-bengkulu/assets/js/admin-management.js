@@ -153,22 +153,27 @@
         const actor = log.actor_name || log.actor_username || 'System';
         const target = log.target_name || log.target_username || 'akun';
         const isSelfAction = Boolean(
-          log.actor_username &&
-          log.target_username &&
-          log.actor_username === log.target_username
+          (log.actor_account_uuid && log.target_account_uuid && log.actor_account_uuid === log.target_account_uuid) ||
+          (log.actor_username && log.target_username && log.actor_username === log.target_username)
         );
         const description = {
           account_created: `membuat akun ${target}`,
           account_updated: `memperbarui akun ${target}`,
           password_reset_requested: `mereset akses ${target}`,
-          account_activated: isSelfAction ? 'mengaktifkan akun' : `mengaktifkan akun ${target}`
+          account_activated: isSelfAction ? 'mengaktifkan akun' : `mengaktifkan akun ${target}`,
+          jamaah_created: `menambahkan jemaah ${target}`,
+          jamaah_updated: `memperbarui data jemaah ${target}`,
+          jamaah_reset_access: `mereset akses jemaah ${target}`
         }[log.action] || `${log.action} · ${target}`;
 
         const meta = {
           account_created: details.role ? `role: ${details.role}` : '',
           account_updated: 'perubahan akun',
           password_reset_requested: 'reset akses',
-          account_activated: details.role ? `role: ${details.role} · aktivasi mandiri` : 'aktivasi mandiri'
+          account_activated: details.role ? `role: ${details.role} · aktivasi mandiri` : 'aktivasi mandiri',
+          jamaah_created: details.member_no ? `nomor: ${details.member_no}` : 'data jemaah',
+          jamaah_updated: 'perubahan data jemaah',
+          jamaah_reset_access: 'reset akses jemaah'
         }[log.action] || log.action;
 
         return `<div class="audit-row"><div><strong>${esc(actor)} ${esc(description)}</strong><span>${esc(meta)}</span></div><time>${esc(fmt(log.created_at))}</time></div>`;
