@@ -42,14 +42,14 @@
 <div class="user-chip"><div class="avatar">AR</div><div class="user-copy"><strong>Ahmad Rasyid</strong><span>Jemaah · Data simulasi</span></div></div>
 </header>
 <main class="page-wrap" id="beranda">
-<div class="prototype-note"><strong>Prototype Dashboard V1.3.</strong> Nama dan progress keseluruhan masih data simulasi. Manasik, Checklist, status Dokumen, dan Pengumuman V2.4 sudah aktif secara lokal; Agenda &amp; Perjalanan V2.2 terhubung dengan data jadwal simulasi.</div>
+<div class="prototype-note"><strong>Dashboard Prototype V2.5.</strong> Nama jemaah dan jadwal Agenda masih data simulasi. Progress persiapan sekarang dihitung otomatis dari aktivitas lokal Manasik, Checklist, Dokumen, dan Agenda di browser ini.</div>
 <section class="journey-hero">
 <div class="journey-copy"><span>Perjalanan Ibadah</span><h1>Persiapan yang tenang,<br/>langkah yang terarah.</h1><p>Semua informasi penting untuk manasik, checklist, agenda, dan perjalanan Anda disusun dalam satu tempat yang mudah dipahami.</p></div>
 <div class="departure-card"><small>Rencana Keberangkatan</small><strong data-departure-date>30 September 2026</strong><span data-departure-countdown>13 hari lagi</span></div>
 </section>
 <section class="card welcome-strip"><div class="avatar">AR</div><div><h2>Assalamu'alaikum, Ahmad Rasyid</h2><p>Terus lengkapi persiapan Anda. Jika ada informasi yang belum jelas, gunakan menu Bantuan atau hubungi pendamping.</p></div></section>
 <section class="journey-progress-grid">
-<article class="card progress-card"><div class="progress-head"><strong>Progress Persiapan Umroh Anda</strong><b>75%</b></div><div class="progress-track"><i></i></div><small>Progress keseluruhan masih simulasi sampai autentikasi dan data operasional resmi terhubung. Manasik, Checklist, serta status Dokumen sudah aktif secara lokal; Agenda V2.2 masih memakai jadwal simulasi.</small></article>
+<article class="card progress-card"><div class="progress-head"><strong>Progress Persiapan Umroh Anda</strong><b data-overall-progress-percent>0%</b></div><div class="progress-track"><i data-overall-progress-bar></i></div><div class="progress-breakdown" aria-label="Rincian progress persiapan"><span><b data-overall-manasik>0%</b><small>Manasik · 35%</small></span><span><b data-overall-checklist>0%</b><small>Checklist · 35%</small></span><span><b data-overall-documents>0%</b><small>Dokumen · 20%</small></span><span><b data-overall-agenda>0%</b><small>Agenda · 10%</small></span></div><small data-overall-progress-copy>Progress dihitung dari aktivitas lokal di browser ini dan belum tersimpan ke akun jemaah.</small></article>
 <article class="card next-action" data-manasik-next><span>Tahap Berikutnya</span><strong data-manasik-next-title>Manasik — Persiapan Sebelum Berangkat</strong><p data-manasik-next-copy>Lanjutkan materi pertama agar progress Manasik mulai tercatat.</p><a class="primary-action" data-manasik-next-link href="/program/umroh-semi-private-bengkulu/manasik/persiapan/">Lanjutkan →</a></article>
 </section>
 <section aria-label="Akses cepat" class="quick-grid">
@@ -79,5 +79,6 @@
 <script src="../../assets/js/jamaah-documents-summary.js"></script>
 <script src="../../assets/js/announcement-data.js"></script>
 <script src="../../assets/js/jamaah-announcements-summary.js"></script>
+<script src="../../assets/js/jamaah-overall-progress.js"></script>
 </body>
 </html>
