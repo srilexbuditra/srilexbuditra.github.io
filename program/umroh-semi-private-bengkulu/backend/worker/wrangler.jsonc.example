@@ -1,0 +1,17 @@
+{
+  "name": "umroh-auth-api",
+  "main": "worker.js",
+  "compatibility_date": "2026-09-18",
+  "vars": {
+    "ALLOWED_ORIGIN": "https://srilexbuditra.work",
+    "SESSION_MAX_AGE_SECONDS": "604800",
+    "ENABLE_BOOTSTRAP": "0"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "umroh-semi-private-bengkulu-db",
+      "database_id": "PASTE-D1-DATABASE-ID-HERE"
+    }
+  ]
+}
