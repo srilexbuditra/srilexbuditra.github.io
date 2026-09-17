@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<meta content="noindex,nofollow,noarchive" name="robots"/>
+<meta content="#0b2830" name="theme-color"/>
+<title>Aktivasi Akun Pengelola | Umroh Semi Private Bengkulu</title>
+<link href="../../assets/css/tokens.css" rel="stylesheet"/>
+<link href="../../assets/css/visual-assets.css" rel="stylesheet"/>
+<link href="../../assets/css/admin-auth.css" rel="stylesheet"/>
+<link href="../../assets/css/admin-activation.css" rel="stylesheet"/>
+</head>
+<body class="admin-login-page admin-activation-page">
+<div class="admin-login-shell">
+<header class="admin-login-topbar">
+<div class="admin-login-brand">
+<div aria-hidden="true" class="brand-mark"><svg fill="none" viewBox="0 0 24 24"><path d="M6 9h12v11H6V9Zm2-5h8v5H8V4Zm4-2v2" stroke="currentColor" stroke-width="1.8"></path><path d="M9 13h6M9 16h6" stroke="currentColor" stroke-width="1.4"></path></svg></div>
+<div class="admin-login-brand-copy"><strong>UMROH SEMI PRIVATE BENGKULU</strong><span>Staff Account Activation</span></div>
+</div>
+<a class="admin-login-portal" href="../login/">Login</a>
+</header>
+
+<main class="admin-login-grid">
+<section class="admin-login-hero" aria-labelledby="activation-hero-title">
+<span class="admin-login-kicker">Aktivasi Sekali</span>
+<h1 id="activation-hero-title">Aktifkan akun pengelola secara aman.</h1>
+<p>Gunakan username dan kode aktivasi yang diberikan Super Admin. Setelah kode diverifikasi, buat password Anda sendiri. Kode aktivasi hanya dapat digunakan satu kali dan memiliki masa berlaku.</p>
+<div class="admin-login-assurance" aria-label="Keamanan aktivasi">
+<article><span aria-hidden="true" class="ui-icon icon-checklist"></span><strong>Kode Sekali Pakai</strong><span>Kode akan ditandai terpakai setelah aktivasi berhasil.</span></article>
+<article><span aria-hidden="true" class="ui-icon icon-admin"></span><strong>Password Pribadi</strong><span>Super Admin tidak membuat atau mengetahui password Anda.</span></article>
+<article><span aria-hidden="true" class="ui-icon icon-info"></span><strong>Session Aman</strong><span>Sesudah aktivasi, browser menerima session cookie HttpOnly.</span></article>
+</div>
+</section>
+
+<section class="admin-login-card" aria-labelledby="activation-title">
+<div class="login-icon"><span aria-hidden="true" class="ui-icon icon-admin"></span></div>
+<h2 id="activation-title">Aktivasi Akun</h2>
+<p>Masukkan data aktivasi akun pengelola yang Anda terima.</p>
+
+<form class="admin-login-form activation-form" data-staff-activation-form novalidate>
+<div class="admin-login-field">
+<label for="activationUsername">Username</label>
+<div class="admin-login-control"><input id="activationUsername" name="username" autocomplete="username" autocapitalize="none" spellcheck="false" maxlength="32" required/></div>
+</div>
+
+<div class="admin-login-field">
+<label for="activationCode">Kode Aktivasi</label>
+<div class="admin-login-control"><input id="activationCode" name="activation_code" autocomplete="one-time-code" autocapitalize="characters" spellcheck="false" maxlength="32" required/></div>
+</div>
+
+<div class="admin-login-field">
+<label for="activationPassword">Password Baru</label>
+<div class="admin-login-control has-action"><input id="activationPassword" name="new_password" type="password" autocomplete="new-password" minlength="10" maxlength="128" required/><button class="password-toggle" data-toggle-password="activationPassword" type="button" aria-pressed="false">Tampilkan</button></div>
+<span class="activation-help">Minimal 10 karakter. Gunakan password unik yang tidak dipakai di layanan lain.</span>
+</div>
+
+<div class="admin-login-field">
+<label for="activationConfirm">Ulangi Password</label>
+<div class="admin-login-control has-action"><input id="activationConfirm" name="confirm_password" type="password" autocomplete="new-password" minlength="10" maxlength="128" required/><button class="password-toggle" data-toggle-password="activationConfirm" type="button" aria-pressed="false">Tampilkan</button></div>
+</div>
+
+<p class="admin-login-message" data-activation-message role="status" aria-live="polite" hidden></p>
+<button class="admin-login-submit" data-activation-submit type="submit">Aktifkan &amp; Masuk</button>
+</form>
+
+<div class="admin-login-security"><strong>Catatan:</strong> jika kode sudah kedaluwarsa atau pernah ditampilkan kepada pihak lain, minta Super Admin melakukan <em>Reset Akses</em> untuk menghasilkan kode baru.</div>
+<div class="activation-login-link">Sudah aktif? <a href="../login/">Masuk ke Dashboard</a></div>
+</section>
+</main>
+
+<footer class="admin-login-footer"><span>Pengembangan Sistem &amp; Dukungan Teknologi · Srilex Buditra</span><a href="https://srilexbuditra.work/">srilexbuditra.work</a></footer>
+</div>
+<script src="../../assets/js/admin-activation.js"></script>
+</body>
+</html>

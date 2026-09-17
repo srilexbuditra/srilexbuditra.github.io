@@ -21,16 +21,16 @@
 </div>
 <nav class="sidebar-nav">
 <div class="nav-section-label">Operasional</div>
-<a class="nav-item is-active" data-nav-item="" href="#ringkasan"><span class="nav-icon"><span aria-hidden="true" class="ui-icon icon-home"></span></span><span class="nav-label">Ringkasan</span></a>
-<a class="nav-item" data-nav-item="" href="#jemaah"><span class="nav-icon"><span aria-hidden="true" class="ui-icon icon-users"></span></span><span class="nav-label">Jemaah</span></a>
-<a class="nav-item" data-nav-item="" href="#manasik"><span class="nav-icon"><span aria-hidden="true" class="ui-icon icon-book"></span></span><span class="nav-label">Manasik</span></a>
-<a class="nav-item" data-nav-item="" href="#agenda"><span class="nav-icon"><span aria-hidden="true" class="ui-icon icon-calendar"></span></span><span class="nav-label">Agenda &amp; Perjalanan</span></a>
-<a class="nav-item" data-nav-item="" href="#dokumen"><span class="nav-icon"><span aria-hidden="true" class="ui-icon icon-file"></span></span><span class="nav-label">Dokumen</span></a>
-<a class="nav-item" data-nav-item="" href="#pengumuman"><span class="nav-icon"><span aria-hidden="true" class="ui-icon icon-megaphone"></span></span><span class="nav-label">Pengumuman</span></a>
-<a class="nav-item" data-nav-item="" href="#laporan"><span class="nav-icon"><span aria-hidden="true" class="ui-icon icon-chart"></span></span><span class="nav-label">Laporan</span></a>
+<a class="nav-item is-active" data-nav-item="" data-rbac="super_admin admin tour_leader pendamping" href="#ringkasan"><span class="nav-icon"><span aria-hidden="true" class="ui-icon icon-home"></span></span><span class="nav-label">Ringkasan</span></a>
+<a class="nav-item" data-nav-item="" data-rbac="super_admin admin tour_leader pendamping" href="#jemaah"><span class="nav-icon"><span aria-hidden="true" class="ui-icon icon-users"></span></span><span class="nav-label">Jemaah</span></a>
+<a class="nav-item" data-nav-item="" data-rbac="super_admin admin tour_leader" href="#manasik"><span class="nav-icon"><span aria-hidden="true" class="ui-icon icon-book"></span></span><span class="nav-label">Manasik</span></a>
+<a class="nav-item" data-nav-item="" data-rbac="super_admin admin tour_leader pendamping" href="#agenda"><span class="nav-icon"><span aria-hidden="true" class="ui-icon icon-calendar"></span></span><span class="nav-label">Agenda &amp; Perjalanan</span></a>
+<a class="nav-item" data-nav-item="" data-rbac="super_admin admin tour_leader" href="#dokumen"><span class="nav-icon"><span aria-hidden="true" class="ui-icon icon-file"></span></span><span class="nav-label">Dokumen</span></a>
+<a class="nav-item" data-nav-item="" data-rbac="super_admin admin tour_leader pendamping" href="#pengumuman"><span class="nav-icon"><span aria-hidden="true" class="ui-icon icon-megaphone"></span></span><span class="nav-label">Pengumuman</span></a>
+<a class="nav-item" data-nav-item="" data-rbac="super_admin admin" href="#laporan"><span class="nav-icon"><span aria-hidden="true" class="ui-icon icon-chart"></span></span><span class="nav-label">Laporan</span></a>
 <div class="nav-section-label">Sistem</div>
-<a class="nav-item" data-nav-item="" data-super-admin-only href="./manajemen-admin/"><span class="nav-icon"><span aria-hidden="true" class="ui-icon icon-admin"></span></span><span class="nav-label">Manajemen Admin</span></a>
-<a class="nav-item" data-nav-item="" href="#pengaturan"><span class="nav-icon"><span aria-hidden="true" class="ui-icon icon-settings"></span></span><span class="nav-label">Pengaturan</span></a>
+<a class="nav-item" data-nav-item="" data-super-admin-only data-rbac="super_admin" href="./manajemen-admin/"><span class="nav-icon"><span aria-hidden="true" class="ui-icon icon-admin"></span></span><span class="nav-label">Manajemen Admin</span></a>
+<a class="nav-item" data-nav-item="" data-rbac="super_admin admin" href="#pengaturan"><span class="nav-icon"><span aria-hidden="true" class="ui-icon icon-settings"></span></span><span class="nav-label">Pengaturan</span></a>
 </nav>
 <div class="sidebar-foot"><div class="tech-credit"><small>Pengembangan Sistem &amp; Dukungan Teknologi</small><strong>Srilex Buditra</strong><a href="https://srilexbuditra.work/">srilexbuditra.work</a></div></div>
 </aside>
@@ -45,8 +45,8 @@
 <button class="auth-logout" data-admin-logout type="button">Keluar</button>
 </header>
 <main class="page-wrap" id="ringkasan">
-<div class="prototype-note"><strong>Admin Auth V3.2 aktif.</strong> Akses halaman sudah dilindungi session backend. Data operasional pada ringkasan ini masih simulasi sampai modul Admin terhubung ke sumber data resmi.</div>
-<div class="page-head"><div><span class="page-kicker">Operational Workspace</span><h1>Ringkasan</h1><p>Prioritaskan pekerjaan yang membutuhkan tindakan hari ini tanpa memenuhi dashboard dengan informasi yang tidak penting.</p></div><div class="page-date">Jumat, 18 September 2026<br/>Admin Management V3.2</div></div>
+<div class="prototype-note"><strong>Admin Access V3.3 aktif.</strong> Session backend dan Role-Based Access Control (RBAC) sudah aktif. Menu disesuaikan dengan role akun. Data operasional pada ringkasan ini masih simulasi sampai modul Admin terhubung ke sumber data resmi.</div>
+<div class="page-head"><div><span class="page-kicker">Operational Workspace</span><h1>Ringkasan</h1><p>Prioritaskan pekerjaan yang membutuhkan tindakan hari ini tanpa memenuhi dashboard dengan informasi yang tidak penting.</p></div><div class="page-date">Jumat, 18 September 2026<br/>Staff Activation + RBAC V3.3</div></div>
 <div aria-label="Konteks ringkasan" class="context-tabs"><button class="context-tab is-active" data-context-tab="">Hari Ini</button><button class="context-tab" data-context-tab="">7 Hari</button><button class="context-tab" data-context-tab="">30 Hari</button></div>
 <section aria-label="Statistik utama" class="stats-grid">
 <article class="card stat-card"><div class="stat-icon"><span aria-hidden="true" class="ui-icon icon-users"></span></div><div><strong>128</strong><span>Total Jemaah</span></div></article>

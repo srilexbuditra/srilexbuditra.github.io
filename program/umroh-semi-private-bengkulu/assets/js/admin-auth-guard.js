@@ -3,7 +3,7 @@
 
   const API_BASE = 'https://umroh-api.srilexbuditra.work';
   const LOGIN_PATH = '/program/umroh-semi-private-bengkulu/admin/login/';
-  const ALLOWED_ROLES = new Set(['super_admin', 'admin']);
+  const ALLOWED_ROLES = new Set(['super_admin', 'admin', 'tour_leader', 'pendamping']);
 
   const root = document.documentElement;
   const logoutButton = document.querySelector('[data-admin-logout]');
@@ -11,6 +11,8 @@
   const roleLabel = (role) => {
     if (role === 'super_admin') return 'Super Admin';
     if (role === 'admin') return 'Admin';
+    if (role === 'tour_leader') return 'Tour Leader';
+    if (role === 'pendamping') return 'Pendamping';
     return role || 'Akun';
   };
 
@@ -67,11 +69,35 @@
     });
 
     document.documentElement.dataset.adminRole = account.role || '';
+
     document.querySelectorAll('[data-super-admin-only]').forEach((node) => {
       node.hidden = account.role !== 'super_admin';
     });
 
+    document.querySelectorAll('[data-rbac]').forEach((node) => {
+      const allowed = String(node.dataset.rbac || '')
+        .split(/\s+/)
+        .map((value) => value.trim())
+        .filter(Boolean);
+      node.hidden = allowed.length > 0 && !allowed.includes(account.role);
+    });
+
+    const requiredRole = document.documentElement.dataset.requiredRole || '';
+    if (requiredRole && account.role !== requiredRole) {
+      window.location.replace('/program/umroh-semi-private-bengkulu/admin/?reason=forbidden');
+      return false;
+    }
+
+    const currentHash = window.location.hash.replace(/^#/, '');
+    if (currentHash) {
+      const currentNav = document.querySelector(`[data-nav-item][href="#${CSS.escape(currentHash)}"]`);
+      if (currentNav?.hidden) {
+        window.history.replaceState(null, '', `${window.location.pathname}${window.location.search}#ringkasan`);
+      }
+    }
+
     window.UMROH_ADMIN_ACCOUNT = Object.freeze({ ...account });
+    return true;
   };
 
   const checkSession = async () => {
@@ -100,7 +126,7 @@
         return;
       }
 
-      renderAccount(account);
+      if (!renderAccount(account)) return;
       root.classList.remove('auth-pending');
       root.classList.add('auth-ready');
     } catch (error) {

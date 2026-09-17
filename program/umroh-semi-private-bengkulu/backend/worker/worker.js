@@ -1,4 +1,4 @@
-const API_VERSION = "3.2";
+const API_VERSION = "3.3";
 const COOKIE_NAME = "umroh_session";
 const DEFAULT_SESSION_AGE = 60 * 60 * 24 * 7;
 const PASSWORD_ITERATIONS = 100000;
@@ -196,7 +196,7 @@ async function activateAccount(request, env) {
   const session = await createSessionMaterial(env);
   const userAgent = truncate(request.headers.get("User-Agent") || "", 500);
 
-  await env.DB.batch([
+  const statements = [
     env.DB.prepare(`
       UPDATE umroh_accounts
       SET password_hash = ?, account_status = 'active',
@@ -220,7 +220,24 @@ async function activateAccount(request, env) {
       userAgent || null,
       now
     ),
-  ]);
+  ];
+
+  if (["admin", "tour_leader", "pendamping"].includes(account.role)) {
+    statements.push(
+      env.DB.prepare(`
+        INSERT INTO umroh_admin_audit_log
+          (actor_account_id, action, target_account_id, details_json, created_at)
+        VALUES (?, 'account_activated', ?, ?, ?)
+      `).bind(
+        account.id,
+        account.id,
+        JSON.stringify({ role: account.role, method: "activation_code" }),
+        now
+      )
+    );
+  }
+
+  await env.DB.batch(statements);
 
   return json(request, env, {
     ok: true,

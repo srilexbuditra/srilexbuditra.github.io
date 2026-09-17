@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html class="auth-pending" lang="id">
+<html class="auth-pending" lang="id" data-required-role="super_admin">
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width,initial-scale=1" name="viewport"/>
@@ -22,16 +22,16 @@
   </div>
   <nav class="sidebar-nav">
     <div class="nav-section-label">Operasional</div>
-    <a class="nav-item" href="../"><span class="nav-icon"><span aria-hidden="true" class="ui-icon icon-home"></span></span><span class="nav-label">Ringkasan</span></a>
-    <a class="nav-item" href="../#jemaah"><span class="nav-icon"><span aria-hidden="true" class="ui-icon icon-users"></span></span><span class="nav-label">Jemaah</span></a>
-    <a class="nav-item" href="../#manasik"><span class="nav-icon"><span aria-hidden="true" class="ui-icon icon-book"></span></span><span class="nav-label">Manasik</span></a>
-    <a class="nav-item" href="../#agenda"><span class="nav-icon"><span aria-hidden="true" class="ui-icon icon-calendar"></span></span><span class="nav-label">Agenda &amp; Perjalanan</span></a>
-    <a class="nav-item" href="../#dokumen"><span class="nav-icon"><span aria-hidden="true" class="ui-icon icon-file"></span></span><span class="nav-label">Dokumen</span></a>
-    <a class="nav-item" href="../#pengumuman"><span class="nav-icon"><span aria-hidden="true" class="ui-icon icon-megaphone"></span></span><span class="nav-label">Pengumuman</span></a>
-    <a class="nav-item" href="../#laporan"><span class="nav-icon"><span aria-hidden="true" class="ui-icon icon-chart"></span></span><span class="nav-label">Laporan</span></a>
+    <a class="nav-item" data-rbac="super_admin admin tour_leader pendamping" href="../"><span class="nav-icon"><span aria-hidden="true" class="ui-icon icon-home"></span></span><span class="nav-label">Ringkasan</span></a>
+    <a class="nav-item" data-rbac="super_admin admin tour_leader pendamping" href="../#jemaah"><span class="nav-icon"><span aria-hidden="true" class="ui-icon icon-users"></span></span><span class="nav-label">Jemaah</span></a>
+    <a class="nav-item" data-rbac="super_admin admin tour_leader" href="../#manasik"><span class="nav-icon"><span aria-hidden="true" class="ui-icon icon-book"></span></span><span class="nav-label">Manasik</span></a>
+    <a class="nav-item" data-rbac="super_admin admin tour_leader pendamping" href="../#agenda"><span class="nav-icon"><span aria-hidden="true" class="ui-icon icon-calendar"></span></span><span class="nav-label">Agenda &amp; Perjalanan</span></a>
+    <a class="nav-item" data-rbac="super_admin admin tour_leader" href="../#dokumen"><span class="nav-icon"><span aria-hidden="true" class="ui-icon icon-file"></span></span><span class="nav-label">Dokumen</span></a>
+    <a class="nav-item" data-rbac="super_admin admin tour_leader pendamping" href="../#pengumuman"><span class="nav-icon"><span aria-hidden="true" class="ui-icon icon-megaphone"></span></span><span class="nav-label">Pengumuman</span></a>
+    <a class="nav-item" data-rbac="super_admin admin" href="../#laporan"><span class="nav-icon"><span aria-hidden="true" class="ui-icon icon-chart"></span></span><span class="nav-label">Laporan</span></a>
     <div class="nav-section-label">Sistem</div>
-    <a class="nav-item is-active" data-super-admin-only href="./"><span class="nav-icon"><span aria-hidden="true" class="ui-icon icon-admin"></span></span><span class="nav-label">Manajemen Admin</span></a>
-    <a class="nav-item" href="../#pengaturan"><span class="nav-icon"><span aria-hidden="true" class="ui-icon icon-settings"></span></span><span class="nav-label">Pengaturan</span></a>
+    <a class="nav-item is-active" data-super-admin-only data-rbac="super_admin" href="./"><span class="nav-icon"><span aria-hidden="true" class="ui-icon icon-admin"></span></span><span class="nav-label">Manajemen Admin</span></a>
+    <a class="nav-item" data-rbac="super_admin admin" href="../#pengaturan"><span class="nav-icon"><span aria-hidden="true" class="ui-icon icon-settings"></span></span><span class="nav-label">Pengaturan</span></a>
   </nav>
   <div class="sidebar-foot"><div class="tech-credit"><small>Pengembangan Sistem &amp; Dukungan Teknologi</small><strong>Srilex Buditra</strong><a href="https://srilexbuditra.work/">srilexbuditra.work</a></div></div>
 </aside>
@@ -46,7 +46,7 @@
 </header>
 
 <main class="page-wrap">
-  <div class="prototype-note"><strong>Manajemen Admin V3.2.</strong> Hanya role <code>super_admin</code> yang dapat membuat akun, mengubah role/status, dan mereset akses. Password tidak pernah ditampilkan atau disimpan di frontend.</div>
+  <div class="prototype-note"><strong>Manajemen Admin V3.3.</strong> Hanya role <code>super_admin</code> yang dapat membuat akun, mengubah role/status, dan mereset akses. Password tidak pernah ditampilkan atau disimpan di frontend.</div>
 
   <div class="page-head">
     <div>

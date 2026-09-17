@@ -107,7 +107,9 @@
       const statusAction = isSuper ? '' : (
         account.account_status === 'active'
           ? `<button class="danger" data-action="status" data-status="suspended" data-id="${esc(account.account_uuid)}">Tangguhkan</button>`
-          : `<button data-action="status" data-status="active" data-id="${esc(account.account_uuid)}">Aktifkan</button>`
+          : ['suspended', 'disabled'].includes(account.account_status)
+            ? `<button data-action="status" data-status="active" data-id="${esc(account.account_uuid)}">Aktifkan</button>`
+            : ''
       );
       const reset = isSuper ? '' : `<button data-action="reset" data-id="${esc(account.account_uuid)}">Reset Akses</button>`;
 
@@ -152,7 +154,8 @@
         const description = {
           account_created: `membuat akun ${target}`,
           account_updated: `memperbarui akun ${target}`,
-          password_reset_requested: `mereset akses ${target}`
+          password_reset_requested: `mereset akses ${target}`,
+          account_activated: `mengaktifkan akun ${target}`
         }[log.action] || `${log.action} · ${target}`;
 
         return `<div class="audit-row"><div><strong>${esc(log.actor_name || log.actor_username || 'System')} ${esc(description)}</strong><span>${esc(log.action)}${details.role ? ` · role: ${esc(details.role)}` : ''}</span></div><time>${esc(fmt(log.created_at))}</time></div>`;
