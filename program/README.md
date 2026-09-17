@@ -33,12 +33,14 @@ Modul yang telah tersedia:
 - Progress Manasik
 - Checklist Persiapan Jemaah
 - Agenda & Perjalanan Jemaah
+- Dokumen Saya / Status Dokumen Jemaah
 
-Catatan: Agenda & Perjalanan sudah tersedia sebagai modul V2.2 dan saat ini masih menggunakan data jadwal simulasi sampai sumber data operasional/backend resmi diaktifkan.
+Catatan:
+- Agenda & Perjalanan sudah tersedia sebagai modul V2.2 dan saat ini masih menggunakan data jadwal simulasi sampai sumber data operasional/backend resmi diaktifkan.
+- Dokumen Saya sudah tersedia sebagai modul V2.3 untuk pencatatan status kesiapan dokumen secara lokal. Modul ini belum menerima upload dan tidak menyimpan berkas pribadi pada halaman statis.
 
 Modul dalam pengembangan:
 
-- Dokumen Jemaah
 - Pengumuman
 - Integrasi akun, autentikasi, backend, dan database
 
