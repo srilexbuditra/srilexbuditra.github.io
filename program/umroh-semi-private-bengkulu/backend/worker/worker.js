@@ -1,8 +1,9 @@
-const API_VERSION = "3.1.1";
+const API_VERSION = "3.2";
 const COOKIE_NAME = "umroh_session";
 const DEFAULT_SESSION_AGE = 60 * 60 * 24 * 7;
 const PASSWORD_ITERATIONS = 100000;
 const MAX_JSON_BYTES = 16 * 1024;
+const STAFF_ACTIVATION_AGE = 60 * 60 * 24;
 
 export default {
   async fetch(request, env) {
@@ -41,6 +42,29 @@ export default {
 
       if (request.method === "GET" && path === "/auth/me") {
         return me(request, env);
+      }
+
+
+      if (request.method === "GET" && path === "/admin/accounts") {
+        return listAdminAccounts(request, env);
+      }
+
+      if (request.method === "POST" && path === "/admin/accounts") {
+        return createAdminAccount(request, env);
+      }
+
+      const accountMatch = path.match(/^\/admin\/accounts\/([0-9a-f-]{36})$/i);
+      if (accountMatch && request.method === "PATCH") {
+        return updateAdminAccount(request, env, accountMatch[1]);
+      }
+
+      const resetMatch = path.match(/^\/admin\/accounts\/([0-9a-f-]{36})\/reset-password$/i);
+      if (resetMatch && request.method === "POST") {
+        return resetAdminPassword(request, env, resetMatch[1]);
+      }
+
+      if (request.method === "GET" && path === "/admin/audit-log") {
+        return listAdminAuditLog(request, env);
       }
 
       return json(request, env, { ok: false, error: "not_found" }, 404);
@@ -302,7 +326,7 @@ async function authenticatedAccount(request, env) {
   const row = await env.DB.prepare(`
     SELECT
       a.id, a.account_uuid, a.role, a.username, a.member_no, a.email, a.whatsapp,
-      a.account_status, p.full_name, p.group_name, p.departure_batch,
+      a.account_status, a.display_name, a.job_title, p.full_name, p.group_name, p.departure_batch,
       s.id AS session_id
     FROM umroh_sessions s
     JOIN umroh_accounts a ON a.id = s.account_id
@@ -332,7 +356,7 @@ async function findAccountByIdentifier(db, identifier) {
   return db.prepare(`
     SELECT
       a.id, a.account_uuid, a.role, a.username, a.member_no, a.email, a.whatsapp,
-      a.password_hash, a.account_status,
+      a.password_hash, a.account_status, a.display_name, a.job_title,
       p.full_name, p.group_name, p.departure_batch
     FROM umroh_accounts a
     LEFT JOIN umroh_jamaah_profiles p ON p.account_id = a.id
@@ -352,10 +376,351 @@ function publicAccount(account) {
     member_no: account.member_no || null,
     email: account.email || null,
     whatsapp: account.whatsapp || null,
+    display_name: account.display_name || null,
+    job_title: account.job_title || null,
     full_name: account.full_name || null,
     group_name: account.group_name || null,
     departure_batch: account.departure_batch || null,
   };
+}
+
+
+async function requireSuperAdmin(request, env) {
+  const account = await authenticatedAccount(request, env);
+  if (!account) {
+    return { response: json(request, env, { ok: false, error: "unauthorized" }, 401) };
+  }
+  if (account.role !== "super_admin") {
+    return { response: json(request, env, { ok: false, error: "forbidden" }, 403) };
+  }
+  return { account };
+}
+
+async function listAdminAccounts(request, env) {
+  const gate = await requireSuperAdmin(request, env);
+  if (gate.response) return gate.response;
+
+  const result = await env.DB.prepare(`
+    SELECT
+      account_uuid, role, username, email, whatsapp, account_status,
+      display_name, job_title, last_login_at, created_at, updated_at
+    FROM umroh_accounts
+    WHERE role IN ('super_admin', 'admin', 'tour_leader', 'pendamping')
+    ORDER BY
+      CASE role
+        WHEN 'super_admin' THEN 1
+        WHEN 'admin' THEN 2
+        WHEN 'tour_leader' THEN 3
+        WHEN 'pendamping' THEN 4
+        ELSE 9
+      END,
+      COALESCE(display_name, username) COLLATE NOCASE
+  `).all();
+
+  return json(request, env, {
+    ok: true,
+    accounts: result.results || [],
+  });
+}
+
+async function createAdminAccount(request, env) {
+  const gate = await requireSuperAdmin(request, env);
+  if (gate.response) return gate.response;
+
+  const body = await readJson(request);
+  const username = normalizeUsername(body.username);
+  const email = normalizeEmail(body.email || "");
+  const displayName = truncate(String(body.display_name || "").trim(), 120);
+  const jobTitle = truncate(String(body.job_title || "").trim(), 120);
+  const role = String(body.role || "").trim();
+
+  const allowedRoles = new Set(["admin", "tour_leader", "pendamping"]);
+  if (!allowedRoles.has(role)) {
+    return json(request, env, { ok: false, error: "invalid_role" }, 400);
+  }
+  if (!isValidUsername(username)) {
+    return json(request, env, { ok: false, error: "invalid_username" }, 400);
+  }
+  if (!displayName) {
+    return json(request, env, { ok: false, error: "display_name_required" }, 400);
+  }
+
+  const duplicate = await env.DB.prepare(`
+    SELECT account_uuid
+    FROM umroh_accounts
+    WHERE username = ?
+       OR (? <> '' AND lower(email) = ?)
+    LIMIT 1
+  `).bind(username, email, email).first();
+
+  if (duplicate) {
+    return json(request, env, { ok: false, error: "account_exists" }, 409);
+  }
+
+  const accountUuid = crypto.randomUUID();
+  const activationCode = generateActivationCode(10);
+  const codeHash = await hashActivationCode(activationCode, accountUuid, env.AUTH_PEPPER);
+  const now = new Date().toISOString();
+  const expiresAt = new Date(Date.now() + STAFF_ACTIVATION_AGE * 1000).toISOString();
+
+  const insert = await env.DB.prepare(`
+    INSERT INTO umroh_accounts
+      (account_uuid, role, username, email, password_hash, account_status,
+       display_name, job_title, created_at, updated_at)
+    VALUES (?, ?, ?, ?, NULL, 'pending_activation', ?, ?, ?, ?)
+  `).bind(
+    accountUuid,
+    role,
+    username,
+    email || null,
+    displayName,
+    jobTitle || null,
+    now,
+    now
+  ).run();
+
+  const targetId = Number(insert.meta?.last_row_id || 0);
+
+  await env.DB.batch([
+    env.DB.prepare(`
+      INSERT INTO umroh_activation_codes
+        (account_id, code_hash, expires_at, failed_attempts, created_at)
+      VALUES (?, ?, ?, 0, ?)
+    `).bind(targetId, codeHash, expiresAt, now),
+    env.DB.prepare(`
+      INSERT INTO umroh_admin_audit_log
+        (actor_account_id, action, target_account_id, details_json, created_at)
+      VALUES (?, 'account_created', ?, ?, ?)
+    `).bind(
+      gate.account.id,
+      targetId,
+      JSON.stringify({ role, username, display_name: displayName, job_title: jobTitle || null }),
+      now
+    ),
+  ]);
+
+  return json(request, env, {
+    ok: true,
+    account: {
+      account_uuid: accountUuid,
+      role,
+      username,
+      email: email || null,
+      display_name: displayName,
+      job_title: jobTitle || null,
+      account_status: "pending_activation",
+    },
+    activation: {
+      code: activationCode,
+      expires_at: expiresAt,
+      one_time_display: true,
+    },
+  }, 201);
+}
+
+async function updateAdminAccount(request, env, accountUuid) {
+  const gate = await requireSuperAdmin(request, env);
+  if (gate.response) return gate.response;
+
+  const target = await env.DB.prepare(`
+    SELECT id, account_uuid, role, username, account_status, display_name, job_title
+    FROM umroh_accounts
+    WHERE account_uuid = ?
+      AND role IN ('super_admin', 'admin', 'tour_leader', 'pendamping')
+    LIMIT 1
+  `).bind(accountUuid).first();
+
+  if (!target) {
+    return json(request, env, { ok: false, error: "account_not_found" }, 404);
+  }
+  if (target.role === "super_admin") {
+    return json(request, env, { ok: false, error: "super_admin_protected" }, 403);
+  }
+
+  const body = await readJson(request);
+  const updates = [];
+  const binds = [];
+  const changes = {};
+
+  if (Object.prototype.hasOwnProperty.call(body, "role")) {
+    const role = String(body.role || "").trim();
+    if (!new Set(["admin", "tour_leader", "pendamping"]).has(role)) {
+      return json(request, env, { ok: false, error: "invalid_role" }, 400);
+    }
+    updates.push("role = ?");
+    binds.push(role);
+    changes.role = { from: target.role, to: role };
+  }
+
+  if (Object.prototype.hasOwnProperty.call(body, "account_status")) {
+    const status = String(body.account_status || "").trim();
+    if (!new Set(["active", "suspended", "disabled"]).has(status)) {
+      return json(request, env, { ok: false, error: "invalid_status" }, 400);
+    }
+    updates.push("account_status = ?");
+    binds.push(status);
+    changes.account_status = { from: target.account_status, to: status };
+  }
+
+  if (Object.prototype.hasOwnProperty.call(body, "display_name")) {
+    const value = truncate(String(body.display_name || "").trim(), 120);
+    if (!value) return json(request, env, { ok: false, error: "display_name_required" }, 400);
+    updates.push("display_name = ?");
+    binds.push(value);
+    changes.display_name = { from: target.display_name || null, to: value };
+  }
+
+  if (Object.prototype.hasOwnProperty.call(body, "job_title")) {
+    const value = truncate(String(body.job_title || "").trim(), 120);
+    updates.push("job_title = ?");
+    binds.push(value || null);
+    changes.job_title = { from: target.job_title || null, to: value || null };
+  }
+
+  if (!updates.length) {
+    return json(request, env, { ok: false, error: "no_changes" }, 400);
+  }
+
+  const now = new Date().toISOString();
+  updates.push("updated_at = ?");
+  binds.push(now);
+  binds.push(target.id);
+
+  const statements = [
+    env.DB.prepare(`
+      UPDATE umroh_accounts
+      SET ${updates.join(", ")}
+      WHERE id = ?
+    `).bind(...binds),
+    env.DB.prepare(`
+      INSERT INTO umroh_admin_audit_log
+        (actor_account_id, action, target_account_id, details_json, created_at)
+      VALUES (?, 'account_updated', ?, ?, ?)
+    `).bind(gate.account.id, target.id, JSON.stringify(changes), now),
+  ];
+
+  if (changes.account_status && changes.account_status.to !== "active") {
+    statements.push(
+      env.DB.prepare(`
+        UPDATE umroh_sessions
+        SET revoked_at = ?
+        WHERE account_id = ? AND revoked_at IS NULL
+      `).bind(now, target.id)
+    );
+  }
+
+  await env.DB.batch(statements);
+
+  return json(request, env, { ok: true });
+}
+
+async function resetAdminPassword(request, env, accountUuid) {
+  const gate = await requireSuperAdmin(request, env);
+  if (gate.response) return gate.response;
+
+  const target = await env.DB.prepare(`
+    SELECT id, account_uuid, role, username, account_status
+    FROM umroh_accounts
+    WHERE account_uuid = ?
+      AND role IN ('admin', 'tour_leader', 'pendamping')
+    LIMIT 1
+  `).bind(accountUuid).first();
+
+  if (!target) {
+    return json(request, env, { ok: false, error: "account_not_found" }, 404);
+  }
+
+  const activationCode = generateActivationCode(10);
+  const codeHash = await hashActivationCode(
+    activationCode,
+    target.account_uuid,
+    env.AUTH_PEPPER
+  );
+  const now = new Date().toISOString();
+  const expiresAt = new Date(Date.now() + STAFF_ACTIVATION_AGE * 1000).toISOString();
+
+  await env.DB.batch([
+    env.DB.prepare(`
+      UPDATE umroh_activation_codes
+      SET used_at = COALESCE(used_at, ?)
+      WHERE account_id = ? AND used_at IS NULL
+    `).bind(now, target.id),
+    env.DB.prepare(`
+      INSERT INTO umroh_activation_codes
+        (account_id, code_hash, expires_at, failed_attempts, created_at)
+      VALUES (?, ?, ?, 0, ?)
+    `).bind(target.id, codeHash, expiresAt, now),
+    env.DB.prepare(`
+      UPDATE umroh_accounts
+      SET password_hash = NULL,
+          account_status = 'pending_activation',
+          password_changed_at = NULL,
+          updated_at = ?
+      WHERE id = ?
+    `).bind(now, target.id),
+    env.DB.prepare(`
+      UPDATE umroh_sessions
+      SET revoked_at = ?
+      WHERE account_id = ? AND revoked_at IS NULL
+    `).bind(now, target.id),
+    env.DB.prepare(`
+      INSERT INTO umroh_admin_audit_log
+        (actor_account_id, action, target_account_id, details_json, created_at)
+      VALUES (?, 'password_reset_requested', ?, ?, ?)
+    `).bind(
+      gate.account.id,
+      target.id,
+      JSON.stringify({ username: target.username }),
+      now
+    ),
+  ]);
+
+  return json(request, env, {
+    ok: true,
+    activation: {
+      code: activationCode,
+      expires_at: expiresAt,
+      one_time_display: true,
+    },
+  });
+}
+
+async function listAdminAuditLog(request, env) {
+  const gate = await requireSuperAdmin(request, env);
+  if (gate.response) return gate.response;
+
+  const result = await env.DB.prepare(`
+    SELECT
+      l.id,
+      l.action,
+      l.details_json,
+      l.created_at,
+      actor.username AS actor_username,
+      COALESCE(actor.display_name, actor.username) AS actor_name,
+      target.account_uuid AS target_account_uuid,
+      target.username AS target_username,
+      COALESCE(target.display_name, target.username) AS target_name
+    FROM umroh_admin_audit_log l
+    LEFT JOIN umroh_accounts actor ON actor.id = l.actor_account_id
+    LEFT JOIN umroh_accounts target ON target.id = l.target_account_id
+    ORDER BY l.id DESC
+    LIMIT 50
+  `).all();
+
+  return json(request, env, {
+    ok: true,
+    logs: result.results || [],
+  });
+}
+
+function generateActivationCode(length = 10) {
+  const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  const bytes = crypto.getRandomValues(new Uint8Array(length));
+  let value = "";
+  for (const byte of bytes) {
+    value += alphabet[byte % alphabet.length];
+  }
+  return value;
 }
 
 async function createSessionMaterial(env) {

@@ -15,14 +15,16 @@
   };
 
   const displayName = (account) => {
+    if (account?.display_name) return account.display_name;
     if (account?.full_name) return account.full_name;
     if (account?.username === 'srilexbuditra') return 'Srilex Buditra';
     return account?.username || 'Administrator';
   };
 
   const displayTitle = (account) => {
+    if (account?.job_title) return account.job_title;
     if (account?.username === 'srilexbuditra' && account?.role === 'super_admin') {
-      return 'Full Stack Developer · Super Admin';
+      return 'Senior Full Stack Developer · Platform Architect';
     }
     return roleLabel(account?.role);
   };
@@ -62,6 +64,11 @@
     });
     document.querySelectorAll('[data-auth-avatar]').forEach((node) => {
       node.textContent = initials(name);
+    });
+
+    document.documentElement.dataset.adminRole = account.role || '';
+    document.querySelectorAll('[data-super-admin-only]').forEach((node) => {
+      node.hidden = account.role !== 'super_admin';
     });
 
     window.UMROH_ADMIN_ACCOUNT = Object.freeze({ ...account });
