@@ -40,3 +40,6 @@ body.sidebar-compact .app-sidebar{width:var(--sidebar-compact)}body.sidebar-comp
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
 .prototype-toast{position:fixed;right:18px;bottom:18px;z-index:120;max-width:min(380px,calc(100vw - 36px));padding:13px 15px;border:1px solid #dfcf8c;border-radius:14px;background:rgba(255,252,241,.97);color:#6f5700;box-shadow:var(--shadow-lg);font-size:10px;line-height:1.5;opacity:0;transform:translateY(12px);pointer-events:none;transition:.2s var(--ease)}.prototype-toast.is-show{opacity:1;transform:none}.prototype-toast strong{display:block;margin-bottom:2px;color:#5b4500}
 @media(max-width:760px){.prototype-toast{bottom:86px;left:10px;right:10px;max-width:none}}
+/* V1.2 shared refinement */
+.prototype-note{margin-bottom:14px}
+@media(min-width:901px){.app-topbar{gap:12px}.icon-button{width:40px;height:40px}.user-chip{border-radius:13px}.avatar{width:34px;height:34px}}
