@@ -46,14 +46,19 @@
 
   navItems.forEach(item => item.addEventListener('click', (e) => {
     const href = item.getAttribute('href') || '';
-    const target = href.startsWith('#') && href.length > 1 ? document.querySelector(href) : null;
-    const isHome = href === '#ringkasan' || href === '#beranda';
-    if (item.hasAttribute('data-live') && !href.startsWith('#')) {
+
+    // Link halaman nyata (bukan hash prototype) harus selalu dibiarkan
+    // berjalan sebagai navigasi browser biasa. Ini mencegah menu seperti
+    // Manasik Saya tertahan oleh handler prototype dashboard.
+    if (href && !href.startsWith('#')) {
       if (innerWidth <= 900) closeMobile();
       return;
     }
 
-    if (!target || (!isHome && !item.hasAttribute('data-live'))) {
+    const target = href.startsWith('#') && href.length > 1 ? document.querySelector(href) : null;
+    const isHome = href === '#ringkasan' || href === '#beranda';
+
+    if (!target || !isHome) {
       e.preventDefault();
       showPrototypeNotice(item.querySelector('.nav-label')?.textContent?.trim() || 'Modul');
     } else {
@@ -67,7 +72,7 @@
     const initialItem = navItems.find(item => item.getAttribute('href') === initialHash);
     const target = document.querySelector(initialHash);
     const isHome = initialHash === '#ringkasan' || initialHash === '#beranda';
-    if (initialItem && target && (isHome || initialItem.hasAttribute('data-live'))) setActiveNav(initialItem);
+    if (initialItem && target && isHome) setActiveNav(initialItem);
     else if (history.replaceState) history.replaceState(null,'',location.pathname + location.search);
   }
 
