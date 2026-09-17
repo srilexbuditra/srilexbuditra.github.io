@@ -68,3 +68,14 @@ Agenda & Perjalanan Jemaah telah ditambahkan di `/jamaah/agenda/`.
 - Jemaah dapat menandai agenda sebagai `Sudah dibaca`; status disimpan lokal dengan key `umroh-agenda-read-v1`.
 - Ringkasan Agenda dan tanggal keberangkatan tersinkron ke Dashboard Jemaah dari `assets/js/agenda-data.js`.
 - Belum terhubung ke admin, akun, API, atau database.
+
+
+## Dokumen Saya V2.3 — 2026-09-17
+
+Dokumen Saya telah ditambahkan di `/jamaah/dokumen/`.
+
+- Memuat 4 status dokumen utama dari materi “Persiapan Sebelum Berangkat”.
+- Status lokal: `Sudah disiapkan` atau `Menunggu`.
+- Progress status disimpan lokal dengan key `umroh-documents-status-v1` dan tersinkron ke Dashboard Jemaah.
+- V2.3 tidak menerima upload berkas dan tidak menyimpan data pribadi ke repository/static hosting.
+- Verifikasi dokumen resmi menunggu autentikasi, backend, dan penyimpanan aman.
