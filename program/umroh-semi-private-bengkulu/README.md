@@ -33,3 +33,12 @@ Semua data pada prototype adalah simulasi. Tidak ada autentikasi, API, database,
 3. Halaman private memakai `noindex,nofollow,noarchive`.
 4. Loading, empty, error, permission denied, dan expired session harus memiliki tampilan yang konsisten saat backend dikembangkan.
 5. Backend, autentikasi, dan API baru dibuat setelah Visual V1 dikunci.
+
+
+## Manasik Digital V1 — 2026-09-17
+
+Manasik Digital telah ditambahkan sebagai modul publik prototype di `/program/umroh-semi-private-bengkulu/manasik/`.
+
+Materi mengikuti bahan PowerPoint Manasik Umroh Semi Private Bengkulu yang diberikan untuk proyek, terdiri dari 11 materi: Persiapan Sebelum Berangkat, Ihram & Miqat, Talbiyah, Tata Cara Umroh, Thawaf, Sa’i, Tahallul, Larangan Ihram, Adab di Tanah Suci, Ziarah Madinah, dan Tips Selama Perjalanan.
+
+Progress baca pada V1 disimpan lokal di browser/perangkat dan belum terhubung ke akun atau database.

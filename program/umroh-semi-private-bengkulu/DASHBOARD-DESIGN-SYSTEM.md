@@ -1,6 +1,6 @@
 # Dashboard Design System — Umroh Semi Private Bengkulu
 
-Status: **V1.3 Final Polish — kandidat Visual V1 Locked setelah uji pengguna**
+Status: **DASHBOARD DESIGN SYSTEM V1 — LOCKED (17 September 2026)**
 
 ## 1. Model Dashboard
 
@@ -85,6 +85,11 @@ Nilai warna tersentralisasi di `assets/css/tokens.css` agar perubahan brand tida
 
 Urutan wajib:
 
-`Design System → Admin Prototype → Jemaah Prototype → Responsive Test → Visual V1 Locked → Auth/Session → Database/API → Feature Integration`
+`Design System → Admin Prototype → Jemaah Prototype → Responsive Test → Visual V1 Locked → Feature Modules → Auth/Session → Database/API → Operational Integration`
 
 Jangan memasukkan data jemaah asli, credential, token, API key, atau secret ke prototype/front-end publik.
+
+
+## 8. Status Locked
+
+Mulai status ini, struktur utama sidebar, topbar, kartu, warna dasar, spacing utama, pola navigasi, dan breakpoint tidak diubah secara fundamental. Pengembangan berikutnya menambah modul dan konten di atas fondasi ini. Koreksi bug dan fine-tuning aksesibilitas/responsif tetap diperbolehkan tanpa mengubah arsitektur visual utama.
