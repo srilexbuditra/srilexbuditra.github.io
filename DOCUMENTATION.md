@@ -2,8 +2,8 @@
 
 Dokumen ini adalah indeks dokumentasi aktif repository `srilexbuditra.github.io`. Gunakan indeks ini untuk membedakan dokumentasi operasional, panduan teknis, audit, dan referensi historis.
 
-**Current documentation baseline:** V12.2  
-**Last documentation sync:** 13 September 2026
+**Current documentation baseline:** 17 September 2026 — Event Public Integration V17.19.13B.4 (pre-lock)  
+**Last documentation sync:** 17 September 2026
 
 ## 1. Dokumentasi Utama
 
@@ -20,6 +20,9 @@ Dokumen ini adalah indeks dokumentasi aktif repository `srilexbuditra.github.io`
 | [PROJECT-TIMELINE-V12.0.md](PROJECT-TIMELINE-V12.0.md) | Active | Dokumentasi halaman Development Timeline / Activity dan aturan status milestone publik. |
 | [DASHBOARD-PESERTA-V2.md](DASHBOARD-PESERTA-V2.md) | Active | Dokumentasi peningkatan Dashboard Peserta V2 dan batas perubahan frontend/backend. |
 | [ANALYTICS-V4.md](ANALYTICS-V4.md) | Active | Dokumentasi Analytics V4 berbasis Cloudflare Workers + D1. |
+| [AKTIVITAS-EVENT-PUBLIC-V17.19.13B.md](AKTIVITAS-EVENT-PUBLIC-V17.19.13B.md) | Active / Pre-lock | Dokumentasi integrasi Aktivitas & Event terbaru: Admin, peserta, halaman publik, gambar, SEO, Rich Summary, dan status uji OG/Schema/GA4. |
+| [AKTIVITAS-EVENT-V13.2.md](AKTIVITAS-EVENT-V13.2.md) | Historical Module Baseline | Baseline awal Event peserta sebelum pengelolaan Admin dan halaman publik. |
+| [AKTIVITAS-EVENT-ADMIN-V13.2.1.md](AKTIVITAS-EVENT-ADMIN-V13.2.1.md) | Historical Admin Baseline | Baseline awal pengelolaan Event Admin dan verifikasi kehadiran. |
 
 ## 2. Program Ketahanan Pangan
 
@@ -38,6 +41,8 @@ Area publik utama Program Ketahanan Pangan:
 - `/program/ketahanan-pangan/verifikasi/` — pemeriksaan status pendaftaran.
 - `/program/ketahanan-pangan/peserta/` — login/aktivasi dan dashboard peserta.
 - `/program/ketahanan-pangan/verifikasi/sertifikat/` — verifikasi sertifikat publik.
+- `/program/ketahanan-pangan/peserta/aktivitas/` — agenda, pendaftaran event, status kehadiran, dan Poin Aktivitas peserta.
+- `/program/ketahanan-pangan/event/<slug>/` — detail Event publik dinamis berdasarkan slug.
 - `/program/ketahanan-pangan/dokumentasi/` — dokumentasi publik program.
 - `/portfolio/ketahanan-pangan/` — flagship case study pada website utama.
 
@@ -141,13 +146,17 @@ File berikut adalah template operasional GitHub, bukan dokumentasi produk:
 - Dashboard Peserta V2: **implemented**.
 - Kartu Anggota Digital + QR: **implemented untuk peserta `verified`**.
 - Sertifikat QR: **existing / aktif untuk peserta terverifikasi**.
-- Level/Poin, Misi, Referral, Benefit, dan Event: **roadmap**.
+- Level/Poin, Misi, Referral, Benefit: **implemented**.
+- Aktivitas & Event: **implemented** untuk Admin, peserta, gambar event, public slug, dan halaman publik; **pre-lock** sampai pengujian akhir OG/WhatsApp, Schema.org Event, dan GA4 Event Analytics selesai.
+- Marketplace & Ekosistem: **implemented pada baseline V13.3** sesuai dokumentasi repository.
+- Notifikasi & Informasi: **implemented pada baseline V13.4** sesuai dokumentasi repository.
+- Arah milestone berikut mengikuti keputusan tim dan roadmap aktif; dokumentasi Event saat ini berfokus pada verifikasi akhir metadata/analytics sebelum LOCK.
 
 ---
 
-**Documentation baseline:** V12.2 — Kartu Anggota Digital + QR  
+**Documentation baseline:** 17 September 2026 — Aktivitas & Event Public Integration V17.19.13B.4 (pre-lock)  
 **Previous audit baseline:** V11.6  
-**Last documentation update:** 13 September 2026
+**Last documentation update:** 17 September 2026
 
 ### Kartu Anggota Digital + QR
 

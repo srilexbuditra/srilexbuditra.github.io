@@ -50,7 +50,8 @@ Prinsip:
 
 - Public Impact Dashboard menggunakan data agregat nyata.
 - Statistik publik hanya menampilkan data yang aman dan tidak mengidentifikasi peserta.
-- Dokumentasi aktivitas/event dan outcome program.
+- Dokumentasi outcome aktivitas/event menggunakan data nyata setelah event berjalan.
+- Pertahankan halaman Event publik, SEO, gambar, dan analytics sebagai bukti implementasi yang dapat diverifikasi.
 - Integrasi benefit/partner sesuai kesepakatan organisasi.
 - Marketplace atau ekosistem transaksi hanya dikembangkan setelah kebutuhan dan tata kelola jelas.
 
@@ -77,7 +78,8 @@ Jangan mengejar klaim "dipercaya semua kalangan" melalui slogan. Bangun kepercay
 ---
 
 **Current phase:** Fase 3 — Pengalaman Anggota  
-**Current milestone:** Dashboard Peserta V2 ✅ + Kartu Anggota Digital + QR ✅ + Sertifikat QR ✅ + Level/Poin ✅ + Misi ✅ + Referral ✅ + Benefit ✅ + Aktivitas & Event ✅ + Marketplace ✅ + Notifikasi & Informasi ✅  
+**Current milestone:** Dashboard Peserta V2 ✅ + Kartu Anggota Digital + QR ✅ + Sertifikat QR ✅ + Level/Poin ✅ + Misi ✅ + Referral ✅ + Benefit ✅ + Aktivitas & Event ✅ + Public Event Integration V17.19.13B ✅ + Marketplace ✅ + Notifikasi & Informasi ✅  
+**Current verification:** OG/WhatsApp Preview, Schema.org Event, dan GA4 Event Analytics masih menjalani pengujian akhir sebelum baseline Public Event di-LOCK.  
 **Next milestone:** Menunggu keputusan tim untuk pengelolaan Event, katalog Marketplace, dan fitur komunikasi lanjutan
 
 ### V13.0 Referral
@@ -90,6 +92,9 @@ Benefit peserta aktif sebagai status akses/eligibility bertingkat berdasarkan To
 
 ### V13.2 Aktivitas & Event
 Modul Aktivitas & Event peserta aktif untuk agenda server-side, pendaftaran event, status kehadiran, riwayat aktivitas, dan Poin Aktivitas yang hanya diberikan setelah kehadiran terverifikasi.
+
+### V17.19.13B Public Event Integration
+Pengelolaan Event Admin telah terhubung ke gambar utama R2, SEO dasar, slug publik, halaman detail Event publik, URL publik di Dashboard Admin, tampilan kartu peserta, serta Rich Summary dari satu sumber Ringkasan. Implementasi metadata Open Graph, Schema.org Event, dan GA4 Event Analytics sudah dipasang dan masih menunggu pengujian akhir sebelum status Event di-LOCK sebagai baseline stabil.
 
 
 ### V13.3 Marketplace & Ekosistem

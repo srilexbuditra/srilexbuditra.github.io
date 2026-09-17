@@ -2,8 +2,8 @@
 
 Website profesional **Srilex Buditra** yang berfungsi sebagai pusat personal branding, layanan pengembangan web, portfolio, studi kasus, profil publik, estimasi biaya proyek, verifikasi dokumen, serta dokumentasi implementasi sistem digital.
 
-**Documentation baseline:** V12.2 — Kartu Anggota Digital + QR  
-**Current public direction:** Flagship Project + Trust & Authority + Knowledge Center + Public Development Timeline  
+**Documentation sync:** 17 September 2026 — Aktivitas & Event Public Integration V17.19.13B.4 (pre-lock)  
+**Current public direction:** Flagship Project + Trust & Authority + Knowledge Center + Public Development Timeline + Public Event  
 **Website:** https://srilexbuditra.work
 
 ## ✨ Fitur Utama
@@ -16,6 +16,7 @@ Website profesional **Srilex Buditra** yang berfungsi sebagai pusat personal bra
 - Portal Program Ketahanan Pangan yang menghubungkan registrasi, verifikasi, akun peserta/dashboard, sertifikat QR, dan dokumentasi.
 - **Dashboard Peserta V2** dengan ringkasan keanggotaan, progres akun, navigasi cepat, dan layanan digital berbasis status.
 - **Kartu Anggota Digital + QR** untuk VERIFIED MEMBER setelah rekam foto kamera dan review admin, dengan QR menuju verifikasi publik tanpa menampilkan data identitas sensitif.
+- **Aktivitas & Event** untuk agenda resmi, pendaftaran peserta, verifikasi kehadiran, Poin Aktivitas, pengelolaan Admin, gambar event, URL publik berbasis slug, dan halaman detail event publik.
 - Portfolio dan selected project samples dengan studi kasus terpisah.
 - Project Cost Estimator dengan keluaran Print/PDF A4.
 - Tanda tangan penyedia dan klien pada dokumen estimasi.
@@ -91,7 +92,8 @@ Project utama menggunakan frontend statis dan layanan pendukung berbasis edge/cl
 │       ├── registrasi/                # Pendaftaran peserta
 │       ├── verifikasi/                # Cek status + sertifikat publik
 │       ├── peserta/                   # Login/aktivasi/dashboard peserta
-│       │   └── kartu/                 # Kartu anggota digital + QR (authenticated/noindex)
+│       │   ├── kartu/                 # Kartu anggota digital + QR (authenticated/noindex)
+│       │   └── aktivitas/             # Agenda, pendaftaran event, status kehadiran & poin
 │       ├── dokumentasi/               # Dokumentasi publik program
 │       ├── admin/                     # Area administrasi
 │       ├── peserta-worker/            # Source/deployment helper layanan peserta
@@ -148,6 +150,8 @@ Titik masuk utama:
 - Akun peserta: `/program/ketahanan-pangan/peserta/`
 - Kartu anggota digital (authenticated): `/program/ketahanan-pangan/peserta/kartu/`
 - Sertifikat publik: `/program/ketahanan-pangan/verifikasi/sertifikat/`
+- Aktivitas & Event peserta: `/program/ketahanan-pangan/peserta/aktivitas/`
+- Detail Event publik: `/program/ketahanan-pangan/event/<slug>/`
 - Dokumentasi: `/program/ketahanan-pangan/dokumentasi/`
 - Case study: `/portfolio/ketahanan-pangan/`
 
@@ -222,6 +226,7 @@ Gunakan dokumen berikut sebagai titik awal:
 - **[DOCUMENTATION_AUDIT_V11.8.md](DOCUMENTATION_AUDIT_V11.8.md)** — audit dokumentasi terbaru.
 - **[CHANGELOG.md](CHANGELOG.md)** — histori perubahan.
 - **[ROADMAP-SRILEXBUDITRA-2026-2027.md](ROADMAP-SRILEXBUDITRA-2026-2027.md)** — prioritas pengembangan.
+- **[AKTIVITAS-EVENT-PUBLIC-V17.19.13B.md](AKTIVITAS-EVENT-PUBLIC-V17.19.13B.md)** — baseline integrasi Event Admin, peserta, halaman publik, SEO, gambar, dan status pengujian metadata/analytics.
 - **[SECURITY.md](SECURITY.md)** — kebijakan keamanan.
 - **[PRIVACY.md](PRIVACY.md)** — kebijakan privasi.
 - **[TERMS.md](TERMS.md)** — ketentuan penggunaan.

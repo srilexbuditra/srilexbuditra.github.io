@@ -1,3 +1,43 @@
+## V17.19.13B.4 — Aktivitas & Event Public Integration (17 September 2026)
+
+**Status:** Implemented / pre-lock; final OG/Schema/GA4 verification pending.
+
+### Added
+- Added URL publik Event berbasis slug pada Dashboard Admin dengan aksi **Salin Link** dan **Lihat Publik**.
+- Added halaman detail Event publik pada `/program/ketahanan-pangan/event/<slug>/` melalui Worker publik khusus.
+- Added Gambar Utama Event pada R2 `EVENT_IMAGES` untuk kartu peserta, halaman publik, dan social preview.
+- Added bidang SEO & Tampilan Publik pada Edit Event: slug, Judul SEO, Meta Description, Alt Text, dan kontrol index setelah dipublikasikan.
+- Added Rich Summary pada halaman publik sehingga heading, paragraf, bold, line break, dan daftar sederhana dapat dirender dari satu sumber Ringkasan Admin.
+
+### Changed
+- Deskripsi kartu Admin dan Dashboard Peserta dibersihkan dari Markdown mentah dan dipendekkan sesuai konteks tampilan.
+- URL publik pada kartu Admin dibuat lebih ringkas agar tidak mendominasi layout.
+- Halaman publik memakai asset CSS/JS same-origin agar kompatibel dengan CSP ketat tanpa `unsafe-inline`.
+
+### Fixed
+- Fixed tombol **Simpan Perubahan** Event agar update tersimpan konsisten.
+- Fixed tombol **Pilih / Ganti Gambar** agar file picker dapat dibuka dari modal Edit Event.
+- Fixed tampilan halaman Event publik yang sebelumnya dapat tampil tanpa styling karena konflik CSP.
+
+### Event Flow
+- Admin dapat membuat Draft, mengedit, mempublikasikan, mengembalikan ke Draft, menutup, dan membatalkan Event.
+- Peserta dapat melihat agenda yang dipublikasikan, mendaftar, membatalkan sesuai aturan, dan melihat status kehadiran.
+- Poin Aktivitas hanya masuk setelah status kehadiran menjadi **Hadir Terverifikasi**; pendaftaran Event tidak langsung memberi poin.
+
+### SEO / Metadata / Analytics
+- Implementasi Open Graph/social preview, Schema.org Event, dan GA4 Event Analytics telah dipasang pada jalur Public Event.
+- Statusnya masih **testing** sampai pengujian final OG/WhatsApp Preview, Schema.org Event, dan event GA4 selesai; belum dinyatakan LOCK/verified pada dokumentasi ini.
+
+### Versions covered
+- V17.19.12 — Event Save Changes Fix.
+- V17.19.13A — SEO & Gambar Utama Event.
+- V17.19.13A.1 — Image Picker Hotfix.
+- V17.19.13B — Public Event + OG + Schema.org + GA4 integration.
+- V17.19.13B.1 — Public Style/CSP + Clean Description Hotfix.
+- V17.19.13B.2 — Admin Public Link + Clean Event Card.
+- V17.19.13B.3 — Rich Summary.
+- V17.19.13B.4 — Compact Public URL.
+
 # V13.4.1 — Sinkronisasi Level Pusat Notifikasi
 
 ## V13.6.0 — Keamanan & Sesi Akun Peserta
