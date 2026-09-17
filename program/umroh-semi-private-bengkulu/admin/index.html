@@ -1,16 +1,17 @@
 <!DOCTYPE html>
 
-<html lang="id">
+<html class="auth-pending" lang="id">
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width,initial-scale=1" name="viewport"/>
 <meta content="noindex,nofollow,noarchive" name="robots"/>
 <meta content="#0b2830" name="theme-color"/>
-<title>Dashboard Admin Prototype V1.3 | Umroh Semi Private Bengkulu</title>
+<title>Dashboard Admin | Umroh Semi Private Bengkulu</title>
 <link href="../assets/css/tokens.css" rel="stylesheet"/>
 <link href="../assets/css/dashboard-shell.css" rel="stylesheet"/>
 <link href="../assets/css/admin-dashboard.css" rel="stylesheet"/>
-<link href="../assets/css/visual-assets.css" rel="stylesheet"/></head>
+<link href="../assets/css/visual-assets.css" rel="stylesheet"/>
+<link href="../assets/css/admin-auth.css" rel="stylesheet"/></head>
 <body class="dashboard-app admin-dashboard">
 <aside aria-label="Navigasi admin" class="app-sidebar">
 <div class="sidebar-brand">
@@ -40,11 +41,12 @@
 <div class="search-box"><span aria-hidden="true"><span aria-hidden="true" class="ui-icon icon-search"></span></span><input placeholder="Cari jemaah, agenda, dokumen..." type="search"/></div>
 <div class="topbar-spacer"></div>
 <button aria-label="Notifikasi" class="icon-button"><span aria-hidden="true" class="ui-icon icon-bell"></span><span class="notification-dot">3</span></button>
-<div class="user-chip"><div class="avatar">SA</div><div class="user-copy"><strong>Administrator</strong><span>Super Admin · Prototype</span></div></div>
+<div class="user-chip"><div class="avatar" data-auth-avatar>SB</div><div class="user-copy"><strong data-auth-name>Srilex Buditra</strong><span data-auth-role>Full Stack Developer · Super Admin</span></div></div>
+<button class="auth-logout" data-admin-logout type="button">Keluar</button>
 </header>
 <main class="page-wrap" id="ringkasan">
-<div class="prototype-note"><strong>Prototype V1.3.</strong> Data pada halaman ini adalah simulasi untuk mengunci desain, navigasi, dan responsif sebelum autentikasi/API dibuat.</div>
-<div class="page-head"><div><span class="page-kicker">Operational Workspace</span><h1>Ringkasan</h1><p>Prioritaskan pekerjaan yang membutuhkan tindakan hari ini tanpa memenuhi dashboard dengan informasi yang tidak penting.</p></div><div class="page-date">Kamis, 17 September 2026<br/>Prototype UI V1.3</div></div>
+<div class="prototype-note"><strong>Admin Auth V3.1.2 aktif.</strong> Akses halaman sudah dilindungi session backend. Data operasional pada ringkasan ini masih simulasi sampai modul Admin terhubung ke sumber data resmi.</div>
+<div class="page-head"><div><span class="page-kicker">Operational Workspace</span><h1>Ringkasan</h1><p>Prioritaskan pekerjaan yang membutuhkan tindakan hari ini tanpa memenuhi dashboard dengan informasi yang tidak penting.</p></div><div class="page-date">Jumat, 18 September 2026<br/>Admin Auth Frontend V3.1.2</div></div>
 <div aria-label="Konteks ringkasan" class="context-tabs"><button class="context-tab is-active" data-context-tab="">Hari Ini</button><button class="context-tab" data-context-tab="">7 Hari</button><button class="context-tab" data-context-tab="">30 Hari</button></div>
 <section aria-label="Statistik utama" class="stats-grid">
 <article class="card stat-card"><div class="stat-icon"><span aria-hidden="true" class="ui-icon icon-users"></span></div><div><strong>128</strong><span>Total Jemaah</span></div></article>
@@ -89,6 +91,7 @@
 </section>
 </main>
 </div>
+<script src="../assets/js/admin-auth-guard.js"></script>
 <script src="../assets/js/dashboard-shell.js"></script>
 </body>
 </html>

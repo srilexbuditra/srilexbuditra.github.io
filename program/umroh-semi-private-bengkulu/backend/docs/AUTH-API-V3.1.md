@@ -1,40 +1,60 @@
-# Auth API V3.1
+# Auth API V3.1 / V3.1.1
 
 ## Scope
 
-V3.1 membangun lapisan autentikasi pertama tanpa mengubah frontend stable V2.5.1.
+Lapisan autentikasi pertama untuk Umroh Semi Private Bengkulu.
 
-### Aktif
+Custom domain produksi:
+
+`https://umroh-api.srilexbuditra.work`
+
+### Aktif dan terverifikasi
+
 - D1 binding `DB`
 - `GET /health`
-- `POST /bootstrap/super-admin`
+- `POST /bootstrap/super-admin` — endpoint tetap ada tetapi bootstrap telah dinonaktifkan
 - `POST /auth/login`
 - `POST /auth/logout`
 - `GET /auth/me`
-- `POST /auth/activate` (handler tersedia; issuance code menyusul)
+- `POST /auth/activate` — handler tersedia; issuance code menyusul
+
+### Frontend Admin V3.1.2
+
+- form Login Admin aktif
+- auth guard Dashboard Admin aktif
+- logout browser aktif
+- request menggunakan `credentials: 'include'`
+- role Dashboard Admin: `super_admin` dan `admin`
+- password dan session token tidak disimpan di localStorage/sessionStorage
 
 ### Belum aktif
-- form login frontend
-- pembuatan akun jemaah dari admin
-- penerbitan kode aktivasi dari admin
+
+- login Jemaah frontend
+- pembuatan akun Jemaah dari Admin
+- penerbitan kode aktivasi dari Admin
 - reset password
 - rate limiting produksi
 - progress API
-- upload dokumen
+- upload dokumen privat
 
 ## Password storage
 
-Worker menggunakan PBKDF2-HMAC-SHA256 dengan 600.000 iterasi, salt unik, dan pepper dari Worker Secret.
+V3.1 awal dirancang menggunakan PBKDF2-HMAC-SHA256 600000 iterasi. Runtime Cloudflare pada deployment ini menolak nilai di atas 100000, sehingga V3.1.1 menggunakan PBKDF2-HMAC-SHA256 **100000 iterasi** sebagai hotfix kompatibilitas.
+
+Salt unik dan `AUTH_PEPPER` Worker Secret tetap digunakan.
 
 Format database:
 
-`pbkdf2-sha256$600000$<salt>$<derived-key>`
+`pbkdf2-sha256$100000$<salt>$<derived-key>`
 
 Tidak ada password mentah di D1.
+
+> Work factor ini harus direview kembali sebelum skala produksi diperbesar.
 
 ## Session
 
 Cookie:
+
 - HttpOnly
 - Secure
 - SameSite=Lax
@@ -43,17 +63,34 @@ Cookie:
 
 Database menyimpan SHA-256 dari token random, bukan token mentah.
 
+Logout mengisi `revoked_at`; session yang telah logout telah diuji menghasilkan HTTP `401` pada `/auth/me`.
+
 ## Bootstrap
 
-Bootstrap super admin hanya digunakan sekali.
+Bootstrap Super Admin sudah selesai.
 
-Sesudah berhasil:
-1. `ENABLE_BOOTSTRAP=0`
-2. hapus `BOOTSTRAP_TOKEN`
-3. endpoint tetap ada tetapi tidak dapat digunakan
+Status produksi:
+
+- `ENABLE_BOOTSTRAP=0`
+- `BOOTSTRAP_TOKEN` sudah dihapus
+- `AUTH_PEPPER` tetap dipertahankan
+
+## Super Admin pertama
+
+- username: `srilexbuditra`
+- role: `super_admin`
+- identitas tampilan frontend: **Srilex Buditra — Full Stack Developer — Super Admin**
+
+## CSP frontend
+
+`connect-src` harus mengizinkan:
+
+`https://umroh-api.srilexbuditra.work`
+
+Tidak perlu menggunakan endpoint `workers.dev` pada frontend produksi.
 
 ## Gate berikutnya
 
-Setelah login super admin, `/auth/me`, dan logout lulus uji:
+Setelah Login Admin browser V3.1.2 lolos uji:
 
-**V3.2 — Admin Jamaah Onboarding & Activation Code Issuance**
+**Admin Jamaah Onboarding & Activation Code Issuance**
