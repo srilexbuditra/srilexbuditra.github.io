@@ -58,3 +58,13 @@ Checklist Persiapan Jemaah telah ditambahkan di `/jamaah/checklist/`.
 - Ringkasan Checklist tersinkron ke Dashboard Jemaah.
 - Belum terhubung ke akun, API, atau database.
 
+
+## Agenda & Perjalanan Jemaah V2.2 — 2026-09-17
+
+Agenda & Perjalanan Jemaah telah ditambahkan di `/jamaah/agenda/`.
+
+- Menampilkan timeline agenda, rencana keberangkatan, dan panduan perjalanan.
+- Data V2.2 masih simulasi dan diberi penanda jelas agar tidak dianggap sebagai jadwal resmi.
+- Jemaah dapat menandai agenda sebagai `Sudah dibaca`; status disimpan lokal dengan key `umroh-agenda-read-v1`.
+- Ringkasan Agenda dan tanggal keberangkatan tersinkron ke Dashboard Jemaah dari `assets/js/agenda-data.js`.
+- Belum terhubung ke admin, akun, API, atau database.

@@ -23,7 +23,7 @@
 <a class="nav-item is-active" data-nav-item="" href="#beranda"><span class="nav-icon"><span aria-hidden="true" class="ui-icon icon-home"></span></span><span class="nav-label">Beranda</span></a>
 <a class="nav-item" data-nav-item="" href="/program/umroh-semi-private-bengkulu/manasik/"><span class="nav-icon"><span aria-hidden="true" class="ui-icon icon-book"></span></span><span class="nav-label">Manasik Saya</span></a>
 <a class="nav-item" data-nav-item="" href="../checklist/index.html"><span class="nav-icon"><span aria-hidden="true" class="ui-icon icon-checklist"></span></span><span class="nav-label">Checklist</span></a>
-<a class="nav-item" data-nav-item="" href="#agenda"><span class="nav-icon"><span aria-hidden="true" class="ui-icon icon-calendar"></span></span><span class="nav-label">Agenda &amp; Perjalanan</span></a>
+<a class="nav-item" data-nav-item="" href="../agenda/index.html"><span class="nav-icon"><span aria-hidden="true" class="ui-icon icon-calendar"></span></span><span class="nav-label">Agenda &amp; Perjalanan</span></a>
 <a class="nav-item" data-nav-item="" href="#dokumen"><span class="nav-icon"><span aria-hidden="true" class="ui-icon icon-file"></span></span><span class="nav-label">Dokumen Saya</span></a>
 <a class="nav-item" data-nav-item="" href="#pengumuman"><span class="nav-icon"><span aria-hidden="true" class="ui-icon icon-megaphone"></span></span><span class="nav-label">Pengumuman</span></a>
 <a class="nav-item" data-nav-item="" href="#bantuan"><span class="nav-icon"><span aria-hidden="true" class="ui-icon icon-help"></span></span><span class="nav-label">Bantuan</span></a>
@@ -42,20 +42,20 @@
 <div class="user-chip"><div class="avatar">AR</div><div class="user-copy"><strong>Ahmad Rasyid</strong><span>Jemaah · Data simulasi</span></div></div>
 </header>
 <main class="page-wrap" id="beranda">
-<div class="prototype-note"><strong>Prototype Dashboard V1.3.</strong> Nama, tanggal keberangkatan, progress keseluruhan, dokumen, dan agenda masih data simulasi. Progress Manasik dan Checklist sudah mengikuti aktivitas Anda di browser ini.</div>
+<div class="prototype-note"><strong>Prototype Dashboard V1.3.</strong> Nama, progress keseluruhan, dan dokumen masih data simulasi. Progress Manasik dan Checklist sudah aktif; Agenda &amp; Perjalanan V2.2 sudah terhubung sebagai modul dengan data jadwal simulasi.</div>
 <section class="journey-hero">
 <div class="journey-copy"><span>Perjalanan Ibadah</span><h1>Persiapan yang tenang,<br/>langkah yang terarah.</h1><p>Semua informasi penting untuk manasik, checklist, agenda, dan perjalanan Anda disusun dalam satu tempat yang mudah dipahami.</p></div>
-<div class="departure-card"><small>Rencana Keberangkatan</small><strong>30 September 2026</strong><span>13 hari lagi</span></div>
+<div class="departure-card"><small>Rencana Keberangkatan</small><strong data-departure-date>30 September 2026</strong><span data-departure-countdown>13 hari lagi</span></div>
 </section>
 <section class="card welcome-strip"><div class="avatar">AR</div><div><h2>Assalamu'alaikum, Ahmad Rasyid</h2><p>Terus lengkapi persiapan Anda. Jika ada informasi yang belum jelas, gunakan menu Bantuan atau hubungi pendamping.</p></div></section>
 <section class="journey-progress-grid">
-<article class="card progress-card"><div class="progress-head"><strong>Progress Persiapan Umroh Anda</strong><b>75%</b></div><div class="progress-track"><i></i></div><small>Progress keseluruhan masih simulasi sampai Dokumen dan Agenda terhubung. Manasik dan Checklist sudah aktif.</small></article>
+<article class="card progress-card"><div class="progress-head"><strong>Progress Persiapan Umroh Anda</strong><b>75%</b></div><div class="progress-track"><i></i></div><small>Progress keseluruhan masih simulasi sampai Dokumen dan data operasional resmi terhubung. Manasik &amp; Checklist aktif; Agenda V2.2 masih memakai jadwal simulasi.</small></article>
 <article class="card next-action" data-manasik-next><span>Tahap Berikutnya</span><strong data-manasik-next-title>Manasik — Persiapan Sebelum Berangkat</strong><p data-manasik-next-copy>Lanjutkan materi pertama agar progress Manasik mulai tercatat.</p><a class="primary-action" data-manasik-next-link href="/program/umroh-semi-private-bengkulu/manasik/persiapan/">Lanjutkan →</a></article>
 </section>
 <section aria-label="Akses cepat" class="quick-grid">
 <a class="card quick-card" href="/program/umroh-semi-private-bengkulu/manasik/"><div class="quick-icon"><span aria-hidden="true" class="ui-icon icon-book"></span></div><div><strong>Manasik Saya</strong><span data-manasik-summary>0 dari 11 selesai</span></div><div class="quick-arrow">›</div></a>
 <a class="card quick-card" href="../checklist/index.html"><div class="quick-icon success"><span aria-hidden="true" class="ui-icon icon-checklist"></span></div><div><strong>Checklist</strong><span data-checklist-summary>0 dari 12 diperiksa</span></div><div class="quick-arrow">›</div></a>
-<a class="card quick-card" href="#agenda"><div class="quick-icon info"><span aria-hidden="true" class="ui-icon icon-calendar"></span></div><div><strong>Agenda</strong><span>Lihat jadwal terbaru</span></div><div class="quick-arrow">›</div></a>
+<a class="card quick-card" href="../agenda/index.html"><div class="quick-icon info"><span aria-hidden="true" class="ui-icon icon-calendar"></span></div><div><strong>Agenda</strong><span data-agenda-summary>Lihat jadwal terbaru</span></div><div class="quick-arrow">›</div></a>
 <a class="card quick-card" href="#dokumen"><div class="quick-icon"><span aria-hidden="true" class="ui-icon icon-file"></span></div><div><strong>Dokumen Saya</strong><span>Semua tersimpan</span></div><div class="quick-arrow">›</div></a>
 </section>
 <section class="jamaah-lower">
@@ -73,10 +73,12 @@
 </main>
 </div>
 <nav aria-label="Navigasi cepat mobile" class="mobile-bottom-nav">
-<a class="is-active" href="#beranda"><span><span aria-hidden="true" class="ui-icon icon-home"></span></span><span>Beranda</span></a><a href="/program/umroh-semi-private-bengkulu/manasik/"><span><span aria-hidden="true" class="ui-icon icon-book"></span></span><span>Manasik</span></a><a href="#agenda"><span><span aria-hidden="true" class="ui-icon icon-calendar"></span></span><span>Agenda</span></a><a href="#bantuan"><span><span aria-hidden="true" class="ui-icon icon-help"></span></span><span>Bantuan</span></a><a href="#profil"><span><span aria-hidden="true" class="ui-icon icon-user"></span></span><span>Profil</span></a>
+<a class="is-active" href="#beranda"><span><span aria-hidden="true" class="ui-icon icon-home"></span></span><span>Beranda</span></a><a href="/program/umroh-semi-private-bengkulu/manasik/"><span><span aria-hidden="true" class="ui-icon icon-book"></span></span><span>Manasik</span></a><a href="../agenda/index.html"><span><span aria-hidden="true" class="ui-icon icon-calendar"></span></span><span>Agenda</span></a><a href="#bantuan"><span><span aria-hidden="true" class="ui-icon icon-help"></span></span><span>Bantuan</span></a><a href="#profil"><span><span aria-hidden="true" class="ui-icon icon-user"></span></span><span>Profil</span></a>
 </nav>
 <script src="../../assets/js/dashboard-shell.js"></script>
 <script src="../../assets/js/jamaah-progress.js"></script>
 <script src="../../assets/js/jamaah-checklist-progress.js"></script>
+<script src="../../assets/js/agenda-data.js"></script>
+<script src="../../assets/js/jamaah-agenda-summary.js"></script>
 </body>
 </html>
