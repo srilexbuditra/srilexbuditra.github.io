@@ -15,7 +15,7 @@
   document.body.appendChild(toast);
 
   const showPrototypeNotice = (label) => {
-    toast.innerHTML = `<strong>${label}</strong>Modul ini sengaja belum diaktifkan pada Prototype V1.2. Fokus tahap ini adalah mengunci visual, navigasi, dan responsif.`;
+    toast.innerHTML = `<strong>${label}</strong>Modul ini sengaja belum diaktifkan pada Prototype dashboard. Modul operasional ini belum diaktifkan; fondasi visual sudah dikunci dan pengembangan fitur dilakukan bertahap.`;
     toast.classList.add('is-show');
     clearTimeout(toastTimer);
     toastTimer = setTimeout(() => toast.classList.remove('is-show'), 3200);
@@ -48,6 +48,10 @@
     const href = item.getAttribute('href') || '';
     const target = href.startsWith('#') && href.length > 1 ? document.querySelector(href) : null;
     const isHome = href === '#ringkasan' || href === '#beranda';
+    if (item.hasAttribute('data-live') && !href.startsWith('#')) {
+      if (innerWidth <= 900) closeMobile();
+      return;
+    }
 
     if (!target || (!isHome && !item.hasAttribute('data-live'))) {
       e.preventDefault();
