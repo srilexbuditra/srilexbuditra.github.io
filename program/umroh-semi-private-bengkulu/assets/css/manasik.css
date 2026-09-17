@@ -7,3 +7,9 @@ body.manasik-page{min-height:100vh;background:radial-gradient(circle at 90% 0,rg
 @media(max-width:900px){.manasik-shell{width:min(100% - 28px,1180px)}.manasik-hero{grid-template-columns:1fr}.progress-panel{max-width:360px}.module-grid{grid-template-columns:1fr 1fr}.lesson-layout{grid-template-columns:1fr}.lesson-side{grid-template-columns:1fr 1fr}.manasik-section-head{align-items:flex-start}.manasik-section-head p{text-align:left}}
 @media(max-width:680px){.manasik-shell{width:min(100% - 20px,1180px);padding-top:10px}.manasik-topbar{top:6px}.manasik-top-actions .hide-mobile{display:none}.manasik-hero{padding:26px 20px;border-radius:22px}.manasik-hero h1{font-size:35px}.module-grid,.ritual-steps,.tips-grid,.lesson-side{grid-template-columns:1fr}.manasik-section-head{display:block}.manasik-section-head p{margin-top:7px}.lesson-hero{padding:26px 20px}.lesson-content{padding:17px}.lesson-nav{grid-template-columns:1fr}.manasik-footer{display:block;line-height:1.7}.arabic-block{padding:16px;font-size:29px}.manasik-brand strong{font-size:9px}.manasik-brand small{font-size:8px}}
 @media(max-width:430px){.manasik-top-actions a{padding:0 9px;font-size:9px}.manasik-hero h1{font-size:31px}.module-card{min-height:170px}}
+
+/* Visual Asset System V1 integration */
+.lesson-hero{position:relative;overflow:hidden;padding-right:clamp(5.5rem,12vw,9rem)}
+.module-card .module-number{margin-bottom:.35rem}
+.module-card .module-visual + h3{margin-top:0}
+@media(max-width:700px){.lesson-hero{padding-right:4.8rem}.module-card .module-visual{margin-bottom:.6rem}}

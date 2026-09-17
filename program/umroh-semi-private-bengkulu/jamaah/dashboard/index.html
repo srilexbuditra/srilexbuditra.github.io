@@ -1,86 +1,80 @@
-<!doctype html>
+<!DOCTYPE html>
+
 <html lang="id">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="robots" content="noindex,nofollow,noarchive">
-  <meta name="theme-color" content="#0b2830">
-  <title>Dashboard Jemaah Prototype V1.3 | Umroh Semi Private Bengkulu</title>
-  <link rel="stylesheet" href="../../assets/css/tokens.css">
-  <link rel="stylesheet" href="../../assets/css/dashboard-shell.css">
-  <link rel="stylesheet" href="../../assets/css/jamaah-dashboard.css">
-</head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<meta content="noindex,nofollow,noarchive" name="robots"/>
+<meta content="#0b2830" name="theme-color"/>
+<title>Dashboard Jemaah Prototype V1.3 | Umroh Semi Private Bengkulu</title>
+<link href="../../assets/css/tokens.css" rel="stylesheet"/>
+<link href="../../assets/css/dashboard-shell.css" rel="stylesheet"/>
+<link href="../../assets/css/jamaah-dashboard.css" rel="stylesheet"/>
+<link href="../../assets/css/visual-assets.css" rel="stylesheet"/></head>
 <body class="dashboard-app">
-  <aside class="app-sidebar" aria-label="Navigasi jemaah">
-    <div class="sidebar-brand">
-      <div class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M6 9h12v11H6V9Zm2-5h8v5H8V4Zm4-2v2" stroke="currentColor" stroke-width="1.8"/><path d="M9 13h6M9 16h6" stroke="currentColor" stroke-width="1.4"/></svg></div>
-      <div class="brand-copy"><strong>UMROH SEMI PRIVATE<br>BENGKULU</strong><span>Digital Platform</span></div>
-      <button class="sidebar-collapse" data-sidebar-collapse aria-label="Ringkas sidebar">‹</button>
-    </div>
-    <nav class="sidebar-nav">
-      <div class="nav-section-label">Perjalanan Saya</div>
-      <a class="nav-item is-active" data-nav-item href="#beranda"><span class="nav-icon">⌂</span><span class="nav-label">Beranda</span></a>
-      <a class="nav-item" data-nav-item href="/program/umroh-semi-private-bengkulu/manasik/"><span class="nav-icon">▤</span><span class="nav-label">Manasik Saya</span></a>
-      <a class="nav-item" data-nav-item href="#checklist"><span class="nav-icon">✓</span><span class="nav-label">Checklist</span></a>
-      <a class="nav-item" data-nav-item href="#agenda"><span class="nav-icon">□</span><span class="nav-label">Agenda & Perjalanan</span></a>
-      <a class="nav-item" data-nav-item href="#dokumen"><span class="nav-icon">▱</span><span class="nav-label">Dokumen Saya</span></a>
-      <a class="nav-item" data-nav-item href="#pengumuman"><span class="nav-icon">◁</span><span class="nav-label">Pengumuman</span></a>
-      <a class="nav-item" data-nav-item href="#bantuan"><span class="nav-icon">?</span><span class="nav-label">Bantuan</span></a>
-      <div class="nav-section-label">Akun</div>
-      <a class="nav-item" data-nav-item href="#profil"><span class="nav-icon">○</span><span class="nav-label">Profil Saya</span></a>
-    </nav>
-    <div class="sidebar-foot"><div class="tech-credit"><small>Pengembangan Sistem & Dukungan Teknologi</small><strong>Srilex Buditra</strong><a href="https://srilexbuditra.work/">srilexbuditra.work</a></div></div>
-  </aside>
-  <div class="sidebar-backdrop" data-sidebar-backdrop></div>
-
-  <div class="app-main jamaah-page">
-    <header class="app-topbar">
-      <button class="mobile-menu" data-mobile-menu aria-label="Buka menu">☰</button>
-      <div class="search-box"><span aria-hidden="true">⌕</span><input type="search" placeholder="Cari materi, agenda, informasi..."></div>
-      <div class="topbar-spacer"></div>
-      <button class="icon-button" aria-label="Notifikasi">♢<span class="notification-dot">2</span></button>
-      <div class="user-chip"><div class="avatar">AR</div><div class="user-copy"><strong>Ahmad Rasyid</strong><span>Jemaah · Data simulasi</span></div></div>
-    </header>
-
-    <main class="page-wrap" id="beranda">
-      <div class="prototype-note"><strong>Prototype Dashboard V1.3.</strong> Nama, tanggal, progress, dan agenda adalah data simulasi untuk menguji pengalaman jemaah sebelum sistem akun dibuat.</div>
-      <section class="journey-hero">
-        <div class="journey-copy"><span>Perjalanan Ibadah</span><h1>Persiapan yang tenang,<br>langkah yang terarah.</h1><p>Semua informasi penting untuk manasik, checklist, agenda, dan perjalanan Anda disusun dalam satu tempat yang mudah dipahami.</p></div>
-        <div class="departure-card"><small>Rencana Keberangkatan</small><strong>30 September 2026</strong><span>13 hari lagi</span></div>
-      </section>
-
-      <section class="card welcome-strip"><div class="avatar">AR</div><div><h2>Assalamu'alaikum, Ahmad Rasyid</h2><p>Terus lengkapi persiapan Anda. Jika ada informasi yang belum jelas, gunakan menu Bantuan atau hubungi pendamping.</p></div></section>
-
-      <section class="journey-progress-grid">
-        <article class="card progress-card"><div class="progress-head"><strong>Progress Persiapan Umroh Anda</strong><b>75%</b></div><div class="progress-track"><i></i></div><small>7 dari 11 tahapan utama telah selesai.</small></article>
-        <article class="card next-action"><span>Tahap Berikutnya</span><strong>Manasik — Tata Cara Umroh</strong><p>Lanjutkan materi yang belum selesai agar progress persiapan tetap terarah.</p><a class="primary-action" href="/program/umroh-semi-private-bengkulu/manasik/tata-cara-umroh/">Lanjutkan →</a></article>
-      </section>
-
-      <section class="quick-grid" aria-label="Akses cepat">
-        <a class="card quick-card" href="/program/umroh-semi-private-bengkulu/manasik/"><div class="quick-icon">▤</div><div><strong>Manasik Saya</strong><span>11 materi tersedia</span></div><div class="quick-arrow">›</div></a>
-        <a class="card quick-card" href="#checklist"><div class="quick-icon success">✓</div><div><strong>Checklist</strong><span>8 dari 10 lengkap</span></div><div class="quick-arrow">›</div></a>
-        <a class="card quick-card" href="#agenda"><div class="quick-icon info">□</div><div><strong>Agenda</strong><span>Lihat jadwal terbaru</span></div><div class="quick-arrow">›</div></a>
-        <a class="card quick-card" href="#dokumen"><div class="quick-icon">▱</div><div><strong>Dokumen Saya</strong><span>Semua tersimpan</span></div><div class="quick-arrow">›</div></a>
-      </section>
-
-      <section class="jamaah-lower">
-        <article class="card card-pad" id="pengumuman"><div class="section-title"><h2>Pengumuman Terbaru</h2><button>Lihat semua →</button></div><div class="announcement-list">
-          <div class="announcement"><div class="announcement-icon">i</div><div><strong>Manasik lanjutan</strong><span>Informasi waktu dan lokasi akan ditampilkan pada Agenda setelah dikonfirmasi.</span></div><time>Hari ini</time></div>
-          <div class="announcement"><div class="announcement-icon">i</div><div><strong>Persiapan dokumen perjalanan</strong><span>Pastikan data identitas dan dokumen sesuai arahan resmi pengelola.</span></div><time>16 Sep</time></div>
-          <div class="announcement"><div class="announcement-icon">i</div><div><strong>Pembagian rombongan</strong><span>Informasi rombongan akan tersedia setelah penetapan final.</span></div><time>15 Sep</time></div>
-        </div></article>
-        <article class="card card-pad" id="bantuan"><div class="section-title"><h2>Kontak Penting</h2></div><div class="contact-list">
-          <div class="contact"><div class="contact-icon">PM</div><div><strong>Pembimbing Manasik</strong><span>Ust. Abdurahman Dody</span></div><button class="contact-action" aria-label="Hubungi pembimbing">☎</button></div>
-          <div class="contact"><div class="contact-icon">TL</div><div><strong>Tour Leader</strong><span>Hj. Prapti Kanthi Rahayu, S.I.Kom</span></div><button class="contact-action" aria-label="Hubungi tour leader">☎</button></div>
-          <div class="contact"><div class="contact-icon">?</div><div><strong>Bantuan Jemaah</strong><span>Kontak resmi akan ditetapkan sebelum fitur diaktifkan.</span></div><button class="contact-action" aria-label="Bantuan">›</button></div>
-        </div></article>
-      </section>
-    </main>
-  </div>
-
-  <nav class="mobile-bottom-nav" aria-label="Navigasi cepat mobile">
-    <a class="is-active" href="#beranda"><span>⌂</span><span>Beranda</span></a><a href="/program/umroh-semi-private-bengkulu/manasik/"><span>▤</span><span>Manasik</span></a><a href="#agenda"><span>□</span><span>Agenda</span></a><a href="#bantuan"><span>?</span><span>Bantuan</span></a><a href="#profil"><span>○</span><span>Profil</span></a>
-  </nav>
+<aside aria-label="Navigasi jemaah" class="app-sidebar">
+<div class="sidebar-brand">
+<div aria-hidden="true" class="brand-mark"><svg fill="none" viewbox="0 0 24 24"><path d="M6 9h12v11H6V9Zm2-5h8v5H8V4Zm4-2v2" stroke="currentColor" stroke-width="1.8"></path><path d="M9 13h6M9 16h6" stroke="currentColor" stroke-width="1.4"></path></svg></div>
+<div class="brand-copy"><strong>UMROH SEMI PRIVATE<br/>BENGKULU</strong><span>Digital Platform</span></div>
+<button aria-label="Ringkas sidebar" class="sidebar-collapse" data-sidebar-collapse="">‹</button>
+</div>
+<nav class="sidebar-nav">
+<div class="nav-section-label">Perjalanan Saya</div>
+<a class="nav-item is-active" data-nav-item="" href="#beranda"><span class="nav-icon"><span aria-hidden="true" class="ui-icon icon-home"></span></span><span class="nav-label">Beranda</span></a>
+<a class="nav-item" data-nav-item="" href="/program/umroh-semi-private-bengkulu/manasik/"><span class="nav-icon"><span aria-hidden="true" class="ui-icon icon-book"></span></span><span class="nav-label">Manasik Saya</span></a>
+<a class="nav-item" data-nav-item="" href="#checklist"><span class="nav-icon"><span aria-hidden="true" class="ui-icon icon-checklist"></span></span><span class="nav-label">Checklist</span></a>
+<a class="nav-item" data-nav-item="" href="#agenda"><span class="nav-icon"><span aria-hidden="true" class="ui-icon icon-calendar"></span></span><span class="nav-label">Agenda &amp; Perjalanan</span></a>
+<a class="nav-item" data-nav-item="" href="#dokumen"><span class="nav-icon"><span aria-hidden="true" class="ui-icon icon-file"></span></span><span class="nav-label">Dokumen Saya</span></a>
+<a class="nav-item" data-nav-item="" href="#pengumuman"><span class="nav-icon"><span aria-hidden="true" class="ui-icon icon-megaphone"></span></span><span class="nav-label">Pengumuman</span></a>
+<a class="nav-item" data-nav-item="" href="#bantuan"><span class="nav-icon"><span aria-hidden="true" class="ui-icon icon-help"></span></span><span class="nav-label">Bantuan</span></a>
+<div class="nav-section-label">Akun</div>
+<a class="nav-item" data-nav-item="" href="#profil"><span class="nav-icon"><span aria-hidden="true" class="ui-icon icon-user"></span></span><span class="nav-label">Profil Saya</span></a>
+</nav>
+<div class="sidebar-foot"><div class="tech-credit"><small>Pengembangan Sistem &amp; Dukungan Teknologi</small><strong>Srilex Buditra</strong><a href="https://srilexbuditra.work/">srilexbuditra.work</a></div></div>
+</aside>
+<div class="sidebar-backdrop" data-sidebar-backdrop=""></div>
+<div class="app-main jamaah-page">
+<header class="app-topbar">
+<button aria-label="Buka menu" class="mobile-menu" data-mobile-menu="">☰</button>
+<div class="search-box"><span aria-hidden="true"><span aria-hidden="true" class="ui-icon icon-search"></span></span><input placeholder="Cari materi, agenda, informasi..." type="search"/></div>
+<div class="topbar-spacer"></div>
+<button aria-label="Notifikasi" class="icon-button"><span aria-hidden="true" class="ui-icon icon-bell"></span><span class="notification-dot">2</span></button>
+<div class="user-chip"><div class="avatar">AR</div><div class="user-copy"><strong>Ahmad Rasyid</strong><span>Jemaah · Data simulasi</span></div></div>
+</header>
+<main class="page-wrap" id="beranda">
+<div class="prototype-note"><strong>Prototype Dashboard V1.3.</strong> Nama, tanggal, progress, dan agenda adalah data simulasi untuk menguji pengalaman jemaah sebelum sistem akun dibuat.</div>
+<section class="journey-hero">
+<div class="journey-copy"><span>Perjalanan Ibadah</span><h1>Persiapan yang tenang,<br/>langkah yang terarah.</h1><p>Semua informasi penting untuk manasik, checklist, agenda, dan perjalanan Anda disusun dalam satu tempat yang mudah dipahami.</p></div>
+<div class="departure-card"><small>Rencana Keberangkatan</small><strong>30 September 2026</strong><span>13 hari lagi</span></div>
+</section>
+<section class="card welcome-strip"><div class="avatar">AR</div><div><h2>Assalamu'alaikum, Ahmad Rasyid</h2><p>Terus lengkapi persiapan Anda. Jika ada informasi yang belum jelas, gunakan menu Bantuan atau hubungi pendamping.</p></div></section>
+<section class="journey-progress-grid">
+<article class="card progress-card"><div class="progress-head"><strong>Progress Persiapan Umroh Anda</strong><b>75%</b></div><div class="progress-track"><i></i></div><small>7 dari 11 tahapan utama telah selesai.</small></article>
+<article class="card next-action"><span>Tahap Berikutnya</span><strong>Manasik — Tata Cara Umroh</strong><p>Lanjutkan materi yang belum selesai agar progress persiapan tetap terarah.</p><a class="primary-action" href="/program/umroh-semi-private-bengkulu/manasik/tata-cara-umroh/">Lanjutkan →</a></article>
+</section>
+<section aria-label="Akses cepat" class="quick-grid">
+<a class="card quick-card" href="/program/umroh-semi-private-bengkulu/manasik/"><div class="quick-icon"><span aria-hidden="true" class="ui-icon icon-book"></span></div><div><strong>Manasik Saya</strong><span>11 materi tersedia</span></div><div class="quick-arrow">›</div></a>
+<a class="card quick-card" href="#checklist"><div class="quick-icon success"><span aria-hidden="true" class="ui-icon icon-checklist"></span></div><div><strong>Checklist</strong><span>8 dari 10 lengkap</span></div><div class="quick-arrow">›</div></a>
+<a class="card quick-card" href="#agenda"><div class="quick-icon info"><span aria-hidden="true" class="ui-icon icon-calendar"></span></div><div><strong>Agenda</strong><span>Lihat jadwal terbaru</span></div><div class="quick-arrow">›</div></a>
+<a class="card quick-card" href="#dokumen"><div class="quick-icon"><span aria-hidden="true" class="ui-icon icon-file"></span></div><div><strong>Dokumen Saya</strong><span>Semua tersimpan</span></div><div class="quick-arrow">›</div></a>
+</section>
+<section class="jamaah-lower">
+<article class="card card-pad" id="pengumuman"><div class="section-title"><h2>Pengumuman Terbaru</h2><button>Lihat semua →</button></div><div class="announcement-list">
+<div class="announcement"><div class="announcement-icon"><span aria-hidden="true" class="ui-icon icon-info"></span></div><div><strong>Manasik lanjutan</strong><span>Informasi waktu dan lokasi akan ditampilkan pada Agenda setelah dikonfirmasi.</span></div><time>Hari ini</time></div>
+<div class="announcement"><div class="announcement-icon"><span aria-hidden="true" class="ui-icon icon-info"></span></div><div><strong>Persiapan dokumen perjalanan</strong><span>Pastikan data identitas dan dokumen sesuai arahan resmi pengelola.</span></div><time>16 Sep</time></div>
+<div class="announcement"><div class="announcement-icon"><span aria-hidden="true" class="ui-icon icon-info"></span></div><div><strong>Pembagian rombongan</strong><span>Informasi rombongan akan tersedia setelah penetapan final.</span></div><time>15 Sep</time></div>
+</div></article>
+<article class="card card-pad" id="bantuan"><div class="section-title"><h2>Kontak Penting</h2></div><div class="contact-list">
+<div class="contact"><div class="contact-icon"><span aria-hidden="true" class="ui-icon icon-user"></span></div><div><strong>Pembimbing Manasik</strong><span>Ust. Abdurahman Dody</span></div><button aria-label="Hubungi pembimbing" class="contact-action"><span aria-hidden="true" class="ui-icon icon-phone"></span></button></div>
+<div class="contact"><div class="contact-icon"><span aria-hidden="true" class="ui-icon icon-user"></span></div><div><strong>Tour Leader</strong><span>Hj. Prapti Kanthi Rahayu, S.I.Kom</span></div><button aria-label="Hubungi tour leader" class="contact-action"><span aria-hidden="true" class="ui-icon icon-phone"></span></button></div>
+<div class="contact"><div class="contact-icon"><span aria-hidden="true" class="ui-icon icon-help"></span></div><div><strong>Bantuan Jemaah</strong><span>Kontak resmi akan ditetapkan sebelum fitur diaktifkan.</span></div><button aria-label="Bantuan" class="contact-action">›</button></div>
+</div></article>
+</section>
+</main>
+</div>
+<nav aria-label="Navigasi cepat mobile" class="mobile-bottom-nav">
+<a class="is-active" href="#beranda"><span><span aria-hidden="true" class="ui-icon icon-home"></span></span><span>Beranda</span></a><a href="/program/umroh-semi-private-bengkulu/manasik/"><span><span aria-hidden="true" class="ui-icon icon-book"></span></span><span>Manasik</span></a><a href="#agenda"><span><span aria-hidden="true" class="ui-icon icon-calendar"></span></span><span>Agenda</span></a><a href="#bantuan"><span><span aria-hidden="true" class="ui-icon icon-help"></span></span><span>Bantuan</span></a><a href="#profil"><span><span aria-hidden="true" class="ui-icon icon-user"></span></span><span>Profil</span></a>
+</nav>
 <script src="../../assets/js/dashboard-shell.js"></script>
 </body>
 </html>

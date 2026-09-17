@@ -22,3 +22,9 @@
 .announcement span,.contact span,.announcement time{font-size:9px}
 
 .primary-action{text-decoration:none}
+
+/* Visual Asset System V1 integration */
+.quick-icon .ui-icon{width:1.2rem;height:1.2rem}
+.announcement-icon .ui-icon,.contact-icon .ui-icon{width:1rem;height:1rem}
+.contact-action .ui-icon{width:1rem;height:1rem}
+.mobile-bottom-nav .ui-icon{width:1.15rem;height:1.15rem}

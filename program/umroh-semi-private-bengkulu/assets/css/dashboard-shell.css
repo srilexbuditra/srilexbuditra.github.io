@@ -64,3 +64,8 @@ body.sidebar-compact .app-sidebar{width:var(--sidebar-compact)}body.sidebar-comp
 .stat-card span{font-size:11px}
 .badge{font-size:10px}
 .prototype-toast{font-size:11px}
+
+/* Visual Asset System V1 integration */
+.nav-icon .ui-icon{width:1.05rem;height:1.05rem}
+.search-box .ui-icon{width:1rem;height:1rem}
+.icon-button .ui-icon{width:1.05rem;height:1.05rem}

@@ -1,0 +1,44 @@
+/* Visual Asset System V1 — local, monochrome SVG icons via CSS masks. */
+.ui-icon{display:inline-block;width:1.15em;height:1.15em;flex:0 0 auto;background:currentColor;vertical-align:-.18em;mask-repeat:no-repeat;mask-position:center;mask-size:contain;-webkit-mask-repeat:no-repeat;-webkit-mask-position:center;-webkit-mask-size:contain}
+.icon-home{mask-image:url('../icons/home.svg');-webkit-mask-image:url('../icons/home.svg')}
+.icon-users{mask-image:url('../icons/users.svg');-webkit-mask-image:url('../icons/users.svg')}
+.icon-book{mask-image:url('../icons/book.svg');-webkit-mask-image:url('../icons/book.svg')}
+.icon-calendar{mask-image:url('../icons/calendar.svg');-webkit-mask-image:url('../icons/calendar.svg')}
+.icon-file{mask-image:url('../icons/file.svg');-webkit-mask-image:url('../icons/file.svg')}
+.icon-megaphone{mask-image:url('../icons/megaphone.svg');-webkit-mask-image:url('../icons/megaphone.svg')}
+.icon-chart{mask-image:url('../icons/chart.svg');-webkit-mask-image:url('../icons/chart.svg')}
+.icon-admin{mask-image:url('../icons/admin.svg');-webkit-mask-image:url('../icons/admin.svg')}
+.icon-settings{mask-image:url('../icons/settings.svg');-webkit-mask-image:url('../icons/settings.svg')}
+.icon-search{mask-image:url('../icons/search.svg');-webkit-mask-image:url('../icons/search.svg')}
+.icon-bell{mask-image:url('../icons/bell.svg');-webkit-mask-image:url('../icons/bell.svg')}
+.icon-checklist{mask-image:url('../icons/checklist.svg');-webkit-mask-image:url('../icons/checklist.svg')}
+.icon-help{mask-image:url('../icons/help.svg');-webkit-mask-image:url('../icons/help.svg')}
+.icon-user{mask-image:url('../icons/user.svg');-webkit-mask-image:url('../icons/user.svg')}
+.icon-suitcase{mask-image:url('../icons/suitcase.svg');-webkit-mask-image:url('../icons/suitcase.svg')}
+.icon-plane{mask-image:url('../icons/plane.svg');-webkit-mask-image:url('../icons/plane.svg')}
+.icon-heart{mask-image:url('../icons/heart.svg');-webkit-mask-image:url('../icons/heart.svg')}
+.icon-mosque{mask-image:url('../icons/mosque.svg');-webkit-mask-image:url('../icons/mosque.svg')}
+.icon-map-pin{mask-image:url('../icons/map-pin.svg');-webkit-mask-image:url('../icons/map-pin.svg')}
+.icon-scissors{mask-image:url('../icons/scissors.svg');-webkit-mask-image:url('../icons/scissors.svg')}
+.icon-ban{mask-image:url('../icons/ban.svg');-webkit-mask-image:url('../icons/ban.svg')}
+.icon-landmark{mask-image:url('../icons/landmark.svg');-webkit-mask-image:url('../icons/landmark.svg')}
+.icon-info{mask-image:url('../icons/info.svg');-webkit-mask-image:url('../icons/info.svg')}
+.icon-phone{mask-image:url('../icons/phone.svg');-webkit-mask-image:url('../icons/phone.svg')}
+.icon-alert{mask-image:url('../icons/alert.svg');-webkit-mask-image:url('../icons/alert.svg')}
+.icon-route{mask-image:url('../icons/route.svg');-webkit-mask-image:url('../icons/route.svg')}
+.icon-thawaf{mask-image:url('../icons/thawaf.svg');-webkit-mask-image:url('../icons/thawaf.svg')}
+.icon-sai{mask-image:url('../icons/sai.svg');-webkit-mask-image:url('../icons/sai.svg')}
+.icon-sparkles{mask-image:url('../icons/sparkles.svg');-webkit-mask-image:url('../icons/sparkles.svg')}
+.icon-lightbulb{mask-image:url('../icons/lightbulb.svg');-webkit-mask-image:url('../icons/lightbulb.svg')}
+.icon-passport{mask-image:url('../icons/passport.svg');-webkit-mask-image:url('../icons/passport.svg')}
+.icon-clipboard{mask-image:url('../icons/clipboard.svg');-webkit-mask-image:url('../icons/clipboard.svg')}
+.icon-clock{mask-image:url('../icons/clock.svg');-webkit-mask-image:url('../icons/clock.svg')}
+.icon-kaaba{mask-image:url('../icons/kaaba.svg');-webkit-mask-image:url('../icons/kaaba.svg')}
+
+/* Shared visual slots */
+.visual-chip{display:inline-flex;align-items:center;justify-content:center;width:2.4rem;height:2.4rem;border-radius:.85rem;background:var(--gold-soft,#fff6dc);color:var(--gold-strong,#a66d00)}
+.module-visual{display:flex;align-items:center;justify-content:center;width:3rem;height:3rem;border-radius:1rem;background:linear-gradient(135deg,#fff8e8,#f5ead0);color:#a66d00;margin-bottom:.8rem}
+.module-visual .ui-icon{width:1.45rem;height:1.45rem}
+.lesson-hero-icon{position:absolute;right:clamp(1.2rem,4vw,3rem);top:50%;transform:translateY(-50%);display:flex;align-items:center;justify-content:center;width:clamp(4.2rem,8vw,6.4rem);height:clamp(4.2rem,8vw,6.4rem);border-radius:1.6rem;background:rgba(255,255,255,.08);color:#e8c768;border:1px solid rgba(255,255,255,.1)}
+.lesson-hero-icon .ui-icon{width:52%;height:52%}
+@media(max-width:700px){.lesson-hero-icon{opacity:.35;right:1rem}.module-visual{width:2.65rem;height:2.65rem}}

@@ -42,3 +42,7 @@ Manasik Digital telah ditambahkan sebagai modul publik prototype di `/program/um
 Materi mengikuti bahan PowerPoint Manasik Umroh Semi Private Bengkulu yang diberikan untuk proyek, terdiri dari 11 materi: Persiapan Sebelum Berangkat, Ihram & Miqat, Talbiyah, Tata Cara Umroh, Thawaf, Sa’i, Tahallul, Larangan Ihram, Adab di Tanah Suci, Ziarah Madinah, dan Tips Selama Perjalanan.
 
 Progress baca pada V1 disimpan lokal di browser/perangkat dan belum terhubung ke akun atau database.
+
+
+## Visual Asset System V1
+Icon dan aturan gambar global berada di `VISUAL-ASSET-SYSTEM.md`. Icon SVG disimpan lokal di `assets/icons/` agar konsisten dengan CSP dan satu gaya visual. Foto asli Pembimbing Manasik/Tour Leader hanya digunakan jika aset diberikan dan diizinkan.
