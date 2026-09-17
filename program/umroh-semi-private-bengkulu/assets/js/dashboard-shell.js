@@ -15,10 +15,18 @@
   document.body.appendChild(toast);
 
   const showPrototypeNotice = (label) => {
-    toast.innerHTML = `<strong>${label}</strong>Modul ini sengaja belum diaktifkan pada Prototype V1. Fokus tahap ini adalah mengunci visual, navigasi, dan responsif.`;
+    toast.innerHTML = `<strong>${label}</strong>Modul ini sengaja belum diaktifkan pada Prototype V1.2. Fokus tahap ini adalah mengunci visual, navigasi, dan responsif.`;
     toast.classList.add('is-show');
     clearTimeout(toastTimer);
     toastTimer = setTimeout(() => toast.classList.remove('is-show'), 3200);
+  };
+
+  const setActiveNav = (item) => {
+    navItems.forEach(x => {
+      x.classList.toggle('is-active', x === item);
+      if (x === item) x.setAttribute('aria-current','page');
+      else x.removeAttribute('aria-current');
+    });
   };
 
   try {
@@ -37,15 +45,27 @@
   addEventListener('resize', () => { if (innerWidth > 900) closeMobile(); });
 
   navItems.forEach(item => item.addEventListener('click', (e) => {
-    navItems.forEach(x => x.classList.remove('is-active'));
-    item.classList.add('is-active');
     const href = item.getAttribute('href') || '';
-    if (href.startsWith('#') && !document.querySelector(href)) {
+    const target = href.startsWith('#') && href.length > 1 ? document.querySelector(href) : null;
+    const isHome = href === '#ringkasan' || href === '#beranda';
+
+    if (!target || (!isHome && !item.hasAttribute('data-live'))) {
       e.preventDefault();
       showPrototypeNotice(item.querySelector('.nav-label')?.textContent?.trim() || 'Modul');
+    } else {
+      setActiveNav(item);
     }
     if (innerWidth <= 900) closeMobile();
   }));
+
+  const initialHash = location.hash;
+  if (initialHash) {
+    const initialItem = navItems.find(item => item.getAttribute('href') === initialHash);
+    const target = document.querySelector(initialHash);
+    const isHome = initialHash === '#ringkasan' || initialHash === '#beranda';
+    if (initialItem && target && (isHome || initialItem.hasAttribute('data-live'))) setActiveNav(initialItem);
+    else if (history.replaceState) history.replaceState(null,'',location.pathname + location.search);
+  }
 
   tabs.forEach(tab => tab.addEventListener('click', () => {
     tabs.forEach(x => x.classList.remove('is-active'));
@@ -57,7 +77,9 @@
     const link = e.target.closest('a[href^="#"]');
     if (!link || link.hasAttribute('data-nav-item')) return;
     const href = link.getAttribute('href');
-    if (href && href !== '#' && !document.querySelector(href)) {
+    if (!href || href === '#') return;
+    const target = document.querySelector(href);
+    if (!target) {
       e.preventDefault();
       showPrototypeNotice(link.textContent.trim() || 'Fitur');
     }
