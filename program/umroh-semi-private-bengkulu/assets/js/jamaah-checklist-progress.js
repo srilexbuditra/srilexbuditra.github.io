@@ -1,22 +1,27 @@
 (() => {
-  const key = 'umroh-checklist-progress-v1';
-  const total = 12;
-  const valid = new Set(['ready','na']);
-  const read = () => {
+  'use strict';
+
+  const API_BASE = 'https://umroh-api.srilexbuditra.work';
+
+  const render = async () => {
     try {
-      const value = JSON.parse(localStorage.getItem(key) || '{}');
-      return value && typeof value === 'object' ? value : {};
-    } catch (_) { return {}; }
+      const response = await fetch(`${API_BASE}/jamaah/progress/checklist`, {
+        credentials: 'include',
+        cache: 'no-store',
+        headers: { Accept: 'application/json' }
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok || !data?.ok) return;
+
+      const done = Number(data.progress?.reviewed || 0);
+      const total = Number(data.progress?.total || 12);
+      document.querySelectorAll('[data-checklist-summary]').forEach((el) => {
+        el.textContent = `${done} dari ${total} diperiksa · D1`;
+      });
+    } catch (_) {}
   };
-  const render = () => {
-    const state = read();
-    const done = Object.values(state).filter(value => valid.has(value)).length;
-    document.querySelectorAll('[data-checklist-summary]').forEach(el => {
-      el.textContent = `${Math.min(done,total)} dari ${total} diperiksa`;
-    });
-  };
+
   render();
   addEventListener('pageshow', render);
   addEventListener('focus', render);
-  addEventListener('storage', event => { if (event.key === key) render(); });
 })();

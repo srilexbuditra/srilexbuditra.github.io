@@ -1,4 +1,4 @@
-const API_VERSION = "3.4.5";
+const API_VERSION = "3.4.6";
 const COOKIE_NAME = "umroh_session";
 const DEFAULT_SESSION_AGE = 60 * 60 * 24 * 7;
 const PASSWORD_ITERATIONS = 100000;
@@ -41,6 +41,13 @@ const AGENDA_SYNC_EVENTS = [
     location_text: "Titik kumpul belum dikonfirmasi",
   },
 ];
+
+const DASHBOARD_PROGRESS_WEIGHTS = Object.freeze({
+  manasik: 35,
+  checklist: 35,
+  documents: 20,
+  agenda: 10,
+});
 
 export default {
   async fetch(request, env) {
@@ -91,6 +98,10 @@ export default {
 
 
 
+
+      if (request.method === "GET" && path === "/jamaah/progress/summary") {
+        return getOwnProgressSummary(request, env);
+      }
 
       if (request.method === "GET" && path === "/jamaah/progress/manasik") {
         return getOwnManasikProgress(request, env);
@@ -601,6 +612,103 @@ function publicAccount(account) {
 
 
 
+
+
+function progressFraction(done, total) {
+  if (!total) return 0;
+  return Math.max(0, Math.min(1, Number(done || 0) / Number(total || 1)));
+}
+
+function progressPercent(done, total) {
+  return Math.round(progressFraction(done, total) * 100);
+}
+
+async function documentProgressPayload(env, accountId) {
+  const row = await env.DB.prepare(`
+    SELECT
+      COUNT(CASE WHEN f.file_uuid IS NOT NULL THEN 1 END) AS uploaded_count,
+      COUNT(CASE
+        WHEN f.file_uuid IS NOT NULL AND s.admin_status = 'verified' THEN 1
+      END) AS verified_count
+    FROM umroh_document_status s
+    LEFT JOIN umroh_document_files f
+      ON f.account_id = s.account_id
+     AND f.document_key = s.document_key
+     AND f.is_current = 1
+    WHERE s.account_id = ?
+      AND s.document_key IN (
+        'paspor-dokumen',
+        'tiket-itinerary',
+        'identitas-jemaah',
+        'dokumen-kesehatan'
+      )
+  `).bind(accountId).first();
+
+  const uploaded = Number(row?.uploaded_count || 0);
+  const verified = Number(row?.verified_count || 0);
+
+  return {
+    uploaded,
+    verified,
+    total: DOCUMENT_KEYS.size,
+    percent: progressPercent(verified, DOCUMENT_KEYS.size),
+  };
+}
+
+async function getOwnProgressSummary(request, env) {
+  const gate = await requireJamaah(request, env);
+  if (gate.response) return gate.response;
+
+  const manasik = await manasikProgressPayload(env, gate.account.id);
+  const checklist = await checklistProgressPayload(env, gate.account.id);
+  const documents = await documentProgressPayload(env, gate.account.id);
+  const agenda = await agendaProgressPayload(env, gate.account.id);
+
+  const manasikFraction = progressFraction(manasik.done, manasik.total);
+  const checklistFraction = progressFraction(checklist.reviewed, checklist.total);
+  const documentsFraction = progressFraction(documents.verified, documents.total);
+  const agendaFraction = progressFraction(agenda.done, agenda.total);
+
+  const total = Math.round(
+    manasikFraction * DASHBOARD_PROGRESS_WEIGHTS.manasik +
+    checklistFraction * DASHBOARD_PROGRESS_WEIGHTS.checklist +
+    documentsFraction * DASHBOARD_PROGRESS_WEIGHTS.documents +
+    agendaFraction * DASHBOARD_PROGRESS_WEIGHTS.agenda
+  );
+
+  return json(request, env, {
+    ok: true,
+    progress: {
+      total,
+      weights: DASHBOARD_PROGRESS_WEIGHTS,
+      modules: {
+        manasik: {
+          done: manasik.done,
+          total: manasik.total,
+          percent: progressPercent(manasik.done, manasik.total),
+        },
+        checklist: {
+          done: checklist.reviewed,
+          total: checklist.total,
+          percent: progressPercent(checklist.reviewed, checklist.total),
+        },
+        documents: {
+          uploaded: documents.uploaded,
+          verified: documents.verified,
+          total: documents.total,
+          percent: documents.percent,
+        },
+        agenda: {
+          done: agenda.done,
+          total: agenda.total,
+          percent: progressPercent(agenda.done, agenda.total),
+        },
+      },
+      source: "backend_d1",
+      generated_at: new Date().toISOString(),
+    },
+  });
+}
 
 async function manasikProgressPayload(env, accountId) {
   const result = await env.DB.prepare(`
