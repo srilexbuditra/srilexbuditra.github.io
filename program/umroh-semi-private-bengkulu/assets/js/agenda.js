@@ -116,10 +116,12 @@
 
       source.simulation = false;
 
-      const departureEvent = source.events.find((event) =>
-        String(event.category || '').toLowerCase().includes('keberangkatan') ||
-        String(event.title || '').toLowerCase().includes('keberangkatan')
-      );
+      const departureEvent =
+        source.events.find((event) => event.id === 'keberangkatan') ||
+        source.events.find((event) =>
+          String(event.category || '').trim().toLowerCase() === 'keberangkatan'
+        ) ||
+        null;
 
       source.departure = departureEvent ? {
         date: departureEvent.date,

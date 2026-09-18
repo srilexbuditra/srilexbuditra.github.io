@@ -52,10 +52,12 @@
       }
     }
 
-    const departure = events.find((event) =>
-      String(event.category || '').toLowerCase().includes('keberangkatan') ||
-      String(event.title || '').toLowerCase().includes('keberangkatan')
-    );
+    const departure =
+      events.find((event) => event.event_key === 'keberangkatan') ||
+      events.find((event) =>
+        String(event.category || '').trim().toLowerCase() === 'keberangkatan'
+      ) ||
+      null;
 
     if (departure?.starts_at) {
       if (departureDate) {
