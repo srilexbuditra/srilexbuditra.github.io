@@ -11,7 +11,7 @@
 <link href="../../assets/css/admin-dashboard.css" rel="stylesheet"/>
 <link href="../../assets/css/visual-assets.css" rel="stylesheet"/>
 <link href="../../assets/css/admin-auth.css" rel="stylesheet"/>
-<link href="../../assets/css/admin-manasik.css" rel="stylesheet"/>
+<link href="../../assets/css/admin-manasik.css?v=3.9.0-step2" rel="stylesheet"/>
 </head>
 <body class="dashboard-app admin-dashboard">
 <aside aria-label="Navigasi admin" class="app-sidebar">
@@ -60,15 +60,77 @@
 <div class="admin-manasik-dialog-head"><div><span class="page-kicker">Materi Resmi</span><h2 id="manasikDialogTitle" data-manasik-dialog-title>Edit Materi</h2></div><button aria-label="Tutup" data-manasik-close type="button">×</button></div>
 <form data-manasik-form>
 <input name="id" type="hidden"/>
+<input name="material_key" type="hidden"/>
+
+<nav class="admin-editor-tabs" aria-label="Bagian editor materi">
+<button class="is-active" data-editor-tab="content" type="button">Konten</button>
+<button data-editor-tab="media" type="button">Media</button>
+<button data-editor-tab="seo" type="button">SEO</button>
+<button data-editor-tab="schema" type="button">Schema</button>
+<button data-editor-tab="analytics" type="button">Analytics</button>
+</nav>
+
+<section class="admin-editor-panel is-active" data-editor-panel="content">
 <div class="admin-manasik-form-grid">
 <label>Urutan<input min="1" max="99" name="sort_order" required type="number"/></label>
 <label class="admin-manasik-publish"><input name="is_published" type="checkbox"/> <span>Publikasikan ke Jemaah</span></label>
 <label class="wide">Judul<input maxlength="180" name="title" required/></label>
 <label class="wide">Ringkasan<textarea maxlength="500" name="summary" rows="3" required></textarea></label>
 </div>
-
 <div class="admin-block-head"><div><strong>Isi Materi</strong><span>Gunakan blok agar teks tetap aman dan konsisten di semua perangkat.</span></div><button data-block-add type="button">+ Tambah Bagian</button></div>
 <div class="admin-blocks" data-blocks></div>
+</section>
+
+<section class="admin-editor-panel" data-editor-panel="media" hidden>
+<div class="admin-meta-intro"><strong>Media &amp; Preview</strong><span>Gunakan URL HTTPS atau path publik situs. Upload file langsung ke media bucket akan ditambahkan pada tahap berikutnya.</span></div>
+<div class="admin-meta-grid">
+<label class="wide">Banner URL<input name="banner_url" maxlength="1200" placeholder="/program/.../assets/banner.avif atau https://..."/></label>
+<label class="wide">Thumbnail URL<input name="thumbnail_url" maxlength="1200" placeholder="Opsional"/></label>
+<label class="wide">Open Graph Image URL<input name="og_image_url" maxlength="1200" placeholder="Disarankan 1200 × 630"/></label>
+<label class="wide">Twitter Image URL<input name="twitter_image_url" maxlength="1200" placeholder="Kosongkan untuk mengikuti Open Graph saat publish statis"/></label>
+<label class="wide">Alt Text<input name="image_alt" maxlength="300" placeholder="Deskripsi gambar yang bermakna"/></label>
+<label class="wide">Caption<textarea name="image_caption" maxlength="500" rows="3" placeholder="Opsional"></textarea></label>
+</div>
+<div class="admin-media-preview" data-media-preview-wrap hidden><img data-media-preview alt="Preview banner"/></div>
+</section>
+
+<section class="admin-editor-panel" data-editor-panel="seo" hidden>
+<div class="admin-meta-intro"><strong>SEO &amp; Social Preview</strong><span>Data ini tersimpan di D1. Karena halaman publik masih GitHub Pages statis, crawler membaca tag HTML yang terakhir dideploy.</span></div>
+<div class="admin-meta-grid">
+<label class="wide">Page Key<input name="page_key" readonly/></label>
+<label class="wide">Page Path<input name="page_path" readonly/></label>
+<label class="wide">SEO Title<input name="seo_title" maxlength="180" required/></label>
+<label class="wide">Meta Description<textarea name="meta_description" maxlength="320" rows="3" required></textarea></label>
+<label class="wide">Canonical URL<input name="canonical_url" maxlength="1200" type="url" required/></label>
+<label>Robots<select name="robots"><option value="index,follow">index,follow</option><option value="index,nofollow">index,nofollow</option><option value="noindex,follow">noindex,follow</option><option value="noindex,nofollow">noindex,nofollow</option><option value="noindex,nofollow,noarchive">noindex,nofollow,noarchive</option></select></label>
+<label>Theme Color<input name="theme_color" maxlength="7" pattern="#[0-9A-Fa-f]{6}"/></label>
+<label>OG Type<select name="og_type"><option value="article">article</option><option value="website">website</option></select></label>
+<label>Locale<input name="locale" maxlength="5" pattern="[a-z]{2}_[A-Z]{2}"/></label>
+<label class="wide">OG Title<input name="og_title" maxlength="200"/></label>
+<label class="wide">OG Description<textarea name="og_description" maxlength="500" rows="3"></textarea></label>
+<label class="wide">Twitter Title<input name="twitter_title" maxlength="200"/></label>
+<label class="wide">Twitter Description<textarea name="twitter_description" maxlength="500" rows="3"></textarea></label>
+<label>Author<input name="author_name" maxlength="180"/></label>
+<label>Publisher<input name="publisher_name" maxlength="180"/></label>
+</div>
+</section>
+
+<section class="admin-editor-panel" data-editor-panel="schema" hidden>
+<div class="admin-meta-intro"><strong>Structured Data</strong><span>Platform menggunakan JSON-LD sebagai format schema utama. Isi JSON bersifat opsional; schema dasar dapat dibentuk dari tipe dan metadata halaman.</span></div>
+<div class="admin-meta-grid">
+<label>Schema Type<select name="schema_type"><option>Article</option><option>WebPage</option><option>CollectionPage</option><option>AboutPage</option><option>FAQPage</option><option>HowTo</option><option>Event</option></select></label>
+<label class="wide">Schema JSON-LD Override<textarea name="schema_json" rows="12" spellcheck="false" placeholder='{"@context":"https://schema.org","@type":"Article",...}'></textarea><small>Harus berupa JSON valid. Jangan masukkan script tag.</small></label>
+</div>
+</section>
+
+<section class="admin-editor-panel" data-editor-panel="analytics" hidden>
+<div class="admin-meta-intro"><strong>Analytics Preference</strong><span>Event Umroh tetap melewati <code>/assets/js/visitor-analytics.js</code> dan hanya aktif sesuai izin Privasi &amp; Analitik. Jangan kirim PII ke GA4.</span></div>
+<div class="admin-analytics-options">
+<label><input name="analytics_enabled" type="checkbox"/> <span><strong>Analytics halaman</strong><small>Izinkan event modul untuk halaman ini.</small></span></label>
+<label><input name="analytics_scroll_enabled" type="checkbox"/> <span><strong>Scroll depth</strong><small>Aktifkan pengukuran kedalaman baca saat event modul tersedia.</small></span></label>
+<label><input name="analytics_cta_enabled" type="checkbox"/> <span><strong>CTA / navigasi</strong><small>Aktifkan event tombol dan navigasi yang relevan.</small></span></label>
+</div>
+</section>
 
 <p class="admin-manasik-message" data-manasik-message hidden></p>
 <div class="admin-manasik-form-actions"><button data-manasik-close type="button">Batal</button><button class="admin-manasik-primary" data-manasik-submit type="submit">Simpan Materi</button></div>
@@ -78,6 +140,6 @@
 
 <script src="../../assets/js/admin-auth-guard.js?v=3.8.0"></script>
 <script src="../../assets/js/dashboard-shell.js"></script>
-<script src="../../assets/js/admin-manasik.js?v=3.8.0"></script>
+<script src="../../assets/js/admin-manasik.js?v=3.9.0-step2"></script>
 </body>
 </html>

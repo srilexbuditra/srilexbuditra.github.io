@@ -9,6 +9,9 @@ const DOCUMENT_KEYS = new Set(["paspor-dokumen", "tiket-itinerary", "identitas-j
 const DOCUMENT_MIME = new Set(["application/pdf", "image/jpeg", "image/png"]);
 const MANASIK_KEYS = new Set(["persiapan", "ihram-miqat", "talbiyah", "tata-cara-umroh", "thawaf", "sai", "tahallul", "larangan-ihram", "adab-tanah-suci", "ziarah-madinah", "tips-perjalanan"]);
 const MANASIK_BLOCK_TYPES = new Set(["section", "arabic", "note", "steps", "tips"]);
+const PAGE_META_ROBOTS = new Set(["index,follow", "index,nofollow", "noindex,follow", "noindex,nofollow", "noindex,nofollow,noarchive"]);
+const PAGE_META_OG_TYPES = new Set(["website", "article"]);
+const PAGE_META_SCHEMA_TYPES = new Set(["WebPage", "Article", "CollectionPage", "AboutPage", "FAQPage", "HowTo", "Event"]);
 const CHECKLIST_KEYS = new Set(["paspor-dokumen", "tiket-itinerary", "identitas-jemaah", "dokumen-kesehatan", "kain-ihram", "mukena-pakaian-muslim", "alas-kaki", "obat-kebutuhan-pribadi", "pelajari-tata-cara", "hafalkan-niat-talbiyah", "jaga-fisik-istirahat", "ikuti-arahan"]);
 const AGENDA_SYNC_KEYS = new Set(["manasik-tata-cara", "pemeriksaan-dokumen", "briefing-keberangkatan", "keberangkatan"]);
 const AGENDA_SYNC_SENTINEL = "__agenda-read-sync-v1__";
@@ -842,6 +845,142 @@ function normalizeManasikBlocks(value) {
   });
 }
 
+function nullableTrim(value, maxLength) {
+  const text = truncate(String(value ?? "").trim(), maxLength);
+  return text || null;
+}
+
+function normalizeCanonicalUrl(value, fallbackPath) {
+  const raw = String(value || "").trim() || `https://srilexbuditra.work${fallbackPath}`;
+  let parsed;
+  try { parsed = new URL(raw); } catch (_) { throw new Error("invalid_canonical_url"); }
+  if (parsed.protocol !== "https:" || parsed.hostname !== "srilexbuditra.work") {
+    throw new Error("invalid_canonical_url");
+  }
+  parsed.hash = "";
+  return truncate(parsed.toString(), 1200);
+}
+
+function normalizePublicMediaUrl(value) {
+  const raw = String(value || "").trim();
+  if (!raw) return null;
+  if (raw.startsWith("/") && !raw.startsWith("//")) return truncate(raw, 1200);
+  let parsed;
+  try { parsed = new URL(raw); } catch (_) { throw new Error("invalid_media_url"); }
+  if (parsed.protocol !== "https:") throw new Error("invalid_media_url");
+  return truncate(parsed.toString(), 1200);
+}
+
+function normalizePageMetaForManasik(rawMeta, material) {
+  const meta = rawMeta && typeof rawMeta === "object" ? rawMeta : {};
+  const pagePath = `/program/umroh-semi-private-bengkulu/manasik/${material.material_key}/`;
+  const defaultTitle = `${material.title} | Manasik Digital Umroh Semi Private Bengkulu`;
+  const defaultDescription = material.summary || `Materi Manasik Digital ${material.title}.`;
+
+  const seoTitle = truncate(String(meta.seo_title || defaultTitle).trim(), 180);
+  const metaDescription = truncate(String(meta.meta_description || defaultDescription).trim(), 320);
+  if (!seoTitle) throw new Error("seo_title_required");
+  if (!metaDescription) throw new Error("meta_description_required");
+
+  const robots = String(meta.robots || "index,follow").trim().toLowerCase();
+  if (!PAGE_META_ROBOTS.has(robots)) throw new Error("invalid_robots");
+
+  const themeColor = String(meta.theme_color || "#0b2830").trim();
+  if (!/^#[0-9a-f]{6}$/i.test(themeColor)) throw new Error("invalid_theme_color");
+
+  const ogType = String(meta.og_type || "article").trim().toLowerCase();
+  if (!PAGE_META_OG_TYPES.has(ogType)) throw new Error("invalid_og_type");
+
+  const schemaType = String(meta.schema_type || "Article").trim();
+  if (!PAGE_META_SCHEMA_TYPES.has(schemaType)) throw new Error("invalid_schema_type");
+
+  let schemaJson = null;
+  const rawSchema = String(meta.schema_json || "").trim();
+  if (rawSchema) {
+    try {
+      const parsed = JSON.parse(rawSchema);
+      if (!parsed || typeof parsed !== "object") throw new Error("invalid_schema_json");
+      schemaJson = JSON.stringify(parsed);
+      if (schemaJson.length > 12000) throw new Error("schema_json_too_large");
+    } catch (error) {
+      if (error?.message === "schema_json_too_large") throw error;
+      throw new Error("invalid_schema_json");
+    }
+  }
+
+  const locale = String(meta.locale || "id_ID").trim();
+  if (!/^[a-z]{2}_[A-Z]{2}$/.test(locale)) throw new Error("invalid_locale");
+
+  for (const key of ["analytics_enabled", "analytics_scroll_enabled", "analytics_cta_enabled"]) {
+    if (meta[key] !== undefined && typeof meta[key] !== "boolean") throw new Error("invalid_analytics_setting");
+  }
+
+  return {
+    page_key: `manasik:${material.material_key}`,
+    page_type: "manasik_material",
+    page_path: pagePath,
+    seo_title: seoTitle,
+    meta_description: metaDescription,
+    canonical_url: normalizeCanonicalUrl(meta.canonical_url, pagePath),
+    robots,
+    theme_color: themeColor.toLowerCase(),
+    og_type: ogType,
+    og_title: nullableTrim(meta.og_title || seoTitle, 200),
+    og_description: nullableTrim(meta.og_description || metaDescription, 500),
+    og_image_url: normalizePublicMediaUrl(meta.og_image_url),
+    twitter_title: nullableTrim(meta.twitter_title || meta.og_title || seoTitle, 200),
+    twitter_description: nullableTrim(meta.twitter_description || meta.og_description || metaDescription, 500),
+    twitter_image_url: normalizePublicMediaUrl(meta.twitter_image_url),
+    banner_url: normalizePublicMediaUrl(meta.banner_url),
+    thumbnail_url: normalizePublicMediaUrl(meta.thumbnail_url),
+    image_alt: nullableTrim(meta.image_alt, 300),
+    image_caption: nullableTrim(meta.image_caption, 500),
+    schema_type: schemaType,
+    schema_json: schemaJson,
+    author_name: nullableTrim(meta.author_name || "Srilex Buditra", 180),
+    publisher_name: nullableTrim(meta.publisher_name || "Umroh Semi Private Bengkulu", 180),
+    locale,
+    analytics_enabled: meta.analytics_enabled !== false,
+    analytics_scroll_enabled: meta.analytics_scroll_enabled !== false,
+    analytics_cta_enabled: meta.analytics_cta_enabled !== false,
+  };
+}
+
+function pageMetaPayload(row) {
+  if (!row || row.page_meta_id == null) return null;
+  return {
+    id: Number(row.page_meta_id),
+    page_key: row.page_key,
+    page_type: row.page_type,
+    page_path: row.page_path,
+    seo_title: row.seo_title || "",
+    meta_description: row.meta_description || "",
+    canonical_url: row.canonical_url || "",
+    robots: row.robots || "index,follow",
+    theme_color: row.theme_color || "#0b2830",
+    og_type: row.og_type || "website",
+    og_title: row.og_title || "",
+    og_description: row.og_description || "",
+    og_image_url: row.og_image_url || "",
+    twitter_title: row.twitter_title || "",
+    twitter_description: row.twitter_description || "",
+    twitter_image_url: row.twitter_image_url || "",
+    banner_url: row.banner_url || "",
+    thumbnail_url: row.thumbnail_url || "",
+    image_alt: row.image_alt || "",
+    image_caption: row.image_caption || "",
+    schema_type: row.schema_type || "WebPage",
+    schema_json: row.schema_json || "",
+    author_name: row.author_name || "",
+    publisher_name: row.publisher_name || "",
+    locale: row.locale || "id_ID",
+    analytics_enabled: Number(row.analytics_enabled ?? 1) === 1,
+    analytics_scroll_enabled: Number(row.analytics_scroll_enabled ?? 1) === 1,
+    analytics_cta_enabled: Number(row.analytics_cta_enabled ?? 1) === 1,
+    updated_at: row.page_meta_updated_at || null,
+  };
+}
+
 function manasikMaterialPayload(row, includeContent = false) {
   const payload = {
     id: Number(row.id),
@@ -855,6 +994,7 @@ function manasikMaterialPayload(row, includeContent = false) {
     updated_at: row.updated_at || null,
   };
   if (row.complete_count !== undefined) payload.complete_count = Number(row.complete_count || 0);
+  if (row.page_meta_id !== undefined) payload.page_meta = pageMetaPayload(row);
   if (includeContent) payload.content = safeJsonArray(row.content_json);
   return payload;
 }
@@ -932,11 +1072,21 @@ async function listAdminManasikMaterials(request, env) {
     SELECT
       m.id, m.material_key, m.sort_order, m.title, m.summary, m.icon_key,
       m.content_json, m.is_published, m.published_at, m.updated_at,
-      COUNT(CASE WHEN p.status = 'complete' THEN 1 END) AS complete_count
+      COUNT(CASE WHEN p.status = 'complete' THEN 1 END) AS complete_count,
+      pm.id AS page_meta_id, pm.page_key, pm.page_type, pm.page_path,
+      pm.seo_title, pm.meta_description, pm.canonical_url, pm.robots, pm.theme_color,
+      pm.og_type, pm.og_title, pm.og_description, pm.og_image_url,
+      pm.twitter_title, pm.twitter_description, pm.twitter_image_url,
+      pm.banner_url, pm.thumbnail_url, pm.image_alt, pm.image_caption,
+      pm.schema_type, pm.schema_json, pm.author_name, pm.publisher_name, pm.locale,
+      pm.analytics_enabled, pm.analytics_scroll_enabled, pm.analytics_cta_enabled,
+      pm.updated_at AS page_meta_updated_at
     FROM umroh_manasik_materials m
     LEFT JOIN umroh_progress_items p
       ON p.module = 'manasik'
      AND p.item_key = m.material_key
+    LEFT JOIN umroh_page_meta pm
+      ON pm.page_key = ('manasik:' || m.material_key)
     GROUP BY m.id
     ORDER BY m.sort_order ASC, m.id ASC
   `).all();
@@ -999,32 +1149,98 @@ async function updateAdminManasikMaterial(request, env, materialId) {
     return json(request, env, { ok: false, error: error.message || "invalid_manasik_content" }, 400);
   }
 
+  let pageMeta;
+  try {
+    pageMeta = normalizePageMetaForManasik(body.page_meta, {
+      material_key: current.material_key,
+      title,
+      summary,
+    });
+  } catch (error) {
+    return json(request, env, { ok: false, error: error.message || "invalid_page_meta" }, 400);
+  }
+
   const now = new Date().toISOString();
   const wasPublished = Number(current.is_published || 0) === 1;
   const publishedAt = isPublished
     ? (wasPublished && current.published_at ? current.published_at : now)
     : null;
 
-  await env.DB.prepare(`
-    UPDATE umroh_manasik_materials
-    SET sort_order = ?,
-        title = ?,
-        summary = ?,
-        content_json = ?,
-        is_published = ?,
-        published_at = ?,
-        updated_at = ?
-    WHERE id = ?
-  `).bind(
-    sortOrder,
-    title,
-    summary,
-    JSON.stringify(content),
-    isPublished ? 1 : 0,
-    publishedAt,
-    now,
-    materialId
-  ).run();
+  await env.DB.batch([
+    env.DB.prepare(`
+      UPDATE umroh_manasik_materials
+      SET sort_order = ?,
+          title = ?,
+          summary = ?,
+          content_json = ?,
+          is_published = ?,
+          published_at = ?,
+          updated_at = ?
+      WHERE id = ?
+    `).bind(
+      sortOrder,
+      title,
+      summary,
+      JSON.stringify(content),
+      isPublished ? 1 : 0,
+      publishedAt,
+      now,
+      materialId
+    ),
+    env.DB.prepare(`
+      INSERT INTO umroh_page_meta (
+        page_key, page_type, page_path,
+        seo_title, meta_description, canonical_url, robots, theme_color,
+        og_type, og_title, og_description, og_image_url,
+        twitter_title, twitter_description, twitter_image_url,
+        banner_url, thumbnail_url, image_alt, image_caption,
+        schema_type, schema_json, author_name, publisher_name, locale,
+        analytics_enabled, analytics_scroll_enabled, analytics_cta_enabled,
+        created_at, updated_at
+      ) VALUES (
+        ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+      )
+      ON CONFLICT(page_key) DO UPDATE SET
+        page_type = excluded.page_type,
+        page_path = excluded.page_path,
+        seo_title = excluded.seo_title,
+        meta_description = excluded.meta_description,
+        canonical_url = excluded.canonical_url,
+        robots = excluded.robots,
+        theme_color = excluded.theme_color,
+        og_type = excluded.og_type,
+        og_title = excluded.og_title,
+        og_description = excluded.og_description,
+        og_image_url = excluded.og_image_url,
+        twitter_title = excluded.twitter_title,
+        twitter_description = excluded.twitter_description,
+        twitter_image_url = excluded.twitter_image_url,
+        banner_url = excluded.banner_url,
+        thumbnail_url = excluded.thumbnail_url,
+        image_alt = excluded.image_alt,
+        image_caption = excluded.image_caption,
+        schema_type = excluded.schema_type,
+        schema_json = excluded.schema_json,
+        author_name = excluded.author_name,
+        publisher_name = excluded.publisher_name,
+        locale = excluded.locale,
+        analytics_enabled = excluded.analytics_enabled,
+        analytics_scroll_enabled = excluded.analytics_scroll_enabled,
+        analytics_cta_enabled = excluded.analytics_cta_enabled,
+        updated_at = excluded.updated_at
+    `).bind(
+      pageMeta.page_key, pageMeta.page_type, pageMeta.page_path,
+      pageMeta.seo_title, pageMeta.meta_description, pageMeta.canonical_url, pageMeta.robots, pageMeta.theme_color,
+      pageMeta.og_type, pageMeta.og_title, pageMeta.og_description, pageMeta.og_image_url,
+      pageMeta.twitter_title, pageMeta.twitter_description, pageMeta.twitter_image_url,
+      pageMeta.banner_url, pageMeta.thumbnail_url, pageMeta.image_alt, pageMeta.image_caption,
+      pageMeta.schema_type, pageMeta.schema_json, pageMeta.author_name, pageMeta.publisher_name, pageMeta.locale,
+      pageMeta.analytics_enabled ? 1 : 0,
+      pageMeta.analytics_scroll_enabled ? 1 : 0,
+      pageMeta.analytics_cta_enabled ? 1 : 0,
+      now, now
+    ),
+  ]);
 
   let action = "manasik_updated";
   if (!wasPublished && isPublished) action = "manasik_published";
@@ -1043,15 +1259,27 @@ async function updateAdminManasikMaterial(request, env, materialId) {
       title,
       sort_order: sortOrder,
       is_published: isPublished,
+      page_meta_key: pageMeta.page_key,
+      page_meta_updated: true,
     }),
     now
   ).run();
 
   const updated = await env.DB.prepare(`
-    SELECT id, material_key, sort_order, title, summary, icon_key, content_json,
-           is_published, published_at, updated_at
-    FROM umroh_manasik_materials
-    WHERE id = ?
+    SELECT
+      m.id, m.material_key, m.sort_order, m.title, m.summary, m.icon_key, m.content_json,
+      m.is_published, m.published_at, m.updated_at,
+      pm.id AS page_meta_id, pm.page_key, pm.page_type, pm.page_path,
+      pm.seo_title, pm.meta_description, pm.canonical_url, pm.robots, pm.theme_color,
+      pm.og_type, pm.og_title, pm.og_description, pm.og_image_url,
+      pm.twitter_title, pm.twitter_description, pm.twitter_image_url,
+      pm.banner_url, pm.thumbnail_url, pm.image_alt, pm.image_caption,
+      pm.schema_type, pm.schema_json, pm.author_name, pm.publisher_name, pm.locale,
+      pm.analytics_enabled, pm.analytics_scroll_enabled, pm.analytics_cta_enabled,
+      pm.updated_at AS page_meta_updated_at
+    FROM umroh_manasik_materials m
+    LEFT JOIN umroh_page_meta pm ON pm.page_key = ('manasik:' || m.material_key)
+    WHERE m.id = ?
     LIMIT 1
   `).bind(materialId).first();
 
