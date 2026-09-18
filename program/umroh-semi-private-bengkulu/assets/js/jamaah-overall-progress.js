@@ -94,13 +94,14 @@
 
     const copy = document.querySelector('[data-overall-progress-copy]');
     if (copy) {
-      copy.textContent = 'Progress tersimpan lokal di browser ini dan belum terhubung ke akun jemaah.';
+      copy.textContent = 'Manasik sudah tersinkron ke akun. Perhitungan total masih masa transisi karena Checklist dan Agenda belum dipindahkan ke D1.';
     }
   };
 
   render();
   addEventListener('pageshow', render);
   addEventListener('focus', render);
+  addEventListener('umroh:manasik-progress-synced', render);
   addEventListener('storage', event => {
     if (Object.values(keys).includes(event.key)) render();
   });

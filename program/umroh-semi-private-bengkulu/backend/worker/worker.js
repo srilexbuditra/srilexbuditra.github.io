@@ -1,4 +1,4 @@
-const API_VERSION = "3.4.2";
+const API_VERSION = "3.4.3";
 const COOKIE_NAME = "umroh_session";
 const DEFAULT_SESSION_AGE = 60 * 60 * 24 * 7;
 const PASSWORD_ITERATIONS = 100000;
@@ -7,6 +7,7 @@ const STAFF_ACTIVATION_AGE = 60 * 60 * 24;
 const MAX_DOCUMENT_BYTES = 5 * 1024 * 1024;
 const DOCUMENT_KEYS = new Set(["paspor-dokumen", "tiket-itinerary", "identitas-jemaah", "dokumen-kesehatan"]);
 const DOCUMENT_MIME = new Set(["application/pdf", "image/jpeg", "image/png"]);
+const MANASIK_KEYS = new Set(["persiapan", "ihram-miqat", "talbiyah", "tata-cara-umroh", "thawaf", "sai", "tahallul", "larangan-ihram", "adab-tanah-suci", "ziarah-madinah", "tips-perjalanan"]);
 
 export default {
   async fetch(request, env) {
@@ -56,6 +57,20 @@ export default {
       }
 
 
+
+
+      if (request.method === "GET" && path === "/jamaah/progress/manasik") {
+        return getOwnManasikProgress(request, env);
+      }
+
+      if (request.method === "POST" && path === "/jamaah/progress/manasik/import") {
+        return importOwnManasikProgress(request, env);
+      }
+
+      const manasikProgressMatch = path.match(/^\/jamaah\/progress\/manasik\/([a-z0-9-]+)$/i);
+      if (manasikProgressMatch && request.method === "PATCH") {
+        return updateOwnManasikProgress(request, env, manasikProgressMatch[1]);
+      }
 
       if (request.method === "GET" && path === "/jamaah/documents") {
         return listOwnDocuments(request, env);
@@ -524,6 +539,121 @@ function publicAccount(account) {
 
 
 
+
+
+async function manasikProgressPayload(env, accountId) {
+  const result = await env.DB.prepare(`
+    SELECT item_key, status, updated_at
+    FROM umroh_progress_items
+    WHERE account_id = ? AND module = 'manasik'
+    ORDER BY item_key
+  `).bind(accountId).all();
+
+  const rows = (result.results || []).filter((row) => MANASIK_KEYS.has(row.item_key));
+  const done = rows.filter((row) => row.status === "complete").length;
+
+  return {
+    initialized: rows.length > 0,
+    done,
+    total: MANASIK_KEYS.size,
+    items: rows.map((row) => ({
+      item_key: row.item_key,
+      status: row.status,
+      updated_at: row.updated_at,
+    })),
+  };
+}
+
+async function getOwnManasikProgress(request, env) {
+  const gate = await requireJamaah(request, env);
+  if (gate.response) return gate.response;
+
+  const progress = await manasikProgressPayload(env, gate.account.id);
+  return json(request, env, { ok: true, progress });
+}
+
+async function updateOwnManasikProgress(request, env, itemKey) {
+  const gate = await requireJamaah(request, env);
+  if (gate.response) return gate.response;
+
+  if (!MANASIK_KEYS.has(itemKey)) {
+    return json(request, env, { ok: false, error: "invalid_progress_item" }, 400);
+  }
+
+  const body = await readJson(request);
+  if (typeof body.complete !== "boolean") {
+    return json(request, env, { ok: false, error: "invalid_progress_status" }, 400);
+  }
+
+  const status = body.complete ? "complete" : "pending";
+  const now = new Date().toISOString();
+
+  await env.DB.prepare(`
+    INSERT INTO umroh_progress_items
+      (account_id, module, item_key, status, updated_at, created_at)
+    VALUES (?, 'manasik', ?, ?, ?, ?)
+    ON CONFLICT(account_id, module, item_key)
+    DO UPDATE SET
+      status = excluded.status,
+      updated_at = excluded.updated_at
+  `).bind(gate.account.id, itemKey, status, now, now).run();
+
+  const progress = await manasikProgressPayload(env, gate.account.id);
+  return json(request, env, { ok: true, progress });
+}
+
+async function importOwnManasikProgress(request, env) {
+  const gate = await requireJamaah(request, env);
+  if (gate.response) return gate.response;
+
+  const current = await manasikProgressPayload(env, gate.account.id);
+  if (current.initialized) {
+    return json(request, env, {
+      ok: true,
+      imported: false,
+      reason: "already_initialized",
+      progress: current,
+    });
+  }
+
+  const body = await readJson(request);
+  const completed = Array.isArray(body.completed)
+    ? [...new Set(body.completed.map((value) => String(value || "").trim()))]
+        .filter((value) => MANASIK_KEYS.has(value))
+    : [];
+
+  if (!completed.length) {
+    return json(request, env, {
+      ok: true,
+      imported: false,
+      reason: "nothing_to_import",
+      progress: current,
+    });
+  }
+
+  const now = new Date().toISOString();
+  await env.DB.batch(
+    completed.map((itemKey) =>
+      env.DB.prepare(`
+        INSERT INTO umroh_progress_items
+          (account_id, module, item_key, status, updated_at, created_at)
+        VALUES (?, 'manasik', ?, 'complete', ?, ?)
+        ON CONFLICT(account_id, module, item_key)
+        DO UPDATE SET
+          status = 'complete',
+          updated_at = excluded.updated_at
+      `).bind(gate.account.id, itemKey, now, now)
+    )
+  );
+
+  const progress = await manasikProgressPayload(env, gate.account.id);
+  return json(request, env, {
+    ok: true,
+    imported: true,
+    imported_count: completed.length,
+    progress,
+  });
+}
 
 async function requireJamaah(request, env) {
   const account = await authenticatedAccount(request, env);

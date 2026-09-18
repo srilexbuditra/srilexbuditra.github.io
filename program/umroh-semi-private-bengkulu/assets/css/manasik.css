@@ -13,3 +13,8 @@ body.manasik-page{min-height:100vh;background:radial-gradient(circle at 90% 0,rg
 .module-card .module-number{margin-bottom:.35rem}
 .module-card .module-visual + h3{margin-top:0}
 @media(max-width:700px){.lesson-hero{padding-right:4.8rem}.module-card .module-visual{margin-bottom:.6rem}}
+
+.manasik-sync-note{margin-top:12px;padding:11px 13px;border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--ink-600);font-size:9px;line-height:1.5}
+.manasik-sync-note[data-state="account"]{border-color:#bfe0d1;background:#f3fbf7;color:#0d6645}
+.manasik-sync-note[data-state="local"]{border-color:#eadfb9;background:#fffaf0;color:#7c6100}
+.complete-button:disabled{opacity:.68;cursor:wait}
