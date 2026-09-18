@@ -1,0 +1,4 @@
+CREATE TABLE IF NOT EXISTS umroh_document_files (id INTEGER PRIMARY KEY AUTOINCREMENT, file_uuid TEXT NOT NULL UNIQUE, account_id INTEGER NOT NULL, document_key TEXT NOT NULL, version INTEGER NOT NULL, object_key TEXT NOT NULL UNIQUE, original_name TEXT NOT NULL, mime_type TEXT NOT NULL, size_bytes INTEGER NOT NULL, sha256_hex TEXT NOT NULL, is_current INTEGER NOT NULL DEFAULT 1 CHECK (is_current IN (0,1)), uploaded_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP, created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP, FOREIGN KEY (account_id) REFERENCES umroh_accounts(id) ON DELETE CASCADE, UNIQUE (account_id, document_key, version));
+CREATE INDEX IF NOT EXISTS idx_umroh_document_files_current ON umroh_document_files(account_id, document_key, is_current);
+CREATE INDEX IF NOT EXISTS idx_umroh_document_files_object ON umroh_document_files(object_key);
+CREATE INDEX IF NOT EXISTS idx_umroh_document_files_uploaded ON umroh_document_files(uploaded_at);

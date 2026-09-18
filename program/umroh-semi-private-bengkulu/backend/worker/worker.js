@@ -1,9 +1,12 @@
-const API_VERSION = "3.4.1";
+const API_VERSION = "3.4.2";
 const COOKIE_NAME = "umroh_session";
 const DEFAULT_SESSION_AGE = 60 * 60 * 24 * 7;
 const PASSWORD_ITERATIONS = 100000;
 const MAX_JSON_BYTES = 16 * 1024;
 const STAFF_ACTIVATION_AGE = 60 * 60 * 24;
+const MAX_DOCUMENT_BYTES = 5 * 1024 * 1024;
+const DOCUMENT_KEYS = new Set(["paspor-dokumen", "tiket-itinerary", "identitas-jemaah", "dokumen-kesehatan"]);
+const DOCUMENT_MIME = new Set(["application/pdf", "image/jpeg", "image/png"]);
 
 export default {
   async fetch(request, env) {
@@ -52,6 +55,35 @@ export default {
         return me(request, env);
       }
 
+
+
+      if (request.method === "GET" && path === "/jamaah/documents") {
+        return listOwnDocuments(request, env);
+      }
+
+      const ownUploadMatch = path.match(/^\/jamaah\/documents\/([a-z0-9-]+)\/upload$/i);
+      if (ownUploadMatch && request.method === "POST") {
+        return uploadOwnDocument(request, env, ownUploadMatch[1]);
+      }
+
+      const ownDownloadMatch = path.match(/^\/jamaah\/documents\/([0-9a-f-]{36})\/download$/i);
+      if (ownDownloadMatch && request.method === "GET") {
+        return downloadOwnDocument(request, env, ownDownloadMatch[1]);
+      }
+
+      if (request.method === "GET" && path === "/admin/documents") {
+        return listAdminDocuments(request, env);
+      }
+
+      const adminDocumentDownloadMatch = path.match(/^\/admin\/documents\/([0-9a-f-]{36})\/download$/i);
+      if (adminDocumentDownloadMatch && request.method === "GET") {
+        return downloadAdminDocument(request, env, adminDocumentDownloadMatch[1]);
+      }
+
+      const adminDocumentReviewMatch = path.match(/^\/admin\/documents\/([0-9a-f-]{36})\/review$/i);
+      if (adminDocumentReviewMatch && request.method === "PATCH") {
+        return reviewAdminDocument(request, env, adminDocumentReviewMatch[1]);
+      }
 
       if (request.method === "GET" && path === "/admin/jamaah/stats") {
         return getAdminJamaahStats(request, env);
@@ -491,6 +523,454 @@ function publicAccount(account) {
 }
 
 
+
+
+async function requireJamaah(request, env) {
+  const account = await authenticatedAccount(request, env);
+  if (!account) {
+    return { response: json(request, env, { ok: false, error: "unauthorized" }, 401) };
+  }
+  if (account.role !== "jamaah") {
+    return { response: json(request, env, { ok: false, error: "forbidden" }, 403) };
+  }
+  return { account };
+}
+
+function requireDocumentsBucket(env) {
+  if (!env.DOCUMENTS_BUCKET) {
+    throw new Error("missing_documents_bucket");
+  }
+}
+
+function documentLabel(key) {
+  return {
+    "paspor-dokumen": "Paspor & dokumen perjalanan",
+    "tiket-itinerary": "Tiket / itinerary",
+    "identitas-jemaah": "Identitas jemaah",
+    "dokumen-kesehatan": "Dokumen kesehatan",
+  }[key] || key;
+}
+
+async function listOwnDocuments(request, env) {
+  const gate = await requireJamaah(request, env);
+  if (gate.response) return gate.response;
+
+  const rows = await env.DB.prepare(`
+    SELECT
+      s.document_key,
+      s.jamaah_status,
+      s.admin_status,
+      s.admin_note,
+      s.reviewed_at,
+      f.file_uuid,
+      f.original_name,
+      f.mime_type,
+      f.size_bytes,
+      f.sha256_hex,
+      f.version,
+      f.uploaded_at
+    FROM umroh_document_status s
+    LEFT JOIN umroh_document_files f
+      ON f.account_id = s.account_id
+     AND f.document_key = s.document_key
+     AND f.is_current = 1
+    WHERE s.account_id = ?
+    ORDER BY s.document_key
+  `).bind(gate.account.id).all();
+
+  const byKey = new Map((rows.results || []).map((row) => [row.document_key, row]));
+  const documents = [...DOCUMENT_KEYS].map((key) => {
+    const row = byKey.get(key) || {};
+    return {
+      document_key: key,
+      label: documentLabel(key),
+      jamaah_status: row.jamaah_status || "unreviewed",
+      admin_status: row.admin_status || "not_reviewed",
+      admin_note: row.admin_note || null,
+      reviewed_at: row.reviewed_at || null,
+      file: row.file_uuid ? {
+        file_uuid: row.file_uuid,
+        original_name: row.original_name,
+        mime_type: row.mime_type,
+        size_bytes: Number(row.size_bytes || 0),
+        sha256_hex: row.sha256_hex,
+        version: Number(row.version || 1),
+        uploaded_at: row.uploaded_at,
+      } : null,
+    };
+  });
+
+  return json(request, env, { ok: true, documents });
+}
+
+async function uploadOwnDocument(request, env, documentKey) {
+  requireDocumentsBucket(env);
+  const gate = await requireJamaah(request, env);
+  if (gate.response) return gate.response;
+
+  if (!DOCUMENT_KEYS.has(documentKey)) {
+    return json(request, env, { ok: false, error: "invalid_document_key" }, 400);
+  }
+
+  const contentLength = Number(request.headers.get("Content-Length") || 0);
+  if (contentLength > MAX_DOCUMENT_BYTES + 1024 * 256) {
+    return json(request, env, { ok: false, error: "file_too_large" }, 413);
+  }
+
+  let form;
+  try {
+    form = await request.formData();
+  } catch (_) {
+    return json(request, env, { ok: false, error: "invalid_multipart" }, 400);
+  }
+
+  const file = form.get("file");
+  if (!(file instanceof File)) {
+    return json(request, env, { ok: false, error: "file_required" }, 400);
+  }
+  if (!file.size || file.size > MAX_DOCUMENT_BYTES) {
+    return json(request, env, { ok: false, error: "file_too_large" }, 413);
+  }
+  if (!DOCUMENT_MIME.has(file.type)) {
+    return json(request, env, { ok: false, error: "unsupported_file_type" }, 415);
+  }
+
+  const bytes = await file.arrayBuffer();
+  if (!matchesDocumentMagic(new Uint8Array(bytes), file.type)) {
+    return json(request, env, { ok: false, error: "file_signature_mismatch" }, 415);
+  }
+
+  const digest = await crypto.subtle.digest("SHA-256", bytes);
+  const sha256Hex = [...new Uint8Array(digest)]
+    .map((value) => value.toString(16).padStart(2, "0"))
+    .join("");
+
+  const fileUuid = crypto.randomUUID();
+  const objectKey = `private/jamaah/${gate.account.account_uuid}/${documentKey}/${fileUuid}`;
+  const originalName = safeFilename(file.name || `${documentKey}.bin`);
+  const now = new Date().toISOString();
+
+  const versionRow = await env.DB.prepare(`
+    SELECT COALESCE(MAX(version), 0) AS max_version
+    FROM umroh_document_files
+    WHERE account_id = ? AND document_key = ?
+  `).bind(gate.account.id, documentKey).first();
+  const version = Number(versionRow?.max_version || 0) + 1;
+
+  await env.DOCUMENTS_BUCKET.put(objectKey, bytes, {
+    httpMetadata: {
+      contentType: file.type,
+      cacheControl: "private, no-store",
+    },
+    customMetadata: {
+      file_uuid: fileUuid,
+      account_uuid: gate.account.account_uuid,
+      document_key: documentKey,
+      version: String(version),
+    },
+  });
+
+  try {
+    await env.DB.batch([
+      env.DB.prepare(`
+        UPDATE umroh_document_files
+        SET is_current = 0
+        WHERE account_id = ? AND document_key = ? AND is_current = 1
+      `).bind(gate.account.id, documentKey),
+      env.DB.prepare(`
+        INSERT INTO umroh_document_files
+          (file_uuid, account_id, document_key, version, object_key,
+           original_name, mime_type, size_bytes, sha256_hex, is_current,
+           uploaded_at, created_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?, ?)
+      `).bind(
+        fileUuid,
+        gate.account.id,
+        documentKey,
+        version,
+        objectKey,
+        originalName,
+        file.type,
+        file.size,
+        sha256Hex,
+        now,
+        now
+      ),
+      env.DB.prepare(`
+        INSERT INTO umroh_document_status
+          (account_id, document_key, jamaah_status, admin_status,
+           admin_note, reviewed_by_account_id, reviewed_at, updated_at, created_at)
+        VALUES (?, ?, 'prepared', 'not_reviewed', NULL, NULL, NULL, ?, ?)
+        ON CONFLICT(account_id, document_key)
+        DO UPDATE SET
+          jamaah_status = 'prepared',
+          admin_status = 'not_reviewed',
+          admin_note = NULL,
+          reviewed_by_account_id = NULL,
+          reviewed_at = NULL,
+          updated_at = excluded.updated_at
+      `).bind(gate.account.id, documentKey, now, now),
+      env.DB.prepare(`
+        INSERT INTO umroh_admin_audit_log
+          (actor_account_id, action, target_account_id, details_json, created_at)
+        VALUES (?, 'document_uploaded', ?, ?, ?)
+      `).bind(
+        gate.account.id,
+        gate.account.id,
+        JSON.stringify({
+          document_key: documentKey,
+          file_uuid: fileUuid,
+          version,
+          mime_type: file.type,
+          size_bytes: file.size,
+          sha256_hex: sha256Hex,
+        }),
+        now
+      ),
+    ]);
+  } catch (error) {
+    await env.DOCUMENTS_BUCKET.delete(objectKey).catch(() => {});
+    throw error;
+  }
+
+  return json(request, env, {
+    ok: true,
+    document: {
+      document_key: documentKey,
+      jamaah_status: "prepared",
+      admin_status: "not_reviewed",
+      file: {
+        file_uuid: fileUuid,
+        original_name: originalName,
+        mime_type: file.type,
+        size_bytes: file.size,
+        sha256_hex: sha256Hex,
+        version,
+        uploaded_at: now,
+      },
+    },
+  }, 201);
+}
+
+async function downloadOwnDocument(request, env, fileUuid) {
+  requireDocumentsBucket(env);
+  const gate = await requireJamaah(request, env);
+  if (gate.response) return gate.response;
+
+  const row = await env.DB.prepare(`
+    SELECT object_key, original_name, mime_type, size_bytes
+    FROM umroh_document_files
+    WHERE file_uuid = ? AND account_id = ? AND is_current = 1
+    LIMIT 1
+  `).bind(fileUuid, gate.account.id).first();
+
+  if (!row) return json(request, env, { ok: false, error: "document_not_found" }, 404);
+  return privateObjectResponse(request, env, row);
+}
+
+async function listAdminDocuments(request, env) {
+  const gate = await requireStaffRole(request, env, ["super_admin", "admin"]);
+  if (gate.response) return gate.response;
+
+  const url = new URL(request.url);
+  const review = String(url.searchParams.get("review") || "").trim();
+  const allowedReview = new Set(["not_reviewed", "verified", "needs_revision", "rejected"]);
+
+  const where = ["a.role = 'jamaah'", "f.is_current = 1"];
+  const binds = [];
+  if (allowedReview.has(review)) {
+    where.push("s.admin_status = ?");
+    binds.push(review);
+  }
+
+  const result = await env.DB.prepare(`
+    SELECT
+      f.file_uuid,
+      f.document_key,
+      f.original_name,
+      f.mime_type,
+      f.size_bytes,
+      f.sha256_hex,
+      f.version,
+      f.uploaded_at,
+      a.account_uuid,
+      a.member_no,
+      p.full_name,
+      s.jamaah_status,
+      s.admin_status,
+      s.admin_note,
+      s.reviewed_at
+    FROM umroh_document_files f
+    JOIN umroh_accounts a ON a.id = f.account_id
+    JOIN umroh_jamaah_profiles p ON p.account_id = a.id
+    JOIN umroh_document_status s
+      ON s.account_id = f.account_id
+     AND s.document_key = f.document_key
+    WHERE ${where.join(" AND ")}
+    ORDER BY
+      CASE s.admin_status
+        WHEN 'not_reviewed' THEN 1
+        WHEN 'needs_revision' THEN 2
+        WHEN 'rejected' THEN 3
+        WHEN 'verified' THEN 4
+        ELSE 9
+      END,
+      f.uploaded_at DESC
+    LIMIT 250
+  `).bind(...binds).all();
+
+  return json(request, env, {
+    ok: true,
+    documents: result.results || [],
+  });
+}
+
+async function downloadAdminDocument(request, env, fileUuid) {
+  requireDocumentsBucket(env);
+  const gate = await requireStaffRole(request, env, ["super_admin", "admin"]);
+  if (gate.response) return gate.response;
+
+  const row = await env.DB.prepare(`
+    SELECT f.object_key, f.original_name, f.mime_type, f.size_bytes, f.account_id, f.document_key
+    FROM umroh_document_files f
+    JOIN umroh_accounts a ON a.id = f.account_id
+    WHERE f.file_uuid = ? AND f.is_current = 1 AND a.role = 'jamaah'
+    LIMIT 1
+  `).bind(fileUuid).first();
+
+  if (!row) return json(request, env, { ok: false, error: "document_not_found" }, 404);
+
+  const now = new Date().toISOString();
+  await env.DB.prepare(`
+    INSERT INTO umroh_admin_audit_log
+      (actor_account_id, action, target_account_id, details_json, created_at)
+    VALUES (?, 'document_downloaded', ?, ?, ?)
+  `).bind(
+    gate.account.id,
+    row.account_id,
+    JSON.stringify({ file_uuid: fileUuid, document_key: row.document_key }),
+    now
+  ).run();
+
+  return privateObjectResponse(request, env, row);
+}
+
+async function reviewAdminDocument(request, env, fileUuid) {
+  const gate = await requireStaffRole(request, env, ["super_admin", "admin"]);
+  if (gate.response) return gate.response;
+
+  const body = await readJson(request);
+  const status = String(body.status || "").trim();
+  const note = truncate(String(body.note || "").trim(), 1000);
+  const allowed = new Set(["verified", "needs_revision", "rejected", "not_reviewed"]);
+  if (!allowed.has(status)) {
+    return json(request, env, { ok: false, error: "invalid_review_status" }, 400);
+  }
+  if (["needs_revision", "rejected"].includes(status) && !note) {
+    return json(request, env, { ok: false, error: "review_note_required" }, 400);
+  }
+
+  const target = await env.DB.prepare(`
+    SELECT f.account_id, f.document_key, f.file_uuid
+    FROM umroh_document_files f
+    JOIN umroh_accounts a ON a.id = f.account_id
+    WHERE f.file_uuid = ? AND f.is_current = 1 AND a.role = 'jamaah'
+    LIMIT 1
+  `).bind(fileUuid).first();
+
+  if (!target) return json(request, env, { ok: false, error: "document_not_found" }, 404);
+
+  const now = new Date().toISOString();
+  await env.DB.batch([
+    env.DB.prepare(`
+      UPDATE umroh_document_status
+      SET admin_status = ?,
+          admin_note = ?,
+          reviewed_by_account_id = ?,
+          reviewed_at = ?,
+          updated_at = ?
+      WHERE account_id = ? AND document_key = ?
+    `).bind(
+      status,
+      note || null,
+      gate.account.id,
+      now,
+      now,
+      target.account_id,
+      target.document_key
+    ),
+    env.DB.prepare(`
+      INSERT INTO umroh_admin_audit_log
+        (actor_account_id, action, target_account_id, details_json, created_at)
+      VALUES (?, 'document_reviewed', ?, ?, ?)
+    `).bind(
+      gate.account.id,
+      target.account_id,
+      JSON.stringify({
+        file_uuid: target.file_uuid,
+        document_key: target.document_key,
+        status,
+        note: note || null,
+      }),
+      now
+    ),
+  ]);
+
+  return json(request, env, { ok: true });
+}
+
+async function privateObjectResponse(request, env, row) {
+  const object = await env.DOCUMENTS_BUCKET.get(row.object_key);
+  if (!object) {
+    return json(request, env, { ok: false, error: "object_missing" }, 404);
+  }
+
+  const headers = new Headers();
+  headers.set("Content-Type", row.mime_type || "application/octet-stream");
+  headers.set("Content-Length", String(row.size_bytes || object.size || ""));
+  headers.set("Content-Disposition", `attachment; filename="${contentDispositionFilename(row.original_name)}"`);
+  headers.set("Cache-Control", "private, no-store");
+  headers.set("X-Content-Type-Options", "nosniff");
+  headers.set("Content-Security-Policy", "default-src 'none'; sandbox");
+
+  const origin = allowedOrigin(request, env);
+  if (origin) {
+    headers.set("Access-Control-Allow-Origin", origin);
+    headers.set("Access-Control-Allow-Credentials", "true");
+    headers.set("Vary", "Origin");
+  }
+
+  return new Response(object.body, { status: 200, headers });
+}
+
+function safeFilename(value) {
+  const cleaned = String(value || "document")
+    .replace(/[^\p{L}\p{N}._() -]+/gu, "_")
+    .replace(/\s+/g, " ")
+    .trim();
+  return truncate(cleaned || "document", 180);
+}
+
+function contentDispositionFilename(value) {
+  return safeFilename(value).replace(/["\\]/g, "_");
+}
+
+function matchesDocumentMagic(bytes, mimeType) {
+  if (mimeType === "application/pdf") {
+    return bytes.length >= 5 &&
+      bytes[0] === 0x25 && bytes[1] === 0x50 && bytes[2] === 0x44 &&
+      bytes[3] === 0x46 && bytes[4] === 0x2D;
+  }
+  if (mimeType === "image/jpeg") {
+    return bytes.length >= 3 &&
+      bytes[0] === 0xFF && bytes[1] === 0xD8 && bytes[2] === 0xFF;
+  }
+  if (mimeType === "image/png") {
+    const sig = [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A];
+    return bytes.length >= sig.length && sig.every((value, index) => bytes[index] === value);
+  }
+  return false;
+}
 
 async function requireStaffRole(request, env, allowedRoles = ["super_admin", "admin", "tour_leader", "pendamping"]) {
   const account = await authenticatedAccount(request, env);
@@ -1562,7 +2042,7 @@ function corsPreflight(request, env) {
       "Access-Control-Allow-Origin": origin,
       "Access-Control-Allow-Credentials": "true",
       "Access-Control-Allow-Headers": "Content-Type, X-Bootstrap-Token",
-      "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+      "Access-Control-Allow-Methods": "GET, POST, PATCH, OPTIONS",
       "Access-Control-Max-Age": "600",
       "Vary": "Origin",
     },

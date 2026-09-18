@@ -1,30 +1,27 @@
 (() => {
-  const key = 'umroh-documents-status-v1';
-  const ids = ['paspor-dokumen','tiket-itinerary','identitas-jemaah','dokumen-kesehatan'];
-  const valid = new Set(['ready','waiting']);
-
-  const read = () => {
+  'use strict';
+  const API_BASE = 'https://umroh-api.srilexbuditra.work';
+  const render = async () => {
     try {
-      const value = JSON.parse(localStorage.getItem(key) || '{}');
-      return value && typeof value === 'object' ? value : {};
-    } catch (_) { return {}; }
+      const response = await fetch(`${API_BASE}/jamaah/documents`, {
+        credentials: 'include',
+        cache: 'no-store',
+        headers: { Accept: 'application/json' }
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok || !data?.ok) return;
+      const docs = data.documents || [];
+      const uploaded = docs.filter((doc) => doc.file).length;
+      const verified = docs.filter((doc) => doc.admin_status === 'verified').length;
+      document.querySelectorAll('[data-documents-summary]').forEach((el) => {
+        el.textContent = uploaded
+          ? `${uploaded} dari ${docs.length} terunggah · ${verified} terverifikasi`
+          : 'Belum diupload';
+        el.title = `${uploaded} terunggah · ${verified} terverifikasi`;
+      });
+    } catch (_) {}
   };
-
-  const render = () => {
-    const state = read();
-    const reviewed = ids.filter(id => valid.has(state[id])).length;
-    const ready = ids.filter(id => state[id] === 'ready').length;
-    const waiting = ids.filter(id => state[id] === 'waiting').length;
-    document.querySelectorAll('[data-documents-summary]').forEach(el => {
-      if (reviewed === 0) {
-        el.textContent = 'Belum diperiksa';
-      } else {
-        el.textContent = `${ready} dari ${ids.length} siap · ${reviewed} diperiksa`;
-      }
-      el.title = `${ready} disiapkan · ${waiting} menunggu · ${ids.length - reviewed} belum diperiksa`;
-    });
-  };
-
   render();
   addEventListener('pageshow', render);
+  addEventListener('focus', render);
 })();

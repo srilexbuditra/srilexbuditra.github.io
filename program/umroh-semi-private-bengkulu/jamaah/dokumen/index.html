@@ -6,7 +6,7 @@
 <meta content="noindex,nofollow,noarchive" name="robots"/>
 <meta content="#0b2830" name="theme-color"/>
 <title>Dokumen Saya | Umroh Semi Private Bengkulu</title>
-<meta content="Status persiapan dokumen jemaah Umroh Semi Private Bengkulu. V2.3 belum menerima upload dokumen pribadi dan belum terhubung ke backend." name="description"/>
+<meta content="Upload dan status verifikasi dokumen jemaah melalui penyimpanan private Cloudflare R2 dan metadata D1." name="description"/>
 <link href="../../assets/css/tokens.css" rel="stylesheet"/>
 <link href="../../assets/css/visual-assets.css" rel="stylesheet"/>
 <link href="../../assets/css/jamaah-auth.css" rel="stylesheet"/>
@@ -29,10 +29,10 @@
   <div>
     <span class="documents-kicker">Persiapan Dokumen Perjalanan</span>
     <h1>Dokumen Saya</h1>
-    <p>Gunakan halaman ini untuk memeriksa kesiapan dokumen. Pada V2.3, platform <strong>belum menerima upload</strong> dan tidak menyimpan berkas pribadi di halaman statis.</p>
+    <p>Unggah dokumen yang diminta melalui akun Anda. Berkas disimpan pada <strong>R2 private</strong>, sedangkan status dan metadata verifikasi disimpan di D1.</p>
   </div>
   <div class="documents-progress-panel">
-    <small>Status di perangkat ini</small>
+    <small>Status akun Anda</small>
     <strong data-docs-count>0 / 4</strong>
     <span><b data-docs-percent>0%</b> selesai diperiksa</span>
     <div class="documents-progress-mini"><i data-docs-bar></i></div>
@@ -41,12 +41,12 @@
 
 <section class="documents-security-note" aria-label="Catatan keamanan dokumen">
   <span aria-hidden="true" class="ui-icon icon-alert"></span>
-  <div><strong>Jangan unggah dokumen pribadi ke repository atau halaman publik.</strong><p>Paspor, identitas, nomor dokumen, dan data kesehatan baru akan diproses setelah autentikasi, backend, dan penyimpanan aman tersedia. Status pada halaman ini hanya catatan lokal di browser/perangkat.</p></div>
+  <div><strong>Penyimpanan dokumen private telah aktif.</strong><p>Berkas tidak ditempatkan di GitHub/halaman publik dan tidak memiliki URL R2 publik. Akses file hanya melalui Worker setelah session dan role diverifikasi. Format: PDF, JPG, PNG · maksimum 5 MB per file.</p></div>
 </section>
 
 <div class="documents-section-head">
   <div><span>4 Dokumen Utama</span><h2>Periksa status dokumen secara bertahap</h2></div>
-  <p>Daftar dokumen mengikuti materi “Persiapan Sebelum Berangkat” pada Manasik Digital. Status ini belum merupakan verifikasi resmi dari pengelola.</p>
+  <p>Status verifikasi pada setiap dokumen berasal dari backend. Jika dokumen perlu diperbaiki, alasan Admin akan tampil pada kartu dokumen.</p>
 </div>
 
 <section class="documents-list" aria-label="Daftar dokumen">
@@ -56,11 +56,12 @@
       <span class="document-number">01</span>
       <h3>Paspor &amp; dokumen perjalanan</h3>
       <p>Pastikan dokumen perjalanan yang diwajibkan sudah tersedia dan masih berlaku sesuai ketentuan perjalanan.</p>
-      <small data-doc-state-label>Belum diperiksa</small>
+      <small data-doc-state-label>Belum diupload</small><p class="document-server-note" data-doc-server-note></p>
     </div>
     <div class="document-actions">
-      <button data-doc-ready type="button">Sudah disiapkan</button>
-      <button data-doc-waiting type="button">Menunggu</button>
+      <input accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png" data-doc-file hidden type="file"/>
+      <button data-doc-upload type="button">Upload Dokumen</button>
+      <button data-doc-download hidden type="button">Unduh</button>
     </div>
   </article>
 
@@ -70,11 +71,12 @@
       <span class="document-number">02</span>
       <h3>Tiket / itinerary</h3>
       <p>Periksa informasi tiket dan itinerary setelah diterbitkan atau dikonfirmasi oleh pengelola perjalanan.</p>
-      <small data-doc-state-label>Belum diperiksa</small>
+      <small data-doc-state-label>Belum diupload</small><p class="document-server-note" data-doc-server-note></p>
     </div>
     <div class="document-actions">
-      <button data-doc-ready type="button">Sudah disiapkan</button>
-      <button data-doc-waiting type="button">Menunggu</button>
+      <input accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png" data-doc-file hidden type="file"/>
+      <button data-doc-upload type="button">Upload Dokumen</button>
+      <button data-doc-download hidden type="button">Unduh</button>
     </div>
   </article>
 
@@ -84,11 +86,12 @@
       <span class="document-number">03</span>
       <h3>Identitas jemaah</h3>
       <p>Pastikan identitas yang diperlukan untuk administrasi perjalanan sudah disiapkan sesuai arahan resmi.</p>
-      <small data-doc-state-label>Belum diperiksa</small>
+      <small data-doc-state-label>Belum diupload</small><p class="document-server-note" data-doc-server-note></p>
     </div>
     <div class="document-actions">
-      <button data-doc-ready type="button">Sudah disiapkan</button>
-      <button data-doc-waiting type="button">Menunggu</button>
+      <input accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png" data-doc-file hidden type="file"/>
+      <button data-doc-upload type="button">Upload Dokumen</button>
+      <button data-doc-download hidden type="button">Unduh</button>
     </div>
   </article>
 
@@ -98,11 +101,12 @@
       <span class="document-number">04</span>
       <h3>Dokumen kesehatan sesuai ketentuan perjalanan</h3>
       <p>Ikuti ketentuan perjalanan yang berlaku dan arahan pengelola mengenai dokumen kesehatan yang diperlukan.</p>
-      <small data-doc-state-label>Belum diperiksa</small>
+      <small data-doc-state-label>Belum diupload</small><p class="document-server-note" data-doc-server-note></p>
     </div>
     <div class="document-actions">
-      <button data-doc-ready type="button">Sudah disiapkan</button>
-      <button data-doc-waiting type="button">Menunggu</button>
+      <input accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png" data-doc-file hidden type="file"/>
+      <button data-doc-upload type="button">Upload Dokumen</button>
+      <button data-doc-download hidden type="button">Unduh</button>
     </div>
   </article>
 </section>
@@ -113,8 +117,9 @@
   <a href="../dashboard/index.html">Kembali ke Dashboard →</a>
 </section>
 
-<footer class="documents-footer"><span>Dokumen V2.3 hanya mencatat status lokal dan tidak menerima upload berkas pribadi.</span><span>Pengembangan Sistem &amp; Dukungan Teknologi · Srilex Buditra</span></footer>
+<footer class="documents-footer"><span>Secure Documents V3.4.2 · R2 private + metadata D1.</span><span>Pengembangan Sistem &amp; Dukungan Teknologi · Srilex Buditra</span></footer>
 </main>
-<script src="../../assets/js/documents.js"></script>
+<script src="../../assets/js/jamaah-auth-guard.js?v=3.4.2"></script>
+<script src="../../assets/js/documents.js?v=3.4.2"></script>
 </body>
 </html>
