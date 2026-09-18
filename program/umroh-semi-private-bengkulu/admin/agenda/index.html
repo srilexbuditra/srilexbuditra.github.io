@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html class="auth-pending" lang="id">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<meta content="noindex,nofollow,noarchive" name="robots"/>
+<meta content="#0b2830" name="theme-color"/>
+<title>Agenda &amp; Perjalanan | Admin Umroh Semi Private Bengkulu</title>
+<link href="../../assets/css/tokens.css" rel="stylesheet"/>
+<link href="../../assets/css/dashboard-shell.css" rel="stylesheet"/>
+<link href="../../assets/css/admin-dashboard.css" rel="stylesheet"/>
+<link href="../../assets/css/visual-assets.css" rel="stylesheet"/>
+<link href="../../assets/css/admin-auth.css" rel="stylesheet"/>
+<link href="../../assets/css/admin-agenda.css" rel="stylesheet"/>
+</head>
+<body class="dashboard-app admin-dashboard">
+<aside aria-label="Navigasi admin" class="app-sidebar">
+<div class="sidebar-brand"><div aria-hidden="true" class="brand-mark"><span class="ui-icon icon-calendar"></span></div><div class="brand-copy"><strong>UMROH SEMI PRIVATE<br/>BENGKULU</strong><span>Digital Platform</span></div><button aria-label="Ringkas sidebar" class="sidebar-collapse" data-sidebar-collapse>‹</button></div>
+<nav class="sidebar-nav">
+<div class="nav-section-label">Operasional</div>
+<a class="nav-item" data-rbac="super_admin admin tour_leader pendamping" href="../"><span class="nav-icon"><span class="ui-icon icon-home"></span></span><span class="nav-label">Ringkasan</span></a>
+<a class="nav-item" data-rbac="super_admin admin tour_leader pendamping" href="../jemaah/"><span class="nav-icon"><span class="ui-icon icon-users"></span></span><span class="nav-label">Jemaah</span></a>
+<a class="nav-item" data-rbac="super_admin admin tour_leader" href="../#manasik"><span class="nav-icon"><span class="ui-icon icon-book"></span></span><span class="nav-label">Manasik</span></a>
+<a class="nav-item is-active" data-rbac="super_admin admin tour_leader pendamping" href="./"><span class="nav-icon"><span class="ui-icon icon-calendar"></span></span><span class="nav-label">Agenda &amp; Perjalanan</span></a>
+<a class="nav-item" data-rbac="super_admin admin tour_leader" href="../dokumen/"><span class="nav-icon"><span class="ui-icon icon-file"></span></span><span class="nav-label">Dokumen</span></a>
+<a class="nav-item" data-rbac="super_admin admin tour_leader pendamping" href="../#pengumuman"><span class="nav-icon"><span class="ui-icon icon-megaphone"></span></span><span class="nav-label">Pengumuman</span></a>
+<a class="nav-item" data-rbac="super_admin admin" href="../#laporan"><span class="nav-icon"><span class="ui-icon icon-chart"></span></span><span class="nav-label">Laporan</span></a>
+<div class="nav-section-label">Sistem</div>
+<a class="nav-item" data-super-admin-only data-rbac="super_admin" href="../manajemen-admin/"><span class="nav-icon"><span class="ui-icon icon-admin"></span></span><span class="nav-label">Manajemen Admin</span></a>
+<a class="nav-item" data-rbac="super_admin admin" href="../#pengaturan"><span class="nav-icon"><span class="ui-icon icon-settings"></span></span><span class="nav-label">Pengaturan</span></a>
+</nav>
+</aside>
+<div class="sidebar-backdrop" data-sidebar-backdrop></div>
+<div class="app-main">
+<header class="app-topbar"><button aria-label="Buka menu" class="mobile-menu" data-mobile-menu>☰</button><div class="topbar-title"><strong>Agenda &amp; Perjalanan</strong><span>D1 · Jadwal Resmi</span></div><div class="topbar-spacer"></div><div class="user-chip"><div class="avatar" data-auth-avatar>SB</div><div class="user-copy"><strong data-auth-name>Srilex Buditra</strong><span data-auth-role>Senior Full Stack Developer · Platform Architect</span></div></div><button class="auth-logout" data-admin-logout type="button">Keluar</button></header>
+<main class="page-wrap">
+<div class="prototype-note"><strong>Agenda Management Backend V3.5.0 aktif.</strong> Agenda baru tetap Draft sampai status dan publikasi ditetapkan. Hanya agenda dengan status Dipublikasikan yang tampil pada akun Jemaah.</div>
+<div class="page-head admin-agenda-head"><div><span class="page-kicker">Official Agenda Management</span><h1>Agenda &amp; Perjalanan</h1><p>Kelola jadwal resmi, lokasi, kategori, status, catatan, dan publikasi dari satu halaman.</p></div><button class="admin-agenda-primary" data-agenda-add data-rbac="super_admin admin tour_leader" type="button">+ Tambah Agenda</button></div>
+
+<section class="stats-grid admin-agenda-stats">
+<article class="card stat-card"><div><strong data-agenda-stat-total>0</strong><span>Total Agenda</span></div></article>
+<article class="card stat-card"><div><strong data-agenda-stat-published>0</strong><span>Dipublikasikan</span></div></article>
+<article class="card stat-card"><div><strong data-agenda-stat-draft>0</strong><span>Draft</span></div></article>
+<article class="card stat-card"><div><strong data-agenda-stat-upcoming>0</strong><span>Mendatang</span></div></article>
+</section>
+
+<section class="card card-pad admin-agenda-card">
+<div class="admin-agenda-toolbar">
+<div><strong>Jadwal Pengelola</strong><span>Baris awal berasal dari agenda simulasi lama dan dapat diedit lalu dipublikasikan sebagai agenda resmi.</span></div>
+<div class="admin-agenda-toolbar-actions"><select data-agenda-filter><option value="">Semua</option><option value="published">Dipublikasikan</option><option value="draft">Draft</option><option value="scheduled">Terjadwal</option><option value="confirmed">Dikonfirmasi</option><option value="cancelled">Dibatalkan</option></select><button data-agenda-refresh type="button">Muat ulang</button></div>
+</div>
+<div class="admin-agenda-table-wrap"><table class="admin-agenda-table"><thead><tr><th>Agenda</th><th>Waktu</th><th>Lokasi</th><th>Status</th><th>Publikasi</th><th>Aksi</th></tr></thead><tbody data-agenda-body><tr><td class="table-state" colspan="6">Memuat agenda...</td></tr></tbody></table></div>
+</section>
+</main>
+</div>
+
+<div class="admin-agenda-modal" data-agenda-modal hidden>
+<div class="admin-agenda-backdrop" data-agenda-close></div>
+<section class="admin-agenda-dialog" role="dialog" aria-modal="true" aria-labelledby="agendaDialogTitle">
+<div class="admin-agenda-dialog-head"><div><span class="page-kicker" data-agenda-dialog-kicker>Agenda Resmi</span><h2 id="agendaDialogTitle" data-agenda-dialog-title>Tambah Agenda</h2></div><button aria-label="Tutup" data-agenda-close type="button">×</button></div>
+<form data-agenda-form>
+<input name="id" type="hidden"/>
+<div class="admin-agenda-form-grid">
+<label class="wide">Judul Agenda<input maxlength="180" name="title" required placeholder="Contoh: Manasik Tata Cara Umroh"/></label>
+<label>Kategori<input list="agendaCategories" maxlength="80" name="category" required placeholder="Manasik"/></label>
+<datalist id="agendaCategories"><option value="Manasik"></option><option value="Dokumen"></option><option value="Briefing"></option><option value="Perjalanan"></option><option value="Keberangkatan"></option></datalist>
+<label>Status<select name="event_status" required><option value="draft">Draft</option><option value="scheduled">Terjadwal</option><option value="confirmed">Dikonfirmasi</option><option value="cancelled">Dibatalkan</option></select></label>
+<label>Tanggal<input name="date" required type="date"/></label>
+<label>Mulai<input name="start_time" required type="time"/></label>
+<label>Selesai<input name="end_time" type="time"/></label>
+<label class="wide">Lokasi<input maxlength="240" name="location_text" placeholder="Lokasi / titik kumpul"/></label>
+<label class="wide">Catatan / Arahan<textarea maxlength="2000" name="description" rows="5" placeholder="Arahan yang akan dibaca jemaah."></textarea></label>
+<label class="admin-agenda-publish wide"><input name="is_published" type="checkbox"/> <span>Publikasikan ke Jemaah</span></label>
+</div>
+<p class="admin-agenda-message" data-agenda-message hidden></p>
+<div class="admin-agenda-form-actions"><button data-agenda-close type="button">Batal</button><button class="admin-agenda-primary" data-agenda-submit type="submit">Simpan Agenda</button></div>
+</form>
+</section>
+</div>
+
+<script src="../../assets/js/admin-auth-guard.js?v=3.5.0"></script>
+<script src="../../assets/js/dashboard-shell.js"></script>
+<script src="../../assets/js/admin-agenda.js?v=3.5.0"></script>
+</body>
+</html>

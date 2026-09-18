@@ -1,4 +1,4 @@
-const API_VERSION = "3.4.6";
+const API_VERSION = "3.5.0";
 const COOKIE_NAME = "umroh_session";
 const DEFAULT_SESSION_AGE = 60 * 60 * 24 * 7;
 const PASSWORD_ITERATIONS = 100000;
@@ -98,6 +98,23 @@ export default {
 
 
 
+
+      if (request.method === "GET" && path === "/jamaah/agenda") {
+        return listOwnPublishedAgenda(request, env);
+      }
+
+      if (request.method === "GET" && path === "/admin/agenda") {
+        return listAdminAgenda(request, env);
+      }
+
+      if (request.method === "POST" && path === "/admin/agenda") {
+        return createAdminAgenda(request, env);
+      }
+
+      const adminAgendaMatch = path.match(/^\/admin\/agenda\/(\d+)$/);
+      if (adminAgendaMatch && request.method === "PATCH") {
+        return updateAdminAgenda(request, env, Number(adminAgendaMatch[1]));
+      }
 
       if (request.method === "GET" && path === "/jamaah/progress/summary") {
         return getOwnProgressSummary(request, env);
@@ -986,48 +1003,82 @@ async function ensureAgendaSyncEvents(env) {
   await env.DB.batch(statements);
 }
 
-async function agendaProgressPayload(env, accountId) {
+async function activeAgendaRows(env) {
   await ensureAgendaSyncEvents(env);
 
-  const result = await env.DB.prepare(`
-    SELECT e.event_key, r.read_at
-    FROM umroh_agenda_events e
-    LEFT JOIN umroh_agenda_reads r
-      ON r.agenda_id = e.id
-     AND r.account_id = ?
-    WHERE e.event_key IN (
+  const published = await env.DB.prepare(`
+    SELECT id, event_key, title, description, category, starts_at, ends_at,
+           location_text, event_status, is_published, created_at, updated_at
+    FROM umroh_agenda_events
+    WHERE event_key <> ?
+      AND is_published = 1
+    ORDER BY
+      CASE WHEN starts_at IS NULL THEN 1 ELSE 0 END,
+      starts_at,
+      id
+  `).bind(AGENDA_SYNC_SENTINEL).all();
+
+  const publishedRows = published.results || [];
+  if (publishedRows.length) {
+    return { official: true, rows: publishedRows };
+  }
+
+  const fallback = await env.DB.prepare(`
+    SELECT id, event_key, title, description, category, starts_at, ends_at,
+           location_text, event_status, is_published, created_at, updated_at
+    FROM umroh_agenda_events
+    WHERE event_key IN (
       'manasik-tata-cara',
       'pemeriksaan-dokumen',
       'briefing-keberangkatan',
-      'keberangkatan',
-      '__agenda-read-sync-v1__'
+      'keberangkatan'
     )
-    ORDER BY e.id
-  `).bind(accountId).all();
+    ORDER BY starts_at, id
+  `).all();
 
-  const rows = result.results || [];
-  const initialized = rows.some(
-    (row) => row.event_key === AGENDA_SYNC_SENTINEL && Boolean(row.read_at)
-  );
-  const items = rows
-    .filter((row) => AGENDA_SYNC_KEYS.has(row.event_key))
-    .map((row) => ({
-      item_key: row.event_key,
-      read: Boolean(row.read_at),
-      read_at: row.read_at || null,
-    }));
+  return { official: false, rows: fallback.results || [] };
+}
+
+async function agendaProgressPayload(env, accountId) {
+  const active = await activeAgendaRows(env);
+
+  const marker = await env.DB.prepare(`
+    SELECT r.read_at
+    FROM umroh_agenda_reads r
+    JOIN umroh_agenda_events e ON e.id = r.agenda_id
+    WHERE r.account_id = ?
+      AND e.event_key = ?
+    LIMIT 1
+  `).bind(accountId, AGENDA_SYNC_SENTINEL).first();
+
+  const items = [];
+  for (const event of active.rows) {
+    const read = await env.DB.prepare(`
+      SELECT read_at
+      FROM umroh_agenda_reads
+      WHERE account_id = ? AND agenda_id = ?
+      LIMIT 1
+    `).bind(accountId, event.id).first();
+
+    items.push({
+      item_key: event.event_key,
+      read: Boolean(read?.read_at),
+      read_at: read?.read_at || null,
+    });
+  }
 
   const done = items.filter((item) => item.read).length;
-
   return {
-    initialized,
+    initialized: Boolean(marker?.read_at),
+    official: active.official,
     done,
-    total: AGENDA_SYNC_KEYS.size,
+    total: active.rows.length,
     items,
   };
 }
 
 async function markAgendaSyncInitialized(env, accountId) {
+  await ensureAgendaSyncEvents(env);
   await env.DB.prepare(`
     INSERT INTO umroh_agenda_reads (account_id, agenda_id, read_at)
     SELECT ?, id, CURRENT_TIMESTAMP
@@ -1050,24 +1101,13 @@ async function updateOwnAgendaProgress(request, env, itemKey) {
   const gate = await requireJamaah(request, env);
   if (gate.response) return gate.response;
 
-  if (!AGENDA_SYNC_KEYS.has(itemKey)) {
-    return json(request, env, { ok: false, error: "invalid_progress_item" }, 400);
-  }
-
   const body = await readJson(request);
   if (typeof body.read !== "boolean") {
     return json(request, env, { ok: false, error: "invalid_progress_status" }, 400);
   }
 
-  await ensureAgendaSyncEvents(env);
-
-  const event = await env.DB.prepare(`
-    SELECT id
-    FROM umroh_agenda_events
-    WHERE event_key = ?
-    LIMIT 1
-  `).bind(itemKey).first();
-
+  const active = await activeAgendaRows(env);
+  const event = active.rows.find((row) => row.event_key === itemKey);
   if (!event) {
     return json(request, env, { ok: false, error: "agenda_not_found" }, 404);
   }
@@ -1106,10 +1146,13 @@ async function importOwnAgendaProgress(request, env) {
   }
 
   const body = await readJson(request);
-  const completed = Array.isArray(body.completed)
+  const requested = Array.isArray(body.completed)
     ? [...new Set(body.completed.map((value) => String(value || "").trim()))]
-        .filter((value) => AGENDA_SYNC_KEYS.has(value))
     : [];
+
+  const active = await activeAgendaRows(env);
+  const allowed = new Set(active.rows.map((row) => row.event_key));
+  const completed = requested.filter((value) => allowed.has(value));
 
   if (!completed.length) {
     return json(request, env, {
@@ -1120,35 +1163,18 @@ async function importOwnAgendaProgress(request, env) {
     });
   }
 
-  await ensureAgendaSyncEvents(env);
-
+  const byKey = new Map(active.rows.map((row) => [row.event_key, row.id]));
   const statements = completed.map((itemKey) =>
     env.DB.prepare(`
       INSERT INTO umroh_agenda_reads (account_id, agenda_id, read_at)
-      SELECT ?, id, CURRENT_TIMESTAMP
-      FROM umroh_agenda_events
-      WHERE event_key = ?
+      VALUES (?, ?, CURRENT_TIMESTAMP)
       ON CONFLICT(account_id, agenda_id)
       DO UPDATE SET read_at = excluded.read_at
-    `).bind(gate.account.id, itemKey)
+    `).bind(gate.account.id, byKey.get(itemKey))
   );
 
-  const sentinel = await env.DB.prepare(`
-    SELECT id FROM umroh_agenda_events WHERE event_key = ? LIMIT 1
-  `).bind(AGENDA_SYNC_SENTINEL).first();
-
-  if (sentinel) {
-    statements.push(
-      env.DB.prepare(`
-        INSERT INTO umroh_agenda_reads (account_id, agenda_id, read_at)
-        VALUES (?, ?, CURRENT_TIMESTAMP)
-        ON CONFLICT(account_id, agenda_id)
-        DO UPDATE SET read_at = excluded.read_at
-      `).bind(gate.account.id, sentinel.id)
-    );
-  }
-
   await env.DB.batch(statements);
+  await markAgendaSyncInitialized(env, gate.account.id);
 
   const progress = await agendaProgressPayload(env, gate.account.id);
   return json(request, env, {
@@ -1157,6 +1183,272 @@ async function importOwnAgendaProgress(request, env) {
     imported_count: completed.length,
     progress,
   });
+}
+
+function agendaStatusLabel(status) {
+  return {
+    draft: "Draft",
+    scheduled: "Terjadwal",
+    confirmed: "Dikonfirmasi",
+    cancelled: "Dibatalkan",
+  }[status] || status;
+}
+
+function agendaRowPayload(row) {
+  return {
+    id: Number(row.id),
+    event_key: row.event_key,
+    title: row.title,
+    description: row.description || "",
+    category: row.category || "Perjalanan",
+    starts_at: row.starts_at || null,
+    ends_at: row.ends_at || null,
+    location_text: row.location_text || "",
+    event_status: row.event_status,
+    status_label: agendaStatusLabel(row.event_status),
+    is_published: Number(row.is_published || 0) === 1,
+    created_at: row.created_at,
+    updated_at: row.updated_at,
+  };
+}
+
+async function listOwnPublishedAgenda(request, env) {
+  const gate = await requireJamaah(request, env);
+  if (gate.response) return gate.response;
+
+  const result = await env.DB.prepare(`
+    SELECT id, event_key, title, description, category, starts_at, ends_at,
+           location_text, event_status, is_published, created_at, updated_at
+    FROM umroh_agenda_events
+    WHERE event_key <> ?
+      AND is_published = 1
+    ORDER BY
+      CASE WHEN starts_at IS NULL THEN 1 ELSE 0 END,
+      starts_at,
+      id
+  `).bind(AGENDA_SYNC_SENTINEL).all();
+
+  return json(request, env, {
+    ok: true,
+    source: "official",
+    timezone: "Asia/Jakarta",
+    events: (result.results || []).map(agendaRowPayload),
+  });
+}
+
+function validateAgendaInput(body, current = null) {
+  const title = truncate(String(body.title ?? current?.title ?? "").trim(), 180);
+  const description = truncate(String(body.description ?? current?.description ?? "").trim(), 2000);
+  const category = truncate(String(body.category ?? current?.category ?? "Perjalanan").trim(), 80);
+  const locationText = truncate(String(body.location_text ?? current?.location_text ?? "").trim(), 240);
+  const startsAt = String(body.starts_at ?? current?.starts_at ?? "").trim();
+  const endsAt = String(body.ends_at ?? current?.ends_at ?? "").trim();
+  const status = String(body.event_status ?? current?.event_status ?? "draft").trim();
+  const isPublished = body.is_published === undefined
+    ? Boolean(current?.is_published)
+    : Boolean(body.is_published);
+
+  const allowedStatus = new Set(["draft", "scheduled", "confirmed", "cancelled"]);
+  if (!title) return { error: "agenda_title_required" };
+  if (!category) return { error: "agenda_category_required" };
+  if (!allowedStatus.has(status)) return { error: "invalid_agenda_status" };
+  if (startsAt && Number.isNaN(Date.parse(startsAt))) return { error: "invalid_agenda_start" };
+  if (endsAt && Number.isNaN(Date.parse(endsAt))) return { error: "invalid_agenda_end" };
+  if (startsAt && endsAt && Date.parse(endsAt) < Date.parse(startsAt)) {
+    return { error: "agenda_end_before_start" };
+  }
+  if (isPublished && status === "draft") {
+    return { error: "draft_cannot_be_published" };
+  }
+
+  return {
+    value: {
+      title,
+      description: description || null,
+      category,
+      location_text: locationText || null,
+      starts_at: startsAt || null,
+      ends_at: endsAt || null,
+      event_status: status,
+      is_published: isPublished ? 1 : 0,
+    },
+  };
+}
+
+async function listAdminAgenda(request, env) {
+  const gate = await requireStaffRole(request, env);
+  if (gate.response) return gate.response;
+
+  await ensureAgendaSyncEvents(env);
+
+  const result = await env.DB.prepare(`
+    SELECT id, event_key, title, description, category, starts_at, ends_at,
+           location_text, event_status, is_published, created_at, updated_at
+    FROM umroh_agenda_events
+    WHERE event_key <> ?
+    ORDER BY
+      is_published DESC,
+      CASE WHEN starts_at IS NULL THEN 1 ELSE 0 END,
+      starts_at,
+      id
+  `).bind(AGENDA_SYNC_SENTINEL).all();
+
+  const events = (result.results || []).map(agendaRowPayload);
+  const now = Date.now();
+  const summary = {
+    total: events.length,
+    published: events.filter((event) => event.is_published).length,
+    draft: events.filter((event) => event.event_status === "draft").length,
+    upcoming: events.filter((event) =>
+      event.is_published &&
+      event.event_status !== "cancelled" &&
+      event.starts_at &&
+      Date.parse(event.starts_at) >= now
+    ).length,
+  };
+
+  return json(request, env, { ok: true, summary, events });
+}
+
+async function createAdminAgenda(request, env) {
+  const gate = await requireStaffRole(request, env, ["super_admin", "admin", "tour_leader"]);
+  if (gate.response) return gate.response;
+
+  const body = await readJson(request);
+  const parsed = validateAgendaInput(body);
+  if (parsed.error) return json(request, env, { ok: false, error: parsed.error }, 400);
+
+  const value = parsed.value;
+  const eventKey = `agenda-${crypto.randomUUID()}`;
+  const now = new Date().toISOString();
+
+  const result = await env.DB.prepare(`
+    INSERT INTO umroh_agenda_events
+      (event_key, title, description, category, starts_at, ends_at,
+       location_text, event_status, is_published, created_by_account_id,
+       created_at, updated_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `).bind(
+    eventKey,
+    value.title,
+    value.description,
+    value.category,
+    value.starts_at,
+    value.ends_at,
+    value.location_text,
+    value.event_status,
+    value.is_published,
+    gate.account.id,
+    now,
+    now
+  ).run();
+
+  const created = await env.DB.prepare(`
+    SELECT id, event_key, title, description, category, starts_at, ends_at,
+           location_text, event_status, is_published, created_at, updated_at
+    FROM umroh_agenda_events
+    WHERE event_key = ?
+    LIMIT 1
+  `).bind(eventKey).first();
+
+  await env.DB.prepare(`
+    INSERT INTO umroh_admin_audit_log
+      (actor_account_id, action, target_account_id, details_json, created_at)
+    VALUES (?, 'agenda_created', NULL, ?, ?)
+  `).bind(
+    gate.account.id,
+    JSON.stringify({
+      agenda_id: Number(created?.id || result.meta?.last_row_id || 0),
+      event_key: eventKey,
+      title: value.title,
+      is_published: Boolean(value.is_published),
+    }),
+    now
+  ).run();
+
+  return json(request, env, { ok: true, event: agendaRowPayload(created) }, 201);
+}
+
+async function updateAdminAgenda(request, env, agendaId) {
+  const gate = await requireStaffRole(request, env, ["super_admin", "admin", "tour_leader"]);
+  if (gate.response) return gate.response;
+
+  if (!Number.isInteger(agendaId) || agendaId < 1) {
+    return json(request, env, { ok: false, error: "invalid_agenda_id" }, 400);
+  }
+
+  const current = await env.DB.prepare(`
+    SELECT id, event_key, title, description, category, starts_at, ends_at,
+           location_text, event_status, is_published, created_at, updated_at
+    FROM umroh_agenda_events
+    WHERE id = ? AND event_key <> ?
+    LIMIT 1
+  `).bind(agendaId, AGENDA_SYNC_SENTINEL).first();
+
+  if (!current) return json(request, env, { ok: false, error: "agenda_not_found" }, 404);
+
+  const body = await readJson(request);
+  const parsed = validateAgendaInput(body, current);
+  if (parsed.error) return json(request, env, { ok: false, error: parsed.error }, 400);
+
+  const value = parsed.value;
+  const now = new Date().toISOString();
+  await env.DB.prepare(`
+    UPDATE umroh_agenda_events
+    SET title = ?,
+        description = ?,
+        category = ?,
+        starts_at = ?,
+        ends_at = ?,
+        location_text = ?,
+        event_status = ?,
+        is_published = ?,
+        updated_at = ?
+    WHERE id = ?
+  `).bind(
+    value.title,
+    value.description,
+    value.category,
+    value.starts_at,
+    value.ends_at,
+    value.location_text,
+    value.event_status,
+    value.is_published,
+    now,
+    agendaId
+  ).run();
+
+  const updated = await env.DB.prepare(`
+    SELECT id, event_key, title, description, category, starts_at, ends_at,
+           location_text, event_status, is_published, created_at, updated_at
+    FROM umroh_agenda_events
+    WHERE id = ?
+    LIMIT 1
+  `).bind(agendaId).first();
+
+  const action =
+    Number(current.is_published || 0) !== Number(updated.is_published || 0)
+      ? (Number(updated.is_published || 0) === 1 ? "agenda_published" : "agenda_unpublished")
+      : "agenda_updated";
+
+  await env.DB.prepare(`
+    INSERT INTO umroh_admin_audit_log
+      (actor_account_id, action, target_account_id, details_json, created_at)
+    VALUES (?, ?, NULL, ?, ?)
+  `).bind(
+    gate.account.id,
+    action,
+    JSON.stringify({
+      agenda_id: agendaId,
+      event_key: updated.event_key,
+      title: updated.title,
+      status: updated.event_status,
+      is_published: Boolean(updated.is_published),
+    }),
+    now
+  ).run();
+
+  return json(request, env, { ok: true, event: agendaRowPayload(updated) });
 }
 
 async function requireJamaah(request, env) {

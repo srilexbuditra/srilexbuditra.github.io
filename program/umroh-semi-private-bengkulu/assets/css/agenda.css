@@ -15,3 +15,6 @@ body.agenda-page{min-height:100vh;background:radial-gradient(circle at 90% 0,rgb
 .agenda-sync-note[data-state="account"]{border-color:#bfe0d1;background:#f3fbf7;color:#0d6645}
 .agenda-sync-note[data-state="local"]{border-color:#eadfb9;background:#fffaf0;color:#7c6100}
 .agenda-read-action:disabled{opacity:.68;cursor:wait}
+
+.agenda-simulation.is-official{border-color:#bfe0d1;background:#f3fbf7;color:#0d6645}
+.agenda-simulation.is-official .ui-icon{color:#0d6645}
