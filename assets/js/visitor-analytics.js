@@ -1,6 +1,6 @@
 /* =========================================================
    Global Visitor Analytics — Cloudflare Worker + D1 + GA4
-   V6.11.0.12 Centralized Site-Wide + Floating Controls Viewport Lock
+   V6.11.0.13 Centralized Site-Wide + Umroh Coverage + Floating Controls Viewport Lock
    ========================================================= */
 (() => {
   if (window.__SB_GLOBAL_VISITOR_ANALYTICS__) return;
@@ -12,7 +12,9 @@
     path.startsWith('/admin/') ||
     path === '/stats.html' ||
     path === '/verify/publisher.html' ||
-    path.startsWith('/program/ketahanan-pangan/admin/');
+    path.startsWith('/program/ketahanan-pangan/admin/') ||
+    path === '/program/umroh-semi-private-bengkulu/admin' ||
+    path.startsWith('/program/umroh-semi-private-bengkulu/admin/');
 
   // Halaman privat/sensitif sengaja tidak dikirim ke GA4 maupun Visitor Analytics.
   if (PRIVATE_PATH) return;
@@ -422,10 +424,15 @@
     const isKetahananPangan =
       window.location.pathname === '/program/ketahanan-pangan' ||
       window.location.pathname.startsWith('/program/ketahanan-pangan/');
+    const isUmrohSemiPrivate =
+      window.location.pathname === '/program/umroh-semi-private-bengkulu' ||
+      window.location.pathname.startsWith('/program/umroh-semi-private-bengkulu/');
 
     description.textContent = isKetahananPangan
       ? 'Kami menggunakan analitik untuk memahami penggunaan layanan Program Ketahanan Pangan dan meningkatkan pengalaman peserta serta pengunjung. Analitik hanya aktif dengan izin Anda.'
-      : 'Kami menggunakan analitik untuk memahami penggunaan srilexbuditra.work dan meningkatkan pengalaman pengunjung. Analitik hanya aktif dengan izin Anda.';
+      : isUmrohSemiPrivate
+        ? 'Kami menggunakan analitik untuk memahami penggunaan Digital Platform Umroh Semi Private Bengkulu dan meningkatkan pengalaman jemaah serta pengunjung. Analitik hanya aktif dengan izin Anda.'
+        : 'Kami menggunakan analitik untuk memahami penggunaan srilexbuditra.work dan meningkatkan pengalaman pengunjung. Analitik hanya aktif dengan izin Anda.';
 
     const status = document.createElement('p');
     status.className = 'sb-privacy-consent__status';

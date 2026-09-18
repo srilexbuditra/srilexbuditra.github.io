@@ -1,0 +1,53 @@
+PATCH UMROH GLOBAL ANALYTICS COMPATIBILITY — V3.9.0 STEP 1
+Date: 2026-09-19
+Baseline: ZIP repository 20260918-183223
+
+TUJUAN
+- Mengaktifkan /assets/js/visitor-analytics.js pada seluruh halaman Umroh non-admin.
+- Menambahkan teks Privacy Consent khusus Digital Platform Umroh Semi Private Bengkulu.
+- Menjamin seluruh /program/umroh-semi-private-bengkulu/admin/ tetap PRIVATE dan tidak dikirim ke GA4 / Visitor Analytics.
+- Tidak mengubah D1, Worker umroh-auth-api, autentikasi, Manasik V3.8.0, atau tampilan halaman.
+
+FILE BERUBAH
+- assets/js/visitor-analytics.js
+- 20 file HTML non-admin di program/umroh-semi-private-bengkulu/
+- 9 file HTML Admin TIDAK diubah.
+
+CARA PASANG
+1. Extract ZIP patch.
+2. Copy folder assets dan program ke root repository srilexbuditra.github.io.
+3. Pilih Replace files in destination.
+4. Buka GitHub Desktop dan pastikan sekitar 21 file berubah.
+5. Commit yang disarankan:
+   Add Umroh Global Analytics Compatibility V3.9.0 Step 1
+6. Push origin.
+7. Tunggu GitHub Pages deploy selesai.
+
+UJI WAJIB
+A. Buka halaman publik Umroh dengan Incognito / localStorage consent kosong:
+   /program/umroh-semi-private-bengkulu/
+   Harus muncul panel "Privasi & Analitik" dengan teks khusus Umroh.
+
+B. Klik Tolak Analitik:
+   - halaman tetap normal;
+   - GA4 / visitor analytics tidak aktif;
+   - launcher privasi tetap tersedia untuk mengubah preferensi.
+
+C. Uji Terima Analitik:
+   - halaman reload;
+   - navigasi tetap normal;
+   - tidak ada error Console.
+
+D. Buka halaman Admin:
+   /program/umroh-semi-private-bengkulu/admin/
+   - tidak boleh muncul panel Privacy Analytics dari visitor-analytics.js;
+   - halaman Admin tetap normal.
+
+E. Buka Manasik Talbiyah dan Dashboard Jemaah:
+   - tampilan/progress tidak berubah;
+   - script global analytics termuat hanya setelah consent sesuai alur.
+
+CATATAN VERSI
+- visitor-analytics.js internal: V6.11.0.13
+- Platform Umroh tetap V3.8.0 selama V3.9.0 masih tahap fondasi.
+- Platform version baru dinaikkan bersama saat V3.9.0 selesai dan lolos uji.
