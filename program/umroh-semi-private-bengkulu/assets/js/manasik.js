@@ -161,7 +161,7 @@
             method: 'POST',
             body: JSON.stringify({ completed: completedLocal })
           });
-          setSyncCopy('account', `Progress lokal lama berhasil dipindahkan ke akun (${data.progress?.done || 0}/${lessons.length}).`);
+          setSyncCopy('account', `Progress lokal lama berhasil dipindahkan ke akun (${data.progress?.done || 0}/${data.progress?.total || lessons.length}).`);
         } else {
           setSyncCopy('account');
         }
@@ -233,6 +233,7 @@
   setSyncCopy('local');
   initialSync();
 
+  addEventListener('umroh:manasik-catalog-ready', () => { render(); initialSync(); });
   addEventListener('pageshow', () => { render(); initialSync(); });
   addEventListener('focus', () => { initialSync(); });
   addEventListener('online', () => { initialSync(); });

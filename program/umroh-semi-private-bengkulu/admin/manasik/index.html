@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html class="auth-pending" lang="id">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<meta content="noindex,nofollow,noarchive" name="robots"/>
+<meta content="#0b2830" name="theme-color"/>
+<title>Manasik | Admin Umroh Semi Private Bengkulu</title>
+<link href="../../assets/css/tokens.css" rel="stylesheet"/>
+<link href="../../assets/css/dashboard-shell.css" rel="stylesheet"/>
+<link href="../../assets/css/admin-dashboard.css" rel="stylesheet"/>
+<link href="../../assets/css/visual-assets.css" rel="stylesheet"/>
+<link href="../../assets/css/admin-auth.css" rel="stylesheet"/>
+<link href="../../assets/css/admin-manasik.css" rel="stylesheet"/>
+</head>
+<body class="dashboard-app admin-dashboard">
+<aside aria-label="Navigasi admin" class="app-sidebar">
+<div class="sidebar-brand"><div aria-hidden="true" class="brand-mark"><span class="ui-icon icon-book"></span></div><div class="brand-copy"><strong>UMROH SEMI PRIVATE<br/>BENGKULU</strong><span>Digital Platform</span></div><button aria-label="Ringkas sidebar" class="sidebar-collapse" data-sidebar-collapse>‹</button></div>
+<nav class="sidebar-nav">
+<div class="nav-section-label">Operasional</div>
+<a class="nav-item" data-rbac="super_admin admin tour_leader pendamping" href="../"><span class="nav-icon"><span class="ui-icon icon-home"></span></span><span class="nav-label">Ringkasan</span></a>
+<a class="nav-item" data-rbac="super_admin admin tour_leader pendamping" href="../jemaah/"><span class="nav-icon"><span class="ui-icon icon-users"></span></span><span class="nav-label">Jemaah</span></a>
+<a class="nav-item is-active" data-rbac="super_admin admin tour_leader" href="./"><span class="nav-icon"><span class="ui-icon icon-book"></span></span><span class="nav-label">Manasik</span></a>
+<a class="nav-item" data-rbac="super_admin admin tour_leader pendamping" href="../agenda/"><span class="nav-icon"><span class="ui-icon icon-calendar"></span></span><span class="nav-label">Agenda &amp; Perjalanan</span></a>
+<a class="nav-item" data-rbac="super_admin admin tour_leader" href="../dokumen/"><span class="nav-icon"><span class="ui-icon icon-file"></span></span><span class="nav-label">Dokumen</span></a>
+<a class="nav-item" data-rbac="super_admin admin tour_leader pendamping" href="../pengumuman/"><span class="nav-icon"><span class="ui-icon icon-megaphone"></span></span><span class="nav-label">Pengumuman</span></a>
+<a class="nav-item" data-rbac="super_admin admin" href="../#laporan"><span class="nav-icon"><span class="ui-icon icon-chart"></span></span><span class="nav-label">Laporan</span></a>
+<div class="nav-section-label">Sistem</div>
+<a class="nav-item" data-super-admin-only data-rbac="super_admin" href="../manajemen-admin/"><span class="nav-icon"><span class="ui-icon icon-admin"></span></span><span class="nav-label">Manajemen Admin</span></a>
+<a class="nav-item" data-rbac="super_admin admin" href="../#pengaturan"><span class="nav-icon"><span class="ui-icon icon-settings"></span></span><span class="nav-label">Pengaturan</span></a>
+</nav>
+</aside>
+<div class="sidebar-backdrop" data-sidebar-backdrop></div>
+<div class="app-main">
+<header class="app-topbar"><button aria-label="Buka menu" class="mobile-menu" data-mobile-menu>☰</button><div class="topbar-title"><strong>Manasik</strong><span>D1 · Materi Resmi</span></div><div class="topbar-spacer"></div><div class="user-chip"><div class="avatar" data-auth-avatar>SB</div><div class="user-copy"><strong data-auth-name>Srilex Buditra</strong><span data-auth-role>Senior Full Stack Developer · Platform Architect</span></div></div><button class="auth-logout" data-admin-logout type="button">Keluar</button></header>
+<main class="page-wrap">
+<div class="prototype-note"><strong>Platform V3.8.0 aktif.</strong> Judul, ringkasan, urutan, isi, dan publikasi 11 materi Manasik kini dikelola melalui backend resmi D1.</div>
+<div class="page-head admin-manasik-head"><div><span class="page-kicker">Official Manasik Management</span><h1>Manasik Digital</h1><p>Kelola 11 materi Manasik tanpa mengubah progress akun Jemaah yang sudah tersimpan.</p></div><a class="admin-manasik-preview" href="../../manasik/" target="_blank" rel="noopener">Lihat Manasik Jemaah ↗</a></div>
+
+<section class="stats-grid admin-manasik-stats">
+<article class="card stat-card"><div><strong data-manasik-stat-total>0</strong><span>Total Materi</span></div></article>
+<article class="card stat-card"><div><strong data-manasik-stat-published>0</strong><span>Dipublikasikan</span></div></article>
+<article class="card stat-card"><div><strong data-manasik-stat-draft>0</strong><span>Draft</span></div></article>
+<article class="card stat-card"><div><strong data-manasik-stat-jamaah>0</strong><span>Jemaah Aktif</span></div></article>
+</section>
+
+<section class="card card-pad admin-manasik-card">
+<div class="admin-manasik-toolbar">
+<div><strong>Materi Manasik Resmi</strong><span>Materi awal berasal dari 11 bahan Manasik yang sudah digunakan pada platform. Edit isi, urutan, lalu atur publikasinya dari halaman ini.</span></div>
+<div class="admin-manasik-toolbar-actions"><select data-manasik-filter><option value="">Semua</option><option value="published">Dipublikasikan</option><option value="draft">Draft</option></select><button data-manasik-refresh type="button">Muat ulang</button></div>
+</div>
+<div class="admin-manasik-table-wrap"><table class="admin-manasik-table"><thead><tr><th>Urutan</th><th>Materi</th><th>Publikasi</th><th>Selesai Jemaah</th><th>Update</th><th>Aksi</th></tr></thead><tbody data-manasik-body><tr><td class="table-state" colspan="6">Memuat materi Manasik...</td></tr></tbody></table></div>
+</section>
+</main>
+</div>
+
+<div class="admin-manasik-modal" data-manasik-modal hidden>
+<div class="admin-manasik-backdrop" data-manasik-close></div>
+<section class="admin-manasik-dialog" role="dialog" aria-modal="true" aria-labelledby="manasikDialogTitle">
+<div class="admin-manasik-dialog-head"><div><span class="page-kicker">Materi Resmi</span><h2 id="manasikDialogTitle" data-manasik-dialog-title>Edit Materi</h2></div><button aria-label="Tutup" data-manasik-close type="button">×</button></div>
+<form data-manasik-form>
+<input name="id" type="hidden"/>
+<div class="admin-manasik-form-grid">
+<label>Urutan<input min="1" max="99" name="sort_order" required type="number"/></label>
+<label class="admin-manasik-publish"><input name="is_published" type="checkbox"/> <span>Publikasikan ke Jemaah</span></label>
+<label class="wide">Judul<input maxlength="180" name="title" required/></label>
+<label class="wide">Ringkasan<textarea maxlength="500" name="summary" rows="3" required></textarea></label>
+</div>
+
+<div class="admin-block-head"><div><strong>Isi Materi</strong><span>Gunakan blok agar teks tetap aman dan konsisten di semua perangkat.</span></div><button data-block-add type="button">+ Tambah Bagian</button></div>
+<div class="admin-blocks" data-blocks></div>
+
+<p class="admin-manasik-message" data-manasik-message hidden></p>
+<div class="admin-manasik-form-actions"><button data-manasik-close type="button">Batal</button><button class="admin-manasik-primary" data-manasik-submit type="submit">Simpan Materi</button></div>
+</form>
+</section>
+</div>
+
+<script src="../../assets/js/admin-auth-guard.js?v=3.8.0"></script>
+<script src="../../assets/js/dashboard-shell.js"></script>
+<script src="../../assets/js/admin-manasik.js?v=3.8.0"></script>
+</body>
+</html>

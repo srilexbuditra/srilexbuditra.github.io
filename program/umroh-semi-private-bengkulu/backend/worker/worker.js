@@ -1,4 +1,4 @@
-const API_VERSION = "3.7.0";
+const API_VERSION = "3.8.0";
 const COOKIE_NAME = "umroh_session";
 const DEFAULT_SESSION_AGE = 60 * 60 * 24 * 7;
 const PASSWORD_ITERATIONS = 100000;
@@ -8,6 +8,7 @@ const MAX_DOCUMENT_BYTES = 5 * 1024 * 1024;
 const DOCUMENT_KEYS = new Set(["paspor-dokumen", "tiket-itinerary", "identitas-jemaah", "dokumen-kesehatan"]);
 const DOCUMENT_MIME = new Set(["application/pdf", "image/jpeg", "image/png"]);
 const MANASIK_KEYS = new Set(["persiapan", "ihram-miqat", "talbiyah", "tata-cara-umroh", "thawaf", "sai", "tahallul", "larangan-ihram", "adab-tanah-suci", "ziarah-madinah", "tips-perjalanan"]);
+const MANASIK_BLOCK_TYPES = new Set(["section", "arabic", "note", "steps", "tips"]);
 const CHECKLIST_KEYS = new Set(["paspor-dokumen", "tiket-itinerary", "identitas-jemaah", "dokumen-kesehatan", "kain-ihram", "mukena-pakaian-muslim", "alas-kaki", "obat-kebutuhan-pribadi", "pelajari-tata-cara", "hafalkan-niat-talbiyah", "jaga-fisik-istirahat", "ikuti-arahan"]);
 const AGENDA_SYNC_KEYS = new Set(["manasik-tata-cara", "pemeriksaan-dokumen", "briefing-keberangkatan", "keberangkatan"]);
 const AGENDA_SYNC_SENTINEL = "__agenda-read-sync-v1__";
@@ -146,6 +147,24 @@ export default {
       const adminAnnouncementMatch = path.match(/^\/admin\/announcements\/(\d+)$/);
       if (adminAnnouncementMatch && request.method === "PATCH") {
         return updateAdminAnnouncement(request, env, Number(adminAnnouncementMatch[1]));
+      }
+
+      if (request.method === "GET" && path === "/manasik/materials") {
+        return listPublishedManasikMaterials(request, env);
+      }
+
+      const publicManasikMaterialMatch = path.match(/^\/manasik\/materials\/([a-z0-9-]+)$/i);
+      if (publicManasikMaterialMatch && request.method === "GET") {
+        return getPublishedManasikMaterial(request, env, publicManasikMaterialMatch[1]);
+      }
+
+      if (request.method === "GET" && path === "/admin/manasik") {
+        return listAdminManasikMaterials(request, env);
+      }
+
+      const adminManasikMaterialMatch = path.match(/^\/admin\/manasik\/(\d+)$/);
+      if (adminManasikMaterialMatch && request.method === "PATCH") {
+        return updateAdminManasikMaterial(request, env, Number(adminManasikMaterialMatch[1]));
       }
 
       if (request.method === "GET" && path === "/jamaah/progress/summary") {
@@ -763,7 +782,287 @@ async function getOwnProgressSummary(request, env) {
   });
 }
 
+
+function safeJsonArray(value) {
+  try {
+    const parsed = typeof value === "string" ? JSON.parse(value) : value;
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (_) {
+    return [];
+  }
+}
+
+function normalizeManasikBlocks(value) {
+  if (!Array.isArray(value) || !value.length || value.length > 24) {
+    throw new Error("invalid_manasik_content");
+  }
+
+  return value.map((raw) => {
+    const block = raw && typeof raw === "object" ? raw : {};
+    const type = String(block.type || "").trim().toLowerCase();
+    if (!MANASIK_BLOCK_TYPES.has(type)) throw new Error("invalid_manasik_block_type");
+
+    if (type === "section") {
+      const heading = truncate(String(block.heading || "").trim(), 120);
+      const body = truncate(String(block.body || "").trim(), 5000);
+      if (!heading || !body) throw new Error("invalid_manasik_section");
+      return { type, heading, body };
+    }
+
+    if (type === "arabic") {
+      const heading = truncate(String(block.heading || "").trim(), 120);
+      const arabic = truncate(String(block.arabic || "").trim(), 3000);
+      const body = truncate(String(block.body || "").trim(), 2000);
+      if (!heading || !arabic) throw new Error("invalid_manasik_arabic");
+      return { type, heading, arabic, body };
+    }
+
+    if (type === "note") {
+      const body = truncate(String(block.body || "").trim(), 3000);
+      if (!body) throw new Error("invalid_manasik_note");
+      return { type, body };
+    }
+
+    const items = Array.isArray(block.items) ? block.items : [];
+    if (!items.length || items.length > 20) throw new Error("invalid_manasik_items");
+    return {
+      type,
+      items: items.map((rawItem, index) => {
+        const item = rawItem && typeof rawItem === "object" ? rawItem : {};
+        const title = truncate(String(item.title || "").trim(), 180);
+        const detail = truncate(String(item.detail || "").trim(), 600);
+        if (!title) throw new Error("invalid_manasik_item");
+        return {
+          number: String(index + 1).padStart(2, "0"),
+          title,
+          detail,
+        };
+      }),
+    };
+  });
+}
+
+function manasikMaterialPayload(row, includeContent = false) {
+  const payload = {
+    id: Number(row.id),
+    material_key: row.material_key,
+    sort_order: Number(row.sort_order || 0),
+    title: row.title,
+    summary: row.summary || "",
+    icon_key: row.icon_key || "book",
+    is_published: Number(row.is_published || 0) === 1,
+    published_at: row.published_at || null,
+    updated_at: row.updated_at || null,
+  };
+  if (row.complete_count !== undefined) payload.complete_count = Number(row.complete_count || 0);
+  if (includeContent) payload.content = safeJsonArray(row.content_json);
+  return payload;
+}
+
+async function publishedManasikRows(env, includeContent = false) {
+  const columns = includeContent
+    ? "id, material_key, sort_order, title, summary, icon_key, content_json, is_published, published_at, updated_at"
+    : "id, material_key, sort_order, title, summary, icon_key, is_published, published_at, updated_at";
+  const result = await env.DB.prepare(`
+    SELECT ${columns}
+    FROM umroh_manasik_materials
+    WHERE is_published = 1
+    ORDER BY sort_order ASC, id ASC
+  `).all();
+  return result.results || [];
+}
+
+async function publishedManasikKeySet(env) {
+  const rows = await publishedManasikRows(env, false);
+  return new Set(rows.map((row) => String(row.material_key || "")).filter((key) => MANASIK_KEYS.has(key)));
+}
+
+async function listPublishedManasikMaterials(request, env) {
+  const rows = await publishedManasikRows(env, false);
+  return json(request, env, {
+    ok: true,
+    materials: rows.map((row) => manasikMaterialPayload(row, false)),
+    total: rows.length,
+    source: "backend_d1",
+  });
+}
+
+async function getPublishedManasikMaterial(request, env, materialKey) {
+  if (!MANASIK_KEYS.has(materialKey)) {
+    return json(request, env, { ok: false, error: "manasik_material_unavailable" }, 404);
+  }
+
+  const row = await env.DB.prepare(`
+    SELECT id, material_key, sort_order, title, summary, icon_key, content_json,
+           is_published, published_at, updated_at
+    FROM umroh_manasik_materials
+    WHERE material_key = ? AND is_published = 1
+    LIMIT 1
+  `).bind(materialKey).first();
+
+  if (!row) {
+    return json(request, env, { ok: false, error: "manasik_material_unavailable" }, 404);
+  }
+
+  const ordered = await publishedManasikRows(env, false);
+  const index = ordered.findIndex((item) => item.material_key === materialKey);
+  const previous = index > 0 ? manasikMaterialPayload(ordered[index - 1], false) : null;
+  const next = index >= 0 && index < ordered.length - 1
+    ? manasikMaterialPayload(ordered[index + 1], false)
+    : null;
+
+  return json(request, env, {
+    ok: true,
+    material: {
+      ...manasikMaterialPayload(row, true),
+      position: index >= 0 ? index + 1 : Number(row.sort_order || 0),
+      total: ordered.length,
+      previous,
+      next,
+    },
+    source: "backend_d1",
+  });
+}
+
+async function listAdminManasikMaterials(request, env) {
+  const gate = await requireStaffRole(request, env, ["super_admin", "admin", "tour_leader"]);
+  if (gate.response) return gate.response;
+
+  const result = await env.DB.prepare(`
+    SELECT
+      m.id, m.material_key, m.sort_order, m.title, m.summary, m.icon_key,
+      m.content_json, m.is_published, m.published_at, m.updated_at,
+      COUNT(CASE WHEN p.status = 'complete' THEN 1 END) AS complete_count
+    FROM umroh_manasik_materials m
+    LEFT JOIN umroh_progress_items p
+      ON p.module = 'manasik'
+     AND p.item_key = m.material_key
+    GROUP BY m.id
+    ORDER BY m.sort_order ASC, m.id ASC
+  `).all();
+
+  const activeRow = await env.DB.prepare(`
+    SELECT COUNT(*) AS total
+    FROM umroh_accounts
+    WHERE role = 'jamaah' AND account_status = 'active'
+  `).first();
+
+  const materials = (result.results || []).map((row) => manasikMaterialPayload(row, true));
+  return json(request, env, {
+    ok: true,
+    materials,
+    summary: {
+      total: materials.length,
+      published: materials.filter((item) => item.is_published).length,
+      draft: materials.filter((item) => !item.is_published).length,
+      active_jamaah: Number(activeRow?.total || 0),
+    },
+  });
+}
+
+async function updateAdminManasikMaterial(request, env, materialId) {
+  const gate = await requireStaffRole(request, env, ["super_admin", "admin", "tour_leader"]);
+  if (gate.response) return gate.response;
+
+  if (!Number.isInteger(materialId) || materialId < 1) {
+    return json(request, env, { ok: false, error: "invalid_manasik_id" }, 400);
+  }
+
+  const current = await env.DB.prepare(`
+    SELECT id, material_key, sort_order, title, summary, icon_key, content_json,
+           is_published, published_at, updated_at
+    FROM umroh_manasik_materials
+    WHERE id = ?
+    LIMIT 1
+  `).bind(materialId).first();
+
+  if (!current) {
+    return json(request, env, { ok: false, error: "manasik_material_not_found" }, 404);
+  }
+
+  const body = await readJson(request);
+  const title = truncate(String(body.title || "").trim(), 180);
+  const summary = truncate(String(body.summary || "").trim(), 500);
+  const sortOrder = Number(body.sort_order);
+  const isPublished = Boolean(body.is_published);
+
+  if (!title) return json(request, env, { ok: false, error: "manasik_title_required" }, 400);
+  if (!summary) return json(request, env, { ok: false, error: "manasik_summary_required" }, 400);
+  if (!Number.isInteger(sortOrder) || sortOrder < 1 || sortOrder > 99) {
+    return json(request, env, { ok: false, error: "invalid_manasik_order" }, 400);
+  }
+
+  let content;
+  try {
+    content = normalizeManasikBlocks(body.content);
+  } catch (error) {
+    return json(request, env, { ok: false, error: error.message || "invalid_manasik_content" }, 400);
+  }
+
+  const now = new Date().toISOString();
+  const wasPublished = Number(current.is_published || 0) === 1;
+  const publishedAt = isPublished
+    ? (wasPublished && current.published_at ? current.published_at : now)
+    : null;
+
+  await env.DB.prepare(`
+    UPDATE umroh_manasik_materials
+    SET sort_order = ?,
+        title = ?,
+        summary = ?,
+        content_json = ?,
+        is_published = ?,
+        published_at = ?,
+        updated_at = ?
+    WHERE id = ?
+  `).bind(
+    sortOrder,
+    title,
+    summary,
+    JSON.stringify(content),
+    isPublished ? 1 : 0,
+    publishedAt,
+    now,
+    materialId
+  ).run();
+
+  let action = "manasik_updated";
+  if (!wasPublished && isPublished) action = "manasik_published";
+  if (wasPublished && !isPublished) action = "manasik_unpublished";
+
+  await env.DB.prepare(`
+    INSERT INTO umroh_admin_audit_log
+      (actor_account_id, action, target_account_id, details_json, created_at)
+    VALUES (?, ?, NULL, ?, ?)
+  `).bind(
+    gate.account.id,
+    action,
+    JSON.stringify({
+      material_id: materialId,
+      material_key: current.material_key,
+      title,
+      sort_order: sortOrder,
+      is_published: isPublished,
+    }),
+    now
+  ).run();
+
+  const updated = await env.DB.prepare(`
+    SELECT id, material_key, sort_order, title, summary, icon_key, content_json,
+           is_published, published_at, updated_at
+    FROM umroh_manasik_materials
+    WHERE id = ?
+    LIMIT 1
+  `).bind(materialId).first();
+
+  return json(request, env, {
+    ok: true,
+    material: manasikMaterialPayload(updated, true),
+  });
+}
+
 async function manasikProgressPayload(env, accountId) {
+  const publishedKeys = await publishedManasikKeySet(env);
   const result = await env.DB.prepare(`
     SELECT item_key, status, updated_at
     FROM umroh_progress_items
@@ -771,13 +1070,14 @@ async function manasikProgressPayload(env, accountId) {
     ORDER BY item_key
   `).bind(accountId).all();
 
-  const rows = (result.results || []).filter((row) => MANASIK_KEYS.has(row.item_key));
+  const allRows = (result.results || []).filter((row) => MANASIK_KEYS.has(row.item_key));
+  const rows = allRows.filter((row) => publishedKeys.has(row.item_key));
   const done = rows.filter((row) => row.status === "complete").length;
 
   return {
-    initialized: rows.length > 0,
+    initialized: allRows.length > 0,
     done,
-    total: MANASIK_KEYS.size,
+    total: publishedKeys.size,
     items: rows.map((row) => ({
       item_key: row.item_key,
       status: row.status,
@@ -800,6 +1100,11 @@ async function updateOwnManasikProgress(request, env, itemKey) {
 
   if (!MANASIK_KEYS.has(itemKey)) {
     return json(request, env, { ok: false, error: "invalid_progress_item" }, 400);
+  }
+
+  const publishedKeys = await publishedManasikKeySet(env);
+  if (!publishedKeys.has(itemKey)) {
+    return json(request, env, { ok: false, error: "manasik_material_unavailable" }, 404);
   }
 
   const body = await readJson(request);
@@ -839,9 +1144,10 @@ async function importOwnManasikProgress(request, env) {
   }
 
   const body = await readJson(request);
+  const publishedKeys = await publishedManasikKeySet(env);
   const completed = Array.isArray(body.completed)
     ? [...new Set(body.completed.map((value) => String(value || "").trim()))]
-        .filter((value) => MANASIK_KEYS.has(value))
+        .filter((value) => MANASIK_KEYS.has(value) && publishedKeys.has(value))
     : [];
 
   if (!completed.length) {
@@ -2353,6 +2659,9 @@ function adminActivityLabel(row) {
     announcement_updated: ['Memperbarui pengumuman', 'Pengumuman', 'warning'],
     announcement_published: ['Mempublikasikan pengumuman', 'Pengumuman', 'success'],
     announcement_unpublished: ['Menarik publikasi pengumuman', 'Pengumuman', 'warning'],
+    manasik_updated: ['Memperbarui materi Manasik', 'Manasik', 'info'],
+    manasik_published: ['Mempublikasikan materi Manasik', 'Manasik', 'success'],
+    manasik_unpublished: ['Menarik publikasi materi Manasik', 'Manasik', 'warning'],
     document_reviewed: ['Memverifikasi dokumen jemaah', 'Dokumen', 'success'],
     jamaah_created: ['Menambahkan akun jemaah', 'Jemaah', 'success'],
     jamaah_updated: ['Memperbarui akun jemaah', 'Jemaah', 'info'],
@@ -2373,6 +2682,13 @@ async function getAdminDashboardSummary(request, env) {
   const nowIso = now.toISOString();
   const windowEndIso = new Date(now.getTime() + windowDays * 86400000).toISOString();
   const activityStartIso = new Date(now.getTime() - windowDays * 86400000).toISOString();
+
+  const manasikPublishedRow = await env.DB.prepare(`
+    SELECT COUNT(*) AS total
+    FROM umroh_manasik_materials
+    WHERE is_published = 1
+  `).first();
+  const publishedManasikCount = Number(manasikPublishedRow?.total || 0);
 
   const jamaahRow = await env.DB.prepare(`
     SELECT COUNT(*) AS total
@@ -2433,6 +2749,9 @@ async function getAdminDashboardSummary(request, env) {
         (
           SELECT COUNT(*)
           FROM umroh_progress_items p
+          JOIN umroh_manasik_materials m
+            ON m.material_key = p.item_key
+           AND m.is_published = 1
           WHERE p.account_id = a.id
             AND p.module = 'manasik'
             AND p.status = 'complete'
@@ -2498,7 +2817,7 @@ async function getAdminDashboardSummary(request, env) {
   `).bind(
     AGENDA_SYNC_SENTINEL,
     AGENDA_SYNC_SENTINEL,
-    MANASIK_KEYS.size,
+    publishedManasikCount,
     CHECKLIST_KEYS.size,
     DOCUMENT_KEYS.size
   ).first();
@@ -2607,7 +2926,7 @@ async function getAdminDashboardSummary(request, env) {
     summary: {
       jamaah_total: Number(jamaahRow?.total || 0),
       agenda_upcoming_total: Number(agendaUpcomingRow?.total || 0),
-      manasik_materials: MANASIK_KEYS.size,
+      manasik_materials: publishedManasikCount,
       attention_total: attentionTotal,
       attention: {
         documents_pending_review: documentsPending,
