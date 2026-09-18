@@ -1,8 +1,14 @@
 (() => {
+  'use strict';
+
+  const API_BASE = 'https://umroh-api.srilexbuditra.work';
   const source = window.UmrohAgenda;
   if (!source) return;
 
   const readKey = 'umroh-agenda-read-v1';
+  const queueKey = 'umroh-agenda-sync-queue-v1';
+  const known = new Set(source.events.map((event) => event.id));
+
   const list = document.querySelector('[data-agenda-list]');
   const progressCount = document.querySelector('[data-agenda-read-count]');
   const progressPercent = document.querySelector('[data-agenda-read-percent]');
@@ -15,17 +21,150 @@
   const departureTime = document.querySelector('[data-departure-time]');
   const departureLocation = document.querySelector('[data-departure-location]');
 
-  const readState = () => {
+  let backendActive = false;
+  let syncPromise = null;
+
+  const readObject = (key) => {
     try {
-      const value = JSON.parse(localStorage.getItem(readKey) || '{}');
+      const value = JSON.parse(localStorage.getItem(key) || '{}');
       return value && typeof value === 'object' ? value : {};
-    } catch (_) {
-      return {};
+    } catch (_) { return {}; }
+  };
+
+  const writeObject = (key, value) => {
+    try { localStorage.setItem(key, JSON.stringify(value)); } catch (_) {}
+  };
+
+  const readState = () => readObject(readKey);
+  const writeState = (state) => writeObject(readKey, state);
+  const getQueue = () => readObject(queueKey);
+  const saveQueue = (queue) => writeObject(queueKey, queue);
+
+  const setSyncCopy = (mode, text = '') => {
+    document.querySelectorAll('[data-agenda-sync-note]').forEach((node) => {
+      node.textContent = text || (mode === 'account'
+        ? 'Status baca Agenda tersinkron ke akun jemaah.'
+        : 'Mode lokal aktif. Status baca Agenda belum tersinkron ke akun.');
+      node.dataset.state = mode;
+    });
+    document.querySelectorAll('[data-agenda-storage-copy]').forEach((node) => {
+      node.textContent = mode === 'account'
+        ? 'Tandai agenda sebagai sudah dibaca. Status ini tersimpan pada akun dan dapat digunakan lintas perangkat.'
+        : 'Tandai agenda sebagai sudah dibaca. Status sementara tersimpan pada browser ini.';
+    });
+  };
+
+  const api = async (path, options = {}) => {
+    const response = await fetch(`${API_BASE}${path}`, {
+      credentials: 'include',
+      cache: 'no-store',
+      headers: {
+        Accept: 'application/json',
+        ...(options.body ? { 'Content-Type':'application/json' } : {}),
+        ...(options.headers || {})
+      },
+      ...options
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok || !data?.ok) {
+      const error = new Error(data?.error || `http_${response.status}`);
+      error.status = response.status;
+      error.code = data?.error || '';
+      throw error;
+    }
+    return data;
+  };
+
+  const serverToLocal = (progress) => {
+    const state = readState();
+    source.events.forEach((event) => { state[event.id] = false; });
+
+    (progress?.items || []).forEach((item) => {
+      if (known.has(item.item_key)) state[item.item_key] = Boolean(item.read);
+    });
+
+    const queue = getQueue();
+    Object.entries(queue).forEach(([id, value]) => {
+      if (known.has(id)) state[id] = Boolean(value);
+    });
+
+    writeState(state);
+    renderList();
+    updateProgress();
+  };
+
+  const flushQueue = async () => {
+    const queue = getQueue();
+    const entries = Object.entries(queue).filter(([id]) => known.has(id));
+    if (!entries.length) return;
+
+    for (const [id, read] of entries) {
+      try {
+        const data = await api(`/jamaah/progress/agenda/${encodeURIComponent(id)}`, {
+          method: 'PATCH',
+          body: JSON.stringify({ read: Boolean(read) })
+        });
+        const latest = getQueue();
+        delete latest[id];
+        saveQueue(latest);
+        serverToLocal(data.progress);
+      } catch (error) {
+        if ([401,403].includes(error.status)) {
+          backendActive = false;
+          setSyncCopy('local');
+        }
+        throw error;
+      }
     }
   };
 
-  const writeState = (state) => {
-    try { localStorage.setItem(readKey, JSON.stringify(state)); } catch (_) {}
+  const initialSync = async () => {
+    if (syncPromise) return syncPromise;
+
+    syncPromise = (async () => {
+      try {
+        let data = await api('/jamaah/progress/agenda');
+        backendActive = true;
+
+        const local = readState();
+        const completedLocal = source.events
+          .filter((event) => local[event.id] === true)
+          .map((event) => event.id);
+
+        if (!data.progress?.initialized && completedLocal.length) {
+          data = await api('/jamaah/progress/agenda/import', {
+            method: 'POST',
+            body: JSON.stringify({ completed: completedLocal })
+          });
+          setSyncCopy(
+            'account',
+            `Status baca Agenda lokal lama berhasil dipindahkan ke akun (${data.progress?.done || 0}/${source.events.length}).`
+          );
+        } else {
+          setSyncCopy('account');
+        }
+
+        serverToLocal(data.progress);
+        await flushQueue();
+
+        const fresh = await api('/jamaah/progress/agenda');
+        serverToLocal(fresh.progress);
+
+        window.dispatchEvent(new CustomEvent('umroh:agenda-progress-synced', {
+          detail: fresh.progress
+        }));
+      } catch (error) {
+        if (![401,403].includes(error.status)) console.warn('Agenda sync:', error);
+        backendActive = false;
+        setSyncCopy('local');
+        renderList();
+        updateProgress();
+      } finally {
+        syncPromise = null;
+      }
+    })();
+
+    return syncPromise;
   };
 
   const dateAtJakarta = (date, time = '00:00:00') => new Date(`${date}T${time}+07:00`);
@@ -53,6 +192,7 @@
   const renderList = () => {
     if (!list) return;
     const state = readState();
+
     list.innerHTML = source.events.map(event => {
       const isRead = state[event.id] === true;
       return `
@@ -68,16 +208,37 @@
         </article>`;
     }).join('');
 
-    list.querySelectorAll('[data-agenda-read]').forEach(button => {
-      button.addEventListener('click', () => {
+    list.querySelectorAll('[data-agenda-read]').forEach((button) => {
+      button.addEventListener('click', async () => {
         const item = button.closest('[data-agenda-item]');
         if (!item) return;
+
         const state = readState();
         const id = item.dataset.agendaItem;
         state[id] = state[id] !== true;
         writeState(state);
+
+        const queue = getQueue();
+        queue[id] = state[id] === true;
+        saveQueue(queue);
+
         renderList();
         updateProgress();
+
+        button.disabled = true;
+        try {
+          if (!backendActive) await initialSync();
+          else {
+            await flushQueue();
+            const fresh = await api('/jamaah/progress/agenda');
+            serverToLocal(fresh.progress);
+            window.dispatchEvent(new CustomEvent('umroh:agenda-progress-synced', {
+              detail: fresh.progress
+            }));
+          }
+        } catch (_) {
+          // Local cache + queue preserve the click until the next successful sync.
+        }
       });
     });
   };
@@ -122,4 +283,16 @@
   updateProgress();
   updateNext();
   updateDeparture();
+  setSyncCopy('local');
+  initialSync();
+
+  addEventListener('pageshow', () => { renderList(); updateProgress(); initialSync(); });
+  addEventListener('focus', () => { initialSync(); });
+  addEventListener('online', () => { initialSync(); });
+  addEventListener('storage', (event) => {
+    if ([readKey, queueKey].includes(event.key)) {
+      renderList();
+      updateProgress();
+    }
+  });
 })();

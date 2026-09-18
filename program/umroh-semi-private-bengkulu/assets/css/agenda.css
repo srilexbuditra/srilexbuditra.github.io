@@ -10,3 +10,8 @@ body.agenda-page{min-height:100vh;background:radial-gradient(circle at 90% 0,rgb
 .agenda-footer{display:flex;justify-content:space-between;gap:14px;padding:20px 2px 0;color:var(--ink-500);font-size:9px;line-height:1.5}
 @media(max-width:900px){.agenda-shell{width:min(100% - 28px,1180px)}.agenda-hero{grid-template-columns:1fr}.agenda-next-panel{max-width:420px}.agenda-section-head{align-items:flex-start}.agenda-section-head p{text-align:left}.agenda-item{grid-template-columns:58px 42px minmax(0,1fr)}.agenda-read-action{grid-column:3;justify-self:start}.travel-grid{grid-template-columns:1fr}.departure-panel{grid-template-columns:1fr}.agenda-progress-card{grid-template-columns:1fr}}
 @media(max-width:680px){.agenda-shell{width:min(100% - 20px,1180px);padding-top:10px}.agenda-topbar{top:6px}.agenda-brand strong{font-size:9px}.agenda-brand small{font-size:8px}.agenda-top-actions a{padding:0 9px;font-size:9px}.agenda-top-actions a.primary{display:none}.agenda-hero{padding:26px 20px;border-radius:22px}.agenda-hero h1{font-size:34px}.agenda-section-head{display:block}.agenda-section-head p{margin-top:7px}.agenda-item{grid-template-columns:52px minmax(0,1fr);gap:10px}.agenda-icon{display:none}.agenda-copy{grid-column:2}.agenda-read-action{grid-column:2}.agenda-meta{display:grid;gap:5px}.agenda-footer{display:block}}
+
+.agenda-sync-note{margin:12px 0;padding:11px 13px;border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--ink-600);font-size:9px;line-height:1.5}
+.agenda-sync-note[data-state="account"]{border-color:#bfe0d1;background:#f3fbf7;color:#0d6645}
+.agenda-sync-note[data-state="local"]{border-color:#eadfb9;background:#fffaf0;color:#7c6100}
+.agenda-read-action:disabled{opacity:.68;cursor:wait}

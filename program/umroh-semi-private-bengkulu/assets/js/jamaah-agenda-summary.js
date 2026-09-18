@@ -1,4 +1,7 @@
 (() => {
+  'use strict';
+
+  const API_BASE = 'https://umroh-api.srilexbuditra.work';
   const source = window.UmrohAgenda;
   if (!source) return;
 
@@ -14,7 +17,29 @@
 
   const next = source.events.find(event => eventInstant(event).getTime() >= Date.now()) || source.events[source.events.length - 1];
   const summary = document.querySelector('[data-agenda-summary]');
-  if (summary && next) summary.textContent = `${formatShortDate(next.date)} · ${next.title}`;
+
+  const renderSummary = (done = null) => {
+    if (!summary || !next) return;
+    const nextText = `${formatShortDate(next.date)} · ${next.title}`;
+    summary.textContent = Number.isInteger(done)
+      ? `${done}/${source.events.length} dibaca · ${nextText}`
+      : nextText;
+  };
+
+  renderSummary();
+
+  const syncReadSummary = async () => {
+    try {
+      const response = await fetch(`${API_BASE}/jamaah/progress/agenda`, {
+        credentials: 'include',
+        cache: 'no-store',
+        headers: { Accept: 'application/json' }
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok || !data?.ok) return;
+      renderSummary(Number(data.progress?.done || 0));
+    } catch (_) {}
+  };
 
   const departureDate = document.querySelector('[data-departure-date]');
   const departureCountdown = document.querySelector('[data-departure-countdown]');
@@ -31,4 +56,11 @@
     const days = Math.ceil((target.getTime() - today.getTime()) / 86400000);
     departureCountdown.textContent = days > 1 ? `${days} hari lagi` : days === 1 ? 'Besok' : days === 0 ? 'Hari ini' : 'Tanggal telah lewat';
   }
+
+  syncReadSummary();
+  addEventListener('focus', syncReadSummary);
+  addEventListener('pageshow', syncReadSummary);
+  addEventListener('umroh:agenda-progress-synced', (event) => {
+    renderSummary(Number(event.detail?.done || 0));
+  });
 })();

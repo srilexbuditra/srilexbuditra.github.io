@@ -1,4 +1,4 @@
-const API_VERSION = "3.4.4";
+const API_VERSION = "3.4.5";
 const COOKIE_NAME = "umroh_session";
 const DEFAULT_SESSION_AGE = 60 * 60 * 24 * 7;
 const PASSWORD_ITERATIONS = 100000;
@@ -9,6 +9,38 @@ const DOCUMENT_KEYS = new Set(["paspor-dokumen", "tiket-itinerary", "identitas-j
 const DOCUMENT_MIME = new Set(["application/pdf", "image/jpeg", "image/png"]);
 const MANASIK_KEYS = new Set(["persiapan", "ihram-miqat", "talbiyah", "tata-cara-umroh", "thawaf", "sai", "tahallul", "larangan-ihram", "adab-tanah-suci", "ziarah-madinah", "tips-perjalanan"]);
 const CHECKLIST_KEYS = new Set(["paspor-dokumen", "tiket-itinerary", "identitas-jemaah", "dokumen-kesehatan", "kain-ihram", "mukena-pakaian-muslim", "alas-kaki", "obat-kebutuhan-pribadi", "pelajari-tata-cara", "hafalkan-niat-talbiyah", "jaga-fisik-istirahat", "ikuti-arahan"]);
+const AGENDA_SYNC_KEYS = new Set(["manasik-tata-cara", "pemeriksaan-dokumen", "briefing-keberangkatan", "keberangkatan"]);
+const AGENDA_SYNC_SENTINEL = "__agenda-read-sync-v1__";
+const AGENDA_SYNC_EVENTS = [
+  {
+    event_key: "manasik-tata-cara",
+    title: "Manasik — Tata Cara Umroh",
+    description: "[SIMULASI] Event statis V2.2 untuk sinkronisasi status baca.",
+    starts_at: "2026-09-20T09:00:00+07:00",
+    location_text: "Bengkulu · lokasi simulasi",
+  },
+  {
+    event_key: "pemeriksaan-dokumen",
+    title: "Pemeriksaan Dokumen Perjalanan",
+    description: "[SIMULASI] Event statis V2.2 untuk sinkronisasi status baca.",
+    starts_at: "2026-09-24T09:30:00+07:00",
+    location_text: "Sekretariat · lokasi simulasi",
+  },
+  {
+    event_key: "briefing-keberangkatan",
+    title: "Briefing Keberangkatan",
+    description: "[SIMULASI] Event statis V2.2 untuk sinkronisasi status baca.",
+    starts_at: "2026-09-29T19:30:00+07:00",
+    location_text: "Lokasi menyusul",
+  },
+  {
+    event_key: "keberangkatan",
+    title: "Rencana Keberangkatan",
+    description: "[SIMULASI] Event statis V2.2 untuk sinkronisasi status baca.",
+    starts_at: "2026-09-30T12:00:00+07:00",
+    location_text: "Titik kumpul belum dikonfirmasi",
+  },
+];
 
 export default {
   async fetch(request, env) {
@@ -85,6 +117,20 @@ export default {
       const checklistProgressMatch = path.match(/^\/jamaah\/progress\/checklist\/([a-z0-9-]+)$/i);
       if (checklistProgressMatch && request.method === "PATCH") {
         return updateOwnChecklistProgress(request, env, checklistProgressMatch[1]);
+      }
+
+
+      if (request.method === "GET" && path === "/jamaah/progress/agenda") {
+        return getOwnAgendaProgress(request, env);
+      }
+
+      if (request.method === "POST" && path === "/jamaah/progress/agenda/import") {
+        return importOwnAgendaProgress(request, env);
+      }
+
+      const agendaProgressMatch = path.match(/^\/jamaah\/progress\/agenda\/([a-z0-9-]+)$/i);
+      if (agendaProgressMatch && request.method === "PATCH") {
+        return updateOwnAgendaProgress(request, env, agendaProgressMatch[1]);
       }
 
       if (request.method === "GET" && path === "/jamaah/documents") {
@@ -797,6 +843,210 @@ async function importOwnChecklistProgress(request, env) {
     ok: true,
     imported: true,
     imported_count: entries.length,
+    progress,
+  });
+}
+
+
+async function ensureAgendaSyncEvents(env) {
+  const statements = AGENDA_SYNC_EVENTS.map((event) =>
+    env.DB.prepare(`
+      INSERT INTO umroh_agenda_events
+        (event_key, title, description, starts_at, location_text,
+         event_status, is_published, created_at, updated_at)
+      VALUES (?, ?, ?, ?, ?, 'scheduled', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+      ON CONFLICT(event_key) DO NOTHING
+    `).bind(
+      event.event_key,
+      event.title,
+      event.description,
+      event.starts_at,
+      event.location_text
+    )
+  );
+
+  statements.push(
+    env.DB.prepare(`
+      INSERT INTO umroh_agenda_events
+        (event_key, title, description, event_status, is_published, created_at, updated_at)
+      VALUES (?, '[SYSTEM] Agenda Read Sync', 'Marker internal; bukan agenda jemaah.',
+              'draft', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+      ON CONFLICT(event_key) DO NOTHING
+    `).bind(AGENDA_SYNC_SENTINEL)
+  );
+
+  await env.DB.batch(statements);
+}
+
+async function agendaProgressPayload(env, accountId) {
+  await ensureAgendaSyncEvents(env);
+
+  const result = await env.DB.prepare(`
+    SELECT e.event_key, r.read_at
+    FROM umroh_agenda_events e
+    LEFT JOIN umroh_agenda_reads r
+      ON r.agenda_id = e.id
+     AND r.account_id = ?
+    WHERE e.event_key IN (
+      'manasik-tata-cara',
+      'pemeriksaan-dokumen',
+      'briefing-keberangkatan',
+      'keberangkatan',
+      '__agenda-read-sync-v1__'
+    )
+    ORDER BY e.id
+  `).bind(accountId).all();
+
+  const rows = result.results || [];
+  const initialized = rows.some(
+    (row) => row.event_key === AGENDA_SYNC_SENTINEL && Boolean(row.read_at)
+  );
+  const items = rows
+    .filter((row) => AGENDA_SYNC_KEYS.has(row.event_key))
+    .map((row) => ({
+      item_key: row.event_key,
+      read: Boolean(row.read_at),
+      read_at: row.read_at || null,
+    }));
+
+  const done = items.filter((item) => item.read).length;
+
+  return {
+    initialized,
+    done,
+    total: AGENDA_SYNC_KEYS.size,
+    items,
+  };
+}
+
+async function markAgendaSyncInitialized(env, accountId) {
+  await env.DB.prepare(`
+    INSERT INTO umroh_agenda_reads (account_id, agenda_id, read_at)
+    SELECT ?, id, CURRENT_TIMESTAMP
+    FROM umroh_agenda_events
+    WHERE event_key = ?
+    ON CONFLICT(account_id, agenda_id)
+    DO UPDATE SET read_at = excluded.read_at
+  `).bind(accountId, AGENDA_SYNC_SENTINEL).run();
+}
+
+async function getOwnAgendaProgress(request, env) {
+  const gate = await requireJamaah(request, env);
+  if (gate.response) return gate.response;
+
+  const progress = await agendaProgressPayload(env, gate.account.id);
+  return json(request, env, { ok: true, progress });
+}
+
+async function updateOwnAgendaProgress(request, env, itemKey) {
+  const gate = await requireJamaah(request, env);
+  if (gate.response) return gate.response;
+
+  if (!AGENDA_SYNC_KEYS.has(itemKey)) {
+    return json(request, env, { ok: false, error: "invalid_progress_item" }, 400);
+  }
+
+  const body = await readJson(request);
+  if (typeof body.read !== "boolean") {
+    return json(request, env, { ok: false, error: "invalid_progress_status" }, 400);
+  }
+
+  await ensureAgendaSyncEvents(env);
+
+  const event = await env.DB.prepare(`
+    SELECT id
+    FROM umroh_agenda_events
+    WHERE event_key = ?
+    LIMIT 1
+  `).bind(itemKey).first();
+
+  if (!event) {
+    return json(request, env, { ok: false, error: "agenda_not_found" }, 404);
+  }
+
+  if (body.read) {
+    await env.DB.prepare(`
+      INSERT INTO umroh_agenda_reads (account_id, agenda_id, read_at)
+      VALUES (?, ?, CURRENT_TIMESTAMP)
+      ON CONFLICT(account_id, agenda_id)
+      DO UPDATE SET read_at = excluded.read_at
+    `).bind(gate.account.id, event.id).run();
+  } else {
+    await env.DB.prepare(`
+      DELETE FROM umroh_agenda_reads
+      WHERE account_id = ? AND agenda_id = ?
+    `).bind(gate.account.id, event.id).run();
+  }
+
+  await markAgendaSyncInitialized(env, gate.account.id);
+  const progress = await agendaProgressPayload(env, gate.account.id);
+  return json(request, env, { ok: true, progress });
+}
+
+async function importOwnAgendaProgress(request, env) {
+  const gate = await requireJamaah(request, env);
+  if (gate.response) return gate.response;
+
+  const current = await agendaProgressPayload(env, gate.account.id);
+  if (current.initialized) {
+    return json(request, env, {
+      ok: true,
+      imported: false,
+      reason: "already_initialized",
+      progress: current,
+    });
+  }
+
+  const body = await readJson(request);
+  const completed = Array.isArray(body.completed)
+    ? [...new Set(body.completed.map((value) => String(value || "").trim()))]
+        .filter((value) => AGENDA_SYNC_KEYS.has(value))
+    : [];
+
+  if (!completed.length) {
+    return json(request, env, {
+      ok: true,
+      imported: false,
+      reason: "nothing_to_import",
+      progress: current,
+    });
+  }
+
+  await ensureAgendaSyncEvents(env);
+
+  const statements = completed.map((itemKey) =>
+    env.DB.prepare(`
+      INSERT INTO umroh_agenda_reads (account_id, agenda_id, read_at)
+      SELECT ?, id, CURRENT_TIMESTAMP
+      FROM umroh_agenda_events
+      WHERE event_key = ?
+      ON CONFLICT(account_id, agenda_id)
+      DO UPDATE SET read_at = excluded.read_at
+    `).bind(gate.account.id, itemKey)
+  );
+
+  const sentinel = await env.DB.prepare(`
+    SELECT id FROM umroh_agenda_events WHERE event_key = ? LIMIT 1
+  `).bind(AGENDA_SYNC_SENTINEL).first();
+
+  if (sentinel) {
+    statements.push(
+      env.DB.prepare(`
+        INSERT INTO umroh_agenda_reads (account_id, agenda_id, read_at)
+        VALUES (?, ?, CURRENT_TIMESTAMP)
+        ON CONFLICT(account_id, agenda_id)
+        DO UPDATE SET read_at = excluded.read_at
+      `).bind(gate.account.id, sentinel.id)
+    );
+  }
+
+  await env.DB.batch(statements);
+
+  const progress = await agendaProgressPayload(env, gate.account.id);
+  return json(request, env, {
+    ok: true,
+    imported: true,
+    imported_count: completed.length,
     progress,
   });
 }
