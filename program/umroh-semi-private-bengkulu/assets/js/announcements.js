@@ -13,5 +13,14 @@
   const render=()=>{if(!list)return;const items=filtered();if(!items.length){list.innerHTML='<div class="announcement-empty">Belum ada pengumuman resmi untuk filter ini.</div>';progress();return;}list.innerHTML=items.map(a=>`<article class="announcement-card ${a.is_read?'is-read':''} priority-${esc(a.priority)}"><div class="announcement-card-icon"><span aria-hidden="true" class="ui-icon ${icon(a.category)}"></span></div><div class="announcement-card-main"><div class="announcement-card-meta"><span class="announcement-category">${esc(a.category_label||a.category)}</span><span class="announcement-priority ${esc(a.priority)}">${esc(a.priority_label||a.priority)}</span><time>${esc(dateLabel(a.published_at))}</time></div><h2>${esc(a.title)}</h2><p>${esc(a.summary||'')}</p><div class="announcement-detail" ${a.is_read?'':'hidden'}>${esc(a.body||'').replaceAll('\n','<br>')}</div></div><div class="announcement-card-action"><button type="button" data-ann-read="${esc(a.announcement_key)}">${a.is_read?'✓ Sudah dibaca':'Tandai dibaca'}</button></div></article>`).join('');list.querySelectorAll('[data-ann-read]').forEach(b=>b.addEventListener('click',async()=>{const key=b.dataset.annRead;const item=announcements.find(a=>a.announcement_key===key);if(!item)return;b.disabled=true;try{await api(`/jamaah/announcements/${encodeURIComponent(key)}/read`,{method:'PATCH',body:JSON.stringify({read:!item.is_read})});item.is_read=!item.is_read;render();}finally{b.disabled=false;}}));progress();};
   const load=async()=>{if(sync)sync.textContent='Memuat Pengumuman resmi dari akun...';try{await importLegacy();const data=await api('/jamaah/announcements');announcements=data.announcements||[];if(sync)sync.textContent='Status baca Pengumuman tersinkron ke akun jemaah.';render();}catch(e){if(sync)sync.textContent='Pengumuman resmi belum dapat dimuat. Silakan muat ulang halaman.';if(list)list.innerHTML='<div class="announcement-empty">Gagal memuat pengumuman resmi.</div>';}};
   filterButtons.forEach(b=>b.addEventListener('click',()=>{activeFilter=b.dataset.announcementFilter||'semua';filterButtons.forEach(x=>x.classList.toggle('is-active',x===b));render();}));
-  const wait=()=>{if(document.documentElement.classList.contains('auth-ready'))load();else setTimeout(wait,60);};wait();
+  let started=false;
+  const startLoad=()=>{if(started)return;started=true;load();};
+  const waitForJamaah=(attempt=0)=>{
+    if(window.UMROH_JAMAAH_ACCOUNT?.role==='jamaah'){startLoad();return;}
+    if(attempt>=100){startLoad();return;}
+    setTimeout(()=>waitForJamaah(attempt+1),60);
+  };
+  waitForJamaah();
+  addEventListener('pageshow',()=>{if(started)load();});
+  addEventListener('online',()=>{if(started)load();});
 })();

@@ -6,5 +6,14 @@
   const importLegacy=async()=>{if(localStorage.getItem(IMPORT_FLAG)==='1')return;let keys=[];try{const s=JSON.parse(localStorage.getItem(LEGACY_KEY)||'{}');keys=Object.keys(s||{}).filter(k=>Boolean(s[k]));}catch(_){}try{if(keys.length)await api('/jamaah/announcements/import',{method:'POST',body:JSON.stringify({read_keys:keys})});localStorage.setItem(IMPORT_FLAG,'1');}catch(_){}};
   const render=(items)=>{const unread=items.filter(x=>!x.is_read);if(dot){dot.textContent=String(unread.length);dot.hidden=unread.length===0;}if(!list)return;const featured=[...unread,...items.filter(x=>x.is_read)].slice(0,3);if(!featured.length){list.innerHTML='<div class="announcement"><div class="announcement-icon"><span class="ui-icon icon-megaphone"></span></div><div><strong>Belum ada pengumuman resmi</strong><span>Informasi dari pengelola akan tampil di sini setelah dipublikasikan.</span></div><time>—</time></div>';return;}list.innerHTML=featured.map(a=>`<div class="announcement ${a.is_read?'is-read':''}"><div class="announcement-icon"><span aria-hidden="true" class="ui-icon ${icon(a.category)}"></span></div><div><strong>${esc(a.title)}</strong><span>${esc(a.summary||'')}</span></div><time>${esc(dateLabel(a.published_at))}</time></div>`).join('');};
   const load=async()=>{try{await importLegacy();const d=await api('/jamaah/announcements');render(d.announcements||[]);}catch(_){if(dot)dot.hidden=true;if(list)list.innerHTML='<div class="announcement"><div class="announcement-icon"><span class="ui-icon icon-alert"></span></div><div><strong>Pengumuman belum dapat dimuat</strong><span>Silakan buka kembali halaman ini beberapa saat lagi.</span></div><time>—</time></div>';}};
-  const wait=()=>{if(document.documentElement.classList.contains('auth-ready'))load();else setTimeout(wait,60);};wait();
+  let started=false;
+  const startLoad=()=>{if(started)return;started=true;load();};
+  const waitForJamaah=(attempt=0)=>{
+    if(window.UMROH_JAMAAH_ACCOUNT?.role==='jamaah'){startLoad();return;}
+    if(attempt>=100){startLoad();return;}
+    setTimeout(()=>waitForJamaah(attempt+1),60);
+  };
+  waitForJamaah();
+  addEventListener('pageshow',()=>{if(started)load();});
+  addEventListener('online',()=>{if(started)load();});
 })();
