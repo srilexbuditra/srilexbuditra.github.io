@@ -31,7 +31,7 @@
 <div class="app-main">
 <header class="app-topbar"><button aria-label="Buka menu" class="mobile-menu" data-mobile-menu="">☰</button><div class="topbar-title"><strong>Verifikasi Dokumen</strong><span>R2 Private · D1 Metadata</span></div><div class="topbar-spacer"></div><div class="user-chip"><div class="avatar" data-auth-avatar>SB</div><div class="user-copy"><strong data-auth-name>Srilex Buditra</strong><span data-auth-role>Senior Full Stack Developer · Platform Architect</span></div></div><button class="auth-logout" data-admin-logout type="button">Keluar</button></header>
 <main class="page-wrap">
-<div class="prototype-note"><strong>Secure Documents V3.4.2.</strong> Dokumen diunduh melalui Worker setelah session dan role diverifikasi. R2 bucket tetap private; jangan aktifkan public access pada bucket.</div>
+<div class="prototype-note"><strong><span data-platform-version>Platform V3.6.2</span>.</strong> Dokumen diunduh melalui Worker setelah session dan role diverifikasi. R2 bucket tetap private; jangan aktifkan public access pada bucket.</div>
 <div class="page-head"><div><span class="page-kicker">Private Document Review</span><h1>Verifikasi Dokumen Jemaah</h1><p>Periksa dokumen yang diupload jemaah, lalu beri status Terverifikasi, Perlu Perbaikan, atau Ditolak.</p></div></div>
 <section class="card card-pad admin-doc-card">
 <div class="admin-doc-toolbar"><select data-admin-doc-filter><option value="">Semua Status</option><option value="not_reviewed">Menunggu Verifikasi</option><option value="needs_revision">Perlu Perbaikan</option><option value="rejected">Ditolak</option><option value="verified">Terverifikasi</option></select><button data-admin-doc-refresh type="button">Muat ulang</button></div>
@@ -42,8 +42,8 @@
 
 <div class="admin-doc-modal" data-review-modal hidden><div class="admin-doc-backdrop" data-close-review></div><section class="admin-doc-dialog" role="dialog" aria-modal="true"><div class="admin-doc-dialog-head"><h2>Verifikasi Dokumen</h2><button data-close-review type="button">×</button></div><form data-review-form><input name="file_uuid" type="hidden"/><label>Status<select name="status" required><option value="verified">Terverifikasi</option><option value="needs_revision">Perlu Perbaikan</option><option value="rejected">Ditolak</option><option value="not_reviewed">Kembalikan ke Menunggu</option></select></label><label>Catatan Admin<textarea name="note" maxlength="1000" rows="5" placeholder="Wajib untuk Perlu Perbaikan / Ditolak"></textarea></label><p class="admin-doc-message" data-review-message hidden></p><div class="admin-doc-form-actions"><button data-close-review type="button">Batal</button><button class="primary" data-review-submit type="submit">Simpan Verifikasi</button></div></form></section></div>
 
-<script src="../../assets/js/admin-auth-guard.js?v=3.4.2"></script>
+<script src="../../assets/js/admin-auth-guard.js?v=3.6.2"></script>
 <script src="../../assets/js/dashboard-shell.js"></script>
-<script src="../../assets/js/admin-documents.js?v=3.4.2"></script>
-</body>
+<script src="../../assets/js/admin-documents.js?v=3.6.2"></script>
+<script src="../../assets/js/platform-version.js"></script></body>
 </html>
