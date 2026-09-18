@@ -5,6 +5,14 @@ const PASSWORD_ITERATIONS = 100000;
 const MAX_JSON_BYTES = 16 * 1024;
 const STAFF_ACTIVATION_AGE = 60 * 60 * 24;
 const MAX_DOCUMENT_BYTES = 5 * 1024 * 1024;
+const MAX_PUBLIC_MEDIA_BYTES = 5 * 1024 * 1024;
+const PUBLIC_MEDIA_ORIGIN = "https://media-umroh.srilexbuditra.work";
+const PUBLIC_MEDIA_MIME = Object.freeze({
+  "image/avif": "avif",
+  "image/webp": "webp",
+  "image/jpeg": "jpg",
+  "image/png": "png",
+});
 const DOCUMENT_KEYS = new Set(["paspor-dokumen", "tiket-itinerary", "identitas-jemaah", "dokumen-kesehatan"]);
 const DOCUMENT_MIME = new Set(["application/pdf", "image/jpeg", "image/png"]);
 const MANASIK_KEYS = new Set(["persiapan", "ihram-miqat", "talbiyah", "tata-cara-umroh", "thawaf", "sai", "tahallul", "larangan-ihram", "adab-tanah-suci", "ziarah-madinah", "tips-perjalanan"]);
@@ -168,6 +176,11 @@ export default {
       const adminManasikMaterialMatch = path.match(/^\/admin\/manasik\/(\d+)$/);
       if (adminManasikMaterialMatch && request.method === "PATCH") {
         return updateAdminManasikMaterial(request, env, Number(adminManasikMaterialMatch[1]));
+      }
+
+      const adminManasikMediaMatch = path.match(/^\/admin\/manasik\/([a-z0-9-]+)\/media$/i);
+      if (adminManasikMediaMatch && request.method === "POST") {
+        return uploadAdminManasikMedia(request, env, adminManasikMediaMatch[1]);
       }
 
       if (request.method === "GET" && path === "/jamaah/progress/summary") {
@@ -932,7 +945,9 @@ function normalizePageMetaForManasik(rawMeta, material) {
     twitter_description: nullableTrim(meta.twitter_description || meta.og_description || metaDescription, 500),
     twitter_image_url: normalizePublicMediaUrl(meta.twitter_image_url),
     banner_url: normalizePublicMediaUrl(meta.banner_url),
+    banner_object_key: normalizePublicMediaObjectKey(meta.banner_object_key, material.material_key),
     thumbnail_url: normalizePublicMediaUrl(meta.thumbnail_url),
+    thumbnail_object_key: normalizePublicMediaObjectKey(meta.thumbnail_object_key, material.material_key),
     image_alt: nullableTrim(meta.image_alt, 300),
     image_caption: nullableTrim(meta.image_caption, 500),
     schema_type: schemaType,
@@ -944,6 +959,148 @@ function normalizePageMetaForManasik(rawMeta, material) {
     analytics_scroll_enabled: meta.analytics_scroll_enabled !== false,
     analytics_cta_enabled: meta.analytics_cta_enabled !== false,
   };
+}
+
+function normalizePublicMediaObjectKey(value, materialKey) {
+  const raw = String(value || "").trim();
+  if (!raw) return null;
+  const prefix = `manasik/${materialKey}/`;
+  if (!raw.startsWith(prefix) || raw.includes("..") || raw.includes("\\")) {
+    throw new Error("invalid_media_object_key");
+  }
+  if (!/^[a-z0-9/_\-.]+$/i.test(raw) || raw.length > 600) {
+    throw new Error("invalid_media_object_key");
+  }
+  return raw;
+}
+
+function hasBytes(bytes, offset, expected) {
+  if (!bytes || bytes.length < offset + expected.length) return false;
+  return expected.every((value, index) => bytes[offset + index] === value);
+}
+
+function looksLikePublicImage(bytes, mime) {
+  if (!(bytes instanceof Uint8Array) || bytes.length < 12) return false;
+  if (mime === "image/jpeg") return hasBytes(bytes, 0, [0xff, 0xd8, 0xff]);
+  if (mime === "image/png") return hasBytes(bytes, 0, [0x89,0x50,0x4e,0x47,0x0d,0x0a,0x1a,0x0a]);
+  if (mime === "image/webp") {
+    return hasBytes(bytes, 0, [0x52,0x49,0x46,0x46]) && hasBytes(bytes, 8, [0x57,0x45,0x42,0x50]);
+  }
+  if (mime === "image/avif") {
+    if (!hasBytes(bytes, 4, [0x66,0x74,0x79,0x70])) return false;
+    const head = new TextDecoder("latin1").decode(bytes.slice(0, Math.min(bytes.length, 64)));
+    return /avif|avis/.test(head);
+  }
+  return false;
+}
+
+async function uploadAdminManasikMedia(request, env, materialKey) {
+  const gate = await requireStaffRole(request, env, ["super_admin", "admin", "tour_leader"]);
+  if (gate.response) return gate.response;
+
+  if (!env.PUBLIC_MEDIA) {
+    return json(request, env, { ok: false, error: "missing_public_media_binding" }, 503);
+  }
+  if (!MANASIK_KEYS.has(materialKey)) {
+    return json(request, env, { ok: false, error: "invalid_manasik_key" }, 400);
+  }
+
+  const material = await env.DB.prepare(`
+    SELECT id, material_key, title
+    FROM umroh_manasik_materials
+    WHERE material_key = ?
+    LIMIT 1
+  `).bind(materialKey).first();
+  if (!material) {
+    return json(request, env, { ok: false, error: "manasik_material_not_found" }, 404);
+  }
+
+  const length = Number(request.headers.get("Content-Length") || 0);
+  if (length > MAX_PUBLIC_MEDIA_BYTES + 512 * 1024) {
+    return json(request, env, { ok: false, error: "media_file_too_large" }, 413);
+  }
+
+  let form;
+  try {
+    form = await request.formData();
+  } catch (_) {
+    return json(request, env, { ok: false, error: "multipart_form_required" }, 400);
+  }
+
+  const file = form.get("file");
+  const purpose = String(form.get("purpose") || "banner").trim().toLowerCase();
+  const altText = truncate(String(form.get("alt_text") || "").trim(), 300);
+  if (!file || typeof file.arrayBuffer !== "function") {
+    return json(request, env, { ok: false, error: "media_file_required" }, 400);
+  }
+  if (!new Set(["banner", "thumbnail"]).has(purpose)) {
+    return json(request, env, { ok: false, error: "invalid_media_purpose" }, 400);
+  }
+  if (!altText) {
+    return json(request, env, { ok: false, error: "image_alt_required" }, 400);
+  }
+  if (!Number.isFinite(file.size) || file.size < 1) {
+    return json(request, env, { ok: false, error: "media_file_empty" }, 400);
+  }
+  if (file.size > MAX_PUBLIC_MEDIA_BYTES) {
+    return json(request, env, { ok: false, error: "media_file_too_large" }, 413);
+  }
+
+  const contentType = String(file.type || "").toLowerCase();
+  const extension = PUBLIC_MEDIA_MIME[contentType];
+  if (!extension) {
+    return json(request, env, { ok: false, error: "unsupported_media_type" }, 415);
+  }
+
+  const bytes = new Uint8Array(await file.arrayBuffer());
+  if (!looksLikePublicImage(bytes, contentType)) {
+    return json(request, env, { ok: false, error: "invalid_image_signature" }, 400);
+  }
+
+  const objectKey = `manasik/${materialKey}/${purpose}-${crypto.randomUUID()}.${extension}`;
+  await env.PUBLIC_MEDIA.put(objectKey, bytes, {
+    httpMetadata: {
+      contentType,
+      cacheControl: "public, max-age=31536000, immutable",
+      contentDisposition: "inline",
+    },
+    customMetadata: {
+      module: "manasik",
+      material_key: materialKey,
+      purpose,
+    },
+  });
+
+  const now = new Date().toISOString();
+  await env.DB.prepare(`
+    INSERT INTO umroh_admin_audit_log
+      (actor_account_id, action, target_account_id, details_json, created_at)
+    VALUES (?, 'manasik_media_uploaded', NULL, ?, ?)
+  `).bind(
+    gate.account.id,
+    JSON.stringify({
+      material_id: Number(material.id),
+      material_key: materialKey,
+      purpose,
+      object_key: objectKey,
+      content_type: contentType,
+      size_bytes: Number(file.size || bytes.length),
+    }),
+    now
+  ).run();
+
+  return json(request, env, {
+    ok: true,
+    media: {
+      material_key: materialKey,
+      purpose,
+      object_key: objectKey,
+      url: `${PUBLIC_MEDIA_ORIGIN}/${objectKey}`,
+      content_type: contentType,
+      size_bytes: Number(file.size || bytes.length),
+      alt_text: altText,
+    },
+  }, 201);
 }
 
 function pageMetaPayload(row) {
@@ -966,7 +1123,9 @@ function pageMetaPayload(row) {
     twitter_description: row.twitter_description || "",
     twitter_image_url: row.twitter_image_url || "",
     banner_url: row.banner_url || "",
+    banner_object_key: row.banner_object_key || "",
     thumbnail_url: row.thumbnail_url || "",
+    thumbnail_object_key: row.thumbnail_object_key || "",
     image_alt: row.image_alt || "",
     image_caption: row.image_caption || "",
     schema_type: row.schema_type || "WebPage",
@@ -1077,7 +1236,7 @@ async function listAdminManasikMaterials(request, env) {
       pm.seo_title, pm.meta_description, pm.canonical_url, pm.robots, pm.theme_color,
       pm.og_type, pm.og_title, pm.og_description, pm.og_image_url,
       pm.twitter_title, pm.twitter_description, pm.twitter_image_url,
-      pm.banner_url, pm.thumbnail_url, pm.image_alt, pm.image_caption,
+      pm.banner_url, pm.banner_object_key, pm.thumbnail_url, pm.thumbnail_object_key, pm.image_alt, pm.image_caption,
       pm.schema_type, pm.schema_json, pm.author_name, pm.publisher_name, pm.locale,
       pm.analytics_enabled, pm.analytics_scroll_enabled, pm.analytics_cta_enabled,
       pm.updated_at AS page_meta_updated_at
@@ -1193,12 +1352,12 @@ async function updateAdminManasikMaterial(request, env, materialId) {
         seo_title, meta_description, canonical_url, robots, theme_color,
         og_type, og_title, og_description, og_image_url,
         twitter_title, twitter_description, twitter_image_url,
-        banner_url, thumbnail_url, image_alt, image_caption,
+        banner_url, banner_object_key, thumbnail_url, thumbnail_object_key, image_alt, image_caption,
         schema_type, schema_json, author_name, publisher_name, locale,
         analytics_enabled, analytics_scroll_enabled, analytics_cta_enabled,
         created_at, updated_at
       ) VALUES (
-        ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+        ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
       )
       ON CONFLICT(page_key) DO UPDATE SET
         page_type = excluded.page_type,
@@ -1216,7 +1375,9 @@ async function updateAdminManasikMaterial(request, env, materialId) {
         twitter_description = excluded.twitter_description,
         twitter_image_url = excluded.twitter_image_url,
         banner_url = excluded.banner_url,
+        banner_object_key = excluded.banner_object_key,
         thumbnail_url = excluded.thumbnail_url,
+        thumbnail_object_key = excluded.thumbnail_object_key,
         image_alt = excluded.image_alt,
         image_caption = excluded.image_caption,
         schema_type = excluded.schema_type,
@@ -1233,7 +1394,7 @@ async function updateAdminManasikMaterial(request, env, materialId) {
       pageMeta.seo_title, pageMeta.meta_description, pageMeta.canonical_url, pageMeta.robots, pageMeta.theme_color,
       pageMeta.og_type, pageMeta.og_title, pageMeta.og_description, pageMeta.og_image_url,
       pageMeta.twitter_title, pageMeta.twitter_description, pageMeta.twitter_image_url,
-      pageMeta.banner_url, pageMeta.thumbnail_url, pageMeta.image_alt, pageMeta.image_caption,
+      pageMeta.banner_url, pageMeta.banner_object_key, pageMeta.thumbnail_url, pageMeta.thumbnail_object_key, pageMeta.image_alt, pageMeta.image_caption,
       pageMeta.schema_type, pageMeta.schema_json, pageMeta.author_name, pageMeta.publisher_name, pageMeta.locale,
       pageMeta.analytics_enabled ? 1 : 0,
       pageMeta.analytics_scroll_enabled ? 1 : 0,
@@ -1273,7 +1434,7 @@ async function updateAdminManasikMaterial(request, env, materialId) {
       pm.seo_title, pm.meta_description, pm.canonical_url, pm.robots, pm.theme_color,
       pm.og_type, pm.og_title, pm.og_description, pm.og_image_url,
       pm.twitter_title, pm.twitter_description, pm.twitter_image_url,
-      pm.banner_url, pm.thumbnail_url, pm.image_alt, pm.image_caption,
+      pm.banner_url, pm.banner_object_key, pm.thumbnail_url, pm.thumbnail_object_key, pm.image_alt, pm.image_caption,
       pm.schema_type, pm.schema_json, pm.author_name, pm.publisher_name, pm.locale,
       pm.analytics_enabled, pm.analytics_scroll_enabled, pm.analytics_cta_enabled,
       pm.updated_at AS page_meta_updated_at

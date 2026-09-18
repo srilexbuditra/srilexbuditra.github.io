@@ -16,6 +16,10 @@
   const editorPanels = [...document.querySelectorAll('[data-editor-panel]')];
   const mediaPreviewWrap = document.querySelector('[data-media-preview-wrap]');
   const mediaPreview = document.querySelector('[data-media-preview]');
+  const mediaFileInput = document.querySelector('[data-media-file]');
+  const mediaUploadButton = document.querySelector('[data-media-upload]');
+  const mediaUploadRole = document.querySelector('[data-media-upload-role]');
+  const mediaUploadStatus = document.querySelector('[data-media-upload-status]');
 
   let materials = [];
 
@@ -24,12 +28,13 @@
     .replaceAll('"', '&quot;').replaceAll("'", '&#039;');
 
   const api = async (path, options = {}) => {
+    const isFormData = typeof FormData !== 'undefined' && options.body instanceof FormData;
     const response = await fetch(`${API_BASE}${path}`, {
       credentials: 'include',
       cache: 'no-store',
       headers: {
         Accept: 'application/json',
-        ...(options.body ? { 'Content-Type': 'application/json' } : {}),
+        ...(options.body && !isFormData ? { 'Content-Type': 'application/json' } : {}),
         ...(options.headers || {})
       },
       ...options
@@ -86,7 +91,9 @@
       twitter_description: description,
       twitter_image_url: '',
       banner_url: '',
+      banner_object_key: '',
       thumbnail_url: '',
+      thumbnail_object_key: '',
       image_alt: '',
       image_caption: '',
       schema_type: 'Article',
@@ -133,7 +140,7 @@
     'page_key', 'page_path', 'seo_title', 'meta_description', 'canonical_url',
     'robots', 'theme_color', 'og_type', 'og_title', 'og_description', 'og_image_url',
     'twitter_title', 'twitter_description', 'twitter_image_url',
-    'banner_url', 'thumbnail_url', 'image_alt', 'image_caption',
+    'banner_url', 'banner_object_key', 'thumbnail_url', 'thumbnail_object_key', 'image_alt', 'image_caption',
     'schema_type', 'schema_json', 'author_name', 'publisher_name', 'locale',
     'analytics_enabled', 'analytics_scroll_enabled', 'analytics_cta_enabled'
   ];
@@ -160,7 +167,9 @@
     twitter_description: form.elements.twitter_description.value.trim(),
     twitter_image_url: form.elements.twitter_image_url.value.trim(),
     banner_url: form.elements.banner_url.value.trim(),
+    banner_object_key: form.elements.banner_object_key.value.trim(),
     thumbnail_url: form.elements.thumbnail_url.value.trim(),
+    thumbnail_object_key: form.elements.thumbnail_object_key.value.trim(),
     image_alt: form.elements.image_alt.value.trim(),
     image_caption: form.elements.image_caption.value.trim(),
     schema_type: form.elements.schema_type.value,
@@ -172,6 +181,121 @@
     analytics_scroll_enabled: form.elements.analytics_scroll_enabled.checked,
     analytics_cta_enabled: form.elements.analytics_cta_enabled.checked
   });
+
+  const formatBytes = (bytes) => {
+    const value = Number(bytes || 0);
+    if (value < 1024) return `${value} B`;
+    if (value < 1024 * 1024) return `${(value / 1024).toFixed(1)} KB`;
+    return `${(value / (1024 * 1024)).toFixed(2)} MB`;
+  };
+
+  const setMediaUploadStatus = (text, state = '') => {
+    if (!mediaUploadStatus) return;
+    mediaUploadStatus.textContent = text;
+    mediaUploadStatus.dataset.state = state;
+  };
+
+  const inspectSelectedMedia = async () => {
+    const file = mediaFileInput?.files?.[0];
+    if (!file) {
+      setMediaUploadStatus('Belum ada file dipilih.');
+      return;
+    }
+    const allowed = new Set(['image/avif', 'image/webp', 'image/jpeg', 'image/png']);
+    if (!allowed.has(file.type)) {
+      setMediaUploadStatus('Format tidak didukung. Gunakan AVIF, WebP, JPEG, atau PNG.', 'error');
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      setMediaUploadStatus('Ukuran file melebihi 5 MB.', 'error');
+      return;
+    }
+    let dimensions = '';
+    try {
+      const url = URL.createObjectURL(file);
+      const img = new Image();
+      dimensions = await new Promise((resolve) => {
+        img.onload = () => resolve(`${img.naturalWidth} × ${img.naturalHeight}px`);
+        img.onerror = () => resolve('');
+        img.src = url;
+      });
+      URL.revokeObjectURL(url);
+    } catch (_) {}
+    setMediaUploadStatus(`${file.name} · ${formatBytes(file.size)}${dimensions ? ` · ${dimensions}` : ''}`, 'ready');
+  };
+
+  const uploadSelectedMedia = async () => {
+    const file = mediaFileInput?.files?.[0];
+    const materialKey = form.elements.material_key?.value.trim();
+    const altText = form.elements.image_alt?.value.trim();
+    const purpose = mediaUploadRole?.value || 'banner';
+    if (!materialKey) {
+      setMediaUploadStatus('Material key tidak tersedia.', 'error');
+      return;
+    }
+    if (!file) {
+      setMediaUploadStatus('Pilih gambar terlebih dahulu.', 'error');
+      return;
+    }
+    if (!altText) {
+      setMediaUploadStatus('Isi Alt Text sebelum upload gambar.', 'error');
+      form.elements.image_alt?.focus();
+      return;
+    }
+    const allowed = new Set(['image/avif', 'image/webp', 'image/jpeg', 'image/png']);
+    if (!allowed.has(file.type)) {
+      setMediaUploadStatus('Format tidak didukung. Gunakan AVIF, WebP, JPEG, atau PNG.', 'error');
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      setMediaUploadStatus('Ukuran file melebihi 5 MB.', 'error');
+      return;
+    }
+
+    const uploadBody = new FormData();
+    uploadBody.append('file', file);
+    uploadBody.append('purpose', purpose);
+    uploadBody.append('alt_text', altText);
+
+    mediaUploadButton.disabled = true;
+    const oldLabel = mediaUploadButton.textContent;
+    mediaUploadButton.textContent = 'Mengunggah...';
+    setMediaUploadStatus('Mengunggah gambar ke media publik Umroh...', 'loading');
+    try {
+      const data = await api(`/admin/manasik/${encodeURIComponent(materialKey)}/media`, {
+        method: 'POST',
+        body: uploadBody
+      });
+      const media = data.media || {};
+      if (purpose === 'thumbnail') {
+        form.elements.thumbnail_url.value = media.url || '';
+        form.elements.thumbnail_object_key.value = media.object_key || '';
+      } else {
+        form.elements.banner_url.value = media.url || '';
+        form.elements.banner_object_key.value = media.object_key || '';
+        form.elements.og_image_url.value = media.url || '';
+        form.elements.twitter_image_url.value = media.url || '';
+      }
+      updateMediaPreview();
+      setMediaUploadStatus(`Upload berhasil: ${media.url || ''}. Klik Simpan Materi untuk menyimpan URL ke metadata.`, 'success');
+    } catch (error) {
+      const labels = {
+        missing_public_media_binding: 'Binding PUBLIC_MEDIA belum tersedia pada Worker.',
+        media_file_required: 'File gambar wajib dipilih.',
+        media_file_empty: 'File gambar kosong.',
+        media_file_too_large: 'Ukuran file maksimum 5 MB.',
+        unsupported_media_type: 'Format gambar tidak didukung.',
+        invalid_image_signature: 'Isi file tidak cocok dengan format gambar yang dipilih.',
+        invalid_media_purpose: 'Tujuan gambar tidak valid.',
+        image_alt_required: 'Alt Text wajib diisi sebelum upload.',
+        forbidden: 'Role akun ini tidak diizinkan mengunggah media.'
+      };
+      setMediaUploadStatus(labels[error.code] || `Upload gagal: ${error.code || error.message}`, 'error');
+    } finally {
+      mediaUploadButton.disabled = false;
+      mediaUploadButton.textContent = oldLabel;
+    }
+  };
 
   const renderStats = (summary = {}) => {
     document.querySelector('[data-manasik-stat-total]').textContent = Number(summary.total || 0);
@@ -362,6 +486,8 @@
     form.elements.is_published.checked = Boolean(material.is_published);
     setBlocks(material.content || []);
     setPageMeta(material);
+    if (mediaFileInput) mediaFileInput.value = '';
+    setMediaUploadStatus('Belum ada file dipilih.');
     setEditorTab('content');
     dialogTitle.textContent = `Edit Materi · ${material.title}`;
     hideMessage();
@@ -410,6 +536,7 @@
         meta_description_required: 'Meta Description wajib diisi.',
         invalid_canonical_url: 'Canonical harus URL HTTPS di srilexbuditra.work.',
         invalid_media_url: 'URL media harus path situs (/...) atau URL HTTPS yang valid.',
+        invalid_media_object_key: 'Object key media tidak valid.',
         invalid_robots: 'Nilai robots tidak valid.',
         invalid_theme_color: 'Theme color harus format #RRGGBB.',
         invalid_og_type: 'OG Type tidak valid.',
@@ -428,6 +555,9 @@
 
   editorTabs.forEach((tab) => tab.addEventListener('click', () => setEditorTab(tab.dataset.editorTab)));
   ['banner_url', 'og_image_url', 'image_alt'].forEach((name) => form.elements[name]?.addEventListener('input', updateMediaPreview));
+
+  mediaFileInput?.addEventListener('change', inspectSelectedMedia);
+  mediaUploadButton?.addEventListener('click', uploadSelectedMedia);
 
   document.querySelectorAll('[data-manasik-close]').forEach((node) => node.addEventListener('click', close));
   addBlockButton?.addEventListener('click', () => blocksHost.appendChild(createBlockEditor()));
