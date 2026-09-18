@@ -1,79 +1,17 @@
 (() => {
-  const key = 'umroh-announcements-read-v1';
-  const announcements = Array.isArray(window.UMROH_ANNOUNCEMENTS) ? window.UMROH_ANNOUNCEMENTS : [];
-  const list = document.querySelector('[data-announcement-list]');
-  const readCount = document.querySelector('[data-announcement-read-count]');
-  const progressText = document.querySelector('[data-announcement-progress-text]');
-  const progressBar = document.querySelector('[data-announcement-progress-bar]');
-  const filterButtons = [...document.querySelectorAll('[data-announcement-filter]')];
-
-  const readState = () => {
-    try {
-      const value = JSON.parse(localStorage.getItem(key) || '{}');
-      return value && typeof value === 'object' ? value : {};
-    } catch (_) {
-      return {};
-    }
-  };
-
-  const writeState = (state) => localStorage.setItem(key, JSON.stringify(state));
-  let activeFilter = 'semua';
-
-  const iconClass = (icon) => ({
-    book: 'icon-book', file: 'icon-file', users: 'icon-user', alert: 'icon-alert', calendar: 'icon-calendar'
-  }[icon] || 'icon-info');
-
-  const filtered = () => activeFilter === 'semua'
-    ? announcements
-    : announcements.filter(item => item.category.toLowerCase() === activeFilter);
-
-  const render = () => {
-    if (!list) return;
-    const state = readState();
-    const items = filtered();
-    list.innerHTML = items.map(item => {
-      const isRead = Boolean(state[item.id]);
-      return `
-        <article class="announcement-card ${isRead ? 'is-read' : ''}" data-announcement-id="${item.id}">
-          <div class="announcement-card-icon"><span aria-hidden="true" class="ui-icon ${iconClass(item.icon)}"></span></div>
-          <div class="announcement-card-main">
-            <div class="announcement-card-meta"><span class="announcement-category">${item.category}</span><time datetime="${item.dateISO}">${item.dateLabel}</time></div>
-            <h2>${item.title}</h2>
-            <p>${item.summary}</p>
-            <div class="announcement-detail" ${isRead ? '' : 'hidden'}>${item.detail}</div>
-          </div>
-          <div class="announcement-card-action">
-            <button type="button" data-announcement-toggle="${item.id}">${isRead ? '✓ Sudah dibaca' : 'Tandai dibaca'}</button>
-          </div>
-        </article>`;
-    }).join('');
-
-    list.querySelectorAll('[data-announcement-toggle]').forEach(button => {
-      button.addEventListener('click', () => {
-        const id = button.getAttribute('data-announcement-toggle');
-        const next = readState();
-        if (next[id]) delete next[id]; else next[id] = true;
-        writeState(next);
-        render();
-      });
-    });
-
-    const stateNow = readState();
-    const read = announcements.filter(item => stateNow[item.id]).length;
-    const pct = announcements.length ? Math.round((read / announcements.length) * 100) : 0;
-    if (readCount) readCount.textContent = `${read} / ${announcements.length}`;
-    if (progressText) progressText.textContent = `${pct}% pengumuman sudah dibaca`;
-    if (progressBar) progressBar.style.width = `${pct}%`;
-  };
-
-  filterButtons.forEach(button => {
-    button.addEventListener('click', () => {
-      activeFilter = button.getAttribute('data-announcement-filter') || 'semua';
-      filterButtons.forEach(item => item.classList.toggle('is-active', item === button));
-      render();
-    });
-  });
-
-  window.addEventListener('storage', render);
-  render();
+  'use strict';
+  const API_BASE='https://umroh-api.srilexbuditra.work'; const LEGACY_KEY='umroh-announcements-read-v1'; const IMPORT_FLAG='umroh-announcements-imported-v3.6.0';
+  const list=document.querySelector('[data-announcement-list]'); const readCount=document.querySelector('[data-announcement-read-count]'); const progressText=document.querySelector('[data-announcement-progress-text]'); const progressBar=document.querySelector('[data-announcement-progress-bar]'); const sync=document.querySelector('[data-announcement-sync]'); const filterButtons=[...document.querySelectorAll('[data-announcement-filter]')]; let announcements=[]; let activeFilter='semua';
+  const esc=(v)=>String(v??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;');
+  const api=async(path,options={})=>{const r=await fetch(`${API_BASE}${path}`,{credentials:'include',cache:'no-store',headers:{Accept:'application/json',...(options.body?{'Content-Type':'application/json'}:{})},...options});const d=await r.json().catch(()=>({}));if(!r.ok||!d?.ok){const e=new Error(d?.error||`http_${r.status}`);e.code=d?.error||'';throw e;}return d;};
+  const icon=(category)=>({manasik:'icon-book',dokumen:'icon-file',perjalanan:'icon-users',keamanan:'icon-alert',umum:'icon-megaphone'}[category]||'icon-info');
+  const dateLabel=(iso)=>{if(!iso)return'Baru';const d=new Date(iso);if(Number.isNaN(d.getTime()))return'';return new Intl.DateTimeFormat('id-ID',{day:'2-digit',month:'short',year:'numeric',timeZone:'Asia/Jakarta'}).format(d);};
+  const legacyKeys=()=>{try{const s=JSON.parse(localStorage.getItem(LEGACY_KEY)||'{}');return Object.keys(s||{}).filter(k=>Boolean(s[k]));}catch(_){return[];}};
+  const importLegacy=async()=>{if(localStorage.getItem(IMPORT_FLAG)==='1')return;const keys=legacyKeys();try{if(keys.length)await api('/jamaah/announcements/import',{method:'POST',body:JSON.stringify({read_keys:keys})});localStorage.setItem(IMPORT_FLAG,'1');}catch(_){}};
+  const filtered=()=>activeFilter==='semua'?announcements:announcements.filter(a=>a.category===activeFilter);
+  const progress=()=>{const done=announcements.filter(a=>a.is_read).length,total=announcements.length,pct=total?Math.round(done/total*100):0;if(readCount)readCount.textContent=`${done} / ${total}`;if(progressText)progressText.textContent=`${pct}% pengumuman sudah dibaca`;if(progressBar)progressBar.style.width=`${pct}%`;};
+  const render=()=>{if(!list)return;const items=filtered();if(!items.length){list.innerHTML='<div class="announcement-empty">Belum ada pengumuman resmi untuk filter ini.</div>';progress();return;}list.innerHTML=items.map(a=>`<article class="announcement-card ${a.is_read?'is-read':''} priority-${esc(a.priority)}"><div class="announcement-card-icon"><span aria-hidden="true" class="ui-icon ${icon(a.category)}"></span></div><div class="announcement-card-main"><div class="announcement-card-meta"><span class="announcement-category">${esc(a.category_label||a.category)}</span><span class="announcement-priority ${esc(a.priority)}">${esc(a.priority_label||a.priority)}</span><time>${esc(dateLabel(a.published_at))}</time></div><h2>${esc(a.title)}</h2><p>${esc(a.summary||'')}</p><div class="announcement-detail" ${a.is_read?'':'hidden'}>${esc(a.body||'').replaceAll('\n','<br>')}</div></div><div class="announcement-card-action"><button type="button" data-ann-read="${esc(a.announcement_key)}">${a.is_read?'✓ Sudah dibaca':'Tandai dibaca'}</button></div></article>`).join('');list.querySelectorAll('[data-ann-read]').forEach(b=>b.addEventListener('click',async()=>{const key=b.dataset.annRead;const item=announcements.find(a=>a.announcement_key===key);if(!item)return;b.disabled=true;try{await api(`/jamaah/announcements/${encodeURIComponent(key)}/read`,{method:'PATCH',body:JSON.stringify({read:!item.is_read})});item.is_read=!item.is_read;render();}finally{b.disabled=false;}}));progress();};
+  const load=async()=>{if(sync)sync.textContent='Memuat Pengumuman resmi dari akun...';try{await importLegacy();const data=await api('/jamaah/announcements');announcements=data.announcements||[];if(sync)sync.textContent='Status baca Pengumuman tersinkron ke akun jemaah.';render();}catch(e){if(sync)sync.textContent='Pengumuman resmi belum dapat dimuat. Silakan muat ulang halaman.';if(list)list.innerHTML='<div class="announcement-empty">Gagal memuat pengumuman resmi.</div>';}};
+  filterButtons.forEach(b=>b.addEventListener('click',()=>{activeFilter=b.dataset.announcementFilter||'semua';filterButtons.forEach(x=>x.classList.toggle('is-active',x===b));render();}));
+  const wait=()=>{if(document.documentElement.classList.contains('auth-ready'))load();else setTimeout(wait,60);};wait();
 })();

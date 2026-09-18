@@ -1,37 +1,10 @@
 (() => {
-  const key = 'umroh-announcements-read-v1';
-  const announcements = Array.isArray(window.UMROH_ANNOUNCEMENTS) ? window.UMROH_ANNOUNCEMENTS : [];
-  const list = document.querySelector('[data-dashboard-announcements]');
-  const dot = document.querySelector('[data-announcement-unread-count]');
-
-  const readState = () => {
-    try {
-      const value = JSON.parse(localStorage.getItem(key) || '{}');
-      return value && typeof value === 'object' ? value : {};
-    } catch (_) { return {}; }
-  };
-
-  const iconClass = (icon) => ({
-    book: 'icon-book', file: 'icon-file', users: 'icon-user', alert: 'icon-alert'
-  }[icon] || 'icon-info');
-
-  const render = () => {
-    const state = readState();
-    const unread = announcements.filter(item => !state[item.id]);
-    if (dot) {
-      dot.textContent = String(unread.length);
-      dot.hidden = unread.length === 0;
-    }
-    if (!list) return;
-    const featured = [...unread, ...announcements.filter(item => state[item.id])].slice(0, 3);
-    list.innerHTML = featured.map(item => `
-      <div class="announcement ${state[item.id] ? 'is-read' : ''}">
-        <div class="announcement-icon"><span aria-hidden="true" class="ui-icon ${iconClass(item.icon)}"></span></div>
-        <div><strong>${item.title}</strong><span>${item.summary}</span></div>
-        <time>${item.dateLabel}</time>
-      </div>`).join('');
-  };
-
-  window.addEventListener('storage', render);
-  render();
+  'use strict';
+  const API_BASE='https://umroh-api.srilexbuditra.work'; const LEGACY_KEY='umroh-announcements-read-v1'; const IMPORT_FLAG='umroh-announcements-imported-v3.6.0'; const list=document.querySelector('[data-dashboard-announcements]'); const dot=document.querySelector('[data-announcement-unread-count]');
+  const esc=(v)=>String(v??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;'); const icon=(c)=>({manasik:'icon-book',dokumen:'icon-file',perjalanan:'icon-users',keamanan:'icon-alert',umum:'icon-megaphone'}[c]||'icon-info'); const dateLabel=(iso)=>{if(!iso)return'Baru';const d=new Date(iso);if(Number.isNaN(d.getTime()))return'';return new Intl.DateTimeFormat('id-ID',{day:'2-digit',month:'short',timeZone:'Asia/Jakarta'}).format(d);};
+  const api=async(path,options={})=>{const r=await fetch(`${API_BASE}${path}`,{credentials:'include',cache:'no-store',headers:{Accept:'application/json',...(options.body?{'Content-Type':'application/json'}:{})},...options});const d=await r.json().catch(()=>({}));if(!r.ok||!d?.ok)throw new Error(d?.error||`http_${r.status}`);return d;};
+  const importLegacy=async()=>{if(localStorage.getItem(IMPORT_FLAG)==='1')return;let keys=[];try{const s=JSON.parse(localStorage.getItem(LEGACY_KEY)||'{}');keys=Object.keys(s||{}).filter(k=>Boolean(s[k]));}catch(_){}try{if(keys.length)await api('/jamaah/announcements/import',{method:'POST',body:JSON.stringify({read_keys:keys})});localStorage.setItem(IMPORT_FLAG,'1');}catch(_){}};
+  const render=(items)=>{const unread=items.filter(x=>!x.is_read);if(dot){dot.textContent=String(unread.length);dot.hidden=unread.length===0;}if(!list)return;const featured=[...unread,...items.filter(x=>x.is_read)].slice(0,3);if(!featured.length){list.innerHTML='<div class="announcement"><div class="announcement-icon"><span class="ui-icon icon-megaphone"></span></div><div><strong>Belum ada pengumuman resmi</strong><span>Informasi dari pengelola akan tampil di sini setelah dipublikasikan.</span></div><time>—</time></div>';return;}list.innerHTML=featured.map(a=>`<div class="announcement ${a.is_read?'is-read':''}"><div class="announcement-icon"><span aria-hidden="true" class="ui-icon ${icon(a.category)}"></span></div><div><strong>${esc(a.title)}</strong><span>${esc(a.summary||'')}</span></div><time>${esc(dateLabel(a.published_at))}</time></div>`).join('');};
+  const load=async()=>{try{await importLegacy();const d=await api('/jamaah/announcements');render(d.announcements||[]);}catch(_){if(dot)dot.hidden=true;if(list)list.innerHTML='<div class="announcement"><div class="announcement-icon"><span class="ui-icon icon-alert"></span></div><div><strong>Pengumuman belum dapat dimuat</strong><span>Silakan buka kembali halaman ini beberapa saat lagi.</span></div><time>—</time></div>';}};
+  const wait=()=>{if(document.documentElement.classList.contains('auth-ready'))load();else setTimeout(wait,60);};wait();
 })();

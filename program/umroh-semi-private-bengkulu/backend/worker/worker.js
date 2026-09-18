@@ -1,4 +1,4 @@
-const API_VERSION = "3.5.1";
+const API_VERSION = "3.6.0";
 const COOKIE_NAME = "umroh_session";
 const DEFAULT_SESSION_AGE = 60 * 60 * 24 * 7;
 const PASSWORD_ITERATIONS = 100000;
@@ -41,6 +41,10 @@ const AGENDA_SYNC_EVENTS = [
     location_text: "Titik kumpul belum dikonfirmasi",
   },
 ];
+
+const ANNOUNCEMENT_CATEGORIES = new Set(["manasik", "dokumen", "perjalanan", "keamanan", "umum"]);
+const ANNOUNCEMENT_PRIORITIES = new Set(["info", "important", "warning", "urgent"]);
+const ANNOUNCEMENT_LEGACY_KEYS = new Set(["manasik-lanjutan", "persiapan-dokumen", "pembagian-rombongan", "keamanan-dokumen"]);
 
 const DASHBOARD_PROGRESS_WEIGHTS = Object.freeze({
   manasik: 35,
@@ -114,6 +118,34 @@ export default {
       const adminAgendaMatch = path.match(/^\/admin\/agenda\/(\d+)$/);
       if (adminAgendaMatch && request.method === "PATCH") {
         return updateAdminAgenda(request, env, Number(adminAgendaMatch[1]));
+      }
+
+
+
+      if (request.method === "GET" && path === "/jamaah/announcements") {
+        return listOwnAnnouncements(request, env);
+      }
+
+      if (request.method === "POST" && path === "/jamaah/announcements/import") {
+        return importOwnAnnouncementReads(request, env);
+      }
+
+      const ownAnnouncementReadMatch = path.match(/^\/jamaah\/announcements\/([a-z0-9-]+)\/read$/i);
+      if (ownAnnouncementReadMatch && request.method === "PATCH") {
+        return updateOwnAnnouncementRead(request, env, ownAnnouncementReadMatch[1]);
+      }
+
+      if (request.method === "GET" && path === "/admin/announcements") {
+        return listAdminAnnouncements(request, env);
+      }
+
+      if (request.method === "POST" && path === "/admin/announcements") {
+        return createAdminAnnouncement(request, env);
+      }
+
+      const adminAnnouncementMatch = path.match(/^\/admin\/announcements\/(\d+)$/);
+      if (adminAnnouncementMatch && request.method === "PATCH") {
+        return updateAdminAnnouncement(request, env, Number(adminAnnouncementMatch[1]));
       }
 
       if (request.method === "GET" && path === "/jamaah/progress/summary") {
@@ -1491,6 +1523,332 @@ async function updateAdminAgenda(request, env, agendaId) {
   ).run();
 
   return json(request, env, { ok: true, event: agendaRowPayload(updated) });
+}
+
+
+function announcementCategoryLabel(category) {
+  return {
+    manasik: "Manasik",
+    dokumen: "Dokumen",
+    perjalanan: "Perjalanan",
+    keamanan: "Keamanan",
+    umum: "Umum",
+  }[category] || category;
+}
+
+function announcementPriorityLabel(priority) {
+  return {
+    info: "Informasi",
+    important: "Penting",
+    warning: "Perhatian",
+    urgent: "Mendesak",
+  }[priority] || priority;
+}
+
+function announcementSummary(body) {
+  const clean = String(body || "").replace(/\s+/g, " ").trim();
+  if (clean.length <= 180) return clean;
+  return `${clean.slice(0, 177).trimEnd()}...`;
+}
+
+function announcementRowPayload(row) {
+  return {
+    id: Number(row.id),
+    announcement_key: row.announcement_key,
+    category: row.category,
+    category_label: announcementCategoryLabel(row.category),
+    priority: row.priority || "info",
+    priority_label: announcementPriorityLabel(row.priority || "info"),
+    title: row.title,
+    body: row.body,
+    summary: announcementSummary(row.body),
+    published_at: row.published_at || null,
+    is_published: Number(row.is_published || 0) === 1,
+    is_read: Number(row.is_read || 0) === 1,
+    read_at: row.read_at || null,
+    created_at: row.created_at,
+    updated_at: row.updated_at,
+  };
+}
+
+function jakartaNowIso() {
+  const shifted = new Date(Date.now() + (7 * 60 * 60 * 1000));
+  return `${shifted.toISOString().slice(0, 19)}+07:00`;
+}
+
+function normalizeAnnouncementDateTime(value) {
+  if (value === null || value === undefined || value === "") return null;
+  const parsed = normalizeAgendaDateTime(value);
+  if (parsed?.error) return { error: "invalid_announcement_datetime" };
+  return parsed;
+}
+
+function validateAnnouncementInput(body, current = null) {
+  const title = truncate(String(body.title ?? current?.title ?? "").trim(), 180);
+  const content = truncate(String(body.body ?? current?.body ?? "").trim(), 5000);
+  const category = String(body.category ?? current?.category ?? "umum").trim().toLowerCase();
+  const priority = String(body.priority ?? current?.priority ?? "info").trim().toLowerCase();
+  const isPublished = body.is_published === undefined
+    ? Boolean(current?.is_published)
+    : Boolean(body.is_published);
+
+  const dateSource = hasOwn(body, "published_at") ? body.published_at : current?.published_at;
+  const parsedDate = normalizeAnnouncementDateTime(dateSource);
+
+  if (!title) return { error: "announcement_title_required" };
+  if (!content) return { error: "announcement_body_required" };
+  if (!ANNOUNCEMENT_CATEGORIES.has(category)) return { error: "invalid_announcement_category" };
+  if (!ANNOUNCEMENT_PRIORITIES.has(priority)) return { error: "invalid_announcement_priority" };
+  if (parsedDate?.error) return { error: parsedDate.error };
+
+  let publishedAt = parsedDate?.value || null;
+  if (isPublished && !publishedAt) publishedAt = jakartaNowIso();
+
+  return {
+    value: {
+      title,
+      body: content,
+      category,
+      priority,
+      published_at: publishedAt,
+      is_published: isPublished ? 1 : 0,
+    },
+  };
+}
+
+async function announcementProgressPayload(env, accountId) {
+  const row = await env.DB.prepare(`
+    SELECT
+      COUNT(a.id) AS total,
+      SUM(CASE WHEN r.id IS NOT NULL THEN 1 ELSE 0 END) AS done
+    FROM umroh_announcements a
+    LEFT JOIN umroh_announcement_reads r
+      ON r.announcement_id = a.id AND r.account_id = ?
+    WHERE a.is_published = 1
+  `).bind(accountId).first();
+
+  const total = Number(row?.total || 0);
+  const done = Number(row?.done || 0);
+  return { total, done, percent: total ? Math.round((done / total) * 100) : 0 };
+}
+
+async function listOwnAnnouncements(request, env) {
+  const gate = await requireJamaah(request, env);
+  if (gate.response) return gate.response;
+
+  const result = await env.DB.prepare(`
+    SELECT a.id, a.announcement_key, a.category, a.priority, a.title, a.body,
+           a.published_at, a.is_published, a.created_at, a.updated_at,
+           CASE WHEN r.id IS NULL THEN 0 ELSE 1 END AS is_read,
+           r.read_at
+    FROM umroh_announcements a
+    LEFT JOIN umroh_announcement_reads r
+      ON r.announcement_id = a.id AND r.account_id = ?
+    WHERE a.is_published = 1
+    ORDER BY
+      CASE a.priority WHEN 'urgent' THEN 1 WHEN 'warning' THEN 2 WHEN 'important' THEN 3 ELSE 4 END,
+      COALESCE(a.published_at, a.created_at) DESC,
+      a.id DESC
+  `).bind(gate.account.id).all();
+
+  const announcements = (result.results || []).map(announcementRowPayload);
+  const progress = await announcementProgressPayload(env, gate.account.id);
+  return json(request, env, {
+    ok: true,
+    source: "official",
+    timezone: "Asia/Jakarta",
+    progress,
+    announcements,
+  });
+}
+
+async function updateOwnAnnouncementRead(request, env, announcementKey) {
+  const gate = await requireJamaah(request, env);
+  if (gate.response) return gate.response;
+
+  const body = await readJson(request);
+  const read = body.read !== false;
+  const announcement = await env.DB.prepare(`
+    SELECT id, announcement_key
+    FROM umroh_announcements
+    WHERE announcement_key = ? AND is_published = 1
+    LIMIT 1
+  `).bind(announcementKey).first();
+
+  if (!announcement) {
+    return json(request, env, { ok: false, error: "announcement_not_found" }, 404);
+  }
+
+  if (read) {
+    await env.DB.prepare(`
+      INSERT INTO umroh_announcement_reads (account_id, announcement_id, read_at)
+      VALUES (?, ?, ?)
+      ON CONFLICT(account_id, announcement_id)
+      DO UPDATE SET read_at = excluded.read_at
+    `).bind(gate.account.id, announcement.id, new Date().toISOString()).run();
+  } else {
+    await env.DB.prepare(`
+      DELETE FROM umroh_announcement_reads
+      WHERE account_id = ? AND announcement_id = ?
+    `).bind(gate.account.id, announcement.id).run();
+  }
+
+  const progress = await announcementProgressPayload(env, gate.account.id);
+  return json(request, env, { ok: true, announcement_key: announcementKey, read, progress });
+}
+
+async function importOwnAnnouncementReads(request, env) {
+  const gate = await requireJamaah(request, env);
+  if (gate.response) return gate.response;
+
+  const body = await readJson(request);
+  const input = Array.isArray(body.read_keys) ? body.read_keys : [];
+  const keys = [...new Set(input.map((value) => String(value || "").trim()).filter((value) => ANNOUNCEMENT_LEGACY_KEYS.has(value)))];
+
+  if (keys.length > 20) {
+    return json(request, env, { ok: false, error: "too_many_announcement_keys" }, 400);
+  }
+
+  const now = new Date().toISOString();
+  let imported = 0;
+  for (const key of keys) {
+    const row = await env.DB.prepare(`
+      SELECT id FROM umroh_announcements WHERE announcement_key = ? LIMIT 1
+    `).bind(key).first();
+    if (!row) continue;
+    await env.DB.prepare(`
+      INSERT INTO umroh_announcement_reads (account_id, announcement_id, read_at)
+      VALUES (?, ?, ?)
+      ON CONFLICT(account_id, announcement_id)
+      DO NOTHING
+    `).bind(gate.account.id, row.id, now).run();
+    imported += 1;
+  }
+
+  const progress = await announcementProgressPayload(env, gate.account.id);
+  return json(request, env, { ok: true, imported_count: imported, progress });
+}
+
+async function listAdminAnnouncements(request, env) {
+  const gate = await requireStaffRole(request, env);
+  if (gate.response) return gate.response;
+
+  const result = await env.DB.prepare(`
+    SELECT id, announcement_key, category, priority, title, body, published_at,
+           is_published, created_at, updated_at,
+           0 AS is_read, NULL AS read_at
+    FROM umroh_announcements
+    ORDER BY is_published DESC, COALESCE(published_at, created_at) DESC, id DESC
+  `).all();
+
+  const announcements = (result.results || []).map(announcementRowPayload);
+  const summary = {
+    total: announcements.length,
+    published: announcements.filter((item) => item.is_published).length,
+    draft: announcements.filter((item) => !item.is_published).length,
+    high_priority: announcements.filter((item) => ["urgent", "warning", "important"].includes(item.priority)).length,
+  };
+
+  return json(request, env, { ok: true, summary, announcements });
+}
+
+async function createAdminAnnouncement(request, env) {
+  const gate = await requireStaffRole(request, env, ["super_admin", "admin", "tour_leader"]);
+  if (gate.response) return gate.response;
+
+  const body = await readJson(request);
+  const parsed = validateAnnouncementInput(body);
+  if (parsed.error) return json(request, env, { ok: false, error: parsed.error }, 400);
+
+  const value = parsed.value;
+  const key = `announcement-${crypto.randomUUID()}`;
+  const now = new Date().toISOString();
+  await env.DB.prepare(`
+    INSERT INTO umroh_announcements
+      (announcement_key, category, priority, title, body, published_at,
+       is_published, created_by_account_id, created_at, updated_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `).bind(
+    key, value.category, value.priority, value.title, value.body,
+    value.published_at, value.is_published, gate.account.id, now, now
+  ).run();
+
+  const created = await env.DB.prepare(`
+    SELECT id, announcement_key, category, priority, title, body, published_at,
+           is_published, created_at, updated_at, 0 AS is_read, NULL AS read_at
+    FROM umroh_announcements WHERE announcement_key = ? LIMIT 1
+  `).bind(key).first();
+
+  await env.DB.prepare(`
+    INSERT INTO umroh_admin_audit_log
+      (actor_account_id, action, target_account_id, details_json, created_at)
+    VALUES (?, 'announcement_created', NULL, ?, ?)
+  `).bind(gate.account.id, JSON.stringify({
+    announcement_id: Number(created?.id || 0),
+    announcement_key: key,
+    title: value.title,
+    priority: value.priority,
+    is_published: Boolean(value.is_published),
+  }), now).run();
+
+  return json(request, env, { ok: true, announcement: announcementRowPayload(created) }, 201);
+}
+
+async function updateAdminAnnouncement(request, env, announcementId) {
+  const gate = await requireStaffRole(request, env, ["super_admin", "admin", "tour_leader"]);
+  if (gate.response) return gate.response;
+
+  if (!Number.isInteger(announcementId) || announcementId < 1) {
+    return json(request, env, { ok: false, error: "invalid_announcement_id" }, 400);
+  }
+
+  const current = await env.DB.prepare(`
+    SELECT id, announcement_key, category, priority, title, body, published_at,
+           is_published, created_at, updated_at
+    FROM umroh_announcements WHERE id = ? LIMIT 1
+  `).bind(announcementId).first();
+  if (!current) return json(request, env, { ok: false, error: "announcement_not_found" }, 404);
+
+  const body = await readJson(request);
+  const parsed = validateAnnouncementInput(body, current);
+  if (parsed.error) return json(request, env, { ok: false, error: parsed.error }, 400);
+
+  const value = parsed.value;
+  const now = new Date().toISOString();
+  await env.DB.prepare(`
+    UPDATE umroh_announcements
+    SET category = ?, priority = ?, title = ?, body = ?, published_at = ?,
+        is_published = ?, updated_at = ?
+    WHERE id = ?
+  `).bind(
+    value.category, value.priority, value.title, value.body, value.published_at,
+    value.is_published, now, announcementId
+  ).run();
+
+  const updated = await env.DB.prepare(`
+    SELECT id, announcement_key, category, priority, title, body, published_at,
+           is_published, created_at, updated_at, 0 AS is_read, NULL AS read_at
+    FROM umroh_announcements WHERE id = ? LIMIT 1
+  `).bind(announcementId).first();
+
+  const action = Number(current.is_published || 0) !== Number(updated.is_published || 0)
+    ? (Number(updated.is_published || 0) === 1 ? "announcement_published" : "announcement_unpublished")
+    : "announcement_updated";
+
+  await env.DB.prepare(`
+    INSERT INTO umroh_admin_audit_log
+      (actor_account_id, action, target_account_id, details_json, created_at)
+    VALUES (?, ?, NULL, ?, ?)
+  `).bind(gate.account.id, action, JSON.stringify({
+    announcement_id: announcementId,
+    announcement_key: updated.announcement_key,
+    title: updated.title,
+    category: updated.category,
+    priority: updated.priority,
+    is_published: Boolean(updated.is_published),
+  }), now).run();
+
+  return json(request, env, { ok: true, announcement: announcementRowPayload(updated) });
 }
 
 async function requireJamaah(request, env) {
