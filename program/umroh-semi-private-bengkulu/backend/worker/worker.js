@@ -1,4 +1,4 @@
-const API_VERSION = "3.6.3";
+const API_VERSION = "3.7.0";
 const COOKIE_NAME = "umroh_session";
 const DEFAULT_SESSION_AGE = 60 * 60 * 24 * 7;
 const PASSWORD_ITERATIONS = 100000;
@@ -219,6 +219,10 @@ export default {
       const adminDocumentReviewMatch = path.match(/^\/admin\/documents\/([0-9a-f-]{36})\/review$/i);
       if (adminDocumentReviewMatch && request.method === "PATCH") {
         return reviewAdminDocument(request, env, adminDocumentReviewMatch[1]);
+      }
+
+      if (request.method === "GET" && path === "/admin/dashboard/summary") {
+        return getAdminDashboardSummary(request, env);
       }
 
       if (request.method === "GET" && path === "/admin/jamaah/stats") {
@@ -2307,6 +2311,316 @@ async function requireStaffRole(request, env, allowedRoles = ["super_admin", "ad
     return { response: json(request, env, { ok: false, error: "forbidden" }, 403) };
   }
   return { account };
+}
+
+
+function adminActivityLabel(row) {
+  const key = String(row.detail_key || row.action || '').trim();
+  const human = key
+    .replaceAll('_', ' ')
+    .replaceAll('-', ' ')
+    .replace(/\b\w/g, (letter) => letter.toUpperCase());
+
+  if (row.activity_type === 'document_uploaded') {
+    return {
+      detail: `Mengunggah ${documentLabel(key)}`,
+      badge: 'Dokumen',
+      badge_type: 'info',
+    };
+  }
+  if (row.activity_type === 'progress') {
+    const module = String(row.module || '').toLowerCase();
+    const prefix = module === 'manasik' ? 'Memperbarui Manasik' : 'Memperbarui Checklist';
+    return {
+      detail: `${prefix} · ${human || 'Progress'}`,
+      badge: module === 'manasik' ? 'Manasik' : 'Checklist',
+      badge_type: row.action === 'complete' ? 'success' : 'info',
+    };
+  }
+  if (row.activity_type === 'agenda_read') {
+    return { detail: `Membaca agenda ${key}`, badge: 'Agenda', badge_type: 'info' };
+  }
+  if (row.activity_type === 'announcement_read') {
+    return { detail: `Membaca pengumuman ${key}`, badge: 'Pengumuman', badge_type: 'warning' };
+  }
+
+  const actionMap = {
+    agenda_created: ['Membuat agenda resmi', 'Agenda', 'warning'],
+    agenda_updated: ['Memperbarui agenda resmi', 'Agenda', 'warning'],
+    agenda_published: ['Mempublikasikan agenda resmi', 'Agenda', 'success'],
+    agenda_unpublished: ['Menarik publikasi agenda', 'Agenda', 'warning'],
+    announcement_created: ['Membuat pengumuman', 'Pengumuman', 'warning'],
+    announcement_updated: ['Memperbarui pengumuman', 'Pengumuman', 'warning'],
+    announcement_published: ['Mempublikasikan pengumuman', 'Pengumuman', 'success'],
+    announcement_unpublished: ['Menarik publikasi pengumuman', 'Pengumuman', 'warning'],
+    document_reviewed: ['Memverifikasi dokumen jemaah', 'Dokumen', 'success'],
+    jamaah_created: ['Menambahkan akun jemaah', 'Jemaah', 'success'],
+    jamaah_updated: ['Memperbarui akun jemaah', 'Jemaah', 'info'],
+    jamaah_reset_access: ['Mereset akses akun jemaah', 'Jemaah', 'warning'],
+  };
+  const mapped = actionMap[row.action] || [`Aktivitas Admin · ${human || 'Sistem'}`, 'Admin', 'info'];
+  return { detail: mapped[0], badge: mapped[1], badge_type: mapped[2] };
+}
+
+async function getAdminDashboardSummary(request, env) {
+  const gate = await requireStaffRole(request, env);
+  if (gate.response) return gate.response;
+
+  const url = new URL(request.url);
+  const requestedDays = Number(url.searchParams.get("days") || 7);
+  const windowDays = [1, 7, 30].includes(requestedDays) ? requestedDays : 7;
+  const now = new Date();
+  const nowIso = now.toISOString();
+  const windowEndIso = new Date(now.getTime() + windowDays * 86400000).toISOString();
+  const activityStartIso = new Date(now.getTime() - windowDays * 86400000).toISOString();
+
+  const jamaahRow = await env.DB.prepare(`
+    SELECT COUNT(*) AS total
+    FROM umroh_accounts
+    WHERE role = 'jamaah'
+  `).first();
+
+  const agendaUpcomingRow = await env.DB.prepare(`
+    SELECT COUNT(*) AS total
+    FROM umroh_agenda_events
+    WHERE is_published = 1
+      AND event_key != ?
+      AND event_status IN ('scheduled', 'confirmed')
+      AND starts_at IS NOT NULL
+      AND datetime(starts_at) >= datetime(?)
+  `).bind(AGENDA_SYNC_SENTINEL, nowIso).first();
+
+  const agendaWindowRow = await env.DB.prepare(`
+    SELECT COUNT(*) AS total
+    FROM umroh_agenda_events
+    WHERE is_published = 1
+      AND event_key != ?
+      AND event_status IN ('scheduled', 'confirmed')
+      AND starts_at IS NOT NULL
+      AND datetime(starts_at) >= datetime(?)
+      AND datetime(starts_at) < datetime(?)
+  `).bind(AGENDA_SYNC_SENTINEL, nowIso, windowEndIso).first();
+
+  const documentPendingRow = await env.DB.prepare(`
+    SELECT COUNT(*) AS total
+    FROM umroh_document_files f
+    JOIN umroh_accounts a ON a.id = f.account_id AND a.role = 'jamaah'
+    JOIN umroh_document_status s
+      ON s.account_id = f.account_id
+     AND s.document_key = f.document_key
+    WHERE f.is_current = 1
+      AND s.admin_status = 'not_reviewed'
+  `).first();
+
+  const announcementDraftRow = await env.DB.prepare(`
+    SELECT COUNT(*) AS total
+    FROM umroh_announcements
+    WHERE is_published = 0
+  `).first();
+
+  const readinessRow = await env.DB.prepare(`
+    WITH published_agenda AS (
+      SELECT COUNT(*) AS total
+      FROM umroh_agenda_events
+      WHERE is_published = 1
+        AND event_key != ?
+        AND event_status != 'cancelled'
+    ),
+    jamaah_progress AS (
+      SELECT
+        a.id,
+        a.account_status,
+        (
+          SELECT COUNT(*)
+          FROM umroh_progress_items p
+          WHERE p.account_id = a.id
+            AND p.module = 'manasik'
+            AND p.status = 'complete'
+        ) AS manasik_done,
+        (
+          SELECT COUNT(*)
+          FROM umroh_progress_items p
+          WHERE p.account_id = a.id
+            AND p.module = 'checklist'
+            AND p.status IN ('complete', 'not_applicable')
+        ) AS checklist_done,
+        (
+          SELECT COUNT(*)
+          FROM umroh_document_status s
+          WHERE s.account_id = a.id
+            AND s.document_key IN (
+              'paspor-dokumen',
+              'tiket-itinerary',
+              'identitas-jemaah',
+              'dokumen-kesehatan'
+            )
+            AND s.admin_status = 'verified'
+        ) AS documents_verified,
+        (
+          SELECT COUNT(*)
+          FROM umroh_document_status s
+          WHERE s.account_id = a.id
+            AND s.admin_status IN ('needs_revision', 'rejected')
+        ) AS document_blockers,
+        (
+          SELECT COUNT(*)
+          FROM umroh_agenda_reads r
+          JOIN umroh_agenda_events e ON e.id = r.agenda_id
+          WHERE r.account_id = a.id
+            AND e.is_published = 1
+            AND e.event_key != ?
+            AND e.event_status != 'cancelled'
+        ) AS agenda_read,
+        (SELECT total FROM published_agenda) AS agenda_total
+      FROM umroh_accounts a
+      WHERE a.role = 'jamaah'
+    ),
+    classified AS (
+      SELECT
+        CASE
+          WHEN account_status != 'active' THEN 'inactive'
+          WHEN document_blockers > 0 THEN 'needs_assistance'
+          WHEN manasik_done >= ?
+           AND checklist_done >= ?
+           AND documents_verified >= ?
+           AND agenda_read >= agenda_total THEN 'ready'
+          ELSE 'in_progress'
+        END AS bucket
+      FROM jamaah_progress
+    )
+    SELECT
+      COUNT(*) AS total,
+      SUM(CASE WHEN bucket = 'ready' THEN 1 ELSE 0 END) AS ready,
+      SUM(CASE WHEN bucket = 'in_progress' THEN 1 ELSE 0 END) AS in_progress,
+      SUM(CASE WHEN bucket = 'needs_assistance' THEN 1 ELSE 0 END) AS needs_assistance,
+      SUM(CASE WHEN bucket = 'inactive' THEN 1 ELSE 0 END) AS inactive
+    FROM classified
+  `).bind(
+    AGENDA_SYNC_SENTINEL,
+    AGENDA_SYNC_SENTINEL,
+    MANASIK_KEYS.size,
+    CHECKLIST_KEYS.size,
+    DOCUMENT_KEYS.size
+  ).first();
+
+  const activitiesResult = await env.DB.prepare(`
+    SELECT *
+    FROM (
+      SELECT
+        'document_uploaded' AS activity_type,
+        COALESCE(p.full_name, a.member_no, 'Jemaah') AS name,
+        f.document_key AS detail_key,
+        NULL AS module,
+        NULL AS action,
+        f.uploaded_at AS occurred_at
+      FROM umroh_document_files f
+      JOIN umroh_accounts a ON a.id = f.account_id AND a.role = 'jamaah'
+      LEFT JOIN umroh_jamaah_profiles p ON p.account_id = a.id
+
+      UNION ALL
+
+      SELECT
+        'progress' AS activity_type,
+        COALESCE(jp.full_name, ja.member_no, 'Jemaah') AS name,
+        pi.item_key AS detail_key,
+        pi.module AS module,
+        pi.status AS action,
+        pi.updated_at AS occurred_at
+      FROM umroh_progress_items pi
+      JOIN umroh_accounts ja ON ja.id = pi.account_id AND ja.role = 'jamaah'
+      LEFT JOIN umroh_jamaah_profiles jp ON jp.account_id = ja.id
+
+      UNION ALL
+
+      SELECT
+        'agenda_read' AS activity_type,
+        COALESCE(ap.full_name, aa.member_no, 'Jemaah') AS name,
+        ae.title AS detail_key,
+        NULL AS module,
+        NULL AS action,
+        ar.read_at AS occurred_at
+      FROM umroh_agenda_reads ar
+      JOIN umroh_accounts aa ON aa.id = ar.account_id AND aa.role = 'jamaah'
+      LEFT JOIN umroh_jamaah_profiles ap ON ap.account_id = aa.id
+      JOIN umroh_agenda_events ae ON ae.id = ar.agenda_id
+      WHERE ae.event_key != ?
+
+      UNION ALL
+
+      SELECT
+        'announcement_read' AS activity_type,
+        COALESCE(np.full_name, na.member_no, 'Jemaah') AS name,
+        an.title AS detail_key,
+        NULL AS module,
+        NULL AS action,
+        nr.read_at AS occurred_at
+      FROM umroh_announcement_reads nr
+      JOIN umroh_accounts na ON na.id = nr.account_id AND na.role = 'jamaah'
+      LEFT JOIN umroh_jamaah_profiles np ON np.account_id = na.id
+      JOIN umroh_announcements an ON an.id = nr.announcement_id
+
+      UNION ALL
+
+      SELECT
+        'admin_audit' AS activity_type,
+        COALESCE(actor.display_name, actor.username, 'Admin') AS name,
+        log.action AS detail_key,
+        NULL AS module,
+        log.action AS action,
+        log.created_at AS occurred_at
+      FROM umroh_admin_audit_log log
+      LEFT JOIN umroh_accounts actor ON actor.id = log.actor_account_id
+    )
+    WHERE occurred_at IS NOT NULL
+      AND datetime(occurred_at) >= datetime(?)
+    ORDER BY datetime(occurred_at) DESC
+    LIMIT 8
+  `).bind(AGENDA_SYNC_SENTINEL, activityStartIso).all();
+
+  const readiness = {
+    total: Number(readinessRow?.total || 0),
+    ready: Number(readinessRow?.ready || 0),
+    in_progress: Number(readinessRow?.in_progress || 0),
+    needs_assistance: Number(readinessRow?.needs_assistance || 0),
+    inactive: Number(readinessRow?.inactive || 0),
+  };
+
+  const documentsPending = Number(documentPendingRow?.total || 0);
+  const jamaahIncomplete = readiness.in_progress + readiness.needs_assistance;
+  const agendaInWindow = Number(agendaWindowRow?.total || 0);
+  const announcementDrafts = Number(announcementDraftRow?.total || 0);
+  const attentionTotal =
+    documentsPending +
+    jamaahIncomplete +
+    agendaInWindow +
+    announcementDrafts;
+
+  const activities = (activitiesResult.results || []).map((row) => ({
+    name: row.name || 'Sistem',
+    ...adminActivityLabel(row),
+    occurred_at: row.occurred_at || null,
+  }));
+
+  return json(request, env, {
+    ok: true,
+    window_days: windowDays,
+    summary: {
+      jamaah_total: Number(jamaahRow?.total || 0),
+      agenda_upcoming_total: Number(agendaUpcomingRow?.total || 0),
+      manasik_materials: MANASIK_KEYS.size,
+      attention_total: attentionTotal,
+      attention: {
+        documents_pending_review: documentsPending,
+        jamaah_incomplete: jamaahIncomplete,
+        agenda_in_window: agendaInWindow,
+        announcement_drafts: announcementDrafts,
+      },
+      readiness,
+    },
+    activities,
+    source: 'backend_d1',
+    generated_at: nowIso,
+  });
 }
 
 async function getAdminJamaahStats(request, env) {

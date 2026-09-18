@@ -40,56 +40,52 @@
 <button aria-label="Buka menu" class="mobile-menu" data-mobile-menu="">☰</button>
 <div class="search-box"><span aria-hidden="true"><span aria-hidden="true" class="ui-icon icon-search"></span></span><input placeholder="Cari jemaah, agenda, dokumen..." type="search"/></div>
 <div class="topbar-spacer"></div>
-<button aria-label="Notifikasi" class="icon-button"><span aria-hidden="true" class="ui-icon icon-bell"></span><span class="notification-dot">3</span></button>
+<button aria-label="Notifikasi" class="icon-button"><span aria-hidden="true" class="ui-icon icon-bell"></span><span class="notification-dot" data-live-attention-dot>0</span></button>
 <div class="user-chip"><div class="avatar" data-auth-avatar>SB</div><div class="user-copy"><strong data-auth-name>Srilex Buditra</strong><span data-auth-role>Senior Full Stack Developer · Platform Architect</span></div></div>
 <button class="auth-logout" data-admin-logout type="button">Keluar</button>
 </header>
 <main class="page-wrap" id="ringkasan">
-<div class="prototype-note"><strong>Platform V3.6.3 aktif.</strong> Total Jemaah dan Agenda resmi kini dibaca dari D1. Statistik Manasik, Perlu Perhatian, grafik, dan aktivitas lain dipindahkan bertahap ke backend resmi.</div>
-<div class="page-head"><div><span class="page-kicker">Operational Workspace</span><h1>Ringkasan</h1><p>Prioritaskan pekerjaan yang membutuhkan tindakan hari ini tanpa memenuhi dashboard dengan informasi yang tidak penting.</p></div><div class="page-date">Jumat, 18 September 2026<br/>Platform V3.6.3</div></div>
-<div aria-label="Konteks ringkasan" class="context-tabs"><button class="context-tab is-active" data-context-tab="">Hari Ini</button><button class="context-tab" data-context-tab="">7 Hari</button><button class="context-tab" data-context-tab="">30 Hari</button></div>
+<div class="prototype-note"><strong>Platform V3.7.0 aktif.</strong> Ringkasan operasional, status persiapan, dokumen, agenda, pengumuman, dan aktivitas terbaru kini dihitung dari backend resmi. Data simulasi pada Ringkasan Admin telah dihentikan.</div>
+<div class="page-head"><div><span class="page-kicker">Operational Workspace</span><h1>Ringkasan</h1><p>Prioritaskan pekerjaan yang membutuhkan tindakan tanpa memenuhi dashboard dengan informasi yang tidak penting.</p></div><div class="page-date"><span data-live-page-date>—</span><br/>Platform V3.7.0</div></div>
+<div aria-label="Konteks ringkasan" class="context-tabs"><button class="context-tab" data-context-tab data-window-days="1">Hari Ini</button><button class="context-tab is-active" data-context-tab data-window-days="7">7 Hari</button><button class="context-tab" data-context-tab data-window-days="30">30 Hari</button></div>
 <section aria-label="Statistik utama" class="stats-grid">
 <article class="card stat-card"><div class="stat-icon"><span aria-hidden="true" class="ui-icon icon-users"></span></div><div><strong data-live-jamaah-total>—</strong><span>Total Jemaah <small data-live-jamaah-source>· D1</small></span></div></article>
 <article class="card stat-card"><div class="stat-icon info"><span aria-hidden="true" class="ui-icon icon-calendar"></span></div><div><strong data-live-agenda-total>0</strong><span>Agenda Resmi Mendatang</span></div></article>
-<article class="card stat-card"><div class="stat-icon gold"><span aria-hidden="true" class="ui-icon icon-book"></span></div><div><strong>11</strong><span>Materi Manasik</span></div></article>
-<article class="card stat-card"><div class="stat-icon danger"><span aria-hidden="true" class="ui-icon icon-alert"></span></div><div><strong>6</strong><span>Perlu Perhatian</span></div></article>
+<article class="card stat-card"><div class="stat-icon gold"><span aria-hidden="true" class="ui-icon icon-book"></span></div><div><strong data-live-manasik-total>—</strong><span>Materi Manasik</span></div></article>
+<article class="card stat-card"><div class="stat-icon danger"><span aria-hidden="true" class="ui-icon icon-alert"></span></div><div><strong data-live-attention-total>—</strong><span>Perlu Perhatian</span></div></article>
 </section>
 <section class="admin-grid">
 <article class="card card-pad">
-<div class="section-title"><h2>Perlu Perhatian Hari Ini</h2><button type="button">Lihat semua →</button></div>
+<div class="section-title"><h2>Perlu Perhatian Operasional</h2><a href="./jemaah/">Lihat Jemaah →</a></div>
 <div class="attention-list">
-<div class="attention-row"><div class="attention-count danger">6</div><div><strong>Dokumen jemaah perlu diperiksa</strong><span>Verifikasi kelengkapan sebelum status persiapan diperbarui.</span></div><div class="row-arrow">›</div></div>
-<div class="attention-row"><div class="attention-count warning">3</div><div><strong>Jemaah belum melengkapi persiapan</strong><span>Checklist masih memiliki item penting yang belum selesai.</span></div><div class="row-arrow">›</div></div>
-<div class="attention-row"><div class="attention-count success">2</div><div><strong>Agenda dalam 7 hari</strong><span>Pastikan lokasi, waktu, dan pemberitahuan sudah final.</span></div><div class="row-arrow">›</div></div>
-<div class="attention-row"><div class="attention-count warning">1</div><div><strong>Pengumuman belum dipublikasikan</strong><span>Draft sudah tersimpan dan menunggu pemeriksaan.</span></div><div class="row-arrow">›</div></div>
+<div class="attention-row"><div class="attention-count danger" data-attention-documents>—</div><div><strong>Dokumen jemaah perlu diperiksa</strong><span>Upload aktif dengan status verifikasi Admin belum selesai.</span></div><div class="row-arrow">›</div></div>
+<div class="attention-row"><div class="attention-count warning" data-attention-jamaah>—</div><div><strong>Jemaah belum menyelesaikan persiapan</strong><span>Jemaah aktif yang belum memenuhi seluruh komponen persiapan.</span></div><div class="row-arrow">›</div></div>
+<div class="attention-row"><div class="attention-count success" data-attention-agenda>—</div><div><strong data-attention-agenda-label>Agenda dalam 7 hari</strong><span>Agenda resmi mendatang pada rentang waktu yang dipilih.</span></div><div class="row-arrow">›</div></div>
+<div class="attention-row"><div class="attention-count warning" data-attention-announcements>—</div><div><strong>Pengumuman belum dipublikasikan</strong><span>Draft tersimpan di D1 dan belum tampil pada akun Jemaah.</span></div><div class="row-arrow">›</div></div>
 </div>
 </article>
 <article class="card card-pad">
-<div class="section-title"><h2>Status Persiapan Jemaah</h2><button type="button">Detail →</button></div>
+<div class="section-title"><h2>Status Persiapan Jemaah</h2><a href="./jemaah/">Detail →</a></div>
 <div class="readiness">
-<div class="donut"><div class="donut-center"><strong>128</strong><span>Jemaah</span></div></div>
+<div class="donut" data-readiness-donut><div class="donut-center"><strong data-readiness-total>—</strong><span>Jemaah</span></div></div>
 <div class="legend">
-<div class="legend-row"><i class="legend-dot is-success"></i><span>Siap Berangkat</span><strong>68 · 53%</strong></div>
-<div class="legend-row"><i class="legend-dot is-warning"></i><span>Dalam Persiapan</span><strong>42 · 33%</strong></div>
-<div class="legend-row"><i class="legend-dot is-danger"></i><span>Perlu Pendampingan</span><strong>12 · 9%</strong></div>
-<div class="legend-row"><i class="legend-dot is-muted"></i><span>Belum Aktif</span><strong>6 · 5%</strong></div>
+<div class="legend-row"><i class="legend-dot is-success"></i><span>Siap Berangkat</span><strong data-readiness-ready>—</strong></div>
+<div class="legend-row"><i class="legend-dot is-warning"></i><span>Dalam Persiapan</span><strong data-readiness-progress>—</strong></div>
+<div class="legend-row"><i class="legend-dot is-danger"></i><span>Perlu Pendampingan</span><strong data-readiness-assistance>—</strong></div>
+<div class="legend-row"><i class="legend-dot is-muted"></i><span>Belum Aktif</span><strong data-readiness-inactive>—</strong></div>
 </div>
 </div>
 </article>
 </section>
 <section class="lower-grid">
 <article class="card card-pad" id="agenda-preview"><div class="section-title"><h2>Agenda Terdekat</h2><a href="./agenda/">Kelola →</a></div><div class="agenda-list" data-admin-agenda-preview><div class="table-state">Memuat agenda resmi...</div></div></article>
-<article class="card card-pad"><div class="section-title"><h2>Aktivitas Terbaru</h2><button>Lihat semua →</button></div><div class="activity-list">
-<div class="activity-row"><div class="avatar-mini">AR</div><div><strong>Ahmad Rasyid</strong><span>Mengunggah dokumen perjalanan · 10 menit lalu</span></div><span class="badge info">Dokumen</span></div>
-<div class="activity-row"><div class="avatar-mini">SN</div><div><strong>Siti Nurhaliza</strong><span>Menyelesaikan materi Thawaf · 1 jam lalu</span></div><span class="badge success">Selesai</span></div>
-<div class="activity-row"><div class="avatar-mini">AD</div><div><strong>Admin</strong><span>Menambahkan agenda baru · 3 jam lalu</span></div><span class="badge warning">Agenda</span></div>
-</div></article>
+<article class="card card-pad"><div class="section-title"><h2>Aktivitas Terbaru</h2><span data-activity-window>7 hari terakhir</span></div><div class="activity-list" data-live-activity-list><div class="table-state">Memuat aktivitas backend...</div></div></article>
 </section>
 </main>
 </div>
 <script src="../assets/js/admin-auth-guard.js?v=3.3.1"></script>
 <script src="../assets/js/dashboard-shell.js"></script>
-<script src="../assets/js/admin-operational-summary.js?v=3.4.1"></script>
-<script src="../assets/js/admin-agenda-summary.js?v=3.5.0"></script>
+<script src="../assets/js/admin-operational-summary.js?v=3.7.0"></script>
+<script src="../assets/js/admin-agenda-summary.js?v=3.7.0"></script>
 </body>
 </html>
