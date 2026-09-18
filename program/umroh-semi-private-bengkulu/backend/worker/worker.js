@@ -1,4 +1,4 @@
-const API_VERSION = "3.5.0";
+const API_VERSION = "3.5.1";
 const COOKIE_NAME = "umroh_session";
 const DEFAULT_SESSION_AGE = 60 * 60 * 24 * 7;
 const PASSWORD_ITERATIONS = 100000;
@@ -1236,29 +1236,67 @@ async function listOwnPublishedAgenda(request, env) {
   });
 }
 
+function hasOwn(object, key) {
+  return Object.prototype.hasOwnProperty.call(object || {}, key);
+}
+
+function normalizeAgendaDateTime(value) {
+  if (value === null || value === undefined || value === "") return null;
+
+  const text = String(value).trim();
+  const match = text.match(
+    /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})(?::(\d{2}))?(?:\+07:00)$/
+  );
+
+  if (!match) return { error: "invalid_agenda_datetime_format" };
+
+  const [, year, month, day, hour, minute, second = "00"] = match;
+  const normalized = `${year}-${month}-${day}T${hour}:${minute}:${second}+07:00`;
+  const timestamp = Date.parse(normalized);
+
+  if (Number.isNaN(timestamp)) return { error: "invalid_agenda_datetime" };
+
+  return { value: normalized, timestamp };
+}
+
 function validateAgendaInput(body, current = null) {
   const title = truncate(String(body.title ?? current?.title ?? "").trim(), 180);
   const description = truncate(String(body.description ?? current?.description ?? "").trim(), 2000);
   const category = truncate(String(body.category ?? current?.category ?? "Perjalanan").trim(), 80);
   const locationText = truncate(String(body.location_text ?? current?.location_text ?? "").trim(), 240);
-  const startsAt = String(body.starts_at ?? current?.starts_at ?? "").trim();
-  const endsAt = String(body.ends_at ?? current?.ends_at ?? "").trim();
+
+  const startSource = hasOwn(body, "starts_at") ? body.starts_at : current?.starts_at;
+  const endSource = hasOwn(body, "ends_at") ? body.ends_at : current?.ends_at;
+
+  const startParsed = normalizeAgendaDateTime(startSource);
+  const endParsed = normalizeAgendaDateTime(endSource);
+
   const status = String(body.event_status ?? current?.event_status ?? "draft").trim();
   const isPublished = body.is_published === undefined
     ? Boolean(current?.is_published)
     : Boolean(body.is_published);
 
   const allowedStatus = new Set(["draft", "scheduled", "confirmed", "cancelled"]);
+
   if (!title) return { error: "agenda_title_required" };
   if (!category) return { error: "agenda_category_required" };
   if (!allowedStatus.has(status)) return { error: "invalid_agenda_status" };
-  if (startsAt && Number.isNaN(Date.parse(startsAt))) return { error: "invalid_agenda_start" };
-  if (endsAt && Number.isNaN(Date.parse(endsAt))) return { error: "invalid_agenda_end" };
-  if (startsAt && endsAt && Date.parse(endsAt) < Date.parse(startsAt)) {
+  if (startParsed?.error) return { error: "invalid_agenda_start" };
+  if (endParsed?.error) return { error: "invalid_agenda_end" };
+
+  const startsAt = startParsed?.value || null;
+  const endsAt = endParsed?.value || null;
+
+  if (startsAt && endsAt && endParsed.timestamp < startParsed.timestamp) {
     return { error: "agenda_end_before_start" };
   }
+
   if (isPublished && status === "draft") {
     return { error: "draft_cannot_be_published" };
+  }
+
+  if (isPublished && !startsAt) {
+    return { error: "published_agenda_requires_start" };
   }
 
   return {
@@ -1267,8 +1305,8 @@ function validateAgendaInput(body, current = null) {
       description: description || null,
       category,
       location_text: locationText || null,
-      starts_at: startsAt || null,
-      ends_at: endsAt || null,
+      starts_at: startsAt,
+      ends_at: endsAt,
       event_status: status,
       is_published: isPublished ? 1 : 0,
     },
@@ -1444,6 +1482,10 @@ async function updateAdminAgenda(request, env, agendaId) {
       title: updated.title,
       status: updated.event_status,
       is_published: Boolean(updated.is_published),
+      starts_at_before: current.starts_at || null,
+      starts_at_after: updated.starts_at || null,
+      ends_at_before: current.ends_at || null,
+      ends_at_after: updated.ends_at || null,
     }),
     now
   ).run();

@@ -57,24 +57,55 @@
     }).format(date).replace('.', ':');
   };
 
-  const dateValue = (iso) => {
-    if (!iso) return '';
-    const parts = new Intl.DateTimeFormat('en-CA', {
+  const splitJakartaIso = (iso) => {
+    const text = String(iso || '').trim();
+    const exact = text.match(
+      /^(\d{4}-\d{2}-\d{2})T(\d{2}):(\d{2})(?::\d{2})?\+07:00$/
+    );
+    if (exact) {
+      return { date: exact[1], time: `${exact[2]}:${exact[3]}` };
+    }
+
+    if (!text) return { date:'', time:'' };
+
+    const parsed = new Date(text);
+    if (Number.isNaN(parsed.getTime())) return { date:'', time:'' };
+
+    const date = new Intl.DateTimeFormat('en-CA', {
       year:'numeric', month:'2-digit', day:'2-digit', timeZone:'Asia/Jakarta'
-    }).format(new Date(iso));
-    return parts;
+    }).format(parsed);
+
+    const time = new Intl.DateTimeFormat('en-GB', {
+      hour:'2-digit', minute:'2-digit', hour12:false, timeZone:'Asia/Jakarta'
+    }).format(parsed);
+
+    return { date, time };
   };
 
-  const timeValue = (iso) => {
-    if (!iso) return '';
-    return new Intl.DateTimeFormat('en-GB', {
-      hour:'2-digit', minute:'2-digit', hour12:false, timeZone:'Asia/Jakarta'
-    }).format(new Date(iso));
+  const dateValue = (iso) => splitJakartaIso(iso).date;
+  const timeValue = (iso) => splitJakartaIso(iso).time;
+
+  const normalizeTimeInput = (value) => {
+    const text = String(value || '').trim();
+    const match = text.match(/^(\d{2}):(\d{2})$/);
+    if (!match) return '';
+    const hour = Number(match[1]);
+    const minute = Number(match[2]);
+    if (hour > 23 || minute > 59) return '';
+    return `${match[1]}:${match[2]}`;
   };
 
   const toIsoJakarta = (date, time) => {
-    if (!date || !time) return null;
-    return `${date}T${time}:00+07:00`;
+    const cleanDate = String(date || '').trim();
+    const cleanTime = normalizeTimeInput(time);
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(cleanDate) || !cleanTime) return null;
+    return `${cleanDate}T${cleanTime}:00+07:00`;
+  };
+
+  const sameDateTimeInputs = (date, time, iso) => {
+    const original = splitJakartaIso(iso);
+    return String(date || '') === original.date &&
+      normalizeTimeInput(time) === original.time;
   };
 
   const showMessage = (text, state='error') => {
@@ -147,6 +178,8 @@
     form.elements.id.value = '';
     form.elements.category.value = 'Perjalanan';
     form.elements.event_status.value = 'draft';
+    form.dataset.originalStartsAt = '';
+    form.dataset.originalEndsAt = '';
     dialogTitle.textContent = 'Tambah Agenda';
     hideMessage();
     modal.hidden = false;
@@ -166,6 +199,8 @@
     form.elements.location_text.value = event.location_text || '';
     form.elements.description.value = event.description || '';
     form.elements.is_published.checked = Boolean(event.is_published);
+    form.dataset.originalStartsAt = event.starts_at || '';
+    form.dataset.originalEndsAt = event.ends_at || '';
     dialogTitle.textContent = 'Edit Agenda';
     hideMessage();
     modal.hidden = false;
@@ -178,19 +213,47 @@
     hideMessage();
 
     const id = String(form.elements.id.value || '').trim();
-    const date = form.elements.date.value;
-    const startTime = form.elements.start_time.value;
-    const endTime = form.elements.end_time.value;
+    const date = String(form.elements.date.value || '').trim();
+    const startTime = normalizeTimeInput(form.elements.start_time.value);
+    const endTime = normalizeTimeInput(form.elements.end_time.value);
+    const originalStartsAt = form.dataset.originalStartsAt || '';
+    const originalEndsAt = form.dataset.originalEndsAt || '';
+
+    if (!date || !startTime) {
+      showMessage('Tanggal dan waktu mulai wajib diisi.');
+      return;
+    }
+
     const payload = {
       title: form.elements.title.value.trim(),
       category: form.elements.category.value.trim(),
       event_status: form.elements.event_status.value,
-      starts_at: toIsoJakarta(date, startTime),
-      ends_at: endTime ? toIsoJakarta(date, endTime) : null,
       location_text: form.elements.location_text.value.trim(),
       description: form.elements.description.value.trim(),
       is_published: form.elements.is_published.checked,
     };
+
+    if (!id || !sameDateTimeInputs(date, startTime, originalStartsAt)) {
+      payload.starts_at = toIsoJakarta(date, startTime);
+    }
+
+    if (!id) {
+      payload.ends_at = endTime ? toIsoJakarta(date, endTime) : null;
+    } else {
+      const originalEnd = splitJakartaIso(originalEndsAt);
+      const endUnchanged =
+        endTime === originalEnd.time &&
+        (!endTime || date === originalEnd.date);
+
+      if (!endUnchanged) {
+        payload.ends_at = endTime ? toIsoJakarta(date, endTime) : null;
+      }
+    }
+
+    // Safety rule:
+    // Editing title/location/status/notes MUST NOT rewrite starts_at/ends_at
+    // when the date/time controls are unchanged.
+
 
     if (payload.is_published && payload.event_status === 'draft') {
       showMessage('Agenda Draft belum dapat dipublikasikan. Ubah status menjadi Terjadwal, Dikonfirmasi, atau Dibatalkan.');
@@ -216,6 +279,7 @@
         invalid_agenda_end:'Waktu selesai tidak valid.',
         agenda_end_before_start:'Waktu selesai tidak boleh lebih awal dari waktu mulai.',
         draft_cannot_be_published:'Agenda Draft tidak dapat dipublikasikan.',
+        published_agenda_requires_start:'Agenda yang dipublikasikan wajib memiliki tanggal dan waktu mulai.',
         forbidden:'Role akun ini tidak diizinkan mengubah agenda.'
       };
       showMessage(labels[error.code] || `Gagal menyimpan agenda: ${error.code || error.message}`);
