@@ -129,9 +129,20 @@
     mediaPreviewWrap.hidden = false;
   };
 
+  const PAGE_META_FORM_FIELDS = [
+    'page_key', 'page_path', 'seo_title', 'meta_description', 'canonical_url',
+    'robots', 'theme_color', 'og_type', 'og_title', 'og_description', 'og_image_url',
+    'twitter_title', 'twitter_description', 'twitter_image_url',
+    'banner_url', 'thumbnail_url', 'image_alt', 'image_caption',
+    'schema_type', 'schema_json', 'author_name', 'publisher_name', 'locale',
+    'analytics_enabled', 'analytics_scroll_enabled', 'analytics_cta_enabled'
+  ];
+
   const setPageMeta = (material) => {
     const meta = { ...defaultMeta(material), ...(material.page_meta || {}) };
-    Object.entries(meta).forEach(([name, value]) => setValue(name, value));
+    // Do not copy page_meta.id into the form's hidden material id field.
+    // The material id and metadata id are separate database identities.
+    PAGE_META_FORM_FIELDS.forEach((name) => setValue(name, meta[name]));
     updateMediaPreview();
   };
 
