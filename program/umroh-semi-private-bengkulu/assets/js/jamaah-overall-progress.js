@@ -94,14 +94,39 @@
 
     const copy = document.querySelector('[data-overall-progress-copy]');
     if (copy) {
-      copy.textContent = 'Manasik sudah tersinkron ke akun. Perhitungan total masih masa transisi karena Checklist dan Agenda belum dipindahkan ke D1.';
+      copy.textContent = 'Manasik dan Checklist sudah tersinkron ke akun. Perhitungan total masih masa transisi karena Agenda belum dipindahkan ke D1.';
     }
   };
 
+  const syncChecklistFromAccount = async () => {
+    try {
+      const response = await fetch('https://umroh-api.srilexbuditra.work/jamaah/progress/checklist', {
+        credentials: 'include',
+        cache: 'no-store',
+        headers: { Accept: 'application/json' }
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok || !data?.ok) return;
+
+      const state = {};
+      (data.progress?.items || []).forEach((item) => {
+        if (item.status === 'complete') state[item.item_key] = 'ready';
+        else if (item.status === 'not_applicable') state[item.item_key] = 'na';
+      });
+      try { localStorage.setItem(keys.checklist, JSON.stringify(state)); } catch (_) {}
+      render();
+      window.dispatchEvent(new CustomEvent('umroh:checklist-progress-synced', {
+        detail: data.progress
+      }));
+    } catch (_) {}
+  };
+
   render();
-  addEventListener('pageshow', render);
-  addEventListener('focus', render);
+  syncChecklistFromAccount();
+  addEventListener('pageshow', () => { render(); syncChecklistFromAccount(); });
+  addEventListener('focus', () => { render(); syncChecklistFromAccount(); });
   addEventListener('umroh:manasik-progress-synced', render);
+  addEventListener('umroh:checklist-progress-synced', render);
   addEventListener('storage', event => {
     if (Object.values(keys).includes(event.key)) render();
   });

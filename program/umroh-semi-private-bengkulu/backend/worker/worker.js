@@ -1,4 +1,4 @@
-const API_VERSION = "3.4.3";
+const API_VERSION = "3.4.4";
 const COOKIE_NAME = "umroh_session";
 const DEFAULT_SESSION_AGE = 60 * 60 * 24 * 7;
 const PASSWORD_ITERATIONS = 100000;
@@ -8,6 +8,7 @@ const MAX_DOCUMENT_BYTES = 5 * 1024 * 1024;
 const DOCUMENT_KEYS = new Set(["paspor-dokumen", "tiket-itinerary", "identitas-jemaah", "dokumen-kesehatan"]);
 const DOCUMENT_MIME = new Set(["application/pdf", "image/jpeg", "image/png"]);
 const MANASIK_KEYS = new Set(["persiapan", "ihram-miqat", "talbiyah", "tata-cara-umroh", "thawaf", "sai", "tahallul", "larangan-ihram", "adab-tanah-suci", "ziarah-madinah", "tips-perjalanan"]);
+const CHECKLIST_KEYS = new Set(["paspor-dokumen", "tiket-itinerary", "identitas-jemaah", "dokumen-kesehatan", "kain-ihram", "mukena-pakaian-muslim", "alas-kaki", "obat-kebutuhan-pribadi", "pelajari-tata-cara", "hafalkan-niat-talbiyah", "jaga-fisik-istirahat", "ikuti-arahan"]);
 
 export default {
   async fetch(request, env) {
@@ -70,6 +71,20 @@ export default {
       const manasikProgressMatch = path.match(/^\/jamaah\/progress\/manasik\/([a-z0-9-]+)$/i);
       if (manasikProgressMatch && request.method === "PATCH") {
         return updateOwnManasikProgress(request, env, manasikProgressMatch[1]);
+      }
+
+
+      if (request.method === "GET" && path === "/jamaah/progress/checklist") {
+        return getOwnChecklistProgress(request, env);
+      }
+
+      if (request.method === "POST" && path === "/jamaah/progress/checklist/import") {
+        return importOwnChecklistProgress(request, env);
+      }
+
+      const checklistProgressMatch = path.match(/^\/jamaah\/progress\/checklist\/([a-z0-9-]+)$/i);
+      if (checklistProgressMatch && request.method === "PATCH") {
+        return updateOwnChecklistProgress(request, env, checklistProgressMatch[1]);
       }
 
       if (request.method === "GET" && path === "/jamaah/documents") {
@@ -651,6 +666,137 @@ async function importOwnManasikProgress(request, env) {
     ok: true,
     imported: true,
     imported_count: completed.length,
+    progress,
+  });
+}
+
+
+async function checklistProgressPayload(env, accountId) {
+  const result = await env.DB.prepare(`
+    SELECT item_key, status, updated_at
+    FROM umroh_progress_items
+    WHERE account_id = ? AND module = 'checklist'
+    ORDER BY item_key
+  `).bind(accountId).all();
+
+  const rows = (result.results || []).filter((row) => CHECKLIST_KEYS.has(row.item_key));
+  const reviewed = rows.filter((row) =>
+    row.status === "complete" || row.status === "not_applicable"
+  ).length;
+
+  return {
+    initialized: rows.length > 0,
+    reviewed,
+    total: CHECKLIST_KEYS.size,
+    items: rows.map((row) => ({
+      item_key: row.item_key,
+      status: row.status,
+      updated_at: row.updated_at,
+    })),
+  };
+}
+
+async function getOwnChecklistProgress(request, env) {
+  const gate = await requireJamaah(request, env);
+  if (gate.response) return gate.response;
+
+  const progress = await checklistProgressPayload(env, gate.account.id);
+  return json(request, env, { ok: true, progress });
+}
+
+async function updateOwnChecklistProgress(request, env, itemKey) {
+  const gate = await requireJamaah(request, env);
+  if (gate.response) return gate.response;
+
+  if (!CHECKLIST_KEYS.has(itemKey)) {
+    return json(request, env, { ok: false, error: "invalid_progress_item" }, 400);
+  }
+
+  const body = await readJson(request);
+  const requested = String(body.status || "").trim();
+  const statusMap = {
+    ready: "complete",
+    na: "not_applicable",
+    pending: "pending",
+  };
+  const status = statusMap[requested];
+
+  if (!status) {
+    return json(request, env, { ok: false, error: "invalid_progress_status" }, 400);
+  }
+
+  const now = new Date().toISOString();
+  await env.DB.prepare(`
+    INSERT INTO umroh_progress_items
+      (account_id, module, item_key, status, updated_at, created_at)
+    VALUES (?, 'checklist', ?, ?, ?, ?)
+    ON CONFLICT(account_id, module, item_key)
+    DO UPDATE SET
+      status = excluded.status,
+      updated_at = excluded.updated_at
+  `).bind(gate.account.id, itemKey, status, now, now).run();
+
+  const progress = await checklistProgressPayload(env, gate.account.id);
+  return json(request, env, { ok: true, progress });
+}
+
+async function importOwnChecklistProgress(request, env) {
+  const gate = await requireJamaah(request, env);
+  if (gate.response) return gate.response;
+
+  const current = await checklistProgressPayload(env, gate.account.id);
+  if (current.initialized) {
+    return json(request, env, {
+      ok: true,
+      imported: false,
+      reason: "already_initialized",
+      progress: current,
+    });
+  }
+
+  const body = await readJson(request);
+  const source = body && body.items && typeof body.items === "object" ? body.items : {};
+  const entries = Object.entries(source)
+    .map(([itemKey, value]) => [String(itemKey || "").trim(), String(value || "").trim()])
+    .filter(([itemKey, value]) =>
+      CHECKLIST_KEYS.has(itemKey) && (value === "ready" || value === "na")
+    );
+
+  if (!entries.length) {
+    return json(request, env, {
+      ok: true,
+      imported: false,
+      reason: "nothing_to_import",
+      progress: current,
+    });
+  }
+
+  const now = new Date().toISOString();
+  await env.DB.batch(
+    entries.map(([itemKey, value]) =>
+      env.DB.prepare(`
+        INSERT INTO umroh_progress_items
+          (account_id, module, item_key, status, updated_at, created_at)
+        VALUES (?, 'checklist', ?, ?, ?, ?)
+        ON CONFLICT(account_id, module, item_key)
+        DO UPDATE SET
+          status = excluded.status,
+          updated_at = excluded.updated_at
+      `).bind(
+        gate.account.id,
+        itemKey,
+        value === "ready" ? "complete" : "not_applicable",
+        now,
+        now
+      )
+    )
+  );
+
+  const progress = await checklistProgressPayload(env, gate.account.id);
+  return json(request, env, {
+    ok: true,
+    imported: true,
+    imported_count: entries.length,
     progress,
   });
 }
