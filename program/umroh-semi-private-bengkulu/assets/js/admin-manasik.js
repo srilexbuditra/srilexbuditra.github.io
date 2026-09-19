@@ -23,6 +23,8 @@
 
   let materials = [];
   let mediaPreviewObjectUrl = '';
+  let mediaAltAuto = true;
+  let mediaCaptionAuto = true;
 
   const esc = (value) => String(value ?? '')
     .replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;')
@@ -70,11 +72,63 @@
     message.textContent = '';
   };
 
+  const MANASIK_MEDIA_CAPTIONS = {
+    persiapan: 'Persiapan Sebelum Berangkat',
+    'ihram-miqat': 'Panduan Ihram & Miqat',
+    talbiyah: 'Bacaan Talbiyah',
+    'tata-cara-umroh': 'Tata Cara Umroh',
+    thawaf: 'Panduan Thawaf',
+    sai: 'Panduan Sa’i',
+    tahallul: 'Panduan Tahallul',
+    'larangan-ihram': 'Larangan Ihram',
+    'adab-tanah-suci': 'Adab di Tanah Suci',
+    'ziarah-madinah': 'Panduan Ziarah Madinah',
+    'tips-perjalanan': 'Tips Selama Perjalanan'
+  };
+
+  const currentMaterialContext = (material = {}) => ({
+    material_key: material.material_key || form?.elements.material_key?.value.trim() || '',
+    title: material.title || form?.elements.title?.value.trim() || 'Materi Manasik'
+  });
+
+  const automaticMediaText = (material = {}) => {
+    const context = currentMaterialContext(material);
+    const title = context.title.replace(/\s+/g, ' ').trim() || 'Materi Manasik';
+    const captionTitle = MANASIK_MEDIA_CAPTIONS[context.material_key] || title;
+    return {
+      alt: `Materi Manasik ${title} Umroh Semi Private Bengkulu`,
+      caption: `Materi Manasik Digital — ${captionTitle}`
+    };
+  };
+
+  const looksManagedAlt = (value = '') => {
+    const text = String(value || '').trim();
+    return !text || /^Materi(?: Manasik)? .+ Umroh Semi Private Bengkulu$/i.test(text);
+  };
+
+  const looksManagedCaption = (value = '') => {
+    const text = String(value || '').trim();
+    return !text
+      || /^Materi Manasik Digital\s*[—-]\s*/i.test(text)
+      || /^Panduan bacaan Talbiyah/i.test(text);
+  };
+
+  const applyAutomaticMediaText = (material = {}, force = false) => {
+    const generated = automaticMediaText(material);
+    const altField = form?.elements.image_alt;
+    const captionField = form?.elements.image_caption;
+    if (altField && (force || mediaAltAuto || !altField.value.trim())) altField.value = generated.alt;
+    if (captionField && (force || mediaCaptionAuto || !captionField.value.trim())) captionField.value = generated.caption;
+    updateMediaPreview();
+    return generated;
+  };
+
   const defaultMeta = (material) => {
     const key = material?.material_key || '';
     const path = `/program/umroh-semi-private-bengkulu/manasik/${key}/`;
     const seoTitle = `${material?.title || 'Materi'} | Manasik Digital Umroh Semi Private Bengkulu`;
     const description = material?.summary || '';
+    const mediaText = automaticMediaText(material);
     return {
       page_key: `manasik:${key}`,
       page_type: 'manasik_material',
@@ -95,8 +149,8 @@
       banner_object_key: '',
       thumbnail_url: '',
       thumbnail_object_key: '',
-      image_alt: '',
-      image_caption: '',
+      image_alt: mediaText.alt,
+      image_caption: mediaText.caption,
       schema_type: 'Article',
       schema_json: '',
       author_name: 'Srilex Buditra',
@@ -169,7 +223,9 @@
     // Do not copy page_meta.id into the form's hidden material id field.
     // The material id and metadata id are separate database identities.
     PAGE_META_FORM_FIELDS.forEach((name) => setValue(name, meta[name]));
-    updateMediaPreview();
+    mediaAltAuto = looksManagedAlt(form.elements.image_alt?.value);
+    mediaCaptionAuto = looksManagedCaption(form.elements.image_caption?.value);
+    applyAutomaticMediaText(material);
   };
 
   const collectPageMeta = () => ({
@@ -222,6 +278,7 @@
       setMediaUploadStatus('Belum ada file dipilih.');
       return;
     }
+    applyAutomaticMediaText();
     const allowed = new Set(['image/avif', 'image/webp', 'image/jpeg', 'image/png']);
     if (!allowed.has(file.type)) {
       clearLocalMediaPreview();
@@ -581,7 +638,18 @@
   });
 
   editorTabs.forEach((tab) => tab.addEventListener('click', () => setEditorTab(tab.dataset.editorTab)));
-  ['banner_url', 'og_image_url', 'image_alt'].forEach((name) => form.elements[name]?.addEventListener('input', updateMediaPreview));
+  ['banner_url', 'og_image_url'].forEach((name) => form.elements[name]?.addEventListener('input', updateMediaPreview));
+
+  form.elements.image_alt?.addEventListener('input', () => {
+    mediaAltAuto = form.elements.image_alt.value.trim() === automaticMediaText().alt;
+    updateMediaPreview();
+  });
+  form.elements.image_caption?.addEventListener('input', () => {
+    mediaCaptionAuto = form.elements.image_caption.value.trim() === automaticMediaText().caption;
+  });
+  form.elements.title?.addEventListener('input', () => {
+    if (mediaAltAuto || mediaCaptionAuto) applyAutomaticMediaText();
+  });
 
   mediaFileInput?.addEventListener('change', inspectSelectedMedia);
   mediaUploadButton?.addEventListener('click', uploadSelectedMedia);

@@ -15,6 +15,8 @@
   const mediaPreviewWrap = document.querySelector('[data-media-preview-wrap]');
   const mediaPreview = document.querySelector('[data-media-preview]');
   let mediaPreviewObjectUrl = '';
+  let mediaAltAuto = true;
+  let mediaCaptionAuto = true;
 
   const api = async (path, options = {}) => {
     const isFormData = typeof FormData !== 'undefined' && options.body instanceof FormData;
@@ -67,6 +69,46 @@
     'analytics_enabled','analytics_scroll_enabled','analytics_cta_enabled'
   ];
 
+  const automaticMediaText = (meta = {}) => {
+    const pageKey = meta.page_key || form?.elements.page_key?.value.trim() || PAGE_KEY;
+    if (pageKey === 'portal:umroh') {
+      return {
+        alt: 'Digital Platform Umroh Semi Private Bengkulu',
+        caption: 'Digital Platform Jemaah & Manasik — Umroh Semi Private Bengkulu'
+      };
+    }
+    const seoTitle = meta.seo_title || form?.elements.seo_title?.value.trim() || 'Halaman Publik Umroh';
+    const shortTitle = seoTitle.split('|')[0].trim() || 'Halaman Publik Umroh';
+    return {
+      alt: `${shortTitle} — Umroh Semi Private Bengkulu`,
+      caption: `${shortTitle} — Umroh Semi Private Bengkulu`
+    };
+  };
+
+  const looksManagedAlt = (value = '') => {
+    const text = String(value || '').trim();
+    return !text
+      || text === 'Digital Platform Umroh Semi Private Bengkulu'
+      || /Umroh Semi Private Bengkulu$/i.test(text);
+  };
+
+  const looksManagedCaption = (value = '') => {
+    const text = String(value || '').trim();
+    return !text
+      || text === 'Digital Platform Jemaah & Manasik — Umroh Semi Private Bengkulu'
+      || /— Umroh Semi Private Bengkulu$/i.test(text);
+  };
+
+  const applyAutomaticMediaText = (meta = {}, force = false) => {
+    const generated = automaticMediaText(meta);
+    const altField = form?.elements.image_alt;
+    const captionField = form?.elements.image_caption;
+    if (altField && (force || mediaAltAuto || !altField.value.trim())) altField.value = generated.alt;
+    if (captionField && (force || mediaCaptionAuto || !captionField.value.trim())) captionField.value = generated.caption;
+    updatePreview();
+    return generated;
+  };
+
   const clearLocalPreview = () => {
     if (mediaPreviewObjectUrl) URL.revokeObjectURL(mediaPreviewObjectUrl);
     mediaPreviewObjectUrl = '';
@@ -89,7 +131,9 @@
 
   const setMeta = (meta = {}) => {
     fields.forEach((name) => setValue(name, meta[name]));
-    updatePreview();
+    mediaAltAuto = looksManagedAlt(form.elements.image_alt?.value);
+    mediaCaptionAuto = looksManagedCaption(form.elements.image_caption?.value);
+    applyAutomaticMediaText(meta);
   };
 
   const collectMeta = () => ({
@@ -135,6 +179,7 @@
   const inspectMedia = async () => {
     const file = mediaFileInput?.files?.[0];
     if (!file) { clearLocalPreview(); updatePreview(); setMediaStatus('Belum ada file dipilih.'); return; }
+    applyAutomaticMediaText();
     const allowed = new Set(['image/avif','image/webp','image/jpeg','image/png']);
     if (!allowed.has(file.type)) { clearLocalPreview(); updatePreview(); setMediaStatus('Format tidak didukung. Gunakan AVIF, WebP, JPEG, atau PNG.', 'error'); return; }
     if (file.size > 5 * 1024 * 1024) { clearLocalPreview(); updatePreview(); setMediaStatus('Ukuran file melebihi 5 MB.', 'error'); return; }
@@ -213,7 +258,17 @@
   });
 
   tabs.forEach((tab) => tab.addEventListener('click', () => setTab(tab.dataset.editorTab)));
-  ['banner_url','og_image_url','image_alt'].forEach((name) => form.elements[name]?.addEventListener('input', updatePreview));
+  ['banner_url','og_image_url'].forEach((name) => form.elements[name]?.addEventListener('input', updatePreview));
+  form.elements.image_alt?.addEventListener('input', () => {
+    mediaAltAuto = form.elements.image_alt.value.trim() === automaticMediaText().alt;
+    updatePreview();
+  });
+  form.elements.image_caption?.addEventListener('input', () => {
+    mediaCaptionAuto = form.elements.image_caption.value.trim() === automaticMediaText().caption;
+  });
+  form.elements.seo_title?.addEventListener('input', () => {
+    if (mediaAltAuto || mediaCaptionAuto) applyAutomaticMediaText();
+  });
   mediaFileInput?.addEventListener('change', inspectMedia);
   mediaUploadButton?.addEventListener('click', uploadMedia);
   window.addEventListener('beforeunload', clearLocalPreview);
