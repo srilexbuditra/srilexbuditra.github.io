@@ -36,3 +36,7 @@ body.portal-page{
 .identity-item>strong{grid-column:2;grid-row:2}
 .portal-tech>.visual-chip{display:inline-flex;margin:0 0 .8rem;color:var(--gold-300)}
 .portal-tech>.visual-chip .ui-icon{display:inline-block;width:1.15em;height:1.15em}
+
+
+/* V3.9.0 Step 5B — optional Portal public media */
+.portal-media{margin:14px 0 0;padding:7px;border:1px solid var(--line);border-radius:20px;background:rgba(255,255,255,.92);box-shadow:var(--shadow-sm);overflow:hidden}.portal-media[hidden]{display:none!important}.portal-media img{display:block;width:100%;height:auto;max-height:640px;object-fit:cover;border-radius:14px;background:var(--surface-soft)}.portal-media figcaption{padding:8px 8px 2px;color:var(--ink-500);font-size:9px;line-height:1.5;text-align:center}@media(max-width:680px){.portal-media{padding:5px;border-radius:16px}.portal-media img{border-radius:11px}}

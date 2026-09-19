@@ -20,6 +20,18 @@ const MANASIK_BLOCK_TYPES = new Set(["section", "arabic", "note", "steps", "tips
 const PAGE_META_ROBOTS = new Set(["index,follow", "index,nofollow", "noindex,follow", "noindex,nofollow", "noindex,nofollow,noarchive"]);
 const PAGE_META_OG_TYPES = new Set(["website", "article"]);
 const PAGE_META_SCHEMA_TYPES = new Set(["WebPage", "Article", "CollectionPage", "AboutPage", "FAQPage", "HowTo", "Event"]);
+const PUBLIC_PAGE_META_CONFIG = Object.freeze({
+  "portal:umroh": Object.freeze({
+    page_key: "portal:umroh",
+    page_type: "portal",
+    page_path: "/program/umroh-semi-private-bengkulu/",
+    default_title: "Umroh Semi Private Bengkulu | Digital Platform Jemaah & Manasik",
+    default_description: "Digital Platform Umroh Semi Private Bengkulu untuk manasik, persiapan jemaah, agenda perjalanan, informasi, dokumen, dan pendampingan dalam satu platform.",
+    default_og_type: "website",
+    default_schema_type: "WebPage",
+    media_prefix: "portal/umroh/",
+  }),
+});
 const CHECKLIST_KEYS = new Set(["paspor-dokumen", "tiket-itinerary", "identitas-jemaah", "dokumen-kesehatan", "kain-ihram", "mukena-pakaian-muslim", "alas-kaki", "obat-kebutuhan-pribadi", "pelajari-tata-cara", "hafalkan-niat-talbiyah", "jaga-fisik-istirahat", "ikuti-arahan"]);
 const AGENDA_SYNC_KEYS = new Set(["manasik-tata-cara", "pemeriksaan-dokumen", "briefing-keberangkatan", "keberangkatan"]);
 const AGENDA_SYNC_SENTINEL = "__agenda-read-sync-v1__";
@@ -158,6 +170,22 @@ export default {
       const adminAnnouncementMatch = path.match(/^\/admin\/announcements\/(\d+)$/);
       if (adminAnnouncementMatch && request.method === "PATCH") {
         return updateAdminAnnouncement(request, env, Number(adminAnnouncementMatch[1]));
+      }
+
+      if (request.method === "GET" && path === "/page-meta") {
+        return getPublicPageMeta(request, env);
+      }
+
+      if (path === "/admin/page-meta" && request.method === "GET") {
+        return getAdminPageMeta(request, env);
+      }
+
+      if (path === "/admin/page-meta" && request.method === "PATCH") {
+        return updateAdminPageMeta(request, env);
+      }
+
+      if (path === "/admin/page-meta/media" && request.method === "POST") {
+        return uploadAdminPageMetaMedia(request, env);
       }
 
       if (request.method === "GET" && path === "/manasik/materials") {
@@ -961,10 +989,9 @@ function normalizePageMetaForManasik(rawMeta, material) {
   };
 }
 
-function normalizePublicMediaObjectKey(value, materialKey) {
+function normalizePublicMediaObjectKeyForPrefix(value, prefix) {
   const raw = String(value || "").trim();
   if (!raw) return null;
-  const prefix = `manasik/${materialKey}/`;
   if (!raw.startsWith(prefix) || raw.includes("..") || raw.includes("\\")) {
     throw new Error("invalid_media_object_key");
   }
@@ -972,6 +999,282 @@ function normalizePublicMediaObjectKey(value, materialKey) {
     throw new Error("invalid_media_object_key");
   }
   return raw;
+}
+
+function normalizePublicMediaObjectKey(value, materialKey) {
+  return normalizePublicMediaObjectKeyForPrefix(value, `manasik/${materialKey}/`);
+}
+
+function publicPageMetaConfig(pageKey) {
+  return PUBLIC_PAGE_META_CONFIG[String(pageKey || "").trim()] || null;
+}
+
+function normalizeStandalonePageMeta(rawMeta, config) {
+  const meta = rawMeta && typeof rawMeta === "object" ? rawMeta : {};
+  const seoTitle = truncate(String(meta.seo_title || config.default_title).trim(), 180);
+  const metaDescription = truncate(String(meta.meta_description || config.default_description).trim(), 320);
+  if (!seoTitle) throw new Error("seo_title_required");
+  if (!metaDescription) throw new Error("meta_description_required");
+
+  const robots = String(meta.robots || "index,follow").trim().toLowerCase();
+  if (!PAGE_META_ROBOTS.has(robots)) throw new Error("invalid_robots");
+
+  const themeColor = String(meta.theme_color || "#0b2830").trim();
+  if (!/^#[0-9a-f]{6}$/i.test(themeColor)) throw new Error("invalid_theme_color");
+
+  const ogType = String(meta.og_type || config.default_og_type || "website").trim().toLowerCase();
+  if (!PAGE_META_OG_TYPES.has(ogType)) throw new Error("invalid_og_type");
+
+  const schemaType = String(meta.schema_type || config.default_schema_type || "WebPage").trim();
+  if (!PAGE_META_SCHEMA_TYPES.has(schemaType)) throw new Error("invalid_schema_type");
+
+  let schemaJson = null;
+  const rawSchema = String(meta.schema_json || "").trim();
+  if (rawSchema) {
+    try {
+      const parsed = JSON.parse(rawSchema);
+      if (!parsed || typeof parsed !== "object") throw new Error("invalid_schema_json");
+      schemaJson = JSON.stringify(parsed);
+      if (schemaJson.length > 12000) throw new Error("schema_json_too_large");
+    } catch (error) {
+      if (error?.message === "schema_json_too_large") throw error;
+      throw new Error("invalid_schema_json");
+    }
+  }
+
+  const locale = String(meta.locale || "id_ID").trim();
+  if (!/^[a-z]{2}_[A-Z]{2}$/.test(locale)) throw new Error("invalid_locale");
+
+  for (const key of ["analytics_enabled", "analytics_scroll_enabled", "analytics_cta_enabled"]) {
+    if (meta[key] !== undefined && typeof meta[key] !== "boolean") throw new Error("invalid_analytics_setting");
+  }
+
+  return {
+    page_key: config.page_key,
+    page_type: config.page_type,
+    page_path: config.page_path,
+    seo_title: seoTitle,
+    meta_description: metaDescription,
+    canonical_url: normalizeCanonicalUrl(meta.canonical_url, config.page_path),
+    robots,
+    theme_color: themeColor.toLowerCase(),
+    og_type: ogType,
+    og_title: nullableTrim(meta.og_title || seoTitle, 200),
+    og_description: nullableTrim(meta.og_description || metaDescription, 500),
+    og_image_url: normalizePublicMediaUrl(meta.og_image_url),
+    twitter_title: nullableTrim(meta.twitter_title || meta.og_title || seoTitle, 200),
+    twitter_description: nullableTrim(meta.twitter_description || meta.og_description || metaDescription, 500),
+    twitter_image_url: normalizePublicMediaUrl(meta.twitter_image_url),
+    banner_url: normalizePublicMediaUrl(meta.banner_url),
+    banner_object_key: normalizePublicMediaObjectKeyForPrefix(meta.banner_object_key, config.media_prefix),
+    thumbnail_url: normalizePublicMediaUrl(meta.thumbnail_url),
+    thumbnail_object_key: normalizePublicMediaObjectKeyForPrefix(meta.thumbnail_object_key, config.media_prefix),
+    image_alt: nullableTrim(meta.image_alt, 300),
+    image_caption: nullableTrim(meta.image_caption, 500),
+    schema_type: schemaType,
+    schema_json: schemaJson,
+    author_name: nullableTrim(meta.author_name || "Srilex Buditra", 180),
+    publisher_name: nullableTrim(meta.publisher_name || "Umroh Semi Private Bengkulu", 180),
+    locale,
+    analytics_enabled: meta.analytics_enabled !== false,
+    analytics_scroll_enabled: meta.analytics_scroll_enabled !== false,
+    analytics_cta_enabled: meta.analytics_cta_enabled !== false,
+  };
+}
+
+function standalonePageMetaPayload(row) {
+  if (!row) return null;
+  return pageMetaPayload({
+    ...row,
+    page_meta_id: row.id,
+    page_meta_updated_at: row.updated_at,
+  });
+}
+
+async function loadStandalonePageMeta(env, pageKey) {
+  return env.DB.prepare(`
+    SELECT id, page_key, page_type, page_path,
+           seo_title, meta_description, canonical_url, robots, theme_color,
+           og_type, og_title, og_description, og_image_url,
+           twitter_title, twitter_description, twitter_image_url,
+           banner_url, banner_object_key, thumbnail_url, thumbnail_object_key, image_alt, image_caption,
+           schema_type, schema_json, author_name, publisher_name, locale,
+           analytics_enabled, analytics_scroll_enabled, analytics_cta_enabled,
+           created_at, updated_at
+    FROM umroh_page_meta
+    WHERE page_key = ?
+    LIMIT 1
+  `).bind(pageKey).first();
+}
+
+async function getPublicPageMeta(request, env) {
+  const pageKey = new URL(request.url).searchParams.get("page_key") || "";
+  const config = publicPageMetaConfig(pageKey);
+  if (!config) return json(request, env, { ok: false, error: "page_meta_not_found" }, 404);
+  const row = await loadStandalonePageMeta(env, config.page_key);
+  if (!row) return json(request, env, { ok: false, error: "page_meta_not_found" }, 404);
+  return json(request, env, { ok: true, page_meta: standalonePageMetaPayload(row) });
+}
+
+async function getAdminPageMeta(request, env) {
+  const gate = await requireStaffRole(request, env, ["super_admin", "admin"]);
+  if (gate.response) return gate.response;
+  const pageKey = new URL(request.url).searchParams.get("page_key") || "";
+  const config = publicPageMetaConfig(pageKey);
+  if (!config) return json(request, env, { ok: false, error: "page_meta_not_found" }, 404);
+  const row = await loadStandalonePageMeta(env, config.page_key);
+  if (!row) return json(request, env, { ok: false, error: "page_meta_not_found" }, 404);
+  return json(request, env, { ok: true, page_meta: standalonePageMetaPayload(row) });
+}
+
+async function updateAdminPageMeta(request, env) {
+  const gate = await requireStaffRole(request, env, ["super_admin", "admin"]);
+  if (gate.response) return gate.response;
+
+  const pageKey = new URL(request.url).searchParams.get("page_key") || "";
+  const config = publicPageMetaConfig(pageKey);
+  if (!config) return json(request, env, { ok: false, error: "page_meta_not_found" }, 404);
+
+  const body = await readJson(request);
+  let pageMeta;
+  try {
+    pageMeta = normalizeStandalonePageMeta(body.page_meta || body, config);
+  } catch (error) {
+    return json(request, env, { ok: false, error: error.message || "invalid_page_meta" }, 400);
+  }
+
+  const now = new Date().toISOString();
+  await env.DB.prepare(`
+    INSERT INTO umroh_page_meta (
+      page_key, page_type, page_path,
+      seo_title, meta_description, canonical_url, robots, theme_color,
+      og_type, og_title, og_description, og_image_url,
+      twitter_title, twitter_description, twitter_image_url,
+      banner_url, banner_object_key, thumbnail_url, thumbnail_object_key, image_alt, image_caption,
+      schema_type, schema_json, author_name, publisher_name, locale,
+      analytics_enabled, analytics_scroll_enabled, analytics_cta_enabled,
+      created_at, updated_at
+    ) VALUES (
+      ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+    )
+    ON CONFLICT(page_key) DO UPDATE SET
+      page_type = excluded.page_type,
+      page_path = excluded.page_path,
+      seo_title = excluded.seo_title,
+      meta_description = excluded.meta_description,
+      canonical_url = excluded.canonical_url,
+      robots = excluded.robots,
+      theme_color = excluded.theme_color,
+      og_type = excluded.og_type,
+      og_title = excluded.og_title,
+      og_description = excluded.og_description,
+      og_image_url = excluded.og_image_url,
+      twitter_title = excluded.twitter_title,
+      twitter_description = excluded.twitter_description,
+      twitter_image_url = excluded.twitter_image_url,
+      banner_url = excluded.banner_url,
+      banner_object_key = excluded.banner_object_key,
+      thumbnail_url = excluded.thumbnail_url,
+      thumbnail_object_key = excluded.thumbnail_object_key,
+      image_alt = excluded.image_alt,
+      image_caption = excluded.image_caption,
+      schema_type = excluded.schema_type,
+      schema_json = excluded.schema_json,
+      author_name = excluded.author_name,
+      publisher_name = excluded.publisher_name,
+      locale = excluded.locale,
+      analytics_enabled = excluded.analytics_enabled,
+      analytics_scroll_enabled = excluded.analytics_scroll_enabled,
+      analytics_cta_enabled = excluded.analytics_cta_enabled,
+      updated_at = excluded.updated_at
+  `).bind(
+    pageMeta.page_key, pageMeta.page_type, pageMeta.page_path,
+    pageMeta.seo_title, pageMeta.meta_description, pageMeta.canonical_url, pageMeta.robots, pageMeta.theme_color,
+    pageMeta.og_type, pageMeta.og_title, pageMeta.og_description, pageMeta.og_image_url,
+    pageMeta.twitter_title, pageMeta.twitter_description, pageMeta.twitter_image_url,
+    pageMeta.banner_url, pageMeta.banner_object_key, pageMeta.thumbnail_url, pageMeta.thumbnail_object_key, pageMeta.image_alt, pageMeta.image_caption,
+    pageMeta.schema_type, pageMeta.schema_json, pageMeta.author_name, pageMeta.publisher_name, pageMeta.locale,
+    pageMeta.analytics_enabled ? 1 : 0, pageMeta.analytics_scroll_enabled ? 1 : 0, pageMeta.analytics_cta_enabled ? 1 : 0,
+    now, now
+  ).run();
+
+  await env.DB.prepare(`
+    INSERT INTO umroh_admin_audit_log
+      (actor_account_id, action, target_account_id, details_json, created_at)
+    VALUES (?, 'page_meta_updated', NULL, ?, ?)
+  `).bind(gate.account.id, JSON.stringify({ page_key: pageMeta.page_key }), now).run();
+
+  const updated = await loadStandalonePageMeta(env, config.page_key);
+  return json(request, env, { ok: true, page_meta: standalonePageMetaPayload(updated) });
+}
+
+async function uploadAdminPageMetaMedia(request, env) {
+  const gate = await requireStaffRole(request, env, ["super_admin", "admin"]);
+  if (gate.response) return gate.response;
+  if (!env.PUBLIC_MEDIA) {
+    return json(request, env, { ok: false, error: "missing_public_media_binding" }, 503);
+  }
+
+  const pageKey = new URL(request.url).searchParams.get("page_key") || "";
+  const config = publicPageMetaConfig(pageKey);
+  if (!config) return json(request, env, { ok: false, error: "page_meta_not_found" }, 404);
+
+  const length = Number(request.headers.get("Content-Length") || 0);
+  if (length > MAX_PUBLIC_MEDIA_BYTES + 512 * 1024) {
+    return json(request, env, { ok: false, error: "media_file_too_large" }, 413);
+  }
+
+  let form;
+  try { form = await request.formData(); }
+  catch (_) { return json(request, env, { ok: false, error: "multipart_form_required" }, 400); }
+
+  const file = form.get("file");
+  const purpose = String(form.get("purpose") || "banner").trim().toLowerCase();
+  const altText = truncate(String(form.get("alt_text") || "").trim(), 300);
+  if (!file || typeof file.arrayBuffer !== "function") {
+    return json(request, env, { ok: false, error: "media_file_required" }, 400);
+  }
+  if (!new Set(["banner", "thumbnail"]).has(purpose)) {
+    return json(request, env, { ok: false, error: "invalid_media_purpose" }, 400);
+  }
+  if (!altText) return json(request, env, { ok: false, error: "image_alt_required" }, 400);
+  if (!Number.isFinite(file.size) || file.size < 1) return json(request, env, { ok: false, error: "media_file_empty" }, 400);
+  if (file.size > MAX_PUBLIC_MEDIA_BYTES) return json(request, env, { ok: false, error: "media_file_too_large" }, 413);
+
+  const contentType = String(file.type || "").toLowerCase();
+  const extension = PUBLIC_MEDIA_MIME[contentType];
+  if (!extension) return json(request, env, { ok: false, error: "unsupported_media_type" }, 415);
+
+  const bytes = new Uint8Array(await file.arrayBuffer());
+  if (!looksLikePublicImage(bytes, contentType)) {
+    return json(request, env, { ok: false, error: "invalid_image_signature" }, 400);
+  }
+
+  const objectKey = `${config.media_prefix}${purpose}-${crypto.randomUUID()}.${extension}`;
+  await env.PUBLIC_MEDIA.put(objectKey, bytes, {
+    httpMetadata: { contentType, cacheControl: "public, max-age=31536000, immutable", contentDisposition: "inline" },
+    customMetadata: { module: "page_meta", page_key: config.page_key, purpose },
+  });
+
+  const now = new Date().toISOString();
+  await env.DB.prepare(`
+    INSERT INTO umroh_admin_audit_log
+      (actor_account_id, action, target_account_id, details_json, created_at)
+    VALUES (?, 'page_meta_media_uploaded', NULL, ?, ?)
+  `).bind(gate.account.id, JSON.stringify({ page_key: config.page_key, purpose, object_key: objectKey, content_type: contentType, size_bytes: Number(file.size || bytes.length) }), now).run();
+
+  return json(request, env, {
+    ok: true,
+    media: {
+      page_key: config.page_key,
+      purpose,
+      object_key: objectKey,
+      url: `${PUBLIC_MEDIA_ORIGIN}/${objectKey}`,
+      content_type: contentType,
+      size_bytes: Number(file.size || bytes.length),
+      alt_text: altText,
+    },
+  }, 201);
 }
 
 function hasBytes(bytes, offset, expected) {

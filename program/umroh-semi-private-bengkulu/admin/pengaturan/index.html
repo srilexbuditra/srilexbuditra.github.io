@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html class="auth-pending" lang="id">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<meta content="noindex,nofollow,noarchive" name="robots"/>
+<meta content="#0b2830" name="theme-color"/>
+<title>Pengaturan Halaman Publik | Admin Umroh Semi Private Bengkulu</title>
+<link href="../../assets/css/tokens.css" rel="stylesheet"/>
+<link href="../../assets/css/dashboard-shell.css" rel="stylesheet"/>
+<link href="../../assets/css/admin-dashboard.css" rel="stylesheet"/>
+<link href="../../assets/css/visual-assets.css" rel="stylesheet"/>
+<link href="../../assets/css/admin-auth.css" rel="stylesheet"/>
+<link href="../../assets/css/admin-page-meta.css?v=3.9.0-step5b" rel="stylesheet"/>
+</head>
+<body class="dashboard-app admin-dashboard">
+<aside aria-label="Navigasi admin" class="app-sidebar">
+<div class="sidebar-brand"><div aria-hidden="true" class="brand-mark"><span class="ui-icon icon-settings"></span></div><div class="brand-copy"><strong>UMROH SEMI PRIVATE<br/>BENGKULU</strong><span>Digital Platform</span></div><button aria-label="Ringkas sidebar" class="sidebar-collapse" data-sidebar-collapse>‹</button></div>
+<nav class="sidebar-nav">
+<div class="nav-section-label">Operasional</div>
+<a class="nav-item" data-rbac="super_admin admin tour_leader pendamping" href="../"><span class="nav-icon"><span class="ui-icon icon-home"></span></span><span class="nav-label">Ringkasan</span></a>
+<a class="nav-item" data-rbac="super_admin admin tour_leader pendamping" href="../jemaah/"><span class="nav-icon"><span class="ui-icon icon-users"></span></span><span class="nav-label">Jemaah</span></a>
+<a class="nav-item" data-rbac="super_admin admin tour_leader" href="../manasik/"><span class="nav-icon"><span class="ui-icon icon-book"></span></span><span class="nav-label">Manasik</span></a>
+<a class="nav-item" data-rbac="super_admin admin tour_leader pendamping" href="../agenda/"><span class="nav-icon"><span class="ui-icon icon-calendar"></span></span><span class="nav-label">Agenda &amp; Perjalanan</span></a>
+<a class="nav-item" data-rbac="super_admin admin tour_leader" href="../dokumen/"><span class="nav-icon"><span class="ui-icon icon-file"></span></span><span class="nav-label">Dokumen</span></a>
+<a class="nav-item" data-rbac="super_admin admin tour_leader pendamping" href="../pengumuman/"><span class="nav-icon"><span class="ui-icon icon-megaphone"></span></span><span class="nav-label">Pengumuman</span></a>
+<a class="nav-item" data-rbac="super_admin admin" href="../#laporan"><span class="nav-icon"><span class="ui-icon icon-chart"></span></span><span class="nav-label">Laporan</span></a>
+<div class="nav-section-label">Sistem</div>
+<a class="nav-item" data-super-admin-only data-rbac="super_admin" href="../manajemen-admin/"><span class="nav-icon"><span class="ui-icon icon-admin"></span></span><span class="nav-label">Manajemen Admin</span></a>
+<a class="nav-item is-active" data-rbac="super_admin admin" href="./"><span class="nav-icon"><span class="ui-icon icon-settings"></span></span><span class="nav-label">Pengaturan</span></a>
+</nav>
+<div class="sidebar-foot"><div class="tech-credit"><small>Pengembangan Sistem &amp; Dukungan Teknologi</small><strong>Srilex Buditra</strong><a href="https://srilexbuditra.work/">srilexbuditra.work</a></div></div>
+</aside>
+<div class="sidebar-backdrop" data-sidebar-backdrop></div>
+<div class="app-main">
+<header class="app-topbar"><button aria-label="Buka menu" class="mobile-menu" data-mobile-menu>☰</button><div class="topbar-title"><strong>Pengaturan</strong><span>SEO · Media · Schema · Analytics</span></div><div class="topbar-spacer"></div><div class="user-chip"><div class="avatar" data-auth-avatar>SB</div><div class="user-copy"><strong data-auth-name>Srilex Buditra</strong><span data-auth-role>Senior Full Stack Developer · Platform Architect</span></div></div><button class="auth-logout" data-admin-logout type="button">Keluar</button></header>
+<main class="page-wrap">
+<div class="prototype-note"><strong>Platform V3.8.0 aktif.</strong> Step V3.9.0 menambahkan pengelolaan metadata halaman publik tanpa mengubah versi platform sampai seluruh rollout selesai diuji.</div>
+<div class="page-head admin-public-head"><div><span class="page-kicker">Global Public Page Management</span><h1>SEO &amp; Media Publik</h1><p>Kelola metadata publik dari D1 dan media dari R2. Tag SEO yang dibaca crawler tetap harus dipublikasikan ke HTML statis melalui deploy GitHub Pages.</p></div><a class="admin-public-preview" href="../../" target="_blank" rel="noopener">Lihat Portal ↗</a></div>
+
+<section class="card card-pad admin-public-card">
+<div class="admin-public-toolbar"><div><strong>Halaman Publik</strong><span>Step 5B menggunakan Portal Umroh sebagai pilot. Halaman publik lain akan masuk ke pusat pengaturan ini pada rollout berikutnya.</span></div><label>Pilih Halaman<select data-public-page-select><option value="portal:umroh">Portal Umroh</option></select></label></div>
+
+<form data-page-meta-form>
+<input name="banner_object_key" type="hidden"/>
+<input name="thumbnail_object_key" type="hidden"/>
+<nav class="admin-editor-tabs" aria-label="Bagian pengaturan halaman publik">
+<button class="is-active" data-editor-tab="media" type="button">Media</button>
+<button data-editor-tab="seo" type="button">SEO</button>
+<button data-editor-tab="schema" type="button">Schema</button>
+<button data-editor-tab="analytics" type="button">Analytics</button>
+</nav>
+
+<section class="admin-editor-panel is-active" data-editor-panel="media">
+<div class="admin-meta-intro"><strong>Media &amp; Social Preview</strong><span>Upload langsung ke R2 publik Umroh. AVIF, WebP, JPEG, PNG · maksimum 5 MB. Alt Text wajib sebelum upload.</span></div>
+<div class="admin-media-uploader">
+<label>Tujuan Gambar<select data-media-upload-role><option value="banner">Banner + Social Preview</option><option value="thumbnail">Thumbnail</option></select></label>
+<label class="admin-media-file-label">Pilih Gambar<input accept="image/avif,image/webp,image/jpeg,image/png" data-media-file type="file"/></label>
+<button class="admin-media-upload-button" data-media-upload type="button">Upload Gambar</button>
+<p class="admin-media-upload-status" data-media-upload-status aria-live="polite">Belum ada file dipilih.</p>
+</div>
+<div class="admin-meta-grid">
+<label class="wide">Banner URL<input name="banner_url" maxlength="1200" placeholder="Akan terisi otomatis setelah upload"/></label>
+<label class="wide">Thumbnail URL<input name="thumbnail_url" maxlength="1200" placeholder="Opsional"/></label>
+<label class="wide">Open Graph Image URL<input name="og_image_url" maxlength="1200" placeholder="Banner akan dipakai otomatis sebagai OG image"/></label>
+<label class="wide">Twitter Image URL<input name="twitter_image_url" maxlength="1200" placeholder="Banner akan dipakai otomatis sebagai Twitter image"/></label>
+<label class="wide">Alt Text<input name="image_alt" maxlength="300" required placeholder="Deskripsi gambar yang bermakna"/></label>
+<label class="wide">Caption<textarea name="image_caption" maxlength="500" rows="3" placeholder="Opsional"></textarea></label>
+</div>
+<div class="admin-media-preview" data-media-preview-wrap hidden><img data-media-preview alt="Preview banner portal"/></div>
+</section>
+
+<section class="admin-editor-panel" data-editor-panel="seo" hidden>
+<div class="admin-meta-intro"><strong>SEO &amp; Social Metadata</strong><span>D1 menjadi sumber pengaturan Admin. Karena situs menggunakan GitHub Pages statis, perubahan crawler-visible baru berlaku setelah HTML terkait dipublikasikan.</span></div>
+<div class="admin-meta-grid">
+<label class="wide">Page Key<input name="page_key" readonly/></label>
+<label class="wide">Page Path<input name="page_path" readonly/></label>
+<label class="wide">SEO Title<input name="seo_title" maxlength="180" required/></label>
+<label class="wide">Meta Description<textarea name="meta_description" maxlength="320" rows="3" required></textarea></label>
+<label class="wide">Canonical URL<input name="canonical_url" maxlength="1200" type="url" required/></label>
+<label>Robots<select name="robots"><option value="index,follow">index,follow</option><option value="index,nofollow">index,nofollow</option><option value="noindex,follow">noindex,follow</option><option value="noindex,nofollow">noindex,nofollow</option><option value="noindex,nofollow,noarchive">noindex,nofollow,noarchive</option></select></label>
+<label>Theme Color<input name="theme_color" maxlength="7" pattern="#[0-9A-Fa-f]{6}"/></label>
+<label>OG Type<select name="og_type"><option value="website">website</option><option value="article">article</option></select></label>
+<label>Locale<input name="locale" maxlength="5" pattern="[a-z]{2}_[A-Z]{2}"/></label>
+<label class="wide">OG Title<input name="og_title" maxlength="200"/></label>
+<label class="wide">OG Description<textarea name="og_description" maxlength="500" rows="3"></textarea></label>
+<label class="wide">Twitter Title<input name="twitter_title" maxlength="200"/></label>
+<label class="wide">Twitter Description<textarea name="twitter_description" maxlength="500" rows="3"></textarea></label>
+<label>Author<input name="author_name" maxlength="180"/></label>
+<label>Publisher<input name="publisher_name" maxlength="180"/></label>
+</div>
+</section>
+
+<section class="admin-editor-panel" data-editor-panel="schema" hidden>
+<div class="admin-meta-intro"><strong>Structured Data</strong><span>JSON-LD adalah format schema utama. Override JSON bersifat opsional; HTML statis Portal sudah membawa WebPage, WebSite, dan BreadcrumbList dasar.</span></div>
+<div class="admin-meta-grid">
+<label>Schema Type<select name="schema_type"><option>WebPage</option><option>CollectionPage</option><option>Article</option><option>AboutPage</option><option>FAQPage</option><option>HowTo</option><option>Event</option></select></label>
+<label class="wide">Schema JSON-LD Override<textarea name="schema_json" rows="12" spellcheck="false" placeholder='{"@context":"https://schema.org","@type":"WebPage",...}'></textarea><small>Harus berupa JSON valid. Jangan masukkan tag script.</small></label>
+</div>
+</section>
+
+<section class="admin-editor-panel" data-editor-panel="analytics" hidden>
+<div class="admin-meta-intro"><strong>Analytics Preference</strong><span>Event Umroh melewati <code>/assets/js/visitor-analytics.js</code> dan hanya dikirim jika pengunjung memberi izin Privasi &amp; Analitik. Jangan masukkan PII ke GA4.</span></div>
+<div class="admin-analytics-options">
+<label><input name="analytics_enabled" type="checkbox"/> <span><strong>Analytics halaman</strong><small>Aktifkan event modul halaman publik.</small></span></label>
+<label><input name="analytics_scroll_enabled" type="checkbox"/> <span><strong>Scroll depth</strong><small>Aktifkan event kedalaman baca 25/50/75/90%.</small></span></label>
+<label><input name="analytics_cta_enabled" type="checkbox"/> <span><strong>CTA / navigasi</strong><small>Aktifkan event tombol dan navigasi Portal.</small></span></label>
+</div>
+</section>
+
+<p class="admin-public-message" data-page-meta-message hidden></p>
+<div class="admin-public-actions"><span data-static-publish-note>Perubahan D1 tidak otomatis mengubah tag crawler pada GitHub Pages.</span><button class="admin-public-primary" data-page-meta-submit type="submit">Simpan Pengaturan</button></div>
+</form>
+</section>
+</main>
+</div>
+<script src="../../assets/js/admin-auth-guard.js?v=3.8.0"></script>
+<script src="../../assets/js/dashboard-shell.js"></script>
+<script src="../../assets/js/admin-page-meta.js?v=3.9.0-step5b"></script>
+</body>
+</html>
