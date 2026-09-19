@@ -11,7 +11,7 @@
 <link href="../../assets/css/admin-dashboard.css" rel="stylesheet"/>
 <link href="../../assets/css/visual-assets.css" rel="stylesheet"/>
 <link href="../../assets/css/admin-auth.css" rel="stylesheet"/>
-<link href="../../assets/css/admin-page-meta.css?v=3.9.0-step6" rel="stylesheet"/>
+<link href="../../assets/css/admin-page-meta.css?v=3.9.0-step6.1" rel="stylesheet"/>
 <link rel="icon" href="/program/umroh-semi-private-bengkulu/branding/favicon.ico" sizes="any"/>
 <link rel="icon" type="image/png" sizes="32x32" href="/program/umroh-semi-private-bengkulu/branding/favicon-32x32.png"/>
 <link rel="icon" type="image/png" sizes="16x16" href="/program/umroh-semi-private-bengkulu/branding/favicon-16x16.png"/>
@@ -66,7 +66,20 @@
 <button class="admin-media-upload-button" data-branding-upload type="button">Terapkan Logo &amp; Favicon</button>
 <p class="admin-media-upload-status" data-branding-status aria-live="polite">Gunakan logo AVIF transparan. Maksimum 5 MB.</p>
 </div>
-<div class="admin-branding-preview"><img data-branding-preview alt="Logo Umroh Semi Private Bengkulu"/></div>
+<div class="admin-branding-preview admin-branding-main-preview"><span class="admin-branding-preview-label">Preview Logo Utama</span><img data-branding-preview alt="Logo Umroh Semi Private Bengkulu"/></div>
+</div>
+<div class="admin-branding-asset-section">
+<div class="admin-branding-asset-heading"><div><strong>Preview Logo &amp; Favicon</strong><span>Seluruh ikon di bawah berasal dari satu logo AVIF yang sama. Saat memilih file baru, pratinjau turunan tampil sebelum upload.</span></div><span data-branding-updated>Belum dimuat.</span></div>
+<div class="admin-branding-asset-grid">
+<figure class="admin-branding-asset-card admin-branding-asset-card-logo"><div class="admin-branding-asset-canvas"><img data-branding-asset-preview="logo_url" alt="Preview logo utama"/></div><figcaption><strong>Logo Utama</strong><span>AVIF · URL permanen</span></figcaption></figure>
+<figure class="admin-branding-asset-card"><div class="admin-branding-asset-canvas is-icon"><img data-branding-asset-preview="favicon_ico_url" alt="Preview favicon ICO"/></div><figcaption><strong>Favicon ICO</strong><span>Browser favicon</span></figcaption></figure>
+<figure class="admin-branding-asset-card"><div class="admin-branding-asset-canvas is-icon"><img data-branding-asset-preview="favicon_32_url" alt="Preview favicon 32 x 32"/></div><figcaption><strong>Favicon 32×32</strong><span>PNG</span></figcaption></figure>
+<figure class="admin-branding-asset-card"><div class="admin-branding-asset-canvas is-icon"><img data-branding-asset-preview="favicon_16_url" alt="Preview favicon 16 x 16"/></div><figcaption><strong>Favicon 16×16</strong><span>PNG</span></figcaption></figure>
+<figure class="admin-branding-asset-card"><div class="admin-branding-asset-canvas is-touch"><img data-branding-asset-preview="apple_touch_icon_url" alt="Preview Apple Touch Icon"/></div><figcaption><strong>Apple Touch</strong><span>180×180 PNG</span></figcaption></figure>
+<figure class="admin-branding-asset-card"><div class="admin-branding-asset-canvas is-app"><img data-branding-asset-preview="android_192_url" alt="Preview Android 192 x 192"/></div><figcaption><strong>Android 192</strong><span>192×192 PNG</span></figcaption></figure>
+<figure class="admin-branding-asset-card"><div class="admin-branding-asset-canvas is-app"><img data-branding-asset-preview="android_512_url" alt="Preview Android 512 x 512"/></div><figcaption><strong>Android 512</strong><span>512×512 PNG</span></figcaption></figure>
+</div>
+<div class="admin-branding-manifest-row"><span>Webmanifest mengikuti Brand Name, Short Name, Theme Color, Background Color, dan ikon Android.</span><a data-branding-manifest-link href="/program/umroh-semi-private-bengkulu/branding/site.webmanifest" target="_blank" rel="noopener">Buka Webmanifest ↗</a></div>
 </div>
 <div class="admin-meta-grid admin-branding-fields">
 <label>Nama Brand<input name="branding_brand_name" maxlength="120"/></label>
@@ -151,6 +164,6 @@
 </div>
 <script src="../../assets/js/admin-auth-guard.js?v=3.8.0"></script>
 <script src="../../assets/js/dashboard-shell.js"></script>
-<script src="../../assets/js/admin-page-meta.js?v=3.9.0-step6"></script>
+<script src="../../assets/js/admin-page-meta.js?v=3.9.0-step6.1"></script>
 </body>
 </html>

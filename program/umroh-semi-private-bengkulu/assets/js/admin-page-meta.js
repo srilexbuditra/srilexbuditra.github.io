@@ -22,8 +22,12 @@
   const brandingSaveButton = document.querySelector('[data-branding-save]');
   const brandingStatus = document.querySelector('[data-branding-status]');
   const brandingPreview = document.querySelector('[data-branding-preview]');
+  const brandingAssetPreviews = [...document.querySelectorAll('[data-branding-asset-preview]')];
+  const brandingManifestLink = document.querySelector('[data-branding-manifest-link]');
+  const brandingUpdated = document.querySelector('[data-branding-updated]');
   let mediaPreviewObjectUrl = '';
   let brandingPreviewObjectUrl = '';
+  let brandingDerivedPreviewUrls = [];
   let mediaAltAuto = true;
   let mediaCaptionAuto = true;
 
@@ -80,12 +84,41 @@
   const clearBrandingLocalPreview = () => {
     if (brandingPreviewObjectUrl) URL.revokeObjectURL(brandingPreviewObjectUrl);
     brandingPreviewObjectUrl = '';
+    brandingDerivedPreviewUrls.forEach((url) => URL.revokeObjectURL(url));
+    brandingDerivedPreviewUrls = [];
+  };
+  const cacheBustedBrandUrl = (url, version = '') => {
+    const value = String(url || '').trim();
+    if (!value) return '';
+    const joiner = value.includes('?') ? '&' : '?';
+    return `${value}${joiner}v=${encodeURIComponent(version || Date.now())}`;
   };
   const setBrandingPreview = (url, alt = '') => {
     if (!brandingPreview) return;
     if (!url) { brandingPreview.removeAttribute('src'); return; }
     brandingPreview.src = url;
     brandingPreview.alt = alt || 'Logo Umroh Semi Private Bengkulu';
+  };
+  const setBrandingAssetPreviews = (branding = {}, localMap = null) => {
+    const version = branding.updated_at || Date.now();
+    brandingAssetPreviews.forEach((img) => {
+      const key = img.dataset.brandingAssetPreview || '';
+      const local = localMap?.[key] || '';
+      const remote = branding[key] || brandingField(`branding_${key.replace(/_url$/, '')}_url`)?.value || '';
+      const url = local || (remote ? cacheBustedBrandUrl(remote, version) : '');
+      if (url) img.src = url; else img.removeAttribute('src');
+    });
+    if (brandingManifestLink) {
+      const url = branding.manifest_url || brandingField('branding_manifest_url')?.value || '/program/umroh-semi-private-bengkulu/branding/site.webmanifest';
+      brandingManifestLink.href = url;
+    }
+    if (brandingUpdated) {
+      if (localMap) brandingUpdated.textContent = 'Pratinjau lokal · belum diupload';
+      else if (branding.updated_at) {
+        const parsed = new Date(branding.updated_at);
+        brandingUpdated.textContent = Number.isNaN(parsed.getTime()) ? `Diperbarui ${branding.updated_at}` : `Diperbarui ${parsed.toLocaleString('id-ID')}`;
+      } else brandingUpdated.textContent = 'Branding default aktif';
+    }
   };
   const setBranding = (branding = {}) => {
     const map = {
@@ -107,7 +140,9 @@
       const field = brandingField(fieldName);
       if (field) field.value = branding[sourceName] ?? '';
     });
-    setBrandingPreview(branding.logo_url ? `${branding.logo_url}?v=${Date.now()}` : '', branding.logo_alt);
+    const logoUrl = branding.logo_url ? cacheBustedBrandUrl(branding.logo_url, branding.updated_at || Date.now()) : '';
+    setBrandingPreview(logoUrl, branding.logo_alt);
+    setBrandingAssetPreviews(branding);
   };
 
   const saveBranding = async ({ quiet = false } = {}) => {
@@ -175,13 +210,50 @@
 
   const inspectBrandingFile = async () => {
     const file = brandingFileInput?.files?.[0];
-    if (!file) { clearBrandingLocalPreview(); setBrandingPreview(brandingField('branding_logo_url')?.value || '', brandingField('branding_logo_alt')?.value || ''); return; }
+    if (!file) {
+      clearBrandingLocalPreview();
+      const remoteLogo = brandingField('branding_logo_url')?.value || '';
+      setBrandingPreview(remoteLogo ? cacheBustedBrandUrl(remoteLogo) : '', brandingField('branding_logo_alt')?.value || '');
+      setBrandingAssetPreviews({
+        logo_url: remoteLogo,
+        favicon_ico_url: brandingField('branding_favicon_ico_url')?.value || '',
+        favicon_32_url: brandingField('branding_favicon_32_url')?.value || '',
+        favicon_16_url: brandingField('branding_favicon_16_url')?.value || '',
+        apple_touch_icon_url: brandingField('branding_apple_touch_icon_url')?.value || '',
+        android_192_url: brandingField('branding_android_192_url')?.value || '',
+        android_512_url: brandingField('branding_android_512_url')?.value || '',
+        manifest_url: brandingField('branding_manifest_url')?.value || ''
+      });
+      return;
+    }
     if (file.type !== 'image/avif') { setBrandingStatus('Gunakan file AVIF untuk logo utama.', 'error'); return; }
     if (file.size > 5 * 1024 * 1024) { setBrandingStatus('Ukuran logo maksimum 5 MB.', 'error'); return; }
     clearBrandingLocalPreview();
     brandingPreviewObjectUrl = URL.createObjectURL(file);
     setBrandingPreview(brandingPreviewObjectUrl, brandingField('branding_logo_alt')?.value || file.name);
-    setBrandingStatus(`${file.name} · ${(file.size / 1024).toFixed(1)} KB · siap diterapkan.`, 'ready');
+    try {
+      setBrandingStatus('Membuat pratinjau logo dan favicon...', 'loading');
+      const bitmap = await createImageBitmap(file);
+      const [png16, png32, png180, png192, png512] = await Promise.all([
+        squarePngBlob(bitmap, 16), squarePngBlob(bitmap, 32), squarePngBlob(bitmap, 180), squarePngBlob(bitmap, 192), squarePngBlob(bitmap, 512)
+      ]);
+      bitmap.close?.();
+      const ico = await pngBlobToIco(png32, 32);
+      const localMap = {
+        logo_url: brandingPreviewObjectUrl,
+        favicon_ico_url: URL.createObjectURL(ico),
+        favicon_32_url: URL.createObjectURL(png32),
+        favicon_16_url: URL.createObjectURL(png16),
+        apple_touch_icon_url: URL.createObjectURL(png180),
+        android_192_url: URL.createObjectURL(png192),
+        android_512_url: URL.createObjectURL(png512)
+      };
+      brandingDerivedPreviewUrls = Object.entries(localMap).filter(([key]) => key !== 'logo_url').map(([, url]) => url);
+      setBrandingAssetPreviews({}, localMap);
+      setBrandingStatus(`${file.name} · ${(file.size / 1024).toFixed(1)} KB · pratinjau logo dan favicon siap.`, 'ready');
+    } catch (error) {
+      setBrandingStatus(`Logo dipilih, tetapi pratinjau favicon gagal dibuat: ${error.message || 'preview_failed'}. Upload masih dapat dicoba.`, 'error');
+    }
   };
 
   const uploadBrandingBundle = async () => {
@@ -220,7 +292,7 @@
       }
       const branding = await saveBranding({ quiet: true });
       clearBrandingLocalPreview();
-      setBrandingPreview(`${branding.logo_url}?v=${Date.now()}`, branding.logo_alt);
+      setBranding(branding);
       setBrandingStatus('Logo, favicon, Apple Touch Icon, dan ikon Android berhasil diperbarui ke R2 dengan URL permanen.', 'success');
     } catch (error) {
       const labels = {
