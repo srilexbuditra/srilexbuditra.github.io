@@ -22,6 +22,7 @@
   const mediaUploadStatus = document.querySelector('[data-media-upload-status]');
 
   let materials = [];
+  let mediaPreviewObjectUrl = '';
 
   const esc = (value) => String(value ?? '')
     .replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;')
@@ -123,16 +124,34 @@
     else field.value = value ?? '';
   };
 
+  const clearLocalMediaPreview = () => {
+    if (mediaPreviewObjectUrl) {
+      URL.revokeObjectURL(mediaPreviewObjectUrl);
+      mediaPreviewObjectUrl = '';
+    }
+  };
+
   const updateMediaPreview = () => {
-    const url = form.elements.banner_url?.value.trim() || form.elements.og_image_url?.value.trim() || '';
     if (!mediaPreviewWrap || !mediaPreview) return;
+    const selectedFile = mediaFileInput?.files?.[0];
+    const remoteUrl = form.elements.banner_url?.value.trim() || form.elements.og_image_url?.value.trim() || '';
+    const url = selectedFile && mediaPreviewObjectUrl ? mediaPreviewObjectUrl : remoteUrl;
     if (!url) {
       mediaPreviewWrap.hidden = true;
       mediaPreview.removeAttribute('src');
       return;
     }
-    mediaPreview.src = url;
+    if (mediaPreview.src !== url) mediaPreview.src = url;
     mediaPreview.alt = form.elements.image_alt?.value.trim() || 'Preview media materi';
+    mediaPreviewWrap.hidden = false;
+  };
+
+  const showSelectedMediaPreview = (file) => {
+    if (!file || !mediaPreviewWrap || !mediaPreview) return;
+    clearLocalMediaPreview();
+    mediaPreviewObjectUrl = URL.createObjectURL(file);
+    mediaPreview.src = mediaPreviewObjectUrl;
+    mediaPreview.alt = form.elements.image_alt?.value.trim() || file.name || 'Preview media materi';
     mediaPreviewWrap.hidden = false;
   };
 
@@ -198,18 +217,25 @@
   const inspectSelectedMedia = async () => {
     const file = mediaFileInput?.files?.[0];
     if (!file) {
+      clearLocalMediaPreview();
+      updateMediaPreview();
       setMediaUploadStatus('Belum ada file dipilih.');
       return;
     }
     const allowed = new Set(['image/avif', 'image/webp', 'image/jpeg', 'image/png']);
     if (!allowed.has(file.type)) {
+      clearLocalMediaPreview();
+      updateMediaPreview();
       setMediaUploadStatus('Format tidak didukung. Gunakan AVIF, WebP, JPEG, atau PNG.', 'error');
       return;
     }
     if (file.size > 5 * 1024 * 1024) {
+      clearLocalMediaPreview();
+      updateMediaPreview();
       setMediaUploadStatus('Ukuran file melebihi 5 MB.', 'error');
       return;
     }
+    showSelectedMediaPreview(file);
     let dimensions = '';
     try {
       const url = URL.createObjectURL(file);
@@ -277,7 +303,7 @@
         form.elements.twitter_image_url.value = media.url || '';
       }
       updateMediaPreview();
-      setMediaUploadStatus(`Upload berhasil: ${media.url || ''}. Klik Simpan Materi untuk menyimpan URL ke metadata.`, 'success');
+      setMediaUploadStatus(`Upload berhasil: ${media.url || ''}. Preview menampilkan file yang dipilih. Klik Simpan Materi untuk menyimpan URL ke metadata.`, 'success');
     } catch (error) {
       const labels = {
         missing_public_media_binding: 'Binding PUBLIC_MEDIA belum tersedia pada Worker.',
@@ -477,6 +503,7 @@
     const material = materials.find((item) => Number(item.id) === Number(id));
     if (!material) return;
 
+    clearLocalMediaPreview();
     form.reset();
     form.elements.id.value = material.id;
     form.elements.material_key.value = material.material_key || '';
@@ -494,7 +521,7 @@
     modal.hidden = false;
   };
 
-  const close = () => { modal.hidden = true; };
+  const close = () => { clearLocalMediaPreview(); modal.hidden = true; };
 
   form?.addEventListener('submit', async (event) => {
     event.preventDefault();
