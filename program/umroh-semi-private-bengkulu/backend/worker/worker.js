@@ -1622,6 +1622,17 @@ async function uploadAdminManasikMedia(request, env, materialKey) {
     return json(request, env, { ok: false, error: "manasik_material_not_found" }, 404);
   }
 
+  const pageKey = `manasik:${materialKey}`;
+  const currentMeta = await env.DB.prepare(`
+    SELECT id, banner_object_key, thumbnail_object_key
+    FROM umroh_page_meta
+    WHERE page_key = ?
+    LIMIT 1
+  `).bind(pageKey).first();
+  if (!currentMeta) {
+    return json(request, env, { ok: false, error: "page_meta_not_found" }, 409);
+  }
+
   const length = Number(request.headers.get("Content-Length") || 0);
   if (length > MAX_PUBLIC_MEDIA_BYTES + 512 * 1024) {
     return json(request, env, { ok: false, error: "media_file_too_large" }, 413);
@@ -1665,6 +1676,7 @@ async function uploadAdminManasikMedia(request, env, materialKey) {
   }
 
   const objectKey = `manasik/${materialKey}/${purpose}-${crypto.randomUUID()}.${extension}`;
+  const publicUrl = `${PUBLIC_MEDIA_ORIGIN}/${objectKey}`;
   await env.PUBLIC_MEDIA.put(objectKey, bytes, {
     httpMetadata: {
       contentType,
@@ -1679,6 +1691,40 @@ async function uploadAdminManasikMedia(request, env, materialKey) {
   });
 
   const now = new Date().toISOString();
+  try {
+    const result = purpose === "thumbnail"
+      ? await env.DB.prepare(`
+          UPDATE umroh_page_meta
+          SET thumbnail_url = ?,
+              thumbnail_object_key = ?,
+              image_alt = ?,
+              updated_at = ?
+          WHERE page_key = ?
+        `).bind(publicUrl, objectKey, altText, now, pageKey).run()
+      : await env.DB.prepare(`
+          UPDATE umroh_page_meta
+          SET banner_url = ?,
+              banner_object_key = ?,
+              og_image_url = ?,
+              twitter_image_url = ?,
+              image_alt = ?,
+              updated_at = ?
+          WHERE page_key = ?
+        `).bind(publicUrl, objectKey, publicUrl, publicUrl, altText, now, pageKey).run();
+
+    if (Number(result?.meta?.changes || 0) < 1) {
+      throw new Error("page_meta_update_failed");
+    }
+  } catch (error) {
+    // Avoid leaving a fresh orphan object if metadata persistence fails.
+    try { await env.PUBLIC_MEDIA.delete(objectKey); } catch (_) {}
+    return json(request, env, {
+      ok: false,
+      error: "media_metadata_update_failed",
+      detail: error?.message || "page_meta_update_failed"
+    }, 500);
+  }
+
   await env.DB.prepare(`
     INSERT INTO umroh_admin_audit_log
       (actor_account_id, action, target_account_id, details_json, created_at)
@@ -1690,6 +1736,10 @@ async function uploadAdminManasikMedia(request, env, materialKey) {
       material_key: materialKey,
       purpose,
       object_key: objectKey,
+      previous_object_key: purpose === "thumbnail"
+        ? (currentMeta.thumbnail_object_key || null)
+        : (currentMeta.banner_object_key || null),
+      page_meta_saved: true,
       content_type: contentType,
       size_bytes: Number(file.size || bytes.length),
     }),
@@ -1702,10 +1752,14 @@ async function uploadAdminManasikMedia(request, env, materialKey) {
       material_key: materialKey,
       purpose,
       object_key: objectKey,
-      url: `${PUBLIC_MEDIA_ORIGIN}/${objectKey}`,
+      url: publicUrl,
       content_type: contentType,
       size_bytes: Number(file.size || bytes.length),
       alt_text: altText,
+      page_meta_saved: true,
+      previous_object_key: purpose === "thumbnail"
+        ? (currentMeta.thumbnail_object_key || null)
+        : (currentMeta.banner_object_key || null),
     },
   }, 201);
 }

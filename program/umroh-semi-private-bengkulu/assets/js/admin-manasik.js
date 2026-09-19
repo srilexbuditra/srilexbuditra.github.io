@@ -25,6 +25,7 @@
   let mediaPreviewObjectUrl = '';
   let mediaAltAuto = true;
   let mediaCaptionAuto = true;
+  let stagedMedia = { banner: null, thumbnail: null };
 
   const esc = (value) => String(value ?? '')
     .replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;')
@@ -228,34 +229,51 @@
     applyAutomaticMediaText(material);
   };
 
-  const collectPageMeta = () => ({
-    seo_title: form.elements.seo_title.value.trim(),
-    meta_description: form.elements.meta_description.value.trim(),
-    canonical_url: form.elements.canonical_url.value.trim(),
-    robots: form.elements.robots.value,
-    theme_color: form.elements.theme_color.value.trim(),
-    og_type: form.elements.og_type.value,
-    og_title: form.elements.og_title.value.trim(),
-    og_description: form.elements.og_description.value.trim(),
-    og_image_url: form.elements.og_image_url.value.trim(),
-    twitter_title: form.elements.twitter_title.value.trim(),
-    twitter_description: form.elements.twitter_description.value.trim(),
-    twitter_image_url: form.elements.twitter_image_url.value.trim(),
-    banner_url: form.elements.banner_url.value.trim(),
-    banner_object_key: form.elements.banner_object_key.value.trim(),
-    thumbnail_url: form.elements.thumbnail_url.value.trim(),
-    thumbnail_object_key: form.elements.thumbnail_object_key.value.trim(),
-    image_alt: form.elements.image_alt.value.trim(),
-    image_caption: form.elements.image_caption.value.trim(),
-    schema_type: form.elements.schema_type.value,
-    schema_json: form.elements.schema_json.value.trim(),
-    author_name: form.elements.author_name.value.trim(),
-    publisher_name: form.elements.publisher_name.value.trim(),
-    locale: form.elements.locale.value.trim(),
-    analytics_enabled: form.elements.analytics_enabled.checked,
-    analytics_scroll_enabled: form.elements.analytics_scroll_enabled.checked,
-    analytics_cta_enabled: form.elements.analytics_cta_enabled.checked
-  });
+  const collectPageMeta = () => {
+    const meta = {
+      seo_title: form.elements.seo_title.value.trim(),
+      meta_description: form.elements.meta_description.value.trim(),
+      canonical_url: form.elements.canonical_url.value.trim(),
+      robots: form.elements.robots.value,
+      theme_color: form.elements.theme_color.value.trim(),
+      og_type: form.elements.og_type.value,
+      og_title: form.elements.og_title.value.trim(),
+      og_description: form.elements.og_description.value.trim(),
+      og_image_url: form.elements.og_image_url.value.trim(),
+      twitter_title: form.elements.twitter_title.value.trim(),
+      twitter_description: form.elements.twitter_description.value.trim(),
+      twitter_image_url: form.elements.twitter_image_url.value.trim(),
+      banner_url: form.elements.banner_url.value.trim(),
+      banner_object_key: form.elements.banner_object_key.value.trim(),
+      thumbnail_url: form.elements.thumbnail_url.value.trim(),
+      thumbnail_object_key: form.elements.thumbnail_object_key.value.trim(),
+      image_alt: form.elements.image_alt.value.trim(),
+      image_caption: form.elements.image_caption.value.trim(),
+      schema_type: form.elements.schema_type.value,
+      schema_json: form.elements.schema_json.value.trim(),
+      author_name: form.elements.author_name.value.trim(),
+      publisher_name: form.elements.publisher_name.value.trim(),
+      locale: form.elements.locale.value.trim(),
+      analytics_enabled: form.elements.analytics_enabled.checked,
+      analytics_scroll_enabled: form.elements.analytics_scroll_enabled.checked,
+      analytics_cta_enabled: form.elements.analytics_cta_enabled.checked
+    };
+
+    // A successful media upload is authoritative for this editor session.
+    // Overlay it again at submit time so a stale form value can never restore
+    // the previous R2 object key after Upload Gambar succeeds.
+    if (stagedMedia.banner?.url && stagedMedia.banner?.object_key) {
+      meta.banner_url = stagedMedia.banner.url;
+      meta.banner_object_key = stagedMedia.banner.object_key;
+      meta.og_image_url = stagedMedia.banner.url;
+      meta.twitter_image_url = stagedMedia.banner.url;
+    }
+    if (stagedMedia.thumbnail?.url && stagedMedia.thumbnail?.object_key) {
+      meta.thumbnail_url = stagedMedia.thumbnail.url;
+      meta.thumbnail_object_key = stagedMedia.thumbnail.object_key;
+    }
+    return meta;
+  };
 
   const formatBytes = (bytes) => {
     const value = Number(bytes || 0);
@@ -341,6 +359,8 @@
     uploadBody.append('alt_text', altText);
 
     mediaUploadButton.disabled = true;
+    const submitWasDisabled = Boolean(submit?.disabled);
+    if (submit) submit.disabled = true;
     const oldLabel = mediaUploadButton.textContent;
     mediaUploadButton.textContent = 'Mengunggah...';
     setMediaUploadStatus('Mengunggah gambar ke media publik Umroh...', 'loading');
@@ -350,17 +370,30 @@
         body: uploadBody
       });
       const media = data.media || {};
+      if (!media.url || !media.object_key) throw new Error('invalid_media_response');
       if (purpose === 'thumbnail') {
-        form.elements.thumbnail_url.value = media.url || '';
-        form.elements.thumbnail_object_key.value = media.object_key || '';
+        stagedMedia.thumbnail = { url: media.url, object_key: media.object_key };
+        form.elements.thumbnail_url.value = media.url;
+        form.elements.thumbnail_object_key.value = media.object_key;
       } else {
-        form.elements.banner_url.value = media.url || '';
-        form.elements.banner_object_key.value = media.object_key || '';
-        form.elements.og_image_url.value = media.url || '';
-        form.elements.twitter_image_url.value = media.url || '';
+        stagedMedia.banner = { url: media.url, object_key: media.object_key };
+        form.elements.banner_url.value = media.url;
+        form.elements.banner_object_key.value = media.object_key;
+        form.elements.og_image_url.value = media.url;
+        form.elements.twitter_image_url.value = media.url;
       }
+
+      // Stop showing the local blob after upload. The preview now loads the
+      // actual public R2 URL so Admin can verify the exact object that D1 uses.
+      clearLocalMediaPreview();
+      if (mediaFileInput) mediaFileInput.value = '';
       updateMediaPreview();
-      setMediaUploadStatus(`Upload berhasil: ${media.url || ''}. Preview menampilkan file yang dipilih. Klik Simpan Materi untuk menyimpan URL ke metadata.`, 'success');
+      setMediaUploadStatus(
+        media.page_meta_saved
+          ? `Upload berhasil dan metadata D1 sudah diperbarui: ${media.url}`
+          : `Upload berhasil: ${media.url}. Klik Simpan Materi untuk menyimpan perubahan lainnya.`,
+        'success'
+      );
     } catch (error) {
       const labels = {
         missing_public_media_binding: 'Binding PUBLIC_MEDIA belum tersedia pada Worker.',
@@ -371,12 +404,16 @@
         invalid_image_signature: 'Isi file tidak cocok dengan format gambar yang dipilih.',
         invalid_media_purpose: 'Tujuan gambar tidak valid.',
         image_alt_required: 'Alt Text wajib diisi sebelum upload.',
+        page_meta_not_found: 'Metadata materi belum tersedia di D1.',
+        media_metadata_update_failed: 'Gambar masuk ke R2, tetapi metadata D1 gagal diperbarui. Object baru sudah dibatalkan.',
+        invalid_media_response: 'Respons upload media tidak lengkap. Coba muat ulang halaman.',
         forbidden: 'Role akun ini tidak diizinkan mengunggah media.'
       };
       setMediaUploadStatus(labels[error.code] || `Upload gagal: ${error.code || error.message}`, 'error');
     } finally {
       mediaUploadButton.disabled = false;
       mediaUploadButton.textContent = oldLabel;
+      if (submit) submit.disabled = submitWasDisabled;
     }
   };
 
@@ -561,6 +598,7 @@
     if (!material) return;
 
     clearLocalMediaPreview();
+    stagedMedia = { banner: null, thumbnail: null };
     form.reset();
     form.elements.id.value = material.id;
     form.elements.material_key.value = material.material_key || '';
@@ -601,6 +639,7 @@
         method: 'PATCH',
         body: JSON.stringify(payload)
       });
+      stagedMedia = { banner: null, thumbnail: null };
       show('Materi Manasik berhasil diperbarui.', 'success');
       await load();
       setTimeout(close, 650);
