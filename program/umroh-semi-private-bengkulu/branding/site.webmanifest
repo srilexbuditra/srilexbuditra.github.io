@@ -1,0 +1,24 @@
+{
+  "name": "Umroh Semi Private Bengkulu",
+  "short_name": "Umroh Bengkulu",
+  "id": "/program/umroh-semi-private-bengkulu/",
+  "start_url": "/program/umroh-semi-private-bengkulu/",
+  "scope": "/program/umroh-semi-private-bengkulu/",
+  "display": "standalone",
+  "theme_color": "#0b2830",
+  "background_color": "#ffffff",
+  "icons": [
+    {
+      "src": "/program/umroh-semi-private-bengkulu/branding/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/program/umroh-semi-private-bengkulu/branding/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

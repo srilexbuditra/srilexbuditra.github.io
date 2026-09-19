@@ -13,6 +13,20 @@ const PUBLIC_MEDIA_MIME = Object.freeze({
   "image/jpeg": "jpg",
   "image/png": "png",
 });
+const BRANDING_PUBLIC_PATH = "/program/umroh-semi-private-bengkulu/branding/";
+const BRANDING_FALLBACK_PATH = "/program/umroh-semi-private-bengkulu/assets/branding/";
+const BRANDING_FILES = Object.freeze({
+  "logo-umroh-semi-private-bengkulu.avif": Object.freeze({ purpose: "logo", object_key: "branding/logo-umroh-semi-private-bengkulu.avif", content_type: "image/avif" }),
+  "favicon.ico": Object.freeze({ purpose: "favicon_ico", object_key: "branding/favicon.ico", content_type: "image/x-icon" }),
+  "favicon-32x32.png": Object.freeze({ purpose: "favicon_32", object_key: "branding/favicon-32x32.png", content_type: "image/png" }),
+  "favicon-16x16.png": Object.freeze({ purpose: "favicon_16", object_key: "branding/favicon-16x16.png", content_type: "image/png" }),
+  "apple-touch-icon.png": Object.freeze({ purpose: "apple_touch_icon", object_key: "branding/apple-touch-icon.png", content_type: "image/png" }),
+  "android-chrome-192x192.png": Object.freeze({ purpose: "android_192", object_key: "branding/android-chrome-192x192.png", content_type: "image/png" }),
+  "android-chrome-512x512.png": Object.freeze({ purpose: "android_512", object_key: "branding/android-chrome-512x512.png", content_type: "image/png" }),
+});
+const BRANDING_PURPOSE_TO_FILE = Object.freeze(Object.fromEntries(
+  Object.entries(BRANDING_FILES).map(([fileName, value]) => [value.purpose, Object.freeze({ ...value, file_name: fileName })])
+));
 const DOCUMENT_KEYS = new Set(["paspor-dokumen", "tiket-itinerary", "identitas-jemaah", "dokumen-kesehatan"]);
 const DOCUMENT_MIME = new Set(["application/pdf", "image/jpeg", "image/png"]);
 const MANASIK_KEYS = new Set(["persiapan", "ihram-miqat", "talbiyah", "tata-cara-umroh", "thawaf", "sai", "tahallul", "larangan-ihram", "adab-tanah-suci", "ziarah-madinah", "tips-perjalanan"]);
@@ -86,6 +100,11 @@ export default {
 
       const url = new URL(request.url);
       const path = normalizePath(url.pathname);
+
+      const brandingAssetMatch = path.match(/^\/program\/umroh-semi-private-bengkulu\/branding\/([a-z0-9._-]+)$/i);
+      if (brandingAssetMatch && request.method === "GET") {
+        return serveBrandingAsset(request, env, brandingAssetMatch[1]);
+      }
 
       if (request.method === "GET" && path === "/health") {
         const db = await env.DB.prepare("SELECT 1 AS ok").first();
@@ -186,6 +205,22 @@ export default {
 
       if (path === "/admin/page-meta/media" && request.method === "POST") {
         return uploadAdminPageMetaMedia(request, env);
+      }
+
+      if (path === "/branding/settings" && request.method === "GET") {
+        return getPublicBrandingSettings(request, env);
+      }
+
+      if (path === "/admin/branding" && request.method === "GET") {
+        return getAdminBrandingSettings(request, env);
+      }
+
+      if (path === "/admin/branding" && request.method === "PATCH") {
+        return updateAdminBrandingSettings(request, env);
+      }
+
+      if (path === "/admin/branding/media" && request.method === "POST") {
+        return uploadAdminBrandingMedia(request, env);
       }
 
       if (request.method === "GET" && path === "/manasik/materials") {
@@ -1275,6 +1310,275 @@ async function uploadAdminPageMetaMedia(request, env) {
       alt_text: altText,
     },
   }, 201);
+}
+
+function brandPublicUrl(fileName) {
+  return `https://srilexbuditra.work${BRANDING_PUBLIC_PATH}${fileName}`;
+}
+
+function defaultBrandSettings() {
+  return {
+    brand_key: "umroh",
+    brand_name: "Umroh Semi Private Bengkulu",
+    short_name: "Umroh Bengkulu",
+    logo_url: brandPublicUrl("logo-umroh-semi-private-bengkulu.avif"),
+    logo_object_key: BRANDING_FILES["logo-umroh-semi-private-bengkulu.avif"].object_key,
+    logo_alt: "Logo Umroh Semi Private Bengkulu",
+    favicon_ico_url: brandPublicUrl("favicon.ico"),
+    favicon_ico_object_key: BRANDING_FILES["favicon.ico"].object_key,
+    favicon_32_url: brandPublicUrl("favicon-32x32.png"),
+    favicon_32_object_key: BRANDING_FILES["favicon-32x32.png"].object_key,
+    favicon_16_url: brandPublicUrl("favicon-16x16.png"),
+    favicon_16_object_key: BRANDING_FILES["favicon-16x16.png"].object_key,
+    apple_touch_icon_url: brandPublicUrl("apple-touch-icon.png"),
+    apple_touch_icon_object_key: BRANDING_FILES["apple-touch-icon.png"].object_key,
+    android_192_url: brandPublicUrl("android-chrome-192x192.png"),
+    android_192_object_key: BRANDING_FILES["android-chrome-192x192.png"].object_key,
+    android_512_url: brandPublicUrl("android-chrome-512x512.png"),
+    android_512_object_key: BRANDING_FILES["android-chrome-512x512.png"].object_key,
+    manifest_url: brandPublicUrl("site.webmanifest"),
+    theme_color: "#0b2830",
+    background_color: "#ffffff",
+    created_at: null,
+    updated_at: null,
+  };
+}
+
+function brandingSettingsPayload(row) {
+  const fallback = defaultBrandSettings();
+  const source = row || {};
+  return {
+    ...fallback,
+    ...source,
+    logo_url: source.logo_url || fallback.logo_url,
+    favicon_ico_url: source.favicon_ico_url || fallback.favicon_ico_url,
+    favicon_32_url: source.favicon_32_url || fallback.favicon_32_url,
+    favicon_16_url: source.favicon_16_url || fallback.favicon_16_url,
+    apple_touch_icon_url: source.apple_touch_icon_url || fallback.apple_touch_icon_url,
+    android_192_url: source.android_192_url || fallback.android_192_url,
+    android_512_url: source.android_512_url || fallback.android_512_url,
+    manifest_url: source.manifest_url || fallback.manifest_url,
+  };
+}
+
+async function loadBrandSettings(env) {
+  const row = await env.DB.prepare(`
+    SELECT brand_key, brand_name, short_name,
+           logo_url, logo_object_key, logo_alt,
+           favicon_ico_url, favicon_ico_object_key,
+           favicon_32_url, favicon_32_object_key,
+           favicon_16_url, favicon_16_object_key,
+           apple_touch_icon_url, apple_touch_icon_object_key,
+           android_192_url, android_192_object_key,
+           android_512_url, android_512_object_key,
+           manifest_url, theme_color, background_color,
+           created_at, updated_at
+    FROM umroh_brand_settings
+    WHERE brand_key = 'umroh'
+    LIMIT 1
+  `).first();
+  return brandingSettingsPayload(row);
+}
+
+async function getPublicBrandingSettings(request, env) {
+  const branding = await loadBrandSettings(env);
+  return json(request, env, { ok: true, branding: {
+    brand_name: branding.brand_name,
+    short_name: branding.short_name,
+    logo_url: branding.logo_url,
+    logo_alt: branding.logo_alt,
+    favicon_ico_url: branding.favicon_ico_url,
+    favicon_32_url: branding.favicon_32_url,
+    favicon_16_url: branding.favicon_16_url,
+    apple_touch_icon_url: branding.apple_touch_icon_url,
+    android_192_url: branding.android_192_url,
+    android_512_url: branding.android_512_url,
+    manifest_url: branding.manifest_url,
+    theme_color: branding.theme_color,
+    background_color: branding.background_color,
+    updated_at: branding.updated_at,
+  } });
+}
+
+async function getAdminBrandingSettings(request, env) {
+  const gate = await requireStaffRole(request, env, ["super_admin", "admin"]);
+  if (gate.response) return gate.response;
+  const branding = await loadBrandSettings(env);
+  return json(request, env, { ok: true, branding });
+}
+
+function normalizeBrandColor(value, fallback) {
+  const color = String(value || fallback || "").trim().toLowerCase();
+  if (!/^#[0-9a-f]{6}$/.test(color)) throw new Error("invalid_brand_color");
+  return color;
+}
+
+async function updateAdminBrandingSettings(request, env) {
+  const gate = await requireStaffRole(request, env, ["super_admin"]);
+  if (gate.response) return gate.response;
+
+  const body = await readJson(request);
+  const current = await loadBrandSettings(env);
+  const raw = body.branding && typeof body.branding === "object" ? body.branding : body;
+  const brandName = truncate(String(raw.brand_name || current.brand_name || "").trim(), 120);
+  const shortName = truncate(String(raw.short_name || current.short_name || "").trim(), 60);
+  const logoAlt = truncate(String(raw.logo_alt || current.logo_alt || "").trim(), 180);
+  if (!brandName) return json(request, env, { ok: false, error: "brand_name_required" }, 400);
+  if (!shortName) return json(request, env, { ok: false, error: "short_name_required" }, 400);
+  if (!logoAlt) return json(request, env, { ok: false, error: "logo_alt_required" }, 400);
+
+  let themeColor;
+  let backgroundColor;
+  try {
+    themeColor = normalizeBrandColor(raw.theme_color, current.theme_color || "#0b2830");
+    backgroundColor = normalizeBrandColor(raw.background_color, current.background_color || "#ffffff");
+  } catch (error) {
+    return json(request, env, { ok: false, error: error.message || "invalid_brand_color" }, 400);
+  }
+
+  const now = new Date().toISOString();
+  await env.DB.prepare(`
+    UPDATE umroh_brand_settings
+    SET brand_name = ?, short_name = ?, logo_alt = ?, theme_color = ?, background_color = ?, updated_at = ?
+    WHERE brand_key = 'umroh'
+  `).bind(brandName, shortName, logoAlt, themeColor, backgroundColor, now).run();
+
+  await env.DB.prepare(`
+    INSERT INTO umroh_admin_audit_log
+      (actor_account_id, action, target_account_id, details_json, created_at)
+    VALUES (?, 'branding_updated', NULL, ?, ?)
+  `).bind(gate.account.id, JSON.stringify({ brand_key: "umroh" }), now).run();
+
+  const branding = await loadBrandSettings(env);
+  return json(request, env, { ok: true, branding });
+}
+
+function isBrandingFileValid(bytes, contentType, purpose) {
+  if (purpose === "favicon_ico") {
+    return bytes instanceof Uint8Array && bytes.length >= 6 && hasBytes(bytes, 0, [0x00, 0x00, 0x01, 0x00]);
+  }
+  return looksLikePublicImage(bytes, contentType);
+}
+
+async function uploadAdminBrandingMedia(request, env) {
+  const gate = await requireStaffRole(request, env, ["super_admin"]);
+  if (gate.response) return gate.response;
+  if (!env.PUBLIC_MEDIA) return json(request, env, { ok: false, error: "missing_public_media_binding" }, 503);
+
+  const length = Number(request.headers.get("Content-Length") || 0);
+  if (length > MAX_PUBLIC_MEDIA_BYTES + 512 * 1024) {
+    return json(request, env, { ok: false, error: "media_file_too_large" }, 413);
+  }
+
+  let form;
+  try { form = await request.formData(); }
+  catch (_) { return json(request, env, { ok: false, error: "multipart_form_required" }, 400); }
+
+  const file = form.get("file");
+  const purpose = String(form.get("purpose") || "").trim();
+  const config = BRANDING_PURPOSE_TO_FILE[purpose];
+  if (!config) return json(request, env, { ok: false, error: "invalid_branding_purpose" }, 400);
+  if (!file || typeof file.arrayBuffer !== "function") {
+    return json(request, env, { ok: false, error: "media_file_required" }, 400);
+  }
+  if (!Number.isFinite(file.size) || file.size < 1) return json(request, env, { ok: false, error: "media_file_empty" }, 400);
+  if (file.size > MAX_PUBLIC_MEDIA_BYTES) return json(request, env, { ok: false, error: "media_file_too_large" }, 413);
+
+  const contentType = String(file.type || "").toLowerCase();
+  const validType = purpose === "logo"
+    ? contentType === "image/avif"
+    : purpose === "favicon_ico"
+      ? new Set(["image/x-icon", "image/vnd.microsoft.icon", "application/octet-stream"]).has(contentType)
+      : contentType === "image/png";
+  if (!validType) return json(request, env, { ok: false, error: "invalid_branding_media_type" }, 415);
+
+  const bytes = new Uint8Array(await file.arrayBuffer());
+  if (!isBrandingFileValid(bytes, contentType, purpose)) {
+    return json(request, env, { ok: false, error: "invalid_image_signature" }, 400);
+  }
+
+  await env.PUBLIC_MEDIA.put(config.object_key, bytes, {
+    httpMetadata: {
+      contentType: config.content_type,
+      cacheControl: "public, max-age=300, must-revalidate",
+      contentDisposition: "inline",
+    },
+    customMetadata: { module: "branding", brand_key: "umroh", purpose },
+  });
+
+  const now = new Date().toISOString();
+  await env.DB.prepare(`UPDATE umroh_brand_settings SET updated_at = ? WHERE brand_key = 'umroh'`).bind(now).run();
+  await env.DB.prepare(`
+    INSERT INTO umroh_admin_audit_log
+      (actor_account_id, action, target_account_id, details_json, created_at)
+    VALUES (?, 'branding_media_updated', NULL, ?, ?)
+  `).bind(gate.account.id, JSON.stringify({ purpose, object_key: config.object_key, content_type: config.content_type, size_bytes: Number(file.size || bytes.length) }), now).run();
+
+  return json(request, env, {
+    ok: true,
+    media: {
+      purpose,
+      object_key: config.object_key,
+      url: brandPublicUrl(config.file_name),
+      content_type: config.content_type,
+      size_bytes: Number(file.size || bytes.length),
+    },
+  }, 201);
+}
+
+async function brandManifestResponse(env) {
+  const branding = await loadBrandSettings(env);
+  const payload = {
+    name: branding.brand_name,
+    short_name: branding.short_name,
+    id: "/program/umroh-semi-private-bengkulu/",
+    start_url: "/program/umroh-semi-private-bengkulu/",
+    scope: "/program/umroh-semi-private-bengkulu/",
+    display: "standalone",
+    theme_color: branding.theme_color,
+    background_color: branding.background_color,
+    icons: [
+      { src: branding.android_192_url, sizes: "192x192", type: "image/png", purpose: "any" },
+      { src: branding.android_512_url, sizes: "512x512", type: "image/png", purpose: "any" },
+    ],
+  };
+  return new Response(JSON.stringify(payload, null, 2), {
+    status: 200,
+    headers: {
+      "Content-Type": "application/manifest+json; charset=utf-8",
+      "Cache-Control": "public, max-age=300, must-revalidate",
+      "X-Content-Type-Options": "nosniff",
+    },
+  });
+}
+
+async function serveBrandingAsset(request, env, fileName) {
+  if (fileName === "site.webmanifest") return brandManifestResponse(env);
+  const config = BRANDING_FILES[fileName];
+  if (!config) return new Response("Not Found", { status: 404, headers: { "Content-Type": "text/plain; charset=utf-8" } });
+
+  if (env.PUBLIC_MEDIA) {
+    const object = await env.PUBLIC_MEDIA.get(config.object_key);
+    if (object) {
+      const headers = new Headers();
+      object.writeHttpMetadata(headers);
+      headers.set("Content-Type", config.content_type);
+      headers.set("Cache-Control", "public, max-age=300, must-revalidate");
+      headers.set("Content-Disposition", "inline");
+      headers.set("X-Content-Type-Options", "nosniff");
+      if (object.httpEtag) headers.set("ETag", object.httpEtag);
+      return new Response(object.body, { status: 200, headers });
+    }
+  }
+
+  const fallbackUrl = new URL(`${BRANDING_FALLBACK_PATH}${fileName}`, "https://srilexbuditra.work");
+  const fallback = await fetch(fallbackUrl.toString(), { redirect: "follow" });
+  if (!fallback.ok) return new Response("Not Found", { status: 404, headers: { "Content-Type": "text/plain; charset=utf-8" } });
+  const headers = new Headers(fallback.headers);
+  headers.set("Content-Type", config.content_type);
+  headers.set("Cache-Control", "public, max-age=300, must-revalidate");
+  headers.set("X-Content-Type-Options", "nosniff");
+  return new Response(fallback.body, { status: 200, headers });
 }
 
 function hasBytes(bytes, offset, expected) {

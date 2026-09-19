@@ -11,7 +11,13 @@
 <link href="../../assets/css/admin-dashboard.css" rel="stylesheet"/>
 <link href="../../assets/css/visual-assets.css" rel="stylesheet"/>
 <link href="../../assets/css/admin-auth.css" rel="stylesheet"/>
-<link href="../../assets/css/admin-page-meta.css?v=3.9.0-step5b" rel="stylesheet"/>
+<link href="../../assets/css/admin-page-meta.css?v=3.9.0-step6" rel="stylesheet"/>
+<link rel="icon" href="/program/umroh-semi-private-bengkulu/branding/favicon.ico" sizes="any"/>
+<link rel="icon" type="image/png" sizes="32x32" href="/program/umroh-semi-private-bengkulu/branding/favicon-32x32.png"/>
+<link rel="icon" type="image/png" sizes="16x16" href="/program/umroh-semi-private-bengkulu/branding/favicon-16x16.png"/>
+<link rel="apple-touch-icon" sizes="180x180" href="/program/umroh-semi-private-bengkulu/branding/apple-touch-icon.png"/>
+<link rel="manifest" href="/program/umroh-semi-private-bengkulu/branding/site.webmanifest"/>
+<link rel="stylesheet" href="/program/umroh-semi-private-bengkulu/assets/css/branding.css?v=3.9.0-step6"/>
 </head>
 <body class="dashboard-app admin-dashboard">
 <aside aria-label="Navigasi admin" class="app-sidebar">
@@ -33,7 +39,7 @@
 </aside>
 <div class="sidebar-backdrop" data-sidebar-backdrop></div>
 <div class="app-main">
-<header class="app-topbar"><button aria-label="Buka menu" class="mobile-menu" data-mobile-menu>☰</button><div class="topbar-title"><strong>Pengaturan</strong><span>SEO · Media · Schema · Analytics</span></div><div class="topbar-spacer"></div><div class="user-chip"><div class="avatar" data-auth-avatar>SB</div><div class="user-copy"><strong data-auth-name>Srilex Buditra</strong><span data-auth-role>Senior Full Stack Developer · Platform Architect</span></div></div><button class="auth-logout" data-admin-logout type="button">Keluar</button></header>
+<header class="app-topbar"><button aria-label="Buka menu" class="mobile-menu" data-mobile-menu>☰</button><div class="topbar-title"><strong>Pengaturan</strong><span>Branding · SEO · Media · Schema · Analytics</span></div><div class="topbar-spacer"></div><div class="user-chip"><div class="avatar" data-auth-avatar>SB</div><div class="user-copy"><strong data-auth-name>Srilex Buditra</strong><span data-auth-role>Senior Full Stack Developer · Platform Architect</span></div></div><button class="auth-logout" data-admin-logout type="button">Keluar</button></header>
 <main class="page-wrap">
 <div class="prototype-note"><strong>Platform V3.8.0 aktif.</strong> Step V3.9.0 menambahkan pengelolaan metadata halaman publik tanpa mengubah versi platform sampai seluruh rollout selesai diuji.</div>
 <div class="page-head admin-public-head"><div><span class="page-kicker">Global Public Page Management</span><h1>SEO &amp; Media Publik</h1><p>Kelola metadata publik dari D1 dan media dari R2. Tag SEO yang dibaca crawler tetap harus dipublikasikan ke HTML statis melalui deploy GitHub Pages.</p></div><a class="admin-public-preview" href="../../" target="_blank" rel="noopener">Lihat Portal ↗</a></div>
@@ -45,13 +51,42 @@
 <input name="banner_object_key" type="hidden"/>
 <input name="thumbnail_object_key" type="hidden"/>
 <nav class="admin-editor-tabs" aria-label="Bagian pengaturan halaman publik">
-<button class="is-active" data-editor-tab="media" type="button">Media</button>
+<button class="is-active" data-branding-tab data-editor-tab="branding" type="button">Branding</button>
+<button data-editor-tab="media" type="button">Media</button>
 <button data-editor-tab="seo" type="button">SEO</button>
 <button data-editor-tab="schema" type="button">Schema</button>
 <button data-editor-tab="analytics" type="button">Analytics</button>
 </nav>
 
-<section class="admin-editor-panel is-active" data-editor-panel="media">
+<section class="admin-editor-panel is-active" data-branding-panel data-editor-panel="branding">
+<div class="admin-meta-intro"><strong>Branding Global</strong><span>Satu logo AVIF menjadi sumber identitas Platform Umroh. Sistem membuat favicon PNG/ICO dan ikon web app dengan latar transparan, lalu mengunggah semuanya ke object key R2 permanen.</span></div>
+<div class="admin-branding-layout">
+<div class="admin-branding-uploader">
+<label>Logo Utama AVIF<input accept="image/avif" data-branding-file type="file"/></label>
+<button class="admin-media-upload-button" data-branding-upload type="button">Terapkan Logo &amp; Favicon</button>
+<p class="admin-media-upload-status" data-branding-status aria-live="polite">Gunakan logo AVIF transparan. Maksimum 5 MB.</p>
+</div>
+<div class="admin-branding-preview"><img data-branding-preview alt="Logo Umroh Semi Private Bengkulu"/></div>
+</div>
+<div class="admin-meta-grid admin-branding-fields">
+<label>Nama Brand<input name="branding_brand_name" maxlength="120"/></label>
+<label>Short Name<input name="branding_short_name" maxlength="60"/></label>
+<label class="wide">Alt Logo<input name="branding_logo_alt" maxlength="180"/></label>
+<label>Theme Color<input name="branding_theme_color" maxlength="7" pattern="#[0-9A-Fa-f]{6}"/></label>
+<label>Background Color<input name="branding_background_color" maxlength="7" pattern="#[0-9A-Fa-f]{6}"/></label>
+<label class="wide">Logo URL<input name="branding_logo_url" readonly/></label>
+<label class="wide">Favicon ICO URL<input name="branding_favicon_ico_url" readonly/></label>
+<label class="wide">Favicon 32×32 URL<input name="branding_favicon_32_url" readonly/></label>
+<label class="wide">Favicon 16×16 URL<input name="branding_favicon_16_url" readonly/></label>
+<label class="wide">Apple Touch Icon URL<input name="branding_apple_touch_icon_url" readonly/></label>
+<label class="wide">Android 192×192 URL<input name="branding_android_192_url" readonly/></label>
+<label class="wide">Android 512×512 URL<input name="branding_android_512_url" readonly/></label>
+<label class="wide">Webmanifest URL<input name="branding_manifest_url" readonly/></label>
+</div>
+<div class="admin-branding-actions"><span>URL branding bersifat permanen. Mengganti logo tidak mengubah alamat aset.</span><button class="admin-public-primary" data-branding-save type="button">Simpan Branding</button></div>
+</section>
+
+<section class="admin-editor-panel" data-editor-panel="media" hidden>
 <div class="admin-meta-intro"><strong>Media &amp; Social Preview</strong><span>Upload langsung ke R2 publik Umroh. AVIF, WebP, JPEG, PNG · maksimum 5 MB. Alt Text wajib sebelum upload.</span></div>
 <div class="admin-media-uploader">
 <label>Tujuan Gambar<select data-media-upload-role><option value="banner">Banner + Social Preview</option><option value="thumbnail">Thumbnail</option></select></label>
@@ -109,13 +144,13 @@
 </section>
 
 <p class="admin-public-message" data-page-meta-message hidden></p>
-<div class="admin-public-actions"><span data-static-publish-note>Perubahan D1 tidak otomatis mengubah tag crawler pada GitHub Pages.</span><button class="admin-public-primary" data-page-meta-submit type="submit">Simpan Pengaturan</button></div>
+<div class="admin-public-actions" data-page-meta-actions><span data-static-publish-note>Perubahan D1 tidak otomatis mengubah tag crawler pada GitHub Pages.</span><button class="admin-public-primary" data-page-meta-submit type="submit">Simpan Pengaturan</button></div>
 </form>
 </section>
 </main>
 </div>
 <script src="../../assets/js/admin-auth-guard.js?v=3.8.0"></script>
 <script src="../../assets/js/dashboard-shell.js"></script>
-<script src="../../assets/js/admin-page-meta.js?v=3.9.0-step5b3"></script>
+<script src="../../assets/js/admin-page-meta.js?v=3.9.0-step6"></script>
 </body>
 </html>

@@ -13,5 +13,19 @@
       "database_name": "umroh-semi-private-bengkulu-db",
       "database_id": "PASTE-D1-DATABASE-ID-HERE"
     }
-  ]
+  ],
+  "r2_buckets": [
+    {
+      "binding": "PUBLIC_MEDIA",
+      "bucket_name": "umroh-public-media"
+    },
+    {
+      "binding": "DOCUMENTS_BUCKET",
+      "bucket_name": "PASTE-PRIVATE-DOCUMENT-BUCKET-NAME-HERE"
+    }
+  ],
+  // Keep the existing custom domain umroh-api.srilexbuditra.work.
+  // Add this path route in Cloudflare Dashboard to make branding URLs same-origin:
+  // srilexbuditra.work/program/umroh-semi-private-bengkulu/branding/*
+  // Do not route the whole srilexbuditra.work domain to this Worker.
 }

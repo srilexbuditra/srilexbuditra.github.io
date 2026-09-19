@@ -14,7 +14,16 @@
   const mediaUploadStatus = document.querySelector('[data-media-upload-status]');
   const mediaPreviewWrap = document.querySelector('[data-media-preview-wrap]');
   const mediaPreview = document.querySelector('[data-media-preview]');
+  const pageMetaActions = document.querySelector('[data-page-meta-actions]');
+  const brandingTab = document.querySelector('[data-branding-tab]');
+  const brandingPanel = document.querySelector('[data-branding-panel]');
+  const brandingFileInput = document.querySelector('[data-branding-file]');
+  const brandingUploadButton = document.querySelector('[data-branding-upload]');
+  const brandingSaveButton = document.querySelector('[data-branding-save]');
+  const brandingStatus = document.querySelector('[data-branding-status]');
+  const brandingPreview = document.querySelector('[data-branding-preview]');
   let mediaPreviewObjectUrl = '';
+  let brandingPreviewObjectUrl = '';
   let mediaAltAuto = true;
   let mediaCaptionAuto = true;
 
@@ -46,6 +55,7 @@
       panel.hidden = !active;
       panel.classList.toggle('is-active', active);
     });
+    if (pageMetaActions) pageMetaActions.hidden = name === 'branding';
   };
 
   const show = (text, state = 'error') => {
@@ -59,6 +69,186 @@
     if (!field) return;
     if (field.type === 'checkbox') field.checked = Boolean(value);
     else field.value = value ?? '';
+  };
+
+  const brandingField = (name) => form?.elements?.[name] || null;
+  const setBrandingStatus = (text, state = '') => {
+    if (!brandingStatus) return;
+    brandingStatus.textContent = text;
+    brandingStatus.dataset.state = state;
+  };
+  const clearBrandingLocalPreview = () => {
+    if (brandingPreviewObjectUrl) URL.revokeObjectURL(brandingPreviewObjectUrl);
+    brandingPreviewObjectUrl = '';
+  };
+  const setBrandingPreview = (url, alt = '') => {
+    if (!brandingPreview) return;
+    if (!url) { brandingPreview.removeAttribute('src'); return; }
+    brandingPreview.src = url;
+    brandingPreview.alt = alt || 'Logo Umroh Semi Private Bengkulu';
+  };
+  const setBranding = (branding = {}) => {
+    const map = {
+      branding_brand_name: 'brand_name',
+      branding_short_name: 'short_name',
+      branding_logo_alt: 'logo_alt',
+      branding_theme_color: 'theme_color',
+      branding_background_color: 'background_color',
+      branding_logo_url: 'logo_url',
+      branding_favicon_ico_url: 'favicon_ico_url',
+      branding_favicon_32_url: 'favicon_32_url',
+      branding_favicon_16_url: 'favicon_16_url',
+      branding_apple_touch_icon_url: 'apple_touch_icon_url',
+      branding_android_192_url: 'android_192_url',
+      branding_android_512_url: 'android_512_url',
+      branding_manifest_url: 'manifest_url'
+    };
+    Object.entries(map).forEach(([fieldName, sourceName]) => {
+      const field = brandingField(fieldName);
+      if (field) field.value = branding[sourceName] ?? '';
+    });
+    setBrandingPreview(branding.logo_url ? `${branding.logo_url}?v=${Date.now()}` : '', branding.logo_alt);
+  };
+
+  const saveBranding = async ({ quiet = false } = {}) => {
+    const payload = {
+      brand_name: brandingField('branding_brand_name')?.value.trim() || '',
+      short_name: brandingField('branding_short_name')?.value.trim() || '',
+      logo_alt: brandingField('branding_logo_alt')?.value.trim() || '',
+      theme_color: brandingField('branding_theme_color')?.value.trim() || '#0b2830',
+      background_color: brandingField('branding_background_color')?.value.trim() || '#ffffff'
+    };
+    if (!payload.brand_name || !payload.short_name || !payload.logo_alt) {
+      setBrandingStatus('Nama Brand, Short Name, dan Alt Logo wajib diisi.', 'error');
+      throw new Error('branding_fields_required');
+    }
+    const data = await api('/admin/branding', { method: 'PATCH', body: JSON.stringify({ branding: payload }) });
+    setBranding(data.branding || {});
+    if (!quiet) setBrandingStatus('Branding berhasil disimpan ke D1.', 'success');
+    return data.branding || {};
+  };
+
+  const squarePngBlob = async (bitmap, size) => {
+    const canvas = document.createElement('canvas');
+    canvas.width = size;
+    canvas.height = size;
+    const ctx = canvas.getContext('2d', { alpha: true });
+    if (!ctx) throw new Error('canvas_unavailable');
+    ctx.clearRect(0, 0, size, size);
+    const padding = Math.max(1, Math.round(size * 0.04));
+    const maxWidth = size - padding * 2;
+    const maxHeight = size - padding * 2;
+    const ratio = Math.min(maxWidth / bitmap.width, maxHeight / bitmap.height);
+    const width = Math.max(1, Math.round(bitmap.width * ratio));
+    const height = Math.max(1, Math.round(bitmap.height * ratio));
+    ctx.drawImage(bitmap, Math.round((size - width) / 2), Math.round((size - height) / 2), width, height);
+    return new Promise((resolve, reject) => canvas.toBlob((blob) => blob ? resolve(blob) : reject(new Error('png_encode_failed')), 'image/png'));
+  };
+
+  const pngBlobToIco = async (pngBlob, size = 32) => {
+    const png = new Uint8Array(await pngBlob.arrayBuffer());
+    const headerSize = 6;
+    const entrySize = 16;
+    const buffer = new ArrayBuffer(headerSize + entrySize + png.length);
+    const view = new DataView(buffer);
+    view.setUint16(0, 0, true);
+    view.setUint16(2, 1, true);
+    view.setUint16(4, 1, true);
+    view.setUint8(6, size >= 256 ? 0 : size);
+    view.setUint8(7, size >= 256 ? 0 : size);
+    view.setUint8(8, 0);
+    view.setUint8(9, 0);
+    view.setUint16(10, 1, true);
+    view.setUint16(12, 32, true);
+    view.setUint32(14, png.length, true);
+    view.setUint32(18, headerSize + entrySize, true);
+    new Uint8Array(buffer, headerSize + entrySize).set(png);
+    return new Blob([buffer], { type: 'image/x-icon' });
+  };
+
+  const uploadBrandAsset = async (purpose, blob, fileName, type) => {
+    const body = new FormData();
+    body.append('purpose', purpose);
+    body.append('file', new File([blob], fileName, { type }));
+    return api('/admin/branding/media', { method: 'POST', body });
+  };
+
+  const inspectBrandingFile = async () => {
+    const file = brandingFileInput?.files?.[0];
+    if (!file) { clearBrandingLocalPreview(); setBrandingPreview(brandingField('branding_logo_url')?.value || '', brandingField('branding_logo_alt')?.value || ''); return; }
+    if (file.type !== 'image/avif') { setBrandingStatus('Gunakan file AVIF untuk logo utama.', 'error'); return; }
+    if (file.size > 5 * 1024 * 1024) { setBrandingStatus('Ukuran logo maksimum 5 MB.', 'error'); return; }
+    clearBrandingLocalPreview();
+    brandingPreviewObjectUrl = URL.createObjectURL(file);
+    setBrandingPreview(brandingPreviewObjectUrl, brandingField('branding_logo_alt')?.value || file.name);
+    setBrandingStatus(`${file.name} · ${(file.size / 1024).toFixed(1)} KB · siap diterapkan.`, 'ready');
+  };
+
+  const uploadBrandingBundle = async () => {
+    const file = brandingFileInput?.files?.[0];
+    if (!file) { setBrandingStatus('Pilih logo AVIF terlebih dahulu.', 'error'); return; }
+    if (file.type !== 'image/avif') { setBrandingStatus('Logo utama harus berformat AVIF.', 'error'); return; }
+    if (file.size > 5 * 1024 * 1024) { setBrandingStatus('Ukuran logo maksimum 5 MB.', 'error'); return; }
+    const alt = brandingField('branding_logo_alt')?.value.trim();
+    if (!alt) { setBrandingStatus('Alt Logo wajib diisi.', 'error'); brandingField('branding_logo_alt')?.focus(); return; }
+
+    brandingUploadButton.disabled = true;
+    brandingSaveButton && (brandingSaveButton.disabled = true);
+    const oldText = brandingUploadButton.textContent;
+    brandingUploadButton.textContent = 'Memproses...';
+    try {
+      setBrandingStatus('Membuat favicon transparan dari logo utama...', 'loading');
+      const bitmap = await createImageBitmap(file);
+      const [png16, png32, png180, png192, png512] = await Promise.all([
+        squarePngBlob(bitmap, 16), squarePngBlob(bitmap, 32), squarePngBlob(bitmap, 180), squarePngBlob(bitmap, 192), squarePngBlob(bitmap, 512)
+      ]);
+      bitmap.close?.();
+      const ico = await pngBlobToIco(png32, 32);
+      const queue = [
+        ['logo', file, 'logo-umroh-semi-private-bengkulu.avif', 'image/avif'],
+        ['favicon_ico', ico, 'favicon.ico', 'image/x-icon'],
+        ['favicon_32', png32, 'favicon-32x32.png', 'image/png'],
+        ['favicon_16', png16, 'favicon-16x16.png', 'image/png'],
+        ['apple_touch_icon', png180, 'apple-touch-icon.png', 'image/png'],
+        ['android_192', png192, 'android-chrome-192x192.png', 'image/png'],
+        ['android_512', png512, 'android-chrome-512x512.png', 'image/png']
+      ];
+      for (let index = 0; index < queue.length; index += 1) {
+        const [purpose, blob, name, type] = queue[index];
+        setBrandingStatus(`Mengunggah branding ${index + 1}/${queue.length} · ${name}...`, 'loading');
+        await uploadBrandAsset(purpose, blob, name, type);
+      }
+      const branding = await saveBranding({ quiet: true });
+      clearBrandingLocalPreview();
+      setBrandingPreview(`${branding.logo_url}?v=${Date.now()}`, branding.logo_alt);
+      setBrandingStatus('Logo, favicon, Apple Touch Icon, dan ikon Android berhasil diperbarui ke R2 dengan URL permanen.', 'success');
+    } catch (error) {
+      const labels = {
+        missing_public_media_binding: 'Binding PUBLIC_MEDIA belum tersedia.',
+        invalid_branding_purpose: 'Jenis aset branding tidak valid.',
+        invalid_branding_media_type: 'Format aset branding tidak sesuai.',
+        invalid_image_signature: 'Isi file branding tidak cocok dengan formatnya.',
+        media_file_required: 'File branding belum dipilih.',
+        media_file_too_large: 'Ukuran file maksimum 5 MB.',
+        forbidden: 'Hanya Super Admin yang dapat mengubah Branding Global.'
+      };
+      setBrandingStatus(labels[error.code] || `Gagal menerapkan branding: ${error.code || error.message}`, 'error');
+    } finally {
+      brandingUploadButton.disabled = false;
+      if (brandingSaveButton) brandingSaveButton.disabled = false;
+      brandingUploadButton.textContent = oldText;
+    }
+  };
+
+  const loadBranding = async () => {
+    try {
+      const data = await api('/admin/branding');
+      setBranding(data.branding || {});
+      setBrandingStatus('Branding Global dimuat dari D1. URL aset bersifat permanen.', 'success');
+    } catch (error) {
+      const labels = { forbidden: 'Branding Global hanya dapat diubah oleh Super Admin.' };
+      setBrandingStatus(labels[error.code] || `Gagal memuat branding: ${error.code || error.message}`, 'error');
+    }
   };
 
   const fields = [
@@ -245,7 +435,12 @@
   };
 
   form?.addEventListener('submit', async (event) => {
-    event.preventDefault(); hideMessage();
+    event.preventDefault();
+    if (brandingPanel?.classList.contains('is-active')) {
+      brandingSaveButton?.click();
+      return;
+    }
+    hideMessage();
     submit.disabled = true; const old = submit.textContent; submit.textContent = 'Menyimpan...';
     try {
       const data = await api(`/admin/page-meta?page_key=${encodeURIComponent(PAGE_KEY)}`, { method: 'PATCH', body: JSON.stringify({ page_meta: collectMeta() }) });
@@ -271,12 +466,28 @@
   });
   mediaFileInput?.addEventListener('change', inspectMedia);
   mediaUploadButton?.addEventListener('click', uploadMedia);
-  window.addEventListener('beforeunload', clearLocalPreview);
+  brandingFileInput?.addEventListener('change', inspectBrandingFile);
+  brandingUploadButton?.addEventListener('click', uploadBrandingBundle);
+  brandingSaveButton?.addEventListener('click', async () => {
+    brandingSaveButton.disabled = true;
+    try { await saveBranding(); }
+    catch (error) { if (error.message !== 'branding_fields_required') setBrandingStatus(`Gagal menyimpan branding: ${error.code || error.message}`, 'error'); }
+    finally { brandingSaveButton.disabled = false; }
+  });
+  window.addEventListener('beforeunload', () => { clearLocalPreview(); clearBrandingLocalPreview(); });
 
   const wait = () => {
     if (!document.documentElement.classList.contains('auth-ready')) { setTimeout(wait, 60); return; }
     const role = window.UMROH_ADMIN_ACCOUNT?.role || '';
     if (!['super_admin','admin'].includes(role)) { window.location.replace('../?reason=forbidden'); return; }
+    if (role === 'super_admin') {
+      setTab('branding');
+      loadBranding();
+    } else {
+      brandingTab?.setAttribute('hidden', '');
+      if (brandingPanel) brandingPanel.hidden = true;
+      setTab('media');
+    }
     load();
   };
   wait();
