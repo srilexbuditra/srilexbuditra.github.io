@@ -18,3 +18,9 @@ body.manasik-page{min-height:100vh;background:radial-gradient(circle at 90% 0,rg
 .manasik-sync-note[data-state="account"]{border-color:#bfe0d1;background:#f3fbf7;color:#0d6645}
 .manasik-sync-note[data-state="local"]{border-color:#eadfb9;background:#fffaf0;color:#7c6100}
 .complete-button:disabled{opacity:.68;cursor:wait}
+
+/* V3.9.0 Step 3.2 — Public Manasik banner */
+.lesson-media{margin:14px 0 0;padding:8px;border:1px solid var(--line);border-radius:20px;background:#fff;box-shadow:var(--shadow-sm);overflow:hidden}
+.lesson-media img{display:block;width:100%;height:auto;aspect-ratio:1.91/1;object-fit:cover;border-radius:14px;background:var(--surface-soft)}
+.lesson-media figcaption{padding:9px 6px 3px;color:var(--ink-500);font-size:9px;line-height:1.5;text-align:center}
+@media(max-width:680px){.lesson-media{padding:6px;border-radius:16px}.lesson-media img{border-radius:11px}.lesson-media figcaption{padding:8px 5px 2px;font-size:8px}}

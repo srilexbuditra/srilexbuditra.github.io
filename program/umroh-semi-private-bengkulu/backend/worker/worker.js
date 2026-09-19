@@ -1192,10 +1192,22 @@ async function getPublishedManasikMaterial(request, env, materialKey) {
   }
 
   const row = await env.DB.prepare(`
-    SELECT id, material_key, sort_order, title, summary, icon_key, content_json,
-           is_published, published_at, updated_at
-    FROM umroh_manasik_materials
-    WHERE material_key = ? AND is_published = 1
+    SELECT
+      m.id, m.material_key, m.sort_order, m.title, m.summary, m.icon_key, m.content_json,
+      m.is_published, m.published_at, m.updated_at,
+      pm.id AS page_meta_id, pm.page_key, pm.page_type, pm.page_path,
+      pm.seo_title, pm.meta_description, pm.canonical_url, pm.robots, pm.theme_color,
+      pm.og_type, pm.og_title, pm.og_description, pm.og_image_url,
+      pm.twitter_title, pm.twitter_description, pm.twitter_image_url,
+      pm.banner_url, pm.banner_object_key, pm.thumbnail_url, pm.thumbnail_object_key,
+      pm.image_alt, pm.image_caption, pm.schema_type, pm.schema_json,
+      pm.author_name, pm.publisher_name, pm.locale,
+      pm.analytics_enabled, pm.analytics_scroll_enabled, pm.analytics_cta_enabled,
+      pm.updated_at AS page_meta_updated_at
+    FROM umroh_manasik_materials m
+    LEFT JOIN umroh_page_meta pm
+      ON pm.page_key = ('manasik:' || m.material_key)
+    WHERE m.material_key = ? AND m.is_published = 1
     LIMIT 1
   `).bind(materialKey).first();
 

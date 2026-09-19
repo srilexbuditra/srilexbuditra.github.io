@@ -180,6 +180,56 @@
     }
   };
 
+  const renderLessonMedia = (page, pageMeta, fallbackTitle = '') => {
+    if (!page) return;
+
+    const bannerUrl = String(pageMeta?.banner_url || '').trim();
+    let figure = page.querySelector('[data-lesson-media]');
+
+    if (!bannerUrl) {
+      if (figure?.dataset.runtimeOnly === 'true') figure.remove();
+      return;
+    }
+
+    if (!figure) {
+      figure = make('figure', 'lesson-media');
+      figure.dataset.lessonMedia = '';
+      figure.dataset.runtimeOnly = 'true';
+
+      const hero = page.querySelector('.lesson-hero');
+      if (hero) hero.insertAdjacentElement('afterend', figure);
+      else page.prepend(figure);
+    }
+
+    let image = figure.querySelector('img');
+    if (!image) {
+      image = document.createElement('img');
+      image.loading = 'eager';
+      image.decoding = 'async';
+      image.fetchPriority = 'high';
+      figure.prepend(image);
+    }
+
+    image.src = bannerUrl;
+    image.alt = String(pageMeta?.image_alt || fallbackTitle || 'Materi Manasik Umroh Semi Private Bengkulu').trim();
+    image.width = 1731;
+    image.height = 909;
+
+    const captionText = String(pageMeta?.image_caption || '').trim();
+    let caption = figure.querySelector('figcaption');
+    if (captionText) {
+      if (!caption) {
+        caption = document.createElement('figcaption');
+        figure.appendChild(caption);
+      }
+      caption.textContent = captionText;
+      caption.hidden = false;
+    } else if (caption) {
+      caption.textContent = '';
+      caption.hidden = true;
+    }
+  };
+
   const renderLesson = async () => {
     const page = document.querySelector('[data-lesson-slug]');
     if (!page) return;
@@ -204,6 +254,7 @@
       if (crumb) crumb.textContent = material.title;
       if (icon) icon.className = `ui-icon icon-${material.icon_key || 'book'}`;
       if (content) renderBlocks(content, material.content || []);
+      renderLessonMedia(page, material.page_meta, material.title);
 
       document.title = `${material.title} | Manasik Digital Umroh Semi Private Bengkulu`;
       const metaDescription = document.querySelector('meta[name="description"]');
