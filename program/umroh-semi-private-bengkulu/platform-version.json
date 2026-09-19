@@ -1,10 +1,10 @@
 {
   "name": "Umroh Semi Private Bengkulu",
-  "platform_version": "3.8.0",
-  "release_date": "2026-09-18",
+  "platform_version": "3.9.0",
+  "release_date": "2026-09-20",
   "release_channel": "stable",
   "environment": "production",
   "api_service": "umroh-auth-api",
-  "api_version": "3.8.0",
+  "api_version": "3.9.0",
   "display_policy": "static-stamped"
 }
