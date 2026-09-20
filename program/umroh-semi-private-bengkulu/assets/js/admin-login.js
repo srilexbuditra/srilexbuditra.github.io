@@ -4,7 +4,7 @@
   const API_BASE = 'https://umroh-api.srilexbuditra.work';
   const DASHBOARD_PATH = '/program/umroh-semi-private-bengkulu/admin/';
   const LOGIN_PATH = '/program/umroh-semi-private-bengkulu/admin/login/';
-  const ALLOWED_ROLES = new Set(['super_admin', 'admin']);
+  const ALLOWED_ROLES = new Set(['super_admin', 'admin', 'tour_leader', 'pendamping']);
 
   const form = document.querySelector('[data-admin-login-form]');
   const usernameInput = document.querySelector('[data-admin-username]');
@@ -50,7 +50,7 @@
     if (reason === 'session') {
       setMessage('Sesi Anda sudah berakhir. Silakan masuk kembali.', 'info');
     } else if (reason === 'forbidden') {
-      setMessage('Akun ini tidak memiliki akses ke Dashboard Admin.', 'error');
+      setMessage('Akun ini tidak memiliki akses ke Dashboard Pengelola.', 'error');
     } else if (reason === 'unavailable') {
       setMessage('Layanan autentikasi belum dapat dihubungi. Coba beberapa saat lagi.', 'error');
     }
@@ -94,7 +94,7 @@
       }
       if (account?.forbidden) {
         await logoutNonAdminSession();
-        setMessage('Sesi sebelumnya bukan akun Admin. Silakan masuk dengan akun Admin.', 'info');
+        setMessage('Sesi sebelumnya bukan akun pengelola yang diizinkan. Silakan masuk dengan akun pengelola.', 'info');
       }
     } catch (_) {
       // Halaman login tetap ditampilkan bila API belum tersedia.
@@ -143,11 +143,11 @@
 
       if (account.forbidden) {
         await logoutNonAdminSession();
-        throw new Error('Akun ini tidak memiliki akses ke Dashboard Admin.');
+        throw new Error('Akun ini tidak memiliki akses ke Dashboard Pengelola.');
       }
 
       if (passwordInput) passwordInput.value = '';
-      setMessage('Login berhasil. Membuka Dashboard Admin...', 'success');
+      setMessage('Login berhasil. Membuka Dashboard Pengelola...', 'success');
       window.location.replace(safeNextPath());
     } catch (error) {
       setMessage(error?.message || 'Layanan autentikasi belum dapat dihubungi.', 'error');
