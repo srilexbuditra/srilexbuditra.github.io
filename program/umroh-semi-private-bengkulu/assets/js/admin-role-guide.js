@@ -4,7 +4,7 @@
   if (!root) return;
 
   const guides = {
-    super_admin: { label: 'Super Admin', file: 'panduan-super-admin-v3.9.0.pdf', preview: 'panduan-super-admin-v3.9.0', pages: 3, description: 'Panduan lengkap Ringkasan, Jemaah, Manasik, Agenda, Dokumen, Pengumuman, Manajemen Admin, dan Pengaturan.' },
+    super_admin: { label: 'Senior Full Stack Developer · Platform Architect', file: 'panduan-super-admin-v3.9.0.pdf', preview: 'panduan-super-admin-v3.9.0', pages: 3, description: 'Panduan untuk akun dengan akses sistem tingkat tertinggi: Ringkasan, Jemaah, Manasik, Agenda, Dokumen, Pengumuman, Manajemen Admin, dan Pengaturan.' },
     admin: { label: 'Admin', file: 'panduan-admin-v3.9.0.pdf', preview: 'panduan-admin-v3.9.0', pages: 3, description: 'Panduan operasional pengelolaan Jemaah, verifikasi dokumen, Manasik, Agenda, Pengumuman, dan Pengaturan yang diizinkan.' },
     tour_leader: { label: 'Tour Leader', file: 'panduan-tour-leader-v3.9.0.pdf', preview: 'panduan-tour-leader-v3.9.0', pages: 3, description: 'Panduan koordinasi perjalanan, Agenda, Pengumuman, Manasik, dan pemantauan Jemaah sesuai kewenangan role.' },
     pendamping: { label: 'Pendamping', file: 'panduan-pendamping-v3.9.0.pdf', preview: 'panduan-pendamping-v3.9.0', pages: 3, description: 'Panduan pemantauan dan pendampingan Jemaah, Agenda, Pengumuman, serta jalur eskalasi sesuai kewenangan role.' }
@@ -21,6 +21,18 @@
     const stage = document.createElement('div');
     stage.className = 'admin-role-guide-stage';
     const pages = [];
+
+    const imagePrev = document.createElement('button');
+    imagePrev.type = 'button';
+    imagePrev.className = 'admin-role-guide-image-nav admin-role-guide-image-nav-prev';
+    imagePrev.setAttribute('aria-label', 'Halaman panduan sebelumnya');
+    imagePrev.innerHTML = '<span aria-hidden="true">‹</span>';
+
+    const imageNext = document.createElement('button');
+    imageNext.type = 'button';
+    imageNext.className = 'admin-role-guide-image-nav admin-role-guide-image-nav-next';
+    imageNext.setAttribute('aria-label', 'Halaman panduan berikutnya');
+    imageNext.innerHTML = '<span aria-hidden="true">›</span>';
 
     for (let page = 1; page <= cfg.pages; page += 1) {
       const figure = document.createElement('figure');
@@ -70,15 +82,20 @@
       status.textContent = `Halaman ${current + 1} dari ${pages.length}`;
       prev.disabled = current === 0;
       next.disabled = current === pages.length - 1;
+      imagePrev.disabled = current === 0;
+      imageNext.disabled = current === pages.length - 1;
     }
 
     prev.addEventListener('click', () => show(current - 1));
     next.addEventListener('click', () => show(current + 1));
+    imagePrev.addEventListener('click', () => show(current - 1));
+    imageNext.addEventListener('click', () => show(current + 1));
     viewer.addEventListener('keydown', (event) => {
       if (event.key === 'ArrowLeft') { event.preventDefault(); show(current - 1); }
       if (event.key === 'ArrowRight') { event.preventDefault(); show(current + 1); }
     });
 
+    stage.append(imagePrev, imageNext);
     viewer.append(stage, nav);
     container.append(viewer);
     show(0);

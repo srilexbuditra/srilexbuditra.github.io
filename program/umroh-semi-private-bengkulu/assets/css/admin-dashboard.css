@@ -24,3 +24,14 @@
 
 /* V3.9.0.2 paginated role guide */
 .admin-role-guide-viewer{outline:none}.admin-role-guide-stage{margin-top:12px}.admin-role-guide-nav{display:grid;grid-template-columns:auto 1fr auto auto;gap:10px;align-items:center;margin-top:12px;padding:10px;border:1px solid #d7e1df;border-radius:12px;background:#fff}.admin-role-guide-nav-button,.admin-role-guide-page-button{appearance:none;border:1px solid #d7e1df;background:#fff;color:#0b2830;border-radius:9px;min-height:36px;padding:0 12px;font:inherit;font-size:12px;font-weight:800;cursor:pointer}.admin-role-guide-nav-button:hover,.admin-role-guide-page-button:hover{background:#f2f7f5}.admin-role-guide-nav-button:disabled{opacity:.42;cursor:not-allowed}.admin-role-guide-page-picker{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}.admin-role-guide-page-button{min-width:36px;padding:0 9px}.admin-role-guide-page-button.is-active{background:#0b2830;color:#fff;border-color:#0b2830}.admin-role-guide-page-status{font-size:12px;font-weight:800;color:#5d7075;white-space:nowrap}@media(max-width:760px){.admin-role-guide-nav{grid-template-columns:1fr 1fr}.admin-role-guide-page-picker{grid-column:1/-1;grid-row:1}.admin-role-guide-page-status{grid-column:1/-1;grid-row:2;text-align:center}.admin-role-guide-nav-button{grid-row:3;width:100%}}
+
+
+/* V3.9.0.3 image-edge role-guide navigation */
+.admin-role-guide-stage{position:relative}
+.admin-role-guide-image-nav{position:absolute;top:50%;z-index:8;display:flex;align-items:center;justify-content:center;width:48px;height:48px;margin:0;padding:0;border:1px solid rgba(255,255,255,.82);border-radius:999px;background:rgba(11,40,48,.86);color:#fff;box-shadow:0 8px 24px rgba(11,40,48,.22);transform:translateY(-50%);cursor:pointer;transition:transform .16s ease,background .16s ease,opacity .16s ease}
+.admin-role-guide-image-nav span{font-size:36px;line-height:1;transform:translateY(-1px)}
+.admin-role-guide-image-nav-prev{left:22px}.admin-role-guide-image-nav-next{right:22px}
+.admin-role-guide-image-nav:hover:not(:disabled){background:#0b2830;transform:translateY(-50%) scale(1.06)}
+.admin-role-guide-image-nav:focus-visible{outline:3px solid #d3a21e;outline-offset:3px}
+.admin-role-guide-image-nav:disabled{opacity:.24;cursor:not-allowed}
+@media(max-width:760px){.admin-role-guide-image-nav{width:42px;height:42px}.admin-role-guide-image-nav span{font-size:31px}.admin-role-guide-image-nav-prev{left:10px}.admin-role-guide-image-nav-next{right:10px}}
