@@ -51,7 +51,7 @@
   }[char]));
 
   const roleLabel = (role) => ({
-    super_admin: 'Super Admin',
+    super_admin: 'Senior Full Stack Developer · Platform Architect',
     admin: 'Admin',
     tour_leader: 'Tour Leader',
     pendamping: 'Pendamping'

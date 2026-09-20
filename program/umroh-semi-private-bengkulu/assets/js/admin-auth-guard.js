@@ -9,7 +9,7 @@
   const logoutButton = document.querySelector('[data-admin-logout]');
 
   const roleLabel = (role) => {
-    if (role === 'super_admin') return 'Super Admin';
+    if (role === 'super_admin') return 'Senior Full Stack Developer · Platform Architect';
     if (role === 'admin') return 'Admin';
     if (role === 'tour_leader') return 'Tour Leader';
     if (role === 'pendamping') return 'Pendamping';

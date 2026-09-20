@@ -302,7 +302,7 @@
         invalid_image_signature: 'Isi file branding tidak cocok dengan formatnya.',
         media_file_required: 'File branding belum dipilih.',
         media_file_too_large: 'Ukuran file maksimum 5 MB.',
-        forbidden: 'Hanya Super Admin yang dapat mengubah Branding Global.'
+        forbidden: 'Hanya Senior Full Stack Developer · Platform Architect yang dapat mengubah Branding Global.'
       };
       setBrandingStatus(labels[error.code] || `Gagal menerapkan branding: ${error.code || error.message}`, 'error');
     } finally {
@@ -318,7 +318,7 @@
       setBranding(data.branding || {});
       setBrandingStatus('Branding Global dimuat dari D1. URL aset bersifat permanen.', 'success');
     } catch (error) {
-      const labels = { forbidden: 'Branding Global hanya dapat diubah oleh Super Admin.' };
+      const labels = { forbidden: 'Branding Global hanya dapat diubah oleh Senior Full Stack Developer · Platform Architect.' };
       setBrandingStatus(labels[error.code] || `Gagal memuat branding: ${error.code || error.message}`, 'error');
     }
   };

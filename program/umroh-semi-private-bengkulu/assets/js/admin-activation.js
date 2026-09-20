@@ -73,7 +73,7 @@
       if (!response.ok || !result?.ok) {
         const text = {
           activation_failed: 'Aktivasi gagal. Periksa username, kode aktivasi, atau masa berlaku kode.',
-          activation_locked: 'Kode aktivasi dikunci karena terlalu banyak percobaan. Hubungi Super Admin untuk Reset Akses.',
+          activation_locked: 'Kode aktivasi dikunci karena terlalu banyak percobaan. Hubungi Senior Full Stack Developer · Platform Architect untuk Reset Akses.',
           password_too_short: 'Password minimal 10 karakter.',
           password_too_long: 'Password terlalu panjang.'
         }[result?.error] || 'Aktivasi belum berhasil. Coba kembali.';
