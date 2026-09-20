@@ -32,15 +32,37 @@
     activityList: $('[data-live-activity-list]'),
     activityWindow: $('[data-activity-window]'),
     pageDate: $('[data-live-page-date]'),
+    pageTitle: $('.page-head h1'),
+    pageDescription: $('.page-head p'),
+    prototypeNote: $('.prototype-note'),
+  };
+
+  const ui = {
+    manasikCard: nodes.manasikTotal?.closest('.stat-card') || null,
+    manasikIcon: nodes.manasikTotal?.closest('.stat-card')?.querySelector('.ui-icon') || null,
+    manasikLabel: nodes.manasikTotal?.parentElement?.querySelector('span') || null,
+    attentionDocumentsRow: nodes.attentionDocuments?.closest('.attention-row') || null,
+    attentionJamaahRow: nodes.attentionJamaah?.closest('.attention-row') || null,
+    attentionAgendaRow: nodes.attentionAgenda?.closest('.attention-row') || null,
+    attentionAnnouncementsRow: nodes.attentionAnnouncements?.closest('.attention-row') || null,
+    attentionTitle: nodes.attentionDocuments?.closest('article')?.querySelector('.section-title h2') || null,
+    agendaAction: $('[data-admin-agenda-preview]')?.closest('article')?.querySelector('.section-title a') || null,
+    activityTitle: nodes.activityList?.closest('article')?.querySelector('.section-title h2') || null,
   };
 
   let activeDays = Number($('[data-context-tab].is-active')?.dataset.windowDays || 7);
+  let lastData = null;
 
   const pct = (count, total) => total ? Math.round((Number(count || 0) / Number(total)) * 100) : 0;
 
   const setText = (node, value) => {
     if (node) node.textContent = String(value);
   };
+
+  const currentRole = () =>
+    document.documentElement.dataset.adminRole ||
+    window.UMROH_ADMIN_ACCOUNT?.role ||
+    '';
 
   const normalizeDate = (value) => {
     const raw = String(value || '').trim();
@@ -105,14 +127,23 @@
     }
   };
 
-  const renderActivities = (activities = []) => {
+  const roleActivities = (activities = [], role = '') => {
+    if (role !== 'pendamping') return activities;
+    const allowedBadges = new Set(['Jemaah', 'Agenda', 'Pengumuman', 'Checklist']);
+    return activities.filter((item) => allowedBadges.has(String(item.badge || '')));
+  };
+
+  const renderActivities = (activities = [], role = '') => {
     if (!nodes.activityList) return;
-    if (!activities.length) {
-      nodes.activityList.innerHTML = '<div class="table-state">Belum ada aktivitas backend pada rentang waktu ini.</div>';
+    const visible = roleActivities(activities, role);
+    if (!visible.length) {
+      nodes.activityList.innerHTML = role === 'pendamping'
+        ? '<div class="table-state">Belum ada aktivitas pendampingan pada rentang waktu ini.</div>'
+        : '<div class="table-state">Belum ada aktivitas backend pada rentang waktu ini.</div>';
       return;
     }
 
-    nodes.activityList.innerHTML = activities.slice(0, 8).map((item) => `
+    nodes.activityList.innerHTML = visible.slice(0, 8).map((item) => `
       <div class="activity-row">
         <div class="avatar-mini">${esc(initials(item.name))}</div>
         <div>
@@ -124,10 +155,69 @@
     `).join('');
   };
 
+  const resetRolePresentation = () => {
+    if (ui.manasikCard) ui.manasikCard.hidden = false;
+    if (ui.attentionDocumentsRow) ui.attentionDocumentsRow.hidden = false;
+    if (ui.attentionAnnouncementsRow) ui.attentionAnnouncementsRow.hidden = false;
+    if (ui.manasikLabel) ui.manasikLabel.textContent = 'Materi Manasik';
+    if (ui.manasikIcon) ui.manasikIcon.className = 'ui-icon icon-book';
+    if (ui.attentionTitle) ui.attentionTitle.textContent = 'Perlu Perhatian Operasional';
+    if (ui.activityTitle) ui.activityTitle.textContent = 'Aktivitas Terbaru';
+    if (ui.agendaAction) ui.agendaAction.textContent = 'Kelola →';
+    if (nodes.pageTitle) nodes.pageTitle.textContent = 'Ringkasan';
+    if (nodes.pageDescription) nodes.pageDescription.textContent = 'Prioritaskan pekerjaan yang membutuhkan tindakan tanpa memenuhi dashboard dengan informasi yang tidak penting.';
+  };
+
+  const applyPendampingPresentation = (summary = {}, attention = {}) => {
+    const readiness = summary.readiness || {};
+    const assistance = Number(readiness.needs_assistance || 0);
+    const jamaahAttention = Number(attention.jamaah_incomplete || 0);
+    const agendaAttention = Number(attention.agenda_in_window || 0);
+    const roleAttentionTotal = jamaahAttention + agendaAttention;
+
+    if (nodes.pageTitle) nodes.pageTitle.textContent = 'Ringkasan Pendamping';
+    if (nodes.pageDescription) {
+      nodes.pageDescription.textContent = 'Fokus pada kondisi Jemaah, kebutuhan pendampingan, agenda perjalanan, dan informasi yang perlu disampaikan.';
+    }
+    if (nodes.prototypeNote) {
+      nodes.prototypeNote.innerHTML = '<strong>Platform V3.9.0 aktif.</strong> Ringkasan ini disesuaikan dengan tugas Pendamping. Informasi dokumen privat, draft pengumuman, dan fungsi administratif tidak ditampilkan.';
+    }
+
+    if (ui.manasikCard) ui.manasikCard.hidden = false;
+    setText(nodes.manasikTotal, assistance);
+    if (ui.manasikLabel) ui.manasikLabel.textContent = 'Perlu Pendampingan';
+    if (ui.manasikIcon) ui.manasikIcon.className = 'ui-icon icon-users';
+
+    setText(nodes.attentionTotal, roleAttentionTotal);
+    if (nodes.attentionDot) {
+      nodes.attentionDot.textContent = roleAttentionTotal > 99 ? '99+' : String(roleAttentionTotal);
+      nodes.attentionDot.hidden = roleAttentionTotal === 0;
+    }
+
+    if (ui.attentionDocumentsRow) ui.attentionDocumentsRow.hidden = true;
+    if (ui.attentionAnnouncementsRow) ui.attentionAnnouncementsRow.hidden = true;
+    if (ui.attentionTitle) ui.attentionTitle.textContent = 'Prioritas Pendampingan';
+
+    const jamaahCopy = ui.attentionJamaahRow?.querySelector('div:nth-child(2)');
+    if (jamaahCopy) {
+      const strong = jamaahCopy.querySelector('strong');
+      const span = jamaahCopy.querySelector('span');
+      if (strong) strong.textContent = 'Jemaah membutuhkan pendampingan';
+      if (span) span.textContent = 'Jemaah aktif yang masih membutuhkan bantuan atau penyelesaian persiapan.';
+    }
+
+    if (ui.agendaAction) ui.agendaAction.textContent = 'Lihat →';
+    if (ui.activityTitle) ui.activityTitle.textContent = 'Aktivitas Pendampingan';
+  };
+
   const render = (data) => {
+    lastData = data;
     const summary = data.summary || {};
     const attention = summary.attention || {};
     const windowDays = Number(data.window_days || activeDays || 7);
+    const role = currentRole();
+
+    resetRolePresentation();
 
     setText(nodes.jamaahTotal, Number(summary.jamaah_total || 0));
     if (nodes.jamaahSource) nodes.jamaahSource.textContent = '· D1';
@@ -155,7 +245,12 @@
     }
 
     renderReadiness(summary.readiness || {});
-    renderActivities(data.activities || []);
+
+    if (role === 'pendamping') {
+      applyPendampingPresentation(summary, attention);
+    }
+
+    renderActivities(data.activities || [], role);
   };
 
   const load = async (days = activeDays) => {
@@ -195,6 +290,11 @@
       load(Number(button.dataset.windowDays || 7));
     });
   });
+
+  const roleObserver = new MutationObserver(() => {
+    if (lastData) render(lastData);
+  });
+  roleObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-admin-role'] });
 
   load(activeDays);
   addEventListener('focus', () => load(activeDays));
