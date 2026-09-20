@@ -137,6 +137,10 @@
       const allowedBadges = new Set(['Jemaah', 'Agenda', 'Pengumuman', 'Manasik', 'Checklist']);
       return activities.filter((item) => allowedBadges.has(String(item.badge || '')));
     }
+    if (role === 'admin') {
+      const allowedBadges = new Set(['Jemaah', 'Agenda', 'Pengumuman', 'Manasik', 'Checklist', 'Dokumen']);
+      return activities.filter((item) => allowedBadges.has(String(item.badge || '')));
+    }
     return activities;
   };
 
@@ -148,7 +152,9 @@
         ? '<div class="table-state">Belum ada aktivitas pendampingan pada rentang waktu ini.</div>'
         : role === 'tour_leader'
           ? '<div class="table-state">Belum ada aktivitas Tour Leader pada rentang waktu ini.</div>'
-          : '<div class="table-state">Belum ada aktivitas backend pada rentang waktu ini.</div>';
+          : role === 'admin'
+            ? '<div class="table-state">Belum ada aktivitas operasional Admin pada rentang waktu ini.</div>'
+            : '<div class="table-state">Belum ada aktivitas backend pada rentang waktu ini.</div>';
       return;
     }
 
@@ -232,6 +238,29 @@
     if (nodes.searchInput) nodes.searchInput.placeholder = 'Cari jemaah, agenda, pengumuman...';
   };
 
+  const applyAdminPresentation = () => {
+    if (nodes.pageTitle) nodes.pageTitle.textContent = 'Ringkasan Admin Operasional';
+    if (nodes.pageDescription) {
+      nodes.pageDescription.textContent = 'Fokus pada pengelolaan Jemaah, verifikasi dokumen, Manasik, Agenda, dan Pengumuman sesuai kewenangan operasional.';
+    }
+    if (nodes.prototypeNote) {
+      nodes.prototypeNote.innerHTML = '<strong>Platform V3.9.0 aktif.</strong> Ringkasan ini disesuaikan dengan tugas Admin Operasional. Pengelolaan akun staf tingkat tertinggi tetap dibatasi untuk Senior Full Stack Developer · Platform Architect.';
+    }
+
+    if (ui.attentionTitle) ui.attentionTitle.textContent = 'Prioritas Admin Operasional';
+    if (ui.activityTitle) ui.activityTitle.textContent = 'Aktivitas Admin Operasional';
+    if (ui.agendaAction) ui.agendaAction.textContent = 'Kelola →';
+    if (nodes.searchInput) nodes.searchInput.placeholder = 'Cari jemaah, agenda, dokumen...';
+
+    const jamaahCopy = ui.attentionJamaahRow?.querySelector('div:nth-child(2)');
+    if (jamaahCopy) {
+      const strong = jamaahCopy.querySelector('strong');
+      const span = jamaahCopy.querySelector('span');
+      if (strong) strong.textContent = 'Jemaah perlu tindak lanjut operasional';
+      if (span) span.textContent = 'Pantau Jemaah yang belum menyelesaikan persiapan dan tindak lanjuti kebutuhan akun atau data yang diperlukan.';
+    }
+  };
+
   const applyTourLeaderPresentation = (summary = {}, attention = {}) => {
     const jamaahAttention = Number(attention.jamaah_incomplete || 0);
     const agendaAttention = Number(attention.agenda_in_window || 0);
@@ -309,6 +338,8 @@
       applyPendampingPresentation(summary, attention);
     } else if (role === 'tour_leader') {
       applyTourLeaderPresentation(summary, attention);
+    } else if (role === 'admin') {
+      applyAdminPresentation();
     }
 
     renderActivities(data.activities || [], role);
