@@ -11,12 +11,12 @@
 <link href="../assets/css/dashboard-shell.css" rel="stylesheet"/>
 <link href="../assets/css/admin-dashboard.css" rel="stylesheet"/>
 <link href="../assets/css/visual-assets.css" rel="stylesheet"/>
-<link href="../assets/css/admin-auth.css" rel="stylesheet"/><link rel="icon" href="/program/umroh-semi-private-bengkulu/branding/favicon.ico" sizes="any"/>
-<link rel="icon" type="image/png" sizes="32x32" href="/program/umroh-semi-private-bengkulu/branding/favicon-32x32.png"/>
-<link rel="icon" type="image/png" sizes="16x16" href="/program/umroh-semi-private-bengkulu/branding/favicon-16x16.png"/>
-<link rel="apple-touch-icon" sizes="180x180" href="/program/umroh-semi-private-bengkulu/branding/apple-touch-icon.png"/>
-<link rel="manifest" href="/program/umroh-semi-private-bengkulu/branding/site.webmanifest"/>
-<link rel="stylesheet" href="/program/umroh-semi-private-bengkulu/assets/css/branding.css?v=3.9.0-step6"/>
+<link href="../assets/css/admin-auth.css" rel="stylesheet"/><link href="/program/umroh-semi-private-bengkulu/branding/favicon.ico" rel="icon" sizes="any"/>
+<link href="/program/umroh-semi-private-bengkulu/branding/favicon-32x32.png" rel="icon" sizes="32x32" type="image/png"/>
+<link href="/program/umroh-semi-private-bengkulu/branding/favicon-16x16.png" rel="icon" sizes="16x16" type="image/png"/>
+<link href="/program/umroh-semi-private-bengkulu/branding/apple-touch-icon.png" rel="apple-touch-icon" sizes="180x180"/>
+<link href="/program/umroh-semi-private-bengkulu/branding/site.webmanifest" rel="manifest"/>
+<link href="/program/umroh-semi-private-bengkulu/assets/css/branding.css?v=3.9.0-step6" rel="stylesheet"/>
 </head>
 <body class="dashboard-app admin-dashboard">
 <aside aria-label="Navigasi admin" class="app-sidebar">
@@ -35,7 +35,7 @@
 <a class="nav-item" data-nav-item="" data-rbac="super_admin admin tour_leader pendamping" href="pengumuman/"><span class="nav-icon"><span aria-hidden="true" class="ui-icon icon-megaphone"></span></span><span class="nav-label">Pengumuman</span></a>
 <a class="nav-item" data-nav-item="" data-rbac="super_admin admin" href="#laporan"><span class="nav-icon"><span aria-hidden="true" class="ui-icon icon-chart"></span></span><span class="nav-label">Laporan</span></a>
 <div class="nav-section-label">Sistem</div>
-<a class="nav-item" data-nav-item="" data-super-admin-only data-rbac="super_admin" href="./manajemen-admin/"><span class="nav-icon"><span aria-hidden="true" class="ui-icon icon-admin"></span></span><span class="nav-label">Manajemen Admin</span></a>
+<a class="nav-item" data-nav-item="" data-rbac="super_admin" data-super-admin-only="" href="./manajemen-admin/"><span class="nav-icon"><span aria-hidden="true" class="ui-icon icon-admin"></span></span><span class="nav-label">Manajemen Admin</span></a>
 <a class="nav-item" data-nav-item="" data-rbac="super_admin admin" href="./pengaturan/"><span class="nav-icon"><span aria-hidden="true" class="ui-icon icon-settings"></span></span><span class="nav-label">Pengaturan</span></a>
 </nav>
 <div class="sidebar-foot"><div class="tech-credit"><small>Pengembangan Sistem &amp; Dukungan Teknologi</small><strong>Srilex Buditra</strong><a href="https://srilexbuditra.work/">srilexbuditra.work</a></div></div>
@@ -46,46 +46,63 @@
 <button aria-label="Buka menu" class="mobile-menu" data-mobile-menu="">☰</button>
 <div class="search-box"><span aria-hidden="true"><span aria-hidden="true" class="ui-icon icon-search"></span></span><input placeholder="Cari jemaah, agenda, dokumen..." type="search"/></div>
 <div class="topbar-spacer"></div>
-<button aria-label="Notifikasi" class="icon-button"><span aria-hidden="true" class="ui-icon icon-bell"></span><span class="notification-dot" data-live-attention-dot>0</span></button>
-<div class="user-chip"><div class="avatar" data-auth-avatar>SB</div><div class="user-copy"><strong data-auth-name>Srilex Buditra</strong><span data-auth-role>Senior Full Stack Developer · Platform Architect</span></div></div>
-<button class="auth-logout" data-admin-logout type="button">Keluar</button>
+<button aria-label="Notifikasi" class="icon-button"><span aria-hidden="true" class="ui-icon icon-bell"></span><span class="notification-dot" data-live-attention-dot="">0</span></button>
+<div class="user-chip"><div class="avatar" data-auth-avatar="">SB</div><div class="user-copy"><strong data-auth-name="">Srilex Buditra</strong><span data-auth-role="">Senior Full Stack Developer · Platform Architect</span></div></div>
+<button class="auth-logout" data-admin-logout="" type="button">Keluar</button>
 </header>
 <main class="page-wrap" id="ringkasan">
 <div class="prototype-note"><strong>Platform V3.9.0 aktif.</strong> Ringkasan operasional, status persiapan, dokumen, agenda, pengumuman, dan aktivitas terbaru kini dihitung dari backend resmi. Data simulasi pada Ringkasan Admin telah dihentikan.</div>
-<div class="page-head"><div><span class="page-kicker">Operational Workspace</span><h1>Ringkasan</h1><p>Prioritaskan pekerjaan yang membutuhkan tindakan tanpa memenuhi dashboard dengan informasi yang tidak penting.</p></div><div class="page-date"><span data-live-page-date>—</span><br/>Platform V3.9.0</div></div>
-<div aria-label="Konteks ringkasan" class="context-tabs"><button class="context-tab" data-context-tab data-window-days="1">Hari Ini</button><button class="context-tab is-active" data-context-tab data-window-days="7">7 Hari</button><button class="context-tab" data-context-tab data-window-days="30">30 Hari</button></div>
+<div class="page-head"><div><span class="page-kicker">Operational Workspace</span><h1>Ringkasan</h1><p>Prioritaskan pekerjaan yang membutuhkan tindakan tanpa memenuhi dashboard dengan informasi yang tidak penting.</p></div><div class="page-date"><span data-live-page-date="">—</span><br/>Platform V3.9.0</div></div>
+<div aria-label="Konteks ringkasan" class="context-tabs"><button class="context-tab" data-context-tab="" data-window-days="1">Hari Ini</button><button class="context-tab is-active" data-context-tab="" data-window-days="7">7 Hari</button><button class="context-tab" data-context-tab="" data-window-days="30">30 Hari</button></div>
 <section aria-label="Statistik utama" class="stats-grid">
-<article class="card stat-card"><div class="stat-icon"><span aria-hidden="true" class="ui-icon icon-users"></span></div><div><strong data-live-jamaah-total>—</strong><span>Total Jemaah <small data-live-jamaah-source>· D1</small></span></div></article>
-<article class="card stat-card"><div class="stat-icon info"><span aria-hidden="true" class="ui-icon icon-calendar"></span></div><div><strong data-live-agenda-total>0</strong><span>Agenda Resmi Mendatang</span></div></article>
-<article class="card stat-card"><div class="stat-icon gold"><span aria-hidden="true" class="ui-icon icon-book"></span></div><div><strong data-live-manasik-total>—</strong><span>Materi Manasik</span></div></article>
-<article class="card stat-card"><div class="stat-icon danger"><span aria-hidden="true" class="ui-icon icon-alert"></span></div><div><strong data-live-attention-total>—</strong><span>Perlu Perhatian</span></div></article>
+<article class="card stat-card"><div class="stat-icon"><span aria-hidden="true" class="ui-icon icon-users"></span></div><div><strong data-live-jamaah-total="">—</strong><span>Total Jemaah <small data-live-jamaah-source="">· D1</small></span></div></article>
+<article class="card stat-card"><div class="stat-icon info"><span aria-hidden="true" class="ui-icon icon-calendar"></span></div><div><strong data-live-agenda-total="">0</strong><span>Agenda Resmi Mendatang</span></div></article>
+<article class="card stat-card"><div class="stat-icon gold"><span aria-hidden="true" class="ui-icon icon-book"></span></div><div><strong data-live-manasik-total="">—</strong><span>Materi Manasik</span></div></article>
+<article class="card stat-card"><div class="stat-icon danger"><span aria-hidden="true" class="ui-icon icon-alert"></span></div><div><strong data-live-attention-total="">—</strong><span>Perlu Perhatian</span></div></article>
 </section>
 <section class="admin-grid">
 <article class="card card-pad">
 <div class="section-title"><h2>Perlu Perhatian Operasional</h2><a href="./jemaah/">Lihat Jemaah →</a></div>
 <div class="attention-list">
-<div class="attention-row"><div class="attention-count danger" data-attention-documents>—</div><div><strong>Dokumen jemaah perlu diperiksa</strong><span>Upload aktif dengan status verifikasi Admin belum selesai.</span></div><div class="row-arrow">›</div></div>
-<div class="attention-row"><div class="attention-count warning" data-attention-jamaah>—</div><div><strong>Jemaah belum menyelesaikan persiapan</strong><span>Jemaah aktif yang belum memenuhi seluruh komponen persiapan.</span></div><div class="row-arrow">›</div></div>
-<div class="attention-row"><div class="attention-count success" data-attention-agenda>—</div><div><strong data-attention-agenda-label>Agenda dalam 7 hari</strong><span>Agenda resmi mendatang pada rentang waktu yang dipilih.</span></div><div class="row-arrow">›</div></div>
-<div class="attention-row"><div class="attention-count warning" data-attention-announcements>—</div><div><strong>Pengumuman belum dipublikasikan</strong><span>Draft tersimpan di D1 dan belum tampil pada akun Jemaah.</span></div><div class="row-arrow">›</div></div>
+<div class="attention-row"><div class="attention-count danger" data-attention-documents="">—</div><div><strong>Dokumen jemaah perlu diperiksa</strong><span>Upload aktif dengan status verifikasi Admin belum selesai.</span></div><div class="row-arrow">›</div></div>
+<div class="attention-row"><div class="attention-count warning" data-attention-jamaah="">—</div><div><strong>Jemaah belum menyelesaikan persiapan</strong><span>Jemaah aktif yang belum memenuhi seluruh komponen persiapan.</span></div><div class="row-arrow">›</div></div>
+<div class="attention-row"><div class="attention-count success" data-attention-agenda="">—</div><div><strong data-attention-agenda-label="">Agenda dalam 7 hari</strong><span>Agenda resmi mendatang pada rentang waktu yang dipilih.</span></div><div class="row-arrow">›</div></div>
+<div class="attention-row"><div class="attention-count warning" data-attention-announcements="">—</div><div><strong>Pengumuman belum dipublikasikan</strong><span>Draft tersimpan di D1 dan belum tampil pada akun Jemaah.</span></div><div class="row-arrow">›</div></div>
 </div>
 </article>
 <article class="card card-pad">
 <div class="section-title"><h2>Status Persiapan Jemaah</h2><a href="./jemaah/">Detail →</a></div>
 <div class="readiness">
-<div class="donut" data-readiness-donut><div class="donut-center"><strong data-readiness-total>—</strong><span>Jemaah</span></div></div>
+<div class="donut" data-readiness-donut=""><div class="donut-center"><strong data-readiness-total="">—</strong><span>Jemaah</span></div></div>
 <div class="legend">
-<div class="legend-row"><i class="legend-dot is-success"></i><span>Siap Berangkat</span><strong data-readiness-ready>—</strong></div>
-<div class="legend-row"><i class="legend-dot is-warning"></i><span>Dalam Persiapan</span><strong data-readiness-progress>—</strong></div>
-<div class="legend-row"><i class="legend-dot is-danger"></i><span>Perlu Pendampingan</span><strong data-readiness-assistance>—</strong></div>
-<div class="legend-row"><i class="legend-dot is-muted"></i><span>Belum Aktif</span><strong data-readiness-inactive>—</strong></div>
+<div class="legend-row"><i class="legend-dot is-success"></i><span>Siap Berangkat</span><strong data-readiness-ready="">—</strong></div>
+<div class="legend-row"><i class="legend-dot is-warning"></i><span>Dalam Persiapan</span><strong data-readiness-progress="">—</strong></div>
+<div class="legend-row"><i class="legend-dot is-danger"></i><span>Perlu Pendampingan</span><strong data-readiness-assistance="">—</strong></div>
+<div class="legend-row"><i class="legend-dot is-muted"></i><span>Belum Aktif</span><strong data-readiness-inactive="">—</strong></div>
 </div>
 </div>
 </article>
 </section>
 <section class="lower-grid">
-<article class="card card-pad" id="agenda-preview"><div class="section-title"><h2>Agenda Terdekat</h2><a href="./agenda/">Kelola →</a></div><div class="agenda-list" data-admin-agenda-preview><div class="table-state">Memuat agenda resmi...</div></div></article>
-<article class="card card-pad"><div class="section-title"><h2>Aktivitas Terbaru</h2><span data-activity-window>7 hari terakhir</span></div><div class="activity-list" data-live-activity-list><div class="table-state">Memuat aktivitas backend...</div></div></article>
+<article class="card card-pad" id="agenda-preview"><div class="section-title"><h2>Agenda Terdekat</h2><a href="./agenda/">Kelola →</a></div><div class="agenda-list" data-admin-agenda-preview=""><div class="table-state">Memuat agenda resmi...</div></div></article>
+<article class="card card-pad"><div class="section-title"><h2>Aktivitas Terbaru</h2><span data-activity-window="">7 hari terakhir</span></div><div class="activity-list" data-live-activity-list=""><div class="table-state">Memuat aktivitas backend...</div></div></article>
+</section>
+
+<section class="card card-pad admin-role-guide" data-admin-role-guide="">
+<div class="section-title admin-role-guide-head">
+<div><span class="admin-role-guide-kicker">Dokumentasi penggunaan</span><h2>Panduan Dashboard <span data-role-guide-label="">Staf</span></h2></div>
+<div class="admin-role-guide-actions">
+<a data-role-guide-open="" href="#" rel="noopener" target="_blank">Buka PDF</a>
+<a data-role-guide-download="" download="" href="#">Download PDF</a>
+</div>
+</div>
+<p data-role-guide-description="">Panduan penggunaan akan disesuaikan otomatis dengan role akun yang sedang login.</p>
+<details class="admin-role-guide-details">
+<summary>Tampilkan panduan di Dashboard</summary>
+<div class="admin-role-guide-frame-wrap">
+<iframe class="admin-role-guide-frame" data-role-guide-frame="" loading="lazy" title="Panduan penggunaan Dashboard staf"></iframe>
+</div>
+</details>
 </section>
 </main>
 </div>
@@ -93,5 +110,5 @@
 <script src="../assets/js/dashboard-shell.js"></script>
 <script src="../assets/js/admin-operational-summary.js?v=3.7.0"></script>
 <script src="../assets/js/admin-agenda-summary.js?v=3.7.0"></script>
-</body>
+<script src="../assets/js/admin-role-guide.js?v=3.9.0"></script></body>
 </html>
