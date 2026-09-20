@@ -35,6 +35,7 @@
     pageTitle: $('.page-head h1'),
     pageDescription: $('.page-head p'),
     prototypeNote: $('.prototype-note'),
+    searchInput: $('.search-box input'),
   };
 
   const ui = {
@@ -128,9 +129,15 @@
   };
 
   const roleActivities = (activities = [], role = '') => {
-    if (role !== 'pendamping') return activities;
-    const allowedBadges = new Set(['Jemaah', 'Agenda', 'Pengumuman', 'Checklist']);
-    return activities.filter((item) => allowedBadges.has(String(item.badge || '')));
+    if (role === 'pendamping') {
+      const allowedBadges = new Set(['Jemaah', 'Agenda', 'Pengumuman', 'Checklist']);
+      return activities.filter((item) => allowedBadges.has(String(item.badge || '')));
+    }
+    if (role === 'tour_leader') {
+      const allowedBadges = new Set(['Jemaah', 'Agenda', 'Pengumuman', 'Manasik', 'Checklist']);
+      return activities.filter((item) => allowedBadges.has(String(item.badge || '')));
+    }
+    return activities;
   };
 
   const renderActivities = (activities = [], role = '') => {
@@ -139,7 +146,9 @@
     if (!visible.length) {
       nodes.activityList.innerHTML = role === 'pendamping'
         ? '<div class="table-state">Belum ada aktivitas pendampingan pada rentang waktu ini.</div>'
-        : '<div class="table-state">Belum ada aktivitas backend pada rentang waktu ini.</div>';
+        : role === 'tour_leader'
+          ? '<div class="table-state">Belum ada aktivitas Tour Leader pada rentang waktu ini.</div>'
+          : '<div class="table-state">Belum ada aktivitas backend pada rentang waktu ini.</div>';
       return;
     }
 
@@ -166,6 +175,18 @@
     if (ui.agendaAction) ui.agendaAction.textContent = 'Kelola →';
     if (nodes.pageTitle) nodes.pageTitle.textContent = 'Ringkasan';
     if (nodes.pageDescription) nodes.pageDescription.textContent = 'Prioritaskan pekerjaan yang membutuhkan tindakan tanpa memenuhi dashboard dengan informasi yang tidak penting.';
+    if (nodes.prototypeNote) {
+      nodes.prototypeNote.innerHTML = '<strong>Platform V3.9.0 aktif.</strong> Ringkasan operasional, status persiapan, dokumen, agenda, pengumuman, dan aktivitas terbaru kini dihitung dari backend resmi. Data simulasi pada Ringkasan Admin telah dihentikan.';
+    }
+    if (nodes.searchInput) nodes.searchInput.placeholder = 'Cari jemaah, agenda, dokumen...';
+
+    const jamaahCopy = ui.attentionJamaahRow?.querySelector('div:nth-child(2)');
+    if (jamaahCopy) {
+      const strong = jamaahCopy.querySelector('strong');
+      const span = jamaahCopy.querySelector('span');
+      if (strong) strong.textContent = 'Jemaah belum menyelesaikan persiapan';
+      if (span) span.textContent = 'Jemaah aktif yang belum memenuhi seluruh komponen persiapan.';
+    }
   };
 
   const applyPendampingPresentation = (summary = {}, attention = {}) => {
@@ -208,6 +229,44 @@
 
     if (ui.agendaAction) ui.agendaAction.textContent = 'Lihat →';
     if (ui.activityTitle) ui.activityTitle.textContent = 'Aktivitas Pendampingan';
+    if (nodes.searchInput) nodes.searchInput.placeholder = 'Cari jemaah, agenda, pengumuman...';
+  };
+
+  const applyTourLeaderPresentation = (summary = {}, attention = {}) => {
+    const jamaahAttention = Number(attention.jamaah_incomplete || 0);
+    const agendaAttention = Number(attention.agenda_in_window || 0);
+    const announcementAttention = Number(attention.announcement_drafts || 0);
+    const roleAttentionTotal = jamaahAttention + agendaAttention + announcementAttention;
+
+    if (nodes.pageTitle) nodes.pageTitle.textContent = 'Ringkasan Tour Leader';
+    if (nodes.pageDescription) {
+      nodes.pageDescription.textContent = 'Fokus pada kesiapan Jemaah, Manasik, agenda perjalanan, dan pengumuman resmi yang perlu ditindaklanjuti.';
+    }
+    if (nodes.prototypeNote) {
+      nodes.prototypeNote.innerHTML = '<strong>Platform V3.9.0 aktif.</strong> Ringkasan ini disesuaikan dengan tugas Tour Leader. Informasi dokumen privat dan fungsi administrasi akun tidak ditampilkan.';
+    }
+
+    setText(nodes.attentionTotal, roleAttentionTotal);
+    if (nodes.attentionDot) {
+      nodes.attentionDot.textContent = roleAttentionTotal > 99 ? '99+' : String(roleAttentionTotal);
+      nodes.attentionDot.hidden = roleAttentionTotal === 0;
+    }
+
+    if (ui.attentionDocumentsRow) ui.attentionDocumentsRow.hidden = true;
+    if (ui.attentionAnnouncementsRow) ui.attentionAnnouncementsRow.hidden = false;
+    if (ui.attentionTitle) ui.attentionTitle.textContent = 'Prioritas Tour Leader';
+
+    const jamaahCopy = ui.attentionJamaahRow?.querySelector('div:nth-child(2)');
+    if (jamaahCopy) {
+      const strong = jamaahCopy.querySelector('strong');
+      const span = jamaahCopy.querySelector('span');
+      if (strong) strong.textContent = 'Jemaah belum menyelesaikan persiapan';
+      if (span) span.textContent = 'Pantau Jemaah yang masih dalam persiapan dan koordinasikan tindak lanjut perjalanan.';
+    }
+
+    if (ui.agendaAction) ui.agendaAction.textContent = 'Kelola →';
+    if (ui.activityTitle) ui.activityTitle.textContent = 'Aktivitas Tour Leader';
+    if (nodes.searchInput) nodes.searchInput.placeholder = 'Cari jemaah, agenda, manasik...';
   };
 
   const render = (data) => {
@@ -248,6 +307,8 @@
 
     if (role === 'pendamping') {
       applyPendampingPresentation(summary, attention);
+    } else if (role === 'tour_leader') {
+      applyTourLeaderPresentation(summary, attention);
     }
 
     renderActivities(data.activities || [], role);
