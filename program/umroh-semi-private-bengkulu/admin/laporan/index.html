@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html class="auth-pending" data-required-roles="super_admin admin" lang="id">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<meta content="noindex,nofollow,noarchive" name="robots"/>
+<meta content="#0b2830" name="theme-color"/>
+<title>Laporan Operasional | Admin Umroh Semi Private Bengkulu</title>
+<link href="../../assets/css/tokens.css" rel="stylesheet"/>
+<link href="../../assets/css/dashboard-shell.css?v=3.9.0.9" rel="stylesheet"/>
+<link href="../../assets/css/admin-dashboard.css?v=3.9.0.3" rel="stylesheet"/>
+<link href="../../assets/css/visual-assets.css" rel="stylesheet"/>
+<link href="../../assets/css/admin-auth.css" rel="stylesheet"/>
+<link href="../../assets/css/admin-reports.css?v=3.9.0.13" rel="stylesheet"/>
+<link rel="icon" href="/program/umroh-semi-private-bengkulu/branding/favicon.ico" sizes="any"/>
+<link rel="icon" type="image/png" sizes="32x32" href="/program/umroh-semi-private-bengkulu/branding/favicon-32x32.png"/>
+<link rel="icon" type="image/png" sizes="16x16" href="/program/umroh-semi-private-bengkulu/branding/favicon-16x16.png"/>
+<link rel="apple-touch-icon" sizes="180x180" href="/program/umroh-semi-private-bengkulu/branding/apple-touch-icon.png"/>
+<link rel="manifest" href="/program/umroh-semi-private-bengkulu/branding/site.webmanifest"/>
+<link rel="stylesheet" href="/program/umroh-semi-private-bengkulu/assets/css/branding.css?v=3.9.0-step6"/>
+</head>
+<body class="dashboard-app admin-dashboard admin-report-page">
+<aside aria-label="Navigasi admin" class="app-sidebar">
+<div class="sidebar-brand">
+<div aria-hidden="true" class="brand-mark"><span class="ui-icon icon-chart"></span></div>
+<div class="brand-copy"><strong>UMROH SEMI PRIVATE<br/>BENGKULU</strong><span>Digital Platform</span></div>
+<button aria-label="Ringkas sidebar" class="sidebar-collapse" data-sidebar-collapse>‹</button>
+</div>
+<nav class="sidebar-nav">
+<div class="nav-section-label">Operasional</div>
+<a class="nav-item" data-rbac="super_admin admin tour_leader pendamping" href="../"><span class="nav-icon"><span class="ui-icon icon-home"></span></span><span class="nav-label">Ringkasan</span></a>
+<a class="nav-item" data-rbac="super_admin admin tour_leader pendamping" href="../jemaah/"><span class="nav-icon"><span class="ui-icon icon-users"></span></span><span class="nav-label">Jemaah</span></a>
+<a class="nav-item" data-rbac="super_admin admin tour_leader" href="../manasik/"><span class="nav-icon"><span class="ui-icon icon-book"></span></span><span class="nav-label">Manasik</span></a>
+<a class="nav-item" data-rbac="super_admin admin tour_leader pendamping" href="../agenda/"><span class="nav-icon"><span class="ui-icon icon-calendar"></span></span><span class="nav-label">Agenda &amp; Perjalanan</span></a>
+<a class="nav-item" data-rbac="super_admin admin" href="../dokumen/"><span class="nav-icon"><span class="ui-icon icon-file"></span></span><span class="nav-label">Dokumen</span></a>
+<a class="nav-item" data-rbac="super_admin admin tour_leader pendamping" href="../pengumuman/"><span class="nav-icon"><span class="ui-icon icon-megaphone"></span></span><span class="nav-label">Pengumuman</span></a>
+<a class="nav-item is-active" data-rbac="super_admin admin" href="./"><span class="nav-icon"><span class="ui-icon icon-chart"></span></span><span class="nav-label">Laporan</span></a>
+<div class="nav-section-label">Sistem</div>
+<a class="nav-item" data-super-admin-only data-rbac="super_admin" href="../manajemen-admin/"><span class="nav-icon"><span class="ui-icon icon-admin"></span></span><span class="nav-label">Manajemen Admin</span></a>
+<a class="nav-item" data-rbac="super_admin admin" href="../pengaturan/"><span class="nav-icon"><span class="ui-icon icon-settings"></span></span><span class="nav-label">Pengaturan</span></a>
+</nav>
+<div class="sidebar-foot"><div class="tech-credit"><small>Pengembangan Sistem &amp; Dukungan Teknologi</small><strong>Srilex Buditra</strong><a href="https://srilexbuditra.work/">srilexbuditra.work</a></div></div>
+</aside>
+<div class="sidebar-backdrop" data-sidebar-backdrop></div>
+
+<div class="app-main">
+<header class="app-topbar">
+<button aria-label="Buka menu" class="mobile-menu" data-mobile-menu>☰</button>
+<div class="topbar-title"><strong>Laporan Operasional</strong><span>D1 · Rekap data resmi</span></div>
+<div class="topbar-spacer"></div>
+<div class="user-chip"><div class="avatar" data-auth-avatar>SB</div><div class="user-copy"><strong data-auth-name>Srilex Buditra</strong><span data-auth-role>Senior Full Stack Developer · Platform Architect</span></div></div>
+<button class="auth-logout" data-admin-logout type="button">Keluar</button>
+</header>
+
+<main class="page-wrap">
+<div class="prototype-note"><strong>Laporan Operasional V1 aktif.</strong> Data dirangkum langsung dari backend D1. Laporan ini tidak memuat password, token, isi dokumen privat, atau data manajemen akun staf.</div>
+
+<div class="page-head report-page-head">
+<div>
+<span class="page-kicker">Operational Report · D1</span>
+<h1>Laporan Operasional</h1>
+<p>Rekap kondisi Jemaah, kesiapan, Manasik, Agenda, Dokumen, dan Pengumuman untuk kebutuhan operasional travel.</p>
+</div>
+<div class="report-head-meta">
+<span class="report-live-badge">LIVE · D1</span>
+<span data-report-generated>Memuat data...</span>
+</div>
+</div>
+
+<section class="report-toolbar card" aria-label="Kontrol laporan">
+<div>
+<strong>Rentang aktivitas</strong>
+<span>Ringkasan kondisi selalu menampilkan status terkini. Pilihan periode memengaruhi agenda perhatian dan aktivitas terbaru.</span>
+</div>
+<div class="report-period-tabs" role="group" aria-label="Rentang aktivitas">
+<button data-report-days="1" type="button">Hari Ini</button>
+<button class="is-active" data-report-days="7" type="button">7 Hari</button>
+<button data-report-days="30" type="button">30 Hari</button>
+</div>
+<div class="report-actions">
+<button data-report-refresh type="button">Muat ulang</button>
+<button data-report-csv type="button">Export CSV</button>
+<button class="primary" data-report-print type="button">Cetak / Simpan PDF</button>
+</div>
+</section>
+
+<div class="report-message" data-report-message hidden></div>
+
+<section class="report-stats" aria-label="Ringkasan utama">
+<article class="card report-stat"><span>Total Jemaah</span><strong data-report-jamaah-total>—</strong><small data-report-jamaah-active>— aktif</small></article>
+<article class="card report-stat"><span>Siap Berangkat</span><strong data-report-ready>—</strong><small data-report-progress>— dalam persiapan</small></article>
+<article class="card report-stat"><span>Dokumen Menunggu</span><strong data-report-doc-pending>—</strong><small>perlu verifikasi</small></article>
+<article class="card report-stat"><span>Agenda Mendatang</span><strong data-report-agenda-upcoming>—</strong><small data-report-agenda-window>— dalam periode</small></article>
+</section>
+
+<section class="report-grid">
+<article class="card card-pad report-readiness-card">
+<div class="section-title"><h2>Status Kesiapan Jemaah</h2><span data-report-window-label>7 hari</span></div>
+<div class="report-readiness">
+<div class="donut" data-report-donut style="--p1:0;--p2:0;--p3:0"><div class="donut-center"><strong data-report-readiness-total>0</strong><span>Jemaah</span></div></div>
+<div class="legend">
+<div class="legend-row"><span class="legend-dot is-success"></span><span>Siap Berangkat</span><strong data-report-ready-legend>0 · 0%</strong></div>
+<div class="legend-row"><span class="legend-dot is-warning"></span><span>Dalam Persiapan</span><strong data-report-progress-legend>0 · 0%</strong></div>
+<div class="legend-row"><span class="legend-dot is-danger"></span><span>Perlu Pendampingan</span><strong data-report-assistance-legend>0 · 0%</strong></div>
+<div class="legend-row"><span class="legend-dot is-muted"></span><span>Belum Aktif</span><strong data-report-inactive-legend>0 · 0%</strong></div>
+</div>
+</div>
+</article>
+
+<article class="card card-pad report-attention-card">
+<div class="section-title"><h2>Perlu Perhatian</h2><span data-report-attention-total>— item</span></div>
+<div class="report-attention-list">
+<div><span>Dokumen menunggu verifikasi</span><strong data-report-att-docs>—</strong></div>
+<div><span>Jemaah belum selesai persiapan</span><strong data-report-att-jamaah>—</strong></div>
+<div><span>Agenda dalam periode</span><strong data-report-att-agenda>—</strong></div>
+<div><span>Draft pengumuman</span><strong data-report-att-ann>—</strong></div>
+</div>
+</article>
+</section>
+
+<section class="card card-pad report-module-card">
+<div class="section-title"><h2>Rekap Modul Operasional</h2><span>Sumber backend resmi</span></div>
+<div class="report-table-wrap">
+<table class="report-table">
+<thead><tr><th>Modul</th><th>Total</th><th>Selesai / Dipublikasikan</th><th>Perlu Tindakan</th><th>Keterangan</th></tr></thead>
+<tbody data-report-module-body><tr><td colspan="5" class="table-state">Memuat rekap modul...</td></tr></tbody>
+</table>
+</div>
+</section>
+
+<section class="report-grid report-grid-lower">
+<article class="card card-pad report-jamaah-card">
+<div class="section-title"><h2>Daftar Jemaah</h2><span><strong data-report-jamaah-count>0</strong> data</span></div>
+<div class="report-table-wrap">
+<table class="report-table report-jamaah-table">
+<thead><tr><th>Jemaah</th><th>Nomor</th><th>Grup / Batch</th><th>Status</th><th>Login Terakhir</th></tr></thead>
+<tbody data-report-jamaah-body><tr><td colspan="5" class="table-state">Memuat data Jemaah...</td></tr></tbody>
+</table>
+</div>
+</article>
+
+<article class="card card-pad report-activity-card">
+<div class="section-title"><h2>Aktivitas Terbaru</h2><span data-report-activity-window>7 hari terakhir</span></div>
+<div class="report-activity-list" data-report-activity-list><div class="table-state">Memuat aktivitas...</div></div>
+</article>
+</section>
+
+<footer class="report-footnote">
+<span>Laporan Operasional V1 · Platform V3.9.0</span>
+<span>Pengembangan Sistem &amp; Dukungan Teknologi · Srilex Buditra</span>
+</footer>
+</main>
+</div>
+
+<script src="../../assets/js/admin-auth-guard.js?v=3.9.0.6"></script>
+<script src="../../assets/js/dashboard-shell.js"></script>
+<script src="../../assets/js/admin-reports.js?v=3.9.0.13"></script>
+</body>
+</html>

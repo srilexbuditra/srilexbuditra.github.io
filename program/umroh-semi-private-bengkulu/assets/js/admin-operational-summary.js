@@ -311,6 +311,7 @@
       { keys: ['manasik', 'materi'], path: 'manasik/', roles: ['super_admin', 'admin', 'tour_leader'] },
       { keys: ['dokumen', 'paspor', 'passport', 'file'], path: 'dokumen/', roles: ['super_admin', 'admin'] },
       { keys: ['pengumuman', 'informasi', 'announcement'], path: 'pengumuman/', roles: ['super_admin', 'admin', 'tour_leader', 'pendamping'] },
+      { keys: ['laporan', 'report', 'rekap', 'export'], path: 'laporan/', roles: ['super_admin', 'admin'] },
       { keys: ['pengaturan', 'seo', 'media', 'branding', 'schema', 'analytics'], path: 'pengaturan/', roles: ['super_admin', 'admin'] },
       { keys: ['manajemen admin', 'akun staf', 'akun admin', 'pengelola'], path: 'manajemen-admin/', roles: ['super_admin'] },
     ];
