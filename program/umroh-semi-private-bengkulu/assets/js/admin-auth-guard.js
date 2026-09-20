@@ -83,7 +83,17 @@
     });
 
     const requiredRole = document.documentElement.dataset.requiredRole || '';
+    const requiredRoles = String(document.documentElement.dataset.requiredRoles || '')
+      .split(/\s+/)
+      .map((value) => value.trim())
+      .filter(Boolean);
+
     if (requiredRole && account.role !== requiredRole) {
+      window.location.replace('/program/umroh-semi-private-bengkulu/admin/?reason=forbidden');
+      return false;
+    }
+
+    if (requiredRoles.length > 0 && !requiredRoles.includes(account.role)) {
       window.location.replace('/program/umroh-semi-private-bengkulu/admin/?reason=forbidden');
       return false;
     }

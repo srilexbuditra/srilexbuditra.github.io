@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html class="auth-pending" lang="id">
+<html class="auth-pending" lang="id" data-required-roles="super_admin admin tour_leader">
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width,initial-scale=1" name="viewport"/>
@@ -28,7 +28,7 @@
 <a class="nav-item" data-rbac="super_admin admin tour_leader pendamping" href="../jemaah/"><span class="nav-icon"><span class="ui-icon icon-users"></span></span><span class="nav-label">Jemaah</span></a>
 <a class="nav-item is-active" data-rbac="super_admin admin tour_leader" href="./"><span class="nav-icon"><span class="ui-icon icon-book"></span></span><span class="nav-label">Manasik</span></a>
 <a class="nav-item" data-rbac="super_admin admin tour_leader pendamping" href="../agenda/"><span class="nav-icon"><span class="ui-icon icon-calendar"></span></span><span class="nav-label">Agenda &amp; Perjalanan</span></a>
-<a class="nav-item" data-rbac="super_admin admin tour_leader" href="../dokumen/"><span class="nav-icon"><span class="ui-icon icon-file"></span></span><span class="nav-label">Dokumen</span></a>
+<a class="nav-item" data-rbac="super_admin admin" href="../dokumen/"><span class="nav-icon"><span class="ui-icon icon-file"></span></span><span class="nav-label">Dokumen</span></a>
 <a class="nav-item" data-rbac="super_admin admin tour_leader pendamping" href="../pengumuman/"><span class="nav-icon"><span class="ui-icon icon-megaphone"></span></span><span class="nav-label">Pengumuman</span></a>
 <a class="nav-item" data-rbac="super_admin admin" href="../#laporan"><span class="nav-icon"><span class="ui-icon icon-chart"></span></span><span class="nav-label">Laporan</span></a>
 <div class="nav-section-label">Sistem</div>
@@ -159,7 +159,7 @@
 </section>
 </div>
 
-<script src="../../assets/js/admin-auth-guard.js?v=3.9.0.5"></script>
+<script src="../../assets/js/admin-auth-guard.js?v=3.9.0.6"></script>
 <script src="../../assets/js/dashboard-shell.js"></script>
 <script src="../../assets/js/admin-manasik.js?v=3.9.0-step6.2"></script>
 </body>
