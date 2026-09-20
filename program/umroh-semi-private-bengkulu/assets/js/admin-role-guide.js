@@ -4,10 +4,10 @@
   if (!root) return;
 
   const guides = {
-    super_admin: { label: 'Senior Full Stack Developer · Platform Architect', file: 'panduan-super-admin-v3.9.0.pdf', preview: 'panduan-super-admin-v3.9.0', pages: 3, description: 'Panduan untuk akun dengan akses sistem tingkat tertinggi: Ringkasan, Jemaah, Manasik, Agenda, Dokumen, Pengumuman, Manajemen Admin, dan Pengaturan.' },
-    admin: { label: 'Admin', file: 'panduan-admin-v3.9.0.pdf', preview: 'panduan-admin-v3.9.0', pages: 3, description: 'Panduan operasional pengelolaan Jemaah, verifikasi dokumen, Manasik, Agenda, Pengumuman, dan Pengaturan yang diizinkan.' },
-    tour_leader: { label: 'Tour Leader', file: 'panduan-tour-leader-v3.9.0.pdf', preview: 'panduan-tour-leader-v3.9.0', pages: 3, description: 'Panduan koordinasi perjalanan, Agenda, Pengumuman, Manasik, dan pemantauan Jemaah sesuai kewenangan role.' },
-    pendamping: { label: 'Pendamping', file: 'panduan-pendamping-v3.9.0.pdf', preview: 'panduan-pendamping-v3.9.0', pages: 3, description: 'Panduan pemantauan dan pendampingan Jemaah, Agenda, Pengumuman, serta jalur eskalasi sesuai kewenangan role.' }
+    super_admin: { label: 'Senior Full Stack Developer · Platform Architect', file: 'panduan-super-admin-v3.9.0.pdf', preview: 'panduan-super-admin-v3.9.0', pages: 4, description: 'Panduan arsitektur platform dan akses tingkat tertinggi: kontrol role staf, Jemaah, Manasik, Agenda, Dokumen, Pengumuman, dan Pengaturan.' },
+    admin: { label: 'Admin Operasional', file: 'panduan-admin-v3.9.0.pdf', preview: 'panduan-admin-v3.9.0', pages: 4, description: 'Panduan Admin Operasional untuk akun Jemaah, verifikasi dokumen, Manasik, Agenda, Pengumuman, dan metadata yang diizinkan.' },
+    tour_leader: { label: 'Tour Leader', file: 'panduan-tour-leader-v3.9.0.pdf', preview: 'panduan-tour-leader-v3.9.0', pages: 4, description: 'Panduan Tour Leader untuk koordinasi perjalanan, Agenda, Pengumuman, Manasik, dan pemantauan Jemaah sesuai kewenangan.' },
+    pendamping: { label: 'Pendamping', file: 'panduan-pendamping-v3.9.0.pdf', preview: 'panduan-pendamping-v3.9.0', pages: 4, description: 'Panduan Pendamping untuk pemantauan Jemaah, Agenda, Pengumuman, bantuan penggunaan platform, dan jalur eskalasi.' }
   };
 
   const renderPreview = (container, cfg) => {
