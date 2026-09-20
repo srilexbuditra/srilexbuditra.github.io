@@ -83,3 +83,7 @@ body.sidebar-compact .app-sidebar{width:var(--sidebar-compact)}body.sidebar-comp
   margin-top:0;
   background:linear-gradient(180deg,rgba(7,28,34,0),rgba(7,28,34,.18));
 }
+
+/* V3.9.0.12 — global dashboard search trigger */
+.search-box>span:first-child[role="button"]{cursor:pointer}
+.search-box>span:first-child[role="button"]:focus-visible{outline:2px solid currentColor;outline-offset:3px;border-radius:6px}

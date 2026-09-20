@@ -23,6 +23,10 @@
   let canWrite = false;
   let rows = [];
 
+  const initialParams = new URLSearchParams(window.location.search);
+  const initialSearch = String(initialParams.get('q') || initialParams.get('search') || '').trim();
+  if (searchInput && initialSearch) searchInput.value = initialSearch;
+
   const esc = (value) => String(value ?? '').replace(/[&<>"']/g, (char) => ({
     '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;'
   }[char]));

@@ -298,6 +298,72 @@
     if (nodes.searchInput) nodes.searchInput.placeholder = 'Cari jemaah, agenda, manasik...';
   };
 
+  const globalSearchTarget = (value) => {
+    const raw = String(value || '').trim();
+    if (!raw) return null;
+
+    const query = raw.toLowerCase();
+    const role = currentRole();
+    const base = '/program/umroh-semi-private-bengkulu/admin/';
+
+    const moduleRoutes = [
+      { keys: ['agenda', 'perjalanan', 'jadwal'], path: 'agenda/', roles: ['super_admin', 'admin', 'tour_leader', 'pendamping'] },
+      { keys: ['manasik', 'materi'], path: 'manasik/', roles: ['super_admin', 'admin', 'tour_leader'] },
+      { keys: ['dokumen', 'paspor', 'passport', 'file'], path: 'dokumen/', roles: ['super_admin', 'admin'] },
+      { keys: ['pengumuman', 'informasi', 'announcement'], path: 'pengumuman/', roles: ['super_admin', 'admin', 'tour_leader', 'pendamping'] },
+      { keys: ['pengaturan', 'seo', 'media', 'branding', 'schema', 'analytics'], path: 'pengaturan/', roles: ['super_admin', 'admin'] },
+      { keys: ['manajemen admin', 'akun staf', 'akun admin', 'pengelola'], path: 'manajemen-admin/', roles: ['super_admin'] },
+    ];
+
+    const matchedModule = moduleRoutes.find((item) =>
+      item.roles.includes(role) && item.keys.some((key) => query.includes(key))
+    );
+
+    // Nama/nomor jemaah adalah pencarian default karena endpoint Jemaah
+    // mendukung pencarian backend berdasarkan nama, nomor, email, WhatsApp, dan grup.
+    if (!matchedModule || query.includes('jemaah')) {
+      return `${base}jemaah/?q=${encodeURIComponent(raw)}`;
+    }
+
+    return `${base}${matchedModule.path}`;
+  };
+
+  const runGlobalSearch = () => {
+    if (!nodes.searchInput) return;
+    const target = globalSearchTarget(nodes.searchInput.value);
+    if (!target) {
+      nodes.searchInput.focus();
+      return;
+    }
+    window.location.assign(target);
+  };
+
+  const bindGlobalSearch = () => {
+    if (!nodes.searchInput) return;
+
+    nodes.searchInput.setAttribute('aria-label', 'Cari di dashboard');
+    nodes.searchInput.addEventListener('keydown', (event) => {
+      if (event.key !== 'Enter') return;
+      event.preventDefault();
+      runGlobalSearch();
+    });
+
+    const searchTrigger = nodes.searchInput.closest('.search-box')?.querySelector('span[aria-hidden="true"]');
+    if (searchTrigger) {
+      searchTrigger.removeAttribute('aria-hidden');
+      searchTrigger.setAttribute('role', 'button');
+      searchTrigger.setAttribute('tabindex', '0');
+      searchTrigger.setAttribute('aria-label', 'Jalankan pencarian');
+      searchTrigger.setAttribute('title', 'Cari');
+      searchTrigger.addEventListener('click', runGlobalSearch);
+      searchTrigger.addEventListener('keydown', (event) => {
+        if (!['Enter', ' '].includes(event.key)) return;
+        event.preventDefault();
+        runGlobalSearch();
+      });
+    }
+  };
+
   const render = (data) => {
     lastData = data;
     const summary = data.summary || {};
@@ -388,6 +454,7 @@
   });
   roleObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-admin-role'] });
 
+  bindGlobalSearch();
   load(activeDays);
   addEventListener('focus', () => load(activeDays));
 })();
