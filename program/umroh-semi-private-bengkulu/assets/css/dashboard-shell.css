@@ -69,3 +69,17 @@ body.sidebar-compact .app-sidebar{width:var(--sidebar-compact)}body.sidebar-comp
 .nav-icon .ui-icon{width:1.05rem;height:1.05rem}
 .search-box .ui-icon{width:1rem;height:1rem}
 .icon-button .ui-icon{width:1.05rem;height:1.05rem}
+
+/* V3.9.0.9 — sidebar credit always visible */
+.app-sidebar .sidebar-nav{
+  flex:1 1 auto;
+  min-height:0;
+  overflow-y:auto;
+  overflow-x:hidden;
+  scrollbar-width:thin;
+}
+.app-sidebar .sidebar-foot{
+  flex:0 0 auto;
+  margin-top:0;
+  background:linear-gradient(180deg,rgba(7,28,34,0),rgba(7,28,34,.18));
+}

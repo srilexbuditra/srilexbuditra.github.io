@@ -5,14 +5,26 @@
   let announcements=[];
   const esc=(v)=>String(v??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;');
   const api=async(path,options={})=>{const response=await fetch(`${API_BASE}${path}`,{credentials:'include',cache:'no-store',headers:{Accept:'application/json',...(options.body?{'Content-Type':'application/json'}:{}),...(options.headers||{})},...options});const data=await response.json().catch(()=>({}));if(!response.ok||!data?.ok){const error=new Error(data?.error||`http_${response.status}`);error.code=data?.error||'';throw error;}return data;};
-  const canEdit=()=>['super_admin','admin','tour_leader'].includes(window.UMROH_ADMIN_ACCOUNT?.role||'');
+  const currentRole=()=>window.UMROH_ADMIN_ACCOUNT?.role||'';
+  const canEdit=()=>['super_admin','admin','tour_leader'].includes(currentRole());
+  const isPendamping=()=>currentRole()==='pendamping';
   const splitIso=(iso)=>{const t=String(iso||'').trim();const m=t.match(/^(\d{4}-\d{2}-\d{2})T(\d{2}):(\d{2})(?::\d{2})?\+07:00$/);if(m)return{date:m[1],time:`${m[2]}:${m[3]}`};if(!t)return{date:'',time:''};const d=new Date(t);if(Number.isNaN(d.getTime()))return{date:'',time:''};return{date:new Intl.DateTimeFormat('en-CA',{year:'numeric',month:'2-digit',day:'2-digit',timeZone:'Asia/Jakarta'}).format(d),time:new Intl.DateTimeFormat('en-GB',{hour:'2-digit',minute:'2-digit',hour12:false,timeZone:'Asia/Jakarta'}).format(d)};};
   const toIso=(date,time)=>/^\d{4}-\d{2}-\d{2}$/.test(date)&&/^\d{2}:\d{2}$/.test(time)?`${date}T${time}:00+07:00`:null;
   const nowJakarta=()=>{const parts=new Intl.DateTimeFormat('en-CA',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false,timeZone:'Asia/Jakarta'}).formatToParts(new Date());const get=(type)=>parts.find(p=>p.type===type)?.value||'';return{date:`${get('year')}-${get('month')}-${get('day')}`,time:`${get('hour')}:${get('minute')}`};};
   const fmt=(iso)=>{if(!iso)return'Belum ditetapkan';const d=new Date(iso);if(Number.isNaN(d.getTime()))return iso;return new Intl.DateTimeFormat('id-ID',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit',timeZone:'Asia/Jakarta'}).format(d).replace('.',':');};
   const show=(text,state='error')=>{message.hidden=false;message.dataset.state=state;message.textContent=text;}; const hide=()=>{message.hidden=true;message.textContent='';};
-  const renderStats=(s={})=>{document.querySelector('[data-ann-stat-total]').textContent=Number(s.total||0);document.querySelector('[data-ann-stat-published]').textContent=Number(s.published||0);document.querySelector('[data-ann-stat-draft]').textContent=Number(s.draft||0);document.querySelector('[data-ann-stat-priority]').textContent=Number(s.high_priority||0);};
-  const matches=(a)=>{const v=filter?.value||'';if(!v)return true;if(v==='published')return a.is_published;if(v==='draft')return!a.is_published;return a.category===v;};
+  const renderStats=(s={})=>{
+    const source=isPendamping()?announcements.filter(a=>a.is_published):announcements;
+    const total=isPendamping()?source.length:Number(s.total||0);
+    const published=isPendamping()?source.length:Number(s.published||0);
+    const drafts=isPendamping()?0:Number(s.draft||0);
+    const high=isPendamping()?source.filter(a=>['important','warning','urgent'].includes(a.priority)).length:Number(s.high_priority||0);
+    document.querySelector('[data-ann-stat-total]').textContent=total;
+    document.querySelector('[data-ann-stat-published]').textContent=published;
+    document.querySelector('[data-ann-stat-draft]').textContent=drafts;
+    document.querySelector('[data-ann-stat-priority]').textContent=high;
+  };
+  const matches=(a)=>{if(isPendamping()&&!a.is_published)return false;const v=filter?.value||'';if(!v)return true;if(v==='published')return a.is_published;if(v==='draft')return!a.is_published;return a.category===v;};
   const render=()=>{const rows=announcements.filter(matches);if(!rows.length){body.innerHTML='<tr><td class="table-state" colspan="6">Belum ada pengumuman untuk filter ini.</td></tr>';return;}body.innerHTML=rows.map(a=>`<tr><td class="admin-ann-name"><strong>${esc(a.title)}</strong><span>${esc(a.announcement_key)}</span></td><td>${esc(a.category_label||a.category)}</td><td><span class="ann-pill ${esc(a.priority)}">${esc(a.priority_label||a.priority)}</span></td><td><span class="ann-pill ${a.is_published?'published':'draft'}">${a.is_published?'Dipublikasikan':'Draft'}</span></td><td>${esc(fmt(a.published_at))}</td><td><div class="admin-ann-actions">${canEdit()?`<button data-edit-ann="${a.id}" type="button">Edit</button>`:'<span>Read-only</span>'}</div></td></tr>`).join('');body.querySelectorAll('[data-edit-ann]').forEach(b=>b.addEventListener('click',()=>openEdit(Number(b.dataset.editAnn))));};
   const load=async()=>{body.innerHTML='<tr><td class="table-state" colspan="6">Memuat pengumuman...</td></tr>';try{const data=await api('/admin/announcements');announcements=data.announcements||[];renderStats(data.summary||{});render();}catch(e){body.innerHTML=`<tr><td class="table-state" colspan="6">Gagal memuat pengumuman: ${esc(e.code||e.message)}</td></tr>`;}};
   const openCreate=()=>{form.reset();form.elements.id.value='';form.elements.category.value='umum';form.elements.priority.value='info';const n=nowJakarta();form.elements.date.value=n.date;form.elements.time.value=n.time;dialogTitle.textContent='Tambah Pengumuman';hide();modal.hidden=false;};
@@ -20,5 +32,14 @@
   const close=()=>{modal.hidden=true;};
   form?.addEventListener('submit',async(e)=>{e.preventDefault();hide();const id=String(form.elements.id.value||'').trim();const date=String(form.elements.date.value||'').trim();const time=String(form.elements.time.value||'').trim();const payload={title:form.elements.title.value.trim(),category:form.elements.category.value,priority:form.elements.priority.value,body:form.elements.body.value.trim(),is_published:form.elements.is_published.checked,published_at:(date&&time)?toIso(date,time):null};if(payload.is_published&&!payload.published_at){show('Tanggal dan waktu publikasi wajib diisi sebelum dipublikasikan.');return;}submit.disabled=true;submit.textContent='Menyimpan...';try{await api(id?`/admin/announcements/${id}`:'/admin/announcements',{method:id?'PATCH':'POST',body:JSON.stringify(payload)});show(id?'Pengumuman berhasil diperbarui.':'Pengumuman berhasil dibuat.','success');await load();setTimeout(close,650);}catch(err){const labels={announcement_title_required:'Judul wajib diisi.',announcement_body_required:'Isi pengumuman wajib diisi.',invalid_announcement_category:'Kategori tidak valid.',invalid_announcement_priority:'Prioritas tidak valid.',invalid_announcement_datetime:'Tanggal/waktu publikasi tidak valid.',forbidden:'Role akun ini tidak diizinkan mengubah pengumuman.'};show(labels[err.code]||`Gagal menyimpan: ${err.code||err.message}`);}finally{submit.disabled=false;submit.textContent='Simpan Pengumuman';}});
   document.querySelectorAll('[data-ann-close]').forEach(n=>n.addEventListener('click',close));add?.addEventListener('click',openCreate);refresh?.addEventListener('click',load);filter?.addEventListener('change',render);
-  const wait=()=>{if(document.documentElement.classList.contains('auth-ready')){if(add&&!canEdit())add.hidden=true;load();}else setTimeout(wait,60);};wait();
+  const applyRoleView=()=>{
+    if(!isPendamping())return;
+    if(add)add.hidden=true;
+    const draftStat=document.querySelector('[data-ann-stat-draft]')?.closest('article');if(draftStat)draftStat.hidden=true;
+    const draftOption=filter?.querySelector('option[value="draft"]');if(draftOption)draftOption.remove();
+    const toolbarTitle=document.querySelector('.admin-ann-toolbar strong');if(toolbarTitle)toolbarTitle.textContent='Pengumuman Dipublikasikan';
+    const toolbarCopy=document.querySelector('.admin-ann-toolbar span');if(toolbarCopy)toolbarCopy.textContent='Pendamping hanya melihat informasi resmi yang sudah dipublikasikan.';
+    const note=document.querySelector('.prototype-note');if(note)note.innerHTML='<strong>Platform V3.9.0 aktif.</strong> Tampilan Pendamping hanya memuat pengumuman resmi yang sudah dipublikasikan. Draft internal tidak ditampilkan.';
+  };
+  const wait=()=>{if(document.documentElement.classList.contains('auth-ready')){applyRoleView();if(add&&!canEdit())add.hidden=true;load();}else setTimeout(wait,60);};wait();
 })();
