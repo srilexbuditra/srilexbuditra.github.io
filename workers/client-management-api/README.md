@@ -18,7 +18,7 @@ Backend foundation for the Srilex Buditra Client & Management Platform R1.
 
 - Session token is stored only in an `HttpOnly; Secure; SameSite=Lax` host-only cookie named `__Host-sb_session`.
 - The browser receives the opaque session token; D1 stores only a SHA-256 hash of that token.
-- Passwords use PBKDF2-HMAC-SHA256 with 600,000 iterations and a unique 16-byte salt.
+- Passwords use PBKDF2-HMAC-SHA256 with 100,000 iterations and a unique 16-byte salt. This matches the current Cloudflare Workers Web Crypto runtime ceiling observed in staging; the password hash format stores the iteration count for future migration.
 - State-changing requests require `application/json` and an explicitly allowed `Origin`.
 - Private/auth responses use `Cache-Control: no-store`.
 - No credentials, API tokens, bootstrap secrets, or real customer data are committed.

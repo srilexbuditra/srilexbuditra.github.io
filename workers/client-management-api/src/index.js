@@ -1,5 +1,5 @@
 const COOKIE_NAME = "__Host-sb_session";
-const PASSWORD_ITERATIONS = 600000;
+const PASSWORD_ITERATIONS = 100000;
 const SESSION_HOURS_DEFAULT = 8;
 const encoder = new TextEncoder();
 
@@ -259,7 +259,7 @@ async function verifyPassword(password, encoded) {
   const parts = String(encoded || "").split("$");
   if (parts.length !== 4 || parts[0] !== "pbkdf2_sha256") return false;
   const iterations = Number(parts[1]);
-  if (!Number.isInteger(iterations) || iterations < 100000 || iterations > 2000000) return false;
+  if (!Number.isInteger(iterations) || iterations < 100000 || iterations > PASSWORD_ITERATIONS) return false;
   let salt;
   let expected;
   try {
