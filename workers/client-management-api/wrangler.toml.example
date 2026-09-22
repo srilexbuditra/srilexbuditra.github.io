@@ -1,0 +1,17 @@
+name = "srilexbuditra-client-management-api-r1"
+main = "src/index.js"
+compatibility_date = "2026-09-22"
+
+[vars]
+ALLOWED_ORIGINS = "https://portal.srilexbuditra.work,https://admin.srilexbuditra.work"
+SESSION_HOURS = "8"
+BOOTSTRAP_ENABLED = "false"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "srilexbuditra-client-management-r1"
+database_id = "REPLACE_WITH_D1_DATABASE_ID"
+
+# Secrets are NOT stored here.
+# Set BOOTSTRAP_SECRET as a Worker secret only when bootstrapping the first admin,
+# then turn BOOTSTRAP_ENABLED back to "false".
