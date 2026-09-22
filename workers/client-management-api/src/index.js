@@ -350,12 +350,12 @@ async function bootstrapAdmin(request, env) {
   const passwordHash = await hashPassword(password);
 
   await env.DB.prepare(
-    `INSERT INTO users (id, email, password_hash, role, status, must_change_password, created_at, updated_at)
-     VALUES (?, ?, ?, 'system_admin', 'active', 0, ?, ?)`
-  ).bind(id, email, passwordHash, timestamp, timestamp).run();
+    `INSERT INTO users (id, email, password_hash, full_name, role, status, must_change_password, created_at, updated_at)
+     VALUES (?, ?, ?, ?, 'system_admin', 'active', 0, ?, ?)`
+  ).bind(id, email, passwordHash, fullName, timestamp, timestamp).run();
 
   await writeActivity(env, id, "BOOTSTRAP_ADMIN_CREATED", "user", id, "Initial system administrator created.");
-  return apiResponse(request, env, { ok: true, user: { id, email, role: "system_admin" } }, 201);
+  return apiResponse(request, env, { ok: true, user: { id, email, full_name: fullName, role: "system_admin" } }, 201);
 }
 
 async function login(request, env) {
@@ -368,7 +368,10 @@ async function login(request, env) {
   }
 
   const user = await env.DB.prepare(
-    `SELECT u.*, c.id AS client_id, c.client_code, c.full_name, c.company_name
+    `SELECT
+       u.id, u.email, u.password_hash, u.role, u.status, u.must_change_password,
+       COALESCE(u.full_name, c.full_name) AS full_name,
+       c.id AS client_id, c.client_code, c.company_name
      FROM users u
      LEFT JOIN clients c ON c.user_id = u.id
      WHERE u.email = ? LIMIT 1`
@@ -441,7 +444,8 @@ async function requireAuth(request, env) {
   const user = await env.DB.prepare(
     `SELECT
        u.id, u.email, u.role, u.status, u.must_change_password,
-       c.id AS client_id, c.client_code, c.full_name, c.company_name,
+       COALESCE(u.full_name, c.full_name) AS full_name,
+       c.id AS client_id, c.client_code, c.company_name,
        s.id AS session_id, s.expires_at
      FROM sessions s
      JOIN users u ON u.id = s.user_id
