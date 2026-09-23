@@ -1,4 +1,4 @@
-﻿(() => {
+(() => {
   "use strict";
 
   const API_BASE = "/api";
@@ -203,7 +203,7 @@
         <img src="https://srilexbuditra.work/images/logo.avif" alt="Logo Srilex Buditra">
         <div>
           <strong>SRILEX BUDITRA</strong>
-          <span>Management Console â€¢ R1</span>
+          <span>Management Console &bull; R1</span>
         </div>
       </div>
 
