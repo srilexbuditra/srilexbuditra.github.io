@@ -592,13 +592,19 @@ async function createProject(request, env, auth) {
   const projectName = String(body?.project_name || "").trim();
   const description = String(body?.description || "").trim() || null;
   const status = String(body?.status || "planning").trim();
-  const progress = Number(body?.progress ?? 0);
+  let progress = Number(body?.progress ?? 0);
   const startDate = body?.start_date || null;
   const targetDate = body?.target_date || null;
 
   const allowedStatuses = new Set(["planning","design","development","testing","deployment","maintenance","completed","on_hold","cancelled"]);
   if (!clientId || !projectName || !allowedStatuses.has(status) || !Number.isInteger(progress) || progress < 0 || progress > 100) {
     return apiResponse(request, env, { error: "Invalid project data." }, 400);
+  }
+
+  if (status === "completed") {
+    progress = 100;
+  } else if (progress === 100) {
+    return apiResponse(request, env, { error: "Progress 100% requires Completed status." }, 400);
   }
 
   const client = await env.DB.prepare(
@@ -635,11 +641,17 @@ async function updateProject(request, env, auth, projectId) {
 
   const allowedStatuses = new Set(["planning","design","development","testing","deployment","maintenance","completed","on_hold","cancelled"]);
   const nextStatus = body?.status === undefined ? current.status : String(body.status);
-  const nextProgress = body?.progress === undefined ? Number(current.progress) : Number(body.progress);
+  let nextProgress = body?.progress === undefined ? Number(current.progress) : Number(body.progress);
   const nextTarget = body?.target_date === undefined ? current.target_date : body.target_date;
 
   if (!allowedStatuses.has(nextStatus) || !Number.isInteger(nextProgress) || nextProgress < 0 || nextProgress > 100) {
     return apiResponse(request, env, { error: "Invalid project update." }, 400);
+  }
+
+  if (nextStatus === "completed") {
+    nextProgress = 100;
+  } else if (nextProgress === 100) {
+    return apiResponse(request, env, { error: "Progress 100% requires Completed status." }, 400);
   }
 
   const timestamp = nowIso();

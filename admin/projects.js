@@ -547,10 +547,31 @@
     }
   }
 
+  function syncCreateProgressRule() {
+    const statusInput = form.querySelector("[name='status']");
+    const progressInput = form.querySelector("[name='progress']");
+
+    if (!statusInput || !progressInput) return;
+
+    if (statusInput.value === "completed") {
+      progressInput.value = "100";
+      progressInput.max = "100";
+      progressInput.readOnly = true;
+    } else {
+      progressInput.readOnly = false;
+      progressInput.max = "99";
+
+      if (Number(progressInput.value) >= 100) {
+        progressInput.value = "99";
+      }
+    }
+  }
+
   async function openModal() {
     form.reset();
     form.querySelector("[name='progress']").value = "0";
     form.querySelector("[name='status']").value = "planning";
+    syncCreateProgressRule();
 
     formError.textContent = "";
     modal.hidden = false;
@@ -794,6 +815,10 @@
   modal.addEventListener("click", event => {
     if (event.target === modal) closeModal();
   });
+
+  form
+    .querySelector("[name='status']")
+    ?.addEventListener("change", syncCreateProgressRule);
 
   form.addEventListener("submit", createProject);
 

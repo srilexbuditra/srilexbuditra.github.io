@@ -215,6 +215,24 @@
   const errorEl = modal.querySelector("[data-edit-error]");
   const submit = modal.querySelector("[data-edit-submit]");
 
+  function syncEditProgressRule() {
+    const statusInput = form.elements.status;
+    const progressInput = form.elements.progress;
+
+    if (statusInput.value === "completed") {
+      progressInput.value = "100";
+      progressInput.max = "100";
+      progressInput.readOnly = true;
+    } else {
+      progressInput.readOnly = false;
+      progressInput.max = "99";
+
+      if (Number(progressInput.value) >= 100) {
+        progressInput.value = "99";
+      }
+    }
+  }
+
   function closeModal() {
     modal.hidden = true;
     currentProject = null;
@@ -231,6 +249,8 @@
 
     form.elements.status.value = project.status || "planning";
     form.elements.progress.value = Number(project.progress || 0);
+    syncEditProgressRule();
+
     form.elements.target_date.value = project.target_date
       ? String(project.target_date).slice(0,10)
       : "";
@@ -324,6 +344,11 @@
 
     if (project) openModal(project);
   });
+
+  form.elements.status.addEventListener(
+    "change",
+    syncEditProgressRule
+  );
 
   form.addEventListener("submit", async event => {
     event.preventDefault();
