@@ -26,8 +26,15 @@ export default {
       if (isStateChanging(method)) {
         const originCheck = ensureTrustedOrigin(request, env);
         if (originCheck) return originCheck;
-        const contentCheck = ensureJsonRequest(request, env);
-        if (contentCheck) return contentCheck;
+
+        const isDocumentUpload =
+          url.pathname === "/api/admin/documents" &&
+          method === "POST";
+
+        if (!isDocumentUpload) {
+          const contentCheck = ensureJsonRequest(request, env);
+          if (contentCheck) return contentCheck;
+        }
       }
 
       if (url.pathname === "/api/internal/bootstrap-admin" && method === "POST") {
@@ -87,6 +94,53 @@ export default {
         return updateProject(request, env, auth, decodeURIComponent(adminProjectMatch[1]));
       }
 
+      if (url.pathname === "/api/admin/documents" && method === "GET") {
+        const auth = await requireRole(request, env, ["system_admin", "staff"]);
+        if (auth.response) return auth.response;
+        return listAdminDocuments(request, env);
+      }
+
+      if (url.pathname === "/api/admin/documents" && method === "POST") {
+        const auth = await requireRole(request, env, ["system_admin", "staff"]);
+        if (auth.response) return auth.response;
+        return uploadAdminDocument(request, env, auth);
+      }
+
+      const adminDocumentDownloadMatch =
+        url.pathname.match(/^\/api\/admin\/documents\/([^/]+)\/download$/);
+
+      if (adminDocumentDownloadMatch && method === "GET") {
+        const auth = await requireRole(request, env, ["system_admin", "staff"]);
+        if (auth.response) return auth.response;
+
+        return downloadAdminDocument(
+          request,
+          env,
+          auth,
+          decodeURIComponent(adminDocumentDownloadMatch[1])
+        );
+      }
+
+      if (url.pathname === "/api/client/documents" && method === "GET") {
+        const auth = await requireRole(request, env, ["client"]);
+        if (auth.response) return auth.response;
+        return listClientDocuments(request, env, auth);
+      }
+
+      const clientDocumentDownloadMatch =
+        url.pathname.match(/^\/api\/client\/documents\/([^/]+)\/download$/);
+
+      if (clientDocumentDownloadMatch && method === "GET") {
+        const auth = await requireRole(request, env, ["client"]);
+        if (auth.response) return auth.response;
+
+        return downloadClientDocument(
+          request,
+          env,
+          auth,
+          decodeURIComponent(clientDocumentDownloadMatch[1])
+        );
+      }
       if (url.pathname === "/api/client/projects" && method === "GET") {
         const auth = await requireRole(request, env, ["client"]);
         if (auth.response) return auth.response;
@@ -683,6 +737,506 @@ async function updateProject(request, env, auth, projectId) {
   });
 }
 
+const DOCUMENT_MAX_BYTES = 15 * 1024 * 1024;
+
+const DOCUMENT_ALLOWED_TYPES = new Set([
+  "application/pdf",
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+  "text/plain",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+]);
+
+function safeDocumentFilename(value) {
+  const cleaned = String(value || "document")
+    .replace(/[\r\n"]/g, "_")
+    .replace(/[<>:"/\\|?*\x00-\x1F]/g, "_")
+    .trim();
+
+  return (cleaned || "document").slice(0, 180);
+}
+
+async function listAdminDocuments(request, env) {
+  const rows = await env.DB.prepare(
+    `SELECT
+       d.id,
+       d.document_code,
+       d.title,
+       d.description,
+       d.file_name,
+       d.content_type,
+       d.size_bytes,
+       d.status,
+       d.created_at,
+       d.updated_at,
+       c.id AS client_id,
+       c.client_code,
+       c.full_name,
+       c.company_name,
+       p.id AS project_id,
+       p.project_code,
+       p.project_name
+     FROM documents d
+     JOIN clients c ON c.id = d.client_id
+     LEFT JOIN projects p ON p.id = d.project_id
+     ORDER BY d.created_at DESC`
+  ).all();
+
+  return apiResponse(request, env, {
+    documents: rows.results || []
+  });
+}
+
+async function uploadAdminDocument(request, env, auth) {
+  if (!env.DOCUMENTS_BUCKET) {
+    return apiResponse(
+      request,
+      env,
+      { error: "DOCUMENTS_BUCKET binding is missing." },
+      500
+    );
+  }
+
+  const contentTypeHeader =
+    request.headers.get("Content-Type") || "";
+
+  if (!contentTypeHeader.toLowerCase().startsWith("multipart/form-data")) {
+    return apiResponse(
+      request,
+      env,
+      { error: "Content-Type must be multipart/form-data." },
+      415
+    );
+  }
+
+  let form;
+
+  try {
+    form = await request.formData();
+  } catch {
+    return apiResponse(
+      request,
+      env,
+      { error: "Invalid multipart form data." },
+      400
+    );
+  }
+
+  const file = form.get("file");
+  const clientId = String(form.get("client_id") || "").trim();
+  const projectId = String(form.get("project_id") || "").trim() || null;
+  const title = String(form.get("title") || "").trim();
+  const description =
+    String(form.get("description") || "").trim() || null;
+
+  if (!clientId || !title || title.length > 180) {
+    return apiResponse(
+      request,
+      env,
+      { error: "Valid client_id and title are required." },
+      400
+    );
+  }
+
+  if (description && description.length > 2000) {
+    return apiResponse(
+      request,
+      env,
+      { error: "Description is too long." },
+      400
+    );
+  }
+
+  if (!(file instanceof File) || file.size < 1) {
+    return apiResponse(
+      request,
+      env,
+      { error: "A document file is required." },
+      400
+    );
+  }
+
+  if (file.size > DOCUMENT_MAX_BYTES) {
+    return apiResponse(
+      request,
+      env,
+      { error: "Document exceeds the 15 MB limit." },
+      413
+    );
+  }
+
+  const fileType =
+    String(file.type || "").toLowerCase();
+
+  if (!DOCUMENT_ALLOWED_TYPES.has(fileType)) {
+    return apiResponse(
+      request,
+      env,
+      { error: "Unsupported document type." },
+      400
+    );
+  }
+
+  const client = await env.DB.prepare(
+    `SELECT id, client_code
+     FROM clients
+     WHERE id = ?
+       AND status = 'active'
+     LIMIT 1`
+  ).bind(clientId).first();
+
+  if (!client) {
+    return apiResponse(
+      request,
+      env,
+      { error: "Client not found." },
+      404
+    );
+  }
+
+  if (projectId) {
+    const project = await env.DB.prepare(
+      `SELECT id
+       FROM projects
+       WHERE id = ?
+         AND client_id = ?
+       LIMIT 1`
+    ).bind(projectId, clientId).first();
+
+    if (!project) {
+      return apiResponse(
+        request,
+        env,
+        { error: "Project does not belong to the selected client." },
+        400
+      );
+    }
+  }
+
+  const documentId = crypto.randomUUID();
+  const year = new Date().getUTCFullYear();
+  const documentCode =
+    `DOC-${year}-${documentId.slice(0, 8).toUpperCase()}`;
+
+  const fileName = safeDocumentFilename(file.name);
+  const objectKey =
+    `clients/${clientId}/${year}/${documentId}/${fileName}`;
+
+  const timestamp = nowIso();
+
+  try {
+    await env.DOCUMENTS_BUCKET.put(
+      objectKey,
+      file.stream(),
+      {
+        httpMetadata: {
+          contentType: fileType
+        },
+        customMetadata: {
+          document_id: documentId,
+          document_code: documentCode,
+          client_id: clientId
+        }
+      }
+    );
+
+    try {
+      await env.DB.prepare(
+        `INSERT INTO documents
+          (
+            id,
+            client_id,
+            project_id,
+            document_code,
+            title,
+            description,
+            file_name,
+            object_key,
+            content_type,
+            size_bytes,
+            status,
+            uploaded_by_user_id,
+            created_at,
+            updated_at
+          )
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'published', ?, ?, ?)`
+      ).bind(
+        documentId,
+        clientId,
+        projectId,
+        documentCode,
+        title,
+        description,
+        fileName,
+        objectKey,
+        fileType,
+        file.size,
+        auth.user.id,
+        timestamp,
+        timestamp
+      ).run();
+    } catch (error) {
+      await env.DOCUMENTS_BUCKET.delete(objectKey);
+      throw error;
+    }
+
+    await writeActivity(
+      env,
+      auth.user.id,
+      "DOCUMENT_UPLOADED",
+      "document",
+      documentId,
+      `Document ${documentCode} uploaded.`
+    );
+
+    return apiResponse(
+      request,
+      env,
+      {
+        ok: true,
+        document: {
+          id: documentId,
+          document_code: documentCode,
+          title,
+          file_name: fileName,
+          content_type: fileType,
+          size_bytes: file.size,
+          status: "published"
+        }
+      },
+      201
+    );
+  } catch (error) {
+    console.error("Document upload failed", error);
+
+    return apiResponse(
+      request,
+      env,
+      { error: "Document upload failed." },
+      500
+    );
+  }
+}
+
+async function listClientDocuments(request, env, auth) {
+  if (!auth.user.client_id) {
+    return apiResponse(
+      request,
+      env,
+      { error: "Client profile is not linked to this account." },
+      403
+    );
+  }
+
+  const rows = await env.DB.prepare(
+    `SELECT
+       d.id,
+       d.document_code,
+       d.title,
+       d.description,
+       d.file_name,
+       d.content_type,
+       d.size_bytes,
+       d.created_at,
+       d.updated_at,
+       p.id AS project_id,
+       p.project_code,
+       p.project_name
+     FROM documents d
+     LEFT JOIN projects p ON p.id = d.project_id
+     WHERE d.client_id = ?
+       AND d.status = 'published'
+     ORDER BY d.created_at DESC`
+  ).bind(auth.user.client_id).all();
+
+  return apiResponse(request, env, {
+    documents: rows.results || []
+  });
+}
+
+function documentDownloadResponse(
+  request,
+  env,
+  object,
+  row
+) {
+  const headers = corsHeaders(request, env);
+
+  for (const [key, value] of Object.entries(securityHeaders())) {
+    headers.set(key, value);
+  }
+
+  headers.set(
+    "Content-Type",
+    row.content_type || "application/octet-stream"
+  );
+
+  headers.set(
+    "Content-Disposition",
+    `attachment; filename="${safeDocumentFilename(row.file_name)}"`
+  );
+
+  headers.set(
+    "Content-Length",
+    String(row.size_bytes || object.size || 0)
+  );
+
+  headers.set("Cache-Control", "private, no-store");
+
+  return new Response(object.body, {
+    status: 200,
+    headers
+  });
+}
+
+async function downloadAdminDocument(
+  request,
+  env,
+  auth,
+  documentId
+) {
+  if (!env.DOCUMENTS_BUCKET) {
+    return apiResponse(
+      request,
+      env,
+      { error: "DOCUMENTS_BUCKET binding is missing." },
+      500
+    );
+  }
+
+  const row = await env.DB.prepare(
+    `SELECT
+       id,
+       document_code,
+       file_name,
+       object_key,
+       content_type,
+       size_bytes
+     FROM documents
+     WHERE id = ?
+     LIMIT 1`
+  ).bind(documentId).first();
+
+  if (!row) {
+    return apiResponse(
+      request,
+      env,
+      { error: "Document not found." },
+      404
+    );
+  }
+
+  const object =
+    await env.DOCUMENTS_BUCKET.get(row.object_key);
+
+  if (!object) {
+    return apiResponse(
+      request,
+      env,
+      { error: "Document object is missing." },
+      404
+    );
+  }
+
+  await writeActivity(
+    env,
+    auth.user.id,
+    "DOCUMENT_DOWNLOADED",
+    "document",
+    row.id,
+    `Document ${row.document_code} downloaded by admin.`
+  );
+
+  return documentDownloadResponse(
+    request,
+    env,
+    object,
+    row
+  );
+}
+
+async function downloadClientDocument(
+  request,
+  env,
+  auth,
+  documentId
+) {
+  if (!auth.user.client_id) {
+    return apiResponse(
+      request,
+      env,
+      { error: "Client profile is not linked to this account." },
+      403
+    );
+  }
+
+  if (!env.DOCUMENTS_BUCKET) {
+    return apiResponse(
+      request,
+      env,
+      { error: "DOCUMENTS_BUCKET binding is missing." },
+      500
+    );
+  }
+
+  const row = await env.DB.prepare(
+    `SELECT
+       id,
+       document_code,
+       file_name,
+       object_key,
+       content_type,
+       size_bytes
+     FROM documents
+     WHERE id = ?
+       AND client_id = ?
+       AND status = 'published'
+     LIMIT 1`
+  ).bind(
+    documentId,
+    auth.user.client_id
+  ).first();
+
+  if (!row) {
+    return apiResponse(
+      request,
+      env,
+      { error: "Document not found." },
+      404
+    );
+  }
+
+  const object =
+    await env.DOCUMENTS_BUCKET.get(row.object_key);
+
+  if (!object) {
+    return apiResponse(
+      request,
+      env,
+      { error: "Document object is missing." },
+      404
+    );
+  }
+
+  await writeActivity(
+    env,
+    auth.user.id,
+    "DOCUMENT_DOWNLOADED",
+    "document",
+    row.id,
+    `Document ${row.document_code} downloaded by client.`
+  );
+
+  return documentDownloadResponse(
+    request,
+    env,
+    object,
+    row
+  );
+}
 async function listClientProjects(request, env, auth) {
   if (!auth.user.client_id) {
     return apiResponse(request, env, { error: "Client profile is not linked to this account." }, 403);
