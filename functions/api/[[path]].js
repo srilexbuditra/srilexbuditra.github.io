@@ -5,15 +5,13 @@ export async function onRequest(context) {
   const sourceUrl = new URL(request.url);
   const targetUrl = new URL(sourceUrl.pathname + sourceUrl.search, UPSTREAM);
 
-  const headers = new Headers(request.headers);
-
-  // Worker R1 staging saat ini mengizinkan origin Worker staging.
-  headers.set("Origin", UPSTREAM);
-  headers.delete("Host");
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set("Origin", UPSTREAM);
+  requestHeaders.delete("Host");
 
   const options = {
     method: request.method,
-    headers,
+    headers: requestHeaders,
     redirect: "manual"
   };
 
@@ -21,5 +19,18 @@ export async function onRequest(context) {
     options.body = request.body;
   }
 
-  return fetch(targetUrl.toString(), options);
+  const upstreamResponse = await fetch(targetUrl.toString(), options);
+
+  const responseHeaders = new Headers(upstreamResponse.headers);
+
+  const setCookie = upstreamResponse.headers.get("Set-Cookie");
+  if (setCookie) {
+    responseHeaders.set("Set-Cookie", setCookie);
+  }
+
+  return new Response(upstreamResponse.body, {
+    status: upstreamResponse.status,
+    statusText: upstreamResponse.statusText,
+    headers: responseHeaders
+  });
 }
