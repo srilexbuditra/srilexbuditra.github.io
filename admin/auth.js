@@ -1,4 +1,4 @@
-(() => {
+﻿(() => {
   "use strict";
 
   const API_BASE = "/api";
@@ -48,6 +48,10 @@
           #07110c;
         color: #f8fafc;
         font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+
+      .sb-auth-overlay[hidden] {
+        display: none !important;
       }
 
       .sb-auth-card {
@@ -199,7 +203,7 @@
         <img src="https://srilexbuditra.work/images/logo.avif" alt="Logo Srilex Buditra">
         <div>
           <strong>SRILEX BUDITRA</strong>
-          <span>Management Console • R1</span>
+          <span>Management Console â€¢ R1</span>
         </div>
       </div>
 
@@ -415,3 +419,4 @@
     checkSession();
   }
 })();
+
