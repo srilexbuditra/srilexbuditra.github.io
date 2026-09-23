@@ -209,7 +209,7 @@
     updateDashboardCount(documents.length);
 
     documents.forEach(document => {
-      const tr = document.createElement("tr");
+      const tr = window.document.createElement("tr");
 
       tr.innerHTML = `
         <td>

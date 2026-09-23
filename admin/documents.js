@@ -521,7 +521,7 @@
     empty.hidden = documents.length !== 0;
 
     documents.forEach(document => {
-      const tr = document.createElement("tr");
+      const tr = window.document.createElement("tr");
 
       tr.innerHTML = `
         <td>
