@@ -6937,3 +6937,14 @@ body {
     grid-column: 1 / -1;
   }
 }
+/* SRILEXBUDITRA MOBILE FOOTER SAFE AREA R4 */
+@media (max-width: 760px) {
+  .footer {
+    padding-bottom: calc(110px + env(safe-area-inset-bottom));
+  }
+
+  .copyright {
+    margin-top: 24px;
+    line-height: 1.55;
+  }
+}
