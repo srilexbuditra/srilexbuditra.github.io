@@ -1,4 +1,4 @@
-﻿(() => {
+(() => {
   "use strict";
 
   const API = "/api/admin/clients";
@@ -241,6 +241,7 @@
   const view = document.createElement("section");
   view.className = "sb-client-view";
   view.hidden = true;
+  view.dataset.sbView = "clients";
 
   view.innerHTML = `
     <div class="sb-client-head">

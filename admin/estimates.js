@@ -277,6 +277,7 @@
   const view = document.createElement("section");
   view.className = "sb-est-view";
   view.hidden = true;
+  view.dataset.sbView = "estimates";
 
   view.innerHTML = `
     <div class="sb-est-head">

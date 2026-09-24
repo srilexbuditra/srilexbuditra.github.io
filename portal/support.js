@@ -278,6 +278,7 @@
   const view = document.createElement("section");
   view.className = "sb-support-view";
   view.hidden = true;
+  view.dataset.sbView = "support";
 
   view.innerHTML = `
     <div class="sb-support-head">

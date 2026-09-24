@@ -283,6 +283,7 @@
   const view = document.createElement("section");
   view.className = "sb-project-view";
   view.hidden = true;
+  view.dataset.sbView = "projects";
 
   view.innerHTML = `
     <div class="sb-project-head">

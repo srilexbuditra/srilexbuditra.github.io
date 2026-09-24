@@ -89,6 +89,7 @@
   const view = document.createElement("section");
   view.className = "sb-client-documents";
   view.hidden = true;
+  view.dataset.sbView = "documents";
 
   view.innerHTML = `
     <div class="sb-client-doc-head">

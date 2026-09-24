@@ -60,6 +60,7 @@
 
   const view = document.createElement("section");
   view.hidden = true;
+  view.dataset.sbView = "estimates";
 
   view.innerHTML = `
     <div class="page-head">

@@ -291,6 +291,7 @@
   const view = window.document.createElement("section");
   view.className = "sb-invoice-view";
   view.hidden = true;
+  view.dataset.sbView = "invoices";
 
   view.innerHTML = `
     <div class="sb-invoice-head">
