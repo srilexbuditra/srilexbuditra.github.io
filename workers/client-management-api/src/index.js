@@ -1314,6 +1314,17 @@ async function addAdminSupportMessage(
     )
   ]);
 
+  if (ticket.status === "open") {
+    await writeActivity(
+      env,
+      auth.user.id,
+      "SUPPORT_STATUS_UPDATED",
+      "support_ticket",
+      ticketId,
+      `Support ticket ${ticket.ticket_code} status changed automatically from open to in_progress after admin reply.`
+    );
+  }
+
   await writeActivity(
     env,
     auth.user.id,
@@ -1687,6 +1698,17 @@ async function addClientSupportMessage(
       ticketId
     )
   ]);
+
+  if (ticket.status === "resolved") {
+    await writeActivity(
+      env,
+      auth.user.id,
+      "SUPPORT_STATUS_UPDATED",
+      "support_ticket",
+      ticketId,
+      `Support ticket ${ticket.ticket_code} status changed automatically from resolved to open after client reply.`
+    );
+  }
 
   await writeActivity(
     env,
