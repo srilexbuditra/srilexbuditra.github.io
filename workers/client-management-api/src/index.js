@@ -75,6 +75,79 @@ export default {
         return createClient(request, env, auth);
       }
 
+      // ======================================================
+      // LEADS R1 - ADMIN
+      // ======================================================
+
+      if (url.pathname === "/api/admin/leads" && method === "GET") {
+        const auth = await requireRole(request, env, ["system_admin", "staff"]);
+        if (auth.response) return auth.response;
+
+        return listAdminLeads(request, env);
+      }
+
+      if (url.pathname === "/api/admin/leads" && method === "POST") {
+        const auth = await requireRole(request, env, ["system_admin", "staff"]);
+        if (auth.response) return auth.response;
+
+        return createAdminLead(request, env, auth);
+      }
+
+      const adminLeadNotesMatch =
+        url.pathname.match(/^\/api\/admin\/leads\/([^/]+)\/notes$/);
+
+      if (adminLeadNotesMatch && method === "GET") {
+        const auth = await requireRole(request, env, ["system_admin", "staff"]);
+        if (auth.response) return auth.response;
+
+        return listAdminLeadNotes(
+          request,
+          env,
+          decodeURIComponent(adminLeadNotesMatch[1])
+        );
+      }
+
+      if (adminLeadNotesMatch && method === "POST") {
+        const auth = await requireRole(request, env, ["system_admin", "staff"]);
+        if (auth.response) return auth.response;
+
+        return addAdminLeadNote(
+          request,
+          env,
+          auth,
+          decodeURIComponent(adminLeadNotesMatch[1])
+        );
+      }
+
+      const adminLeadConvertMatch =
+        url.pathname.match(/^\/api\/admin\/leads\/([^/]+)\/convert$/);
+
+      if (adminLeadConvertMatch && method === "POST") {
+        const auth = await requireRole(request, env, ["system_admin"]);
+        if (auth.response) return auth.response;
+
+        return convertLeadToClient(
+          request,
+          env,
+          auth,
+          decodeURIComponent(adminLeadConvertMatch[1])
+        );
+      }
+
+      const adminLeadMatch =
+        url.pathname.match(/^\/api\/admin\/leads\/([^/]+)$/);
+
+      if (adminLeadMatch && method === "PATCH") {
+        const auth = await requireRole(request, env, ["system_admin", "staff"]);
+        if (auth.response) return auth.response;
+
+        return updateAdminLead(
+          request,
+          env,
+          auth,
+          decodeURIComponent(adminLeadMatch[1])
+        );
+      }
       if (url.pathname === "/api/admin/projects" && method === "GET") {
         const auth = await requireRole(request, env, ["system_admin", "staff"]);
         if (auth.response) return auth.response;
@@ -868,6 +941,931 @@ async function createClient(request, env, auth) {
   }, 201);
 }
 
+
+/* ==========================================================
+   LEADS R1
+   ========================================================== */
+
+function hasOwnField(object, key) {
+  return Object.prototype.hasOwnProperty.call(object || {}, key);
+}
+
+function nullableLeadText(value) {
+  if (value === null || value === undefined) return null;
+
+  const text = String(value).trim();
+  return text || null;
+}
+
+function normalizeLeadFollowUp(value) {
+  if (value === null || value === undefined || String(value).trim() === "") {
+    return null;
+  }
+
+  const parsed = new Date(value);
+
+  if (Number.isNaN(parsed.getTime())) {
+    return null;
+  }
+
+  return parsed.toISOString();
+}
+
+async function validateLeadAssignee(request, env, userId) {
+  if (!userId) return { ok: true };
+
+  const user = await env.DB.prepare(
+    `SELECT id
+     FROM users
+     WHERE id = ?
+       AND status = 'active'
+       AND role IN ('system_admin', 'staff')
+     LIMIT 1`
+  ).bind(userId).first();
+
+  if (!user) {
+    return {
+      ok: false,
+      response: apiResponse(
+        request,
+        env,
+        { error: "Assigned user is not a valid active administrator or staff member." },
+        400
+      )
+    };
+  }
+
+  return { ok: true };
+}
+
+async function listAdminLeads(request, env) {
+  const rows = await env.DB.prepare(
+    `SELECT
+       l.id,
+       l.lead_code,
+       l.full_name,
+       l.company_name,
+       l.email,
+       l.phone,
+       l.source,
+       l.service_interest,
+       l.message,
+       l.status,
+       l.assigned_to_user_id,
+       l.next_follow_up_at,
+       l.converted_client_id,
+       l.converted_at,
+       l.created_by_user_id,
+       l.created_at,
+       l.updated_at,
+
+       au.full_name AS assigned_to_name,
+       au.email AS assigned_to_email,
+
+       cc.client_code AS converted_client_code,
+       cc.full_name AS converted_client_name,
+
+       (
+         SELECT COUNT(*)
+         FROM lead_notes ln
+         WHERE ln.lead_id = l.id
+       ) AS note_count
+
+     FROM leads l
+
+     LEFT JOIN users au
+       ON au.id = l.assigned_to_user_id
+
+     LEFT JOIN clients cc
+       ON cc.id = l.converted_client_id
+
+     ORDER BY
+       CASE l.status
+         WHEN 'new' THEN 1
+         WHEN 'contacted' THEN 2
+         WHEN 'qualified' THEN 3
+         WHEN 'lost' THEN 4
+         WHEN 'converted' THEN 5
+         ELSE 6
+       END,
+       CASE
+         WHEN l.next_follow_up_at IS NULL THEN 1
+         ELSE 0
+       END,
+       l.next_follow_up_at ASC,
+       l.updated_at DESC`
+  ).all();
+
+  return apiResponse(
+    request,
+    env,
+    {
+      leads: rows.results || []
+    }
+  );
+}
+
+async function createAdminLead(request, env, auth) {
+  const body = await readJson(request);
+
+  const fullName =
+    String(body?.full_name || "").trim();
+
+  const companyName =
+    nullableLeadText(body?.company_name);
+
+  const rawEmail =
+    nullableLeadText(body?.email);
+
+  const email =
+    rawEmail ? normalizeEmail(rawEmail) : null;
+
+  const phone =
+    nullableLeadText(body?.phone);
+
+  const source =
+    nullableLeadText(body?.source);
+
+  const serviceInterest =
+    nullableLeadText(body?.service_interest);
+
+  const message =
+    nullableLeadText(body?.message);
+
+  const status =
+    String(body?.status || "new")
+      .trim()
+      .toLowerCase();
+
+  const assignedToUserId =
+    nullableLeadText(body?.assigned_to_user_id);
+
+  const nextFollowUpAt =
+    normalizeLeadFollowUp(body?.next_follow_up_at);
+
+  const allowedStatuses =
+    new Set([
+      "new",
+      "contacted",
+      "qualified",
+      "lost"
+    ]);
+
+  if (!fullName) {
+    return apiResponse(
+      request,
+      env,
+      { error: "full_name is required." },
+      400
+    );
+  }
+
+  if (!email && !phone) {
+    return apiResponse(
+      request,
+      env,
+      { error: "Lead requires at least an email or phone number." },
+      400
+    );
+  }
+
+  if (email && !validEmail(email)) {
+    return apiResponse(
+      request,
+      env,
+      { error: "Invalid lead email address." },
+      400
+    );
+  }
+
+  if (!allowedStatuses.has(status)) {
+    return apiResponse(
+      request,
+      env,
+      { error: "Invalid lead status." },
+      400
+    );
+  }
+
+  if (
+    body?.next_follow_up_at &&
+    !nextFollowUpAt
+  ) {
+    return apiResponse(
+      request,
+      env,
+      { error: "Invalid next_follow_up_at." },
+      400
+    );
+  }
+
+  if (
+    fullName.length > 200 ||
+    (companyName && companyName.length > 200) ||
+    (phone && phone.length > 100) ||
+    (source && source.length > 160) ||
+    (serviceInterest && serviceInterest.length > 300) ||
+    (message && message.length > 5000)
+  ) {
+    return apiResponse(
+      request,
+      env,
+      { error: "Lead data exceeds allowed length." },
+      400
+    );
+  }
+
+  const assigneeCheck =
+    await validateLeadAssignee(
+      request,
+      env,
+      assignedToUserId
+    );
+
+  if (!assigneeCheck.ok) {
+    return assigneeCheck.response;
+  }
+
+  const leadId = crypto.randomUUID();
+
+  const leadCode =
+    `LEAD-${new Date().getUTCFullYear()}-${leadId
+      .slice(0, 8)
+      .toUpperCase()}`;
+
+  const timestamp = nowIso();
+
+  await env.DB.prepare(
+    `INSERT INTO leads
+      (
+        id,
+        lead_code,
+        full_name,
+        company_name,
+        email,
+        phone,
+        source,
+        service_interest,
+        message,
+        status,
+        assigned_to_user_id,
+        next_follow_up_at,
+        converted_client_id,
+        converted_at,
+        created_by_user_id,
+        created_at,
+        updated_at
+      )
+     VALUES (
+       ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
+       NULL, NULL, ?, ?, ?
+     )`
+  ).bind(
+    leadId,
+    leadCode,
+    fullName,
+    companyName,
+    email,
+    phone,
+    source,
+    serviceInterest,
+    message,
+    status,
+    assignedToUserId,
+    nextFollowUpAt,
+    auth.user.id,
+    timestamp,
+    timestamp
+  ).run();
+
+  await writeActivity(
+    env,
+    auth.user.id,
+    "LEAD_CREATED",
+    "lead",
+    leadId,
+    `Lead ${leadCode} created.`
+  );
+
+  return apiResponse(
+    request,
+    env,
+    {
+      ok: true,
+      lead: {
+        id: leadId,
+        lead_code: leadCode,
+        full_name: fullName,
+        status
+      }
+    },
+    201
+  );
+}
+
+async function updateAdminLead(
+  request,
+  env,
+  auth,
+  leadId
+) {
+  const body = await readJson(request);
+
+  const current = await env.DB.prepare(
+    `SELECT *
+     FROM leads
+     WHERE id = ?
+     LIMIT 1`
+  ).bind(leadId).first();
+
+  if (!current) {
+    return apiResponse(
+      request,
+      env,
+      { error: "Lead not found." },
+      404
+    );
+  }
+
+  if (current.status === "converted") {
+    return apiResponse(
+      request,
+      env,
+      { error: "Converted leads are locked." },
+      409
+    );
+  }
+
+  const allowedStatuses =
+    new Set([
+      "new",
+      "contacted",
+      "qualified",
+      "lost"
+    ]);
+
+  const fullName =
+    hasOwnField(body, "full_name")
+      ? String(body.full_name || "").trim()
+      : current.full_name;
+
+  const companyName =
+    hasOwnField(body, "company_name")
+      ? nullableLeadText(body.company_name)
+      : current.company_name;
+
+  const rawEmail =
+    hasOwnField(body, "email")
+      ? nullableLeadText(body.email)
+      : current.email;
+
+  const email =
+    rawEmail ? normalizeEmail(rawEmail) : null;
+
+  const phone =
+    hasOwnField(body, "phone")
+      ? nullableLeadText(body.phone)
+      : current.phone;
+
+  const source =
+    hasOwnField(body, "source")
+      ? nullableLeadText(body.source)
+      : current.source;
+
+  const serviceInterest =
+    hasOwnField(body, "service_interest")
+      ? nullableLeadText(body.service_interest)
+      : current.service_interest;
+
+  const message =
+    hasOwnField(body, "message")
+      ? nullableLeadText(body.message)
+      : current.message;
+
+  const status =
+    hasOwnField(body, "status")
+      ? String(body.status || "")
+          .trim()
+          .toLowerCase()
+      : current.status;
+
+  const assignedToUserId =
+    hasOwnField(body, "assigned_to_user_id")
+      ? nullableLeadText(body.assigned_to_user_id)
+      : current.assigned_to_user_id;
+
+  let nextFollowUpAt =
+    current.next_follow_up_at;
+
+  if (hasOwnField(body, "next_follow_up_at")) {
+    if (
+      body.next_follow_up_at === null ||
+      String(body.next_follow_up_at).trim() === ""
+    ) {
+      nextFollowUpAt = null;
+    } else {
+      nextFollowUpAt =
+        normalizeLeadFollowUp(
+          body.next_follow_up_at
+        );
+
+      if (!nextFollowUpAt) {
+        return apiResponse(
+          request,
+          env,
+          { error: "Invalid next_follow_up_at." },
+          400
+        );
+      }
+    }
+  }
+
+  if (!fullName) {
+    return apiResponse(
+      request,
+      env,
+      { error: "full_name is required." },
+      400
+    );
+  }
+
+  if (!email && !phone) {
+    return apiResponse(
+      request,
+      env,
+      { error: "Lead requires at least an email or phone number." },
+      400
+    );
+  }
+
+  if (email && !validEmail(email)) {
+    return apiResponse(
+      request,
+      env,
+      { error: "Invalid lead email address." },
+      400
+    );
+  }
+
+  if (!allowedStatuses.has(status)) {
+    return apiResponse(
+      request,
+      env,
+      {
+        error:
+          "Invalid lead status. Use the convert endpoint to mark a lead as converted."
+      },
+      400
+    );
+  }
+
+  if (
+    fullName.length > 200 ||
+    (companyName && companyName.length > 200) ||
+    (phone && phone.length > 100) ||
+    (source && source.length > 160) ||
+    (serviceInterest && serviceInterest.length > 300) ||
+    (message && message.length > 5000)
+  ) {
+    return apiResponse(
+      request,
+      env,
+      { error: "Lead data exceeds allowed length." },
+      400
+    );
+  }
+
+  const assigneeCheck =
+    await validateLeadAssignee(
+      request,
+      env,
+      assignedToUserId
+    );
+
+  if (!assigneeCheck.ok) {
+    return assigneeCheck.response;
+  }
+
+  const timestamp = nowIso();
+
+  await env.DB.prepare(
+    `UPDATE leads
+     SET
+       full_name = ?,
+       company_name = ?,
+       email = ?,
+       phone = ?,
+       source = ?,
+       service_interest = ?,
+       message = ?,
+       status = ?,
+       assigned_to_user_id = ?,
+       next_follow_up_at = ?,
+       updated_at = ?
+     WHERE id = ?`
+  ).bind(
+    fullName,
+    companyName,
+    email,
+    phone,
+    source,
+    serviceInterest,
+    message,
+    status,
+    assignedToUserId,
+    nextFollowUpAt,
+    timestamp,
+    leadId
+  ).run();
+
+  await writeActivity(
+    env,
+    auth.user.id,
+    "LEAD_UPDATED",
+    "lead",
+    leadId,
+    `Lead ${current.lead_code} updated from ${current.status} to ${status}.`
+  );
+
+  return apiResponse(
+    request,
+    env,
+    {
+      ok: true,
+      lead: {
+        id: leadId,
+        lead_code: current.lead_code,
+        full_name: fullName,
+        status,
+        next_follow_up_at: nextFollowUpAt
+      }
+    }
+  );
+}
+
+async function listAdminLeadNotes(
+  request,
+  env,
+  leadId
+) {
+  const lead = await env.DB.prepare(
+    `SELECT id, lead_code
+     FROM leads
+     WHERE id = ?
+     LIMIT 1`
+  ).bind(leadId).first();
+
+  if (!lead) {
+    return apiResponse(
+      request,
+      env,
+      { error: "Lead not found." },
+      404
+    );
+  }
+
+  const rows = await env.DB.prepare(
+    `SELECT
+       n.id,
+       n.lead_id,
+       n.user_id,
+       n.note,
+       n.created_at,
+       u.full_name AS user_name,
+       u.email AS user_email
+     FROM lead_notes n
+     JOIN users u
+       ON u.id = n.user_id
+     WHERE n.lead_id = ?
+     ORDER BY n.created_at DESC`
+  ).bind(leadId).all();
+
+  return apiResponse(
+    request,
+    env,
+    {
+      lead: {
+        id: lead.id,
+        lead_code: lead.lead_code
+      },
+      notes: rows.results || []
+    }
+  );
+}
+
+async function addAdminLeadNote(
+  request,
+  env,
+  auth,
+  leadId
+) {
+  const body = await readJson(request);
+
+  const note =
+    String(body?.note || "").trim();
+
+  if (!note || note.length > 5000) {
+    return apiResponse(
+      request,
+      env,
+      {
+        error:
+          "Lead note is required and must not exceed 5000 characters."
+      },
+      400
+    );
+  }
+
+  const lead = await env.DB.prepare(
+    `SELECT id, lead_code, status
+     FROM leads
+     WHERE id = ?
+     LIMIT 1`
+  ).bind(leadId).first();
+
+  if (!lead) {
+    return apiResponse(
+      request,
+      env,
+      { error: "Lead not found." },
+      404
+    );
+  }
+
+  if (lead.status === "converted") {
+    return apiResponse(
+      request,
+      env,
+      { error: "Converted leads are locked." },
+      409
+    );
+  }
+
+  const noteId = crypto.randomUUID();
+  const timestamp = nowIso();
+
+  await env.DB.prepare(
+    `INSERT INTO lead_notes
+      (
+        id,
+        lead_id,
+        user_id,
+        note,
+        created_at
+      )
+     VALUES (?, ?, ?, ?, ?)`
+  ).bind(
+    noteId,
+    leadId,
+    auth.user.id,
+    note,
+    timestamp
+  ).run();
+
+  await writeActivity(
+    env,
+    auth.user.id,
+    "LEAD_NOTE_ADDED",
+    "lead",
+    leadId,
+    `Note added to lead ${lead.lead_code}.`
+  );
+
+  return apiResponse(
+    request,
+    env,
+    {
+      ok: true,
+      note: {
+        id: noteId,
+        lead_id: leadId,
+        note,
+        created_at: timestamp
+      }
+    },
+    201
+  );
+}
+
+async function convertLeadToClient(
+  request,
+  env,
+  auth,
+  leadId
+) {
+  const body = await readJson(request);
+
+  const temporaryPassword =
+    body?.temporary_password;
+
+  const lead = await env.DB.prepare(
+    `SELECT *
+     FROM leads
+     WHERE id = ?
+     LIMIT 1`
+  ).bind(leadId).first();
+
+  if (!lead) {
+    return apiResponse(
+      request,
+      env,
+      { error: "Lead not found." },
+      404
+    );
+  }
+
+  if (
+    lead.status === "converted" ||
+    lead.converted_client_id
+  ) {
+    return apiResponse(
+      request,
+      env,
+      { error: "Lead has already been converted." },
+      409
+    );
+  }
+
+  if (lead.status !== "qualified") {
+    return apiResponse(
+      request,
+      env,
+      {
+        error:
+          "Only qualified leads can be converted to clients."
+      },
+      409
+    );
+  }
+
+  const email =
+    lead.email
+      ? normalizeEmail(lead.email)
+      : null;
+
+  if (!email || !validEmail(email)) {
+    return apiResponse(
+      request,
+      env,
+      {
+        error:
+          "A valid lead email is required before conversion."
+      },
+      400
+    );
+  }
+
+  const passwordError =
+    validatePassword(temporaryPassword);
+
+  if (passwordError) {
+    return apiResponse(
+      request,
+      env,
+      { error: passwordError },
+      400
+    );
+  }
+
+  const existing = await env.DB.prepare(
+    `SELECT id
+     FROM users
+     WHERE email = ?
+     LIMIT 1`
+  ).bind(email).first();
+
+  if (existing) {
+    return apiResponse(
+      request,
+      env,
+      { error: "Email is already registered." },
+      409
+    );
+  }
+
+  const userId = crypto.randomUUID();
+  const clientId = crypto.randomUUID();
+
+  const clientCode =
+    `CL-${new Date().getUTCFullYear()}-${clientId
+      .slice(0, 8)
+      .toUpperCase()}`;
+
+  const passwordHash =
+    await hashPassword(
+      temporaryPassword
+    );
+
+  const timestamp = nowIso();
+
+  await env.DB.batch([
+    env.DB.prepare(
+      `INSERT INTO users
+        (
+          id,
+          email,
+          password_hash,
+          role,
+          status,
+          must_change_password,
+          created_at,
+          updated_at
+        )
+       VALUES (
+         ?, ?, ?, 'client', 'active', 1, ?, ?
+       )`
+    ).bind(
+      userId,
+      email,
+      passwordHash,
+      timestamp,
+      timestamp
+    ),
+
+    env.DB.prepare(
+      `INSERT INTO clients
+        (
+          id,
+          user_id,
+          client_code,
+          full_name,
+          company_name,
+          phone,
+          status,
+          created_at,
+          updated_at
+        )
+       VALUES (
+         ?, ?, ?, ?, ?, ?, 'active', ?, ?
+       )`
+    ).bind(
+      clientId,
+      userId,
+      clientCode,
+      lead.full_name,
+      lead.company_name || null,
+      lead.phone || null,
+      timestamp,
+      timestamp
+    ),
+
+    env.DB.prepare(
+      `UPDATE leads
+       SET
+         status = 'converted',
+         converted_client_id = ?,
+         converted_at = ?,
+         updated_at = ?
+       WHERE id = ?
+         AND status = 'qualified'
+         AND converted_client_id IS NULL`
+    ).bind(
+      clientId,
+      timestamp,
+      timestamp,
+      leadId
+    )
+  ]);
+
+  await writeActivity(
+    env,
+    auth.user.id,
+    "CLIENT_CREATED",
+    "client",
+    clientId,
+    `Client ${clientCode} created from lead ${lead.lead_code}.`
+  );
+
+  await writeActivity(
+    env,
+    auth.user.id,
+    "LEAD_CONVERTED",
+    "lead",
+    leadId,
+    `Lead ${lead.lead_code} converted to client ${clientCode}.`
+  );
+
+  return apiResponse(
+    request,
+    env,
+    {
+      ok: true,
+      lead: {
+        id: leadId,
+        lead_code: lead.lead_code,
+        status: "converted"
+      },
+      client: {
+        id: clientId,
+        client_code: clientCode,
+        email,
+        full_name: lead.full_name,
+        company_name: lead.company_name || null
+      }
+    },
+    201
+  );
+}
 async function listAdminProjects(request, env) {
   const rows = await env.DB.prepare(
     `SELECT
