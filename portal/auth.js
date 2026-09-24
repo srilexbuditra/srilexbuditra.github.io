@@ -191,7 +191,7 @@
 
     card.innerHTML = `
       <div class="sb-portal-auth-brand">
-        <img src="https://srilexbuditra.work/images/logo.avif" alt="Logo Srilex Buditra">
+        <img src="/images/logo.avif" alt="Logo Srilex Buditra">
         <div>
           <strong>SRILEX BUDITRA</strong>
           <span>Client Portal &bull; R1</span>

@@ -200,7 +200,7 @@
 
     card.innerHTML = `
       <div class="sb-auth-brand">
-        <img src="https://srilexbuditra.work/images/logo.avif" alt="Logo Srilex Buditra">
+        <img src="/images/logo.avif" alt="Logo Srilex Buditra">
         <div>
           <strong>SRILEX BUDITRA</strong>
           <span>Management Console &bull; R1</span>
