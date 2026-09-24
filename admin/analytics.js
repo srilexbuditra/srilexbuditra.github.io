@@ -113,7 +113,7 @@
 
       const [htmlResponse, cssResponse] =
         await Promise.all([
-          fetch("./stats.html", {
+          fetch("./analytics-template.html", {
             cache:"no-store"
           }),
           fetch("./stats.css", {
@@ -151,7 +151,7 @@
 
       if (!sourceMain) {
         throw new Error(
-          "Struktur main.container pada stats.html tidak ditemukan."
+          "Struktur main.container pada analytics-template.html tidak ditemukan."
         );
       }
 
