@@ -8,7 +8,7 @@
 
   if (!analyticsRoot) return;
 const STATS_API =
-  "https://srilexbuditra-visitors-api.srilexbuditra.workers.dev/stats";
+  window.location.origin + "/api/analytics/stats";
 
 const apiKeyInput = analyticsRoot.querySelector("#apiKey");
 const loadBtn = analyticsRoot.querySelector("#loadBtn");
