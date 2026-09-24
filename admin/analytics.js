@@ -113,7 +113,7 @@
 
       const [htmlResponse, cssResponse] =
         await Promise.all([
-          fetch("./analytics-template.html", {
+          fetch("./analytics-template.html?v=2", {
             cache:"no-store"
           }),
           fetch("./stats.css", {
