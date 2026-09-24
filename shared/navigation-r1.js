@@ -48,7 +48,8 @@
       "estimates": "estimates",
       "invoices": "invoices",
       "support": "support",
-        "analytics": "analytics"
+        "analytics": "analytics",
+      "activity logs": "activity"
     };
 
     return adminMap[label] || null;

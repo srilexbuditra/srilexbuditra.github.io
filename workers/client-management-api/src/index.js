@@ -63,6 +63,24 @@ export default {
         return changePassword(request, env, auth);
       }
 
+      // ======================================================
+      // ACTIVITY LOGS R1 - ADMIN
+      // ======================================================
+
+      if (url.pathname === "/api/admin/activity" && method === "GET") {
+        const auth = await requireRole(
+          request,
+          env,
+          ["system_admin", "staff"]
+        );
+
+        if (auth.response) return auth.response;
+
+        return listAdminActivity(
+          request,
+          env
+        );
+      }
       if (url.pathname === "/api/admin/clients" && method === "GET") {
         const auth = await requireRole(request, env, ["system_admin", "staff"]);
         if (auth.response) return auth.response;
@@ -684,6 +702,64 @@ async function writeActivity(env, userId, action, entityType = null, entityId = 
     description,
     nowIso()
   ).run();
+}
+
+/* ==========================================================
+   ACTIVITY LOGS R1
+   ========================================================== */
+
+async function listAdminActivity(request, env) {
+  const url = new URL(request.url);
+
+  const requestedLimit =
+    Number.parseInt(
+      url.searchParams.get("limit") || "50",
+      10
+    );
+
+  const limit =
+    Number.isFinite(requestedLimit)
+      ? Math.min(
+          Math.max(requestedLimit, 1),
+          100
+        )
+      : 50;
+
+  const rows = await env.DB.prepare(
+    `SELECT
+       a.id,
+       a.user_id,
+       a.action,
+       a.entity_type,
+       a.entity_id,
+       a.description,
+       a.created_at,
+
+       u.email AS user_email,
+       u.full_name AS user_full_name,
+       u.role AS user_role
+
+     FROM activity_logs a
+
+     LEFT JOIN users u
+       ON u.id = a.user_id
+
+     ORDER BY a.created_at DESC
+
+     LIMIT ?`
+  )
+    .bind(limit)
+    .all();
+
+  return apiResponse(
+    request,
+    env,
+    {
+      activity:
+        rows.results || [],
+      limit
+    }
+  );
 }
 
 async function bootstrapAdmin(request, env) {
