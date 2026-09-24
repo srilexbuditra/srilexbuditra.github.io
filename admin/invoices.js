@@ -487,6 +487,7 @@
       if (node !== view) node.style.display = "none";
     });
 
+    view.style.removeProperty("display");
     view.hidden = false;
 
     window.document.querySelectorAll(".nav a, .mobile-nav a")

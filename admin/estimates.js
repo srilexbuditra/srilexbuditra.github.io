@@ -457,6 +457,7 @@
       if (node !== view) node.style.display = "none";
     });
 
+    view.style.removeProperty("display");
     view.hidden = false;
 
     document.querySelectorAll(".nav a, .mobile-nav a")
