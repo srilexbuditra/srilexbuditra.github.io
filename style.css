@@ -6948,3 +6948,20 @@ body {
     line-height: 1.55;
   }
 }
+/* SRILEXBUDITRA MOBILE COPYRIGHT SAFE AREA R5
+   Keep floating accessibility/privacy controls clear of copyright.
+*/
+@media (max-width: 760px) {
+  .footer {
+    padding-bottom: 15px;
+  }
+
+  .copyright {
+    margin-top: 24px;
+    padding-top: 15px;
+    padding-left: 14px;
+    padding-right: 14px;
+    padding-bottom: calc(105px + env(safe-area-inset-bottom));
+    line-height: 1.55;
+  }
+}
