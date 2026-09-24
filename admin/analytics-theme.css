@@ -374,7 +374,7 @@ main.content:has(> .sb-admin-analytics:not([hidden])) {
 
 main.content > .sb-admin-analytics {
   width: 100% !important;
-  max-width: 1480px !important;
+  max-width: none !important;
   margin-left: auto !important;
   margin-right: auto !important;
   padding-bottom: 36px !important;
