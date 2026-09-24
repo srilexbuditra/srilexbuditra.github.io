@@ -16,7 +16,7 @@
   --analytics-shadow: 0 12px 32px rgba(20, 55, 43, .07);
 
   width: 100% !important;
-  max-width: none !important;
+  max-width: 1600px !important;
   color: var(--analytics-text) !important;
 }
 
@@ -28,7 +28,7 @@
 .sb-admin-analytics > .container,
 .sb-admin-analytics .container {
   width: 100% !important;
-  max-width: none !important;
+  max-width: 1600px !important;
   margin: 0 !important;
   padding: 0 !important;
   background: transparent !important;
@@ -101,7 +101,7 @@
 /* DASHBOARD ANALYTICS */
 .sb-admin-analytics #dashboard {
   width: 100% !important;
-  max-width: none !important;
+  max-width: 1600px !important;
   background: transparent !important;
   color: var(--analytics-text) !important;
 }
@@ -369,12 +369,12 @@
 
 /* Gunakan area Admin lebih maksimal */
 main.content:has(> .sb-admin-analytics:not([hidden])) {
-  max-width: none !important;
+  max-width: 1600px !important;
 }
 
 main.content > .sb-admin-analytics {
   width: 100% !important;
-  max-width: none !important;
+  max-width: 1600px !important;
   margin-left: auto !important;
   margin-right: auto !important;
   padding-bottom: 36px !important;
