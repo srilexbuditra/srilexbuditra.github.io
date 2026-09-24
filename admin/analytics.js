@@ -178,6 +178,35 @@
        */
       view.replaceChildren(container);
 
+      /* SB_ANALYTICS_SECRET_UI */
+      const loginBox =
+        container.querySelector("#loginBox");
+
+      const keyRow =
+        loginBox?.querySelector(".key-row");
+
+      if (keyRow) {
+        keyRow.style.display = "none";
+      }
+
+      const loginHeading =
+        loginBox?.querySelector(
+          "h1, h2, h3"
+        );
+
+      if (loginHeading) {
+        loginHeading.textContent =
+          "Analytics Connection";
+      }
+
+      const status =
+        container.querySelector("#status");
+
+      if (status) {
+        status.textContent =
+          "Menghubungkan Visitor Analytics...";
+      }
+
       const script =
         document.createElement("script");
 

@@ -481,12 +481,7 @@ function renderOnlinePages(items = []) {
 }
 
 async function loadStats() {
-  const key = apiKeyInput.value.trim();
-
-  if (!key) {
-    statusBox.textContent = "Masukkan API Key terlebih dahulu.";
-    return;
-  }
+  
 
   statusBox.textContent = "Mengambil data statistik...";
   loadBtn.disabled = true;
@@ -495,15 +490,13 @@ async function loadStats() {
   try {
     const response = await fetch(statsUrl(), {
       method: "GET",
-      headers: {
-        Authorization: "Bearer " + key
-      },
+      headers: { Accept: "application/json" },
       cache: "no-store"
     });
 
     if (!response.ok) {
       if (response.status === 401 || response.status === 403) {
-        throw new Error("API Key tidak valid.");
+        throw new Error("Akses Analytics ditolak. Silakan login kembali sebagai Admin.");
       }
       throw new Error("Gagal mengambil statistik. HTTP " + response.status);
     }
@@ -623,5 +616,9 @@ document.addEventListener("visibilitychange", () => {
   if (document.visibilityState === "visible") loadStats();
 });
 startAutoRefresh();
+
+
+  /* SB_ANALYTICS_AUTOLOAD */
+  loadStats();
 
 })();

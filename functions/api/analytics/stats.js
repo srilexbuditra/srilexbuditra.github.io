@@ -1,25 +1,101 @@
 const ANALYTICS_UPSTREAM =
   "https://srilexbuditra-visitors-api.srilexbuditra.workers.dev/stats";
 
-export async function onRequestGet(context) {
-  const request = context.request;
+async function requireAdmin(request) {
+  const cookie =
+    request.headers.get("Cookie") || "";
 
-  const authorization =
-    request.headers.get("Authorization");
+  if (!cookie) {
+    return null;
+  }
 
-  if (!authorization) {
-    return new Response(
-      JSON.stringify({
-        error: "Authorization required."
-      }),
-      {
-        status: 401,
+  try {
+    const authUrl =
+      new URL("/api/auth/me", request.url);
+
+    const response =
+      await fetch(authUrl.toString(), {
+        method: "GET",
+
         headers: {
-          "Content-Type": "application/json; charset=utf-8",
-          "Cache-Control": "no-store",
-          "X-Content-Type-Options": "nosniff"
-        }
+          "Cookie": cookie,
+          "Accept": "application/json"
+        },
+
+        cache: "no-store",
+        redirect: "manual"
+      });
+
+    if (!response.ok) {
+      return null;
+    }
+
+    const data =
+      await response.json().catch(() => null);
+
+    const user =
+      data?.user || data;
+
+    const role =
+      user?.role || "";
+
+    if (
+      role !== "system_admin" &&
+      role !== "staff"
+    ) {
+      return null;
+    }
+
+    return user;
+  }
+  catch {
+    return null;
+  }
+}
+
+function jsonResponse(data, status) {
+  return new Response(
+    JSON.stringify(data),
+    {
+      status,
+      headers: {
+        "Content-Type":
+          "application/json; charset=utf-8",
+
+        "Cache-Control":
+          "no-store",
+
+        "X-Content-Type-Options":
+          "nosniff"
       }
+    }
+  );
+}
+
+export async function onRequestGet(context) {
+  const { request, env } = context;
+
+  const user =
+    await requireAdmin(request);
+
+  if (!user) {
+    return jsonResponse(
+      {
+        error: "Admin authentication required."
+      },
+      401
+    );
+  }
+
+  const statsKey =
+    String(env.STATS_API_KEY || "").trim();
+
+  if (!statsKey) {
+    return jsonResponse(
+      {
+        error: "Analytics secret is not configured."
+      },
+      503
     );
   }
 
@@ -30,15 +106,17 @@ export async function onRequestGet(context) {
     const upstream =
       new URL(ANALYTICS_UPSTREAM);
 
-    /*
-     * Hanya teruskan query yang memang dipakai Analytics.
-     */
-    for (const key of ["t", "start", "end"]) {
+    for (
+      const key of ["t", "start", "end"]
+    ) {
       const value =
         incoming.searchParams.get(key);
 
       if (value) {
-        upstream.searchParams.set(key, value);
+        upstream.searchParams.set(
+          key,
+          value
+        );
       }
     }
 
@@ -47,8 +125,11 @@ export async function onRequestGet(context) {
         method: "GET",
 
         headers: {
-          "Authorization": authorization,
-          "Accept": "application/json"
+          "Authorization":
+            `Bearer ${statsKey}`,
+
+          "Accept":
+            "application/json"
         },
 
         redirect: "follow"
@@ -59,7 +140,9 @@ export async function onRequestGet(context) {
 
     headers.set(
       "Content-Type",
-      response.headers.get("Content-Type") ||
+      response.headers.get(
+        "Content-Type"
+      ) ||
       "application/json; charset=utf-8"
     );
 
@@ -87,38 +170,26 @@ export async function onRequestGet(context) {
       error
     );
 
-    return new Response(
-      JSON.stringify({
-        error: "Analytics upstream unavailable."
-      }),
+    return jsonResponse(
       {
-        status: 502,
-        headers: {
-          "Content-Type": "application/json; charset=utf-8",
-          "Cache-Control": "no-store",
-          "X-Content-Type-Options": "nosniff"
-        }
-      }
+        error:
+          "Analytics upstream unavailable."
+      },
+      502
     );
   }
 }
 
 export function onRequest(context) {
   if (
-    context.request.method.toUpperCase() !== "GET"
+    context.request.method
+      .toUpperCase() !== "GET"
   ) {
-    return new Response(
-      JSON.stringify({
-        error: "Method not allowed."
-      }),
+    return jsonResponse(
       {
-        status: 405,
-        headers: {
-          "Content-Type": "application/json; charset=utf-8",
-          "Cache-Control": "no-store",
-          "Allow": "GET"
-        }
-      }
+        error: "Method not allowed."
+      },
+      405
     );
   }
 
