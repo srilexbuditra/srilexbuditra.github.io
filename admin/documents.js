@@ -681,5 +681,5 @@
     if (event.key === "Escape" && !modal.hidden) closeModal();
   });
 
-  loadDocuments();
+  /* SB_D1_LAZY_R1: load only when Documents is opened */
 })();

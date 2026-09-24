@@ -661,5 +661,5 @@
     }
   });
 
-  loadClients();
+  /* SB_D1_LAZY_R1: load only when Clients is opened */
 })();

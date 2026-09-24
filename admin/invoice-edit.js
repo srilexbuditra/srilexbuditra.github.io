@@ -583,6 +583,14 @@
   }
 
   async function syncRows() {
+    /* SB_INVOICE_EDIT_VISIBLE_ONLY */
+    const invoiceView =
+      document.querySelector('[data-sb-view="invoices"]');
+
+    if (!invoiceView || invoiceView.hidden) {
+      return;
+    }
+
     if (syncing) return;
 
     syncing = true;
@@ -782,5 +790,5 @@
     );
   }
 
-  setTimeout(syncRows, 400);
+  /* SB_D1_LAZY_R1: no background invoice sync */
 })();

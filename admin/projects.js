@@ -829,5 +829,5 @@
     }
   });
 
-  loadProjects();
+  /* SB_D1_LAZY_R1: load only when Projects is opened */
 })();

@@ -321,6 +321,14 @@
   }
 
   async function syncRows() {
+    /* SB_PROJECT_EDIT_VISIBLE_ONLY */
+    const projectView =
+      document.querySelector('[data-sb-view="projects"]');
+
+    if (!projectView || projectView.hidden) {
+      return;
+    }
+
     if (syncing) return;
     syncing = true;
 
@@ -450,5 +458,5 @@
     });
   }
 
-  setTimeout(syncRows, 300);
+  /* SB_D1_LAZY_R1: no background project sync */
 })();

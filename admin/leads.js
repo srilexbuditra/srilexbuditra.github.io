@@ -1927,9 +1927,34 @@
     }
   );
 
+  /* SB_LEADS_NAV_ACTIVE */
+  function setLeadsNavigationActive() {
+    const links = [
+      ...document.querySelectorAll(
+        ".nav a, .mobile-nav a"
+      )
+    ];
+
+    links.forEach(link => {
+      link.classList.remove("active");
+    });
+
+    links
+      .filter(
+        link =>
+          String(link.textContent || "")
+            .trim()
+            .toLowerCase() === "leads"
+      )
+      .forEach(link => {
+        link.classList.add("active");
+      });
+  }
+
   const observer =
     new MutationObserver(() => {
       if (!view.hidden) {
+        setLeadsNavigationActive();
         loadLeads();
       }
     });
