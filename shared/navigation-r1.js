@@ -1,19 +1,45 @@
 (() => {
   "use strict";
 
-  const NAV_SELECTOR = ".nav a, .mobile-nav a";
+  const NAV_SELECTOR =
+    ".nav a, .mobile-nav a";
 
-  function normalizeName(value) {
+  const content =
+    document.querySelector("main.content");
+
+  if (!content) return;
+
+  const isPortal =
+    location.pathname.includes("/portal/");
+
+  function normalize(value) {
     return String(value || "")
       .trim()
       .toLowerCase()
       .replace(/\s+/g, " ");
   }
 
-  function getTargetName(link) {
-    const label = normalizeName(link?.textContent);
+  function targetFromLink(link) {
 
-    const map = {
+    const label =
+      normalize(link?.textContent);
+
+    if (isPortal) {
+
+      const portalMap = {
+        "dashboard": "dashboard",
+        "home": "dashboard",
+        "projects": "projects",
+        "documents": "documents",
+        "estimates": "estimates",
+        "invoices": "invoices",
+        "support": "support"
+      };
+
+      return portalMap[label] || null;
+    }
+
+    const adminMap = {
       "clients": "clients",
       "projects": "projects",
       "documents": "documents",
@@ -22,82 +48,146 @@
       "support": "support"
     };
 
-    return map[label] || null;
+    return adminMap[label] || null;
   }
 
-  function registeredViews() {
+  function views() {
     return [
-      ...document.querySelectorAll(
-        "main.content > [data-sb-view]"
+      ...content.querySelectorAll(
+        ":scope > [data-sb-view]"
       )
     ];
   }
 
-  function prepare(targetName) {
-    registeredViews().forEach(view => {
+  function ensurePortalDashboard() {
 
-      if (
-        targetName &&
-        view.dataset.sbView === targetName
-      ) {
-        view.style.removeProperty("display");
-        view.hidden = false;
-      }
-      else {
-        view.hidden = true;
-        view.style.display = "none";
-      }
+    if (!isPortal) return;
 
-    });
+    if (
+      content.querySelector(
+        ':scope > [data-sb-view="dashboard"]'
+      )
+    ) {
+      return;
+    }
+
+    const baseNodes =
+      [...content.children].filter(
+        node => !node.dataset.sbView
+      );
+
+    if (!baseNodes.length) return;
+
+    const wrapper =
+      document.createElement("section");
+
+    wrapper.dataset.sbView = "dashboard";
+    wrapper.className = "sb-portal-dashboard";
+
+    content.insertBefore(
+      wrapper,
+      baseNodes[0]
+    );
+
+    baseNodes.forEach(
+      node => wrapper.appendChild(node)
+    );
   }
 
-  function enforce(targetName) {
-    const views = registeredViews();
+  function setPortalActive(targetName) {
+
+    if (!isPortal) return;
+
+    document
+      .querySelectorAll(NAV_SELECTOR)
+      .forEach(link => {
+
+        const linkTarget =
+          targetFromLink(link);
+
+        link.classList.toggle(
+          "active",
+          linkTarget === targetName
+        );
+
+      });
+  }
+
+  function showOnly(targetName) {
+
+    const allViews = views();
 
     if (!targetName) {
-      /*
-       * Dashboard, Leads, Activity Logs, Users & Roles,
-       * atau view dasar lain dikelola oleh app utama.
-       * Semua custom module harus tetap ditutup.
-       */
-      views.forEach(view => {
-        view.hidden = true;
-        view.style.display = "none";
-      });
+
+      if (!isPortal) {
+
+        allViews.forEach(view => {
+          view.hidden = true;
+          view.style.display = "none";
+        });
+
+      }
 
       return;
     }
 
     const target =
-      views.find(
-        view => view.dataset.sbView === targetName
+      allViews.find(
+        view =>
+          view.dataset.sbView === targetName
       );
 
-    /*
-     * Jika halaman seperti Projects di Portal bukan custom view,
-     * biarkan app utama menanganinya.
-     */
-    if (!target) {
-      views.forEach(view => {
-        view.hidden = true;
-        view.style.display = "none";
-      });
+    if (!target) return;
 
-      return;
-    }
-
-    views.forEach(view => {
+    allViews.forEach(view => {
 
       if (view === target) {
+
         view.style.removeProperty("display");
         view.hidden = false;
+
       }
       else {
+
         view.hidden = true;
         view.style.display = "none";
+
       }
 
     });
+
+    setPortalActive(targetName);
+  }
+
+  function prepareAdmin(targetName) {
+
+    if (isPortal) return;
+
+    views().forEach(view => {
+
+      if (
+        targetName &&
+        view.dataset.sbView === targetName
+      ) {
+
+        view.style.removeProperty("display");
+        view.hidden = false;
+
+      }
+      else {
+
+        view.hidden = true;
+        view.style.display = "none";
+
+      }
+
+    });
+  }
+
+  ensurePortalDashboard();
+
+  if (isPortal) {
+    showOnly("dashboard");
   }
 
   document.addEventListener(
@@ -110,20 +200,61 @@
       if (!link) return;
 
       const targetName =
-        getTargetName(link);
+        targetFromLink(link);
+
+      if (isPortal) {
+
+        if (!targetName) return;
+
+        event.preventDefault();
+
+        showOnly(targetName);
+
+        /*
+         * Module lama seperti Documents masih mempunyai
+         * leaveDocuments() yang dapat membuka sibling lagi.
+         *
+         * Enforcement setelah seluruh click handler selesai
+         * memastikan hanya target yang tetap terlihat.
+         */
+        setTimeout(() => {
+          showOnly(targetName);
+        }, 0);
+
+        return;
+      }
 
       /*
-       * Sebelum handler module berjalan:
-       * buka hanya target dan tutup custom view lain.
+       * ADMIN:
+       * pertahankan perilaku V2 yang sudah terbukti stabil.
        */
-      prepare(targetName);
+      prepareAdmin(targetName);
 
-      /*
-       * Setelah handler module selesai:
-       * pastikan tidak ada module lain ikut tampil.
-       */
       setTimeout(() => {
-        enforce(targetName);
+
+        if (!targetName) return;
+
+        const target =
+          views().find(
+            view =>
+              view.dataset.sbView === targetName
+          );
+
+        if (!target) return;
+
+        views().forEach(view => {
+
+          if (view === target) {
+            view.style.removeProperty("display");
+            view.hidden = false;
+          }
+          else {
+            view.hidden = true;
+            view.style.display = "none";
+          }
+
+        });
+
       }, 0);
 
     },
@@ -136,11 +267,11 @@
 
       if (!event.persisted) return;
 
-      registeredViews().forEach(view => {
-        view.hidden = true;
-        view.style.display = "none";
-      });
+      if (isPortal) {
+        showOnly("dashboard");
+      }
 
     }
   );
+
 })();
