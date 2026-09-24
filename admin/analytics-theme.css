@@ -363,3 +363,201 @@
     min-height: 240px !important;
   }
 }
+/* =========================================================
+   ANALYTICS VISUAL V2.1 - FINAL POLISH
+   ========================================================= */
+
+/* Gunakan area Admin lebih maksimal */
+main.content:has(> .sb-admin-analytics:not([hidden])) {
+  max-width: none !important;
+}
+
+main.content > .sb-admin-analytics {
+  width: 100% !important;
+  max-width: 1480px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  padding-bottom: 36px !important;
+}
+
+/* Header lebih kuat */
+.sb-admin-analytics .page-head {
+  margin-bottom: 18px !important;
+}
+
+.sb-admin-analytics .page-head h1 {
+  font-size: 34px !important;
+  font-weight: 800 !important;
+}
+
+.sb-admin-analytics .subtitle {
+  font-size: 14px !important;
+  color: #64746e !important;
+}
+
+/* API Key lama tidak tampil lagi.
+   #status tetap dipertahankan untuk analytics-core.js */
+.sb-admin-analytics #loginBox {
+  min-height: 0 !important;
+  padding: 9px 13px !important;
+  margin: 0 0 14px !important;
+
+  display: inline-flex !important;
+  align-items: center !important;
+
+  background: #eef9f4 !important;
+  border: 1px solid #cee9dc !important;
+  box-shadow: none !important;
+}
+
+.sb-admin-analytics #loginBox > :not(#status) {
+  display: none !important;
+}
+
+.sb-admin-analytics #status {
+  display: block !important;
+  margin: 0 !important;
+  color: #176b4d !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+}
+
+/* Filter lebih ringkas */
+.sb-admin-analytics .filter-panel {
+  padding: 20px !important;
+}
+
+.sb-admin-analytics .filter-head {
+  margin-bottom: 14px !important;
+}
+
+.sb-admin-analytics .toolbar {
+  margin-top: 14px !important;
+  padding-top: 13px !important;
+  border-top: 1px solid #edf2ef !important;
+}
+
+/* KPI lebih mudah dibaca */
+.sb-admin-analytics .cards.kpi-grid {
+  grid-template-columns: repeat(4, minmax(0,1fr)) !important;
+  gap: 16px !important;
+}
+
+.sb-admin-analytics .cards.kpi-grid .card {
+  min-height: 128px !important;
+  padding: 20px !important;
+}
+
+.sb-admin-analytics .cards.kpi-grid .number {
+  margin-top: 8px !important;
+  font-size: 34px !important;
+  font-weight: 800 !important;
+}
+
+.sb-admin-analytics .cards.kpi-grid .label,
+.sb-admin-analytics .cards.kpi-grid .meta {
+  color: #53655e !important;
+  font-weight: 700 !important;
+}
+
+/* Grafik menjadi fokus utama */
+.sb-admin-analytics .trend-section {
+  padding: 22px !important;
+}
+
+.sb-admin-analytics #trendChart {
+  min-height: 370px !important;
+  padding: 16px !important;
+}
+
+/* Statistik 2 kolom */
+.sb-admin-analytics #dashboard > .cards:not(.kpi-grid) {
+  grid-template-columns: repeat(2,minmax(0,1fr)) !important;
+  gap: 16px !important;
+}
+
+/* Kontras list diperkuat */
+.sb-admin-analytics .stats-list {
+  color: #263832 !important;
+}
+
+.sb-admin-analytics .stats-list a,
+.sb-admin-analytics .stats-list span,
+.sb-admin-analytics .stats-list div {
+  color: #40554d !important;
+}
+
+.sb-admin-analytics .stats-list > * {
+  padding-top: 9px !important;
+  padding-bottom: 9px !important;
+  border-bottom: 1px solid #edf2ef !important;
+}
+
+/* Top Pages dan Traffic Sources full-width */
+.sb-admin-analytics .wide-section {
+  grid-column: 1 / -1 !important;
+}
+
+/* Recent Visits */
+.sb-admin-analytics .recent-table th {
+  padding: 11px 12px !important;
+}
+
+.sb-admin-analytics .recent-table td {
+  padding: 11px 12px !important;
+  line-height: 1.45 !important;
+}
+
+/* Sedikit lebih tegas tetapi tetap lembut */
+.sb-admin-analytics .analytics-panel,
+.sb-admin-analytics .stats-section,
+.sb-admin-analytics .trend-section,
+.sb-admin-analytics .card,
+.sb-admin-analytics .filter-panel {
+  box-shadow:
+    0 8px 24px rgba(20,55,43,.055) !important;
+}
+
+/* Tablet */
+@media (max-width: 1100px) {
+  main.content > .sb-admin-analytics {
+    max-width: 100% !important;
+  }
+
+  .sb-admin-analytics .cards.kpi-grid {
+    grid-template-columns:
+      repeat(3,minmax(0,1fr)) !important;
+  }
+}
+
+/* Mobile */
+@media (max-width: 760px) {
+  .sb-admin-analytics .cards.kpi-grid {
+    grid-template-columns:
+      repeat(2,minmax(0,1fr)) !important;
+  }
+
+  .sb-admin-analytics #trendChart {
+    min-height: 280px !important;
+  }
+}
+
+@media (max-width: 520px) {
+  .sb-admin-analytics .cards.kpi-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .sb-admin-analytics .page-head h1 {
+    font-size: 28px !important;
+  }
+
+  .sb-admin-analytics .date-filter {
+    align-items: stretch !important;
+  }
+
+  .sb-admin-analytics .date-filter label {
+    width: 100% !important;
+  }
+}
+
+/* ANALYTICS VISUAL V2.1 */

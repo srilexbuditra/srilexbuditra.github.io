@@ -54,7 +54,7 @@
     document.createElement("link");
 
   themeLink.rel = "stylesheet";
-  themeLink.href = "./analytics-theme.css?v=2";
+  themeLink.href = "./analytics-theme.css?v=2.1";
   themeLink.dataset.sbAnalyticsTheme = "v2";
 
   document.head.appendChild(themeLink);
