@@ -6910,7 +6910,7 @@ body {
     align-items: start;
   }
 
-  .footer-grid > div:first-child {
+  .footer-grid > :first-child {
     grid-column: 1 / -1;
   }
 
@@ -6933,7 +6933,7 @@ body {
     row-gap: 24px;
   }
 
-  .footer-grid > div:first-child {
+  .footer-grid > :first-child {
     grid-column: 1 / -1;
   }
 }
