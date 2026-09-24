@@ -1,0 +1,29 @@
+PATCH-CLIENT-MANAGEMENT-R1-AUTH-D1
+====================================
+
+Branch target:
+feature/client-management-r1
+
+ADD ONLY:
+database/migrations/001_client_management_core.sql
+workers/client-management-api/src/index.js
+workers/client-management-api/wrangler.toml.example
+workers/client-management-api/README.md
+workers/client-management-api/SMOKE-TESTS.md
+docs/CLIENT-MANAGEMENT-R1-AUTH-D1.md
+
+DO NOT:
+- merge to main yet
+- add real credentials or customer data
+- reuse an existing production D1 database
+- rename or overwrite existing Program Ketahanan Pangan workers/database files
+
+NEXT:
+1. Copy this patch into the repository while staying on feature/client-management-r1.
+2. Commit the added files.
+3. Create a NEW staging D1 database.
+4. Apply migration 001.
+5. Create a staging Worker from workers/client-management-api.
+6. Bind DB and configure allowed origins.
+7. Bootstrap the first system admin once, then disable bootstrap.
+8. Test admin -> client -> project -> client visibility before any production merge.
