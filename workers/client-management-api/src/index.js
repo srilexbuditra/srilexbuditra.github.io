@@ -94,6 +94,94 @@ export default {
         return updateProject(request, env, auth, decodeURIComponent(adminProjectMatch[1]));
       }
 
+      if (url.pathname === "/api/admin/estimates" && method === "GET") {
+        const auth = await requireRole(request, env, ["system_admin", "staff"]);
+        if (auth.response) return auth.response;
+        return listAdminEstimates(request, env);
+      }
+
+      if (url.pathname === "/api/admin/estimates" && method === "POST") {
+        const auth = await requireRole(request, env, ["system_admin", "staff"]);
+        if (auth.response) return auth.response;
+        return createAdminEstimate(request, env, auth);
+      }
+
+      const adminEstimateMatch =
+        url.pathname.match(/^\/api\/admin\/estimates\/([^/]+)$/);
+
+      if (adminEstimateMatch && method === "GET") {
+        const auth = await requireRole(request, env, ["system_admin", "staff"]);
+        if (auth.response) return auth.response;
+
+        return getAdminEstimate(
+          request,
+          env,
+          decodeURIComponent(adminEstimateMatch[1])
+        );
+      }
+
+      if (adminEstimateMatch && method === "PATCH") {
+        const auth = await requireRole(request, env, ["system_admin", "staff"]);
+        if (auth.response) return auth.response;
+
+        return updateAdminEstimate(
+          request,
+          env,
+          auth,
+          decodeURIComponent(adminEstimateMatch[1])
+        );
+      }
+
+      const adminEstimateConvertMatch =
+        url.pathname.match(/^\/api\/admin\/estimates\/([^/]+)\/convert-to-invoice$/);
+
+      if (adminEstimateConvertMatch && method === "POST") {
+        const auth = await requireRole(request, env, ["system_admin", "staff"]);
+        if (auth.response) return auth.response;
+
+        return convertEstimateToInvoice(
+          request,
+          env,
+          auth,
+          decodeURIComponent(adminEstimateConvertMatch[1])
+        );
+      }
+
+      if (url.pathname === "/api/client/estimates" && method === "GET") {
+        const auth = await requireRole(request, env, ["client"]);
+        if (auth.response) return auth.response;
+        return listClientEstimates(request, env, auth);
+      }
+
+      const clientEstimateMatch =
+        url.pathname.match(/^\/api\/client\/estimates\/([^/]+)$/);
+
+      if (clientEstimateMatch && method === "GET") {
+        const auth = await requireRole(request, env, ["client"]);
+        if (auth.response) return auth.response;
+
+        return getClientEstimate(
+          request,
+          env,
+          auth,
+          decodeURIComponent(clientEstimateMatch[1])
+        );
+      }
+
+      const clientEstimateDecisionMatch =
+        url.pathname.match(/^\/api\/client\/estimates\/([^/]+)\/decision$/);
+
+      if (clientEstimateDecisionMatch && method === "POST") {
+        const auth = await requireRole(request, env, ["client"]);
+        if (auth.response) return auth.response;
+
+        return decideClientEstimate(
+          request,
+          env,
+          auth,
+          decodeURIComponent(clientEstimateDecisionMatch[1])
+        );
+      }
       if (url.pathname === "/api/admin/invoices" && method === "GET") {
         const auth = await requireRole(request, env, ["system_admin", "staff"]);
         if (auth.response) return auth.response;
@@ -795,6 +883,945 @@ async function updateProject(request, env, auth, projectId) {
   });
 }
 
+function estimateToday() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function validEstimateDate(value) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(String(value || ""))) {
+    return false;
+  }
+
+  const date = new Date(`${value}T00:00:00Z`);
+
+  return (
+    !Number.isNaN(date.getTime()) &&
+    date.toISOString().slice(0, 10) === value
+  );
+}
+
+function effectiveEstimateStatus(status, validUntil) {
+  if (
+    status === "sent" &&
+    validUntil &&
+    validUntil < estimateToday()
+  ) {
+    return "expired";
+  }
+
+  return status;
+}
+
+function mapEstimateRow(row) {
+  return {
+    ...row,
+    status: effectiveEstimateStatus(
+      row.status,
+      row.valid_until
+    )
+  };
+}
+
+async function listAdminEstimates(request, env) {
+  const rows = await env.DB.prepare(
+    `SELECT
+       e.id,
+       e.estimate_code,
+       e.title,
+       e.description,
+       e.currency,
+       e.issue_date,
+       e.valid_until,
+       e.status,
+       e.subtotal,
+       e.tax_amount,
+       e.total_amount,
+       e.notes,
+       e.sent_at,
+       e.approved_at,
+       e.rejected_at,
+       e.converted_invoice_id,
+       e.created_at,
+       e.updated_at,
+       c.id AS client_id,
+       c.client_code,
+       c.full_name,
+       c.company_name,
+       p.id AS project_id,
+       p.project_code,
+       p.project_name,
+       i.invoice_code AS converted_invoice_code
+     FROM estimates e
+     JOIN clients c ON c.id = e.client_id
+     LEFT JOIN projects p ON p.id = e.project_id
+     LEFT JOIN invoices i ON i.id = e.converted_invoice_id
+     ORDER BY e.created_at DESC`
+  ).all();
+
+  return apiResponse(request, env, {
+    estimates: (rows.results || []).map(mapEstimateRow)
+  });
+}
+
+async function getAdminEstimate(request, env, estimateId) {
+  const estimate = await env.DB.prepare(
+    `SELECT
+       e.*,
+       c.client_code,
+       c.full_name,
+       c.company_name,
+       p.project_code,
+       p.project_name,
+       i.invoice_code AS converted_invoice_code
+     FROM estimates e
+     JOIN clients c ON c.id = e.client_id
+     LEFT JOIN projects p ON p.id = e.project_id
+     LEFT JOIN invoices i ON i.id = e.converted_invoice_id
+     WHERE e.id = ?
+     LIMIT 1`
+  ).bind(estimateId).first();
+
+  if (!estimate) {
+    return apiResponse(
+      request,
+      env,
+      { error: "Estimate not found." },
+      404
+    );
+  }
+
+  const items = await env.DB.prepare(
+    `SELECT
+       id,
+       description,
+       quantity,
+       unit_price,
+       line_total,
+       position
+     FROM estimate_items
+     WHERE estimate_id = ?
+     ORDER BY position ASC`
+  ).bind(estimateId).all();
+
+  return apiResponse(request, env, {
+    estimate: mapEstimateRow(estimate),
+    items: items.results || []
+  });
+}
+
+async function createAdminEstimate(request, env, auth) {
+  const body = await readJson(request);
+
+  const clientId = String(body?.client_id || "").trim();
+  const projectId =
+    String(body?.project_id || "").trim() || null;
+
+  const title = String(body?.title || "").trim();
+  const description =
+    String(body?.description || "").trim() || null;
+
+  const issueDate =
+    String(body?.issue_date || estimateToday()).trim();
+
+  const validUntil =
+    String(body?.valid_until || "").trim() || null;
+
+  const notes =
+    String(body?.notes || "").trim() || null;
+
+  const taxAmount = Number(body?.tax_amount ?? 0);
+
+  const rawItems =
+    Array.isArray(body?.items)
+      ? body.items
+      : [];
+
+  if (
+    !clientId ||
+    !title ||
+    title.length > 180 ||
+    !validEstimateDate(issueDate)
+  ) {
+    return apiResponse(
+      request,
+      env,
+      { error: "Invalid estimate data." },
+      400
+    );
+  }
+
+  if (
+    validUntil &&
+    (
+      !validEstimateDate(validUntil) ||
+      validUntil < issueDate
+    )
+  ) {
+    return apiResponse(
+      request,
+      env,
+      { error: "Invalid estimate validity date." },
+      400
+    );
+  }
+
+  if (
+    !Number.isSafeInteger(taxAmount) ||
+    taxAmount < 0
+  ) {
+    return apiResponse(
+      request,
+      env,
+      { error: "Invalid tax amount." },
+      400
+    );
+  }
+
+  if (
+    rawItems.length < 1 ||
+    rawItems.length > 50
+  ) {
+    return apiResponse(
+      request,
+      env,
+      { error: "Estimate requires 1 to 50 items." },
+      400
+    );
+  }
+
+  const client = await env.DB.prepare(
+    `SELECT id
+     FROM clients
+     WHERE id = ?
+       AND status = 'active'
+     LIMIT 1`
+  ).bind(clientId).first();
+
+  if (!client) {
+    return apiResponse(
+      request,
+      env,
+      { error: "Client not found." },
+      404
+    );
+  }
+
+  if (projectId) {
+    const project = await env.DB.prepare(
+      `SELECT id
+       FROM projects
+       WHERE id = ?
+         AND client_id = ?
+       LIMIT 1`
+    ).bind(projectId, clientId).first();
+
+    if (!project) {
+      return apiResponse(
+        request,
+        env,
+        { error: "Project does not belong to selected client." },
+        400
+      );
+    }
+  }
+
+  const items = [];
+  let subtotal = 0;
+
+  for (
+    let index = 0;
+    index < rawItems.length;
+    index++
+  ) {
+    const source = rawItems[index];
+
+    const itemDescription =
+      String(source?.description || "").trim();
+
+    const quantity =
+      Number(source?.quantity ?? 1);
+
+    const unitPrice =
+      Number(source?.unit_price ?? 0);
+
+    if (
+      !itemDescription ||
+      itemDescription.length > 500 ||
+      !Number.isFinite(quantity) ||
+      quantity <= 0 ||
+      !Number.isSafeInteger(unitPrice) ||
+      unitPrice < 0
+    ) {
+      return apiResponse(
+        request,
+        env,
+        {
+          error:
+            `Invalid estimate item at position ${index + 1}.`
+        },
+        400
+      );
+    }
+
+    const lineTotal =
+      Math.round(quantity * unitPrice);
+
+    if (
+      !Number.isSafeInteger(lineTotal) ||
+      lineTotal < 0
+    ) {
+      return apiResponse(
+        request,
+        env,
+        { error: "Estimate amount is too large." },
+        400
+      );
+    }
+
+    subtotal += lineTotal;
+
+    if (!Number.isSafeInteger(subtotal)) {
+      return apiResponse(
+        request,
+        env,
+        { error: "Estimate subtotal is too large." },
+        400
+      );
+    }
+
+    items.push({
+      id: crypto.randomUUID(),
+      description: itemDescription,
+      quantity,
+      unit_price: unitPrice,
+      line_total: lineTotal,
+      position: index + 1
+    });
+  }
+
+  const totalAmount =
+    subtotal + taxAmount;
+
+  if (!Number.isSafeInteger(totalAmount)) {
+    return apiResponse(
+      request,
+      env,
+      { error: "Estimate total is too large." },
+      400
+    );
+  }
+
+  const estimateId = crypto.randomUUID();
+  const year = new Date().getUTCFullYear();
+
+  const estimateCode =
+    `EST-${year}-${estimateId.slice(0, 8).toUpperCase()}`;
+
+  const timestamp = nowIso();
+
+  const statements = [
+    env.DB.prepare(
+      `INSERT INTO estimates
+        (
+          id,
+          client_id,
+          project_id,
+          estimate_code,
+          title,
+          description,
+          currency,
+          issue_date,
+          valid_until,
+          status,
+          subtotal,
+          tax_amount,
+          total_amount,
+          notes,
+          created_by_user_id,
+          created_at,
+          updated_at
+        )
+       VALUES (?, ?, ?, ?, ?, ?, 'IDR', ?, ?, 'draft', ?, ?, ?, ?, ?, ?, ?)`
+    ).bind(
+      estimateId,
+      clientId,
+      projectId,
+      estimateCode,
+      title,
+      description,
+      issueDate,
+      validUntil,
+      subtotal,
+      taxAmount,
+      totalAmount,
+      notes,
+      auth.user.id,
+      timestamp,
+      timestamp
+    )
+  ];
+
+  for (const item of items) {
+    statements.push(
+      env.DB.prepare(
+        `INSERT INTO estimate_items
+          (
+            id,
+            estimate_id,
+            description,
+            quantity,
+            unit_price,
+            line_total,
+            position,
+            created_at
+          )
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
+      ).bind(
+        item.id,
+        estimateId,
+        item.description,
+        item.quantity,
+        item.unit_price,
+        item.line_total,
+        item.position,
+        timestamp
+      )
+    );
+  }
+
+  await env.DB.batch(statements);
+
+  await writeActivity(
+    env,
+    auth.user.id,
+    "ESTIMATE_CREATED",
+    "estimate",
+    estimateId,
+    `Estimate ${estimateCode} created as draft.`
+  );
+
+  return apiResponse(
+    request,
+    env,
+    {
+      ok: true,
+      estimate: {
+        id: estimateId,
+        estimate_code: estimateCode,
+        title,
+        status: "draft",
+        subtotal,
+        tax_amount: taxAmount,
+        total_amount: totalAmount,
+        issue_date: issueDate,
+        valid_until: validUntil
+      }
+    },
+    201
+  );
+}
+
+async function updateAdminEstimate(
+  request,
+  env,
+  auth,
+  estimateId
+) {
+  const body = await readJson(request);
+
+  const current = await env.DB.prepare(
+    `SELECT *
+     FROM estimates
+     WHERE id = ?
+     LIMIT 1`
+  ).bind(estimateId).first();
+
+  if (!current) {
+    return apiResponse(
+      request,
+      env,
+      { error: "Estimate not found." },
+      404
+    );
+  }
+
+  const nextStatus =
+    body?.status === undefined
+      ? current.status
+      : String(body.status).trim();
+
+  const transitions = {
+    draft: new Set(["draft", "sent", "cancelled"]),
+    sent: new Set(["sent", "cancelled"]),
+    approved: new Set(["approved"]),
+    rejected: new Set(["rejected"]),
+    cancelled: new Set(["cancelled"])
+  };
+
+  const allowed =
+    transitions[current.status] ||
+    new Set([current.status]);
+
+  if (!allowed.has(nextStatus)) {
+    return apiResponse(
+      request,
+      env,
+      {
+        error:
+          `Invalid estimate status transition: ${current.status} -> ${nextStatus}.`
+      },
+      400
+    );
+  }
+
+  const timestamp = nowIso();
+  let sentAt = current.sent_at;
+
+  if (nextStatus === "sent" && !sentAt) {
+    sentAt = timestamp;
+  }
+
+  await env.DB.prepare(
+    `UPDATE estimates
+     SET
+       status = ?,
+       sent_at = ?,
+       updated_at = ?
+     WHERE id = ?`
+  ).bind(
+    nextStatus,
+    sentAt,
+    timestamp,
+    estimateId
+  ).run();
+
+  await writeActivity(
+    env,
+    auth.user.id,
+    "ESTIMATE_STATUS_UPDATED",
+    "estimate",
+    estimateId,
+    `Estimate ${current.estimate_code} status changed from ${current.status} to ${nextStatus}.`
+  );
+
+  return apiResponse(request, env, {
+    ok: true,
+    estimate: {
+      id: estimateId,
+      estimate_code: current.estimate_code,
+      status: effectiveEstimateStatus(
+        nextStatus,
+        current.valid_until
+      ),
+      sent_at: sentAt,
+      updated_at: timestamp
+    }
+  });
+}
+
+async function listClientEstimates(
+  request,
+  env,
+  auth
+) {
+  if (!auth.user.client_id) {
+    return apiResponse(
+      request,
+      env,
+      { error: "Client profile is not linked to this account." },
+      403
+    );
+  }
+
+  const rows = await env.DB.prepare(
+    `SELECT
+       e.id,
+       e.estimate_code,
+       e.title,
+       e.description,
+       e.currency,
+       e.issue_date,
+       e.valid_until,
+       e.status,
+       e.subtotal,
+       e.tax_amount,
+       e.total_amount,
+       e.notes,
+       e.sent_at,
+       e.approved_at,
+       e.rejected_at,
+       e.converted_invoice_id,
+       p.id AS project_id,
+       p.project_code,
+       p.project_name
+     FROM estimates e
+     LEFT JOIN projects p ON p.id = e.project_id
+     WHERE e.client_id = ?
+       AND e.status IN ('sent','approved','rejected')
+     ORDER BY e.issue_date DESC, e.created_at DESC`
+  ).bind(auth.user.client_id).all();
+
+  return apiResponse(request, env, {
+    estimates:
+      (rows.results || []).map(mapEstimateRow)
+  });
+}
+
+async function getClientEstimate(
+  request,
+  env,
+  auth,
+  estimateId
+) {
+  if (!auth.user.client_id) {
+    return apiResponse(
+      request,
+      env,
+      { error: "Client profile is not linked to this account." },
+      403
+    );
+  }
+
+  const estimate = await env.DB.prepare(
+    `SELECT
+       e.*,
+       p.project_code,
+       p.project_name
+     FROM estimates e
+     LEFT JOIN projects p ON p.id = e.project_id
+     WHERE e.id = ?
+       AND e.client_id = ?
+       AND e.status IN ('sent','approved','rejected')
+     LIMIT 1`
+  ).bind(
+    estimateId,
+    auth.user.client_id
+  ).first();
+
+  if (!estimate) {
+    return apiResponse(
+      request,
+      env,
+      { error: "Estimate not found." },
+      404
+    );
+  }
+
+  const items = await env.DB.prepare(
+    `SELECT
+       id,
+       description,
+       quantity,
+       unit_price,
+       line_total,
+       position
+     FROM estimate_items
+     WHERE estimate_id = ?
+     ORDER BY position ASC`
+  ).bind(estimateId).all();
+
+  await writeActivity(
+    env,
+    auth.user.id,
+    "ESTIMATE_VIEWED",
+    "estimate",
+    estimateId,
+    `Estimate ${estimate.estimate_code} viewed by client.`
+  );
+
+  return apiResponse(request, env, {
+    estimate: mapEstimateRow(estimate),
+    items: items.results || []
+  });
+}
+
+async function decideClientEstimate(
+  request,
+  env,
+  auth,
+  estimateId
+) {
+  const body = await readJson(request);
+  const decision = String(body?.decision || "").trim();
+
+  if (!["approved", "rejected"].includes(decision)) {
+    return apiResponse(
+      request,
+      env,
+      { error: "Decision must be approved or rejected." },
+      400
+    );
+  }
+
+  const estimate = await env.DB.prepare(
+    `SELECT
+       id,
+       estimate_code,
+       status,
+       valid_until
+     FROM estimates
+     WHERE id = ?
+       AND client_id = ?
+     LIMIT 1`
+  ).bind(
+    estimateId,
+    auth.user.client_id
+  ).first();
+
+  if (!estimate) {
+    return apiResponse(
+      request,
+      env,
+      { error: "Estimate not found." },
+      404
+    );
+  }
+
+  const effectiveStatus =
+    effectiveEstimateStatus(
+      estimate.status,
+      estimate.valid_until
+    );
+
+  if (effectiveStatus !== "sent") {
+    return apiResponse(
+      request,
+      env,
+      {
+        error:
+          effectiveStatus === "expired"
+            ? "Estimate has expired."
+            : "Estimate can no longer be changed."
+      },
+      409
+    );
+  }
+
+  const timestamp = nowIso();
+
+  await env.DB.prepare(
+    `UPDATE estimates
+     SET
+       status = ?,
+       approved_at = ?,
+       rejected_at = ?,
+       updated_at = ?
+     WHERE id = ?
+       AND client_id = ?
+       AND status = 'sent'`
+  ).bind(
+    decision,
+    decision === "approved" ? timestamp : null,
+    decision === "rejected" ? timestamp : null,
+    timestamp,
+    estimateId,
+    auth.user.client_id
+  ).run();
+
+  await writeActivity(
+    env,
+    auth.user.id,
+    decision === "approved"
+      ? "ESTIMATE_APPROVED"
+      : "ESTIMATE_REJECTED",
+    "estimate",
+    estimateId,
+    `Estimate ${estimate.estimate_code} ${decision} by client.`
+  );
+
+  return apiResponse(request, env, {
+    ok: true,
+    estimate: {
+      id: estimateId,
+      estimate_code: estimate.estimate_code,
+      status: decision,
+      updated_at: timestamp
+    }
+  });
+}
+
+async function convertEstimateToInvoice(
+  request,
+  env,
+  auth,
+  estimateId
+) {
+  const estimate = await env.DB.prepare(
+    `SELECT *
+     FROM estimates
+     WHERE id = ?
+     LIMIT 1`
+  ).bind(estimateId).first();
+
+  if (!estimate) {
+    return apiResponse(
+      request,
+      env,
+      { error: "Estimate not found." },
+      404
+    );
+  }
+
+  if (estimate.status !== "approved") {
+    return apiResponse(
+      request,
+      env,
+      { error: "Only approved estimates can be converted." },
+      409
+    );
+  }
+
+  if (estimate.converted_invoice_id) {
+    return apiResponse(
+      request,
+      env,
+      {
+        error: "Estimate has already been converted.",
+        invoice_id: estimate.converted_invoice_id
+      },
+      409
+    );
+  }
+
+  const estimateItems = await env.DB.prepare(
+    `SELECT
+       description,
+       quantity,
+       unit_price,
+       line_total,
+       position
+     FROM estimate_items
+     WHERE estimate_id = ?
+     ORDER BY position ASC`
+  ).bind(estimateId).all();
+
+  const invoiceId = crypto.randomUUID();
+  const year = new Date().getUTCFullYear();
+
+  const invoiceCode =
+    `INV-${year}-${invoiceId.slice(0, 8).toUpperCase()}`;
+
+  const timestamp = nowIso();
+  const issueDate = invoiceToday();
+
+  const statements = [
+    env.DB.prepare(
+      `INSERT INTO invoices
+        (
+          id,
+          client_id,
+          project_id,
+          invoice_code,
+          title,
+          description,
+          currency,
+          issue_date,
+          due_date,
+          status,
+          subtotal,
+          tax_amount,
+          total_amount,
+          notes,
+          created_by_user_id,
+          created_at,
+          updated_at
+        )
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, NULL, 'draft', ?, ?, ?, ?, ?, ?, ?)`
+    ).bind(
+      invoiceId,
+      estimate.client_id,
+      estimate.project_id,
+      invoiceCode,
+      estimate.title,
+      estimate.description,
+      estimate.currency || "IDR",
+      issueDate,
+      estimate.subtotal,
+      estimate.tax_amount,
+      estimate.total_amount,
+      estimate.notes,
+      auth.user.id,
+      timestamp,
+      timestamp
+    ),
+
+    env.DB.prepare(
+      `UPDATE estimates
+       SET
+         converted_invoice_id = ?,
+         updated_at = ?
+       WHERE id = ?
+         AND converted_invoice_id IS NULL`
+    ).bind(
+      invoiceId,
+      timestamp,
+      estimateId
+    )
+  ];
+
+  for (const item of estimateItems.results || []) {
+    statements.push(
+      env.DB.prepare(
+        `INSERT INTO invoice_items
+          (
+            id,
+            invoice_id,
+            description,
+            quantity,
+            unit_price,
+            line_total,
+            position,
+            created_at
+          )
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
+      ).bind(
+        crypto.randomUUID(),
+        invoiceId,
+        item.description,
+        item.quantity,
+        item.unit_price,
+        item.line_total,
+        item.position,
+        timestamp
+      )
+    );
+  }
+
+  await env.DB.batch(statements);
+
+  await writeActivity(
+    env,
+    auth.user.id,
+    "ESTIMATE_CONVERTED_TO_INVOICE",
+    "estimate",
+    estimateId,
+    `Estimate ${estimate.estimate_code} converted to invoice ${invoiceCode}.`
+  );
+
+  await writeActivity(
+    env,
+    auth.user.id,
+    "INVOICE_CREATED",
+    "invoice",
+    invoiceId,
+    `Invoice ${invoiceCode} created from estimate ${estimate.estimate_code}.`
+  );
+
+  return apiResponse(
+    request,
+    env,
+    {
+      ok: true,
+      invoice: {
+        id: invoiceId,
+        invoice_code: invoiceCode,
+        status: "draft",
+        total_amount: estimate.total_amount
+      }
+    },
+    201
+  );
+}
 function invoiceToday() {
   return new Date().toISOString().slice(0, 10);
 }
