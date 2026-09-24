@@ -1,0 +1,365 @@
+/* =========================================================
+   SRILEX BUDITRA - ADMIN ANALYTICS VISUAL V2
+   Hanya berlaku di panel Analytics.
+   Tidak mengubah stats.html standalone.
+   ========================================================= */
+
+.sb-admin-analytics {
+  --analytics-green: #14845f;
+  --analytics-green-dark: #0d5f46;
+  --analytics-green-soft: #eaf7f1;
+  --analytics-bg: #f5f8f7;
+  --analytics-card: #ffffff;
+  --analytics-border: #dfe8e4;
+  --analytics-text: #13231e;
+  --analytics-muted: #66756f;
+  --analytics-shadow: 0 12px 32px rgba(20, 55, 43, .07);
+
+  width: 100% !important;
+  max-width: none !important;
+  color: var(--analytics-text) !important;
+}
+
+.sb-admin-analytics[hidden] {
+  display: none !important;
+}
+
+/* Hilangkan karakter halaman standalone lama */
+.sb-admin-analytics > .container,
+.sb-admin-analytics .container {
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  color: var(--analytics-text) !important;
+}
+
+/* HEADER */
+.sb-admin-analytics .page-head {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: flex-start !important;
+  gap: 20px !important;
+  flex-wrap: wrap !important;
+
+  margin: 0 0 22px !important;
+  padding: 0 !important;
+
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.sb-admin-analytics .page-head h1 {
+  margin: 5px 0 5px !important;
+  color: #111d19 !important;
+  font-size: clamp(28px, 3vw, 38px) !important;
+  line-height: 1.1 !important;
+  letter-spacing: -.03em !important;
+}
+
+.sb-admin-analytics .subtitle {
+  color: var(--analytics-muted) !important;
+  font-size: 14px !important;
+}
+
+.sb-admin-analytics .updated {
+  background: var(--analytics-green-soft) !important;
+  border: 1px solid #cee8dc !important;
+  color: var(--analytics-green-dark) !important;
+  border-radius: 12px !important;
+  padding: 9px 12px !important;
+  font-weight: 700 !important;
+}
+
+/* KONEKSI / STATUS */
+.sb-admin-analytics #loginBox {
+  background: #fff !important;
+  border: 1px solid var(--analytics-border) !important;
+  box-shadow: none !important;
+  border-radius: 16px !important;
+  margin-bottom: 18px !important;
+  padding: 14px 18px !important;
+}
+
+.sb-admin-analytics #loginBox .key-row {
+  display: none !important;
+}
+
+.sb-admin-analytics #loginBox h1,
+.sb-admin-analytics #loginBox h2,
+.sb-admin-analytics #loginBox h3 {
+  display: none !important;
+}
+
+.sb-admin-analytics #status {
+  color: var(--analytics-muted) !important;
+  font-size: 13px !important;
+}
+
+/* DASHBOARD ANALYTICS */
+.sb-admin-analytics #dashboard {
+  width: 100% !important;
+  max-width: none !important;
+  background: transparent !important;
+  color: var(--analytics-text) !important;
+}
+
+/* FILTER */
+.sb-admin-analytics .filter-panel {
+  background: var(--analytics-card) !important;
+  border: 1px solid var(--analytics-border) !important;
+  border-radius: 18px !important;
+  box-shadow: var(--analytics-shadow) !important;
+  padding: 18px !important;
+  margin-bottom: 18px !important;
+}
+
+.sb-admin-analytics .filter-head,
+.sb-admin-analytics .toolbar {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 12px !important;
+  flex-wrap: wrap !important;
+}
+
+.sb-admin-analytics .preset-buttons,
+.sb-admin-analytics .range-tabs {
+  display: flex !important;
+  gap: 8px !important;
+  flex-wrap: wrap !important;
+}
+
+.sb-admin-analytics button,
+.sb-admin-analytics .secondary-btn,
+.sb-admin-analytics .preset-btn,
+.sb-admin-analytics .range-btn {
+  border: 1px solid var(--analytics-border) !important;
+  background: #fff !important;
+  color: #25352f !important;
+  border-radius: 10px !important;
+  min-height: 38px !important;
+  padding: 8px 13px !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  box-shadow: none !important;
+}
+
+.sb-admin-analytics button:hover,
+.sb-admin-analytics .secondary-btn:hover,
+.sb-admin-analytics .preset-btn:hover,
+.sb-admin-analytics .range-btn:hover {
+  border-color: #a8cdbd !important;
+  background: #f5fbf8 !important;
+}
+
+.sb-admin-analytics .preset-btn.active,
+.sb-admin-analytics .range-btn.active {
+  background: var(--analytics-green) !important;
+  border-color: var(--analytics-green) !important;
+  color: #fff !important;
+}
+
+.sb-admin-analytics .date-filter {
+  display: flex !important;
+  gap: 10px !important;
+  flex-wrap: wrap !important;
+  align-items: end !important;
+}
+
+.sb-admin-analytics .date-filter label {
+  color: var(--analytics-muted) !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+}
+
+.sb-admin-analytics input[type="date"] {
+  background: #fff !important;
+  color: var(--analytics-text) !important;
+  border: 1px solid var(--analytics-border) !important;
+  border-radius: 10px !important;
+  min-height: 40px !important;
+  padding: 8px 10px !important;
+}
+
+.sb-admin-analytics .period-label,
+.sb-admin-analytics .auto-refresh-badge {
+  color: var(--analytics-muted) !important;
+}
+
+/* KPI */
+.sb-admin-analytics .cards.kpi-grid {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 14px !important;
+  margin: 18px 0 !important;
+}
+
+.sb-admin-analytics .card {
+  background: var(--analytics-card) !important;
+  color: var(--analytics-text) !important;
+  border: 1px solid var(--analytics-border) !important;
+  border-radius: 16px !important;
+  box-shadow: var(--analytics-shadow) !important;
+}
+
+.sb-admin-analytics .cards.kpi-grid .card {
+  min-height: 116px !important;
+  padding: 17px !important;
+}
+
+.sb-admin-analytics .card .label,
+.sb-admin-analytics .card .meta,
+.sb-admin-analytics .card small {
+  color: var(--analytics-muted) !important;
+}
+
+.sb-admin-analytics .number {
+  color: #101c18 !important;
+  font-size: 30px !important;
+  line-height: 1 !important;
+  font-weight: 800 !important;
+}
+
+/* PANEL UMUM */
+.sb-admin-analytics .analytics-panel,
+.sb-admin-analytics .stats-section,
+.sb-admin-analytics .trend-section {
+  background: var(--analytics-card) !important;
+  color: var(--analytics-text) !important;
+  border: 1px solid var(--analytics-border) !important;
+  border-radius: 18px !important;
+  box-shadow: var(--analytics-shadow) !important;
+}
+
+.sb-admin-analytics .analytics-panel,
+.sb-admin-analytics .stats-section {
+  padding: 18px !important;
+}
+
+.sb-admin-analytics .section-heading,
+.sb-admin-analytics .section-head {
+  color: var(--analytics-text) !important;
+}
+
+.sb-admin-analytics .section-heading h2,
+.sb-admin-analytics .section-head h2,
+.sb-admin-analytics .stats-section h2,
+.sb-admin-analytics .stats-section h3 {
+  color: #14231e !important;
+}
+
+/* ONLINE */
+.sb-admin-analytics #onlinePagesPanel {
+  margin: 18px 0 !important;
+}
+
+.sb-admin-analytics #onlinePages .empty-state {
+  color: var(--analytics-muted) !important;
+  background: #f8faf9 !important;
+  border: 1px dashed #ccd9d4 !important;
+}
+
+/* GRAFIK */
+.sb-admin-analytics .trend-section {
+  padding: 20px !important;
+  margin: 18px 0 !important;
+}
+
+.sb-admin-analytics #trendChart {
+  width: 100% !important;
+  min-height: 320px !important;
+  background: #fbfdfc !important;
+  border: 1px solid #edf2ef !important;
+  border-radius: 14px !important;
+  padding: 10px !important;
+}
+
+.sb-admin-analytics #trackingNote {
+  color: var(--analytics-muted) !important;
+}
+
+/* Grid statistik bawah */
+.sb-admin-analytics #dashboard > .cards:not(.kpi-grid) {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 14px !important;
+}
+
+/* LIST */
+.sb-admin-analytics .stats-list {
+  color: var(--analytics-text) !important;
+}
+
+.sb-admin-analytics .stats-list > * {
+  border-color: #edf1ef !important;
+}
+
+/* TABLE */
+.sb-admin-analytics .recent-wrap {
+  overflow-x: auto !important;
+}
+
+.sb-admin-analytics .recent-table {
+  width: 100% !important;
+  border-collapse: collapse !important;
+  color: var(--analytics-text) !important;
+}
+
+.sb-admin-analytics .recent-table th {
+  background: #f6f9f7 !important;
+  color: #68766f !important;
+  border-bottom: 1px solid var(--analytics-border) !important;
+  font-size: 11px !important;
+  letter-spacing: .04em !important;
+  text-transform: uppercase !important;
+}
+
+.sb-admin-analytics .recent-table td {
+  background: #fff !important;
+  color: var(--analytics-text) !important;
+  border-bottom: 1px solid #edf1ef !important;
+}
+
+/* Hilangkan navy lama pada elemen yang masih tersisa */
+.sb-admin-analytics section,
+.sb-admin-analytics article,
+.sb-admin-analytics div {
+  border-color: var(--analytics-border);
+}
+
+/* RESPONSIVE */
+@media (max-width: 1180px) {
+  .sb-admin-analytics .cards.kpi-grid {
+    grid-template-columns: repeat(3, minmax(0,1fr)) !important;
+  }
+}
+
+@media (max-width: 900px) {
+  .sb-admin-analytics .cards.kpi-grid {
+    grid-template-columns: repeat(2, minmax(0,1fr)) !important;
+  }
+
+  .sb-admin-analytics #dashboard > .cards:not(.kpi-grid) {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 620px) {
+  .sb-admin-analytics .cards.kpi-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .sb-admin-analytics .filter-panel,
+  .sb-admin-analytics .analytics-panel,
+  .sb-admin-analytics .stats-section,
+  .sb-admin-analytics .trend-section {
+    border-radius: 14px !important;
+  }
+
+  .sb-admin-analytics #trendChart {
+    min-height: 240px !important;
+  }
+}

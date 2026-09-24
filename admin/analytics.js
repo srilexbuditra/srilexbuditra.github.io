@@ -50,6 +50,15 @@
 
   document.head.appendChild(baseStyle);
 
+  const themeLink =
+    document.createElement("link");
+
+  themeLink.rel = "stylesheet";
+  themeLink.href = "./analytics-theme.css?v=2";
+  themeLink.dataset.sbAnalyticsTheme = "v2";
+
+  document.head.appendChild(themeLink);
+
   function links(name) {
     return [
       ...document.querySelectorAll(
@@ -177,6 +186,51 @@
        * Hanya isi Analytics yang dimasukkan.
        */
       view.replaceChildren(container);
+
+      /* SB_ANALYTICS_VISUAL_V2 */
+      const pageHead =
+        container.querySelector(".page-head");
+
+      const oldTitle =
+        pageHead?.querySelector("h1");
+
+      if (oldTitle) {
+        oldTitle.textContent = "Analytics";
+      }
+
+      const subtitle =
+        pageHead?.querySelector(".subtitle");
+
+      if (subtitle) {
+        subtitle.textContent =
+          "Pantau trafik dan aktivitas pengunjung srilexbuditra.work.";
+      }
+
+      if (
+        pageHead &&
+        !pageHead.querySelector(
+          "[data-analytics-eyebrow]"
+        )
+      ) {
+        const eyebrow =
+          document.createElement("div");
+
+        eyebrow.className = "eyebrow";
+        eyebrow.dataset.analyticsEyebrow = "1";
+
+        eyebrow.innerHTML =
+          '<span class="pulse"></span>Visitor Analytics &bull; R1';
+
+        const titleWrap =
+          oldTitle?.parentElement;
+
+        if (titleWrap) {
+          titleWrap.insertBefore(
+            eyebrow,
+            titleWrap.firstChild
+          );
+        }
+      }
 
       /* SB_ANALYTICS_SECRET_UI */
       const loginBox =
