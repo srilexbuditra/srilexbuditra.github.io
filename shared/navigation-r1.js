@@ -33,7 +33,8 @@
         "documents": "documents",
         "estimates": "estimates",
         "invoices": "invoices",
-        "support": "support"
+        "support": "support",
+        "analytics": "analytics"
       };
 
       return portalMap[label] || null;
@@ -45,7 +46,8 @@
       "documents": "documents",
       "estimates": "estimates",
       "invoices": "invoices",
-      "support": "support"
+      "support": "support",
+        "analytics": "analytics"
     };
 
     return adminMap[label] || null;
