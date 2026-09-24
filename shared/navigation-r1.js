@@ -41,6 +41,7 @@
     }
 
     const adminMap = {
+      "leads": "leads",
       "clients": "clients",
       "projects": "projects",
       "documents": "documents",
