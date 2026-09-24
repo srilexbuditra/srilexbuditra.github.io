@@ -331,7 +331,7 @@
         throw new Error(data.error || "Login gagal.");
       }
 
-      if (data.user.role !== "system_admin") {
+      if (!["system_admin", "staff"].includes(data.user.role)) {
         await api("/auth/logout", {
           method: "POST",
           headers: {
@@ -348,6 +348,7 @@
 
       hideLogin();
       installUserControls(currentUser);
+      applyRoleVisibility(currentUser);
     } catch (error) {
       showLogin(
         error instanceof Error
@@ -382,6 +383,34 @@
     showLogin("Anda telah keluar dari sesi administrator.");
   }
 
+  /* SB_USERS_ROLES_VISIBILITY_R1 */
+  function applyRoleVisibility(user) {
+    const canManageUsers =
+      user?.role === "system_admin";
+
+    document
+      .querySelectorAll(".nav a, .mobile-nav a")
+      .forEach(link => {
+        const label =
+          String(link.textContent || "")
+            .trim()
+            .toLowerCase();
+
+        if (label !== "users & roles") {
+          return;
+        }
+
+        link.hidden = !canManageUsers;
+
+        if (canManageUsers) {
+          link.removeAttribute("aria-hidden");
+          link.removeAttribute("tabindex");
+        } else {
+          link.setAttribute("aria-hidden", "true");
+          link.setAttribute("tabindex", "-1");
+        }
+      });
+  }
   async function checkSession() {
     showLogin();
 
@@ -398,7 +427,7 @@
         return;
       }
 
-      if (data.user.role !== "system_admin") {
+      if (!["system_admin", "staff"].includes(data.user.role)) {
         showLogin("Akun ini tidak memiliki akses administrator.");
         return;
       }
@@ -408,6 +437,7 @@
 
       hideLogin();
       installUserControls(currentUser);
+      applyRoleVisibility(currentUser);
     } catch {
       showLogin("Tidak dapat terhubung ke layanan autentikasi.");
     }
