@@ -94,6 +94,102 @@ export default {
         return updateProject(request, env, auth, decodeURIComponent(adminProjectMatch[1]));
       }
 
+      // ======================================================
+      // SUPPORT R1 - ADMIN
+      // ======================================================
+
+      if (url.pathname === "/api/admin/support" && method === "GET") {
+        const auth = await requireRole(request, env, ["system_admin", "staff"]);
+        if (auth.response) return auth.response;
+        return listAdminSupportTickets(request, env);
+      }
+
+      const adminSupportMessageMatch =
+        url.pathname.match(/^\/api\/admin\/support\/([^/]+)\/messages$/);
+
+      if (adminSupportMessageMatch && method === "POST") {
+        const auth = await requireRole(request, env, ["system_admin", "staff"]);
+        if (auth.response) return auth.response;
+
+        return addAdminSupportMessage(
+          request,
+          env,
+          auth,
+          decodeURIComponent(adminSupportMessageMatch[1])
+        );
+      }
+
+      const adminSupportMatch =
+        url.pathname.match(/^\/api\/admin\/support\/([^/]+)$/);
+
+      if (adminSupportMatch && method === "GET") {
+        const auth = await requireRole(request, env, ["system_admin", "staff"]);
+        if (auth.response) return auth.response;
+
+        return getAdminSupportTicket(
+          request,
+          env,
+          decodeURIComponent(adminSupportMatch[1])
+        );
+      }
+
+      if (adminSupportMatch && method === "PATCH") {
+        const auth = await requireRole(request, env, ["system_admin", "staff"]);
+        if (auth.response) return auth.response;
+
+        return updateAdminSupportTicket(
+          request,
+          env,
+          auth,
+          decodeURIComponent(adminSupportMatch[1])
+        );
+      }
+
+      // ======================================================
+      // SUPPORT R1 - CLIENT
+      // ======================================================
+
+      if (url.pathname === "/api/client/support" && method === "GET") {
+        const auth = await requireRole(request, env, ["client"]);
+        if (auth.response) return auth.response;
+        return listClientSupportTickets(request, env, auth);
+      }
+
+      if (url.pathname === "/api/client/support" && method === "POST") {
+        const auth = await requireRole(request, env, ["client"]);
+        if (auth.response) return auth.response;
+        return createClientSupportTicket(request, env, auth);
+      }
+
+      const clientSupportMessageMatch =
+        url.pathname.match(/^\/api\/client\/support\/([^/]+)\/messages$/);
+
+      if (clientSupportMessageMatch && method === "POST") {
+        const auth = await requireRole(request, env, ["client"]);
+        if (auth.response) return auth.response;
+
+        return addClientSupportMessage(
+          request,
+          env,
+          auth,
+          decodeURIComponent(clientSupportMessageMatch[1])
+        );
+      }
+
+      const clientSupportMatch =
+        url.pathname.match(/^\/api\/client\/support\/([^/]+)$/);
+
+      if (clientSupportMatch && method === "GET") {
+        const auth = await requireRole(request, env, ["client"]);
+        if (auth.response) return auth.response;
+
+        return getClientSupportTicket(
+          request,
+          env,
+          auth,
+          decodeURIComponent(clientSupportMatch[1])
+        );
+      }
       if (url.pathname === "/api/admin/estimates" && method === "GET") {
         const auth = await requireRole(request, env, ["system_admin", "staff"]);
         if (auth.response) return auth.response;
@@ -883,6 +979,739 @@ async function updateProject(request, env, auth, projectId) {
   });
 }
 
+const SUPPORT_CATEGORIES = new Set([
+  "general",
+  "technical",
+  "billing",
+  "project",
+  "document",
+  "other"
+]);
+
+const SUPPORT_PRIORITIES = new Set([
+  "low",
+  "normal",
+  "high",
+  "urgent"
+]);
+
+const SUPPORT_STATUSES = new Set([
+  "open",
+  "in_progress",
+  "resolved",
+  "closed"
+]);
+
+async function listAdminSupportTickets(request, env) {
+  const rows = await env.DB.prepare(
+    `SELECT
+       t.id,
+       t.ticket_code,
+       t.subject,
+       t.category,
+       t.priority,
+       t.status,
+       t.assigned_to_user_id,
+       t.resolved_at,
+       t.closed_at,
+       t.created_at,
+       t.updated_at,
+       c.id AS client_id,
+       c.client_code,
+       c.full_name,
+       c.company_name,
+       (
+         SELECT COUNT(*)
+         FROM support_messages sm
+         WHERE sm.ticket_id = t.id
+       ) AS message_count
+     FROM support_tickets t
+     JOIN clients c ON c.id = t.client_id
+     ORDER BY
+       CASE t.priority
+         WHEN 'urgent' THEN 1
+         WHEN 'high' THEN 2
+         WHEN 'normal' THEN 3
+         ELSE 4
+       END,
+       t.updated_at DESC`
+  ).all();
+
+  return apiResponse(request, env, {
+    tickets: rows.results || []
+  });
+}
+
+async function getAdminSupportTicket(
+  request,
+  env,
+  ticketId
+) {
+  const ticket = await env.DB.prepare(
+    `SELECT
+       t.*,
+       c.client_code,
+       c.full_name,
+       c.company_name
+     FROM support_tickets t
+     JOIN clients c ON c.id = t.client_id
+     WHERE t.id = ?
+     LIMIT 1`
+  ).bind(ticketId).first();
+
+  if (!ticket) {
+    return apiResponse(
+      request,
+      env,
+      { error: "Support ticket not found." },
+      404
+    );
+  }
+
+  const messages = await env.DB.prepare(
+    `SELECT
+       sm.id,
+       sm.ticket_id,
+       sm.sender_user_id,
+       sm.message,
+       sm.visibility,
+       sm.created_at,
+       u.email AS sender_email,
+       u.role AS sender_role
+     FROM support_messages sm
+     JOIN users u ON u.id = sm.sender_user_id
+     WHERE sm.ticket_id = ?
+     ORDER BY sm.created_at ASC`
+  ).bind(ticketId).all();
+
+  return apiResponse(request, env, {
+    ticket,
+    messages: messages.results || []
+  });
+}
+
+async function updateAdminSupportTicket(
+  request,
+  env,
+  auth,
+  ticketId
+) {
+  const body = await readJson(request);
+
+  const current = await env.DB.prepare(
+    `SELECT *
+     FROM support_tickets
+     WHERE id = ?
+     LIMIT 1`
+  ).bind(ticketId).first();
+
+  if (!current) {
+    return apiResponse(
+      request,
+      env,
+      { error: "Support ticket not found." },
+      404
+    );
+  }
+
+  const status =
+    body?.status === undefined
+      ? current.status
+      : String(body.status).trim();
+
+  const priority =
+    body?.priority === undefined
+      ? current.priority
+      : String(body.priority).trim();
+
+  if (!SUPPORT_STATUSES.has(status)) {
+    return apiResponse(
+      request,
+      env,
+      { error: "Invalid support status." },
+      400
+    );
+  }
+
+  if (!SUPPORT_PRIORITIES.has(priority)) {
+    return apiResponse(
+      request,
+      env,
+      { error: "Invalid support priority." },
+      400
+    );
+  }
+
+  const timestamp = nowIso();
+
+  let resolvedAt = current.resolved_at;
+  let closedAt = current.closed_at;
+
+  if (status === "resolved" && current.status !== "resolved") {
+    resolvedAt = timestamp;
+  }
+
+  if (status !== "resolved" && status !== "closed") {
+    resolvedAt = null;
+  }
+
+  if (status === "closed" && current.status !== "closed") {
+    closedAt = timestamp;
+  }
+
+  if (status !== "closed") {
+    closedAt = null;
+  }
+
+  await env.DB.prepare(
+    `UPDATE support_tickets
+     SET
+       status = ?,
+       priority = ?,
+       resolved_at = ?,
+       closed_at = ?,
+       updated_at = ?
+     WHERE id = ?`
+  ).bind(
+    status,
+    priority,
+    resolvedAt,
+    closedAt,
+    timestamp,
+    ticketId
+  ).run();
+
+  if (status !== current.status) {
+    await writeActivity(
+      env,
+      auth.user.id,
+      "SUPPORT_STATUS_UPDATED",
+      "support_ticket",
+      ticketId,
+      `Support ticket ${current.ticket_code} status changed from ${current.status} to ${status}.`
+    );
+  }
+
+  if (priority !== current.priority) {
+    await writeActivity(
+      env,
+      auth.user.id,
+      "SUPPORT_PRIORITY_UPDATED",
+      "support_ticket",
+      ticketId,
+      `Support ticket ${current.ticket_code} priority changed from ${current.priority} to ${priority}.`
+    );
+  }
+
+  return apiResponse(request, env, {
+    ok: true,
+    ticket: {
+      id: ticketId,
+      ticket_code: current.ticket_code,
+      status,
+      priority,
+      resolved_at: resolvedAt,
+      closed_at: closedAt,
+      updated_at: timestamp
+    }
+  });
+}
+
+async function addAdminSupportMessage(
+  request,
+  env,
+  auth,
+  ticketId
+) {
+  const body = await readJson(request);
+
+  const message =
+    String(body?.message || "").trim();
+
+  const visibility =
+    String(body?.visibility || "public").trim();
+
+  if (!message || message.length > 5000) {
+    return apiResponse(
+      request,
+      env,
+      { error: "Message is required and must be 5000 characters or less." },
+      400
+    );
+  }
+
+  if (!["public", "internal"].includes(visibility)) {
+    return apiResponse(
+      request,
+      env,
+      { error: "Invalid message visibility." },
+      400
+    );
+  }
+
+  const ticket = await env.DB.prepare(
+    `SELECT *
+     FROM support_tickets
+     WHERE id = ?
+     LIMIT 1`
+  ).bind(ticketId).first();
+
+  if (!ticket) {
+    return apiResponse(
+      request,
+      env,
+      { error: "Support ticket not found." },
+      404
+    );
+  }
+
+  if (ticket.status === "closed") {
+    return apiResponse(
+      request,
+      env,
+      { error: "Closed support ticket cannot receive new messages." },
+      409
+    );
+  }
+
+  const messageId = crypto.randomUUID();
+  const timestamp = nowIso();
+
+  await env.DB.batch([
+    env.DB.prepare(
+      `INSERT INTO support_messages
+        (
+          id,
+          ticket_id,
+          sender_user_id,
+          message,
+          visibility,
+          created_at
+        )
+       VALUES (?, ?, ?, ?, ?, ?)`
+    ).bind(
+      messageId,
+      ticketId,
+      auth.user.id,
+      message,
+      visibility,
+      timestamp
+    ),
+
+    env.DB.prepare(
+      `UPDATE support_tickets
+       SET
+         status =
+           CASE
+             WHEN status = 'open' THEN 'in_progress'
+             ELSE status
+           END,
+         updated_at = ?
+       WHERE id = ?`
+    ).bind(
+      timestamp,
+      ticketId
+    )
+  ]);
+
+  await writeActivity(
+    env,
+    auth.user.id,
+    "SUPPORT_MESSAGE_SENT",
+    "support_ticket",
+    ticketId,
+    `Admin replied to support ticket ${ticket.ticket_code}.`
+  );
+
+  return apiResponse(
+    request,
+    env,
+    {
+      ok: true,
+      message: {
+        id: messageId,
+        ticket_id: ticketId,
+        message,
+        visibility,
+        created_at: timestamp
+      }
+    },
+    201
+  );
+}
+
+async function listClientSupportTickets(
+  request,
+  env,
+  auth
+) {
+  if (!auth.user.client_id) {
+    return apiResponse(
+      request,
+      env,
+      { error: "Client profile is not linked to this account." },
+      403
+    );
+  }
+
+  const rows = await env.DB.prepare(
+    `SELECT
+       t.id,
+       t.ticket_code,
+       t.subject,
+       t.category,
+       t.priority,
+       t.status,
+       t.resolved_at,
+       t.closed_at,
+       t.created_at,
+       t.updated_at,
+       (
+         SELECT COUNT(*)
+         FROM support_messages sm
+         WHERE sm.ticket_id = t.id
+           AND sm.visibility = 'public'
+       ) AS message_count
+     FROM support_tickets t
+     WHERE t.client_id = ?
+     ORDER BY t.updated_at DESC`
+  ).bind(auth.user.client_id).all();
+
+  return apiResponse(request, env, {
+    tickets: rows.results || []
+  });
+}
+
+async function createClientSupportTicket(
+  request,
+  env,
+  auth
+) {
+  if (!auth.user.client_id) {
+    return apiResponse(
+      request,
+      env,
+      { error: "Client profile is not linked to this account." },
+      403
+    );
+  }
+
+  const body = await readJson(request);
+
+  const subject =
+    String(body?.subject || "").trim();
+
+  const category =
+    String(body?.category || "general").trim();
+
+  const priority =
+    String(body?.priority || "normal").trim();
+
+  const message =
+    String(body?.message || "").trim();
+
+  if (!subject || subject.length > 180) {
+    return apiResponse(
+      request,
+      env,
+      { error: "Subject is required and must be 180 characters or less." },
+      400
+    );
+  }
+
+  if (!SUPPORT_CATEGORIES.has(category)) {
+    return apiResponse(
+      request,
+      env,
+      { error: "Invalid support category." },
+      400
+    );
+  }
+
+  if (!SUPPORT_PRIORITIES.has(priority)) {
+    return apiResponse(
+      request,
+      env,
+      { error: "Invalid support priority." },
+      400
+    );
+  }
+
+  if (!message || message.length > 5000) {
+    return apiResponse(
+      request,
+      env,
+      { error: "Message is required and must be 5000 characters or less." },
+      400
+    );
+  }
+
+  const ticketId = crypto.randomUUID();
+  const messageId = crypto.randomUUID();
+  const year = new Date().getUTCFullYear();
+
+  const ticketCode =
+    `TKT-${year}-${ticketId.slice(0, 8).toUpperCase()}`;
+
+  const timestamp = nowIso();
+
+  await env.DB.batch([
+    env.DB.prepare(
+      `INSERT INTO support_tickets
+        (
+          id,
+          client_id,
+          ticket_code,
+          subject,
+          category,
+          priority,
+          status,
+          created_by_user_id,
+          created_at,
+          updated_at
+        )
+       VALUES (?, ?, ?, ?, ?, ?, 'open', ?, ?, ?)`
+    ).bind(
+      ticketId,
+      auth.user.client_id,
+      ticketCode,
+      subject,
+      category,
+      priority,
+      auth.user.id,
+      timestamp,
+      timestamp
+    ),
+
+    env.DB.prepare(
+      `INSERT INTO support_messages
+        (
+          id,
+          ticket_id,
+          sender_user_id,
+          message,
+          visibility,
+          created_at
+        )
+       VALUES (?, ?, ?, ?, 'public', ?)`
+    ).bind(
+      messageId,
+      ticketId,
+      auth.user.id,
+      message,
+      timestamp
+    )
+  ]);
+
+  await writeActivity(
+    env,
+    auth.user.id,
+    "SUPPORT_TICKET_CREATED",
+    "support_ticket",
+    ticketId,
+    `Support ticket ${ticketCode} created by client.`
+  );
+
+  return apiResponse(
+    request,
+    env,
+    {
+      ok: true,
+      ticket: {
+        id: ticketId,
+        ticket_code: ticketCode,
+        subject,
+        category,
+        priority,
+        status: "open",
+        created_at: timestamp
+      }
+    },
+    201
+  );
+}
+
+async function getClientSupportTicket(
+  request,
+  env,
+  auth,
+  ticketId
+) {
+  if (!auth.user.client_id) {
+    return apiResponse(
+      request,
+      env,
+      { error: "Client profile is not linked to this account." },
+      403
+    );
+  }
+
+  const ticket = await env.DB.prepare(
+    `SELECT *
+     FROM support_tickets
+     WHERE id = ?
+       AND client_id = ?
+     LIMIT 1`
+  ).bind(
+    ticketId,
+    auth.user.client_id
+  ).first();
+
+  if (!ticket) {
+    return apiResponse(
+      request,
+      env,
+      { error: "Support ticket not found." },
+      404
+    );
+  }
+
+  const messages = await env.DB.prepare(
+    `SELECT
+       sm.id,
+       sm.ticket_id,
+       sm.sender_user_id,
+       sm.message,
+       sm.created_at,
+       u.email AS sender_email,
+       u.role AS sender_role
+     FROM support_messages sm
+     JOIN users u ON u.id = sm.sender_user_id
+     WHERE sm.ticket_id = ?
+       AND sm.visibility = 'public'
+     ORDER BY sm.created_at ASC`
+  ).bind(ticketId).all();
+
+  return apiResponse(request, env, {
+    ticket,
+    messages: messages.results || []
+  });
+}
+
+async function addClientSupportMessage(
+  request,
+  env,
+  auth,
+  ticketId
+) {
+  if (!auth.user.client_id) {
+    return apiResponse(
+      request,
+      env,
+      { error: "Client profile is not linked to this account." },
+      403
+    );
+  }
+
+  const body = await readJson(request);
+  const message = String(body?.message || "").trim();
+
+  if (!message || message.length > 5000) {
+    return apiResponse(
+      request,
+      env,
+      { error: "Message is required and must be 5000 characters or less." },
+      400
+    );
+  }
+
+  const ticket = await env.DB.prepare(
+    `SELECT *
+     FROM support_tickets
+     WHERE id = ?
+       AND client_id = ?
+     LIMIT 1`
+  ).bind(
+    ticketId,
+    auth.user.client_id
+  ).first();
+
+  if (!ticket) {
+    return apiResponse(
+      request,
+      env,
+      { error: "Support ticket not found." },
+      404
+    );
+  }
+
+  if (ticket.status === "closed") {
+    return apiResponse(
+      request,
+      env,
+      { error: "Closed support ticket cannot receive new messages." },
+      409
+    );
+  }
+
+  const messageId = crypto.randomUUID();
+  const timestamp = nowIso();
+
+  await env.DB.batch([
+    env.DB.prepare(
+      `INSERT INTO support_messages
+        (
+          id,
+          ticket_id,
+          sender_user_id,
+          message,
+          visibility,
+          created_at
+        )
+       VALUES (?, ?, ?, ?, 'public', ?)`
+    ).bind(
+      messageId,
+      ticketId,
+      auth.user.id,
+      message,
+      timestamp
+    ),
+
+    env.DB.prepare(
+      `UPDATE support_tickets
+       SET
+         status =
+           CASE
+             WHEN status = 'resolved' THEN 'open'
+             ELSE status
+           END,
+         resolved_at =
+           CASE
+             WHEN status = 'resolved' THEN NULL
+             ELSE resolved_at
+           END,
+         updated_at = ?
+       WHERE id = ?`
+    ).bind(
+      timestamp,
+      ticketId
+    )
+  ]);
+
+  await writeActivity(
+    env,
+    auth.user.id,
+    "SUPPORT_MESSAGE_SENT",
+    "support_ticket",
+    ticketId,
+    `Client replied to support ticket ${ticket.ticket_code}.`
+  );
+
+  return apiResponse(
+    request,
+    env,
+    {
+      ok: true,
+      message: {
+        id: messageId,
+        ticket_id: ticketId,
+        message,
+        created_at: timestamp
+      }
+    },
+    201
+  );
+}
 function estimateToday() {
   return new Date().toISOString().slice(0, 10);
 }
