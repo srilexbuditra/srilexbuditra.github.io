@@ -192,6 +192,27 @@
     showOnly("dashboard");
   }
 
+  /* SB_ADMIN_INITIAL_HASH */
+  if (
+    !isPortal &&
+    location.hash.toLowerCase() === "#analytics"
+  ) {
+
+    const analyticsLink =
+      [...document.querySelectorAll(
+        NAV_SELECTOR
+      )].find(
+        link =>
+          targetFromLink(link) === "analytics"
+      );
+
+    if (analyticsLink) {
+      setTimeout(() => {
+        analyticsLink.click();
+      }, 0);
+    }
+  }
+
   document.addEventListener(
     "click",
     event => {
@@ -230,6 +251,37 @@
        * ADMIN:
        * pertahankan perilaku V2 yang sudah terbukti stabil.
        */
+      /* SB_ADMIN_HASH_ANALYTICS */
+      if (targetName === "analytics") {
+
+        if (location.hash !== "#analytics") {
+          history.replaceState(
+            null,
+            "",
+            location.pathname +
+              location.search +
+              "#analytics"
+          );
+        }
+
+      }
+      else {
+
+        /*
+         * Saat pindah dari Analytics ke modul Admin lain,
+         * hapus hash tanpa reload.
+         */
+        if (location.hash === "#analytics") {
+          history.replaceState(
+            null,
+            "",
+            location.pathname +
+              location.search
+          );
+        }
+
+      }
+
       prepareAdmin(targetName);
 
       setTimeout(() => {
