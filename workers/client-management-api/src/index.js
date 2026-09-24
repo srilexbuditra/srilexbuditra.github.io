@@ -94,6 +94,64 @@ export default {
         return updateProject(request, env, auth, decodeURIComponent(adminProjectMatch[1]));
       }
 
+      if (url.pathname === "/api/admin/invoices" && method === "GET") {
+        const auth = await requireRole(request, env, ["system_admin", "staff"]);
+        if (auth.response) return auth.response;
+        return listAdminInvoices(request, env);
+      }
+
+      if (url.pathname === "/api/admin/invoices" && method === "POST") {
+        const auth = await requireRole(request, env, ["system_admin", "staff"]);
+        if (auth.response) return auth.response;
+        return createAdminInvoice(request, env, auth);
+      }
+
+      const adminInvoiceMatch =
+        url.pathname.match(/^\/api\/admin\/invoices\/([^/]+)$/);
+
+      if (adminInvoiceMatch && method === "GET") {
+        const auth = await requireRole(request, env, ["system_admin", "staff"]);
+        if (auth.response) return auth.response;
+
+        return getAdminInvoice(
+          request,
+          env,
+          decodeURIComponent(adminInvoiceMatch[1])
+        );
+      }
+
+      if (adminInvoiceMatch && method === "PATCH") {
+        const auth = await requireRole(request, env, ["system_admin", "staff"]);
+        if (auth.response) return auth.response;
+
+        return updateAdminInvoice(
+          request,
+          env,
+          auth,
+          decodeURIComponent(adminInvoiceMatch[1])
+        );
+      }
+
+      if (url.pathname === "/api/client/invoices" && method === "GET") {
+        const auth = await requireRole(request, env, ["client"]);
+        if (auth.response) return auth.response;
+        return listClientInvoices(request, env, auth);
+      }
+
+      const clientInvoiceMatch =
+        url.pathname.match(/^\/api\/client\/invoices\/([^/]+)$/);
+
+      if (clientInvoiceMatch && method === "GET") {
+        const auth = await requireRole(request, env, ["client"]);
+        if (auth.response) return auth.response;
+
+        return getClientInvoice(
+          request,
+          env,
+          auth,
+          decodeURIComponent(clientInvoiceMatch[1])
+        );
+      }
       if (url.pathname === "/api/admin/documents" && method === "GET") {
         const auth = await requireRole(request, env, ["system_admin", "staff"]);
         if (auth.response) return auth.response;
@@ -737,6 +795,685 @@ async function updateProject(request, env, auth, projectId) {
   });
 }
 
+function invoiceToday() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function validInvoiceDate(value) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(String(value || ""))) {
+    return false;
+  }
+
+  const date = new Date(`${value}T00:00:00Z`);
+
+  return (
+    !Number.isNaN(date.getTime()) &&
+    date.toISOString().slice(0, 10) === value
+  );
+}
+
+function effectiveInvoiceStatus(status, dueDate) {
+  if (
+    status === "sent" &&
+    dueDate &&
+    dueDate < invoiceToday()
+  ) {
+    return "overdue";
+  }
+
+  return status;
+}
+
+function mapInvoiceRow(row) {
+  return {
+    ...row,
+    status: effectiveInvoiceStatus(row.status, row.due_date)
+  };
+}
+
+async function listAdminInvoices(request, env) {
+  const rows = await env.DB.prepare(
+    `SELECT
+       i.id,
+       i.invoice_code,
+       i.title,
+       i.description,
+       i.currency,
+       i.issue_date,
+       i.due_date,
+       i.status,
+       i.subtotal,
+       i.tax_amount,
+       i.total_amount,
+       i.notes,
+       i.sent_at,
+       i.paid_at,
+       i.created_at,
+       i.updated_at,
+       c.id AS client_id,
+       c.client_code,
+       c.full_name,
+       c.company_name,
+       p.id AS project_id,
+       p.project_code,
+       p.project_name,
+       (
+         SELECT COUNT(*)
+         FROM invoice_items ii
+         WHERE ii.invoice_id = i.id
+       ) AS item_count
+     FROM invoices i
+     JOIN clients c ON c.id = i.client_id
+     LEFT JOIN projects p ON p.id = i.project_id
+     ORDER BY i.created_at DESC`
+  ).all();
+
+  return apiResponse(request, env, {
+    invoices: (rows.results || []).map(mapInvoiceRow)
+  });
+}
+
+async function getAdminInvoice(request, env, invoiceId) {
+  const invoice = await env.DB.prepare(
+    `SELECT
+       i.*,
+       c.client_code,
+       c.full_name,
+       c.company_name,
+       p.project_code,
+       p.project_name
+     FROM invoices i
+     JOIN clients c ON c.id = i.client_id
+     LEFT JOIN projects p ON p.id = i.project_id
+     WHERE i.id = ?
+     LIMIT 1`
+  ).bind(invoiceId).first();
+
+  if (!invoice) {
+    return apiResponse(
+      request,
+      env,
+      { error: "Invoice not found." },
+      404
+    );
+  }
+
+  const items = await env.DB.prepare(
+    `SELECT
+       id,
+       description,
+       quantity,
+       unit_price,
+       line_total,
+       position
+     FROM invoice_items
+     WHERE invoice_id = ?
+     ORDER BY position ASC`
+  ).bind(invoiceId).all();
+
+  return apiResponse(request, env, {
+    invoice: mapInvoiceRow(invoice),
+    items: items.results || []
+  });
+}
+
+async function createAdminInvoice(request, env, auth) {
+  const body = await readJson(request);
+
+  const clientId = String(body?.client_id || "").trim();
+  const projectId =
+    String(body?.project_id || "").trim() || null;
+
+  const title = String(body?.title || "").trim();
+  const description =
+    String(body?.description || "").trim() || null;
+
+  const issueDate =
+    String(body?.issue_date || invoiceToday()).trim();
+
+  const dueDate =
+    String(body?.due_date || "").trim() || null;
+
+  const notes =
+    String(body?.notes || "").trim() || null;
+
+  const taxAmount = Number(body?.tax_amount ?? 0);
+  const rawItems = Array.isArray(body?.items)
+    ? body.items
+    : [];
+
+  if (
+    !clientId ||
+    !title ||
+    title.length > 180 ||
+    !validInvoiceDate(issueDate)
+  ) {
+    return apiResponse(
+      request,
+      env,
+      { error: "Invalid invoice data." },
+      400
+    );
+  }
+
+  if (dueDate && !validInvoiceDate(dueDate)) {
+    return apiResponse(
+      request,
+      env,
+      { error: "Invalid due date." },
+      400
+    );
+  }
+
+  if (dueDate && dueDate < issueDate) {
+    return apiResponse(
+      request,
+      env,
+      { error: "Due date cannot be before issue date." },
+      400
+    );
+  }
+
+  if (
+    !Number.isSafeInteger(taxAmount) ||
+    taxAmount < 0
+  ) {
+    return apiResponse(
+      request,
+      env,
+      { error: "Invalid tax amount." },
+      400
+    );
+  }
+
+  if (
+    rawItems.length < 1 ||
+    rawItems.length > 50
+  ) {
+    return apiResponse(
+      request,
+      env,
+      { error: "Invoice requires 1 to 50 items." },
+      400
+    );
+  }
+
+  const client = await env.DB.prepare(
+    `SELECT id
+     FROM clients
+     WHERE id = ?
+       AND status = 'active'
+     LIMIT 1`
+  ).bind(clientId).first();
+
+  if (!client) {
+    return apiResponse(
+      request,
+      env,
+      { error: "Client not found." },
+      404
+    );
+  }
+
+  if (projectId) {
+    const project = await env.DB.prepare(
+      `SELECT id
+       FROM projects
+       WHERE id = ?
+         AND client_id = ?
+       LIMIT 1`
+    ).bind(projectId, clientId).first();
+
+    if (!project) {
+      return apiResponse(
+        request,
+        env,
+        { error: "Project does not belong to selected client." },
+        400
+      );
+    }
+  }
+
+  const items = [];
+  let subtotal = 0;
+
+  for (let index = 0; index < rawItems.length; index++) {
+    const source = rawItems[index];
+
+    const itemDescription =
+      String(source?.description || "").trim();
+
+    const quantity = Number(source?.quantity ?? 1);
+    const unitPrice = Number(source?.unit_price ?? 0);
+
+    if (
+      !itemDescription ||
+      itemDescription.length > 500 ||
+      !Number.isFinite(quantity) ||
+      quantity <= 0 ||
+      !Number.isSafeInteger(unitPrice) ||
+      unitPrice < 0
+    ) {
+      return apiResponse(
+        request,
+        env,
+        { error: `Invalid invoice item at position ${index + 1}.` },
+        400
+      );
+    }
+
+    const lineTotal =
+      Math.round(quantity * unitPrice);
+
+    if (!Number.isSafeInteger(lineTotal) || lineTotal < 0) {
+      return apiResponse(
+        request,
+        env,
+        { error: "Invoice amount is too large." },
+        400
+      );
+    }
+
+    subtotal += lineTotal;
+
+    if (!Number.isSafeInteger(subtotal)) {
+      return apiResponse(
+        request,
+        env,
+        { error: "Invoice subtotal is too large." },
+        400
+      );
+    }
+
+    items.push({
+      id: crypto.randomUUID(),
+      description: itemDescription,
+      quantity,
+      unit_price: unitPrice,
+      line_total: lineTotal,
+      position: index + 1
+    });
+  }
+
+  const totalAmount = subtotal + taxAmount;
+
+  if (!Number.isSafeInteger(totalAmount)) {
+    return apiResponse(
+      request,
+      env,
+      { error: "Invoice total is too large." },
+      400
+    );
+  }
+
+  const invoiceId = crypto.randomUUID();
+  const year = new Date().getUTCFullYear();
+
+  const invoiceCode =
+    `INV-${year}-${invoiceId.slice(0, 8).toUpperCase()}`;
+
+  const timestamp = nowIso();
+
+  const statements = [
+    env.DB.prepare(
+      `INSERT INTO invoices
+        (
+          id,
+          client_id,
+          project_id,
+          invoice_code,
+          title,
+          description,
+          currency,
+          issue_date,
+          due_date,
+          status,
+          subtotal,
+          tax_amount,
+          total_amount,
+          notes,
+          created_by_user_id,
+          created_at,
+          updated_at
+        )
+       VALUES (?, ?, ?, ?, ?, ?, 'IDR', ?, ?, 'draft', ?, ?, ?, ?, ?, ?, ?)`
+    ).bind(
+      invoiceId,
+      clientId,
+      projectId,
+      invoiceCode,
+      title,
+      description,
+      issueDate,
+      dueDate,
+      subtotal,
+      taxAmount,
+      totalAmount,
+      notes,
+      auth.user.id,
+      timestamp,
+      timestamp
+    )
+  ];
+
+  for (const item of items) {
+    statements.push(
+      env.DB.prepare(
+        `INSERT INTO invoice_items
+          (
+            id,
+            invoice_id,
+            description,
+            quantity,
+            unit_price,
+            line_total,
+            position,
+            created_at
+          )
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
+      ).bind(
+        item.id,
+        invoiceId,
+        item.description,
+        item.quantity,
+        item.unit_price,
+        item.line_total,
+        item.position,
+        timestamp
+      )
+    );
+  }
+
+  await env.DB.batch(statements);
+
+  await writeActivity(
+    env,
+    auth.user.id,
+    "INVOICE_CREATED",
+    "invoice",
+    invoiceId,
+    `Invoice ${invoiceCode} created as draft.`
+  );
+
+  return apiResponse(
+    request,
+    env,
+    {
+      ok: true,
+      invoice: {
+        id: invoiceId,
+        invoice_code: invoiceCode,
+        title,
+        status: "draft",
+        subtotal,
+        tax_amount: taxAmount,
+        total_amount: totalAmount,
+        issue_date: issueDate,
+        due_date: dueDate
+      }
+    },
+    201
+  );
+}
+
+async function updateAdminInvoice(
+  request,
+  env,
+  auth,
+  invoiceId
+) {
+  const body = await readJson(request);
+
+  const current = await env.DB.prepare(
+    `SELECT
+       id,
+       invoice_code,
+       status,
+       issue_date,
+       due_date,
+       notes,
+       sent_at,
+       paid_at
+     FROM invoices
+     WHERE id = ?
+     LIMIT 1`
+  ).bind(invoiceId).first();
+
+  if (!current) {
+    return apiResponse(
+      request,
+      env,
+      { error: "Invoice not found." },
+      404
+    );
+  }
+
+  const nextStatus =
+    body?.status === undefined
+      ? current.status
+      : String(body.status).trim();
+
+  const nextDueDate =
+    body?.due_date === undefined
+      ? current.due_date
+      : (String(body.due_date || "").trim() || null);
+
+  const nextNotes =
+    body?.notes === undefined
+      ? current.notes
+      : (String(body.notes || "").trim() || null);
+
+  const transitions = {
+    draft: new Set(["draft", "sent", "cancelled"]),
+    sent: new Set(["sent", "paid", "cancelled"]),
+    overdue: new Set(["overdue", "paid", "cancelled"]),
+    paid: new Set(["paid"]),
+    cancelled: new Set(["cancelled"])
+  };
+
+  const allowed =
+    transitions[current.status] ||
+    new Set([current.status]);
+
+  if (!allowed.has(nextStatus)) {
+    return apiResponse(
+      request,
+      env,
+      {
+        error:
+          `Invalid invoice status transition: ${current.status} -> ${nextStatus}.`
+      },
+      400
+    );
+  }
+
+  if (
+    nextDueDate &&
+    (
+      !validInvoiceDate(nextDueDate) ||
+      nextDueDate < current.issue_date
+    )
+  ) {
+    return apiResponse(
+      request,
+      env,
+      { error: "Invalid invoice due date." },
+      400
+    );
+  }
+
+  const timestamp = nowIso();
+
+  let sentAt = current.sent_at;
+  let paidAt = current.paid_at;
+
+  if (
+    (nextStatus === "sent" || nextStatus === "paid") &&
+    !sentAt
+  ) {
+    sentAt = timestamp;
+  }
+
+  if (nextStatus === "paid" && !paidAt) {
+    paidAt = timestamp;
+  }
+
+  await env.DB.prepare(
+    `UPDATE invoices
+     SET
+       status = ?,
+       due_date = ?,
+       notes = ?,
+       sent_at = ?,
+       paid_at = ?,
+       updated_at = ?
+     WHERE id = ?`
+  ).bind(
+    nextStatus,
+    nextDueDate,
+    nextNotes,
+    sentAt,
+    paidAt,
+    timestamp,
+    invoiceId
+  ).run();
+
+  await writeActivity(
+    env,
+    auth.user.id,
+    "INVOICE_STATUS_UPDATED",
+    "invoice",
+    invoiceId,
+    `Invoice ${current.invoice_code} status changed from ${current.status} to ${nextStatus}.`
+  );
+
+  return apiResponse(request, env, {
+    ok: true,
+    invoice: {
+      id: invoiceId,
+      invoice_code: current.invoice_code,
+      status: effectiveInvoiceStatus(
+        nextStatus,
+        nextDueDate
+      ),
+      due_date: nextDueDate,
+      sent_at: sentAt,
+      paid_at: paidAt,
+      updated_at: timestamp
+    }
+  });
+}
+
+async function listClientInvoices(request, env, auth) {
+  if (!auth.user.client_id) {
+    return apiResponse(
+      request,
+      env,
+      { error: "Client profile is not linked to this account." },
+      403
+    );
+  }
+
+  const rows = await env.DB.prepare(
+    `SELECT
+       i.id,
+       i.invoice_code,
+       i.title,
+       i.description,
+       i.currency,
+       i.issue_date,
+       i.due_date,
+       i.status,
+       i.subtotal,
+       i.tax_amount,
+       i.total_amount,
+       i.notes,
+       i.sent_at,
+       i.paid_at,
+       i.created_at,
+       i.updated_at,
+       p.id AS project_id,
+       p.project_code,
+       p.project_name
+     FROM invoices i
+     LEFT JOIN projects p ON p.id = i.project_id
+     WHERE i.client_id = ?
+       AND i.status IN ('sent','paid','overdue')
+     ORDER BY i.issue_date DESC, i.created_at DESC`
+  ).bind(auth.user.client_id).all();
+
+  return apiResponse(request, env, {
+    invoices: (rows.results || []).map(mapInvoiceRow)
+  });
+}
+
+async function getClientInvoice(
+  request,
+  env,
+  auth,
+  invoiceId
+) {
+  if (!auth.user.client_id) {
+    return apiResponse(
+      request,
+      env,
+      { error: "Client profile is not linked to this account." },
+      403
+    );
+  }
+
+  const invoice = await env.DB.prepare(
+    `SELECT
+       i.*,
+       p.project_code,
+       p.project_name
+     FROM invoices i
+     LEFT JOIN projects p ON p.id = i.project_id
+     WHERE i.id = ?
+       AND i.client_id = ?
+       AND i.status IN ('sent','paid','overdue')
+     LIMIT 1`
+  ).bind(
+    invoiceId,
+    auth.user.client_id
+  ).first();
+
+  if (!invoice) {
+    return apiResponse(
+      request,
+      env,
+      { error: "Invoice not found." },
+      404
+    );
+  }
+
+  const items = await env.DB.prepare(
+    `SELECT
+       id,
+       description,
+       quantity,
+       unit_price,
+       line_total,
+       position
+     FROM invoice_items
+     WHERE invoice_id = ?
+     ORDER BY position ASC`
+  ).bind(invoiceId).all();
+
+  await writeActivity(
+    env,
+    auth.user.id,
+    "INVOICE_VIEWED",
+    "invoice",
+    invoiceId,
+    `Invoice ${invoice.invoice_code} viewed by client.`
+  );
+
+  return apiResponse(request, env, {
+    invoice: mapInvoiceRow(invoice),
+    items: items.results || []
+  });
+}
 const DOCUMENT_MAX_BYTES = 15 * 1024 * 1024;
 
 const DOCUMENT_ALLOWED_TYPES = new Set([
