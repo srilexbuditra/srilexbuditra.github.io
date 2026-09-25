@@ -175,6 +175,13 @@
         font-size: 13px;
         font-weight: 700;
       }
+      /*
+       * STAFF BUSINESS ACTION GUARD R1
+       */
+      html[data-sb-role="staff"] [data-client-new],
+      html[data-sb-role="staff"] [data-lead-convert-area] {
+        display: none !important;
+      }
 
       .sb-auth-logout {
         border: 1px solid rgba(15,23,42,.15);
@@ -643,6 +650,13 @@
   function applyRoleVisibility(user) {
     const canManageUsers =
       user?.role === "system_admin";
+    /*
+     * STAFF BUSINESS ACTION GUARD R1
+     * Role disimpan pada root document agar guard
+     * berlaku juga untuk elemen yang dirender kemudian.
+     */
+    document.documentElement.dataset.sbRole =
+      user?.role || "";
 
     document
       .querySelectorAll(".nav a, .mobile-nav a")
