@@ -163,9 +163,55 @@
     setPortalActive(targetName);
   }
 
+  /* SB_ADMIN_VIEW_ROUTING_R1 */
+  function setAdminActive(targetName) {
+
+    if (isPortal) return;
+
+    document
+      .querySelectorAll(NAV_SELECTOR)
+      .forEach(link => {
+
+        const label =
+          normalize(link.textContent);
+
+        const linkTarget =
+          targetFromLink(link);
+
+        const active =
+          targetName
+            ? linkTarget === targetName
+            : label === "dashboard";
+
+        link.classList.toggle(
+          "active",
+          active
+        );
+
+      });
+  }
+
   function prepareAdmin(targetName) {
 
     if (isPortal) return;
+
+    const baseNodes =
+      [...content.children].filter(
+        node => !node.dataset.sbView
+      );
+
+    baseNodes.forEach(node => {
+
+      if (targetName) {
+        node.hidden = true;
+        node.style.display = "none";
+      }
+      else {
+        node.style.removeProperty("display");
+        node.hidden = false;
+      }
+
+    });
 
     views().forEach(view => {
 
@@ -173,19 +219,17 @@
         targetName &&
         view.dataset.sbView === targetName
       ) {
-
         view.style.removeProperty("display");
         view.hidden = false;
-
       }
       else {
-
         view.hidden = true;
         view.style.display = "none";
-
       }
 
     });
+
+    setAdminActive(targetName);
   }
 
   ensurePortalDashboard();
