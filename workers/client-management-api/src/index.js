@@ -188,6 +188,20 @@ export default {
       // ======================================================
       // LEADS R1 - ADMIN
       // ======================================================
+      // ======================================================
+      // DOMAIN AVAILABILITY R1 - PUBLIC
+      // ======================================================
+
+      if (
+        url.pathname === "/api/public/domain-check" &&
+        method === "GET"
+      ) {
+        return checkPublicDomainAvailability(
+          request,
+          env,
+          url
+        );
+      }
 
       if (
         url.pathname === "/api/public/estimate-request" &&
@@ -1682,6 +1696,381 @@ async function validateLeadAssignee(request, env, userId) {
   return { ok: true };
 }
 
+const RDAP_BOOTSTRAP_URL =
+  "https://data.iana.org/rdap/dns.json";
+
+const RDAP_BOOTSTRAP_TTL_MS =
+  24 * 60 * 60 * 1000;
+
+let rdapBootstrapMemory = null;
+let rdapBootstrapExpiresAt = 0;
+
+function normalizeDomainForRdap(value) {
+  let input =
+    String(value || "")
+      .trim()
+      .toLowerCase();
+
+  if (!input) return null;
+
+  if (input.endsWith(".")) {
+    input =
+      input.slice(0, -1);
+  }
+
+  if (
+    input.length > 253 ||
+    input.includes("/") ||
+    input.includes("\\") ||
+    input.includes(":") ||
+    input.includes("@") ||
+    /\s/.test(input)
+  ) {
+    return null;
+  }
+
+  let hostname;
+
+  try {
+    hostname =
+      new URL(
+        `http://${input}`
+      ).hostname
+        .toLowerCase()
+        .replace(/\.$/, "");
+  } catch {
+    return null;
+  }
+
+  const labels =
+    hostname.split(".");
+
+  if (labels.length < 2) {
+    return null;
+  }
+
+  for (const label of labels) {
+    if (
+      !label ||
+      label.length > 63 ||
+      !/^[a-z0-9-]+$/.test(label) ||
+      label.startsWith("-") ||
+      label.endsWith("-")
+    ) {
+      return null;
+    }
+  }
+
+  return hostname;
+}
+
+async function getRdapBootstrap() {
+  const now =
+    Date.now();
+
+  if (
+    rdapBootstrapMemory &&
+    now < rdapBootstrapExpiresAt
+  ) {
+    return rdapBootstrapMemory;
+  }
+
+  const response =
+    await fetch(
+      RDAP_BOOTSTRAP_URL,
+      {
+        headers: {
+          "Accept": "application/json"
+        }
+      }
+    );
+
+  if (!response.ok) {
+    throw new Error(
+      `IANA RDAP bootstrap failed: ${response.status}`
+    );
+  }
+
+  const data =
+    await response.json();
+
+  if (
+    !data ||
+    !Array.isArray(data.services)
+  ) {
+    throw new Error(
+      "Invalid IANA RDAP bootstrap response."
+    );
+  }
+
+  rdapBootstrapMemory =
+    data;
+
+  rdapBootstrapExpiresAt =
+    now + RDAP_BOOTSTRAP_TTL_MS;
+
+  return data;
+}
+
+function findRdapBaseUrl(
+  bootstrap,
+  domain
+) {
+  const labels =
+    domain.split(".");
+
+  const tld =
+    labels[labels.length - 1];
+
+  for (
+    const service
+    of bootstrap.services || []
+  ) {
+    const tlds =
+      Array.isArray(service?.[0])
+        ? service[0]
+        : [];
+
+    const urls =
+      Array.isArray(service?.[1])
+        ? service[1]
+        : [];
+
+    const matchesTld =
+      tlds.some(
+        (value) =>
+          String(value || "")
+            .toLowerCase() === tld
+      );
+
+    if (
+      matchesTld &&
+      urls.length
+    ) {
+      return String(
+        urls[0] || ""
+      ).trim() || null;
+    }
+  }
+
+  return null;
+}
+
+function buildRdapDomainUrl(
+  baseUrl,
+  domain
+) {
+  const normalizedBase =
+    baseUrl.endsWith("/")
+      ? baseUrl
+      : `${baseUrl}/`;
+
+  return (
+    normalizedBase +
+    "domain/" +
+    encodeURIComponent(domain)
+  );
+}
+
+async function fetchRdapDomain(
+  rdapUrl
+) {
+  const controller =
+    new AbortController();
+
+  const timeout =
+    setTimeout(
+      () => controller.abort(),
+      8000
+    );
+
+  try {
+    return await fetch(
+      rdapUrl,
+      {
+        method: "GET",
+        headers: {
+          "Accept": "application/rdap+json, application/json"
+        },
+        redirect: "follow",
+        signal: controller.signal
+      }
+    );
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
+async function checkPublicDomainAvailability(
+  request,
+  env,
+  url
+) {
+  const domain =
+    normalizeDomainForRdap(
+      url.searchParams.get("domain")
+    );
+
+  if (!domain) {
+    return apiResponse(
+      request,
+      env,
+      {
+        ok: false,
+        error: "Invalid domain name."
+      },
+      400
+    );
+  }
+
+  try {
+    const bootstrap =
+      await getRdapBootstrap();
+
+    const rdapBaseUrl =
+      findRdapBaseUrl(
+        bootstrap,
+        domain
+      );
+
+    if (!rdapBaseUrl) {
+      return apiResponse(
+        request,
+        env,
+        {
+          ok: true,
+          domain,
+          status: "unknown",
+          label:
+            "Status belum dapat dikonfirmasi.",
+          reason:
+            "rdap_not_available",
+          checked_at:
+            new Date().toISOString()
+        }
+      );
+    }
+
+    const rdapUrl =
+      buildRdapDomainUrl(
+        rdapBaseUrl,
+        domain
+      );
+
+    const response =
+      await fetchRdapDomain(
+        rdapUrl
+      );
+
+    if (response.status === 200) {
+      let payload = null;
+
+      try {
+        payload =
+          await response.json();
+      } catch {
+        payload = null;
+      }
+
+      const validDomainObject =
+        payload?.objectClassName ===
+          "domain" ||
+        Boolean(payload?.ldhName) ||
+        Boolean(payload?.unicodeName);
+
+      if (!validDomainObject) {
+        return apiResponse(
+          request,
+          env,
+          {
+            ok: true,
+            domain,
+            status: "unknown",
+            label:
+              "Status belum dapat dikonfirmasi.",
+            reason:
+              "unexpected_rdap_response",
+            checked_at:
+              new Date().toISOString()
+          }
+        );
+      }
+
+      return apiResponse(
+        request,
+        env,
+        {
+          ok: true,
+          domain,
+          status: "registered",
+          label:
+            "Domain sudah terdaftar.",
+          checked_at:
+            new Date().toISOString()
+        }
+      );
+    }
+
+    if (response.status === 404) {
+      return apiResponse(
+        request,
+        env,
+        {
+          ok: true,
+          domain,
+          status: "unregistered",
+          label:
+            "Belum terdaftar — kandidat tersedia.",
+          disclaimer:
+            "Ketersediaan final dikonfirmasi saat proses registrasi.",
+          checked_at:
+            new Date().toISOString()
+        }
+      );
+    }
+
+    return apiResponse(
+      request,
+      env,
+      {
+        ok: true,
+        domain,
+        status: "unknown",
+        label:
+          "Status belum dapat dikonfirmasi.",
+        reason:
+          response.status === 429
+            ? "rate_limited"
+            : "registry_response_error",
+        checked_at:
+          new Date().toISOString()
+      }
+    );
+  } catch (error) {
+    console.error(
+      "Public domain availability check failed",
+      error
+    );
+
+    return apiResponse(
+      request,
+      env,
+      {
+        ok: true,
+        domain,
+        status: "unknown",
+        label:
+          "Status belum dapat dikonfirmasi.",
+        reason:
+          error?.name === "AbortError"
+            ? "timeout"
+            : "rdap_lookup_failed",
+        checked_at:
+          new Date().toISOString()
+      }
+    );
+  }
+}
 async function createPublicEstimateLead(
   request,
   env
