@@ -49,7 +49,8 @@
       "invoices": "invoices",
       "support": "support",
         "analytics": "analytics",
-      "activity logs": "activity"
+      "activity logs": "activity",
+      "users & roles": "users"
     };
 
     return adminMap[label] || null;
@@ -243,7 +244,8 @@
 
     const hashTargetMap = {
       "#analytics": "analytics",
-      "#activity": "activity"
+      "#activity": "activity",
+      "#users": "users"
     };
 
     const initialTarget =
@@ -311,7 +313,8 @@
       /* SB_ADMIN_HASH_ROUTING_R1 */
       if (
         targetName === "analytics" ||
-        targetName === "activity"
+        targetName === "activity" ||
+        targetName === "users"
       ) {
 
         const targetHash =
@@ -335,7 +338,8 @@
 
         if (
           currentHash === "#analytics" ||
-          currentHash === "#activity"
+          currentHash === "#activity" ||
+          currentHash === "#users"
         ) {
           history.replaceState(
             null,
