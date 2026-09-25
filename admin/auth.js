@@ -349,6 +349,212 @@
     topbar.appendChild(box);
   }
 
+  /* SB_REQUIRED_PASSWORD_CHANGE_R1 */
+  function showRequiredPasswordChange(user) {
+    if (!authOverlay) {
+      buildLogin();
+    }
+
+    authOverlay.hidden = false;
+
+    const card =
+      authOverlay.firstElementChild;
+
+    if (!card) return;
+
+    const heading =
+      card.querySelector("h1, h2");
+
+    if (heading) {
+      heading.textContent =
+        "Wajib Ganti Password";
+    }
+
+    const description =
+      heading?.nextElementSibling;
+
+    if (
+      description &&
+      description.tagName === "P"
+    ) {
+      description.textContent =
+        "Password sementara atau hasil reset harus diganti sebelum Management Console dapat digunakan.";
+    }
+
+    const oldForm =
+      card.querySelector("#sb-auth-form");
+
+    if (!oldForm) return;
+
+    const form =
+      document.createElement("form");
+
+    form.id =
+      "sb-required-password-form";
+
+    form.innerHTML = `
+      <div class="sb-auth-field">
+        <label for="sb-current-password">
+          Password Saat Ini
+        </label>
+        <input
+          id="sb-current-password"
+          type="password"
+          autocomplete="current-password"
+          required
+        >
+      </div>
+
+      <div class="sb-auth-field">
+        <label for="sb-new-password">
+          Password Baru
+        </label>
+        <input
+          id="sb-new-password"
+          type="password"
+          autocomplete="new-password"
+          minlength="12"
+          required
+        >
+      </div>
+
+      <div class="sb-auth-field">
+        <label for="sb-confirm-password">
+          Ulangi Password Baru
+        </label>
+        <input
+          id="sb-confirm-password"
+          type="password"
+          autocomplete="new-password"
+          minlength="12"
+          required
+        >
+      </div>
+
+      <button
+        class="sb-auth-submit"
+        type="submit"
+      >
+        Simpan Password Baru
+      </button>
+
+      <div
+        class="sb-auth-message"
+        role="alert"
+        aria-live="polite"
+      ></div>
+    `;
+
+    oldForm.replaceWith(form);
+
+    const currentPassword =
+      form.querySelector(
+        "#sb-current-password"
+      );
+
+    const newPassword =
+      form.querySelector(
+        "#sb-new-password"
+      );
+
+    const confirmPassword =
+      form.querySelector(
+        "#sb-confirm-password"
+      );
+
+    const button =
+      form.querySelector(
+        ".sb-auth-submit"
+      );
+
+    const message =
+      form.querySelector(
+        ".sb-auth-message"
+      );
+
+    form.addEventListener(
+      "submit",
+      async event => {
+        event.preventDefault();
+
+        message.textContent = "";
+
+        if (
+          newPassword.value !==
+          confirmPassword.value
+        ) {
+          message.textContent =
+            "Konfirmasi password baru tidak sama.";
+          return;
+        }
+
+        if (
+          newPassword.value ===
+          currentPassword.value
+        ) {
+          message.textContent =
+            "Password baru harus berbeda dari password saat ini.";
+          return;
+        }
+
+        button.disabled = true;
+        button.textContent =
+          "Menyimpan...";
+
+        try {
+          const response =
+            await api(
+              "/auth/change-password",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type":
+                    "application/json"
+                },
+                body: JSON.stringify({
+                  current_password:
+                    currentPassword.value,
+                  new_password:
+                    newPassword.value
+                })
+              }
+            );
+
+          const data =
+            await readJson(response);
+
+          if (!response.ok) {
+            throw new Error(
+              data.error ||
+              "Gagal mengubah password."
+            );
+          }
+
+          message.textContent =
+            "Password berhasil diubah. Memuat Management Console...";
+
+          window.setTimeout(() => {
+            window.location.reload();
+          }, 700);
+
+        } catch (error) {
+          message.textContent =
+            error instanceof Error
+              ? error.message
+              : "Gagal mengubah password.";
+
+          button.disabled = false;
+          button.textContent =
+            "Simpan Password Baru";
+        }
+      }
+    );
+
+    window.setTimeout(() => {
+      currentPassword?.focus();
+    }, 0);
+  }
+
   async function handleLogin(event) {
     event.preventDefault();
 
@@ -388,6 +594,13 @@
 
       currentUser = data.user;
       window.SB_AUTH_USER = currentUser;
+
+      if (currentUser.must_change_password) {
+        showRequiredPasswordChange(
+          currentUser
+        );
+        return;
+      }
 
       hideLogin();
       installUserControls(currentUser);
@@ -477,6 +690,13 @@
 
       currentUser = data.user;
       window.SB_AUTH_USER = currentUser;
+
+      if (currentUser.must_change_password) {
+        showRequiredPasswordChange(
+          currentUser
+        );
+        return;
+      }
 
       hideLogin();
       installUserControls(currentUser);

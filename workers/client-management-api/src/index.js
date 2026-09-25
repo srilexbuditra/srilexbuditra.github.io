@@ -1015,6 +1015,26 @@ async function requireAuth(request, env) {
 async function requireRole(request, env, allowedRoles) {
   const auth = await requireAuth(request, env);
   if (auth.response) return auth;
+  /* SB_REQUIRED_PASSWORD_GATE_R1 */
+  if (
+    auth.user.must_change_password &&
+    ["system_admin", "staff"].includes(
+      auth.user.role
+    )
+  ) {
+    return {
+      response: apiResponse(
+        request,
+        env,
+        {
+          error: "Password change required.",
+          code: "PASSWORD_CHANGE_REQUIRED"
+        },
+        403
+      )
+    };
+  }
+
   if (!allowedRoles.includes(auth.user.role)) {
     return { response: apiResponse(request, env, { error: "Forbidden." }, 403) };
   }
@@ -1034,6 +1054,24 @@ async function changePassword(request, env, auth) {
 
   if (!row || !(await verifyPassword(currentPassword, row.password_hash))) {
     return apiResponse(request, env, { error: "Current password is incorrect." }, 400);
+  }
+
+  /* SB_PASSWORD_MUST_DIFFER_R1 */
+  if (
+    await verifyPassword(
+      newPassword,
+      row.password_hash
+    )
+  ) {
+    return apiResponse(
+      request,
+      env,
+      {
+        error:
+          "New password must be different from the current password."
+      },
+      400
+    );
   }
 
   const newHash = await hashPassword(newPassword);
