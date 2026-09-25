@@ -213,7 +213,7 @@ function syncSelectedPackageUI(){
       selectedPackageName;
   }
 
-  $('.package').forEach(card => {
+  $$('.package').forEach(card => {
     const active =
       card.dataset.package ===
       selectedPackageName;
@@ -331,7 +331,7 @@ function updateEstimate(){
   return total;
 }
 
-$('.package').forEach(btn => {
+$$('.package').forEach(btn => {
   btn.addEventListener(
     'click',
     () => {
