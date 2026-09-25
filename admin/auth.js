@@ -659,13 +659,51 @@
         link.hidden = !canManageUsers;
 
         if (canManageUsers) {
+          link.style.removeProperty("display");
           link.removeAttribute("aria-hidden");
           link.removeAttribute("tabindex");
         } else {
+          link.style.setProperty(
+            "display",
+            "none",
+            "important"
+          );
           link.setAttribute("aria-hidden", "true");
           link.setAttribute("tabindex", "-1");
         }
       });
+
+    /*
+     * STAFF ACCESS UI GUARD R1
+     * Staff tidak boleh membuka Users & Roles
+     * walaupun URL #users dimasukkan manual.
+     */
+    if (
+      !canManageUsers &&
+      location.hash.toLowerCase() === "#users"
+    ) {
+      history.replaceState(
+        null,
+        "",
+        location.pathname + location.search
+      );
+
+      const dashboardLink =
+        [...document.querySelectorAll(
+          ".nav a, .mobile-nav a"
+        )].find(
+          link =>
+            String(link.textContent || "")
+              .trim()
+              .toLowerCase() === "dashboard"
+        );
+
+      if (dashboardLink) {
+        window.setTimeout(() => {
+          dashboardLink.click();
+        }, 0);
+      }
+    }
   }
   async function checkSession() {
     showLogin();
@@ -712,4 +750,3 @@
     checkSession();
   }
 })();
-

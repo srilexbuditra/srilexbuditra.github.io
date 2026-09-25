@@ -284,6 +284,28 @@
       const targetName =
         targetFromLink(link);
 
+      /*
+       * STAFF ACCESS UI GUARD R1
+       * Users & Roles hanya untuk system_admin.
+       */
+      if (
+        !isPortal &&
+        targetName === "users" &&
+        window.SB_AUTH_USER?.role !== "system_admin"
+      ) {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+
+        history.replaceState(
+          null,
+          "",
+          location.pathname + location.search
+        );
+
+        prepareAdmin(null);
+        setAdminActive(null);
+        return;
+      }
       if (isPortal) {
 
         if (!targetName) return;

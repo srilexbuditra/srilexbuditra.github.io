@@ -199,7 +199,7 @@
       <div>
         <div class="eyebrow">
           <span class="pulse"></span>
-          System Audit &bull; R1
+          System Audit • R1
         </div>
 
         <h1>Activity Logs</h1>
@@ -467,7 +467,7 @@
                   value &&
                   value !== actor
               )
-              .join(" &bull; ");
+              .join(" • ");
 
           const entity =
             item.entity_type
