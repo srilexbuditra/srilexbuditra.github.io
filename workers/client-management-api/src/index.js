@@ -81,6 +81,43 @@ export default {
           env
         );
       }
+      // ======================================================
+      // USERS & ROLES R1 - ADMIN
+      // ======================================================
+
+      if (url.pathname === "/api/admin/users" && method === "GET") {
+        const auth = await requireRole(
+          request,
+          env,
+          ["system_admin"]
+        );
+
+        if (auth.response) return auth.response;
+
+        return listAdminUsers(
+          request,
+          env
+        );
+      }
+
+      if (
+        url.pathname === "/api/admin/users/staff" &&
+        method === "POST"
+      ) {
+        const auth = await requireRole(
+          request,
+          env,
+          ["system_admin"]
+        );
+
+        if (auth.response) return auth.response;
+
+        return createAdminStaff(
+          request,
+          env,
+          auth
+        );
+      }
       if (url.pathname === "/api/admin/clients" && method === "GET") {
         const auth = await requireRole(request, env, ["system_admin", "staff"]);
         if (auth.response) return auth.response;
@@ -958,6 +995,176 @@ async function changePassword(request, env, auth) {
 
   await writeActivity(env, auth.user.id, "PASSWORD_CHANGED", "user", auth.user.id, "Password changed and other sessions revoked.");
   return apiResponse(request, env, { ok: true });
+}
+
+/* ==========================================================
+   USERS & ROLES R1
+   ========================================================== */
+
+async function listAdminUsers(request, env) {
+  const rows = await env.DB.prepare(
+    `SELECT
+       u.id,
+       u.email,
+       u.full_name,
+       u.role,
+       u.status,
+       u.must_change_password,
+       u.created_at,
+       u.updated_at,
+       c.id AS client_id,
+       c.client_code,
+       c.company_name
+     FROM users u
+     LEFT JOIN clients c
+       ON c.user_id = u.id
+     ORDER BY
+       CASE u.role
+         WHEN 'system_admin' THEN 0
+         WHEN 'staff' THEN 1
+         ELSE 2
+       END,
+       u.created_at ASC`
+  ).all();
+
+  return apiResponse(
+    request,
+    env,
+    {
+      users: (rows.results || []).map(user => ({
+        ...user,
+        must_change_password:
+          Boolean(user.must_change_password)
+      }))
+    }
+  );
+}
+
+async function createAdminStaff(
+  request,
+  env,
+  auth
+) {
+  const body = await readJson(request);
+
+  const email =
+    normalizeEmail(body?.email);
+
+  const fullName =
+    String(body?.full_name || "").trim();
+
+  const temporaryPassword =
+    body?.temporary_password;
+
+  if (!validEmail(email) || !fullName) {
+    return apiResponse(
+      request,
+      env,
+      {
+        error:
+          "Valid email and full_name are required."
+      },
+      400
+    );
+  }
+
+  const passwordError =
+    validatePassword(temporaryPassword);
+
+  if (passwordError) {
+    return apiResponse(
+      request,
+      env,
+      { error: passwordError },
+      400
+    );
+  }
+
+  const existing =
+    await env.DB.prepare(
+      `SELECT id
+       FROM users
+       WHERE email = ?
+       LIMIT 1`
+    )
+      .bind(email)
+      .first();
+
+  if (existing) {
+    return apiResponse(
+      request,
+      env,
+      {
+        error:
+          "Email is already registered."
+      },
+      409
+    );
+  }
+
+  const userId =
+    crypto.randomUUID();
+
+  const passwordHash =
+    await hashPassword(
+      temporaryPassword
+    );
+
+  const timestamp =
+    nowIso();
+
+  await env.DB.prepare(
+    `INSERT INTO users
+      (
+        id,
+        email,
+        password_hash,
+        full_name,
+        role,
+        status,
+        must_change_password,
+        created_at,
+        updated_at
+      )
+     VALUES (
+       ?, ?, ?, ?, 'staff', 'active', 1, ?, ?
+     )`
+  )
+    .bind(
+      userId,
+      email,
+      passwordHash,
+      fullName,
+      timestamp,
+      timestamp
+    )
+    .run();
+
+  await writeActivity(
+    env,
+    auth.user.id,
+    "STAFF_CREATED",
+    "user",
+    userId,
+    `Staff account ${email} created.`
+  );
+
+  return apiResponse(
+    request,
+    env,
+    {
+      ok: true,
+      user: {
+        id: userId,
+        email,
+        full_name: fullName,
+        role: "staff",
+        status: "active",
+        must_change_password: true
+      }
+    },
+    201
+  );
 }
 
 async function listClients(request, env) {
