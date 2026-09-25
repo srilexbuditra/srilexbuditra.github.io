@@ -1006,7 +1006,7 @@ async function listAdminUsers(request, env) {
     `SELECT
        u.id,
        u.email,
-       u.full_name,
+       COALESCE(u.full_name, c.full_name) AS full_name,
        u.role,
        u.status,
        u.must_change_password,
