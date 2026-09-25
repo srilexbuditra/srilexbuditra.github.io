@@ -283,7 +283,50 @@
     }
   }
 
+  /* SB_ADMIN_ROLE_BADGE_R1 */
+  function applyRoleBadge(user) {
+    const profile =
+      document.querySelector(".profile");
+
+    if (!profile) return;
+
+    const avatar =
+      profile.querySelector(".avatar");
+
+    const title =
+      profile.querySelector(
+        ".profile-copy strong"
+      );
+
+    const subtitle =
+      profile.querySelector(
+        ".profile-copy span"
+      );
+
+    const isStaff =
+      user?.role === "staff";
+
+    if (avatar) {
+      avatar.textContent =
+        isStaff ? "ST" : "SA";
+    }
+
+    if (title) {
+      title.textContent =
+        isStaff
+          ? "Staff"
+          : "System Admin";
+    }
+
+    if (subtitle) {
+      subtitle.textContent =
+        isStaff
+          ? "Limited access"
+          : "Full access";
+    }
+  }
   function installUserControls(user) {
+    applyRoleBadge(user);
     const topbar = document.querySelector(".topbar");
     if (!topbar || document.getElementById("sb-auth-user")) return;
 

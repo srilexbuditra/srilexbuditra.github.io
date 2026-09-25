@@ -348,6 +348,11 @@
       }
       prepareAdmin(targetName);
 
+      /* SB_ADMIN_POST_ROUTING_SYNC_R1 */
+      setTimeout(() => {
+        prepareAdmin(targetName);
+      }, 25);
+
       setTimeout(() => {
 
         if (!targetName) return;
