@@ -194,27 +194,38 @@
     showOnly("dashboard");
   }
 
-  /* SB_ADMIN_INITIAL_HASH */
-  if (
-    !isPortal &&
-    location.hash.toLowerCase() === "#analytics"
-  ) {
+  /* SB_ADMIN_INITIAL_HASH_R1 */
+  if (!isPortal) {
 
-    const analyticsLink =
-      [...document.querySelectorAll(
-        NAV_SELECTOR
-      )].find(
-        link =>
-          targetFromLink(link) === "analytics"
-      );
+    const hashTargetMap = {
+      "#analytics": "analytics",
+      "#activity": "activity"
+    };
 
-    if (analyticsLink) {
-      setTimeout(() => {
-        analyticsLink.click();
-      }, 0);
+    const initialTarget =
+      hashTargetMap[
+        location.hash.toLowerCase()
+      ];
+
+    if (initialTarget) {
+
+      const initialLink =
+        [...document.querySelectorAll(
+          NAV_SELECTOR
+        )].find(
+          link =>
+            targetFromLink(link) ===
+            initialTarget
+        );
+
+      if (initialLink) {
+        setTimeout(() => {
+          initialLink.click();
+        }, 0);
+      }
+
     }
   }
-
   document.addEventListener(
     "click",
     event => {
@@ -253,27 +264,35 @@
        * ADMIN:
        * pertahankan perilaku V2 yang sudah terbukti stabil.
        */
-      /* SB_ADMIN_HASH_ANALYTICS */
-      if (targetName === "analytics") {
+      /* SB_ADMIN_HASH_ROUTING_R1 */
+      if (
+        targetName === "analytics" ||
+        targetName === "activity"
+      ) {
 
-        if (location.hash !== "#analytics") {
+        const targetHash =
+          "#" + targetName;
+
+        if (location.hash !== targetHash) {
           history.replaceState(
             null,
             "",
             location.pathname +
               location.search +
-              "#analytics"
+              targetHash
           );
         }
 
       }
       else {
 
-        /*
-         * Saat pindah dari Analytics ke modul Admin lain,
-         * hapus hash tanpa reload.
-         */
-        if (location.hash === "#analytics") {
+        const currentHash =
+          location.hash.toLowerCase();
+
+        if (
+          currentHash === "#analytics" ||
+          currentHash === "#activity"
+        ) {
           history.replaceState(
             null,
             "",
@@ -283,7 +302,6 @@
         }
 
       }
-
       prepareAdmin(targetName);
 
       setTimeout(() => {
