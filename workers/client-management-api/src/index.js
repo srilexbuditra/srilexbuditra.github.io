@@ -2020,7 +2020,7 @@ async function checkPublicDomainAvailability(
           domain,
           status: "unregistered",
           label:
-            "Belum terdaftar — kandidat tersedia.",
+            "Belum terdaftar \u2014 kandidat tersedia.",
           disclaimer:
             "Ketersediaan final dikonfirmasi saat proses registrasi.",
           checked_at:
