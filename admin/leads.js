@@ -817,6 +817,10 @@
               </option>
               <option value="lost">Lost</option>
             </select>
+
+            <small class="sb-leads-status-help">
+              Converted ditetapkan otomatis setelah proses Convert to Client berhasil.
+            </small>
           </div>
 
           <div class="sb-leads-field">
