@@ -203,32 +203,266 @@ $('#estimateForm')?.addEventListener('submit', e => {
   $('#result').scrollIntoView({behavior:'smooth',block:'center'});
 });
 
-waBtn?.addEventListener('click', () => {
+let calculatorLeadRequestRef = '';
+let calculatorLeadRequestKey = '';
+
+function createCalculatorLeadRequestRef(){
+  const randomPart =
+    window.crypto?.randomUUID
+      ? crypto.randomUUID()
+          .replaceAll('-', '')
+          .slice(0, 12)
+      : Math.random()
+          .toString(36)
+          .slice(2, 14);
+
+  return `CALC-${Date.now()}-${randomPart}`;
+}
+
+waBtn?.addEventListener('click', async () => {
   if (!isPrivacyReady()) return;
-  const total = updateEstimate();
-  const msg = [
-    'Halo Srilex Buditra, saya tertarik konsultasi project.',
-    '',
-    `Nama: ${$('#name').value}`,
-    `Perusahaan: ${$('#company').value || '-'}`,
-    `Email: ${$('#email').value}`,
-    `WhatsApp: ${$('#whatsapp').value || '-'}`,
-    `Jenis Project: ${$('#project').value}`,
-    `Fitur Tambahan: ${$('#extra').selectedOptions[0].text}`,
-    `Estimasi Awal: ${formatIDR(total)}`,
-    `Deskripsi: ${$('#description').value || '-'}`
-  ].join('\n');
-  // GA4: record WhatsApp consultation click without changing the existing WhatsApp flow.
-  if (typeof window.gtag === 'function') {
-    window.gtag('event', 'whatsapp_click', {
-      event_category: 'engagement',
-      event_label: 'Homepage - Konsultasi WhatsApp'
-    });
+
+  const form = $('#estimateForm');
+
+  if (
+    form &&
+    typeof form.reportValidity === 'function' &&
+    !form.reportValidity()
+  ) {
+    return;
   }
 
-  window.open('https://wa.me/6282136238350?text=' + encodeURIComponent(msg),'_blank','noopener');
-});
-async function sha256Hex(input){
+  const total = updateEstimate();
+
+  const payload = {
+    full_name:
+      $('#name').value.trim(),
+
+    company_name:
+      $('#company').value.trim(),
+
+    email:
+      $('#email').value.trim(),
+
+    phone:
+      $('#whatsapp').value.trim(),
+
+    project:
+      $('#project').value,
+
+    package_name:
+      selectedPackageName,
+
+    extra_value:
+      String(
+        $('#extra').value || '0'
+      ),
+
+    description:
+      $('#description').value.trim(),
+
+    privacy_consent:
+      true
+  };
+
+  /*
+   * Satu kombinasi data Calculator menggunakan
+   * request_ref yang sama.
+   *
+   * Jika pengguna klik ulang / browser retry,
+   * backend mengembalikan Lead yang sama,
+   * bukan membuat duplikat.
+   */
+  const payloadKey =
+    JSON.stringify(payload);
+
+  if (
+    !calculatorLeadRequestRef ||
+    calculatorLeadRequestKey !== payloadKey
+  ) {
+    calculatorLeadRequestKey =
+      payloadKey;
+
+    calculatorLeadRequestRef =
+      createCalculatorLeadRequestRef();
+  }
+
+  payload.request_ref =
+    calculatorLeadRequestRef;
+
+  const originalHtml =
+    waBtn.innerHTML;
+
+  waBtn.disabled = true;
+
+  waBtn.setAttribute(
+    'aria-busy',
+    'true'
+  );
+
+  waBtn.textContent =
+    'Menyimpan...';
+
+  /*
+   * Buka tab lebih dahulu saat masih berada
+   * dalam user gesture.
+   *
+   * Setelah API selesai, tab diarahkan ke WhatsApp.
+   * Ini mencegah popup diblokir browser akibat
+   * window.open dipanggil setelah await.
+   */
+  const waWindow =
+    window.open('', '_blank');
+
+  if (waWindow) {
+    try {
+      waWindow.opener = null;
+    } catch {}
+  }
+
+  try {
+    const response =
+      await fetch(
+        '/api/public/estimate-request',
+        {
+          method: 'POST',
+
+          headers: {
+            'Content-Type':
+              'application/json',
+
+            Accept:
+              'application/json'
+          },
+
+          credentials:
+            'same-origin',
+
+          cache:
+            'no-store',
+
+          body:
+            JSON.stringify(payload)
+        }
+      );
+
+    const data =
+      await response
+        .json()
+        .catch(() => ({}));
+
+    if (
+      !response.ok ||
+      data?.ok !== true
+    ) {
+      throw new Error(
+        data?.error ||
+        `HTTP ${response.status}`
+      );
+    }
+
+    const leadCode =
+      data?.lead?.lead_code ||
+      '';
+
+    const requestRef =
+      data?.lead?.request_ref ||
+      payload.request_ref;
+
+    const msg = [
+      'Halo Srilex Buditra, saya tertarik konsultasi project.',
+      '',
+      `Referensi Lead: ${leadCode || '-'}`,
+      `Request Ref: ${requestRef}`,
+      '',
+      `Nama: ${payload.full_name}`,
+      `Perusahaan: ${payload.company_name || '-'}`,
+      `Email: ${payload.email}`,
+      `WhatsApp: ${payload.phone || '-'}`,
+      `Jenis Project: ${payload.project}`,
+      `Paket: ${payload.package_name}`,
+      `Fitur Tambahan: ${$('#extra').selectedOptions[0].text}`,
+      `Estimasi Awal: ${formatIDR(total)}`,
+      `Deskripsi: ${payload.description || '-'}`
+    ].join('\n');
+
+    /*
+     * Analytics hanya dicatat setelah Lead
+     * berhasil tersimpan.
+     */
+    if (
+      typeof window.gtag ===
+      'function'
+    ) {
+      window.gtag(
+        'event',
+        'whatsapp_click',
+        {
+          event_category:
+            'engagement',
+
+          event_label:
+            'Homepage - Konsultasi WhatsApp',
+
+          lead_code:
+            leadCode || undefined
+        }
+      );
+    }
+
+    const waUrl =
+      'https://wa.me/6282136238350?text=' +
+      encodeURIComponent(msg);
+
+    if (
+      waWindow &&
+      !waWindow.closed
+    ) {
+      waWindow.location.replace(
+        waUrl
+      );
+    } else {
+      /*
+       * Fallback jika browser benar-benar
+       * memblokir tab baru.
+       */
+      window.location.href =
+        waUrl;
+    }
+
+  } catch (error) {
+    if (
+      waWindow &&
+      !waWindow.closed
+    ) {
+      waWindow.close();
+    }
+
+    console.error(
+      '[Calculator Lead Sync]',
+      error
+    );
+
+    window.alert(
+      'Permintaan belum dapat disimpan. ' +
+      'Silakan coba kembali sebelum membuka WhatsApp.'
+    );
+
+  } finally {
+    waBtn.innerHTML =
+      originalHtml;
+
+    waBtn.removeAttribute(
+      'aria-busy'
+    );
+
+    /*
+     * Kembalikan status tombol berdasarkan
+     * persetujuan privasi yang berlaku.
+     */
+    updateAgreementState();
+  }
+});async function sha256Hex(input){
   if(!window.crypto?.subtle) return '';
   const data=new TextEncoder().encode(input); const hash=await crypto.subtle.digest('SHA-256',data);
   return [...new Uint8Array(hash)].map(b=>b.toString(16).padStart(2,'0')).join('').toUpperCase();
