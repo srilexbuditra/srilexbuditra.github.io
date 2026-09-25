@@ -377,7 +377,137 @@
           <label>Jenis Proyek<select id="project"><option>Website Company Profile</option><option>Web Application</option><option>REST API / Backend</option><option>Sistem Informasi Custom</option><option>Database Development</option><option>Deployment & Cloud</option></select></label>
           <label>Fitur Tambahan<select id="extra"><option value="0">Tidak ada</option><option value="500000">Form / WhatsApp (+Rp 500.000)</option><option value="1000000">Dashboard Admin (+Rp 1.000.000)</option><option value="1500000">Login & Role (+Rp 1.500.000)</option><option value="2500000">Integrasi API (+Rp 2.500.000)</option></select></label>
         </div>
-        <label>Deskripsi Kebutuhan<textarea id="description" rows="4" placeholder="Ceritakan kebutuhan project Anda..."></textarea></label>
+                <fieldset class="domain-picker" id="domainPicker">
+          <legend>DOMAIN &amp; ALAMAT WEBSITE</legend>
+
+          <p class="domain-picker-intro">
+            Tentukan kebutuhan domain. Pengecekan domain baru menggunakan data RDAP registry secara langsung.
+          </p>
+
+          <div class="domain-choice-grid">
+            <label class="domain-choice-card">
+              <input
+                type="radio"
+                name="domainMode"
+                value="none"
+                checked
+              >
+              <span>
+                <strong>Belum menentukan domain</strong>
+                <small>Dapat ditentukan saat konsultasi.</small>
+              </span>
+            </label>
+
+            <label class="domain-choice-card">
+              <input
+                type="radio"
+                name="domainMode"
+                value="owned"
+              >
+              <span>
+                <strong>Saya sudah memiliki domain</strong>
+                <small>Gunakan domain yang sudah Anda miliki.</small>
+              </span>
+            </label>
+
+            <label class="domain-choice-card">
+              <input
+                type="radio"
+                name="domainMode"
+                value="new"
+              >
+              <span>
+                <strong>Saya ingin domain baru</strong>
+                <small>Cek ketersediaannya sekarang.</small>
+              </span>
+            </label>
+          </div>
+
+          <div
+            class="domain-panel"
+            id="ownedDomainPanel"
+            hidden
+          >
+            <label class="domain-field-label" for="ownedDomain">
+              Domain yang sudah dimiliki
+            </label>
+
+            <input
+              id="ownedDomain"
+              type="text"
+              inputmode="url"
+              autocomplete="off"
+              placeholder="contoh: namabisnis.com"
+            >
+
+            <small class="domain-helper">
+              Masukkan nama domain tanpa https://
+            </small>
+          </div>
+
+          <div
+            class="domain-panel"
+            id="newDomainPanel"
+            hidden
+          >
+            <label class="domain-field-label" for="domainName">
+              Cari domain baru
+            </label>
+
+            <div class="domain-search-row">
+              <input
+                id="domainName"
+                type="text"
+                inputmode="url"
+                autocomplete="off"
+                spellcheck="false"
+                placeholder="namabisnis"
+              >
+
+              <select
+                id="domainTld"
+                aria-label="Ekstensi domain"
+              >
+                <option value=".com">.com</option>
+                <option value=".id">.id</option>
+                <option value=".co.id">.co.id</option>
+                <option value=".net">.net</option>
+                <option value=".org">.org</option>
+                <option value=".web.id">.web.id</option>
+                <option value=".my.id">.my.id</option>
+              </select>
+
+              <button
+                class="btn domain-check-button"
+                id="domainCheckButton"
+                type="button"
+              >
+                Cek Ketersediaan
+              </button>
+            </div>
+
+            <small class="domain-helper">
+              Masukkan nama tanpa www. Ketersediaan final dikonfirmasi kembali saat proses registrasi.
+            </small>
+
+            <div
+              class="domain-result"
+              id="domainResult"
+              aria-live="polite"
+              hidden
+            ></div>
+
+            <button
+              class="btn primary domain-use-button"
+              id="domainUseButton"
+              type="button"
+              hidden
+            >
+              Gunakan Domain Ini
+            </button>
+          </div>
+        </fieldset>
+<label>Deskripsi Kebutuhan<textarea id="description" rows="4" placeholder="Ceritakan kebutuhan project Anda..."></textarea></label>
         <button class="btn primary full" type="submit">▣ Lihat Estimasi Saya →</button>
       </form>
     </div>
@@ -392,6 +522,8 @@
         <span>Paket <b id="previewPackage">Professional</b></span>
         <span>Layanan <b id="chosen">Website Company Profile</b></span>
         <span>Fitur tambahan <b id="extraText">Tidak ada</b></span>
+        <span>Domain <b id="previewDomain">Belum dipilih</b></span>
+        <span>Status domain <b id="previewDomainStatus">Belum ditentukan</b></span>
       </div>
 
       <div class="estimate-mode-note" id="estimateModeNote">

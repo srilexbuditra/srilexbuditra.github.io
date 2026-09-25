@@ -249,6 +249,544 @@ function syncSelectedPackageUI(){
   });
 }
 
+const domainState = {
+  mode: 'none',
+  selectedDomain: '',
+  checkedDomain: '',
+  status: 'none'
+};
+
+let domainCheckSequence = 0;
+
+function normalizeDomainCandidateInput(value){
+  return String(value || '')
+    .trim()
+    .toLowerCase()
+    .replace(/^https?:\/\//, '')
+    .replace(/^www\./, '')
+    .split(/[/?#]/)[0]
+    .replace(/\.$/, '');
+}
+
+function composeRequestedDomain(){
+  const input =
+    normalizeDomainCandidateInput(
+      $('#domainName')?.value
+    );
+
+  if(!input){
+    return '';
+  }
+
+  if(input.includes('.')){
+    return input;
+  }
+
+  const tld =
+    $('#domainTld')?.value ||
+    '.com';
+
+  return `${input}${tld}`;
+}
+
+function currentDomainMode(){
+  return (
+    document.querySelector(
+      'input[name="domainMode"]:checked'
+    )?.value ||
+    'none'
+  );
+}
+
+function domainStatusLabel(){
+  if(domainState.mode === 'none'){
+    return 'Belum ditentukan';
+  }
+
+  if(domainState.mode === 'owned'){
+    return domainState.selectedDomain
+      ? 'Domain milik Anda'
+      : 'Masukkan domain yang dimiliki';
+  }
+
+  if(
+    domainState.selectedDomain &&
+    domainState.status === 'unregistered'
+  ){
+    return 'Kandidat tersedia';
+  }
+
+  if(domainState.status === 'registered'){
+    return 'Sudah terdaftar';
+  }
+
+  if(domainState.status === 'unregistered'){
+    return 'Belum dipilih';
+  }
+
+  if(domainState.status === 'checking'){
+    return 'Sedang diperiksa';
+  }
+
+  if(domainState.status === 'unknown'){
+    return 'Belum dapat dikonfirmasi';
+  }
+
+  return 'Belum diperiksa';
+}
+
+function syncDomainPreview(){
+  const domainElement =
+    $('#previewDomain');
+
+  const statusElement =
+    $('#previewDomainStatus');
+
+  if(!domainElement || !statusElement){
+    return;
+  }
+
+  if(domainState.mode === 'none'){
+    domainElement.textContent =
+      'Belum dipilih';
+
+    statusElement.textContent =
+      'Belum ditentukan';
+
+    return;
+  }
+
+  if(domainState.mode === 'owned'){
+    domainElement.textContent =
+      domainState.selectedDomain ||
+      'Belum diisi';
+
+    statusElement.textContent =
+      domainStatusLabel();
+
+    return;
+  }
+
+  domainElement.textContent =
+    domainState.selectedDomain ||
+    domainState.checkedDomain ||
+    'Belum dipilih';
+
+  statusElement.textContent =
+    domainStatusLabel();
+}
+
+function setDomainResult(
+  type,
+  title,
+  detail = ''
+){
+  const result =
+    $('#domainResult');
+
+  if(!result){
+    return;
+  }
+
+  result.hidden = false;
+
+  result.className =
+    `domain-result is-${type}`;
+
+  result.textContent = '';
+
+  const strong =
+    document.createElement('strong');
+
+  strong.textContent =
+    title;
+
+  result.appendChild(strong);
+
+  if(detail){
+    const small =
+      document.createElement('small');
+
+    small.textContent =
+      detail;
+
+    result.appendChild(small);
+  }
+}
+
+function hideDomainResult(){
+  const result =
+    $('#domainResult');
+
+  if(!result){
+    return;
+  }
+
+  result.hidden = true;
+  result.className = 'domain-result';
+  result.textContent = '';
+}
+
+function resetDomainLookup(){
+  domainCheckSequence += 1;
+
+  domainState.checkedDomain = '';
+  domainState.selectedDomain = '';
+  domainState.status = 'none';
+
+  const useButton =
+    $('#domainUseButton');
+
+  if(useButton){
+    useButton.hidden = true;
+    useButton.textContent =
+      'Gunakan Domain Ini';
+  }
+
+  hideDomainResult();
+  syncDomainPreview();
+}
+
+function syncDomainModeUI(){
+  domainState.mode =
+    currentDomainMode();
+
+  const ownedPanel =
+    $('#ownedDomainPanel');
+
+  const newPanel =
+    $('#newDomainPanel');
+
+  if(ownedPanel){
+    ownedPanel.hidden =
+      domainState.mode !== 'owned';
+  }
+
+  if(newPanel){
+    newPanel.hidden =
+      domainState.mode !== 'new';
+  }
+
+  if(domainState.mode === 'none'){
+    domainState.selectedDomain = '';
+    domainState.checkedDomain = '';
+    domainState.status = 'none';
+    hideDomainResult();
+  }
+
+  if(domainState.mode === 'owned'){
+    domainState.checkedDomain = '';
+    domainState.status = 'owned';
+
+    domainState.selectedDomain =
+      normalizeDomainCandidateInput(
+        $('#ownedDomain')?.value
+      );
+
+    hideDomainResult();
+  }
+
+  if(domainState.mode === 'new'){
+    resetDomainLookup();
+  }
+
+  syncDomainPreview();
+}
+
+async function checkDomainAvailability(){
+  if(currentDomainMode() !== 'new'){
+    return;
+  }
+
+  const domain =
+    composeRequestedDomain();
+
+  if(!domain){
+    domainState.status = 'unknown';
+
+    setDomainResult(
+      'warning',
+      'Masukkan nama domain terlebih dahulu.',
+      'Contoh: namabisnis lalu pilih .com'
+    );
+
+    syncDomainPreview();
+    return;
+  }
+
+  const requestNumber =
+    ++domainCheckSequence;
+
+  domainState.checkedDomain =
+    domain;
+
+  domainState.selectedDomain =
+    '';
+
+  domainState.status =
+    'checking';
+
+  const checkButton =
+    $('#domainCheckButton');
+
+  const useButton =
+    $('#domainUseButton');
+
+  if(checkButton){
+    checkButton.disabled = true;
+    checkButton.textContent =
+      'Memeriksa...';
+  }
+
+  if(useButton){
+    useButton.hidden = true;
+  }
+
+  setDomainResult(
+    'loading',
+    `Memeriksa ${domain}...`,
+    'Menghubungi registry domain.'
+  );
+
+  syncDomainPreview();
+
+  try {
+    const response =
+      await fetch(
+        '/api/public/domain-check?domain=' +
+        encodeURIComponent(domain),
+        {
+          method: 'GET',
+          headers: {
+            Accept: 'application/json'
+          }
+        }
+      );
+
+    const data =
+      await response
+        .json()
+        .catch(() => null);
+
+    if(
+      requestNumber !==
+      domainCheckSequence
+    ){
+      return;
+    }
+
+    if(
+      !response.ok ||
+      !data?.ok
+    ){
+      domainState.status =
+        'unknown';
+
+      setDomainResult(
+        'error',
+        'Nama domain tidak dapat diperiksa.',
+        data?.error ||
+        'Periksa kembali nama domain.'
+      );
+
+      syncDomainPreview();
+      return;
+    }
+
+    domainState.checkedDomain =
+      data.domain ||
+      domain;
+
+    domainState.status =
+      data.status ||
+      'unknown';
+
+    if(data.status === 'unregistered'){
+      setDomainResult(
+        'success',
+        `${domainState.checkedDomain} belum terdaftar`,
+        'Kandidat tersedia. Ketersediaan final dikonfirmasi saat registrasi.'
+      );
+
+      if(useButton){
+        useButton.hidden = false;
+        useButton.textContent =
+          'Gunakan Domain Ini';
+      }
+    } else if(data.status === 'registered'){
+      setDomainResult(
+        'error',
+        `${domainState.checkedDomain} sudah terdaftar`,
+        'Silakan coba nama atau ekstensi domain lain.'
+      );
+    } else {
+      setDomainResult(
+        'warning',
+        'Status domain belum dapat dikonfirmasi.',
+        'Silakan coba kembali atau pilih domain lain.'
+      );
+    }
+
+    syncDomainPreview();
+  } catch(error){
+    if(
+      requestNumber !==
+      domainCheckSequence
+    ){
+      return;
+    }
+
+    domainState.status =
+      'unknown';
+
+    setDomainResult(
+      'error',
+      'Pengecekan domain gagal.',
+      'Periksa koneksi dan coba kembali.'
+    );
+
+    syncDomainPreview();
+  } finally {
+    if(
+      requestNumber ===
+      domainCheckSequence &&
+      checkButton
+    ){
+      checkButton.disabled = false;
+      checkButton.textContent =
+        'Cek Ketersediaan';
+    }
+  }
+}
+
+function initDomainSearchUI(){
+  const radios =
+    document.querySelectorAll(
+      'input[name="domainMode"]'
+    );
+
+  radios.forEach(radio => {
+    radio.addEventListener(
+      'change',
+      syncDomainModeUI
+    );
+  });
+
+  $('#ownedDomain')
+    ?.addEventListener(
+      'input',
+      () => {
+        if(
+          currentDomainMode() !==
+          'owned'
+        ){
+          return;
+        }
+
+        domainState.mode =
+          'owned';
+
+        domainState.status =
+          'owned';
+
+        domainState.selectedDomain =
+          normalizeDomainCandidateInput(
+            $('#ownedDomain')?.value
+          );
+
+        syncDomainPreview();
+      }
+    );
+
+  $('#domainName')
+    ?.addEventListener(
+      'input',
+      () => {
+        if(
+          currentDomainMode() ===
+          'new'
+        ){
+          resetDomainLookup();
+        }
+      }
+    );
+
+  $('#domainName')
+    ?.addEventListener(
+      'keydown',
+      event => {
+        if(event.key === 'Enter'){
+          event.preventDefault();
+          checkDomainAvailability();
+        }
+      }
+    );
+
+  $('#domainTld')
+    ?.addEventListener(
+      'change',
+      () => {
+        if(
+          currentDomainMode() ===
+          'new'
+        ){
+          resetDomainLookup();
+        }
+      }
+    );
+
+  $('#domainCheckButton')
+    ?.addEventListener(
+      'click',
+      checkDomainAvailability
+    );
+
+  $('#domainUseButton')
+    ?.addEventListener(
+      'click',
+      () => {
+        const current =
+          composeRequestedDomain();
+
+        if(
+          domainState.status !==
+            'unregistered' ||
+          !domainState.checkedDomain ||
+          current !==
+            domainState.checkedDomain
+        ){
+          setDomainResult(
+            'warning',
+            'Periksa ulang domain terlebih dahulu.',
+            'Nama domain berubah setelah pengecekan.'
+          );
+
+          return;
+        }
+
+        domainState.selectedDomain =
+          domainState.checkedDomain;
+
+        setDomainResult(
+          'success',
+          `${domainState.selectedDomain} dipilih`,
+          'Domain akan dikonfirmasi kembali saat proses registrasi.'
+        );
+
+        const button =
+          $('#domainUseButton');
+
+        if(button){
+          button.textContent =
+            '✓ Domain Dipilih';
+        }
+
+        syncDomainPreview();
+      }
+    );
+
+  syncDomainModeUI();
+}
 function updateEstimate(){
   const project =
     $('#project')?.value ||
@@ -358,6 +896,8 @@ syncSelectedPackageUI();
 updateEstimate();
 $('#project')?.addEventListener('change', updateEstimate);
 $('#extra')?.addEventListener('change', updateEstimate);
+
+initDomainSearchUI();
 
 $('#estimateForm')?.addEventListener('submit', e => {
   e.preventDefault();
