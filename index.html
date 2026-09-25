@@ -324,12 +324,27 @@
 
 <section class="section" id="harga" itemprop="mentions" itemscope itemtype="https://schema.org/OfferCatalog" itemid="https://srilexbuditra.work/#pricing">
   <div class="container">
-    <div class="section-title reveal"><span></span><h2 itemprop="name">Packages &amp; Pricing</h2><span></span><p>Harga awal yang transparan dan dapat disesuaikan dengan scope.</p></div>
+    <div class="section-title reveal"><span></span><h2 itemprop="name">Packages &amp; Pricing</h2><span></span><p><b>Langkah 1:</b> Pilih paket awal yang paling mendekati kebutuhan Anda. Harga dapat menyesuaikan fitur, kompleksitas, dan scope project.</p></div>
+
+    <div class="pricing-flow-guide reveal" aria-label="Alur estimasi project">
+      <div>
+        <strong>1</strong>
+        <span><b>Pilih Paket</b><small>Tentukan titik awal kebutuhan Anda.</small></span>
+      </div>
+      <div>
+        <strong>2</strong>
+        <span><b>Sesuaikan Project</b><small>Lengkapi jenis project, fitur, dan kebutuhan.</small></span>
+      </div>
+      <div>
+        <strong>3</strong>
+        <span><b>Tinjau & Konsultasi</b><small>Lihat estimasi lalu lanjutkan konsultasi.</small></span>
+      </div>
+    </div>
     <div class="package-grid">
-      <button class="package reveal" data-package="Starter" data-price="2500000" itemprop="itemListElement" itemscope itemtype="https://schema.org/Offer"><span class="package-no">01</span><strong itemprop="name">Starter</strong><em itemprop="price">Rp 2.500.000</em><meta itemprop="priceCurrency" content="IDR"><small>✓ Website hingga 5 halaman<br>✓ Responsive<br>✓ Form kontak / WhatsApp<br>✓ Basic SEO</small><b>Pilih Paket →</b></button>
-      <button class="package popular reveal" data-package="Professional" data-price="5000000" itemprop="itemListElement" itemscope itemtype="https://schema.org/Offer"><i>PALING POPULER</i><span class="package-no">02</span><strong itemprop="name">Professional</strong><em itemprop="price">Rp 5.000.000</em><meta itemprop="priceCurrency" content="IDR"><small>✓ Fitur lebih lengkap<br>✓ Sistem terintegrasi<br>✓ Dashboard / dynamic content<br>✓ Basic SEO</small><b>Pilih Paket →</b></button>
-      <button class="package reveal" data-package="Business" data-price="10000000" itemprop="itemListElement" itemscope itemtype="https://schema.org/Offer"><span class="package-no">03</span><strong itemprop="name">Business</strong><em itemprop="price">Rp 10.000.000</em><meta itemprop="priceCurrency" content="IDR"><small>✓ Custom features<br>✓ Integrasi API<br>✓ Database / auth<br>✓ Support sesuai kesepakatan</small><b>Pilih Paket →</b></button>
-      <button class="package reveal" data-package="Custom" data-price="0" itemprop="itemListElement" itemscope itemtype="https://schema.org/Offer"><span class="package-no">04</span><strong itemprop="name">Custom</strong><em itemprop="price">Konsultasi</em><small>✓ Scope fleksibel<br>✓ Arsitektur sesuai kebutuhan<br>✓ Solusi yang dirancang khusus<br>✓ Penawaran berdasarkan project</small><b>Konsultasikan →</b></button>
+      <button class="package reveal" data-package="Starter" data-price="2500000" itemprop="itemListElement" itemscope itemtype="https://schema.org/Offer"><span class="package-no">01</span><strong itemprop="name">Starter</strong><em itemprop="price">Mulai dari Rp 2.500.000</em><meta itemprop="priceCurrency" content="IDR"><small>✓ Website hingga 5 halaman<br>✓ Responsive<br>✓ Form kontak / WhatsApp<br>✓ Basic SEO</small><b data-package-action>Pilih Paket →</b></button>
+      <button class="package popular reveal" data-package="Professional" data-price="5000000" itemprop="itemListElement" itemscope itemtype="https://schema.org/Offer"><i>PALING POPULER</i><span class="package-no">02</span><strong itemprop="name">Professional</strong><em itemprop="price">Mulai dari Rp 5.000.000</em><meta itemprop="priceCurrency" content="IDR"><small>✓ Fitur lebih lengkap<br>✓ Sistem terintegrasi<br>✓ Dashboard / dynamic content<br>✓ Basic SEO</small><b data-package-action>Pilih Paket →</b></button>
+      <button class="package reveal" data-package="Business" data-price="10000000" itemprop="itemListElement" itemscope itemtype="https://schema.org/Offer"><span class="package-no">03</span><strong itemprop="name">Business</strong><em itemprop="price">Mulai dari Rp 10.000.000</em><meta itemprop="priceCurrency" content="IDR"><small>✓ Custom features<br>✓ Integrasi API<br>✓ Database / auth<br>✓ Support sesuai kesepakatan</small><b data-package-action>Pilih Paket →</b></button>
+      <button class="package reveal" data-package="Custom" data-price="0" itemprop="itemListElement" itemscope itemtype="https://schema.org/Offer"><span class="package-no">04</span><strong itemprop="name">Custom</strong><em itemprop="price">Konsultasi</em><small>✓ Scope fleksibel<br>✓ Arsitektur sesuai kebutuhan<br>✓ Solusi yang dirancang khusus<br>✓ Penawaran berdasarkan project</small><b data-package-action>Konsultasi Custom →</b></button>
     </div>
   </div>
 </section>
@@ -337,7 +352,22 @@
 <section class="section alt" id="estimasi" itemprop="potentialAction" itemscope itemtype="https://schema.org/Action">
   <div class="container split">
     <div class="panel estimator reveal">
-      <span class="mini-label">PROJECT COST CALCULATOR</span><h2 itemprop="name">Hitung Estimasi Project</h2><p class="muted">Isi kebutuhan awal. Estimasi ini bersifat indikatif dan akan disesuaikan setelah scope dibahas.</p>
+      <span class="mini-label">LANGKAH 2 • PROJECT COST CALCULATOR</span>
+      <h2 itemprop="name">Sesuaikan Kebutuhan Project</h2>
+      <p class="muted">Paket menjadi titik awal. Lengkapi data, pilih jenis project dan fitur tambahan agar estimasi lebih sesuai dengan kebutuhan Anda.</p>
+
+      <div class="estimate-selection" id="estimateSelection" aria-live="polite">
+        <div class="estimate-selection-copy">
+          <span>PAKET TERPILIH</span>
+          <strong id="selectedPackageLabel">Professional</strong>
+          <small id="selectedPackagePrice">Mulai dari Rp 5.000.000</small>
+        </div>
+
+        <a class="estimate-change-package" href="#harga">
+          Ganti Paket
+        </a>
+      </div>
+
       <form id="estimateForm">
         <div class="form-grid">
           <label>Nama Lengkap<input id="name" required placeholder="Nama Anda"></label>
@@ -348,12 +378,26 @@
           <label>Fitur Tambahan<select id="extra"><option value="0">Tidak ada</option><option value="500000">Form / WhatsApp (+Rp 500.000)</option><option value="1000000">Dashboard Admin (+Rp 1.000.000)</option><option value="1500000">Login & Role (+Rp 1.500.000)</option><option value="2500000">Integrasi API (+Rp 2.500.000)</option></select></label>
         </div>
         <label>Deskripsi Kebutuhan<textarea id="description" rows="4" placeholder="Ceritakan kebutuhan project Anda..."></textarea></label>
-        <button class="btn primary full" type="submit">▣ Hitung Estimasi</button>
+        <button class="btn primary full" type="submit">▣ Lihat Estimasi Saya →</button>
       </form>
     </div>
     <div class="panel result-panel reveal" id="result">
-      <span class="mini-label">ESTIMATE PREVIEW</span><div class="estimate-total" id="total">Rp 5.000.000</div>
-      <p>Layanan: <b id="chosen">Website Company Profile</b><br>Fitur tambahan: <b id="extraText">Tidak ada</b></p>
+      <span class="mini-label">LANGKAH 3 • ESTIMATE PREVIEW</span>
+      <h2 class="estimate-preview-title">Tinjau Estimasi Awal</h2>
+      <p class="muted estimate-preview-copy">Periksa ringkasan berikut. Nilai ini merupakan estimasi awal, bukan invoice atau harga final.</p>
+
+      <div class="estimate-total" id="total">Rp 5.000.000</div>
+
+      <div class="estimate-summary">
+        <span>Paket <b id="previewPackage">Professional</b></span>
+        <span>Layanan <b id="chosen">Website Company Profile</b></span>
+        <span>Fitur tambahan <b id="extraText">Tidak ada</b></span>
+      </div>
+
+      <div class="estimate-mode-note" id="estimateModeNote">
+        Estimasi awal akan dikonfirmasi kembali setelah kebutuhan dan scope project dibahas.
+      </div>
+
       <div class="estimate-meter"><span></span></div>
       <div class="privacy-consent" id="privacyConsent">
         <label class="privacy-consent-label" for="privacyConsentCheckbox">
@@ -361,11 +405,11 @@
           <span class="privacy-checkbox-box" aria-hidden="true"></span>
           <span>Saya telah membaca dan menyetujui <a href="/privacy.html" target="_blank" rel="noopener">Kebijakan Privasi</a> serta memberikan persetujuan untuk memproses data yang saya isi pada formulir ini.</span>
         </label>
-        <small class="privacy-consent-note" id="privacyConsentNote">Persetujuan diperlukan sebelum data dapat dikirim melalui WhatsApp atau dicetak/disimpan sebagai PDF.</small>
+        <small class="privacy-consent-note" id="privacyConsentNote">Centang persetujuan untuk melanjutkan. Estimasi yang dikirim melalui WhatsApp akan dicatat terlebih dahulu sebagai permintaan konsultasi agar dapat ditindaklanjuti.</small>
       </div>
       <div class="agreement-hint" id="agreementHint" aria-live="polite">Persetujuan & tanda tangan akan dibuka setelah Anda memilih <b>Cetak / Simpan PDF</b>.</div>
       <div class="result-actions">
-        <button id="waBtn" class="btn whatsapp" type="button" disabled aria-disabled="true">◉ Kirim ke WhatsApp</button>
+        <button id="waBtn" class="btn whatsapp" type="button" disabled aria-disabled="true">◉ Kirim Estimasi & Konsultasi</button>
         <button id="pdfBtn" class="btn secondary" type="button" disabled aria-disabled="true">▧ Cetak / Simpan PDF</button>
       </div>
       <small class="result-note">*Harga final mengikuti scope, tingkat kompleksitas, timeline dan kesepakatan project. Tanda tangan digital di formulir ini tidak menggantikan penandatanganan perjanjian final apabila diperlukan.</small>

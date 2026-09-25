@@ -167,31 +167,195 @@ let selectedPackage = 5000000;
 let selectedPackageName = 'Professional';
 
 function formatIDR(n){
-  return new Intl.NumberFormat('id-ID',{style:'currency',currency:'IDR',maximumFractionDigits:0}).format(n);
+  return new Intl.NumberFormat(
+    'id-ID',
+    {
+      style:'currency',
+      currency:'IDR',
+      maximumFractionDigits:0
+    }
+  ).format(n);
 }
+
+function estimateDisplay(total){
+  return selectedPackageName === 'Custom'
+    ? 'Konsultasi setelah scope dibahas'
+    : formatIDR(total);
+}
+
+function syncSelectedPackageUI(){
+  const isCustom =
+    selectedPackageName === 'Custom';
+
+  const label =
+    $('#selectedPackageLabel');
+
+  const price =
+    $('#selectedPackagePrice');
+
+  const preview =
+    $('#previewPackage');
+
+  if(label){
+    label.textContent =
+      selectedPackageName;
+  }
+
+  if(price){
+    price.textContent =
+      isCustom
+        ? 'Harga disusun setelah scope kebutuhan dibahas'
+        : `Mulai dari ${formatIDR(selectedPackage)}`;
+  }
+
+  if(preview){
+    preview.textContent =
+      selectedPackageName;
+  }
+
+  $('.package').forEach(card => {
+    const active =
+      card.dataset.package ===
+      selectedPackageName;
+
+    card.classList.toggle(
+      'selected',
+      active
+    );
+
+    card.setAttribute(
+      'aria-pressed',
+      active ? 'true' : 'false'
+    );
+
+    const action =
+      card.querySelector(
+        '[data-package-action]'
+      );
+
+    if(action){
+      if(active){
+        action.textContent =
+          selectedPackageName === 'Custom'
+            ? '✓ Custom Dipilih'
+            : `✓ ${selectedPackageName} Dipilih`;
+      } else {
+        action.textContent =
+          card.dataset.package === 'Custom'
+            ? 'Konsultasi Custom →'
+            : `Pilih ${card.dataset.package} →`;
+      }
+    }
+  });
+}
+
 function updateEstimate(){
-  const project = $('#project').value;
-  const extra = Number($('#extra').value || 0);
-  const total = selectedPackage ? Math.max(selectedPackage, basePrices[project] || 0) + extra : (basePrices[project] || 0) + extra;
-  $('#total').textContent = formatIDR(total);
-  $('#chosen').textContent = project;
-  $('#extraText').textContent = $('#extra').selectedOptions[0].text.replace(/\s*\(\+.*\)/,'');
-  const pct = Math.min(100, Math.max(18, Math.round((total / 15000000) * 100)));
-  document.querySelector('.estimate-meter span').style.width = pct + '%';
+  const project =
+    $('#project')?.value ||
+    'Website Company Profile';
+
+  const extra =
+    Number(
+      $('#extra')?.value || 0
+    );
+
+  const isCustom =
+    selectedPackageName === 'Custom';
+
+  const total =
+    isCustom
+      ? 0
+      : Math.max(
+          selectedPackage,
+          basePrices[project] || 0
+        ) + extra;
+
+  const totalElement =
+    $('#total');
+
+  if(totalElement){
+    totalElement.textContent =
+      isCustom
+        ? 'Konsultasi'
+        : formatIDR(total);
+  }
+
+  if($('#chosen')){
+    $('#chosen').textContent =
+      project;
+  }
+
+  if($('#extraText')){
+    $('#extraText').textContent =
+      $('#extra')
+        .selectedOptions[0]
+        .text
+        .replace(/\s*\(\+.*\)/,'');
+  }
+
+  const note =
+    $('#estimateModeNote');
+
+  if(note){
+    note.textContent =
+      isCustom
+        ? 'Paket Custom tidak menggunakan harga otomatis. Nilai final disusun setelah kebutuhan, kompleksitas, dan scope project dibahas.'
+        : 'Estimasi awal akan dikonfirmasi kembali setelah kebutuhan dan scope project dibahas.';
+  }
+
+  const meter =
+    document.querySelector(
+      '.estimate-meter span'
+    );
+
+  if(meter){
+    const pct =
+      isCustom
+        ? 18
+        : Math.min(
+            100,
+            Math.max(
+              18,
+              Math.round(
+                (total / 15000000) * 100
+              )
+            )
+          );
+
+    meter.style.width =
+      pct + '%';
+  }
+
+  syncSelectedPackageUI();
+
   return total;
 }
-$$('.package').forEach(btn => btn.addEventListener('click', () => {
-  $$('.package').forEach(x => x.classList.remove('selected'));
-  btn.classList.add('selected');
-  selectedPackage = Number(btn.dataset.price || 0);
-  selectedPackageName = btn.dataset.package;
-  if(btn.dataset.price === '0'){
-    $('#estimasi').scrollIntoView({behavior:'smooth'});
-  } else {
-    updateEstimate();
-    $('#estimasi').scrollIntoView({behavior:'smooth'});
-  }
-}));
+
+$('.package').forEach(btn => {
+  btn.addEventListener(
+    'click',
+    () => {
+      selectedPackage =
+        Number(
+          btn.dataset.price || 0
+        );
+
+      selectedPackageName =
+        btn.dataset.package;
+
+      updateEstimate();
+
+      $('#estimasi')
+        ?.scrollIntoView({
+          behavior:'smooth',
+          block:'start'
+        });
+    }
+  );
+});
+
+syncSelectedPackageUI();
+updateEstimate();
 $('#project')?.addEventListener('change', updateEstimate);
 $('#extra')?.addEventListener('change', updateEstimate);
 
@@ -382,7 +546,7 @@ waBtn?.addEventListener('click', async () => {
       `Jenis Project: ${payload.project}`,
       `Paket: ${payload.package_name}`,
       `Fitur Tambahan: ${$('#extra').selectedOptions[0].text}`,
-      `Estimasi Awal: ${formatIDR(total)}`,
+      `Estimasi Awal: ${estimateDisplay(total)}`,
       `Deskripsi: ${payload.description || '-'}`
     ].join('\n');
 
