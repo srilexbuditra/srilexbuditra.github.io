@@ -1673,6 +1673,466 @@ async function validateLeadAssignee(request, env, userId) {
   return { ok: true };
 }
 
+async function createPublicEstimateLead(
+  request,
+  env
+) {
+  const body =
+    await readJson(request);
+
+  const fullName =
+    String(
+      body?.full_name || ""
+    ).trim();
+
+  const companyName =
+    nullableLeadText(
+      body?.company_name
+    );
+
+  const email =
+    normalizeEmail(
+      body?.email
+    );
+
+  const phone =
+    nullableLeadText(
+      body?.phone
+    );
+
+  const project =
+    String(
+      body?.project || ""
+    ).trim();
+
+  const packageName =
+    String(
+      body?.package_name ||
+      "Professional"
+    ).trim();
+
+  const extraValue =
+    String(
+      body?.extra_value ??
+      "0"
+    ).trim();
+
+  const description =
+    String(
+      body?.description || ""
+    ).trim();
+
+  const requestRef =
+    String(
+      body?.request_ref || ""
+    ).trim();
+
+  const privacyConsent =
+    body?.privacy_consent === true;
+
+  /*
+   * Harga tidak dipercayai dari browser.
+   * Worker menghitung ulang menggunakan
+   * konfigurasi yang sama dengan Calculator.
+   */
+  const projectPrices = {
+    "Website Company Profile":
+      2500000,
+
+    "Web Application":
+      5000000,
+
+    "REST API / Backend":
+      4500000,
+
+    "Sistem Informasi Custom":
+      7500000,
+
+    "Database Development":
+      3500000,
+
+    "Deployment & Cloud":
+      2500000
+  };
+
+  const packagePrices = {
+    Starter:
+      2500000,
+
+    Professional:
+      5000000,
+
+    Business:
+      10000000,
+
+    Custom:
+      0
+  };
+
+  const extraOptions = {
+    "0": {
+      label: "Tidak ada",
+      amount: 0
+    },
+
+    "500000": {
+      label: "Form / WhatsApp",
+      amount: 500000
+    },
+
+    "1000000": {
+      label: "Dashboard Admin",
+      amount: 1000000
+    },
+
+    "1500000": {
+      label: "Login & Role",
+      amount: 1500000
+    },
+
+    "2500000": {
+      label: "Integrasi API",
+      amount: 2500000
+    }
+  };
+
+  if (
+    !fullName ||
+    !validEmail(email)
+  ) {
+    return apiResponse(
+      request,
+      env,
+      {
+        error:
+          "Valid full_name and email are required."
+      },
+      400
+    );
+  }
+
+  if (!privacyConsent) {
+    return apiResponse(
+      request,
+      env,
+      {
+        error:
+          "Privacy consent is required."
+      },
+      400
+    );
+  }
+
+  if (
+    !Object.prototype.hasOwnProperty.call(
+      projectPrices,
+      project
+    )
+  ) {
+    return apiResponse(
+      request,
+      env,
+      {
+        error:
+          "Invalid project type."
+      },
+      400
+    );
+  }
+
+  if (
+    !Object.prototype.hasOwnProperty.call(
+      packagePrices,
+      packageName
+    )
+  ) {
+    return apiResponse(
+      request,
+      env,
+      {
+        error:
+          "Invalid package."
+      },
+      400
+    );
+  }
+
+  const extra =
+    extraOptions[extraValue];
+
+  if (!extra) {
+    return apiResponse(
+      request,
+      env,
+      {
+        error:
+          "Invalid extra feature."
+      },
+      400
+    );
+  }
+
+  if (
+    !/^[A-Za-z0-9_-]{12,100}$/.test(
+      requestRef
+    )
+  ) {
+    return apiResponse(
+      request,
+      env,
+      {
+        error:
+          "Invalid request_ref."
+      },
+      400
+    );
+  }
+
+  if (
+    fullName.length > 200 ||
+    (
+      companyName &&
+      companyName.length > 200
+    ) ||
+    (
+      phone &&
+      phone.length > 100
+    ) ||
+    description.length > 3000
+  ) {
+    return apiResponse(
+      request,
+      env,
+      {
+        error:
+          "Estimate request data exceeds allowed length."
+      },
+      400
+    );
+  }
+
+  /*
+   * Idempotency:
+   * request_ref yang sama tidak membuat
+   * Lead ganda ketika tombol terklik ulang.
+   */
+  const existing =
+    await env.DB.prepare(
+      `SELECT
+         id,
+         lead_code,
+         public_request_ref,
+         estimated_amount
+       FROM leads
+       WHERE public_request_ref = ?
+       LIMIT 1`
+    )
+      .bind(requestRef)
+      .first();
+
+  if (existing) {
+    return apiResponse(
+      request,
+      env,
+      {
+        ok: true,
+        duplicate: true,
+        lead: {
+          lead_code:
+            existing.lead_code,
+
+          request_ref:
+            existing.public_request_ref,
+
+          estimated_amount:
+            Number(
+              existing.estimated_amount ||
+              0
+            )
+        }
+      }
+    );
+  }
+
+  /*
+   * Anti rapid-submit sederhana.
+   * Email yang sama tidak boleh membuat
+   * banyak request baru dalam 60 detik.
+   */
+  const recentCutoff =
+    new Date(
+      Date.now() - 60000
+    ).toISOString();
+
+  const recent =
+    await env.DB.prepare(
+      `SELECT id
+       FROM leads
+       WHERE source = 'Website Calculator'
+         AND email = ?
+         AND created_at >= ?
+       LIMIT 1`
+    )
+      .bind(
+        email,
+        recentCutoff
+      )
+      .first();
+
+  if (recent) {
+    return apiResponse(
+      request,
+      env,
+      {
+        error:
+          "Please wait before submitting another estimate request."
+      },
+      429
+    );
+  }
+
+  const basePrice =
+    projectPrices[project];
+
+  const packagePrice =
+    packagePrices[packageName];
+
+  const estimatedAmount =
+    (
+      packagePrice
+        ? Math.max(
+            packagePrice,
+            basePrice
+          )
+        : basePrice
+    ) +
+    extra.amount;
+
+  const leadId =
+    crypto.randomUUID();
+
+  const leadCode =
+    `LEAD-${new Date()
+      .getUTCFullYear()}-${leadId
+      .slice(0, 8)
+      .toUpperCase()}`;
+
+  const timestamp =
+    nowIso();
+
+  const readableAmount =
+    new Intl.NumberFormat(
+      "id-ID"
+    ).format(
+      estimatedAmount
+    );
+
+  const message = [
+    `Paket: ${packageName}`,
+    `Fitur tambahan: ${extra.label}`,
+    `Estimasi awal: Rp ${readableAmount}`,
+    `Request Ref: ${requestRef}`,
+    "",
+    "Deskripsi kebutuhan:",
+    description || "-"
+  ].join("\n");
+
+  await env.DB.prepare(
+    `INSERT INTO leads
+      (
+        id,
+        lead_code,
+        full_name,
+        company_name,
+        email,
+        phone,
+        source,
+        service_interest,
+        message,
+        status,
+        assigned_to_user_id,
+        next_follow_up_at,
+        converted_client_id,
+        converted_at,
+        created_by_user_id,
+        public_request_ref,
+        package_name,
+        estimated_amount,
+        extra_feature,
+        privacy_consent_at,
+        created_at,
+        updated_at
+      )
+     VALUES (
+       ?, ?, ?, ?, ?, ?,
+       'Website Calculator',
+       ?, ?,
+       'new',
+       NULL,
+       NULL,
+       NULL,
+       NULL,
+       NULL,
+       ?, ?, ?, ?, ?,
+       ?, ?
+     )`
+  )
+    .bind(
+      leadId,
+      leadCode,
+      fullName,
+      companyName,
+      email,
+      phone,
+      project,
+      message,
+      requestRef,
+      packageName,
+      estimatedAmount,
+      extra.label,
+      timestamp,
+      timestamp,
+      timestamp
+    )
+    .run();
+
+  /*
+   * user_id = NULL adalah disengaja:
+   * event berasal dari website publik,
+   * bukan dari Admin/Staff.
+   */
+  await writeActivity(
+    env,
+    null,
+    "PUBLIC_LEAD_CREATED",
+    "lead",
+    leadId,
+    `Website Calculator created ${leadCode}.`
+  );
+
+  return apiResponse(
+    request,
+    env,
+    {
+      ok: true,
+
+      lead: {
+        lead_code:
+          leadCode,
+
+        request_ref:
+          requestRef,
+
+        estimated_amount:
+          estimatedAmount,
+
+        status:
+          "new"
+      }
+    },
+    201
+  );
+}
 async function listAdminLeads(request, env) {
   const rows = await env.DB.prepare(
     `SELECT
