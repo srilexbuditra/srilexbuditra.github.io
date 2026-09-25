@@ -189,6 +189,15 @@ export default {
       // LEADS R1 - ADMIN
       // ======================================================
 
+      if (
+        url.pathname === "/api/public/estimate-request" &&
+        method === "POST"
+      ) {
+        return createPublicEstimateLead(
+          request,
+          env
+        );
+      }
       if (url.pathname === "/api/admin/leads" && method === "GET") {
         const auth = await requireRole(request, env, ["system_admin", "staff"]);
         if (auth.response) return auth.response;
