@@ -118,6 +118,61 @@ export default {
           auth
         );
       }
+      /* SB_USERS_ROLES_STAGE2_ROUTES_R1 */
+
+      const adminUserStatusMatch =
+        url.pathname.match(
+          /^\/api\/admin\/users\/([^/]+)\/status$/
+        );
+
+      if (
+        adminUserStatusMatch &&
+        method === "PATCH"
+      ) {
+        const auth = await requireRole(
+          request,
+          env,
+          ["system_admin"]
+        );
+
+        if (auth.response) return auth.response;
+
+        return updateAdminUserStatus(
+          request,
+          env,
+          auth,
+          decodeURIComponent(
+            adminUserStatusMatch[1]
+          )
+        );
+      }
+
+      const adminUserResetPasswordMatch =
+        url.pathname.match(
+          /^\/api\/admin\/users\/([^/]+)\/reset-password$/
+        );
+
+      if (
+        adminUserResetPasswordMatch &&
+        method === "POST"
+      ) {
+        const auth = await requireRole(
+          request,
+          env,
+          ["system_admin"]
+        );
+
+        if (auth.response) return auth.response;
+
+        return resetAdminUserPassword(
+          request,
+          env,
+          auth,
+          decodeURIComponent(
+            adminUserResetPasswordMatch[1]
+          )
+        );
+      }
       if (url.pathname === "/api/admin/clients" && method === "GET") {
         const auth = await requireRole(request, env, ["system_admin", "staff"]);
         if (auth.response) return auth.response;
@@ -1164,6 +1219,305 @@ async function createAdminStaff(
       }
     },
     201
+  );
+}
+
+/* ==========================================================
+   USERS & ROLES R1 - STAGE 2
+   ========================================================== */
+
+async function updateAdminUserStatus(
+  request,
+  env,
+  auth,
+  userId
+) {
+  const body = await readJson(request);
+
+  const nextStatus =
+    String(body?.status || "")
+      .trim()
+      .toLowerCase();
+
+  const allowedStatuses =
+    new Set([
+      "active",
+      "suspended",
+      "disabled"
+    ]);
+
+  if (!allowedStatuses.has(nextStatus)) {
+    return apiResponse(
+      request,
+      env,
+      {
+        error:
+          "Status must be active, suspended, or disabled."
+      },
+      400
+    );
+  }
+
+  const target =
+    await env.DB.prepare(
+      `SELECT
+         id,
+         email,
+         role,
+         status
+       FROM users
+       WHERE id = ?
+       LIMIT 1`
+    )
+      .bind(userId)
+      .first();
+
+  if (!target) {
+    return apiResponse(
+      request,
+      env,
+      { error: "User not found." },
+      404
+    );
+  }
+
+  if (target.role === "client") {
+    return apiResponse(
+      request,
+      env,
+      {
+        error:
+          "Client account status is managed through Clients."
+      },
+      400
+    );
+  }
+
+  if (
+    target.id === auth.user.id &&
+    nextStatus !== "active"
+  ) {
+    return apiResponse(
+      request,
+      env,
+      {
+        error:
+          "You cannot suspend or disable your own account."
+      },
+      400
+    );
+  }
+
+  if (
+    target.role === "system_admin" &&
+    target.status === "active" &&
+    nextStatus !== "active"
+  ) {
+    const remaining =
+      await env.DB.prepare(
+        `SELECT COUNT(*) AS total
+         FROM users
+         WHERE role = 'system_admin'
+           AND status = 'active'
+           AND id <> ?`
+      )
+        .bind(target.id)
+        .first();
+
+    if (
+      Number(remaining?.total || 0) < 1
+    ) {
+      return apiResponse(
+        request,
+        env,
+        {
+          error:
+            "At least one active system administrator must remain."
+        },
+        400
+      );
+    }
+  }
+
+  if (target.status === nextStatus) {
+    return apiResponse(
+      request,
+      env,
+      {
+        ok: true,
+        user: {
+          id: target.id,
+          email: target.email,
+          role: target.role,
+          status: target.status
+        }
+      }
+    );
+  }
+
+  const timestamp = nowIso();
+
+  await env.DB.batch([
+    env.DB.prepare(
+      `UPDATE users
+       SET status = ?,
+           updated_at = ?
+       WHERE id = ?`
+    ).bind(
+      nextStatus,
+      timestamp,
+      target.id
+    ),
+
+    env.DB.prepare(
+      `UPDATE sessions
+       SET revoked_at = ?
+       WHERE user_id = ?
+         AND revoked_at IS NULL`
+    ).bind(
+      timestamp,
+      target.id
+    )
+  ]);
+
+  await writeActivity(
+    env,
+    auth.user.id,
+    "USER_STATUS_CHANGED",
+    "user",
+    target.id,
+    `User ${target.email} status changed from ${target.status} to ${nextStatus}.`
+  );
+
+  return apiResponse(
+    request,
+    env,
+    {
+      ok: true,
+      user: {
+        id: target.id,
+        email: target.email,
+        role: target.role,
+        status: nextStatus
+      }
+    }
+  );
+}
+
+async function resetAdminUserPassword(
+  request,
+  env,
+  auth,
+  userId
+) {
+  if (userId === auth.user.id) {
+    return apiResponse(
+      request,
+      env,
+      {
+        error:
+          "Use Change Password for your own account."
+      },
+      400
+    );
+  }
+
+  const body = await readJson(request);
+
+  const temporaryPassword =
+    body?.temporary_password;
+
+  const passwordError =
+    validatePassword(
+      temporaryPassword
+    );
+
+  if (passwordError) {
+    return apiResponse(
+      request,
+      env,
+      { error: passwordError },
+      400
+    );
+  }
+
+  const target =
+    await env.DB.prepare(
+      `SELECT
+         id,
+         email,
+         role,
+         status
+       FROM users
+       WHERE id = ?
+       LIMIT 1`
+    )
+      .bind(userId)
+      .first();
+
+  if (!target) {
+    return apiResponse(
+      request,
+      env,
+      { error: "User not found." },
+      404
+    );
+  }
+
+  const passwordHash =
+    await hashPassword(
+      temporaryPassword
+    );
+
+  const timestamp =
+    nowIso();
+
+  await env.DB.batch([
+    env.DB.prepare(
+      `UPDATE users
+       SET password_hash = ?,
+           must_change_password = 1,
+           updated_at = ?
+       WHERE id = ?`
+    ).bind(
+      passwordHash,
+      timestamp,
+      target.id
+    ),
+
+    env.DB.prepare(
+      `UPDATE sessions
+       SET revoked_at = ?
+       WHERE user_id = ?
+         AND revoked_at IS NULL`
+    ).bind(
+      timestamp,
+      target.id
+    )
+  ]);
+
+  await writeActivity(
+    env,
+    auth.user.id,
+    "USER_PASSWORD_RESET",
+    "user",
+    target.id,
+    `Temporary password reset for ${target.email}; sessions revoked.`
+  );
+
+  return apiResponse(
+    request,
+    env,
+    {
+      ok: true,
+      user: {
+        id: target.id,
+        email: target.email,
+        role: target.role,
+        status: target.status,
+        must_change_password: true
+      }
+    }
   );
 }
 
