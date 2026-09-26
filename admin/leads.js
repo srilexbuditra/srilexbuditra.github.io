@@ -1887,6 +1887,14 @@
           </button>
 
           <button
+            class="secondary"
+            type="button"
+            data-lead-print
+            hidden
+          >
+            🖨 Cetak / Simpan PDF
+          </button>
+          <button
             type="submit"
             data-lead-save
           >
@@ -2439,6 +2447,12 @@
     );
 
     title.textContent = "New Lead";
+    modal.querySelector(
+      "[data-lead-print]"
+    )?.setAttribute(
+      "hidden",
+      ""
+    );
     subtitle.textContent =
       "Tambahkan calon client baru.";
 
@@ -2521,6 +2535,11 @@
     title.textContent =
       lead.full_name;
 
+    modal.querySelector(
+      "[data-lead-print]"
+    )?.removeAttribute(
+      "hidden"
+    );
     subtitle.textContent =
       `${lead.lead_code} - ${statusLabel(lead.status)}`;
 
@@ -2630,6 +2649,457 @@
     await loadNotes(lead.id);
   }
 
+  function ensureLeadPrintAssets() {
+    let style =
+      document.getElementById(
+        "sb-lead-print-style"
+      );
+
+    if (!style) {
+      style =
+        document.createElement(
+          "style"
+        );
+
+      style.id =
+        "sb-lead-print-style";
+
+      style.textContent = `
+        .sb-lead-print-sheet {
+          display: none;
+        }
+
+        @media print {
+          @page {
+            size: A4;
+            margin: 14mm;
+          }
+
+          body > *:not(.sb-lead-print-sheet) {
+            display: none !important;
+          }
+
+          .sb-lead-print-sheet {
+            display: block !important;
+            box-sizing: border-box;
+            width: 100%;
+            color: #17251f;
+            background: #ffffff;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 10.5pt;
+            line-height: 1.5;
+          }
+
+          .sb-lead-print-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 24px;
+            padding-bottom: 14px;
+            margin-bottom: 16px;
+            border-bottom: 2px solid #176b3a;
+          }
+
+          .sb-lead-print-brand {
+            font-size: 16pt;
+            font-weight: 800;
+            color: #124d2d;
+          }
+
+          .sb-lead-print-subbrand {
+            margin-top: 2px;
+            font-size: 8.5pt;
+            color: #64748b;
+          }
+
+          .sb-lead-print-title {
+            text-align: right;
+          }
+
+          .sb-lead-print-title strong {
+            display: block;
+            font-size: 14pt;
+          }
+
+          .sb-lead-print-title span {
+            font-size: 8.5pt;
+            color: #64748b;
+          }
+
+          .sb-lead-print-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px 18px;
+            margin-bottom: 16px;
+          }
+
+          .sb-lead-print-item {
+            break-inside: avoid;
+          }
+
+          .sb-lead-print-item-label {
+            display: block;
+            margin-bottom: 2px;
+            font-size: 8pt;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .04em;
+            color: #64748b;
+          }
+
+          .sb-lead-print-item-value {
+            font-weight: 600;
+            overflow-wrap: anywhere;
+          }
+
+          .sb-lead-print-section {
+            margin-top: 16px;
+            padding: 12px 14px;
+            border: 1px solid #dce6e1;
+            border-radius: 8px;
+            break-inside: avoid;
+          }
+
+          .sb-lead-print-section > h2 {
+            margin: 0 0 10px;
+            font-size: 11pt;
+            color: #124d2d;
+          }
+
+          .sb-lead-print-section .sb-lead-rich-title {
+            margin-bottom: 9px;
+            font-size: 10pt;
+            font-weight: 800;
+            color: #173d2b;
+          }
+
+          .sb-lead-print-section .sb-lead-rich-section {
+            margin-top: 10px;
+            margin-bottom: 5px;
+            padding-bottom: 3px;
+            border-bottom: 1px solid #e6eeea;
+            font-size: 8.5pt;
+            font-weight: 800;
+            color: #176b3a;
+          }
+
+          .sb-lead-print-section .sb-lead-rich-label,
+          .sb-lead-print-section .sb-lead-rich-row-label,
+          .sb-lead-print-section .is-important {
+            font-weight: 800;
+          }
+
+          .sb-lead-print-section .sb-lead-rich-value,
+          .sb-lead-print-section .sb-lead-rich-row,
+          .sb-lead-print-section .sb-lead-rich-bullet {
+            margin: 2px 0;
+          }
+
+          .sb-lead-print-section .sb-lead-rich-gap {
+            height: 4px;
+          }
+
+          .sb-lead-print-footer {
+            margin-top: 18px;
+            padding-top: 10px;
+            border-top: 1px solid #dce6e1;
+            font-size: 8pt;
+            color: #64748b;
+          }
+        }
+      `;
+
+      document.head.appendChild(
+        style
+      );
+    }
+
+    let sheet =
+      document.querySelector(
+        "[data-lead-print-sheet]"
+      );
+
+    if (!sheet) {
+      sheet =
+        document.createElement(
+          "section"
+        );
+
+      sheet.className =
+        "sb-lead-print-sheet";
+
+      sheet.setAttribute(
+        "data-lead-print-sheet",
+        ""
+      );
+
+      document.body.appendChild(
+        sheet
+      );
+    }
+
+    return sheet;
+  }
+
+  function printCurrentLead() {
+    if (!currentLeadId) {
+      return;
+    }
+
+    const lead =
+      leads.find(
+        item =>
+          item.id === currentLeadId
+      );
+
+    if (!lead) {
+      formError.textContent =
+        "Lead tidak ditemukan.";
+
+      return;
+    }
+
+    const sheet =
+      ensureLeadPrintAssets();
+
+    const followUpMeta =
+      getLeadNextFollowupMeta(
+        lead.next_follow_up_at
+      );
+
+    const followUpStatus =
+      followUpMeta
+        ? followUpMeta.label
+        : "Belum dijadwalkan";
+
+    const printedAt =
+      new Intl.DateTimeFormat(
+        "id-ID",
+        {
+          dateStyle: "long",
+          timeStyle: "short"
+        }
+      ).format(
+        new Date()
+      );
+
+    const requirementHtml =
+      formatLeadRichHtml(
+        formatLeadRequirement(
+          lead
+        )
+      );
+
+    const calculatorHtml =
+      lead.source ===
+        "Website Calculator"
+        ? formatLeadRichHtml(
+            formatLeadCalculatorScope(
+              lead
+            )
+          )
+        : "";
+
+    sheet.innerHTML = `
+      <div class="sb-lead-print-header">
+        <div>
+          <div class="sb-lead-print-brand">
+            srilexbuditra.work
+          </div>
+
+          <div class="sb-lead-print-subbrand">
+            Client & Management Platform
+          </div>
+        </div>
+
+        <div class="sb-lead-print-title">
+          <strong>Lead Detail / Project Requirement</strong>
+
+          <span>
+            ${escapeHtml(
+              lead.lead_code ||
+              "-"
+            )}
+          </span>
+        </div>
+      </div>
+
+      <div class="sb-lead-print-grid">
+        <div class="sb-lead-print-item">
+          <span class="sb-lead-print-item-label">
+            Nama
+          </span>
+
+          <div class="sb-lead-print-item-value">
+            ${escapeHtml(
+              lead.full_name ||
+              "-"
+            )}
+          </div>
+        </div>
+
+        <div class="sb-lead-print-item">
+          <span class="sb-lead-print-item-label">
+            Company
+          </span>
+
+          <div class="sb-lead-print-item-value">
+            ${escapeHtml(
+              lead.company_name ||
+              "-"
+            )}
+          </div>
+        </div>
+
+        <div class="sb-lead-print-item">
+          <span class="sb-lead-print-item-label">
+            Email
+          </span>
+
+          <div class="sb-lead-print-item-value">
+            ${escapeHtml(
+              lead.email ||
+              "-"
+            )}
+          </div>
+        </div>
+
+        <div class="sb-lead-print-item">
+          <span class="sb-lead-print-item-label">
+            Phone / WhatsApp
+          </span>
+
+          <div class="sb-lead-print-item-value">
+            ${escapeHtml(
+              lead.phone ||
+              "-"
+            )}
+          </div>
+        </div>
+
+        <div class="sb-lead-print-item">
+          <span class="sb-lead-print-item-label">
+            Source
+          </span>
+
+          <div class="sb-lead-print-item-value">
+            ${escapeHtml(
+              lead.source ||
+              "-"
+            )}
+          </div>
+        </div>
+
+        <div class="sb-lead-print-item">
+          <span class="sb-lead-print-item-label">
+            Service Interest
+          </span>
+
+          <div class="sb-lead-print-item-value">
+            ${escapeHtml(
+              lead.service_interest ||
+              "-"
+            )}
+          </div>
+        </div>
+
+        <div class="sb-lead-print-item">
+          <span class="sb-lead-print-item-label">
+            Status Lead
+          </span>
+
+          <div class="sb-lead-print-item-value">
+            ${escapeHtml(
+              statusLabel(
+                lead.status
+              )
+            )}
+          </div>
+        </div>
+
+        <div class="sb-lead-print-item">
+          <span class="sb-lead-print-item-label">
+            Next Follow-up
+          </span>
+
+          <div class="sb-lead-print-item-value">
+            ${escapeHtml(
+              followUpStatus
+            )}
+            •
+            ${escapeHtml(
+              formatDate(
+                lead.next_follow_up_at
+              )
+            )}
+          </div>
+        </div>
+      </div>
+
+      <section class="sb-lead-print-section">
+        <h2>
+          Ringkasan Kebutuhan Project
+        </h2>
+
+        ${requirementHtml}
+      </section>
+
+      ${
+        calculatorHtml
+          ? `
+            <section class="sb-lead-print-section">
+              <h2>
+                Calculator / Scope Data
+              </h2>
+
+              ${calculatorHtml}
+            </section>
+          `
+          : ""
+      }
+
+      <div class="sb-lead-print-footer">
+        Dicetak
+        ${escapeHtml(
+          printedAt
+        )}
+        • srilexbuditra.work
+
+        <br>
+
+        Dokumen ini merupakan ringkasan data Lead / kebutuhan project.
+      </div>
+    `;
+
+    const previousTitle =
+      document.title;
+
+    document.title =
+      `${
+        lead.lead_code ||
+        "Lead"
+      } - ${
+        lead.full_name ||
+        "Lead"
+      }`;
+
+    const restoreTitle = () => {
+      document.title =
+        previousTitle;
+
+      window.removeEventListener(
+        "afterprint",
+        restoreTitle
+      );
+    };
+
+    window.addEventListener(
+      "afterprint",
+      restoreTitle
+    );
+
+    window.print();
+  }
   function closeModal() {
     modal.hidden = true;
     currentLeadId = null;
@@ -3853,6 +4323,13 @@
   ).addEventListener(
     "click",
     closeModal
+  );
+
+  modal.querySelector(
+    "[data-lead-print]"
+  )?.addEventListener(
+    "click",
+    printCurrentLead
   );
 
   form.elements.next_follow_up_at?.addEventListener(
