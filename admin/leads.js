@@ -2686,17 +2686,17 @@
             color: #17251f;
             background: #ffffff;
             font-family: Arial, Helvetica, sans-serif;
-            font-size: 10.5pt;
-            line-height: 1.5;
+            font-size: 10pt;
+            line-height: 1.4;
           }
 
           .sb-lead-print-header {
             display: flex;
             align-items: flex-start;
             justify-content: space-between;
-            gap: 24px;
-            padding-bottom: 14px;
-            margin-bottom: 16px;
+            gap: 20px;
+            padding-bottom: 10px;
+            margin-bottom: 12px;
             border-bottom: 2px solid #176b3a;
           }
 
@@ -2729,8 +2729,8 @@
           .sb-lead-print-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 10px 18px;
-            margin-bottom: 16px;
+            gap: 8px 16px;
+            margin-bottom: 12px;
           }
 
           .sb-lead-print-item {
@@ -2753,17 +2753,20 @@
           }
 
           .sb-lead-print-section {
-            margin-top: 16px;
-            padding: 12px 14px;
+            margin-top: 10px;
+            padding: 10px 12px;
             border: 1px solid #dce6e1;
             border-radius: 8px;
-            break-inside: avoid;
+            break-inside: auto;
+            page-break-inside: auto;
           }
 
           .sb-lead-print-section > h2 {
-            margin: 0 0 10px;
+            margin: 0 0 8px;
             font-size: 11pt;
             color: #124d2d;
+            break-after: avoid;
+            page-break-after: avoid;
           }
 
           .sb-lead-print-section .sb-lead-rich-title {
@@ -2800,8 +2803,8 @@
           }
 
           .sb-lead-print-footer {
-            margin-top: 18px;
-            padding-top: 10px;
+            margin-top: 12px;
+            padding-top: 8px;
             border-top: 1px solid #dce6e1;
             font-size: 8pt;
             color: #64748b;
