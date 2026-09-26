@@ -1589,6 +1589,28 @@ waBtn?.addEventListener('click', async () => {
       data?.lead?.request_ref ||
       payload.request_ref;
 
+    const shareToken =
+      String(
+        data?.lead?.share_token ||
+          ""
+      ).trim();
+
+    if (
+      !/^[A-Za-z0-9_-]{20,100}\.[A-Za-z0-9_-]{20,100}$/.test(
+        shareToken
+      )
+    ) {
+      throw new Error(
+        "Secure document link is unavailable."
+      );
+    }
+
+    const shareUrl =
+      `${
+        window.location.origin
+          .replace(/\/+$/, "")
+      }/share/lead/#${shareToken}`;
+
     const selectedFeatureLines =
       getSelectedExtraItems().length
         ? getSelectedExtraItems()
@@ -1608,6 +1630,10 @@ waBtn?.addEventListener('click', async () => {
       "*REFERENSI*",
       `• Lead Ref: ${leadCode || "-"}`,
       `• Request Ref: ${requestRef}`,
+      "",
+      "*DOKUMEN ESTIMASI*",
+      "• Lihat / Cetak / Simpan PDF:",
+      shareUrl,
       "",
       "*DATA KONTAK*",
       `• Nama: ${payload.full_name}`,
