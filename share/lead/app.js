@@ -261,6 +261,53 @@
     });
   }
 
+  function extractAdditionalNote(value) {
+    const raw =
+      String(
+        value || ""
+      )
+        .replace(/\r\n?/g, "\n")
+        .trim();
+
+    if (!raw) {
+      return "Tidak ada catatan tambahan.";
+    }
+
+    const lines =
+      raw.split("\n");
+
+    const markerIndex =
+      lines.findIndex(
+        line =>
+          line.trim().toUpperCase() ===
+          "CATATAN TAMBAHAN"
+      );
+
+    /*
+     * Legacy / plain Lead:
+     * jika marker tidak ada, teks asli dianggap
+     * sebagai catatan kebutuhan pengguna.
+     */
+    if (markerIndex < 0) {
+      return raw;
+    }
+
+    const note =
+      lines
+        .slice(markerIndex + 1)
+        .join("\n")
+        .trim();
+
+    if (
+      !note ||
+      note ===
+        "Tidak ada deskripsi tambahan."
+    ) {
+      return "Tidak ada catatan tambahan.";
+    }
+
+    return note;
+  }
   function showError(
     title,
     message
@@ -391,8 +438,9 @@
 
     setText(
       "requirement",
-      doc.requirement ||
-        "Tidak ada catatan tambahan."
+      extractAdditionalNote(
+        doc.requirement
+      )
     );
 
     document.title =
