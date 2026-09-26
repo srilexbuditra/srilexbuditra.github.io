@@ -7246,3 +7246,119 @@ body {
     width:100%;
   }
 }
+
+/* ==========================================================
+   MULTI FEATURE FRONTEND R1
+   ========================================================== */
+
+.extra-feature-picker{
+  grid-column:1 / -1;
+  margin:0;
+  padding:16px;
+  border:1px solid rgba(148,163,184,.20);
+  border-radius:16px;
+  background:rgba(255,255,255,.025);
+}
+
+.extra-feature-picker legend{
+  padding:0 8px;
+  font-size:.78rem;
+  font-weight:800;
+  letter-spacing:.09em;
+}
+
+.extra-feature-intro{
+  margin:0 0 12px;
+  opacity:.76;
+  line-height:1.5;
+}
+
+.extra-feature-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+}
+
+.extra-feature-card{
+  display:flex !important;
+  align-items:flex-start;
+  gap:10px;
+  min-width:0;
+  padding:13px 14px;
+  border:1px solid rgba(148,163,184,.20);
+  border-radius:13px;
+  cursor:pointer;
+  background:rgba(255,255,255,.025);
+  transition:
+    border-color .18s ease,
+    background .18s ease,
+    transform .18s ease;
+}
+
+.extra-feature-card:hover{
+  transform:translateY(-1px);
+}
+
+.extra-feature-card.selected,
+.extra-feature-card:has(input:checked){
+  border-color:rgba(56,189,248,.68);
+  background:rgba(56,189,248,.085);
+}
+
+.extra-feature-card input{
+  width:auto !important;
+  min-width:auto !important;
+  margin:3px 0 0;
+  flex:0 0 auto;
+}
+
+.extra-feature-card span{
+  display:grid;
+  gap:4px;
+  min-width:0;
+}
+
+.extra-feature-card strong{
+  line-height:1.35;
+}
+
+.extra-feature-card small{
+  opacity:.72;
+}
+
+.extra-feature-total{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  margin-top:12px;
+  padding:12px 14px;
+  border-radius:12px;
+  background:rgba(0,0,0,.10);
+}
+
+.extra-feature-total span{
+  font-size:.82rem;
+  opacity:.78;
+}
+
+.extra-feature-total strong{
+  font-size:1rem;
+}
+
+#extraText,
+#previewDomain,
+#printExtra,
+#printDomain{
+  overflow-wrap:anywhere;
+}
+
+@media (max-width:760px){
+  .extra-feature-grid{
+    grid-template-columns:1fr;
+  }
+
+  .extra-feature-total{
+    align-items:flex-start;
+  }
+}

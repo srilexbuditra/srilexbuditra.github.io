@@ -787,49 +787,83 @@ function initDomainSearchUI(){
 
   syncDomainModeUI();
 }
-function updateEstimate(){
-  const project =
-    $('#project')?.value ||
-    'Website Company Profile';
+const extraFeatureCatalog = Object.freeze({
+  '500000': {
+    label: 'Form / WhatsApp',
+    amount: 500000
+  },
 
-  const extra =
-    Number(
-      $('#extra')?.value || 0
+  '1000000': {
+    label: 'Dashboard Admin',
+    amount: 1000000
+  },
+
+  '1500000': {
+    label: 'Login & Role',
+    amount: 1500000
+  },
+
+  '2500000': {
+    label: 'Integrasi API',
+    amount: 2500000
+  }
+});
+
+function getSelectedExtraValues(){
+  return [
+    ...document.querySelectorAll(
+      'input[name="extraFeature"]:checked'
+    )
+  ]
+    .map(input =>
+      String(input.value || '').trim()
+    )
+    .filter(value =>
+      Object.prototype.hasOwnProperty.call(
+        extraFeatureCatalog,
+        value
+      )
     );
+}
 
-  const isCustom =
-    selectedPackageName === 'Custom';
+function getSelectedExtraItems(){
+  return getSelectedExtraValues()
+    .map(value => ({
+      value,
+      ...extraFeatureCatalog[value]
+    }));
+}
 
+function getSelectedExtraTotal(){
+  return getSelectedExtraItems()
+    .reduce(
+      (total, item) =>
+        total + item.amount,
+      0
+    );
+}
+
+function getSelectedExtraLabel(){
+  const items =
+    getSelectedExtraItems();
+
+  return items.length
+    ? items
+        .map(item => item.label)
+        .join(', ')
+    : 'Tidak ada';
+}
+
+function syncExtraFeatureUI(){
   const total =
-    isCustom
-      ? 0
-      : Math.max(
-          selectedPackage,
-          basePrices[project] || 0
-        ) + extra;
+    getSelectedExtraTotal();
 
-  const totalElement =
-    $('#total');
-
-  if(totalElement){
-    totalElement.textContent =
-      isCustom
-        ? 'Konsultasi'
-        : formatIDR(total);
+  if($('#extraTotal')){
+    $('#extraTotal').textContent =
+      formatIDR(total);
   }
 
-  if($('#chosen')){
-    $('#chosen').textContent =
-      project;
-  }
-
-  if($('#extraText')){
-    $('#extraText').textContent =
-      $('#extra')
-        .selectedOptions[0]
-        .text
-        .replace(/\s*\(\+.*\)/,'');
-  }
+  syncExtraFeatureUI();
 
   const note =
     $('#estimateModeNote');
@@ -895,7 +929,13 @@ $$('.package').forEach(btn => {
 syncSelectedPackageUI();
 updateEstimate();
 $('#project')?.addEventListener('change', updateEstimate);
-$('#extra')?.addEventListener('change', updateEstimate);
+$$('input[name="extraFeature"]')
+  .forEach(input => {
+    input.addEventListener(
+      'change',
+      updateEstimate
+    );
+  });
 
 initDomainSearchUI();
 
@@ -938,6 +978,36 @@ waBtn?.addEventListener('click', async () => {
 
   const total = updateEstimate();
 
+  const selectedExtraValues =
+    getSelectedExtraValues();
+
+  const selectedDomainMode =
+    currentDomainMode();
+
+  if (
+    selectedDomainMode === 'new' &&
+    (
+      !domainState.selectedDomain ||
+      domainState.status !== 'unregistered'
+    )
+  ) {
+    alert(
+      'Silakan cek ketersediaan domain dan klik "Gunakan Domain Ini" sebelum mengirim estimasi.'
+    );
+
+    return;
+  }
+
+  if (
+    selectedDomainMode === 'owned' &&
+    !domainState.selectedDomain
+  ) {
+    alert(
+      'Masukkan domain yang sudah Anda miliki terlebih dahulu.'
+    );
+
+    return;
+  }
   const payload = {
     full_name:
       $('#name').value.trim(),
@@ -956,11 +1026,21 @@ waBtn?.addEventListener('click', async () => {
 
     package_name:
       selectedPackageName,
+    extra_values:
+      selectedExtraValues.length
+        ? selectedExtraValues
+        : ['0'],
 
-    extra_value:
-      String(
-        $('#extra').value || '0'
-      ),
+    domain_mode:
+      selectedDomainMode,
+
+    domain_name:
+      selectedDomainMode === 'none'
+        ? null
+        : (
+            domainState.selectedDomain ||
+            null
+          ),
 
     description:
       $('#description').value.trim(),
@@ -1085,7 +1165,9 @@ waBtn?.addEventListener('click', async () => {
       `WhatsApp: ${payload.phone || '-'}`,
       `Jenis Project: ${payload.project}`,
       `Paket: ${payload.package_name}`,
-      `Fitur Tambahan: ${$('#extra').selectedOptions[0].text}`,
+      `Fitur Tambahan: ${getSelectedExtraLabel()}`,
+      `Domain: ${payload.domain_name || 'Belum ditentukan'}`,
+      `Status Domain: ${selectedDomainMode === 'none' ? 'Belum ditentukan' : domainStatusLabel()}`,
       `Estimasi Awal: ${estimateDisplay(total)}`,
       `Deskripsi: ${payload.description || '-'}`
     ].join('\n');
@@ -1258,13 +1340,55 @@ async function snapshotClientSignature(){
 async function populatePrintReport(){
   const value = id => document.getElementById(id)?.value?.trim() || '-';
   const text = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = val || '-'; };
-  const extraText = $('#extra')?.selectedOptions?.[0]?.text?.replace(/\s*\(\+.*\)/,'') || '-';
+  const extraText =
+    getSelectedExtraLabel();
+
+  const domainText =
+    domainState.mode === 'none'
+      ? 'Belum ditentukan'
+      : (
+          domainState.selectedDomain ||
+          'Belum dipilih'
+        );
+
+  const domainStatusText =
+    domainState.mode === 'none'
+      ? 'Belum ditentukan'
+      : domainStatusLabel();
   const total = updateEstimate();
   const now = new Date();
   currentDocumentRef=`SB-EST-${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}-${String(now.getHours()).padStart(2,'0')}${String(now.getMinutes()).padStart(2,'0')}${String(now.getSeconds()).padStart(2,'0')}`;
 
   text('printName', value('name')); text('printCompany', value('company')); text('printEmail', value('email')); text('printWhatsapp', value('whatsapp'));
-  text('printProject', $('#project')?.value || '-'); text('printExtra', extraText); text('printDescription', value('description')); text('printTotal', formatIDR(total));
+  text(
+    'printProject',
+    $('#project')?.value || '-'
+  );
+
+  text(
+    'printExtra',
+    extraText
+  );
+
+  text(
+    'printDomain',
+    domainText
+  );
+
+  text(
+    'printDomainStatus',
+    domainStatusText
+  );
+
+  text(
+    'printDescription',
+    value('description')
+  );
+
+  text(
+    'printTotal',
+    formatIDR(total)
+  );
   text('printDate', now.toLocaleDateString('id-ID',{day:'2-digit',month:'long',year:'numeric'}));
   text('printRef', currentDocumentRef); text('printRefTop',currentDocumentRef); text('printRefVerify',currentDocumentRef);
   const dateText=now.toLocaleDateString('id-ID',{day:'2-digit',month:'long',year:'numeric'});
@@ -1284,7 +1408,7 @@ async function populatePrintReport(){
     }
   }
 
-  const fingerprintSource=[currentDocumentRef,value('name'),value('company'),value('email'),value('whatsapp'),$('#project')?.value||'',extraText,value('description'),String(total),signaturePads.client?.dataUrl||''].join('|');
+  const fingerprintSource=[currentDocumentRef,value('name'),value('company'),value('email'),value('whatsapp'),$('#project')?.value||'',extraText,domainText,domainStatusText,value('description'),String(total),signaturePads.client?.dataUrl||''].join('|');
   currentFingerprint=await sha256Hex(fingerprintSource);
   renderCode39(currentDocumentRef);
   await renderVerificationQr(currentDocumentRef);

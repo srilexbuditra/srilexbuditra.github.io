@@ -375,7 +375,71 @@
           <label>Email<input id="email" type="email" required placeholder="nama@email.com"></label>
           <label>WhatsApp<input id="whatsapp" inputmode="tel" placeholder="08xxxxxxxxxx"></label>
           <label>Jenis Proyek<select id="project"><option>Website Company Profile</option><option>Web Application</option><option>REST API / Backend</option><option>Sistem Informasi Custom</option><option>Database Development</option><option>Deployment & Cloud</option></select></label>
-          <label>Fitur Tambahan<select id="extra"><option value="0">Tidak ada</option><option value="500000">Form / WhatsApp (+Rp 500.000)</option><option value="1000000">Dashboard Admin (+Rp 1.000.000)</option><option value="1500000">Login & Role (+Rp 1.500.000)</option><option value="2500000">Integrasi API (+Rp 2.500.000)</option></select></label>
+                    <fieldset
+            class="extra-feature-picker"
+            id="extraFeaturePicker"
+          >
+            <legend>FITUR TAMBAHAN</legend>
+
+            <p class="extra-feature-intro">
+              Pilih satu atau beberapa fitur tambahan sesuai kebutuhan project.
+            </p>
+
+            <div class="extra-feature-grid">
+              <label class="extra-feature-card">
+                <input
+                  type="checkbox"
+                  name="extraFeature"
+                  value="500000"
+                >
+                <span>
+                  <strong>Form / WhatsApp</strong>
+                  <small>+ Rp 500.000</small>
+                </span>
+              </label>
+
+              <label class="extra-feature-card">
+                <input
+                  type="checkbox"
+                  name="extraFeature"
+                  value="1000000"
+                >
+                <span>
+                  <strong>Dashboard Admin</strong>
+                  <small>+ Rp 1.000.000</small>
+                </span>
+              </label>
+
+              <label class="extra-feature-card">
+                <input
+                  type="checkbox"
+                  name="extraFeature"
+                  value="1500000"
+                >
+                <span>
+                  <strong>Login &amp; Role</strong>
+                  <small>+ Rp 1.500.000</small>
+                </span>
+              </label>
+
+              <label class="extra-feature-card">
+                <input
+                  type="checkbox"
+                  name="extraFeature"
+                  value="2500000"
+                >
+                <span>
+                  <strong>Integrasi API</strong>
+                  <small>+ Rp 2.500.000</small>
+                </span>
+              </label>
+            </div>
+
+            <div class="extra-feature-total">
+              <span>Total Add-on</span>
+              <strong id="extraTotal">Rp 0</strong>
+            </div>
+          </fieldset>
         </div>
                 <fieldset class="domain-picker" id="domainPicker">
           <legend>DOMAIN &amp; ALAMAT WEBSITE</legend>
@@ -595,7 +659,9 @@
         <div class="print-section-title">Detail Project</div>
         <div class="print-detail-grid">
           <div><span>Jenis Project</span><strong id="printProject">-</strong></div>
-          <div><span>Fitur Tambahan</span><strong id="printExtra">-</strong></div>
+                    <div><span>Fitur Tambahan</span><strong id="printExtra">-</strong></div>
+          <div><span>Domain</span><strong id="printDomain">-</strong></div>
+          <div><span>Status Domain</span><strong id="printDomainStatus">-</strong></div>
         </div>
         <div class="print-description">
           <span>Deskripsi Kebutuhan</span>
