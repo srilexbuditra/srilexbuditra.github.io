@@ -2109,11 +2109,43 @@ async function createPublicEstimateLead(
       "Professional"
     ).trim();
 
-  const extraValue =
-    String(
-      body?.extra_value ??
-      "0"
-    ).trim();
+  /*
+   * R1 compatibility:
+   * - Frontend baru mengirim extra_values[]
+   * - Frontend lama tetap boleh mengirim extra_value
+   */
+  let rawExtraValues =
+    Array.isArray(body?.extra_values)
+      ? body.extra_values
+      : [
+          body?.extra_value ?? "0"
+        ];
+
+  let extraValues =
+    [
+      ...new Set(
+        rawExtraValues
+          .map(value =>
+            String(value ?? "")
+              .trim()
+          )
+          .filter(Boolean)
+      )
+    ];
+
+  if (!extraValues.length) {
+    extraValues = ["0"];
+  }
+
+  if (
+    extraValues.length > 1 &&
+    extraValues.includes("0")
+  ) {
+    extraValues =
+      extraValues.filter(
+        value => value !== "0"
+      );
+  }
 
   const description =
     String(
@@ -2128,10 +2160,22 @@ async function createPublicEstimateLead(
   const privacyConsent =
     body?.privacy_consent === true;
 
+  const domainMode =
+    String(
+      body?.domain_mode || "none"
+    )
+      .trim()
+      .toLowerCase();
+
+  const rawDomainName =
+    nullableLeadText(
+      body?.domain_name
+    );
+
+
   /*
-   * Harga tidak dipercayai dari browser.
-   * Worker menghitung ulang menggunakan
-   * konfigurasi yang sama dengan Calculator.
+   * Harga selalu dihitung ulang di Worker.
+   * Browser tidak menjadi sumber nilai final.
    */
   const projectPrices = {
     "Website Company Profile":
@@ -2255,20 +2299,46 @@ async function createPublicEstimateLead(
     );
   }
 
-  const extra =
-    extraOptions[extraValue];
-
-  if (!extra) {
+  if (
+    extraValues.length > 4 ||
+    extraValues.some(
+      value =>
+        !Object.prototype.hasOwnProperty.call(
+          extraOptions,
+          value
+        )
+    )
+  ) {
     return apiResponse(
       request,
       env,
       {
         error:
-          "Invalid extra feature."
+          "Invalid extra feature selection."
       },
       400
     );
   }
+
+  const extras =
+    extraValues.map(
+      value => extraOptions[value]
+    );
+
+  const extraAmount =
+    extras.reduce(
+      (total, extra) =>
+        total + extra.amount,
+      0
+    );
+
+  const extraLabel =
+    extraValues.length === 1 &&
+    extraValues[0] === "0"
+      ? "Tidak ada"
+      : extras
+          .map(extra => extra.label)
+          .join(", ");
 
   if (
     !/^[A-Za-z0-9_-]{12,100}$/.test(
@@ -2284,6 +2354,150 @@ async function createPublicEstimateLead(
       },
       400
     );
+  }
+
+  if (
+    ![
+      "none",
+      "owned",
+      "new"
+    ].includes(domainMode)
+  ) {
+    return apiResponse(
+      request,
+      env,
+      {
+        error:
+          "Invalid domain_mode."
+      },
+      400
+    );
+  }
+
+  let domainName = null;
+  let domainStatus = "none";
+  let domainCheckedAt = null;
+
+  if (domainMode === "owned") {
+    domainName =
+      normalizeDomainForRdap(
+        rawDomainName
+      );
+
+    if (!domainName) {
+      return apiResponse(
+        request,
+        env,
+        {
+          error:
+            "A valid owned domain is required."
+        },
+        400
+      );
+    }
+
+    domainStatus = "owned";
+  }
+
+  if (domainMode === "new") {
+    domainName =
+      normalizeDomainForRdap(
+        rawDomainName
+      );
+
+    if (!domainName) {
+      return apiResponse(
+        request,
+        env,
+        {
+          error:
+            "A valid new domain is required."
+        },
+        400
+      );
+    }
+
+    /*
+     * Jangan percaya status dari browser.
+     * Worker mengecek ulang registry RDAP
+     * tepat sebelum Lead disimpan.
+     */
+    try {
+      const bootstrap =
+        await getRdapBootstrap();
+
+      const rdapBaseUrl =
+        findRdapBaseUrl(
+          bootstrap,
+          domainName
+        );
+
+      if (!rdapBaseUrl) {
+        return apiResponse(
+          request,
+          env,
+          {
+            error:
+              "Domain availability could not be confirmed."
+          },
+          503
+        );
+      }
+
+      const rdapResponse =
+        await fetchRdapDomain(
+          buildRdapDomainUrl(
+            rdapBaseUrl,
+            domainName
+          )
+        );
+
+      if (rdapResponse.status === 200) {
+        return apiResponse(
+          request,
+          env,
+          {
+            error:
+              "Domain is already registered."
+          },
+          409
+        );
+      }
+
+      if (rdapResponse.status !== 404) {
+        return apiResponse(
+          request,
+          env,
+          {
+            error:
+              "Domain availability could not be confirmed."
+          },
+          503
+        );
+      }
+
+      domainStatus =
+        "unregistered";
+
+      domainCheckedAt =
+        nowIso();
+
+    } catch (error) {
+      console.error(
+        "Public estimate domain recheck failed",
+        error
+      );
+
+      return apiResponse(
+        request,
+        env,
+        {
+          error:
+            "Domain availability could not be confirmed."
+        },
+        503
+      );
+    }
   }
 
   if (
@@ -2310,9 +2524,7 @@ async function createPublicEstimateLead(
   }
 
   /*
-   * Idempotency:
-   * request_ref yang sama tidak membuat
-   * Lead ganda ketika tombol terklik ulang.
+   * request_ref mencegah Lead ganda.
    */
   const existing =
     await env.DB.prepare(
@@ -2353,9 +2565,8 @@ async function createPublicEstimateLead(
   }
 
   /*
-   * Anti rapid-submit sederhana.
-   * Email yang sama tidak boleh membuat
-   * banyak request baru dalam 60 detik.
+   * Anti rapid-submit:
+   * email sama dibatasi 60 detik.
    */
   const recentCutoff =
     new Date(
@@ -2404,7 +2615,7 @@ async function createPublicEstimateLead(
           )
         : basePrice
     ) +
-    extra.amount;
+    extraAmount;
 
   const leadId =
     crypto.randomUUID();
@@ -2425,15 +2636,35 @@ async function createPublicEstimateLead(
       estimatedAmount
     );
 
-  const message = [
+  const domainStatusText =
+    domainMode === "owned"
+      ? "Domain milik calon client"
+      : domainMode === "new"
+        ? "Belum terdaftar - kandidat tersedia"
+        : "Belum ditentukan";
+
+  const messageParts = [
     `Paket: ${packageName}`,
-    `Fitur tambahan: ${extra.label}`,
-    `Estimasi awal: Rp ${readableAmount}`,
+    `Fitur tambahan: ${extraLabel}`,
+    `Estimasi awal: Rp ${readableAmount}`
+  ];
+
+  if (domainMode !== "none") {
+    messageParts.push(
+      `Domain: ${domainName}`,
+      `Status domain: ${domainStatusText}`
+    );
+  }
+
+  messageParts.push(
     `Request Ref: ${requestRef}`,
     "",
     "Deskripsi kebutuhan:",
     description || "-"
-  ].join("\n");
+  );
+
+  const message =
+    messageParts.join("\n");
 
   await env.DB.prepare(
     `INSERT INTO leads
@@ -2458,6 +2689,10 @@ async function createPublicEstimateLead(
         estimated_amount,
         extra_feature,
         privacy_consent_at,
+        domain_mode,
+        domain_name,
+        domain_status,
+        domain_checked_at,
         created_at,
         updated_at
       )
@@ -2472,6 +2707,7 @@ async function createPublicEstimateLead(
        NULL,
        NULL,
        ?, ?, ?, ?, ?,
+       ?, ?, ?, ?,
        ?, ?
      )`
   )
@@ -2487,18 +2723,17 @@ async function createPublicEstimateLead(
       requestRef,
       packageName,
       estimatedAmount,
-      extra.label,
+      extraLabel,
       timestamp,
+      domainMode,
+      domainName,
+      domainStatus,
+      domainCheckedAt,
       timestamp,
       timestamp
     )
     .run();
 
-  /*
-   * user_id = NULL adalah disengaja:
-   * event berasal dari website publik,
-   * bukan dari Admin/Staff.
-   */
   await writeActivity(
     env,
     null,
@@ -2543,6 +2778,15 @@ async function listAdminLeads(request, env) {
        l.source,
        l.service_interest,
        l.message,
+       l.public_request_ref,
+       l.package_name,
+       l.estimated_amount,
+       l.extra_feature,
+       l.privacy_consent_at,
+       l.domain_mode,
+       l.domain_name,
+       l.domain_status,
+       l.domain_checked_at,
        l.status,
        l.assigned_to_user_id,
        l.next_follow_up_at,
