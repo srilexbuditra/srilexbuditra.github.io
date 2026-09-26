@@ -2502,8 +2502,43 @@
 
       formError.textContent = "";
 
-      showNotice(
-        "Nomor WhatsApp berhasil disalin."
+      const copyButton =
+        modal.querySelector(
+          "[data-lead-copy-whatsapp]"
+        );
+
+      const hint =
+        modal.querySelector(
+          "[data-lead-whatsapp-hint]"
+        );
+
+      if (copyButton) {
+        copyButton.textContent =
+          "✓ Nomor Disalin";
+
+        copyButton.disabled = true;
+      }
+
+      if (hint) {
+        hint.textContent =
+          "Nomor WhatsApp berhasil disalin.";
+      }
+
+      setTimeout(
+        () => {
+          if (copyButton) {
+            copyButton.textContent =
+              "Salin Nomor";
+
+            copyButton.disabled = false;
+          }
+
+          if (hint) {
+            hint.textContent =
+              "Membuka WhatsApp tidak otomatis mengubah status Lead.";
+          }
+        },
+        2500
       );
     }
     catch (error) {
