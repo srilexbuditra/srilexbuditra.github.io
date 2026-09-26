@@ -956,7 +956,7 @@ function updateEstimate(){
   return total;
 }
 
-$('.package').forEach(btn => {
+$$('.package').forEach(btn => {
   btn.addEventListener(
     'click',
     () => {
