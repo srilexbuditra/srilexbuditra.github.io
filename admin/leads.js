@@ -2434,33 +2434,11 @@
       null
     );
 
-        syncLeadNextFollowupStatus(
+            syncLeadNextFollowupStatus(
       null
     );
 
-    '@ +
-        $m.Groups[2].Value
-      } `
-      "New Lead follow-up reset"
-
-  # ============================================================
-  # 5. LOAD EXISTING LEAD
-  # ============================================================
-
-  $text =
-    Replace-RegexOnce `
-      $text `
-      '(?ms)(form\.elements\.next_follow_up_at\.value\s*=\s*toDatetimeLocal\(\s*lead\.next_follow_up_at\s*\);)' `
-      {
-        param($m)
-
-        $m.Groups[1].Value +
-        @'
-
-    syncLeadNextFollowupStatus(
-      lead.next_follow_up_at
-    );
-
+    title.textContent = "New Lead";
     subtitle.textContent =
       "Tambahkan calon client baru.";
 
@@ -2593,6 +2571,10 @@
       toDatetimeLocal(
         lead.next_follow_up_at
       );
+
+    syncLeadNextFollowupStatus(
+      lead.next_follow_up_at
+    );
 
     formError.textContent = "";
 
@@ -3881,7 +3863,7 @@
       );
     }
   );
-modal.querySelector(
+  modal.querySelector(
     "[data-lead-whatsapp]"
   )?.addEventListener(
     "click",
