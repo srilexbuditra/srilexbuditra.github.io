@@ -1473,6 +1473,54 @@
       .sb-lead-rich-gap {
         height: 5px;
       }
+      .sb-lead-next-followup-status {
+        margin-top: 7px;
+        padding: 7px 9px;
+        border: 1px solid #dce6e1;
+        border-radius: 9px;
+        background: #f8faf9;
+        font-size: 11px;
+        line-height: 1.45;
+      }
+
+      .sb-lead-next-followup-status strong {
+        display: block;
+        margin-bottom: 1px;
+        font-weight: 800;
+      }
+
+      .sb-lead-next-followup-status span {
+        color: #64748b;
+      }
+
+      .sb-lead-next-followup-status.is-today strong,
+      .sb-lead-next-followup-badge.is-today {
+        color: #087443;
+      }
+
+      .sb-lead-next-followup-status.is-overdue strong,
+      .sb-lead-next-followup-badge.is-overdue {
+        color: #b42318;
+      }
+
+      .sb-lead-next-followup-status.is-upcoming strong,
+      .sb-lead-next-followup-badge.is-upcoming {
+        color: #175cd3;
+      }
+
+      .sb-lead-next-followup-badge {
+        display: block;
+        margin-bottom: 2px;
+        font-size: 11px;
+        font-weight: 800;
+      }
+
+      .sb-lead-next-followup-time {
+        display: block;
+        font-size: 10px;
+        line-height: 1.35;
+        color: #64748b;
+      }
 
       .sb-lead-whatsapp-hint {
         display: block;
@@ -1783,6 +1831,11 @@
               name="next_follow_up_at"
               type="datetime-local"
             >
+            <div
+              class="sb-lead-next-followup-status"
+              data-lead-next-followup-status
+              hidden
+            ></div>
           </div>
 
           <div class="sb-leads-field full">
@@ -2275,10 +2328,8 @@
           </td>
 
           <td>
-            ${escapeHtml(
-              formatDate(
-                lead.next_follow_up_at
-              )
+            ${formatLeadNextFollowupCell(
+              lead.next_follow_up_at
             )}
           </td>
 
@@ -2383,7 +2434,32 @@
       null
     );
 
-    title.textContent = "New Lead";
+        syncLeadNextFollowupStatus(
+      null
+    );
+
+    '@ +
+        $m.Groups[2].Value
+      } `
+      "New Lead follow-up reset"
+
+  # ============================================================
+  # 5. LOAD EXISTING LEAD
+  # ============================================================
+
+  $text =
+    Replace-RegexOnce `
+      $text `
+      '(?ms)(form\.elements\.next_follow_up_at\.value\s*=\s*toDatetimeLocal\(\s*lead\.next_follow_up_at\s*\);)' `
+      {
+        param($m)
+
+        $m.Groups[1].Value +
+        @'
+
+    syncLeadNextFollowupStatus(
+      lead.next_follow_up_at
+    );
 
     subtitle.textContent =
       "Tambahkan calon client baru.";
@@ -2954,6 +3030,143 @@
       true;
   }
 
+  function getLeadNextFollowupMeta(value) {
+    if (!value) {
+      return null;
+    }
+
+    const target =
+      new Date(value);
+
+    if (
+      Number.isNaN(
+        target.getTime()
+      )
+    ) {
+      return null;
+    }
+
+    const now =
+      new Date();
+
+    const today =
+      new Date(
+        now.getFullYear(),
+        now.getMonth(),
+        now.getDate()
+      );
+
+    const targetDay =
+      new Date(
+        target.getFullYear(),
+        target.getMonth(),
+        target.getDate()
+      );
+
+    if (
+      targetDay.getTime() ===
+      today.getTime()
+    ) {
+      return {
+        label:
+          "🟢 Hari ini",
+
+        className:
+          "is-today"
+      };
+    }
+
+    if (
+      targetDay.getTime() <
+      today.getTime()
+    ) {
+      return {
+        label:
+          "🔴 Terlambat",
+
+        className:
+          "is-overdue"
+      };
+    }
+
+    return {
+      label:
+        "🔵 Akan datang",
+
+      className:
+        "is-upcoming"
+    };
+  }
+
+  function syncLeadNextFollowupStatus(value) {
+    const element =
+      modal.querySelector(
+        "[data-lead-next-followup-status]"
+      );
+
+    if (!element) {
+      return;
+    }
+
+    const meta =
+      getLeadNextFollowupMeta(
+        value
+      );
+
+    if (!meta) {
+      element.hidden = true;
+      element.className =
+        "sb-lead-next-followup-status";
+      element.innerHTML = "";
+      return;
+    }
+
+    element.hidden = false;
+
+    element.className =
+      "sb-lead-next-followup-status " +
+      meta.className;
+
+    element.innerHTML =
+      "<strong>" +
+        escapeHtml(
+          meta.label
+        ) +
+      "</strong>" +
+      "<span>" +
+        escapeHtml(
+          formatDate(value)
+        ) +
+      "</span>";
+  }
+
+  function formatLeadNextFollowupCell(value) {
+    const meta =
+      getLeadNextFollowupMeta(
+        value
+      );
+
+    if (!meta) {
+      return (
+        '<span class="sb-lead-next-followup-time">-</span>'
+      );
+    }
+
+    return (
+      '<span class="sb-lead-next-followup-badge ' +
+        meta.className +
+      '">' +
+        escapeHtml(
+          meta.label
+        ) +
+      "</span>" +
+      '<span class="sb-lead-next-followup-time">' +
+        escapeHtml(
+          formatDate(value)
+        ) +
+      "</span>"
+    );
+  }
   function formatLeadFollowupTimestamp(value) {
     if (!value) {
       return "";
@@ -3660,7 +3873,15 @@
     closeModal
   );
 
-  modal.querySelector(
+  form.elements.next_follow_up_at?.addEventListener(
+    "input",
+    event => {
+      syncLeadNextFollowupStatus(
+        event.currentTarget.value
+      );
+    }
+  );
+modal.querySelector(
     "[data-lead-whatsapp]"
   )?.addEventListener(
     "click",
