@@ -868,7 +868,7 @@ function syncExtraFeatureUI(){
       getSelectedExtraLabel();
   }
 
-  $('.extra-feature-card')
+  $$('.extra-feature-card')
     .forEach(card => {
       const input =
         card.querySelector(
