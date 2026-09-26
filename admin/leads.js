@@ -751,6 +751,17 @@
         ".sb-leads-modal [data-lead-whatsapp-hint]"
       );
 
+    renderLeadFollowupStatus(
+      lead,
+      null
+    );
+
+    if (lead?.id) {
+      void loadLeadFollowupStatus(
+        lead
+      );
+    }
+
     if (
       !actions ||
       !whatsappButton ||
@@ -1336,6 +1347,52 @@
         cursor: not-allowed;
       }
 
+      .sb-lead-followup-status {
+        margin-top: 9px;
+        padding: 10px 11px;
+        border: 1px solid #dce6e1;
+        border-radius: 10px;
+        background: #f8fbf9;
+      }
+
+      .sb-lead-followup-status-copy {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        margin-bottom: 8px;
+      }
+
+      .sb-lead-followup-status-copy strong {
+        font-size: 11px;
+        color: #273c34;
+      }
+
+      .sb-lead-followup-state {
+        font-size: 11px;
+        line-height: 1.45;
+        color: #64748b;
+      }
+
+      .sb-lead-followup-state.is-opened {
+        color: #8a5a00;
+      }
+
+      .sb-lead-followup-state.is-contacted {
+        color: #087443;
+        font-weight: 700;
+      }
+
+      .sb-lead-followup-status button {
+        min-height: 32px;
+        padding: 6px 10px;
+        font-size: 11px;
+      }
+
+      .sb-lead-followup-status button:disabled {
+        opacity: .65;
+        cursor: default;
+      }
+
       .sb-lead-whatsapp-hint {
         display: block;
         margin-top: 7px;
@@ -1573,6 +1630,33 @@
               class="sb-lead-whatsapp-hint"
               data-lead-whatsapp-hint
             ></small>
+
+            <div
+              class="sb-lead-followup-status"
+              data-lead-followup-status
+              hidden
+            >
+              <div
+                class="sb-lead-followup-status-copy"
+              >
+                <strong>Status Follow-up</strong>
+
+                <span
+                  class="sb-lead-followup-state"
+                  data-lead-followup-state
+                >
+                  ⚪ Belum Follow-up
+                </span>
+              </div>
+
+              <button
+                class="secondary"
+                type="button"
+                data-lead-mark-contacted
+              >
+                ✓ Tandai Sudah Dihubungi
+              </button>
+            </div>
           </div>
 
           <div class="sb-leads-field">
@@ -2513,6 +2597,295 @@
     }
   );
 
+  function formatLeadFollowupTimestamp(value) {
+    if (!value) {
+      return "";
+    }
+
+    const date =
+      new Date(value);
+
+    if (
+      Number.isNaN(
+        date.getTime()
+      )
+    ) {
+      return String(value);
+    }
+
+    return new Intl.DateTimeFormat(
+      "id-ID",
+      {
+        dateStyle:
+          "medium",
+
+        timeStyle:
+          "short"
+      }
+    ).format(date);
+  }
+
+  function renderLeadFollowupStatus(
+    lead,
+    followUp
+  ) {
+    const box =
+      modal.querySelector(
+        "[data-lead-followup-status]"
+      );
+
+    const stateElement =
+      modal.querySelector(
+        "[data-lead-followup-state]"
+      );
+
+    const markButton =
+      modal.querySelector(
+        "[data-lead-mark-contacted]"
+      );
+
+    if (
+      !box ||
+      !stateElement ||
+      !markButton
+    ) {
+      return;
+    }
+
+    if (!lead?.id) {
+      box.hidden = true;
+      return;
+    }
+
+    box.hidden = false;
+
+    const leadStatus =
+      String(
+        followUp?.lead_status ||
+        lead.status ||
+        "new"
+      );
+
+    const openedAt =
+      followUp?.whatsapp_opened_at ||
+      null;
+
+    const contactedAt =
+      followUp?.contacted_at ||
+      null;
+
+    const statusUpdatedAt =
+      followUp?.status_updated_at ||
+      null;
+
+    stateElement.className =
+      "sb-lead-followup-state";
+
+    if (
+      contactedAt ||
+      leadStatus === "contacted"
+    ) {
+      const time =
+        formatLeadFollowupTimestamp(
+          contactedAt ||
+          statusUpdatedAt
+        );
+
+      stateElement.classList.add(
+        "is-contacted"
+      );
+
+      stateElement.textContent =
+        time
+          ? `🟢 Sudah dihubungi • ${time}`
+          : "🟢 Sudah dihubungi";
+
+      markButton.hidden = false;
+      markButton.disabled = true;
+      markButton.textContent =
+        "✓ Sudah Dihubungi";
+
+      return;
+    }
+
+    if (openedAt) {
+      const time =
+        formatLeadFollowupTimestamp(
+          openedAt
+        );
+
+      stateElement.classList.add(
+        "is-opened"
+      );
+
+      stateElement.textContent =
+        time
+          ? `🟡 WhatsApp dibuka • ${time}`
+          : "🟡 WhatsApp dibuka";
+    }
+    else {
+      stateElement.textContent =
+        "⚪ Belum Follow-up";
+    }
+
+    if (leadStatus === "new") {
+      markButton.hidden = false;
+      markButton.disabled = false;
+      markButton.textContent =
+        "✓ Tandai Sudah Dihubungi";
+    }
+    else {
+      markButton.hidden = true;
+      markButton.disabled = true;
+    }
+  }
+
+  async function loadLeadFollowupStatus(
+    lead
+  ) {
+    if (!lead?.id) {
+      renderLeadFollowupStatus(
+        null,
+        null
+      );
+
+      return;
+    }
+
+    try {
+      const result =
+        await api(
+          `${API}/${
+            encodeURIComponent(
+              lead.id
+            )
+          }/follow-up-status`
+        );
+
+      const followUp =
+        result?.follow_up ||
+        null;
+
+      if (
+        followUp?.lead_status
+      ) {
+        lead.status =
+          followUp.lead_status;
+      }
+
+      renderLeadFollowupStatus(
+        lead,
+        followUp
+      );
+    }
+    catch (error) {
+      console.error(
+        "LEAD_FOLLOWUP_STATUS_LOAD_FAILED",
+        error
+      );
+
+      renderLeadFollowupStatus(
+        lead,
+        null
+      );
+    }
+  }
+
+  async function markLeadContacted() {
+    if (!currentLeadId) {
+      return;
+    }
+
+    const lead =
+      leads.find(
+        item =>
+          item.id === currentLeadId
+      );
+
+    if (!lead) {
+      formError.textContent =
+        "Lead tidak ditemukan.";
+
+      return;
+    }
+
+    const markButton =
+      modal.querySelector(
+        "[data-lead-mark-contacted]"
+      );
+
+    if (markButton) {
+      markButton.disabled = true;
+      markButton.textContent =
+        "Menyimpan...";
+    }
+
+    formError.textContent = "";
+
+    try {
+      const result =
+        await api(
+          `${API}/${
+            encodeURIComponent(
+              lead.id
+            )
+          }/mark-contacted`,
+          {
+            method:
+              "POST",
+
+            headers: {
+              "Content-Type":
+                "application/json"
+            },
+
+            body:
+              JSON.stringify({})
+          }
+        );
+
+      lead.status =
+        result?.lead?.status ||
+        "contacted";
+
+      if (
+        form.elements.status
+      ) {
+        form.elements.status.value =
+          lead.status;
+      }
+
+      renderLeadFollowupStatus(
+        lead,
+        result?.follow_up ||
+        null
+      );
+
+      showNotice(
+        "Lead ditandai sudah dihubungi. Status Lead menjadi Contacted."
+      );
+
+      try {
+        await loadLeads(true);
+      }
+      catch (refreshError) {
+        console.warn(
+          "LEAD_REFRESH_AFTER_CONTACT_FAILED",
+          refreshError
+        );
+      }
+    }
+    catch (error) {
+      formError.textContent =
+        error?.message ||
+        "Gagal menandai Lead sudah dihubungi.";
+
+      await loadLeadFollowupStatus(
+        lead
+      );
+    }
+  }
+
   async function openLeadWhatsappFollowup() {
     if (!currentLeadId) {
       return;
@@ -2589,6 +2962,10 @@
           body:
             JSON.stringify({})
         }
+      );
+
+      await loadLeadFollowupStatus(
+        lead
       );
 
       showNotice(
@@ -2938,6 +3315,13 @@
   )?.addEventListener(
     "click",
     copyLeadWhatsappNumber
+  );
+
+  modal.querySelector(
+    "[data-lead-mark-contacted]"
+  )?.addEventListener(
+    "click",
+    markLeadContacted
   );
 
   modal.querySelector(

@@ -252,6 +252,72 @@ export default {
         );
       }
 
+      const adminLeadFollowupStatusMatch =
+        url.pathname.match(
+          /^\/api\/admin\/leads\/([^/]+)\/follow-up-status$/
+        );
+
+      if (
+        adminLeadFollowupStatusMatch &&
+        method === "GET"
+      ) {
+        const auth =
+          await requireRole(
+            request,
+            env,
+            [
+              "system_admin",
+              "staff"
+            ]
+          );
+
+        if (auth.response) {
+          return auth.response;
+        }
+
+        return getAdminLeadFollowupStatus(
+          request,
+          env,
+          auth,
+          decodeURIComponent(
+            adminLeadFollowupStatusMatch[1]
+          )
+        );
+      }
+
+      const adminLeadMarkContactedMatch =
+        url.pathname.match(
+          /^\/api\/admin\/leads\/([^/]+)\/mark-contacted$/
+        );
+
+      if (
+        adminLeadMarkContactedMatch &&
+        method === "POST"
+      ) {
+        const auth =
+          await requireRole(
+            request,
+            env,
+            [
+              "system_admin",
+              "staff"
+            ]
+          );
+
+        if (auth.response) {
+          return auth.response;
+        }
+
+        return markAdminLeadContacted(
+          request,
+          env,
+          auth,
+          decodeURIComponent(
+            adminLeadMarkContactedMatch[1]
+          )
+        );
+      }
+
       const adminLeadWhatsappFollowupMatch =
         url.pathname.match(
           /^\/api\/admin\/leads\/([^/]+)\/follow-up-whatsapp$/
@@ -3674,6 +3740,297 @@ async function listAdminLeadNotes(
         lead_code: lead.lead_code
       },
       notes: rows.results || []
+    }
+  );
+}
+
+async function readAdminLeadFollowupState(
+  env,
+  leadId
+) {
+  const row =
+    await env.DB.prepare(
+      `SELECT
+         MAX(
+           CASE
+             WHEN action =
+               'LEAD_WHATSAPP_FOLLOWUP_OPENED'
+             THEN created_at
+           END
+         ) AS whatsapp_opened_at,
+
+         MAX(
+           CASE
+             WHEN action =
+               'LEAD_CONTACTED'
+             THEN created_at
+           END
+         ) AS contacted_at
+
+       FROM activity_logs
+
+       WHERE entity_type = 'lead'
+         AND entity_id = ?
+         AND action IN (
+           'LEAD_WHATSAPP_FOLLOWUP_OPENED',
+           'LEAD_CONTACTED'
+         )`
+    )
+      .bind(leadId)
+      .first();
+
+  return {
+    whatsapp_opened_at:
+      row?.whatsapp_opened_at ||
+      null,
+
+    contacted_at:
+      row?.contacted_at ||
+      null
+  };
+}
+
+async function getAdminLeadFollowupStatus(
+  request,
+  env,
+  auth,
+  leadId
+) {
+  const lead =
+    await env.DB.prepare(
+      `SELECT
+         id,
+         lead_code,
+         status,
+         updated_at
+       FROM leads
+       WHERE id = ?
+       LIMIT 1`
+    )
+      .bind(leadId)
+      .first();
+
+  if (!lead) {
+    return apiResponse(
+      request,
+      env,
+      {
+        error:
+          "Lead not found."
+      },
+      404
+    );
+  }
+
+  const state =
+    await readAdminLeadFollowupState(
+      env,
+      leadId
+    );
+
+  return apiResponse(
+    request,
+    env,
+    {
+      ok: true,
+
+      follow_up: {
+        lead_status:
+          lead.status,
+
+        status_updated_at:
+          lead.updated_at ||
+          null,
+
+        whatsapp_opened_at:
+          state.whatsapp_opened_at,
+
+        contacted_at:
+          state.contacted_at
+      }
+    }
+  );
+}
+
+async function markAdminLeadContacted(
+  request,
+  env,
+  auth,
+  leadId
+) {
+  const lead =
+    await env.DB.prepare(
+      `SELECT
+         id,
+         lead_code,
+         full_name,
+         status,
+         updated_at
+       FROM leads
+       WHERE id = ?
+       LIMIT 1`
+    )
+      .bind(leadId)
+      .first();
+
+  if (!lead) {
+    return apiResponse(
+      request,
+      env,
+      {
+        error:
+          "Lead not found."
+      },
+      404
+    );
+  }
+
+  if (
+    ![
+      "new",
+      "contacted"
+    ].includes(
+      lead.status
+    )
+  ) {
+    return apiResponse(
+      request,
+      env,
+      {
+        error:
+          "Only a New lead can be marked as Contacted."
+      },
+      409
+    );
+  }
+
+  let currentStatus =
+    lead.status;
+
+  let statusUpdatedAt =
+    lead.updated_at ||
+    null;
+
+  if (
+    lead.status === "new"
+  ) {
+    const timestamp =
+      nowIso();
+
+    const updateResult =
+      await env.DB.prepare(
+        `UPDATE leads
+         SET
+           status = 'contacted',
+           updated_at = ?
+         WHERE id = ?
+           AND status = 'new'`
+      )
+        .bind(
+          timestamp,
+          leadId
+        )
+        .run();
+
+    const changed =
+      Number(
+        updateResult?.meta?.changes ||
+        0
+      );
+
+    if (changed > 0) {
+      await writeActivity(
+        env,
+        auth.user.id,
+        "LEAD_CONTACTED",
+        "lead",
+        leadId,
+        `Lead ${lead.lead_code} marked as contacted.`
+      );
+
+      currentStatus =
+        "contacted";
+
+      statusUpdatedAt =
+        timestamp;
+    }
+    else {
+      const refreshed =
+        await env.DB.prepare(
+          `SELECT
+             status,
+             updated_at
+           FROM leads
+           WHERE id = ?
+           LIMIT 1`
+        )
+          .bind(leadId)
+          .first();
+
+      currentStatus =
+        refreshed?.status ||
+        currentStatus;
+
+      statusUpdatedAt =
+        refreshed?.updated_at ||
+        statusUpdatedAt;
+    }
+  }
+
+  if (
+    currentStatus !==
+    "contacted"
+  ) {
+    return apiResponse(
+      request,
+      env,
+      {
+        error:
+          "Lead status changed before the follow-up could be saved."
+      },
+      409
+    );
+  }
+
+  const state =
+    await readAdminLeadFollowupState(
+      env,
+      leadId
+    );
+
+  return apiResponse(
+    request,
+    env,
+    {
+      ok: true,
+
+      lead: {
+        id:
+          lead.id,
+
+        lead_code:
+          lead.lead_code,
+
+        full_name:
+          lead.full_name,
+
+        status:
+          currentStatus
+      },
+
+      follow_up: {
+        lead_status:
+          currentStatus,
+
+        status_updated_at:
+          statusUpdatedAt,
+
+        whatsapp_opened_at:
+          state.whatsapp_opened_at,
+
+        contacted_at:
+          state.contacted_at
+      }
     }
   );
 }
