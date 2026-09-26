@@ -840,6 +840,17 @@
               maxlength="5000"
             ></textarea>
           </div>
+
+          <div class="sb-leads-field full">
+            <label>Calculator / Scope Data</label>
+
+            <textarea
+              data-lead-r2-summary
+              rows="10"
+              readonly
+              placeholder="Data Calculator akan tampil di sini."
+            ></textarea>
+          </div>
         </div>
 
         <div
@@ -1226,7 +1237,14 @@
             lead.email,
             lead.phone,
             lead.service_interest,
-            lead.source
+            lead.source,
+            lead.public_request_ref,
+            lead.package_name,
+            lead.extra_feature,
+            lead.domain_name,
+            lead.hosting_mode,
+            lead.target_timeline,
+            lead.target_date
           ]
             .filter(Boolean)
             .join(" ")

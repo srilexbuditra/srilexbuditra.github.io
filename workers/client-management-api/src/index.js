@@ -2172,29 +2172,50 @@ async function createPublicEstimateLead(
       body?.domain_name
     );
 
+  const hostingMode =
+    String(
+      body?.hosting_mode ||
+      "none"
+    )
+      .trim()
+      .toLowerCase();
+
+  const targetTimeline =
+    String(
+      body?.target_timeline ||
+      "flexible"
+    )
+      .trim()
+      .toLowerCase();
+
+  const rawTargetDate =
+    nullableLeadText(
+      body?.target_date
+    );
+
 
   /*
    * Harga selalu dihitung ulang di Worker.
    * Browser tidak menjadi sumber nilai final.
    */
-  const projectPrices = {
+  const projectAdjustments = {
     "Website Company Profile":
-      2500000,
+      300000,
 
     "Web Application":
-      5000000,
+      2500000,
 
     "REST API / Backend":
-      4500000,
+      2000000,
 
     "Sistem Informasi Custom":
-      7500000,
+      5000000,
 
     "Database Development":
-      3500000,
+      1000000,
 
     "Deployment & Cloud":
-      2500000
+      500000
   };
 
   const packagePrices = {
@@ -2209,6 +2230,26 @@ async function createPublicEstimateLead(
 
     Custom:
       0
+  };
+
+  const packageIncludedFeatures = {
+    Starter: [
+      "500000"
+    ],
+
+    Professional: [
+      "500000",
+      "1000000"
+    ],
+
+    Business: [
+      "500000",
+      "1000000",
+      "1500000",
+      "2500000"
+    ],
+
+    Custom: []
   };
 
   const extraOptions = {
@@ -2267,7 +2308,7 @@ async function createPublicEstimateLead(
 
   if (
     !Object.prototype.hasOwnProperty.call(
-      projectPrices,
+      projectAdjustments,
       project
     )
   ) {
@@ -2320,25 +2361,73 @@ async function createPublicEstimateLead(
     );
   }
 
-  const extras =
-    extraValues.map(
-      value => extraOptions[value]
+  const selectedExtras =
+    extraValues
+      .filter(
+        value =>
+          value !== "0"
+      )
+      .map(
+        value => ({
+          value,
+          ...extraOptions[value]
+        })
+      );
+
+  const includedExtraValues =
+    new Set(
+      packageIncludedFeatures[
+        packageName
+      ] || []
     );
 
+  const includedSelectedExtras =
+    packageName === "Custom"
+      ? []
+      : selectedExtras.filter(
+          extra =>
+            includedExtraValues.has(
+              extra.value
+            )
+        );
+
+  const chargeableExtras =
+    packageName === "Custom"
+      ? []
+      : selectedExtras.filter(
+          extra =>
+            !includedExtraValues.has(
+              extra.value
+            )
+        );
+
   const extraAmount =
-    extras.reduce(
+    chargeableExtras.reduce(
       (total, extra) =>
         total + extra.amount,
       0
     );
 
   const extraLabel =
-    extraValues.length === 1 &&
-    extraValues[0] === "0"
-      ? "Tidak ada"
-      : extras
+    selectedExtras.length
+      ? selectedExtras
           .map(extra => extra.label)
-          .join(", ");
+          .join(", ")
+      : "Tidak ada";
+
+  const includedExtraLabel =
+    includedSelectedExtras.length
+      ? includedSelectedExtras
+          .map(extra => extra.label)
+          .join(", ")
+      : "Tidak ada";
+
+  const chargeableExtraLabel =
+    chargeableExtras.length
+      ? chargeableExtras
+          .map(extra => extra.label)
+          .join(", ")
+      : "Tidak ada";
 
   if (
     !/^[A-Za-z0-9_-]{12,100}$/.test(
@@ -2374,6 +2463,96 @@ async function createPublicEstimateLead(
     );
   }
 
+  if (
+    ![
+      "none",
+      "owned",
+      "needed"
+    ].includes(hostingMode)
+  ) {
+    return apiResponse(
+      request,
+      env,
+      {
+        error:
+          "Invalid hosting_mode."
+      },
+      400
+    );
+  }
+
+  if (
+    ![
+      "flexible",
+      "2_4_weeks",
+      "1_2_months",
+      "target_date"
+    ].includes(targetTimeline)
+  ) {
+    return apiResponse(
+      request,
+      env,
+      {
+        error:
+          "Invalid target_timeline."
+      },
+      400
+    );
+  }
+
+  let targetDate = null;
+
+  if (
+    targetTimeline ===
+    "target_date"
+  ) {
+    if (
+      !rawTargetDate ||
+      !/^\d{4}-\d{2}-\d{2}$/.test(
+        rawTargetDate
+      )
+    ) {
+      return apiResponse(
+        request,
+        env,
+        {
+          error:
+            "A valid target_date is required."
+        },
+        400
+      );
+    }
+
+    const parsedTargetDate =
+      Date.parse(
+        `${rawTargetDate}T00:00:00Z`
+      );
+
+    if (
+      Number.isNaN(
+        parsedTargetDate
+      ) ||
+      new Date(
+        parsedTargetDate
+      )
+        .toISOString()
+        .slice(0, 10) !==
+        rawTargetDate
+    ) {
+      return apiResponse(
+        request,
+        env,
+        {
+          error:
+            "Invalid target_date."
+        },
+        400
+      );
+    }
+
+    targetDate =
+      rawTargetDate;
+  }
   let domainName = null;
   let domainStatus = "none";
   let domainCheckedAt = null;
@@ -2555,10 +2734,11 @@ async function createPublicEstimateLead(
             existing.public_request_ref,
 
           estimated_amount:
-            Number(
-              existing.estimated_amount ||
-              0
-            )
+            existing.estimated_amount == null
+              ? null
+              : Number(
+                  existing.estimated_amount
+                )
         }
       }
     );
@@ -2600,22 +2780,20 @@ async function createPublicEstimateLead(
     );
   }
 
-  const basePrice =
-    projectPrices[project];
+  const projectAdjustment =
+    projectAdjustments[project];
 
   const packagePrice =
     packagePrices[packageName];
 
   const estimatedAmount =
-    (
-      packagePrice
-        ? Math.max(
-            packagePrice,
-            basePrice
-          )
-        : basePrice
-    ) +
-    extraAmount;
+    packageName === "Custom"
+      ? null
+      : (
+          packagePrice +
+          projectAdjustment +
+          extraAmount
+        );
 
   const leadId =
     crypto.randomUUID();
@@ -2629,12 +2807,32 @@ async function createPublicEstimateLead(
   const timestamp =
     nowIso();
 
-  const readableAmount =
-    new Intl.NumberFormat(
-      "id-ID"
-    ).format(
-      estimatedAmount
-    );
+  const estimateText =
+    estimatedAmount == null
+      ? "Konsultasi"
+      : `Rp ${new Intl.NumberFormat(
+          "id-ID"
+        ).format(
+          estimatedAmount
+        )}`;
+
+  const projectAdjustmentText =
+    packageName === "Custom"
+      ? "Dicatat untuk konsultasi"
+      : `+ Rp ${new Intl.NumberFormat(
+          "id-ID"
+        ).format(
+          projectAdjustment
+        )}`;
+
+  const addOnAmountText =
+    packageName === "Custom"
+      ? "Dicatat untuk konsultasi"
+      : `Rp ${new Intl.NumberFormat(
+          "id-ID"
+        ).format(
+          extraAmount
+        )}`;
 
   const domainStatusText =
     domainMode === "owned"
@@ -2643,10 +2841,63 @@ async function createPublicEstimateLead(
         ? "Belum terdaftar - kandidat tersedia"
         : "Belum ditentukan";
 
+  const hostingText = {
+    none:
+      "Belum menentukan",
+    owned:
+      "Sudah memiliki hosting / server",
+    needed:
+      "Membutuhkan hosting / server"
+  }[hostingMode] ||
+    "Belum menentukan";
+
+  const timelineText =
+    targetTimeline === "target_date"
+      ? `Target tanggal ${targetDate}`
+      : ({
+          flexible:
+            "Fleksibel",
+          "2_4_weeks":
+            "2-4 minggu",
+          "1_2_months":
+            "1-2 bulan"
+        }[targetTimeline] ||
+        "Fleksibel");
+
+  const projectDisplayLabels = {
+    "Website Company Profile":
+      "Website Company Profile",
+
+    "Web Application":
+      "Web Application",
+
+    "REST API / Backend":
+      "REST API / Backend",
+
+    "Sistem Informasi Custom":
+      "Sistem Informasi Bisnis",
+
+    "Database Development":
+      "Database Development",
+
+    "Deployment & Cloud":
+      "Deployment / Cloud Setup"
+  };
+
   const messageParts = [
     `Paket: ${packageName}`,
-    `Fitur tambahan: ${extraLabel}`,
-    `Estimasi awal: Rp ${readableAmount}`
+    `Jenis Project: ${
+      projectDisplayLabels[project] ||
+      project
+    }`,
+    `Penyesuaian scope: ${projectAdjustmentText}`,
+    `Fitur kebutuhan: ${extraLabel}`,
+    `Fitur termasuk paket: ${includedExtraLabel}`,
+    `Add-on berbayar: ${chargeableExtraLabel}`,
+    `Total add-on: ${addOnAmountText}`,
+    `Hosting / Server: ${hostingText}`,
+    `Target waktu: ${timelineText}`,
+    `Estimasi awal: ${estimateText}`
   ];
 
   if (domainMode !== "none") {
@@ -2693,6 +2944,9 @@ async function createPublicEstimateLead(
         domain_name,
         domain_status,
         domain_checked_at,
+        hosting_mode,
+        target_timeline,
+        target_date,
         created_at,
         updated_at
       )
@@ -2708,6 +2962,7 @@ async function createPublicEstimateLead(
        NULL,
        ?, ?, ?, ?, ?,
        ?, ?, ?, ?,
+       ?, ?, ?,
        ?, ?
      )`
   )
@@ -2729,6 +2984,9 @@ async function createPublicEstimateLead(
       domainName,
       domainStatus,
       domainCheckedAt,
+      hostingMode,
+      targetTimeline,
+      targetDate,
       timestamp,
       timestamp
     )
@@ -2787,6 +3045,9 @@ async function listAdminLeads(request, env) {
        l.domain_name,
        l.domain_status,
        l.domain_checked_at,
+       l.hosting_mode,
+       l.target_timeline,
+       l.target_date,
        l.status,
        l.assigned_to_user_id,
        l.next_follow_up_at,

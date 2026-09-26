@@ -7362,3 +7362,100 @@ body {
     align-items:flex-start;
   }
 }
+
+/* ==========================================================
+   ESTIMATOR FLOW R2
+   ========================================================== */
+
+.estimator-field,
+.estimator-description{
+  display:grid;
+  gap:8px;
+}
+
+.estimator-field-note,
+.estimator-choice-intro,
+.estimator-external-cost-note{
+  display:block;
+  line-height:1.55;
+}
+
+.estimator-choice-section,
+.contact-picker{
+  margin-top:18px;
+  padding:18px;
+  border:1px solid rgba(23,56,75,.14);
+  border-radius:18px;
+}
+
+.estimator-choice-section legend,
+.contact-picker legend{
+  padding:0 8px;
+  font-weight:800;
+  letter-spacing:.04em;
+}
+
+.estimator-choice-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:12px;
+  margin-top:12px;
+}
+
+.estimator-choice-card{
+  display:flex;
+  gap:10px;
+  align-items:flex-start;
+  padding:14px;
+  border:1px solid rgba(23,56,75,.14);
+  border-radius:14px;
+  cursor:pointer;
+}
+
+.estimator-choice-card span{
+  display:grid;
+  gap:4px;
+}
+
+.timeline-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:12px;
+  margin-top:12px;
+}
+
+.estimator-description{
+  margin-top:18px;
+}
+
+.estimator-external-cost-note{
+  margin:14px 0 0;
+  font-size:.88rem;
+}
+
+.extra-feature-card.included small{
+  font-weight:800;
+}
+
+.estimate-summary-r2 span{
+  display:grid;
+  gap:3px;
+}
+
+.estimate-summary-r2 span small{
+  display:block;
+  font-size:.78rem;
+  line-height:1.35;
+}
+
+@media (max-width:760px){
+  .estimator-choice-grid,
+  .timeline-grid{
+    grid-template-columns:1fr;
+  }
+
+  .estimator-choice-section,
+  .contact-picker{
+    padding:14px;
+  }
+}

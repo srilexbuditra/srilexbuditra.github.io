@@ -154,14 +154,40 @@ const revealObserver = new IntersectionObserver(entries => {
 }, {threshold:.12});
 $$('.reveal').forEach(el => revealObserver.observe(el));
 
-const basePrices = {
-  'Website Company Profile': 2500000,
-  'Web Application': 5000000,
-  'REST API / Backend': 4500000,
-  'Sistem Informasi Custom': 7500000,
-  'Database Development': 3500000,
-  'Deployment & Cloud': 2500000
-};
+const projectAdjustments = Object.freeze({
+  'Website Company Profile': 300000,
+  'Web Application': 2500000,
+  'REST API / Backend': 2000000,
+  'Sistem Informasi Custom': 5000000,
+  'Database Development': 1000000,
+  'Deployment & Cloud': 500000
+});
+
+const projectDisplayLabels = Object.freeze({
+  'Website Company Profile': 'Website Company Profile',
+  'Web Application': 'Web Application',
+  'REST API / Backend': 'REST API / Backend',
+  'Sistem Informasi Custom': 'Sistem Informasi Bisnis',
+  'Database Development': 'Database Development',
+  'Deployment & Cloud': 'Deployment / Cloud Setup'
+});
+
+const packageIncludedFeatures = Object.freeze({
+  Starter: [
+    '500000'
+  ],
+  Professional: [
+    '500000',
+    '1000000'
+  ],
+  Business: [
+    '500000',
+    '1000000',
+    '1500000',
+    '2500000'
+  ],
+  Custom: []
+});
 
 let selectedPackage = 5000000;
 let selectedPackageName = 'Professional';
@@ -205,7 +231,7 @@ function syncSelectedPackageUI(){
     price.textContent =
       isCustom
         ? 'Harga disusun setelah scope kebutuhan dibahas'
-        : `Mulai dari ${formatIDR(selectedPackage)}`;
+        : `Harga dasar ${formatIDR(selectedPackage)}`;
   }
 
   if(preview){
@@ -834,8 +860,43 @@ function getSelectedExtraItems(){
     }));
 }
 
-function getSelectedExtraTotal(){
+function getIncludedExtraValues(
+  packageName = selectedPackageName
+){
+  return new Set(
+    packageIncludedFeatures[
+      packageName
+    ] || []
+  );
+}
+
+function isExtraIncluded(
+  value,
+  packageName = selectedPackageName
+){
+  return getIncludedExtraValues(
+    packageName
+  ).has(
+    String(value || '')
+  );
+}
+
+function getChargeableExtraItems(){
+  if(selectedPackageName === 'Custom'){
+    return [];
+  }
+
   return getSelectedExtraItems()
+    .filter(
+      item =>
+        !isExtraIncluded(
+          item.value
+        )
+    );
+}
+
+function getSelectedExtraTotal(){
+  return getChargeableExtraItems()
     .reduce(
       (total, item) =>
         total + item.amount,
@@ -854,13 +915,126 @@ function getSelectedExtraLabel(){
     : 'Tidak ada';
 }
 
+function getHostingMode(){
+  return (
+    document.querySelector(
+      'input[name="hostingMode"]:checked'
+    )?.value ||
+    'none'
+  );
+}
+
+function hostingModeLabel(
+  mode = getHostingMode()
+){
+  const labels = {
+    none:
+      'Belum menentukan',
+    owned:
+      'Sudah memiliki hosting / server',
+    needed:
+      'Membutuhkan hosting / server'
+  };
+
+  return (
+    labels[mode] ||
+    labels.none
+  );
+}
+
+function getTargetTimeline(){
+  return (
+    $('#targetTimeline')?.value ||
+    'flexible'
+  );
+}
+
+function formatTargetDate(value){
+  const raw =
+    String(value || '').trim();
+
+  if(!raw){
+    return '';
+  }
+
+  const parts =
+    raw.split('-');
+
+  if(parts.length !== 3){
+    return raw;
+  }
+
+  return (
+    parts[2] +
+    '/' +
+    parts[1] +
+    '/' +
+    parts[0]
+  );
+}
+
+function targetTimelineLabel(
+  timeline = getTargetTimeline()
+){
+  const labels = {
+    flexible:
+      'Fleksibel',
+    '2_4_weeks':
+      '2–4 minggu',
+    '1_2_months':
+      '1–2 bulan'
+  };
+
+  if(timeline === 'target_date'){
+    const date =
+      $('#targetDate')?.value ||
+      '';
+
+    return date
+      ? 'Target tanggal ' +
+          formatTargetDate(date)
+      : 'Target tanggal belum dipilih';
+  }
+
+  return (
+    labels[timeline] ||
+    labels.flexible
+  );
+}
+
+function syncTargetDateVisibility(){
+  const wrap =
+    $('#targetDateWrap');
+
+  if(!wrap){
+    return;
+  }
+
+  const show =
+    getTargetTimeline() ===
+    'target_date';
+
+  wrap.hidden =
+    !show;
+
+  const input =
+    $('#targetDate');
+
+  if(input){
+    input.required =
+      show;
+  }
+}
+
 function syncExtraFeatureUI(){
   const total =
     getSelectedExtraTotal();
 
   if($('#extraTotal')){
     $('#extraTotal').textContent =
-      formatIDR(total);
+      selectedPackageName === 'Custom'
+        ? 'Konsultasi'
+        : formatIDR(total);
   }
 
   if($('#extraText')){
@@ -875,10 +1049,55 @@ function syncExtraFeatureUI(){
           'input[name="extraFeature"]'
         );
 
+      const value =
+        String(
+          input?.value ||
+          ''
+        );
+
+      const item =
+        extraFeatureCatalog[value];
+
+      const included =
+        isExtraIncluded(value);
+
       card.classList.toggle(
         'selected',
         Boolean(input?.checked)
       );
+
+      card.classList.toggle(
+        'included',
+        included &&
+        selectedPackageName !== 'Custom'
+      );
+
+      const price =
+        card.querySelector(
+          'small'
+        );
+
+      if(!price || !item){
+        return;
+      }
+
+      if(
+        selectedPackageName ===
+        'Custom'
+      ){
+        price.textContent =
+          'Dicatat untuk konsultasi';
+
+        return;
+      }
+
+      price.textContent =
+        included
+          ? '✓ Termasuk Paket'
+          : '+ ' +
+            formatIDR(
+              item.amount
+            );
     });
 }
 
@@ -887,19 +1106,26 @@ function updateEstimate(){
     $('#project')?.value ||
     'Website Company Profile';
 
+  const projectAdjustment =
+    projectAdjustments[
+      project
+    ] || 0;
+
   const extra =
     getSelectedExtraTotal();
 
   const isCustom =
-    selectedPackageName === 'Custom';
+    selectedPackageName ===
+    'Custom';
 
   const total =
     isCustom
       ? 0
-      : Math.max(
-          selectedPackage,
-          basePrices[project] || 0
-        ) + extra;
+      : (
+          selectedPackage +
+          projectAdjustment +
+          extra
+        );
 
   const totalElement =
     $('#total');
@@ -913,7 +1139,53 @@ function updateEstimate(){
 
   if($('#chosen')){
     $('#chosen').textContent =
+      projectDisplayLabels[
+        project
+      ] ||
       project;
+  }
+
+  if($('#projectAdjustment')){
+    $('#projectAdjustment').textContent =
+      isCustom
+        ? 'Dicatat untuk konsultasi'
+        : '+ ' +
+          formatIDR(
+            projectAdjustment
+          );
+  }
+
+  if($('#previewPackageBase')){
+    $('#previewPackageBase').textContent =
+      isCustom
+        ? 'Konsultasi'
+        : formatIDR(
+            selectedPackage
+          );
+  }
+
+  if($('#extraCharge')){
+    $('#extraCharge').textContent =
+      isCustom
+        ? 'Dicatat untuk konsultasi'
+        : (
+            extra
+              ? '+ ' +
+                formatIDR(extra)
+              : formatIDR(0)
+          );
+  }
+
+  if($('#previewHosting')){
+    $('#previewHosting').textContent =
+      hostingModeLabel();
+  }
+
+  syncTargetDateVisibility();
+
+  if($('#previewTimeline')){
+    $('#previewTimeline').textContent =
+      targetTimelineLabel();
   }
 
   syncExtraFeatureUI();
@@ -924,8 +1196,8 @@ function updateEstimate(){
   if(note){
     note.textContent =
       isCustom
-        ? 'Paket Custom tidak menggunakan harga otomatis. Nilai final disusun setelah kebutuhan, kompleksitas, dan scope project dibahas.'
-        : 'Estimasi awal akan dikonfirmasi kembali setelah kebutuhan dan scope project dibahas.';
+        ? 'Paket Custom tidak menggunakan harga otomatis. Pilihan project, fitur, domain, hosting, dan target waktu tetap dicatat untuk konsultasi.'
+        : 'Estimasi awal = harga dasar paket + penyesuaian scope + add-on yang belum termasuk paket. Domain, hosting/server, lisensi, dan layanan pihak ketiga dikonfirmasi saat konsultasi.';
   }
 
   const meter =
@@ -942,7 +1214,11 @@ function updateEstimate(){
             Math.max(
               18,
               Math.round(
-                (total / 15000000) * 100
+                (
+                  total /
+                  20000000
+                ) *
+                100
               )
             )
           );
@@ -990,6 +1266,26 @@ $$('input[name="extraFeature"]')
     );
   });
 
+$$('input[name="hostingMode"]')
+  .forEach(input =>
+    input.addEventListener(
+      'change',
+      updateEstimate
+    )
+  );
+
+$('#targetTimeline')
+  ?.addEventListener(
+    'change',
+    updateEstimate
+  );
+
+$('#targetDate')
+  ?.addEventListener(
+    'change',
+    updateEstimate
+  );
+
 initDomainSearchUI();
 
 $('#estimateForm')?.addEventListener('submit', e => {
@@ -1036,6 +1332,33 @@ waBtn?.addEventListener('click', async () => {
 
   const selectedDomainMode =
     currentDomainMode();
+
+  const selectedHostingMode =
+    getHostingMode();
+
+  const selectedTargetTimeline =
+    getTargetTimeline();
+
+  const selectedTargetDate =
+    selectedTargetTimeline ===
+      'target_date'
+      ? (
+          $('#targetDate')?.value ||
+          ''
+        ).trim()
+      : null;
+
+  if (
+    selectedTargetTimeline ===
+      'target_date' &&
+    !selectedTargetDate
+  ) {
+    alert(
+      'Silakan pilih target tanggal terlebih dahulu.'
+    );
+
+    return;
+  }
 
   if (
     selectedDomainMode === 'new' &&
@@ -1094,6 +1417,15 @@ waBtn?.addEventListener('click', async () => {
             domainState.selectedDomain ||
             null
           ),
+
+    hosting_mode:
+      selectedHostingMode,
+
+    target_timeline:
+      selectedTargetTimeline,
+
+    target_date:
+      selectedTargetDate,
 
     description:
       $('#description').value.trim(),
@@ -1216,11 +1548,15 @@ waBtn?.addEventListener('click', async () => {
       `Perusahaan: ${payload.company_name || '-'}`,
       `Email: ${payload.email}`,
       `WhatsApp: ${payload.phone || '-'}`,
-      `Jenis Project: ${payload.project}`,
+      `Jenis Project: ${projectDisplayLabels[payload.project] || payload.project}`,
       `Paket: ${payload.package_name}`,
-      `Fitur Tambahan: ${getSelectedExtraLabel()}`,
+      `Penyesuaian Scope: ${selectedPackageName === 'Custom' ? 'Konsultasi' : '+ ' + formatIDR(projectAdjustments[payload.project] || 0)}`,
+      `Fitur Kebutuhan: ${getSelectedExtraLabel()}`,
+      `Total Add-on: ${selectedPackageName === 'Custom' ? 'Konsultasi' : formatIDR(getSelectedExtraTotal())}`,
       `Domain: ${payload.domain_name || 'Belum ditentukan'}`,
       `Status Domain: ${selectedDomainMode === 'none' ? 'Belum ditentukan' : domainStatusLabel()}`,
+      `Hosting / Server: ${hostingModeLabel(payload.hosting_mode)}`,
+      `Target Waktu: ${targetTimelineLabel(payload.target_timeline)}`,
       `Estimasi Awal: ${estimateDisplay(total)}`,
       `Deskripsi: ${payload.description || '-'}`
     ].join('\n');
@@ -1408,19 +1744,80 @@ async function populatePrintReport(){
     domainState.mode === 'none'
       ? 'Belum ditentukan'
       : domainStatusLabel();
-  const total = updateEstimate();
+
+  const projectValue =
+    $('#project')?.value ||
+    'Website Company Profile';
+
+  const projectLabel =
+    projectDisplayLabels[
+      projectValue
+    ] ||
+    projectValue;
+
+  const projectAdjustmentText =
+    selectedPackageName === 'Custom'
+      ? 'Dicatat untuk konsultasi'
+      : '+ ' +
+        formatIDR(
+          projectAdjustments[
+            projectValue
+          ] || 0
+        );
+
+  const extraChargeText =
+    selectedPackageName === 'Custom'
+      ? 'Dicatat untuk konsultasi'
+      : formatIDR(
+          getSelectedExtraTotal()
+        );
+
+  const packageText =
+    selectedPackageName === 'Custom'
+      ? 'Custom — Konsultasi'
+      : (
+          selectedPackageName +
+          ' — ' +
+          formatIDR(
+            selectedPackage
+          )
+        );
+
+  const hostingText =
+    hostingModeLabel();
+
+  const timelineText =
+    targetTimelineLabel();
+
+  const total =
+    updateEstimate();
   const now = new Date();
   currentDocumentRef=`SB-EST-${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}-${String(now.getHours()).padStart(2,'0')}${String(now.getMinutes()).padStart(2,'0')}${String(now.getSeconds()).padStart(2,'0')}`;
 
   text('printName', value('name')); text('printCompany', value('company')); text('printEmail', value('email')); text('printWhatsapp', value('whatsapp'));
   text(
+    'printPackage',
+    packageText
+  );
+
+  text(
     'printProject',
-    $('#project')?.value || '-'
+    projectLabel
+  );
+
+  text(
+    'printProjectAdjustment',
+    projectAdjustmentText
   );
 
   text(
     'printExtra',
     extraText
+  );
+
+  text(
+    'printExtraCharge',
+    extraChargeText
   );
 
   text(
@@ -1434,13 +1831,25 @@ async function populatePrintReport(){
   );
 
   text(
+    'printHosting',
+    hostingText
+  );
+
+  text(
+    'printTimeline',
+    timelineText
+  );
+
+  text(
     'printDescription',
     value('description')
   );
 
   text(
     'printTotal',
-    formatIDR(total)
+    selectedPackageName === 'Custom'
+      ? 'Konsultasi'
+      : formatIDR(total)
   );
   text('printDate', now.toLocaleDateString('id-ID',{day:'2-digit',month:'long',year:'numeric'}));
   text('printRef', currentDocumentRef); text('printRefTop',currentDocumentRef); text('printRefVerify',currentDocumentRef);
@@ -1461,7 +1870,28 @@ async function populatePrintReport(){
     }
   }
 
-  const fingerprintSource=[currentDocumentRef,value('name'),value('company'),value('email'),value('whatsapp'),$('#project')?.value||'',extraText,domainText,domainStatusText,value('description'),String(total),signaturePads.client?.dataUrl||''].join('|');
+  const fingerprintSource=[
+    currentDocumentRef,
+    value('name'),
+    value('company'),
+    value('email'),
+    value('whatsapp'),
+    selectedPackageName,
+    projectValue,
+    projectAdjustmentText,
+    extraText,
+    extraChargeText,
+    domainText,
+    domainStatusText,
+    hostingText,
+    timelineText,
+    $('#targetDate')?.value || '',
+    value('description'),
+    selectedPackageName === 'Custom'
+      ? 'Konsultasi'
+      : String(total),
+    signaturePads.client?.dataUrl || ''
+  ].join('|');
   currentFingerprint=await sha256Hex(fingerprintSource);
   renderCode39(currentDocumentRef);
   await renderVerificationQr(currentDocumentRef);
