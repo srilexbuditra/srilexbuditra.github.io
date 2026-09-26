@@ -1589,29 +1589,59 @@ waBtn?.addEventListener('click', async () => {
       data?.lead?.request_ref ||
       payload.request_ref;
 
+    const selectedFeatureLines =
+      getSelectedExtraItems().length
+        ? getSelectedExtraItems()
+            .map(
+              item =>
+                `• ${item.label}`
+            )
+        : [
+            "• Tidak ada"
+          ];
+
     const msg = [
-      'Halo Srilex Buditra, saya tertarik konsultasi project.',
-      '',
-      `Referensi Lead: ${leadCode || '-'}`,
-      `Request Ref: ${requestRef}`,
-      '',
-      `Nama: ${payload.full_name}`,
-      `Perusahaan: ${payload.company_name || '-'}`,
-      `Email: ${payload.email}`,
-      `WhatsApp: ${payload.phone || '-'}`,
-      `Jenis Project: ${projectDisplayLabels[payload.project] || payload.project}`,
-      `Paket: ${payload.package_name}`,
-      `Penyesuaian Scope: ${selectedPackageName === 'Custom' ? 'Konsultasi' : '+ ' + formatIDR(projectAdjustments[payload.project] || 0)}`,
-      `Fitur Kebutuhan: ${getSelectedExtraLabel()}`,
-      `Nilai Fitur Termasuk Paket: ${selectedPackageName === 'Custom' ? 'Dicatat untuk konsultasi' : formatIDR(getSelectedIncludedExtraTotal())}`,
-      `Total Add-on Berbayar: ${selectedPackageName === 'Custom' ? 'Konsultasi' : formatIDR(getSelectedExtraTotal())}`,
-      `Domain: ${payload.domain_name || 'Belum ditentukan'}`,
-      `Status Domain: ${selectedDomainMode === 'none' ? 'Belum ditentukan' : domainStatusLabel()}`,
-      `Hosting / Server: ${hostingModeLabel(payload.hosting_mode)}`,
-      `Target Waktu: ${targetTimelineLabel(payload.target_timeline)}`,
-      `Estimasi Awal: ${estimateDisplay(total)}`,
-      `Deskripsi: ${payload.description || '-'}`
-    ].join('\n');
+      "Halo Srilex Buditra,",
+      "",
+      "Saya tertarik untuk melanjutkan konsultasi project. Berikut ringkasan kebutuhan project saya:",
+      "",
+      "*REFERENSI*",
+      `• Lead Ref: ${leadCode || "-"}`,
+      `• Request Ref: ${requestRef}`,
+      "",
+      "*DATA KONTAK*",
+      `• Nama: ${payload.full_name}`,
+      `• Perusahaan: ${payload.company_name || "-"}`,
+      `• Email: ${payload.email}`,
+      `• WhatsApp: ${payload.phone || "-"}`,
+      "",
+      "*DETAIL PROJECT*",
+      `• Jenis Project: ${projectDisplayLabels[payload.project] || payload.project}`,
+      `• Paket: ${payload.package_name}`,
+      `• Penyesuaian Scope: ${selectedPackageName === "Custom" ? "Dicatat untuk konsultasi" : "+ " + formatIDR(projectAdjustments[payload.project] || 0)}`,
+      "",
+      "*FITUR YANG DIBUTUHKAN*",
+      ...selectedFeatureLines,
+      "",
+      "*RINCIAN ESTIMASI*",
+      `• Nilai Fitur Termasuk Paket: ${selectedPackageName === "Custom" ? "Dicatat untuk konsultasi" : formatIDR(getSelectedIncludedExtraTotal())}`,
+      `• Total Add-on Berbayar: ${selectedPackageName === "Custom" ? "Konsultasi" : formatIDR(getSelectedExtraTotal())}`,
+      `• Estimasi Awal: ${estimateDisplay(total)}`,
+      "",
+      "*KEBUTUHAN TAMBAHAN*",
+      `• Domain: ${payload.domain_name || "Belum ditentukan"}`,
+      `• Status Domain: ${selectedDomainMode === "none" ? "Belum ditentukan" : domainStatusLabel()}`,
+      `• Hosting / Server: ${hostingModeLabel(payload.hosting_mode)}`,
+      `• Target Pengerjaan: ${targetTimelineLabel(payload.target_timeline)}`,
+      "",
+      "*CATATAN*",
+      payload.description ||
+        "Belum ada deskripsi tambahan.",
+      "",
+      "Mohon bantu ditinjau dan diinformasikan langkah konsultasi selanjutnya.",
+      "",
+      "Terima kasih."
+    ].join("\n");
 
     /*
      * Analytics hanya dicatat setelah Lead

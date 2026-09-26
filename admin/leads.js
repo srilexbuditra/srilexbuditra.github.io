@@ -84,7 +84,574 @@
     return STATUS_LABELS[status] || status;
   }
 
-  function addStyles() {
+  /* LEAD FOLLOW-UP R1 */
+
+  const LEAD_FEATURE_VALUES = Object.freeze({
+    "Form / WhatsApp": 500000,
+    "Dashboard Admin": 1000000,
+    "Login & Role": 1500000,
+    "Integrasi API": 2500000
+  });
+
+  const LEAD_PACKAGE_FEATURES = Object.freeze({
+    Starter: [
+      "Form / WhatsApp"
+    ],
+
+    Professional: [
+      "Form / WhatsApp",
+      "Dashboard Admin"
+    ],
+
+    Business: [
+      "Form / WhatsApp",
+      "Dashboard Admin",
+      "Login & Role",
+      "Integrasi API"
+    ],
+
+    Custom: []
+  });
+
+  const LEAD_PROJECT_ADJUSTMENTS = Object.freeze({
+    "Website Company Profile": 300000,
+    "Web Application": 2500000,
+    "REST API / Backend": 2000000,
+    "Sistem Informasi Custom": 5000000,
+    "Database Development": 1000000,
+    "Deployment & Cloud": 500000
+  });
+
+  const LEAD_PROJECT_LABELS = Object.freeze({
+    "Website Company Profile":
+      "Website Company Profile",
+
+    "Web Application":
+      "Web Application",
+
+    "REST API / Backend":
+      "REST API / Backend",
+
+    "Sistem Informasi Custom":
+      "Sistem Informasi Bisnis",
+
+    "Database Development":
+      "Database Development",
+
+    "Deployment & Cloud":
+      "Deployment / Cloud Setup"
+  });
+
+  function formatLeadMoney(value) {
+    return (
+      "Rp " +
+      new Intl.NumberFormat(
+        "id-ID"
+      ).format(
+        Number(value || 0)
+      )
+    );
+  }
+
+  function normalizeWhatsappNumber(value) {
+    let digits =
+      String(value || "")
+        .replace(/\D/g, "");
+
+    if (!digits) {
+      return "";
+    }
+
+    if (digits.startsWith("0")) {
+      digits =
+        "62" +
+        digits.slice(1);
+    }
+    else if (digits.startsWith("8")) {
+      digits =
+        "62" +
+        digits;
+    }
+
+    if (
+      !digits.startsWith("62") ||
+      digits.length < 10 ||
+      digits.length > 15
+    ) {
+      return "";
+    }
+
+    return digits;
+  }
+
+  function selectedLeadFeatures(lead) {
+    const raw =
+      String(
+        lead?.extra_feature ||
+        ""
+      ).trim();
+
+    if (
+      !raw ||
+      raw.toLowerCase() ===
+        "tidak ada"
+    ) {
+      return [];
+    }
+
+    return raw
+      .split(",")
+      .map(item => item.trim())
+      .filter(Boolean);
+  }
+
+  function leadDescription(lead) {
+    const text =
+      String(
+        lead?.message ||
+        ""
+      );
+
+    const oldMarker =
+      "Deskripsi kebutuhan:";
+
+    const oldIndex =
+      text.toLowerCase()
+        .lastIndexOf(
+          oldMarker.toLowerCase()
+        );
+
+    if (oldIndex >= 0) {
+      const value =
+        text
+          .slice(
+            oldIndex +
+            oldMarker.length
+          )
+          .trim();
+
+      if (
+        value &&
+        value !== "-"
+      ) {
+        return value;
+      }
+    }
+
+    const newMarker =
+      "CATATAN TAMBAHAN";
+
+    const newIndex =
+      text.lastIndexOf(
+        newMarker
+      );
+
+    if (newIndex >= 0) {
+      const value =
+        text
+          .slice(
+            newIndex +
+            newMarker.length
+          )
+          .trim();
+
+      if (
+        value &&
+        value !== "-"
+      ) {
+        return value;
+      }
+    }
+
+    return "Tidak ada deskripsi tambahan.";
+  }
+
+  function leadHostingLabel(value) {
+    return ({
+      none:
+        "Belum menentukan",
+
+      owned:
+        "Sudah memiliki hosting / server",
+
+      needed:
+        "Membutuhkan hosting / server"
+    })[
+      String(value || "")
+    ] ||
+      "Belum menentukan";
+  }
+
+  function leadTimelineLabel(lead) {
+    const value =
+      String(
+        lead?.target_timeline ||
+        ""
+      );
+
+    if (
+      value ===
+      "target_date"
+    ) {
+      return lead?.target_date
+        ? `Target tanggal ${lead.target_date}`
+        : "Target tanggal belum ditentukan";
+    }
+
+    return ({
+      flexible:
+        "Fleksibel",
+
+      "2_4_weeks":
+        "2–4 minggu",
+
+      "1_2_months":
+        "1–2 bulan"
+    })[value] ||
+      "Belum ditentukan";
+  }
+
+  function leadDomainStatusLabel(value) {
+    return ({
+      none:
+        "Belum ditentukan",
+
+      owned:
+        "Domain milik calon client",
+
+      unregistered:
+        "Belum terdaftar — kandidat tersedia",
+
+      registered:
+        "Sudah terdaftar",
+
+      unknown:
+        "Belum dapat dipastikan"
+    })[
+      String(value || "")
+    ] ||
+      "Belum ditentukan";
+  }
+
+  function formatLeadRequirement(lead) {
+    if (
+      !lead ||
+      lead.source !==
+        "Website Calculator"
+    ) {
+      return (
+        lead?.message ||
+        ""
+      );
+    }
+
+    const packageName =
+      lead.package_name ||
+      "-";
+
+    const isCustom =
+      packageName ===
+      "Custom";
+
+    const project =
+      lead.service_interest ||
+      "-";
+
+    const projectLabel =
+      LEAD_PROJECT_LABELS[
+        project
+      ] ||
+      project;
+
+    const projectAdjustment =
+      LEAD_PROJECT_ADJUSTMENTS[
+        project
+      ] || 0;
+
+    const selectedFeatures =
+      selectedLeadFeatures(
+        lead
+      );
+
+    const includedFeatures =
+      new Set(
+        LEAD_PACKAGE_FEATURES[
+          packageName
+        ] || []
+      );
+
+    const includedSelected =
+      isCustom
+        ? []
+        : selectedFeatures
+            .filter(
+              item =>
+                includedFeatures.has(
+                  item
+                )
+            );
+
+    const chargeableSelected =
+      isCustom
+        ? []
+        : selectedFeatures
+            .filter(
+              item =>
+                !includedFeatures.has(
+                  item
+                )
+            );
+
+    const includedAmount =
+      includedSelected.reduce(
+        (total, item) =>
+          total +
+          (
+            LEAD_FEATURE_VALUES[
+              item
+            ] || 0
+          ),
+        0
+      );
+
+    const addOnAmount =
+      chargeableSelected.reduce(
+        (total, item) =>
+          total +
+          (
+            LEAD_FEATURE_VALUES[
+              item
+            ] || 0
+          ),
+        0
+      );
+
+    const featureLines =
+      selectedFeatures.length
+        ? selectedFeatures.map(
+            item => `• ${item}`
+          )
+        : [
+            "• Tidak ada"
+          ];
+
+    const includedText =
+      isCustom
+        ? "Dicatat untuk konsultasi"
+        : formatLeadMoney(
+            includedAmount
+          );
+
+    const addOnList =
+      isCustom
+        ? "Dicatat untuk konsultasi"
+        : (
+            chargeableSelected.length
+              ? chargeableSelected.join(
+                  ", "
+                )
+              : "Tidak ada"
+          );
+
+    const addOnAmountText =
+      isCustom
+        ? "Konsultasi"
+        : formatLeadMoney(
+            addOnAmount
+          );
+
+    const estimateText =
+      lead.estimated_amount == null
+        ? "Konsultasi"
+        : formatLeadMoney(
+            lead.estimated_amount
+          );
+
+    const scopeText =
+      isCustom
+        ? "Dicatat untuk konsultasi"
+        : (
+            "+ " +
+            formatLeadMoney(
+              projectAdjustment
+            )
+          );
+
+    const domainText =
+      lead.domain_mode ===
+        "none"
+        ? "Belum ditentukan"
+        : (
+            lead.domain_name ||
+            "Belum ditentukan"
+          );
+
+    return [
+      "RINGKASAN KEBUTUHAN PROJECT",
+      "",
+      "Paket",
+      packageName,
+      "",
+      "Jenis Project",
+      projectLabel,
+      "",
+      "Penyesuaian Scope",
+      scopeText,
+      "",
+      "Fitur yang Dibutuhkan",
+      ...featureLines,
+      "",
+      "Nilai Fitur Termasuk Paket",
+      includedText,
+      "",
+      "Add-on Tambahan Berbayar",
+      addOnList,
+      "",
+      "Total Add-on Berbayar",
+      addOnAmountText,
+      "",
+      "DOMAIN & INFRASTRUKTUR",
+      `Domain: ${domainText}`,
+      `Status Domain: ${
+        leadDomainStatusLabel(
+          lead.domain_status
+        )
+      }`,
+      `Hosting / Server: ${
+        leadHostingLabel(
+          lead.hosting_mode
+        )
+      }`,
+      "",
+      "TARGET & ESTIMASI",
+      `Target Pengerjaan: ${
+        leadTimelineLabel(
+          lead
+        )
+      }`,
+      `Estimasi Awal: ${estimateText}`,
+      "",
+      "REFERENSI",
+      `Lead Ref: ${
+        lead.lead_code ||
+        "-"
+      }`,
+      `Request Ref: ${
+        lead.public_request_ref ||
+        "-"
+      }`,
+      "",
+      "CATATAN TAMBAHAN",
+      leadDescription(
+        lead
+      )
+    ].join("\n");
+  }
+
+  function buildLeadFollowupMessage(lead) {
+    return [
+      `Halo Bapak/Ibu ${
+        lead?.full_name ||
+        ""
+      },`,
+      "",
+      "Saya dari Srilex Buditra ingin menindaklanjuti permintaan konsultasi project yang sebelumnya Anda kirim.",
+      "",
+      `Project: ${
+        LEAD_PROJECT_LABELS[
+          lead?.service_interest
+        ] ||
+        lead?.service_interest ||
+        "-"
+      }`,
+      `Paket: ${
+        lead?.package_name ||
+        "-"
+      }`,
+      `Referensi Lead: ${
+        lead?.lead_code ||
+        "-"
+      }`,
+      "",
+      "Apakah kebutuhan project tersebut masih ingin dilanjutkan?",
+      "",
+      "Jika masih berlanjut, kami siap membantu membahas kebutuhan, scope, estimasi, dan langkah berikutnya.",
+      "",
+      "Terima kasih.",
+      "Srilex Buditra",
+      "Website & System Development"
+    ].join("\n");
+  }
+
+  function syncLeadWhatsappActions(lead) {
+    const actions =
+      document.querySelector(
+        ".sb-leads-modal [data-lead-whatsapp-actions]"
+      );
+
+    const whatsappButton =
+      document.querySelector(
+        ".sb-leads-modal [data-lead-whatsapp]"
+      );
+
+    const copyButton =
+      document.querySelector(
+        ".sb-leads-modal [data-lead-copy-whatsapp]"
+      );
+
+    const hint =
+      document.querySelector(
+        ".sb-leads-modal [data-lead-whatsapp-hint]"
+      );
+
+    if (
+      !actions ||
+      !whatsappButton ||
+      !copyButton
+    ) {
+      return;
+    }
+
+    if (!lead) {
+      actions.hidden = true;
+      whatsappButton.disabled = true;
+      copyButton.disabled = true;
+
+      if (hint) {
+        hint.textContent = "";
+      }
+
+      return;
+    }
+
+    const phone =
+      String(
+        lead.phone ||
+        ""
+      ).trim();
+
+    const normalized =
+      normalizeWhatsappNumber(
+        phone
+      );
+
+    actions.hidden = false;
+
+    whatsappButton.disabled =
+      !normalized;
+
+    copyButton.disabled =
+      !phone;
+
+    if (hint) {
+      hint.textContent =
+        normalized
+          ? "Membuka WhatsApp tidak otomatis mengubah status Lead."
+          : "Nomor WhatsApp belum tersedia atau formatnya belum valid.";
+    }
+  }
+
+  function addStyles() {function addStyles() {
     if (
       document.getElementById(
         "sb-leads-r1-styles"
@@ -587,6 +1154,54 @@
       }
     `;
 
+    style.textContent += `
+      .sb-lead-whatsapp-actions[hidden] {
+        display: none !important;
+      }
+
+      .sb-lead-whatsapp-actions {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-top: 9px;
+      }
+
+      .sb-lead-whatsapp-actions button {
+        min-height: 38px;
+        padding: 8px 12px;
+        border-radius: 10px;
+        border: 1px solid #cbd5e1;
+        background: #ffffff;
+        color: #0f172a;
+        font: inherit;
+        font-weight: 700;
+        cursor: pointer;
+      }
+
+      .sb-lead-whatsapp-actions button[data-lead-whatsapp] {
+        background: #128c7e;
+        border-color: #128c7e;
+        color: #ffffff;
+      }
+
+      .sb-lead-whatsapp-actions button:disabled {
+        opacity: .5;
+        cursor: not-allowed;
+      }
+
+      .sb-lead-whatsapp-hint {
+        display: block;
+        margin-top: 7px;
+        color: #64748b;
+        line-height: 1.45;
+      }
+
+      .sb-leads-field textarea[name="message"] {
+        min-height: 390px;
+        line-height: 1.55;
+      }
+    `;
+
     document.head.appendChild(style);
   }
 
@@ -780,11 +1395,37 @@
           </div>
 
           <div class="sb-leads-field">
-            <label>Phone</label>
+            <label>Phone / WhatsApp</label>
+
             <input
               name="phone"
               maxlength="100"
             >
+
+            <div
+              class="sb-lead-whatsapp-actions"
+              data-lead-whatsapp-actions
+              hidden
+            >
+              <button
+                type="button"
+                data-lead-whatsapp
+              >
+                💬 Follow-up WhatsApp
+              </button>
+
+              <button
+                type="button"
+                data-lead-copy-whatsapp
+              >
+                Salin Nomor
+              </button>
+            </div>
+
+            <small
+              class="sb-lead-whatsapp-hint"
+              data-lead-whatsapp-hint
+            ></small>
           </div>
 
           <div class="sb-leads-field">
@@ -833,11 +1474,12 @@
           </div>
 
           <div class="sb-leads-field full">
-            <label>Message / Requirement</label>
+            <label>Ringkasan Kebutuhan Project</label>
 
             <textarea
               name="message"
               maxlength="5000"
+              rows="22"
             ></textarea>
           </div>
 
@@ -1402,6 +2044,8 @@
 
     form.elements.status.value = "new";
 
+    syncLeadWhatsappActions(null);
+
     title.textContent = "New Lead";
 
     subtitle.textContent =
@@ -1501,6 +2145,10 @@
     form.elements.phone.value =
       lead.phone || "";
 
+    syncLeadWhatsappActions(
+      lead
+    );
+
     form.elements.source.value =
       lead.source || "";
 
@@ -1508,7 +2156,9 @@
       lead.service_interest || "";
 
     form.elements.message.value =
-      lead.message || "";
+      formatLeadRequirement(
+        lead
+      );
 
     form.elements.next_follow_up_at.value =
       toDatetimeLocal(
@@ -1694,6 +2344,178 @@
       }
     }
   );
+
+  async function openLeadWhatsappFollowup() {
+    if (!currentLeadId) {
+      return;
+    }
+
+    const lead =
+      leads.find(
+        item =>
+          item.id === currentLeadId
+      );
+
+    if (!lead) {
+      formError.textContent =
+        "Lead tidak ditemukan.";
+
+      return;
+    }
+
+    const number =
+      normalizeWhatsappNumber(
+        lead.phone
+      );
+
+    if (!number) {
+      formError.textContent =
+        "Nomor WhatsApp belum tersedia atau formatnya belum valid.";
+
+      return;
+    }
+
+    const message =
+      buildLeadFollowupMessage(
+        lead
+      );
+
+    const url =
+      `https://wa.me/${number}?text=${
+        encodeURIComponent(
+          message
+        )
+      }`;
+
+    const popup =
+      window.open(
+        "about:blank",
+        "_blank"
+      );
+
+    if (!popup) {
+      formError.textContent =
+        "Popup WhatsApp diblokir browser. Izinkan popup lalu coba lagi.";
+
+      return;
+    }
+
+    popup.opener = null;
+    popup.location.href = url;
+
+    formError.textContent = "";
+
+    try {
+      await api(
+        `${API}/${
+          encodeURIComponent(
+            lead.id
+          )
+        }/follow-up-whatsapp`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type":
+              "application/json"
+          },
+          body:
+            JSON.stringify({})
+        }
+      );
+
+      showNotice(
+        "WhatsApp follow-up dibuka. Status Lead tetap manual."
+      );
+    }
+    catch (error) {
+      showNotice(
+        "WhatsApp berhasil dibuka, tetapi Activity Log gagal dicatat."
+      );
+
+      console.error(
+        "LEAD_WHATSAPP_FOLLOWUP_LOG_FAILED",
+        error
+      );
+    }
+  }
+
+  async function copyLeadWhatsappNumber() {
+    if (!currentLeadId) {
+      return;
+    }
+
+    const lead =
+      leads.find(
+        item =>
+          item.id === currentLeadId
+      );
+
+    const phone =
+      String(
+        lead?.phone ||
+        ""
+      ).trim();
+
+    if (!phone) {
+      formError.textContent =
+        "Nomor WhatsApp tidak tersedia.";
+
+      return;
+    }
+
+    try {
+      if (
+        navigator.clipboard &&
+        navigator.clipboard.writeText
+      ) {
+        await navigator.clipboard.writeText(
+          phone
+        );
+      }
+      else {
+        const temporary =
+          document.createElement(
+            "textarea"
+          );
+
+        temporary.value =
+          phone;
+
+        temporary.style.position =
+          "fixed";
+
+        temporary.style.opacity =
+          "0";
+
+        document.body.appendChild(
+          temporary
+        );
+
+        temporary.select();
+
+        document.execCommand(
+          "copy"
+        );
+
+        temporary.remove();
+      }
+
+      formError.textContent = "";
+
+      showNotice(
+        "Nomor WhatsApp berhasil disalin."
+      );
+    }
+    catch (error) {
+      formError.textContent =
+        "Nomor WhatsApp gagal disalin.";
+
+      console.error(
+        "LEAD_WHATSAPP_COPY_FAILED",
+        error
+      );
+    }
+  }
 
   async function addNote() {
     if (!currentLeadId) return;
@@ -1899,6 +2721,20 @@
   ).addEventListener(
     "click",
     closeModal
+  );
+
+  modal.querySelector(
+    "[data-lead-whatsapp]"
+  )?.addEventListener(
+    "click",
+    openLeadWhatsappFollowup
+  );
+
+  modal.querySelector(
+    "[data-lead-copy-whatsapp]"
+  )?.addEventListener(
+    "click",
+    copyLeadWhatsappNumber
   );
 
   modal.querySelector(

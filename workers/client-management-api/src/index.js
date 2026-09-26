@@ -252,6 +252,39 @@ export default {
         );
       }
 
+      const adminLeadWhatsappFollowupMatch =
+        url.pathname.match(
+          /^\/api\/admin\/leads\/([^/]+)\/follow-up-whatsapp$/
+        );
+
+      if (
+        adminLeadWhatsappFollowupMatch &&
+        method === "POST"
+      ) {
+        const auth =
+          await requireRole(
+            request,
+            env,
+            [
+              "system_admin",
+              "staff"
+            ]
+          );
+
+        if (auth.response) {
+          return auth.response;
+        }
+
+        return logAdminLeadWhatsappFollowup(
+          request,
+          env,
+          auth,
+          decodeURIComponent(
+            adminLeadWhatsappFollowupMatch[1]
+          )
+        );
+      }
+
       const adminLeadConvertMatch =
         url.pathname.match(/^\/api\/admin\/leads\/([^/]+)\/convert$/);
 
@@ -2902,36 +2935,71 @@ async function createPublicEstimateLead(
       "Deployment / Cloud Setup"
   };
 
+  const selectedFeatureLines =
+    selectedExtras.length
+      ? selectedExtras.map(
+          extra =>
+            `• ${extra.label}`
+        )
+      : [
+          "• Tidak ada"
+        ];
+
+  const messageDomainText =
+    domainMode === "none"
+      ? "Belum ditentukan"
+      : (
+          domainName ||
+          "Belum ditentukan"
+        );
+
+  const messageDomainStatusText =
+    domainMode === "none"
+      ? "Belum ditentukan"
+      : domainStatusText;
+
   const messageParts = [
-    `Paket: ${packageName}`,
-    `Jenis Project: ${
-      projectDisplayLabels[project] ||
-      project
-    }`,
-    `Penyesuaian scope: ${projectAdjustmentText}`,
-    `Fitur kebutuhan: ${extraLabel}`,
-    `Fitur termasuk paket: ${includedExtraLabel}`,
-    `Nilai fitur termasuk paket: ${includedExtraAmountText}`,
-    `Add-on berbayar: ${chargeableExtraLabel}`,
-    `Total add-on: ${addOnAmountText}`,
+    "RINGKASAN KEBUTUHAN PROJECT",
+    "",
+    "Paket",
+    packageName,
+    "",
+    "Jenis Project",
+    projectDisplayLabels[project] ||
+      project,
+    "",
+    "Penyesuaian Scope",
+    projectAdjustmentText,
+    "",
+    "Fitur yang Dibutuhkan",
+    ...selectedFeatureLines,
+    "",
+    "Nilai Fitur Termasuk Paket",
+    includedExtraAmountText,
+    "",
+    "Add-on Tambahan Berbayar",
+    chargeableExtraLabel,
+    "",
+    "Total Add-on Berbayar",
+    addOnAmountText,
+    "",
+    "DOMAIN & INFRASTRUKTUR",
+    `Domain: ${messageDomainText}`,
+    `Status Domain: ${messageDomainStatusText}`,
     `Hosting / Server: ${hostingText}`,
-    `Target waktu: ${timelineText}`,
-    `Estimasi awal: ${estimateText}`
-  ];
-
-  if (domainMode !== "none") {
-    messageParts.push(
-      `Domain: ${domainName}`,
-      `Status domain: ${domainStatusText}`
-    );
-  }
-
-  messageParts.push(
+    "",
+    "TARGET & ESTIMASI",
+    `Target Pengerjaan: ${timelineText}`,
+    `Estimasi Awal: ${estimateText}`,
+    "",
+    "REFERENSI",
+    `Lead Ref: ${leadCode}`,
     `Request Ref: ${requestRef}`,
     "",
-    "Deskripsi kebutuhan:",
-    description || "-"
-  );
+    "CATATAN TAMBAHAN",
+    description ||
+      "Tidak ada deskripsi tambahan."
+  ];
 
   const message =
     messageParts.join("\n");
@@ -3606,6 +3674,90 @@ async function listAdminLeadNotes(
         lead_code: lead.lead_code
       },
       notes: rows.results || []
+    }
+  );
+}
+
+async function logAdminLeadWhatsappFollowup(
+  request,
+  env,
+  auth,
+  leadId
+) {
+  const lead =
+    await env.DB.prepare(
+      `SELECT
+         id,
+         lead_code,
+         full_name,
+         phone
+       FROM leads
+       WHERE id = ?
+       LIMIT 1`
+    )
+      .bind(
+        leadId
+      )
+      .first();
+
+  if (!lead) {
+    return apiResponse(
+      request,
+      env,
+      {
+        error:
+          "Lead not found."
+      },
+      404
+    );
+  }
+
+  const phone =
+    String(
+      lead.phone ||
+      ""
+    )
+      .replace(
+        /\D/g,
+        ""
+      );
+
+  if (!phone) {
+    return apiResponse(
+      request,
+      env,
+      {
+        error:
+          "Lead WhatsApp number is not available."
+      },
+      400
+    );
+  }
+
+  await writeActivity(
+    env,
+    auth.user.id,
+    "LEAD_WHATSAPP_FOLLOWUP_OPENED",
+    "lead",
+    leadId,
+    `WhatsApp follow-up opened for lead ${lead.lead_code}.`
+  );
+
+  return apiResponse(
+    request,
+    env,
+    {
+      ok: true,
+      lead: {
+        id:
+          lead.id,
+
+        lead_code:
+          lead.lead_code,
+
+        full_name:
+          lead.full_name
+      }
     }
   );
 }
