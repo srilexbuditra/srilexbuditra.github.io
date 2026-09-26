@@ -1393,6 +1393,87 @@
         cursor: default;
       }
 
+      .sb-lead-rich-preview[hidden],
+      .sb-leads-field textarea[hidden] {
+        display: none !important;
+      }
+
+      .sb-lead-rich-preview {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 16px 17px;
+        border: 1px solid #dce6e1;
+        border-radius: 12px;
+        background: #fbfdfc;
+        color: #26362f;
+        font-size: 12px;
+        line-height: 1.6;
+        overflow-wrap: anywhere;
+      }
+
+      .sb-lead-rich-title {
+        margin-bottom: 12px;
+        font-size: 13px;
+        font-weight: 800;
+        letter-spacing: .035em;
+        color: #173d2b;
+      }
+
+      .sb-lead-rich-section {
+        margin-top: 14px;
+        margin-bottom: 6px;
+        padding-bottom: 4px;
+        border-bottom: 1px solid #e6eeea;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: .045em;
+        color: #176b3a;
+      }
+
+      .sb-lead-rich-label {
+        margin-top: 9px;
+        margin-bottom: 2px;
+        font-weight: 750;
+        color: #34483f;
+      }
+
+      .sb-lead-rich-row {
+        margin: 2px 0;
+      }
+
+      .sb-lead-rich-row-label {
+        font-weight: 750;
+        color: #34483f;
+      }
+
+      .sb-lead-rich-value {
+        margin-bottom: 3px;
+        color: #52645c;
+      }
+
+      .sb-lead-rich-value.is-important,
+      .sb-lead-rich-row-value.is-important {
+        font-weight: 800;
+        color: #173d2b;
+      }
+
+      .sb-lead-rich-bullet {
+        display: flex;
+        gap: 7px;
+        margin: 2px 0;
+        color: #52645c;
+      }
+
+      .sb-lead-rich-bullet-mark {
+        flex: 0 0 auto;
+        font-weight: 800;
+        color: #176b3a;
+      }
+
+      .sb-lead-rich-gap {
+        height: 5px;
+      }
+
       .sb-lead-whatsapp-hint {
         display: block;
         margin-top: 7px;
@@ -1707,6 +1788,12 @@
           <div class="sb-leads-field full">
             <label>Ringkasan Kebutuhan Project</label>
 
+            <div
+              class="sb-lead-rich-preview"
+              data-lead-requirement-preview
+              hidden
+            ></div>
+
             <textarea
               name="message"
               maxlength="5000"
@@ -1716,6 +1803,12 @@
 
           <div class="sb-leads-field full">
             <label>Calculator / Scope Data</label>
+
+            <div
+              class="sb-lead-rich-preview"
+              data-lead-calculator-preview
+              hidden
+            ></div>
 
             <textarea
               data-lead-r2-summary
@@ -2286,6 +2379,10 @@
       r2Summary.value = "";
     }
 
+    syncLeadRichPreviews(
+      null
+    );
+
     title.textContent = "New Lead";
 
     subtitle.textContent =
@@ -2411,6 +2508,10 @@
           lead
         );
     }
+
+    syncLeadRichPreviews(
+      lead
+    );
 
     form.elements.next_follow_up_at.value =
       toDatetimeLocal(
@@ -2596,6 +2697,262 @@
       }
     }
   );
+
+  function formatLeadRichHtml(value) {
+    const lines =
+      String(value || "")
+        .split(/\r?\n/);
+
+    const standaloneLabels =
+      new Set([
+        "Paket",
+        "Jenis Project",
+        "Penyesuaian Scope",
+        "Fitur yang Dibutuhkan",
+        "Nilai Fitur Termasuk Paket",
+        "Add-on Tambahan Berbayar",
+        "Total Add-on Berbayar"
+      ]);
+
+    const importantLabels =
+      new Set([
+        "Total Add-on Berbayar",
+        "Estimated Amount",
+        "Estimasi Awal"
+      ]);
+
+    return lines.map(
+      (rawLine, index) => {
+        const line =
+          String(rawLine || "").trim();
+
+        if (!line) {
+          return (
+            '<div class="sb-lead-rich-gap"></div>'
+          );
+        }
+
+        if (index === 0) {
+          return (
+            '<div class="sb-lead-rich-title">' +
+            escapeHtml(line) +
+            "</div>"
+          );
+        }
+
+        const isUpperHeading =
+          line.length > 2 &&
+          line === line.toUpperCase() &&
+          /^[A-Z0-9À-ÖØ-Ý &/+-]+$/.test(
+            line
+          );
+
+        if (isUpperHeading) {
+          return (
+            '<div class="sb-lead-rich-section">' +
+            escapeHtml(line) +
+            "</div>"
+          );
+        }
+
+        if (
+          line.startsWith("\u2022")
+        ) {
+          const bulletText =
+            line
+              .replace(
+                /^\u2022\s*/,
+                ""
+              );
+
+          return (
+            '<div class="sb-lead-rich-bullet">' +
+              '<span class="sb-lead-rich-bullet-mark">•</span>' +
+              "<span>" +
+                escapeHtml(
+                  bulletText
+                ) +
+              "</span>" +
+            "</div>"
+          );
+        }
+
+        const colonIndex =
+          line.indexOf(":");
+
+        if (
+          colonIndex > 0 &&
+          colonIndex < 40
+        ) {
+          const label =
+            line
+              .slice(
+                0,
+                colonIndex
+              )
+              .trim();
+
+          const rowValue =
+            line
+              .slice(
+                colonIndex + 1
+              )
+              .trim();
+
+          const important =
+            importantLabels.has(
+              label
+            );
+
+          return (
+            '<div class="sb-lead-rich-row">' +
+              '<span class="sb-lead-rich-row-label">' +
+                escapeHtml(label) +
+                ":" +
+              "</span> " +
+              '<span class="sb-lead-rich-row-value' +
+                (
+                  important
+                    ? " is-important"
+                    : ""
+                ) +
+              '">' +
+                escapeHtml(
+                  rowValue
+                ) +
+              "</span>" +
+            "</div>"
+          );
+        }
+
+        if (
+          standaloneLabels.has(line)
+        ) {
+          return (
+            '<div class="sb-lead-rich-label">' +
+            escapeHtml(line) +
+            "</div>"
+          );
+        }
+
+        const previousLine =
+          index > 0
+            ? String(
+                lines[
+                  index - 1
+                ] || ""
+              ).trim()
+            : "";
+
+        const importantValue =
+          importantLabels.has(
+            previousLine
+          );
+
+        return (
+          '<div class="sb-lead-rich-value' +
+            (
+              importantValue
+                ? " is-important"
+                : ""
+            ) +
+          '">' +
+            escapeHtml(line) +
+          "</div>"
+        );
+      }
+    ).join("");
+  }
+
+  function syncLeadRichPreviews(lead) {
+    const requirementPreview =
+      modal.querySelector(
+        "[data-lead-requirement-preview]"
+      );
+
+    const calculatorPreview =
+      modal.querySelector(
+        "[data-lead-calculator-preview]"
+      );
+
+    const messageTextarea =
+      form.elements.message;
+
+    const calculatorTextarea =
+      modal.querySelector(
+        "[data-lead-r2-summary]"
+      );
+
+    if (
+      !requirementPreview ||
+      !calculatorPreview ||
+      !messageTextarea ||
+      !calculatorTextarea
+    ) {
+      return;
+    }
+
+    const isCalculator =
+      Boolean(
+        lead &&
+        lead.source ===
+          "Website Calculator"
+      );
+
+    if (!isCalculator) {
+      requirementPreview.hidden =
+        true;
+
+      calculatorPreview.hidden =
+        true;
+
+      messageTextarea.hidden =
+        false;
+
+      calculatorTextarea.hidden =
+        false;
+
+      return;
+    }
+
+    const requirementText =
+      formatLeadRequirement(
+        lead
+      );
+
+    const calculatorText =
+      formatLeadCalculatorScope(
+        lead
+      );
+
+    messageTextarea.value =
+      requirementText;
+
+    calculatorTextarea.value =
+      calculatorText;
+
+    requirementPreview.innerHTML =
+      formatLeadRichHtml(
+        requirementText
+      );
+
+    calculatorPreview.innerHTML =
+      formatLeadRichHtml(
+        calculatorText
+      );
+
+    requirementPreview.hidden =
+      false;
+
+    calculatorPreview.hidden =
+      false;
+
+    messageTextarea.hidden =
+      true;
+
+    calculatorTextarea.hidden =
+      true;
+  }
 
   function formatLeadFollowupTimestamp(value) {
     if (!value) {
