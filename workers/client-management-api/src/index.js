@@ -2401,6 +2401,15 @@ async function createPublicEstimateLead(
             )
         );
 
+  const includedExtraAmount =
+    packageName === "Custom"
+      ? 0
+      : includedSelectedExtras.reduce(
+          (total, extra) =>
+            total + extra.amount,
+          0
+        );
+
   const extraAmount =
     chargeableExtras.reduce(
       (total, extra) =>
@@ -2834,6 +2843,15 @@ async function createPublicEstimateLead(
           extraAmount
         )}`;
 
+  const includedExtraAmountText =
+    packageName === "Custom"
+      ? "Dicatat untuk konsultasi"
+      : `Rp ${new Intl.NumberFormat(
+          "id-ID"
+        ).format(
+          includedExtraAmount
+        )}`;
+
   const domainStatusText =
     domainMode === "owned"
       ? "Domain milik calon client"
@@ -2893,6 +2911,7 @@ async function createPublicEstimateLead(
     `Penyesuaian scope: ${projectAdjustmentText}`,
     `Fitur kebutuhan: ${extraLabel}`,
     `Fitur termasuk paket: ${includedExtraLabel}`,
+    `Nilai fitur termasuk paket: ${includedExtraAmountText}`,
     `Add-on berbayar: ${chargeableExtraLabel}`,
     `Total add-on: ${addOnAmountText}`,
     `Hosting / Server: ${hostingText}`,

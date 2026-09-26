@@ -895,6 +895,29 @@ function getChargeableExtraItems(){
     );
 }
 
+function getSelectedIncludedExtraItems(){
+  if(selectedPackageName === 'Custom'){
+    return [];
+  }
+
+  return getSelectedExtraItems()
+    .filter(
+      item =>
+        isExtraIncluded(
+          item.value
+        )
+    );
+}
+
+function getSelectedIncludedExtraTotal(){
+  return getSelectedIncludedExtraItems()
+    .reduce(
+      (total, item) =>
+        total + item.amount,
+      0
+    );
+}
+
 function getSelectedExtraTotal(){
   return getChargeableExtraItems()
     .reduce(
@@ -1030,6 +1053,18 @@ function syncExtraFeatureUI(){
   const total =
     getSelectedExtraTotal();
 
+  const includedTotal =
+    getSelectedIncludedExtraTotal();
+
+  if($('#includedExtraTotal')){
+    $('#includedExtraTotal').textContent =
+      selectedPackageName === 'Custom'
+        ? 'Konsultasi'
+        : formatIDR(
+            includedTotal
+          );
+  }
+
   if($('#extraTotal')){
     $('#extraTotal').textContent =
       selectedPackageName === 'Custom'
@@ -1093,7 +1128,11 @@ function syncExtraFeatureUI(){
 
       price.textContent =
         included
-          ? '✓ Termasuk Paket'
+          ? 'Nilai ' +
+            formatIDR(
+              item.amount
+            ) +
+            ' — ✓ Termasuk Paket'
           : '+ ' +
             formatIDR(
               item.amount
@@ -1113,6 +1152,9 @@ function updateEstimate(){
 
   const extra =
     getSelectedExtraTotal();
+
+  const includedExtra =
+    getSelectedIncludedExtraTotal();
 
   const isCustom =
     selectedPackageName ===
@@ -1161,6 +1203,15 @@ function updateEstimate(){
         ? 'Konsultasi'
         : formatIDR(
             selectedPackage
+          );
+  }
+
+  if($('#previewIncludedExtraTotal')){
+    $('#previewIncludedExtraTotal').textContent =
+      isCustom
+        ? 'Dicatat untuk konsultasi'
+        : formatIDR(
+            includedExtra
           );
   }
 
@@ -1552,7 +1603,8 @@ waBtn?.addEventListener('click', async () => {
       `Paket: ${payload.package_name}`,
       `Penyesuaian Scope: ${selectedPackageName === 'Custom' ? 'Konsultasi' : '+ ' + formatIDR(projectAdjustments[payload.project] || 0)}`,
       `Fitur Kebutuhan: ${getSelectedExtraLabel()}`,
-      `Total Add-on: ${selectedPackageName === 'Custom' ? 'Konsultasi' : formatIDR(getSelectedExtraTotal())}`,
+      `Nilai Fitur Termasuk Paket: ${selectedPackageName === 'Custom' ? 'Dicatat untuk konsultasi' : formatIDR(getSelectedIncludedExtraTotal())}`,
+      `Total Add-on Berbayar: ${selectedPackageName === 'Custom' ? 'Konsultasi' : formatIDR(getSelectedExtraTotal())}`,
       `Domain: ${payload.domain_name || 'Belum ditentukan'}`,
       `Status Domain: ${selectedDomainMode === 'none' ? 'Belum ditentukan' : domainStatusLabel()}`,
       `Hosting / Server: ${hostingModeLabel(payload.hosting_mode)}`,
@@ -1772,6 +1824,13 @@ async function populatePrintReport(){
           getSelectedExtraTotal()
         );
 
+  const includedExtraTotalText =
+    selectedPackageName === 'Custom'
+      ? 'Dicatat untuk konsultasi'
+      : formatIDR(
+          getSelectedIncludedExtraTotal()
+        );
+
   const packageText =
     selectedPackageName === 'Custom'
       ? 'Custom — Konsultasi'
@@ -1813,6 +1872,11 @@ async function populatePrintReport(){
   text(
     'printExtra',
     extraText
+  );
+
+  text(
+    'printIncludedExtraTotal',
+    includedExtraTotalText
   );
 
   text(
@@ -1880,6 +1944,7 @@ async function populatePrintReport(){
     projectValue,
     projectAdjustmentText,
     extraText,
+    includedExtraTotalText,
     extraChargeText,
     domainText,
     domainStatusText,

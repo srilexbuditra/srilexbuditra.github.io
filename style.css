@@ -7462,3 +7462,14 @@ body {
 #targetDateWrap[hidden]{
   display:none !important;
 }
+/* INCLUDED FEATURE VALUE R2 */
+.extra-feature-totals{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  gap:8px 14px;
+  align-items:center;
+}
+
+.extra-feature-totals strong{
+  text-align:right;
+}
