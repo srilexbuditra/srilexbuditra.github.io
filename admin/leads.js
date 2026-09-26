@@ -651,7 +651,7 @@
     }
   }
 
-  function addStyles() {function addStyles() {
+  function addStyles() {
     if (
       document.getElementById(
         "sb-leads-r1-styles"
