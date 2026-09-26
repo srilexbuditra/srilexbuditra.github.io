@@ -333,6 +333,153 @@
       "Belum ditentukan";
   }
 
+  function formatLeadCalculatorScope(lead) {
+    if (
+      !lead ||
+      lead.source !==
+        "Website Calculator"
+    ) {
+      return (
+        "Tidak ada data Calculator untuk Lead ini."
+      );
+    }
+
+    const packageName =
+      lead.package_name ||
+      "-";
+
+    const project =
+      lead.service_interest ||
+      "-";
+
+    const projectLabel =
+      LEAD_PROJECT_LABELS[
+        project
+      ] ||
+      project;
+
+    const features =
+      selectedLeadFeatures(
+        lead
+      );
+
+    const featureLines =
+      features.length
+        ? features.map(
+            item => `• ${item}`
+          )
+        : [
+            "• Tidak ada"
+          ];
+
+    const estimateText =
+      lead.estimated_amount == null
+        ? "Konsultasi"
+        : formatLeadMoney(
+            lead.estimated_amount
+          );
+
+    const domainMode =
+      String(
+        lead.domain_mode ||
+        "none"
+      );
+
+    const domainModeLabel =
+      ({
+        none:
+          "Belum menentukan",
+
+        owned:
+          "Sudah memiliki domain",
+
+        new:
+          "Membutuhkan domain baru"
+      })[domainMode] ||
+        "Belum ditentukan";
+
+    const domainStatus =
+      String(
+        lead.domain_status ||
+        "none"
+      );
+
+    const hostingMode =
+      String(
+        lead.hosting_mode ||
+        "none"
+      );
+
+    const targetTimeline =
+      String(
+        lead.target_timeline ||
+        ""
+      );
+
+    return [
+      "CALCULATOR / SCOPE DATA",
+      "",
+      "REFERENSI",
+      `Lead Ref: ${
+        lead.lead_code ||
+        "-"
+      }`,
+      `Request Ref: ${
+        lead.public_request_ref ||
+        "-"
+      }`,
+      `Source: ${
+        lead.source ||
+        "-"
+      }`,
+      "",
+      "PROJECT",
+      `Package: ${packageName}`,
+      `Project: ${projectLabel}`,
+      `Estimated Amount: ${estimateText}`,
+      "",
+      "SELECTED FEATURES",
+      ...featureLines,
+      "",
+      "DOMAIN",
+      `Mode: ${domainMode} — ${domainModeLabel}`,
+      `Name: ${
+        lead.domain_name ||
+        "-"
+      }`,
+      `Status: ${domainStatus} — ${
+        leadDomainStatusLabel(
+          domainStatus
+        )
+      }`,
+      `Checked At: ${
+        lead.domain_checked_at ||
+        "-"
+      }`,
+      "",
+      "HOSTING / TIMELINE",
+      `Hosting Mode: ${
+        hostingMode
+      } — ${
+        leadHostingLabel(
+          hostingMode
+        )
+      }`,
+      `Target Timeline: ${
+        targetTimeline ||
+        "-"
+      } — ${
+        leadTimelineLabel(
+          lead
+        )
+      }`,
+      `Target Date: ${
+        lead.target_date ||
+        "-"
+      }`
+    ].join("\n");
+  }
+
   function formatLeadRequirement(lead) {
     if (
       !lead ||
@@ -2046,6 +2193,15 @@
 
     syncLeadWhatsappActions(null);
 
+    const r2Summary =
+      modal.querySelector(
+        "[data-lead-r2-summary]"
+      );
+
+    if (r2Summary) {
+      r2Summary.value = "";
+    }
+
     title.textContent = "New Lead";
 
     subtitle.textContent =
@@ -2159,6 +2315,18 @@
       formatLeadRequirement(
         lead
       );
+
+    const r2Summary =
+      modal.querySelector(
+        "[data-lead-r2-summary]"
+      );
+
+    if (r2Summary) {
+      r2Summary.value =
+        formatLeadCalculatorScope(
+          lead
+        );
+    }
 
     form.elements.next_follow_up_at.value =
       toDatetimeLocal(
