@@ -863,6 +863,59 @@ function syncExtraFeatureUI(){
       formatIDR(total);
   }
 
+  if($('#extraText')){
+    $('#extraText').textContent =
+      getSelectedExtraLabel();
+  }
+
+  $('.extra-feature-card')
+    .forEach(card => {
+      const input =
+        card.querySelector(
+          'input[name="extraFeature"]'
+        );
+
+      card.classList.toggle(
+        'selected',
+        Boolean(input?.checked)
+      );
+    });
+}
+
+function updateEstimate(){
+  const project =
+    $('#project')?.value ||
+    'Website Company Profile';
+
+  const extra =
+    getSelectedExtraTotal();
+
+  const isCustom =
+    selectedPackageName === 'Custom';
+
+  const total =
+    isCustom
+      ? 0
+      : Math.max(
+          selectedPackage,
+          basePrices[project] || 0
+        ) + extra;
+
+  const totalElement =
+    $('#total');
+
+  if(totalElement){
+    totalElement.textContent =
+      isCustom
+        ? 'Konsultasi'
+        : formatIDR(total);
+  }
+
+  if($('#chosen')){
+    $('#chosen').textContent =
+      project;
+  }
+
   syncExtraFeatureUI();
 
   const note =
@@ -903,7 +956,7 @@ function syncExtraFeatureUI(){
   return total;
 }
 
-$$('.package').forEach(btn => {
+$('.package').forEach(btn => {
   btn.addEventListener(
     'click',
     () => {
