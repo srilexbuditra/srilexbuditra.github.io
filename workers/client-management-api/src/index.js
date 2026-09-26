@@ -212,6 +212,16 @@ export default {
           env
         );
       }
+
+      if (
+        url.pathname === "/api/public/lead-share" &&
+        method === "POST"
+      ) {
+        return readPublicLeadShare(
+          request,
+          env
+        );
+      }
       if (url.pathname === "/api/admin/leads" && method === "GET") {
         const auth = await requireRole(request, env, ["system_admin", "staff"]);
         if (auth.response) return auth.response;
@@ -884,6 +894,483 @@ async function sha256Base64Url(value) {
 
 function randomToken() {
   return base64UrlEncode(crypto.getRandomValues(new Uint8Array(32)));
+}
+
+function leadShareSecret(env) {
+  const value =
+    String(
+      env.LEAD_SHARE_SECRET || ""
+    );
+
+  if (value.length < 32) {
+    throw new Error(
+      "LEAD_SHARE_SECRET is not configured."
+    );
+  }
+
+  return value;
+}
+
+async function hmacSha256Base64Url(
+  secret,
+  value
+) {
+  const key =
+    await crypto.subtle.importKey(
+      "raw",
+      encoder.encode(secret),
+      {
+        name: "HMAC",
+        hash: "SHA-256"
+      },
+      false,
+      [
+        "sign"
+      ]
+    );
+
+  const signature =
+    await crypto.subtle.sign(
+      "HMAC",
+      key,
+      encoder.encode(value)
+    );
+
+  return base64UrlEncode(
+    new Uint8Array(signature)
+  );
+}
+
+function base64UrlTimingSafeEqual(
+  leftValue,
+  rightValue
+) {
+  let left;
+  let right;
+
+  try {
+    left =
+      base64UrlDecode(
+        String(leftValue || "")
+      );
+
+    right =
+      base64UrlDecode(
+        String(rightValue || "")
+      );
+  } catch {
+    return false;
+  }
+
+  if (
+    left.length !== right.length
+  ) {
+    return false;
+  }
+
+  let diff = 0;
+
+  for (
+    let index = 0;
+    index < left.length;
+    index += 1
+  ) {
+    diff |=
+      left[index] ^
+      right[index];
+  }
+
+  return diff === 0;
+}
+
+function leadShareSigningInput(
+  shareId,
+  version
+) {
+  return (
+    `lead-share-r1:${shareId}:${Number(version)}`
+  );
+}
+
+async function buildLeadShareToken(
+  env,
+  share
+) {
+  const signature =
+    await hmacSha256Base64Url(
+      leadShareSecret(env),
+      leadShareSigningInput(
+        share.id,
+        share.version
+      )
+    );
+
+  return (
+    `${share.id}.${signature}`
+  );
+}
+
+async function ensureLeadPublicShare(
+  env,
+  leadId,
+  createdByUserId = null
+) {
+  let share =
+    await env.DB.prepare(
+      `SELECT
+         id,
+         lead_id,
+         version,
+         status,
+         expires_at,
+         revoked_at
+       FROM lead_public_shares
+       WHERE lead_id = ?
+       LIMIT 1`
+    )
+      .bind(
+        leadId
+      )
+      .first();
+
+  if (!share) {
+    const shareId =
+      randomToken();
+
+    const timestamp =
+      nowIso();
+
+    await env.DB.prepare(
+      `INSERT OR IGNORE INTO lead_public_shares
+       (
+         id,
+         lead_id,
+         version,
+         status,
+         created_by_user_id,
+         created_at,
+         updated_at,
+         expires_at,
+         last_accessed_at,
+         revoked_at
+       )
+       VALUES (
+         ?, ?, 1, 'active', ?,
+         ?, ?, NULL, NULL, NULL
+       )`
+    )
+      .bind(
+        shareId,
+        leadId,
+        createdByUserId,
+        timestamp,
+        timestamp
+      )
+      .run();
+
+    share =
+      await env.DB.prepare(
+        `SELECT
+           id,
+           lead_id,
+           version,
+           status,
+           expires_at,
+           revoked_at
+         FROM lead_public_shares
+         WHERE lead_id = ?
+         LIMIT 1`
+      )
+        .bind(
+          leadId
+        )
+        .first();
+  }
+
+  if (!share) {
+    throw new Error(
+      "Unable to create Lead public share."
+    );
+  }
+
+  const timestamp =
+    nowIso();
+
+  if (
+    share.status !== "active" ||
+    share.revoked_at ||
+    (
+      share.expires_at &&
+      share.expires_at <= timestamp
+    )
+  ) {
+    return {
+      id:
+        share.id,
+
+      token:
+        null,
+
+      status:
+        "unavailable",
+
+      expires_at:
+        share.expires_at || null
+    };
+  }
+
+  return {
+    id:
+      share.id,
+
+    token:
+      await buildLeadShareToken(
+        env,
+        share
+      ),
+
+    status:
+      "active",
+
+    expires_at:
+      share.expires_at || null
+  };
+}
+
+async function readPublicLeadShare(
+  request,
+  env
+) {
+  const body =
+    await readJson(request);
+
+  const token =
+    String(
+      body?.token || ""
+    ).trim();
+
+  const unavailable =
+    () =>
+      apiResponse(
+        request,
+        env,
+        {
+          error:
+            "Document is unavailable."
+        },
+        404,
+        {
+          "Cache-Control":
+            "no-store, private",
+
+          "Pragma":
+            "no-cache"
+        }
+      );
+
+  if (
+    token.length < 40 ||
+    token.length > 220
+  ) {
+    return unavailable();
+  }
+
+  const parts =
+    token.split(".");
+
+  if (
+    parts.length !== 2
+  ) {
+    return unavailable();
+  }
+
+  const shareId =
+    parts[0];
+
+  const suppliedSignature =
+    parts[1];
+
+  if (
+    !/^[A-Za-z0-9_-]{20,100}$/.test(
+      shareId
+    ) ||
+    !/^[A-Za-z0-9_-]{20,100}$/.test(
+      suppliedSignature
+    )
+  ) {
+    return unavailable();
+  }
+
+  const row =
+    await env.DB.prepare(
+      `SELECT
+         s.id AS share_id,
+         s.version AS share_version,
+         s.status AS share_status,
+         s.expires_at,
+         s.revoked_at,
+
+         l.lead_code,
+         l.public_request_ref,
+         l.full_name,
+         l.company_name,
+         l.email,
+         l.phone,
+         l.service_interest,
+         l.message,
+         l.package_name,
+         l.estimated_amount,
+         l.extra_feature,
+         l.domain_mode,
+         l.domain_name,
+         l.domain_status,
+         l.domain_checked_at,
+         l.hosting_mode,
+         l.target_timeline,
+         l.target_date,
+         l.created_at
+
+       FROM lead_public_shares s
+
+       JOIN leads l
+         ON l.id = s.lead_id
+
+       WHERE s.id = ?
+
+       LIMIT 1`
+    )
+      .bind(
+        shareId
+      )
+      .first();
+
+  if (!row) {
+    return unavailable();
+  }
+
+  const timestamp =
+    nowIso();
+
+  if (
+    row.share_status !== "active" ||
+    row.revoked_at ||
+    (
+      row.expires_at &&
+      row.expires_at <= timestamp
+    )
+  ) {
+    return unavailable();
+  }
+
+  const expectedSignature =
+    await hmacSha256Base64Url(
+      leadShareSecret(env),
+      leadShareSigningInput(
+        row.share_id,
+        row.share_version
+      )
+    );
+
+  if (
+    !base64UrlTimingSafeEqual(
+      suppliedSignature,
+      expectedSignature
+    )
+  ) {
+    return unavailable();
+  }
+
+  await env.DB.prepare(
+    `UPDATE lead_public_shares
+     SET last_accessed_at = ?
+     WHERE id = ?`
+  )
+    .bind(
+      timestamp,
+      row.share_id
+    )
+    .run();
+
+  return apiResponse(
+    request,
+    env,
+    {
+      ok: true,
+
+      document: {
+        lead_code:
+          row.lead_code,
+
+        request_ref:
+          row.public_request_ref,
+
+        full_name:
+          row.full_name,
+
+        company_name:
+          row.company_name,
+
+        email:
+          row.email,
+
+        phone:
+          row.phone,
+
+        project:
+          row.service_interest,
+
+        requirement:
+          row.message,
+
+        package_name:
+          row.package_name,
+
+        estimated_amount:
+          row.estimated_amount == null
+            ? null
+            : Number(
+                row.estimated_amount
+              ),
+
+        extra_feature:
+          row.extra_feature,
+
+        domain: {
+          mode:
+            row.domain_mode,
+
+          name:
+            row.domain_name,
+
+          status:
+            row.domain_status,
+
+          checked_at:
+            row.domain_checked_at
+        },
+
+        hosting_mode:
+          row.hosting_mode,
+
+        target_timeline:
+          row.target_timeline,
+
+        target_date:
+          row.target_date,
+
+        created_at:
+          row.created_at
+      }
+    },
+    200,
+    {
+      "Cache-Control":
+        "no-store, private",
+
+      "Pragma":
+        "no-cache"
+    }
+  );
 }
 
 function parseCookie(request, name) {
@@ -2828,12 +3315,19 @@ async function createPublicEstimateLead(
       .first();
 
   if (existing) {
+    const share =
+      await ensureLeadPublicShare(
+        env,
+        existing.id
+      );
+
     return apiResponse(
       request,
       env,
       {
         ok: true,
         duplicate: true,
+
         lead: {
           lead_code:
             existing.lead_code,
@@ -2846,7 +3340,10 @@ async function createPublicEstimateLead(
               ? null
               : Number(
                   existing.estimated_amount
-                )
+                ),
+
+          share_token:
+            share.token
         }
       }
     );
@@ -3154,6 +3651,12 @@ async function createPublicEstimateLead(
     `Website Calculator created ${leadCode}.`
   );
 
+  const share =
+    await ensureLeadPublicShare(
+      env,
+      leadId
+    );
+
   return apiResponse(
     request,
     env,
@@ -3171,7 +3674,10 @@ async function createPublicEstimateLead(
           estimatedAmount,
 
         status:
-          "new"
+          "new",
+
+        share_token:
+          share.token
       }
     },
     201
