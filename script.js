@@ -2668,6 +2668,67 @@ confirmAgreementBtn?.addEventListener(
   async () => {
     if (!isAgreementReady()) {
       updateAgreementState();
+
+      /*
+       * Batalkan state mobile-print lama apabila
+       * persyaratan dokumen berubah / belum lengkap.
+       */
+      mobilePrintPrepared = false;
+      mobilePrintPreparedMode = null;
+
+      confirmAgreementBtn.textContent =
+        'Konfirmasi & Buat PDF';
+
+
+      if (!agreementCheckbox?.checked) {
+        if (agreementStatus) {
+          agreementStatus.textContent =
+            'WAJIB CENTANG KONFIRMASI DOKUMEN';
+        }
+
+        agreementCheckbox
+          ?.closest('.agreement-check')
+          ?.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center'
+          });
+
+        agreementCheckbox?.focus();
+
+        alert(
+          'Wajib mencentang Konfirmasi Dokumen Estimasi sebelum membuat PDF.'
+        );
+
+        return;
+      }
+
+      if (
+        currentPdfMode === 'signed' &&
+        !signaturePads.client?.hasSignature
+      ) {
+        if (agreementStatus) {
+          agreementStatus.textContent =
+            'WAJIB TANDA TANGAN PIHAK KEDUA';
+        }
+
+        document
+          .getElementById('clientSignature')
+          ?.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center'
+          });
+
+        alert(
+          'Wajib membubuhkan tanda tangan Pihak Kedua untuk mode Dengan Tanda Tangan.'
+        );
+
+        return;
+      }
+
+      alert(
+        'Lengkapi persyaratan dokumen sebelum membuat PDF.'
+      );
+
       return;
     }
 
