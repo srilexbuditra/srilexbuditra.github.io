@@ -2653,11 +2653,50 @@ function restorePrintReportAfterPrint(){
   report.style.removeProperty('width');
   printReportParent=null; printReportNextSibling=null;
 }
+let mobilePrintPrepared = false;
+let mobilePrintPreparedMode = null;
+
+function isMobilePrintEnvironment(){
+  return (
+    window.matchMedia?.('(pointer: coarse)')?.matches ||
+    /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)
+  );
+}
+
 confirmAgreementBtn?.addEventListener(
   'click',
   async () => {
     if (!isAgreementReady()) {
       updateAgreementState();
+      return;
+    }
+
+    const mobilePrint =
+      isMobilePrintEnvironment();
+
+    if (
+      mobilePrint &&
+      mobilePrintPrepared &&
+      mobilePrintPreparedMode === currentPdfMode
+    ) {
+      mountPrintReportForPrint();
+      fitPrintReportToA4Portrait();
+
+      void document.body.offsetHeight;
+
+      void $('.print-report')
+        ?.getBoundingClientRect();
+
+      closeAgreementModal();
+
+      window.print();
+
+      mobilePrintPrepared = false;
+      mobilePrintPreparedMode = null;
+
+      confirmAgreementBtn.textContent =
+        'Konfirmasi & Buat PDF';
+
       return;
     }
 
@@ -2681,6 +2720,25 @@ confirmAgreementBtn?.addEventListener(
       void $('.print-report')
         ?.getBoundingClientRect();
 
+      if (mobilePrint) {
+        mobilePrintPrepared = true;
+        mobilePrintPreparedMode =
+          currentPdfMode;
+
+        confirmAgreementBtn.textContent =
+          'Buka Print / Simpan PDF';
+
+        confirmAgreementBtn.disabled =
+          false;
+
+        if (agreementStatus) {
+          agreementStatus.textContent =
+            'DOKUMEN SIAP - TAP BUKA PRINT / SIMPAN PDF';
+        }
+
+        return;
+      }
+
       closeAgreementModal();
 
       requestAnimationFrame(
@@ -2701,18 +2759,26 @@ confirmAgreementBtn?.addEventListener(
         error
       );
 
+      mobilePrintPrepared = false;
+      mobilePrintPreparedMode = null;
+
+      confirmAgreementBtn.textContent =
+        'Konfirmasi & Buat PDF';
+
       alert(
         'PDF belum dapat dibuat. Silakan coba kembali.'
       );
     }
     finally {
-      setTimeout(
-        () => {
-          confirmAgreementBtn.disabled =
-            false;
-        },
-        1000
-      );
+      if (!mobilePrintPrepared) {
+        setTimeout(
+          () => {
+            confirmAgreementBtn.disabled =
+              false;
+          },
+          1000
+        );
+      }
     }
   }
 );
