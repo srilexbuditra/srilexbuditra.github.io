@@ -8152,3 +8152,17 @@ body {
   }
 }
 /* ===== /PDF PRINT TRANSPARENT LOGO ALIGNMENT R1 ===== */
+
+/* ===== PDF MODE R1 FINAL A4 PAGE FIT ===== */
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 8mm 10mm;
+  }
+
+  body > .print-report.print-host {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+}
+/* ===== /PDF MODE R1 FINAL A4 PAGE FIT ===== */

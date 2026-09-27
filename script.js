@@ -2772,25 +2772,11 @@ confirmAgreementBtn?.addEventListener(
       void $('.print-report')
         ?.getBoundingClientRect();
 
-      if (mobilePrint) {
-        mobilePrintPrepared = true;
-        mobilePrintPreparedMode =
-          currentPdfMode;
-
-        confirmAgreementBtn.textContent =
-          'Buka Print / Simpan PDF';
-
-        confirmAgreementBtn.disabled =
-          false;
-
-        if (agreementStatus) {
-          agreementStatus.textContent =
-            'DOKUMEN SIAP - TAP BUKA PRINT / SIMPAN PDF';
-        }
-
-        return;
-      }
-
+      /*
+       * PDF MODE R1:
+       * Mobile and desktop use the same one-tap print path.
+       * The report is already prepared before print is requested.
+       */
       closeAgreementModal();
 
       requestAnimationFrame(
