@@ -13,6 +13,8 @@ const clientSignerName = $('#clientSignerName');
 const modalClientName = $('#modalClientName');
 let currentDocumentRef = '';
 let currentFingerprint = '';
+let currentPdfMode = 'signed';
+let currentVerificationPublished = false;
 
 const signaturePads = {};
 
@@ -86,36 +88,306 @@ function clearSignature(key){
 }
 $$('[data-clear-signature]').forEach(btn=>btn.addEventListener('click',()=>clearSignature(btn.dataset.clearSignature==='clientSignature'?'client':btn.dataset.clearSignature)));
 
-function isPrivacyReady(){ return Boolean(privacyConsentCheckbox?.checked); }
-function isAgreementReady(){ return isPrivacyReady() && Boolean(agreementCheckbox?.checked) && Boolean(signaturePads.client?.hasSignature); }
-function updateAgreementState(){
-  const ready=isAgreementReady();
-  if(waBtn){waBtn.disabled=!isPrivacyReady();waBtn.setAttribute('aria-disabled',isPrivacyReady()?'false':'true');}
-  if(pdfBtn){pdfBtn.disabled=!isPrivacyReady();pdfBtn.setAttribute('aria-disabled',isPrivacyReady()?'false':'true');}
-  if(agreementStatus){agreementStatus.textContent=ready?'Lengkap • siap dibuat':!isPrivacyReady()?'Menunggu persetujuan privasi':!agreementCheckbox?.checked?'Menunggu persetujuan kerja sama':'Menunggu tanda tangan Pihak Kedua';agreementStatus.classList.toggle('complete',ready);}
-  const name=$('#name')?.value?.trim()||'Nama Pemesan';
-  if(clientSignerName) clientSignerName.textContent=name;
-  if(modalClientName) modalClientName.textContent=name;
+function isPrivacyReady(){
+  return Boolean(
+    privacyConsentCheckbox?.checked
+  );
 }
-privacyConsentCheckbox?.addEventListener('change',updateAgreementState);
-$('#name')?.addEventListener('input',updateAgreementState);
-agreementCheckbox?.addEventListener('change',updateAgreementState);
-updateAgreementState();
+
+function isAgreementReady(){
+  const confirmed =
+    Boolean(
+      agreementCheckbox?.checked
+    );
+
+  const signatureReady =
+    currentPdfMode === 'unsigned' ||
+    Boolean(
+      signaturePads.client?.hasSignature
+    );
+
+  return (
+    isPrivacyReady() &&
+    confirmed &&
+    signatureReady
+  );
+}
+
+function applyPdfMode(mode){
+  currentPdfMode =
+    mode === 'unsigned'
+      ? 'unsigned'
+      : 'signed';
+
+  const signed =
+    currentPdfMode === 'signed';
+
+  $$('[data-signed-only]')
+    .forEach(element => {
+      element.hidden =
+        !signed;
+    });
+
+  const report =
+    $('.print-report');
+
+  report?.classList.toggle(
+    'pdf-mode-signed',
+    signed
+  );
+
+  report?.classList.toggle(
+    'pdf-mode-unsigned',
+    !signed
+  );
+
+  const summaryTitle =
+    $('#agreementSummaryTitle');
+
+  const summaryText =
+    $('#agreementSummaryText');
+
+  const checkTitle =
+    $('#agreementCheckTitle');
+
+  const checkText =
+    $('#agreementCheckText');
+
+  if (signed) {
+    if (summaryTitle) {
+      summaryTitle.textContent =
+        'RINGKASAN PERJANJIAN';
+    }
+
+    if (summaryText) {
+      summaryText.textContent =
+        'Kedua pihak menyatakan bahwa data pemesanan, jenis project, scope awal, dan estimasi biaya telah ditinjau. Harga final, timeline, pembayaran, revisi, deliverables, dan ketentuan lain mengikuti kesepakatan/perjanjian final.';
+    }
+
+    if (checkTitle) {
+      checkTitle.textContent =
+        'Persetujuan Pemrosesan & Scope';
+    }
+
+    if (checkText) {
+      checkText.textContent =
+        'Saya menyatakan data yang saya isi benar dan menyetujui ringkasan kerja sama/scope awal untuk diproses lebih lanjut.';
+    }
+  }
+  else {
+    if (summaryTitle) {
+      summaryTitle.textContent =
+        'RINGKASAN DOKUMEN';
+    }
+
+    if (summaryText) {
+      summaryText.textContent =
+        'Dokumen estimasi ini dibuat tanpa tanda tangan Pihak Pertama maupun Pihak Kedua. Dokumen berfungsi sebagai ringkasan estimasi awal dan bukan perjanjian final.';
+    }
+
+    if (checkTitle) {
+      checkTitle.textContent =
+        'Konfirmasi Dokumen Estimasi';
+    }
+
+    if (checkText) {
+      checkText.textContent =
+        'Saya mengonfirmasi bahwa data dan kebutuhan project yang ditampilkan pada dokumen estimasi ini sesuai dengan informasi yang saya isi.';
+    }
+  }
+
+  updateAgreementState();
+}
+
+function updateAgreementState(){
+  const ready =
+    isAgreementReady();
+
+  const privacyReady =
+    isPrivacyReady();
+
+  if (waBtn) {
+    waBtn.disabled =
+      !privacyReady;
+
+    waBtn.setAttribute(
+      'aria-disabled',
+      privacyReady
+        ? 'false'
+        : 'true'
+    );
+  }
+
+  if (pdfBtn) {
+    pdfBtn.disabled =
+      !privacyReady;
+
+    pdfBtn.setAttribute(
+      'aria-disabled',
+      privacyReady
+        ? 'false'
+        : 'true'
+    );
+  }
+
+  if (agreementStatus) {
+    let statusText =
+      'Belum lengkap';
+
+    if (!privacyReady) {
+      statusText =
+        'Menunggu persetujuan privasi';
+    }
+    else if (
+      !agreementCheckbox?.checked
+    ) {
+      statusText =
+        'Menunggu konfirmasi dokumen';
+    }
+    else if (
+      currentPdfMode === 'signed' &&
+      !signaturePads.client?.hasSignature
+    ) {
+      statusText =
+        'Menunggu tanda tangan Pihak Kedua';
+    }
+    else {
+      statusText =
+        currentPdfMode === 'signed'
+          ? 'Lengkap - siap dibuat dengan tanda tangan'
+          : 'Lengkap - siap dibuat tanpa tanda tangan';
+    }
+
+    agreementStatus.textContent =
+      statusText;
+
+    agreementStatus.classList.toggle(
+      'complete',
+      ready
+    );
+  }
+
+  const name =
+    $('#name')?.value?.trim() ||
+    'Nama Pemesan';
+
+  if (clientSignerName) {
+    clientSignerName.textContent =
+      name;
+  }
+
+  if (modalClientName) {
+    modalClientName.textContent =
+      name;
+  }
+}
+
+privacyConsentCheckbox?.addEventListener(
+  'change',
+  updateAgreementState
+);
+
+$('#name')?.addEventListener(
+  'input',
+  updateAgreementState
+);
+
+agreementCheckbox?.addEventListener(
+  'change',
+  updateAgreementState
+);
+
+$$('input[name="pdfSignatureMode"]')
+  .forEach(input => {
+    input.addEventListener(
+      'change',
+      () => {
+        if (input.checked) {
+          applyPdfMode(
+            input.value
+          );
+        }
+      }
+    );
+  });
+
+applyPdfMode('signed');
 
 function openAgreementModal(){
-  if(!isPrivacyReady()) return;
-  updateAgreementState();
-  agreementModal?.classList.add('open'); agreementModal?.setAttribute('aria-hidden','false');
-  document.body.classList.add('modal-open');
-  setTimeout(()=>document.querySelector('#agreementModal .modal-close')?.focus(),30);
-}
-function closeAgreementModal(){
-  agreementModal?.classList.remove('open'); agreementModal?.setAttribute('aria-hidden','true');
-  document.body.classList.remove('modal-open');
-}
-$$('[data-close-agreement]').forEach(el=>el.addEventListener('click',closeAgreementModal));
-document.addEventListener('keydown',e=>{if(e.key==='Escape' && agreementModal?.classList.contains('open')) closeAgreementModal();});
+  if (!isPrivacyReady()) {
+    return;
+  }
 
+  const selectedMode =
+    document.querySelector(
+      'input[name="pdfSignatureMode"]:checked'
+    )?.value ||
+    currentPdfMode;
+
+  applyPdfMode(
+    selectedMode
+  );
+
+  agreementModal?.classList.add(
+    'open'
+  );
+
+  agreementModal?.setAttribute(
+    'aria-hidden',
+    'false'
+  );
+
+  document.body.classList.add(
+    'modal-open'
+  );
+
+  setTimeout(
+    () =>
+      document
+        .querySelector(
+          '#agreementModal .modal-close'
+        )
+        ?.focus(),
+    30
+  );
+}
+
+function closeAgreementModal(){
+  agreementModal?.classList.remove(
+    'open'
+  );
+
+  agreementModal?.setAttribute(
+    'aria-hidden',
+    'true'
+  );
+
+  document.body.classList.remove(
+    'modal-open'
+  );
+}
+
+$$('[data-close-agreement]')
+  .forEach(element =>
+    element.addEventListener(
+      'click',
+      closeAgreementModal
+    )
+  );
+
+document.addEventListener(
+  'keydown',
+  event => {
+    if (
+      event.key === 'Escape' &&
+      agreementModal?.classList.contains(
+        'open'
+      )
+    ) {
+      closeAgreementModal();
+    }
+  }
+);
 const menuToggle = $('#menuToggle');
 const nav = $('#mainNav');
 menuToggle?.addEventListener('click', () => {
@@ -1976,21 +2248,116 @@ async function populatePrintReport(){
   const dateText=now.toLocaleDateString('id-ID',{day:'2-digit',month:'long',year:'numeric'});
   text('printProviderDate',dateText); text('printClientDate',dateText); text('printClientSigner',value('name'));
 
-  const providerImg=$('#printProviderSignature'), clientImg=$('#printClientSignature');
-  if(providerImg){
-    providerImg.src='assets/signature-provider.svg';
-    providerImg.style.display='block';
-  }
-  if(clientImg && signaturePads.client){
-    const clientData=await snapshotClientSignature();
-    if(clientData){
-      renderClientSignatureForPrint(clientData);
-      clientImg.alt='Tanda tangan digital Pihak Kedua';
-      if(clientImg.decode){ try{ await clientImg.decode(); }catch(e){} }
+  const report =
+    $('.print-report');
+
+  const signedMode =
+    currentPdfMode === 'signed';
+
+  report?.classList.toggle(
+    'pdf-mode-signed',
+    signedMode
+  );
+
+  report?.classList.toggle(
+    'pdf-mode-unsigned',
+    !signedMode
+  );
+
+  text(
+    'printAgreementKicker',
+    signedMode
+      ? 'PROJECT AGREEMENT'
+      : 'ESTIMATE DOCUMENT'
+  );
+
+  text(
+    'printAgreementTitle',
+    signedMode
+      ? 'Persetujuan Kerja Sama & Konfirmasi Scope Awal'
+      : 'Ringkasan Estimasi Tanpa Tanda Tangan'
+  );
+
+  text(
+    'printAgreementText',
+    signedMode
+      ? 'Dokumen ini merupakan ringkasan awal berdasarkan data formulir. Para pihak mengonfirmasi bahwa data dan scope awal telah ditinjau. Ketentuan harga final, timeline, pembayaran, revisi, deliverables, dan kewajiban para pihak mengikuti perjanjian final yang disepakati.'
+      : 'Dokumen ini merupakan ringkasan estimasi awal berdasarkan data formulir dan dibuat tanpa tanda tangan Pihak Pertama maupun Pihak Kedua. Dokumen ini bukan perjanjian final.'
+  );
+
+  const providerImg =
+    $('#printProviderSignature');
+
+  const clientImg =
+    $('#printClientSignature');
+
+  const clientSvg =
+    $('#printClientSignatureSvg');
+
+  if (signedMode) {
+    if (providerImg) {
+      providerImg.src =
+        'assets/signature-provider.svg';
+
+      providerImg.style.display =
+        'block';
+    }
+
+    if (
+      clientImg &&
+      signaturePads.client
+    ) {
+      const clientData =
+        await snapshotClientSignature();
+
+      if (clientData) {
+        renderClientSignatureForPrint(
+          clientData
+        );
+
+        clientImg.alt =
+          'Tanda tangan digital Pihak Kedua';
+
+        if (clientImg.decode) {
+          try {
+            await clientImg.decode();
+          }
+          catch (_) {}
+        }
+      }
     }
   }
+  else {
+    if (providerImg) {
+      providerImg.removeAttribute(
+        'src'
+      );
 
-  const fingerprintSource=[
+      providerImg.style.display =
+        'none';
+    }
+
+    if (clientImg) {
+      clientImg.removeAttribute(
+        'src'
+      );
+
+      clientImg.style.display =
+        'none';
+    }
+
+    const signaturePath =
+      clientSvg?.querySelector(
+        'path[data-signature-path]'
+      );
+
+    signaturePath?.setAttribute(
+      'd',
+      ''
+    );
+  }
+
+  const fingerprintSource=[  const fingerprintSource=[
     currentDocumentRef,
     value('name'),
     value('company'),
@@ -2011,35 +2378,201 @@ async function populatePrintReport(){
     selectedPackageName === 'Custom'
       ? 'Konsultasi'
       : String(total),
-    signaturePads.client?.dataUrl || ''
+    currentPdfMode,
+    currentPdfMode === 'signed'
+      ? (signaturePads.client?.dataUrl || '')
+      : ''
   ].join('|');
-  currentFingerprint=await sha256Hex(fingerprintSource);
-  renderCode39(currentDocumentRef);
-  await renderVerificationQr(currentDocumentRef);
-  text('printFingerprint',currentFingerprint ? currentFingerprint.slice(0,24) : 'Browser fingerprint unavailable');
-  // V32: publish the verification record before opening print preview.
-  // The existing API endpoint and session-only Publisher Token model are preserved.
-  const api=(window.SB_VERIFY_API||'').replace(/\/$/,'');
-  if(api){
-    const publisherToken=window.SB_VERIFY_PUBLISHER_TOKEN||'';
-    if(!publisherToken){
-      throw new Error('PUBLISHER_SESSION_REQUIRED');
+  currentFingerprint =
+    await sha256Hex(
+      fingerprintSource
+    );
+
+  renderCode39(
+    currentDocumentRef
+  );
+
+  text(
+    'printFingerprint',
+    currentFingerprint
+      ? currentFingerprint.slice(0,24)
+      : 'Browser fingerprint unavailable'
+  );
+
+  const record = {
+    id:
+      currentDocumentRef,
+
+    status:
+      'Verified',
+
+    issued_at:
+      now
+        .toISOString()
+        .slice(0,10),
+
+    client_name:
+      value('name'),
+
+    project:
+      $('#project')?.value ||
+      '-',
+
+    fingerprint:
+      currentFingerprint ||
+      '-'
+  };
+
+  currentVerificationPublished =
+    await tryPublishVerification(
+      record
+    );
+
+  let verificationQrReady =
+    false;
+
+  if (currentVerificationPublished) {
+    verificationQrReady =
+      await renderVerificationQr(
+        currentDocumentRef
+      );
+  }
+
+  setVerificationPresentation(
+    currentVerificationPublished,
+    verificationQrReady
+  );
+}
+
+async function tryPublishVerification(record){
+  const api =
+    (
+      window.SB_VERIFY_API ||
+      ''
+    ).replace(
+      /\/$/,
+      ''
+    );
+
+  const publisherToken =
+    window.SB_VERIFY_PUBLISHER_TOKEN ||
+    '';
+
+  if (
+    !api ||
+    !publisherToken
+  ) {
+    return false;
+  }
+
+  try {
+    const response =
+      await fetch(
+        api + '/documents',
+        {
+          method:
+            'POST',
+
+          headers: {
+            'Content-Type':
+              'application/json',
+
+            'Authorization':
+              'Bearer ' +
+              publisherToken
+          },
+
+          body:
+            JSON.stringify(
+              record
+            ),
+
+          keepalive:
+            true
+        }
+      );
+
+    if (!response.ok) {
+      console.warn(
+        'Optional verification publish skipped:',
+        response.status
+      );
+
+      return false;
     }
 
-    const record={id:currentDocumentRef,status:'Verified',issued_at:now.toISOString().slice(0,10),client_name:value('name'),project:$('#project')?.value||'-',fingerprint:currentFingerprint||'-'};
-    const publishResponse=await fetch(api+'/documents',{
-      method:'POST',
-      headers:{'Content-Type':'application/json','Authorization':'Bearer '+publisherToken},
-      body:JSON.stringify(record),
-      keepalive:true
-    });
+    return true;
+  }
+  catch (error) {
+    console.warn(
+      'Optional verification publish unavailable.',
+      error
+    );
 
-    if(!publishResponse.ok){
-      throw new Error('PUBLISH_FAILED_'+publishResponse.status);
-    }
+    return false;
   }
 }
 
+function setVerificationPresentation(
+  published,
+  qrReady
+){
+  const signed =
+    currentPdfMode === 'signed';
+
+  const state =
+    $('#printVerificationState');
+
+  if (state) {
+    if (published) {
+      state.textContent =
+        signed
+          ? 'DITANDATANGANI / TERVERIFIKASI'
+          : 'TANPA TANDA TANGAN / TERVERIFIKASI';
+    }
+    else {
+      state.textContent =
+        signed
+          ? 'DITANDATANGANI / BELUM TERVERIFIKASI'
+          : 'TANPA TANDA TANGAN / BELUM TERVERIFIKASI';
+    }
+  }
+
+  const qr =
+    $('#printVerifyQr');
+
+  const qrLink =
+    $('#printVerifyQrLink');
+
+  const qrBlock =
+    qr?.closest(
+      '.print-verify-qr'
+    );
+
+  const showQr =
+    Boolean(
+      published &&
+      qrReady
+    );
+
+  if (qrBlock) {
+    qrBlock.hidden =
+      !showQr;
+  }
+
+  if (!showQr) {
+    if (qr) {
+      qr.innerHTML =
+        '';
+    }
+
+    if (qrLink) {
+      qrLink.removeAttribute(
+        'href'
+      );
+    }
+  }
+}
 async function prepareClientSignatureForPrint(){
   const pad=signaturePads.client;
   const img=$('#printClientSignature');
@@ -2120,44 +2653,95 @@ function restorePrintReportAfterPrint(){
   report.style.removeProperty('width');
   printReportParent=null; printReportNextSibling=null;
 }
-confirmAgreementBtn?.addEventListener('click',async()=>{
-  if(!isAgreementReady()){updateAgreementState();return;}
-  confirmAgreementBtn.disabled=true;
-  try{
-    await populatePrintReport();
-    await prepareClientSignatureForPrint();
-    mountPrintReportForPrint();
-    fitPrintReportToA4Portrait();
-    // Force the browser to lay out the now top-level print document before print preview.
-    void document.body.offsetHeight;
-    void $('.print-report')?.getBoundingClientRect();
-    closeAgreementModal();
-    requestAnimationFrame(()=>requestAnimationFrame(()=>setTimeout(()=>window.print(),180)));
-  }catch(err){
-    console.error('Document publishing failed:',err);
-    const code=String(err?.message||'');
-    if(code==='PUBLISHER_SESSION_REQUIRED'){
-      alert('Sesi Publisher belum aktif. Buka /verify/publisher.html, simpan konfigurasi Publisher, lalu gunakan tombol “Buka Formulir Utama” sebelum membuat PDF.');
-    }else if(code.startsWith('PUBLISH_FAILED_401') || code.startsWith('PUBLISH_FAILED_403')){
-      alert('Publisher Token ditolak oleh API. Aktifkan ulang sesi Publisher sebelum membuat PDF.');
-    }else{
-      alert('Dokumen belum berhasil didaftarkan ke database verifikasi. PDF tidak dibuat agar QR tidak menghasilkan dokumen yang belum terverifikasi. Silakan coba kembali.');
+confirmAgreementBtn?.addEventListener(
+  'click',
+  async () => {
+    if (!isAgreementReady()) {
+      updateAgreementState();
+      return;
     }
-  }finally{
-    setTimeout(()=>{confirmAgreementBtn.disabled=false;},1000);
+
+    confirmAgreementBtn.disabled =
+      true;
+
+    try {
+      await populatePrintReport();
+
+      if (
+        currentPdfMode === 'signed'
+      ) {
+        await prepareClientSignatureForPrint();
+      }
+
+      mountPrintReportForPrint();
+      fitPrintReportToA4Portrait();
+
+      void document.body.offsetHeight;
+
+      void $('.print-report')
+        ?.getBoundingClientRect();
+
+      closeAgreementModal();
+
+      requestAnimationFrame(
+        () =>
+          requestAnimationFrame(
+            () =>
+              setTimeout(
+                () =>
+                  window.print(),
+                180
+              )
+          )
+      );
+    }
+    catch (error) {
+      console.error(
+        'PDF generation failed:',
+        error
+      );
+
+      alert(
+        'PDF belum dapat dibuat. Silakan coba kembali.'
+      );
+    }
+    finally {
+      setTimeout(
+        () => {
+          confirmAgreementBtn.disabled =
+            false;
+        },
+        1000
+      );
+    }
   }
-});
+);
 window.addEventListener('afterprint',restorePrintReportAfterPrint);
 
-window.addEventListener('beforeprint',()=>{
-  mountPrintReportForPrint();
-  fitPrintReportToA4Portrait();
-  if(isAgreementReady()){
-    const pad=signaturePads.client;
-    if(pad?.hasSignature) renderClientSignatureForPrint(pad.dataUrl || pad.canvas.toDataURL('image/png'));
-  }
-});
+window.addEventListener(
+  'beforeprint',
+  () => {
+    mountPrintReportForPrint();
+    fitPrintReportToA4Portrait();
 
+    if (
+      currentPdfMode === 'signed' &&
+      isAgreementReady()
+    ) {
+      const pad =
+        signaturePads.client;
+
+      if (pad?.hasSignature) {
+        renderClientSignatureForPrint(
+          pad.dataUrl ||
+          pad.canvas.toDataURL(
+            'image/png'
+          )
+        );
+      }
+    }
+  }
+);
 const sections = $$('main section[id], main section.hero');
 const navLinks = $$('#mainNav a[href^="#"]');
 const activeObserver = new IntersectionObserver(entries => {

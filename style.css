@@ -7722,3 +7722,109 @@ body {
 }
 
 /* ===== /PRICING FLOW INTRO HIGHLIGHT R1 ===== */
+
+/* ===== PDF MODE R1 ===== */
+
+.pdf-mode-selector {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 18px 0 14px;
+}
+
+.pdf-mode-option {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+  padding: 14px;
+  border: 1px solid #245c77;
+  border-radius: 14px;
+  background: #041827;
+  cursor: pointer;
+  transition:
+    border-color .2s ease,
+    background .2s ease,
+    box-shadow .2s ease;
+}
+
+.pdf-mode-option:has(input:checked) {
+  border-color: #ffb31a;
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255,179,26,.12),
+      #041827
+    );
+  box-shadow:
+    0 0 0 1px rgba(255,179,26,.08);
+}
+
+.pdf-mode-option input {
+  flex: 0 0 auto;
+  margin-top: 3px;
+  accent-color: #ffb31a;
+}
+
+.pdf-mode-option-copy {
+  min-width: 0;
+}
+
+.pdf-mode-option-copy strong {
+  display: block;
+  color: #fff;
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+.pdf-mode-option-copy small {
+  display: block;
+  margin-top: 4px;
+  color: #9eb2bf;
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+[data-signed-only][hidden] {
+  display: none !important;
+}
+
+.print-report.pdf-mode-unsigned .print-signatures {
+  display: none !important;
+}
+
+.print-verify-qr[hidden] {
+  display: none !important;
+}
+
+@media (max-width: 760px) {
+  .pdf-mode-selector {
+    grid-template-columns: 1fr;
+    gap: 9px;
+    margin-top: 14px;
+  }
+
+  .pdf-mode-option {
+    padding: 11px;
+  }
+
+  .pdf-mode-option-copy strong {
+    font-size: 12px;
+  }
+
+  .pdf-mode-option-copy small {
+    font-size: 9px;
+  }
+}
+
+@media print {
+  body > .print-report.print-host.pdf-mode-unsigned .print-signatures {
+    display: none !important;
+  }
+
+  body > .print-report.print-host .print-verify-qr[hidden] {
+    display: none !important;
+  }
+}
+
+/* ===== /PDF MODE R1 ===== */
