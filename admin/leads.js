@@ -695,7 +695,7 @@
     ].join("\n");
   }
 
-  function buildLeadFollowupMessage(lead) {
+  function buildLeadFollowupMessage(lead, shareUrl) {
     return [
       `Halo Bapak/Ibu ${
         lead?.full_name ||
@@ -703,6 +703,10 @@
       },`,
       "",
       "Saya dari Srilex Buditra ingin menindaklanjuti permintaan konsultasi project yang sebelumnya Anda kirim.",
+      "",
+      "*DOKUMEN ESTIMASI*",
+      "• Lihat / Cetak / Simpan PDF:",
+      shareUrl,
       "",
       `Project: ${
         LEAD_PROJECT_LABELS[
@@ -3941,18 +3945,6 @@
       return;
     }
 
-    const message =
-      buildLeadFollowupMessage(
-        lead
-      );
-
-    const url =
-      `https://wa.me/${number}?text=${
-        encodeURIComponent(
-          message
-        )
-      }`;
-
     const popup =
       window.open(
         "about:blank",
@@ -3966,18 +3958,117 @@
       return;
     }
 
-    popup.opener = null;
-    popup.location.href = url;
+    try {
+      popup.opener = null;
+    }
+    catch {}
 
     formError.textContent = "";
 
+    const endpoint =
+      `${API}/${
+        encodeURIComponent(
+          lead.id
+        )
+      }/follow-up-whatsapp`;
+
+    let shareToken = "";
+
+    /*
+     * Tahap 1:
+     * menyiapkan Secure Document Link.
+     * Belum mencatat WhatsApp sebagai dibuka.
+     */
+    try {
+      const prepared =
+        await api(
+          endpoint,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type":
+                "application/json"
+            },
+            body:
+              JSON.stringify({
+                prepare: true
+              })
+          }
+        );
+
+      shareToken =
+        String(
+          prepared?.lead?.share_token ||
+            ""
+        ).trim();
+
+      if (
+        !/^[A-Za-z0-9_-]{20,100}\.[A-Za-z0-9_-]{20,100}$/.test(
+          shareToken
+        )
+      ) {
+        throw new Error(
+          "Secure Document Link belum tersedia."
+        );
+      }
+    }
+    catch (error) {
+      if (
+        popup &&
+        !popup.closed
+      ) {
+        popup.close();
+      }
+
+      formError.textContent =
+        error?.message ||
+        "Secure Document Link belum dapat disiapkan.";
+
+      console.error(
+        "LEAD_WHATSAPP_FOLLOWUP_PREPARE_FAILED",
+        error
+      );
+
+      return;
+    }
+
+    const shareUrl =
+      `${
+        window.location.origin
+          .replace(/\/+$/, "")
+      }/share/lead/#${shareToken}`;
+
+    const message =
+      buildLeadFollowupMessage(
+        lead,
+        shareUrl
+      );
+
+    const url =
+      `https://wa.me/${number}?text=${
+        encodeURIComponent(
+          message
+        )
+      }`;
+
+    if (popup.closed) {
+      formError.textContent =
+        "Tab WhatsApp sudah ditutup sebelum proses selesai.";
+
+      return;
+    }
+
+    /*
+     * Arahkan ke WhatsApp terlebih dahulu.
+     * Activity Log dicatat setelah navigasi dimulai.
+     */
+    popup.location.replace(
+      url
+    );
+
     try {
       await api(
-        `${API}/${
-          encodeURIComponent(
-            lead.id
-          )
-        }/follow-up-whatsapp`,
+        endpoint,
         {
           method: "POST",
           headers: {
@@ -3994,13 +4085,20 @@
       );
 
       showNotice(
-        "WhatsApp follow-up dibuka. Status Lead tetap manual."
+        "WhatsApp follow-up dibuka dengan Secure Document Link. Status Lead tetap manual."
       );
     }
     catch (error) {
       showNotice(
         "WhatsApp berhasil dibuka, tetapi Activity Log gagal dicatat."
       );
+
+      try {
+        await loadLeadFollowupStatus(
+          lead
+        );
+      }
+      catch {}
 
       console.error(
         "LEAD_WHATSAPP_FOLLOWUP_LOG_FAILED",

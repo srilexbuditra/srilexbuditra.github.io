@@ -4547,6 +4547,12 @@ async function logAdminLeadWhatsappFollowup(
   auth,
   leadId
 ) {
+  const body =
+    await readJson(request);
+
+  const prepareOnly =
+    body?.prepare === true;
+
   const lead =
     await env.DB.prepare(
       `SELECT
@@ -4597,20 +4603,49 @@ async function logAdminLeadWhatsappFollowup(
     );
   }
 
-  await writeActivity(
-    env,
-    auth.user.id,
-    "LEAD_WHATSAPP_FOLLOWUP_OPENED",
-    "lead",
-    leadId,
-    `WhatsApp follow-up opened for lead ${lead.lead_code}.`
-  );
+  const share =
+    await ensureLeadPublicShare(
+      env,
+      leadId,
+      auth.user.id
+    );
+
+  if (!share?.token) {
+    return apiResponse(
+      request,
+      env,
+      {
+        error:
+          "Lead public document is unavailable."
+      },
+      409
+    );
+  }
+
+  /*
+   * prepare=true hanya menyiapkan Secure Document.
+   * Activity dicatat pada request normal berikutnya.
+   */
+  if (!prepareOnly) {
+    await writeActivity(
+      env,
+      auth.user.id,
+      "LEAD_WHATSAPP_FOLLOWUP_OPENED",
+      "lead",
+      leadId,
+      `WhatsApp follow-up opened for lead ${lead.lead_code}.`
+    );
+  }
 
   return apiResponse(
     request,
     env,
     {
       ok: true,
+
+      prepared:
+        prepareOnly,
+
       lead: {
         id:
           lead.id,
@@ -4619,7 +4654,10 @@ async function logAdminLeadWhatsappFollowup(
           lead.lead_code,
 
         full_name:
-          lead.full_name
+          lead.full_name,
+
+        share_token:
+          share.token
       }
     }
   );
