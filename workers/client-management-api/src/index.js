@@ -651,6 +651,28 @@ export default {
           decodeURIComponent(clientInvoiceMatch[1])
         );
       }
+      // ======================================================
+      // ADMIN VERIFICATION PUBLISH R1
+      // ======================================================
+
+      if (
+        url.pathname === "/api/admin/verification/publish" &&
+        method === "POST"
+      ) {
+        const auth = await requireRole(
+          request,
+          env,
+          ["system_admin"]
+        );
+
+        if (auth.response) return auth.response;
+
+        return publishAdminVerification(
+          request,
+          env,
+          auth
+        );
+      }
       if (url.pathname === "/api/admin/documents" && method === "GET") {
         const auth = await requireRole(request, env, ["system_admin", "staff"]);
         if (auth.response) return auth.response;
@@ -1388,6 +1410,186 @@ function sessionCookie(token) {
 
 function clearSessionCookie() {
   return `${COOKIE_NAME}=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0`;
+}
+
+async function publishAdminVerification(request, env, auth) {
+  const verificationApi =
+    String(
+      env.VERIFICATION_API_URL ||
+      "https://srilexbuditra-verification-api.srilexbuditra.workers.dev"
+    )
+      .trim()
+      .replace(/\/+$/, "");
+
+  const publisherToken =
+    String(
+      env.VERIFICATION_PUBLISHER_TOKEN ||
+      ""
+    ).trim();
+
+  if (!publisherToken) {
+    return apiResponse(
+      request,
+      env,
+      {
+        error: "Verification publisher is not configured.",
+        code: "VERIFICATION_PUBLISHER_NOT_CONFIGURED"
+      },
+      503
+    );
+  }
+
+  const body = await readJson(request);
+
+  const documentId =
+    String(body?.id || "")
+      .trim()
+      .slice(0, 160);
+
+  if (!documentId) {
+    return apiResponse(
+      request,
+      env,
+      {
+        error: "Document ID is required.",
+        code: "DOCUMENT_ID_REQUIRED"
+      },
+      400
+    );
+  }
+
+  const record = {
+    id: documentId,
+
+    issued_at:
+      String(
+        body?.issued_at ||
+        new Date()
+          .toISOString()
+          .slice(0, 10)
+      ).slice(0, 32),
+
+    client_name:
+      String(
+        body?.client_name ||
+        "-"
+      ).slice(0, 200),
+
+    project:
+      String(
+        body?.project ||
+        "-"
+      ).slice(0, 200),
+
+    fingerprint:
+      String(
+        body?.fingerprint ||
+        "-"
+      ).slice(0, 500)
+  };
+
+  let upstreamResponse;
+
+  try {
+    upstreamResponse =
+      await fetch(
+        verificationApi + "/documents",
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type":
+              "application/json",
+
+            "Authorization":
+              "Bearer " +
+              publisherToken
+          },
+
+          body:
+            JSON.stringify(
+              record
+            )
+        }
+      );
+  }
+  catch (error) {
+    console.error(
+      "Verification publish upstream unavailable:",
+      error
+    );
+
+    return apiResponse(
+      request,
+      env,
+      {
+        error: "Verification service is unavailable.",
+        code: "VERIFICATION_SERVICE_UNAVAILABLE"
+      },
+      502
+    );
+  }
+
+  let upstreamData = null;
+
+  try {
+    upstreamData =
+      await upstreamResponse.json();
+  }
+  catch (_) {
+    upstreamData = null;
+  }
+
+  if (!upstreamResponse.ok) {
+    console.warn(
+      "Verification publish rejected:",
+      upstreamResponse.status
+    );
+
+    return apiResponse(
+      request,
+      env,
+      {
+        error:
+          "Verification document could not be published.",
+
+        code:
+          "VERIFICATION_PUBLISH_FAILED",
+
+        upstream_status:
+          upstreamResponse.status
+      },
+      502
+    );
+  }
+
+  await writeActivity(
+    env,
+    auth.user.id,
+    "VERIFICATION_PUBLISHED",
+    "verification_document",
+    documentId,
+    `Verification document published: ${documentId}`
+  );
+
+  return apiResponse(
+    request,
+    env,
+    {
+      ok: true,
+      published: true,
+
+      verification:
+        upstreamData || record,
+
+      verify_url:
+        "https://srilexbuditra.work/verify/?id=" +
+        encodeURIComponent(
+          documentId
+        )
+    },
+    201
+  );
 }
 
 async function writeActivity(env, userId, action, entityType = null, entityId = null, description = null) {
