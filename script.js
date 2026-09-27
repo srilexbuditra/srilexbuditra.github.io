@@ -2445,41 +2445,23 @@ async function populatePrintReport(){
 }
 
 async function tryPublishVerification(record){
-  const api =
-    (
-      window.SB_VERIFY_API ||
-      ''
-    ).replace(
-      /\/$/,
-      ''
-    );
-
-  const publisherToken =
-    window.SB_VERIFY_PUBLISHER_TOKEN ||
-    '';
-
-  if (
-    !api ||
-    !publisherToken
-  ) {
-    return false;
-  }
-
   try {
     const response =
       await fetch(
-        api + '/documents',
+        '/api/admin/verification/publish',
         {
           method:
             'POST',
 
+          credentials:
+            'same-origin',
+
           headers: {
-            'Content-Type':
+            'Accept':
               'application/json',
 
-            'Authorization':
-              'Bearer ' +
-              publisherToken
+            'Content-Type':
+              'application/json'
           },
 
           body:
@@ -2493,26 +2475,35 @@ async function tryPublishVerification(record){
       );
 
     if (!response.ok) {
-      console.warn(
-        'Optional verification publish skipped:',
-        response.status
-      );
+      if (
+        response.status !== 401 &&
+        response.status !== 403
+      ) {
+        console.warn(
+          'Verification publish skipped:',
+          response.status
+        );
+      }
 
       return false;
     }
 
-    return true;
+    const data =
+      await response.json().catch(
+        () => ({})
+      );
+
+    return data.published === true;
   }
   catch (error) {
     console.warn(
-      'Optional verification publish unavailable.',
+      'Verification publish unavailable.',
       error
     );
 
     return false;
   }
 }
-
 function setVerificationPresentation(
   published,
   qrReady
