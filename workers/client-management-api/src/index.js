@@ -418,7 +418,11 @@ export default {
       if (url.pathname === "/api/admin/support" && method === "GET") {
         const auth = await requireRole(request, env, ["system_admin", "staff"]);
         if (auth.response) return auth.response;
-        return listAdminSupportTickets(request, env);
+        return listAdminSupportTickets(
+          request,
+          env,
+          auth
+        );
       }
 
       const adminSupportMessageMatch =
@@ -446,6 +450,7 @@ export default {
         return getAdminSupportTicket(
           request,
           env,
+          auth,
           decodeURIComponent(adminSupportMatch[1])
         );
       }
@@ -5559,6 +5564,50 @@ const SUPPORT_PRIORITIES = new Set([
   "urgent"
 ]);
 
+/*
+ * SUPPORT ASSIGNMENT ACCESS R1
+ * system_admin: may access every support ticket.
+ * staff: may access only tickets assigned to the authenticated user.
+ *
+ * Return 404 for cross-staff / unassigned access so the API does not
+ * reveal whether another support ticket ID exists.
+ */
+async function requireAssignedSupportAccess(
+  request,
+  env,
+  auth,
+  ticketId
+) {
+  if (auth?.user?.role !== "staff") {
+    return null;
+  }
+
+  const ticket =
+    await env.DB.prepare(
+      `SELECT id
+       FROM support_tickets
+       WHERE id = ?
+         AND assigned_to_user_id = ?
+       LIMIT 1`
+    )
+      .bind(
+        ticketId,
+        auth.user.id
+      )
+      .first();
+
+  if (ticket) {
+    return null;
+  }
+
+  return apiResponse(
+    request,
+    env,
+    { error: "Support ticket not found." },
+    404
+  );
+}
+
 const SUPPORT_STATUSES = new Set([
   "open",
   "in_progress",
@@ -5566,7 +5615,11 @@ const SUPPORT_STATUSES = new Set([
   "closed"
 ]);
 
-async function listAdminSupportTickets(request, env) {
+async function listAdminSupportTickets(
+  request,
+  env,
+  auth
+) {
   const rows = await env.DB.prepare(
     `SELECT
        t.id,
@@ -5591,6 +5644,12 @@ async function listAdminSupportTickets(request, env) {
        ) AS message_count
      FROM support_tickets t
      JOIN clients c ON c.id = t.client_id
+
+     WHERE (
+       ? <> 'staff'
+       OR t.assigned_to_user_id = ?
+     )
+
      ORDER BY
        CASE t.priority
          WHEN 'urgent' THEN 1
@@ -5599,7 +5658,12 @@ async function listAdminSupportTickets(request, env) {
          ELSE 4
        END,
        t.updated_at DESC`
-  ).all();
+  )
+    .bind(
+      auth.user.role,
+      auth.user.id
+    )
+    .all();
 
   return apiResponse(request, env, {
     tickets: rows.results || []
@@ -5609,8 +5673,21 @@ async function listAdminSupportTickets(request, env) {
 async function getAdminSupportTicket(
   request,
   env,
+  auth,
   ticketId
 ) {
+  const accessResponse =
+    await requireAssignedSupportAccess(
+      request,
+      env,
+      auth,
+      ticketId
+    );
+
+  if (accessResponse) {
+    return accessResponse;
+  }
+
   const ticket = await env.DB.prepare(
     `SELECT
        t.*,
@@ -5660,6 +5737,18 @@ async function updateAdminSupportTicket(
   auth,
   ticketId
 ) {
+  const accessResponse =
+    await requireAssignedSupportAccess(
+      request,
+      env,
+      auth,
+      ticketId
+    );
+
+  if (accessResponse) {
+    return accessResponse;
+  }
+
   const body = await readJson(request);
 
   const current = await env.DB.prepare(
@@ -5787,6 +5876,18 @@ async function addAdminSupportMessage(
   auth,
   ticketId
 ) {
+  const accessResponse =
+    await requireAssignedSupportAccess(
+      request,
+      env,
+      auth,
+      ticketId
+    );
+
+  if (accessResponse) {
+    return accessResponse;
+  }
+
   const body = await readJson(request);
 
   const message =
