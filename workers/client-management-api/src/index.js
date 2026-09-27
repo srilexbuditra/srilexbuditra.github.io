@@ -226,7 +226,7 @@ export default {
         const auth = await requireRole(request, env, ["system_admin", "staff"]);
         if (auth.response) return auth.response;
 
-        return listAdminLeads(request, env);
+        return listAdminLeads(request, env, auth);
       }
 
       if (url.pathname === "/api/admin/leads" && method === "POST") {
@@ -246,6 +246,7 @@ export default {
         return listAdminLeadNotes(
           request,
           env,
+          auth,
           decodeURIComponent(adminLeadNotesMatch[1])
         );
       }
@@ -2488,6 +2489,49 @@ async function validateLeadAssignee(request, env, userId) {
   return { ok: true };
 }
 
+/*
+ * LEAD ASSIGNMENT R1
+ * system_admin: may access every lead.
+ * staff: may access only leads assigned to the authenticated user.
+ *
+ * Return 404 for cross-staff access so the API does not reveal
+ * whether another user's Lead ID exists.
+ */
+async function requireAssignedLeadAccess(
+  request,
+  env,
+  auth,
+  leadId
+) {
+  if (auth?.user?.role !== "staff") {
+    return null;
+  }
+
+  const lead = await env.DB.prepare(
+    `SELECT id
+     FROM leads
+     WHERE id = ?
+       AND assigned_to_user_id = ?
+     LIMIT 1`
+  )
+    .bind(
+      leadId,
+      auth.user.id
+    )
+    .first();
+
+  if (lead) {
+    return null;
+  }
+
+  return apiResponse(
+    request,
+    env,
+    { error: "Lead not found." },
+    404
+  );
+}
+
 const RDAP_BOOTSTRAP_URL =
   "https://data.iana.org/rdap/dns.json";
 
@@ -3889,7 +3933,7 @@ async function createPublicEstimateLead(
     201
   );
 }
-async function listAdminLeads(request, env) {
+async function listAdminLeads(request, env, auth) {
   const rows = await env.DB.prepare(
     `SELECT
        l.id,
@@ -3942,6 +3986,11 @@ async function listAdminLeads(request, env) {
      LEFT JOIN clients cc
        ON cc.id = l.converted_client_id
 
+     WHERE (
+       ? <> 'staff'
+       OR l.assigned_to_user_id = ?
+     )
+
      ORDER BY
        CASE l.status
          WHEN 'new' THEN 1
@@ -3957,7 +4006,12 @@ async function listAdminLeads(request, env) {
        END,
        l.next_follow_up_at ASC,
        l.updated_at DESC`
-  ).all();
+  )
+    .bind(
+      auth.user.role,
+      auth.user.id
+    )
+    .all();
 
   return apiResponse(
     request,
@@ -4001,7 +4055,9 @@ async function createAdminLead(request, env, auth) {
       .toLowerCase();
 
   const assignedToUserId =
-    nullableLeadText(body?.assigned_to_user_id);
+    auth.user.role === "staff"
+      ? auth.user.id
+      : nullableLeadText(body?.assigned_to_user_id);
 
   const nextFollowUpAt =
     normalizeLeadFollowUp(body?.next_follow_up_at);
@@ -4172,6 +4228,18 @@ async function updateAdminLead(
   auth,
   leadId
 ) {
+  const accessResponse =
+    await requireAssignedLeadAccess(
+      request,
+      env,
+      auth,
+      leadId
+    );
+
+  if (accessResponse) {
+    return accessResponse;
+  }
+
   const body = await readJson(request);
 
   const current = await env.DB.prepare(
@@ -4253,9 +4321,11 @@ async function updateAdminLead(
       : current.status;
 
   const assignedToUserId =
-    hasOwnField(body, "assigned_to_user_id")
-      ? nullableLeadText(body.assigned_to_user_id)
-      : current.assigned_to_user_id;
+    auth.user.role === "staff"
+      ? auth.user.id
+      : hasOwnField(body, "assigned_to_user_id")
+        ? nullableLeadText(body.assigned_to_user_id)
+        : current.assigned_to_user_id;
 
   let nextFollowUpAt =
     current.next_follow_up_at;
@@ -4409,8 +4479,21 @@ async function updateAdminLead(
 async function listAdminLeadNotes(
   request,
   env,
+  auth,
   leadId
 ) {
+  const accessResponse =
+    await requireAssignedLeadAccess(
+      request,
+      env,
+      auth,
+      leadId
+    );
+
+  if (accessResponse) {
+    return accessResponse;
+  }
+
   const lead = await env.DB.prepare(
     `SELECT id, lead_code
      FROM leads
@@ -4508,6 +4591,18 @@ async function getAdminLeadFollowupStatus(
   auth,
   leadId
 ) {
+  const accessResponse =
+    await requireAssignedLeadAccess(
+      request,
+      env,
+      auth,
+      leadId
+    );
+
+  if (accessResponse) {
+    return accessResponse;
+  }
+
   const lead =
     await env.DB.prepare(
       `SELECT
@@ -4570,6 +4665,18 @@ async function markAdminLeadContacted(
   auth,
   leadId
 ) {
+  const accessResponse =
+    await requireAssignedLeadAccess(
+      request,
+      env,
+      auth,
+      leadId
+    );
+
+  if (accessResponse) {
+    return accessResponse;
+  }
+
   const lead =
     await env.DB.prepare(
       `SELECT
@@ -4753,6 +4860,18 @@ async function logAdminLeadWhatsappFollowup(
   auth,
   leadId
 ) {
+  const accessResponse =
+    await requireAssignedLeadAccess(
+      request,
+      env,
+      auth,
+      leadId
+    );
+
+  if (accessResponse) {
+    return accessResponse;
+  }
+
   const body =
     await readJson(request);
 
@@ -4875,6 +4994,18 @@ async function addAdminLeadNote(
   auth,
   leadId
 ) {
+  const accessResponse =
+    await requireAssignedLeadAccess(
+      request,
+      env,
+      auth,
+      leadId
+    );
+
+  if (accessResponse) {
+    return accessResponse;
+  }
+
   const body = await readJson(request);
 
   const note =
