@@ -2357,7 +2357,7 @@ async function populatePrintReport(){
     );
   }
 
-  const fingerprintSource=[  const fingerprintSource=[
+  const fingerprintSource=[
     currentDocumentRef,
     value('name'),
     value('company'),
