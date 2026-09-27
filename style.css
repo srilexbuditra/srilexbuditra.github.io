@@ -7828,3 +7828,67 @@ body {
 }
 
 /* ===== /PDF MODE R1 ===== */
+
+/* ===== PDF MODE R1 MODAL LAYOUT FIX ===== */
+
+.agreement-modal-card {
+  box-sizing: border-box;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.pdf-mode-selector {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+}
+
+.pdf-mode-selector > .pdf-mode-option {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  margin: 0;
+  overflow: hidden;
+}
+
+.pdf-mode-option input[type="radio"] {
+  display: block;
+  flex: 0 0 18px;
+  width: 18px !important;
+  min-width: 18px !important;
+  max-width: 18px !important;
+  height: 18px;
+  margin: 1px 0 0 !important;
+  padding: 0 !important;
+}
+
+.pdf-mode-option-copy {
+  flex: 1 1 auto;
+  width: auto;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.pdf-mode-option-copy strong,
+.pdf-mode-option-copy small {
+  max-width: 100%;
+  overflow-wrap: break-word;
+  word-break: normal;
+}
+
+@media (max-width: 760px) {
+  .pdf-mode-selector {
+    grid-template-columns:
+      minmax(0, 1fr);
+  }
+
+  .pdf-mode-selector > .pdf-mode-option {
+    width: 100%;
+    margin: 0;
+  }
+}
+
+/* ===== /PDF MODE R1 MODAL LAYOUT FIX ===== */
