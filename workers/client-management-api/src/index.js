@@ -78,7 +78,8 @@ export default {
 
         return listAdminActivity(
           request,
-          env
+          env,
+          auth
         );
       }
       // ======================================================
@@ -1616,7 +1617,11 @@ async function writeActivity(env, userId, action, entityType = null, entityId = 
    ACTIVITY LOGS R1
    ========================================================== */
 
-async function listAdminActivity(request, env) {
+async function listAdminActivity(
+  request,
+  env,
+  auth
+) {
   const url = new URL(request.url);
 
   const requestedLimit =
@@ -1652,11 +1657,20 @@ async function listAdminActivity(request, env) {
      LEFT JOIN users u
        ON u.id = a.user_id
 
+     WHERE (
+       ? <> 'staff'
+       OR a.user_id = ?
+     )
+
      ORDER BY a.created_at DESC
 
      LIMIT ?`
   )
-    .bind(limit)
+    .bind(
+      auth.user.role,
+      auth.user.id,
+      limit
+    )
     .all();
 
   return apiResponse(
@@ -2487,6 +2501,52 @@ async function validateLeadAssignee(request, env, userId) {
   }
 
   return { ok: true };
+}
+
+async function leadAssigneeAuditLabel(
+  env,
+  userId
+) {
+  if (!userId) {
+    return "Unassigned";
+  }
+
+  const user =
+    await env.DB.prepare(
+      `SELECT
+         id,
+         full_name,
+         email
+       FROM users
+       WHERE id = ?
+       LIMIT 1`
+    )
+      .bind(userId)
+      .first();
+
+  if (!user) {
+    return `User ${userId}`;
+  }
+
+  const name =
+    String(
+      user.full_name || ""
+    ).trim();
+
+  const email =
+    String(
+      user.email || ""
+    ).trim();
+
+  if (name && email) {
+    return `${name} (${email})`;
+  }
+
+  return (
+    name ||
+    email ||
+    `User ${userId}`
+  );
 }
 
 /*
@@ -4206,6 +4266,23 @@ async function createAdminLead(request, env, auth) {
     `Lead ${leadCode} created.`
   );
 
+  if (assignedToUserId) {
+    const assigneeLabel =
+      await leadAssigneeAuditLabel(
+        env,
+        assignedToUserId
+      );
+
+    await writeActivity(
+      env,
+      auth.user.id,
+      "LEAD_ASSIGNED",
+      "lead",
+      leadId,
+      `Lead ${leadCode} assigned to ${assigneeLabel}.`
+    );
+  }
+
   return apiResponse(
     request,
     env,
@@ -4450,6 +4527,48 @@ async function updateAdminLead(
     timestamp,
     leadId
   ).run();
+
+  if (
+    current.assigned_to_user_id !==
+    assignedToUserId
+  ) {
+    const previousAssigneeLabel =
+      await leadAssigneeAuditLabel(
+        env,
+        current.assigned_to_user_id
+      );
+
+    const nextAssigneeLabel =
+      await leadAssigneeAuditLabel(
+        env,
+        assignedToUserId
+      );
+
+    const assignmentAction =
+      !current.assigned_to_user_id
+        ? "LEAD_ASSIGNED"
+        : !assignedToUserId
+          ? "LEAD_UNASSIGNED"
+          : "LEAD_REASSIGNED";
+
+    const assignmentDescription =
+      assignmentAction ===
+        "LEAD_ASSIGNED"
+        ? `Lead ${current.lead_code} assigned to ${nextAssigneeLabel}.`
+        : assignmentAction ===
+            "LEAD_UNASSIGNED"
+          ? `Lead ${current.lead_code} unassigned from ${previousAssigneeLabel}.`
+          : `Lead ${current.lead_code} reassigned from ${previousAssigneeLabel} to ${nextAssigneeLabel}.`;
+
+    await writeActivity(
+      env,
+      auth.user.id,
+      assignmentAction,
+      "lead",
+      leadId,
+      assignmentDescription
+    );
+  }
 
   await writeActivity(
     env,
