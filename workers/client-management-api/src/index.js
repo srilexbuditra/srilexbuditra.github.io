@@ -1488,30 +1488,34 @@ async function publishAdminVerification(request, env, auth) {
       ).slice(0, 500)
   };
 
+  const verificationService =
+    env.VERIFICATION_SERVICE &&
+    typeof env.VERIFICATION_SERVICE.fetch === "function"
+      ? env.VERIFICATION_SERVICE
+      : null;
+
   let upstreamResponse;
 
   try {
+    const requestInit = {
+      method: "POST",
+      headers: {
+        "Content-Type":"application/json",
+        "Authorization":"Bearer " + publisherToken
+      },
+      body: JSON.stringify(record)
+    };
+
     upstreamResponse =
-      await fetch(
-        verificationApi + "/documents",
-        {
-          method: "POST",
-
-          headers: {
-            "Content-Type":
-              "application/json",
-
-            "Authorization":
-              "Bearer " +
-              publisherToken
-          },
-
-          body:
-            JSON.stringify(
-              record
-            )
-        }
-      );
+      verificationService
+        ? await verificationService.fetch(
+            "https://verification.internal/documents",
+            requestInit
+          )
+        : await fetch(
+            verificationApi + "/documents",
+            requestInit
+          );
   }
   catch (error) {
     console.error(
