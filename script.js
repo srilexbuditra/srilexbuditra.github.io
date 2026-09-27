@@ -2184,6 +2184,84 @@ function setEstimatorFlowStep(step){
       )
     );
 
+  const instruction =
+    document.getElementById(
+      'estimateStepInstruction'
+    );
+
+  const instructionBadge =
+    document.getElementById(
+      'estimateStepInstructionBadge'
+    );
+
+  const instructionTitle =
+    document.getElementById(
+      'estimateStepInstructionTitle'
+    );
+
+  const instructionText =
+    document.getElementById(
+      'estimateStepInstructionText'
+    );
+
+  const instructionContent = {
+    1: {
+      badge: 'LANGKAH 1',
+      title: 'Pilih Paket',
+      text:
+        'Pilih paket awal yang paling mendekati kebutuhan Anda. Harga dapat menyesuaikan fitur, kompleksitas, dan scope project.'
+    },
+
+    2: {
+      badge: 'LANGKAH 2',
+      title:
+        'Lengkapi Kebutuhan Project',
+      text:
+        'Isi data project, fitur, domain, hosting/server, dan target waktu agar estimasi lebih sesuai kebutuhan.'
+    },
+
+    3: {
+      badge: 'LANGKAH 3',
+      title:
+        'Tinjau Estimasi & Lanjutkan',
+      text:
+        'Periksa hasil estimasi awal, lalu lanjutkan konsultasi atau pilih Lihat / Cetak / Simpan PDF.'
+    }
+  };
+
+  const activeInstruction =
+    instructionContent[target];
+
+  if (
+    instruction &&
+    activeInstruction
+  ) {
+    instruction.classList.remove(
+      'step-1',
+      'step-2',
+      'step-3'
+    );
+
+    instruction.classList.add(
+      `step-${target}`
+    );
+
+    if (instructionBadge) {
+      instructionBadge.textContent =
+        activeInstruction.badge;
+    }
+
+    if (instructionTitle) {
+      instructionTitle.textContent =
+        activeInstruction.title;
+    }
+
+    if (instructionText) {
+      instructionText.textContent =
+        activeInstruction.text;
+    }
+  }
+
   document
     .querySelectorAll(
       '.pricing-flow-guide [data-estimate-step]'

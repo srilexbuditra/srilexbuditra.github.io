@@ -7581,3 +7581,104 @@ body {
     font-size: 11px;
   }
 }
+
+/* ===== STEP INSTRUCTION BLOCK R1 ===== */
+
+.estimate-step-instruction {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  margin: 18px 0 26px;
+  padding: 16px 18px;
+  border: 1px solid rgba(255,179,26,.45);
+  border-left: 4px solid #ffb31a;
+  border-radius: 14px;
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255,179,26,.11),
+      rgba(6,30,44,.82)
+    );
+  box-shadow:
+    0 12px 30px rgba(0,0,0,.10);
+  transition:
+    border-color .2s ease,
+    background .2s ease,
+    box-shadow .2s ease;
+}
+
+.estimate-step-instruction-badge {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 30px;
+  padding: 0 11px;
+  border-radius: 999px;
+  background: #ffb31a;
+  color: #061725;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: .08em;
+  white-space: nowrap;
+}
+
+.estimate-step-instruction-copy {
+  min-width: 0;
+}
+
+.estimate-step-instruction-copy strong {
+  display: block;
+  margin: 1px 0 5px;
+  color: #fff;
+  font-size: 15px;
+  line-height: 1.35;
+}
+
+.estimate-step-instruction-copy p {
+  margin: 0;
+  color: #aebfca;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.estimate-step-instruction.step-2 {
+  border-color: rgba(255,179,26,.45);
+  border-left-color: #ffb31a;
+}
+
+.estimate-step-instruction.step-3 {
+  border-color: rgba(255,179,26,.55);
+  border-left-color: #ffb31a;
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255,179,26,.13),
+      rgba(6,30,44,.86)
+    );
+}
+
+@media (max-width: 760px) {
+  .estimate-step-instruction {
+    flex-direction: column;
+    gap: 10px;
+    margin: 14px 0 22px;
+    padding: 14px;
+  }
+
+  .estimate-step-instruction-badge {
+    min-height: 28px;
+    padding: 0 9px;
+    font-size: 10px;
+  }
+
+  .estimate-step-instruction-copy strong {
+    font-size: 14px;
+  }
+
+  .estimate-step-instruction-copy p {
+    font-size: 12px;
+  }
+}
+
+/* ===== /STEP INSTRUCTION BLOCK R1 ===== */
