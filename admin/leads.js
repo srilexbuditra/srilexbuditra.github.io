@@ -1633,6 +1633,19 @@
           <option value="lost">Lost</option>
           <option value="converted">Converted</option>
         </select>
+
+        <select
+          data-leads-assignee-filter
+          hidden
+        >
+          <option value="">
+            Semua assignee
+          </option>
+
+          <option value="__unassigned__">
+            Belum Ditugaskan
+          </option>
+        </select>
       </div>
     </div>
 
@@ -1644,6 +1657,7 @@
               <th>Lead</th>
               <th>Interest</th>
               <th>Status</th>
+              <th>Assignee</th>
               <th>Follow-up</th>
               <th>Notes</th>
               <th>Updated</th>
@@ -1653,7 +1667,7 @@
 
           <tbody data-leads-body>
             <tr>
-              <td colspan="7">
+              <td colspan="8">
                 <div class="sb-leads-empty">
                   Memuat leads...
                 </div>
@@ -1840,6 +1854,35 @@
               data-lead-next-followup-status
               hidden
             ></div>
+          </div>
+
+          <div
+            class="sb-leads-field"
+            data-lead-assignee-field
+            hidden
+          >
+            <label>Ditugaskan Kepada</label>
+
+            <select
+              name="assigned_to_user_id"
+              data-lead-assignee-select
+            >
+              <option value="">
+                Belum Ditugaskan
+              </option>
+            </select>
+
+            <input
+              type="text"
+              data-lead-assignee-readonly
+              readonly
+              hidden
+            >
+
+            <small
+              class="sb-leads-status-help"
+              data-lead-assignee-help
+            ></small>
           </div>
 
           <div class="sb-leads-field full">
@@ -2062,6 +2105,11 @@
   const filter =
     view.querySelector("[data-leads-filter]");
 
+  const assigneeFilter =
+    view.querySelector(
+      "[data-leads-assignee-filter]"
+    );
+
   const notice =
     view.querySelector("[data-leads-notice]");
 
@@ -2114,6 +2162,36 @@
   const saveButton =
     modal.querySelector("[data-lead-save]");
 
+  const assigneeField =
+    modal.querySelector(
+      "[data-lead-assignee-field]"
+    );
+
+  const assigneeSelect =
+    modal.querySelector(
+      "[data-lead-assignee-select]"
+    );
+
+  const assigneeReadonly =
+    modal.querySelector(
+      "[data-lead-assignee-readonly]"
+    );
+
+  const assigneeHelp =
+    modal.querySelector(
+      "[data-lead-assignee-help]"
+    );
+
+  let currentUser = null;
+  let assignmentUsers = [];
+
+  if (assigneeFilter) {
+    assigneeFilter.addEventListener(
+      "change",
+      () => render()
+    );
+  }
+
   function showNotice(message) {
     notice.textContent = message;
     notice.classList.add("show");
@@ -2160,6 +2238,226 @@
     }
 
     return result;
+  }
+
+  function assignmentUserLabel(user) {
+    const name =
+      String(
+        user?.full_name ||
+        user?.email ||
+        "User"
+      ).trim();
+
+    const role =
+      user?.role === "system_admin"
+        ? "System Admin"
+        : "Staff";
+
+    return `${name} - ${role}`;
+  }
+
+  function populateAssigneeControls() {
+    const isSystemAdmin =
+      currentUser?.role === "system_admin";
+
+    if (assigneeField) {
+      assigneeField.hidden = !currentUser;
+    }
+
+    if (assigneeFilter) {
+      assigneeFilter.hidden =
+        !isSystemAdmin;
+
+      if (isSystemAdmin) {
+        const previous =
+          String(
+            assigneeFilter.value || ""
+          );
+
+        assigneeFilter.innerHTML = `
+          <option value="">
+            Semua assignee
+          </option>
+
+          <option value="__unassigned__">
+            Belum Ditugaskan
+          </option>
+
+          ${assignmentUsers.map(user => `
+            <option
+              value="${escapeHtml(user.id)}"
+            >
+              ${escapeHtml(
+                assignmentUserLabel(user)
+              )}
+            </option>
+          `).join("")}
+        `;
+
+        assigneeFilter.value =
+          [
+            ...assigneeFilter.options
+          ].some(
+            option =>
+              option.value === previous
+          )
+            ? previous
+            : "";
+      }
+    }
+
+    if (!assigneeSelect) {
+      return;
+    }
+
+    if (isSystemAdmin) {
+      assigneeSelect.hidden = false;
+
+      if (assigneeReadonly) {
+        assigneeReadonly.hidden = true;
+      }
+
+      assigneeSelect.innerHTML = `
+        <option value="">
+          Belum Ditugaskan
+        </option>
+
+        ${assignmentUsers.map(user => `
+          <option
+            value="${escapeHtml(user.id)}"
+          >
+            ${escapeHtml(
+              assignmentUserLabel(user)
+            )}
+          </option>
+        `).join("")}
+      `;
+
+      if (assigneeHelp) {
+        assigneeHelp.textContent =
+          "System Admin dapat menetapkan atau memindahkan penanggung jawab Lead.";
+      }
+    }
+    else {
+      assigneeSelect.hidden = true;
+
+      if (assigneeReadonly) {
+        assigneeReadonly.hidden = false;
+
+        const label =
+          currentUser
+            ? assignmentUserLabel(
+                currentUser
+              )
+            : "Staff";
+
+        assigneeReadonly.value =
+          label;
+
+        assigneeReadonly.defaultValue =
+          label;
+      }
+
+      if (assigneeHelp) {
+        assigneeHelp.textContent =
+          "Assignment ditetapkan oleh System Admin.";
+      }
+    }
+  }
+
+  function syncLeadAssigneeField(
+    lead = null
+  ) {
+    if (!currentUser) {
+      return;
+    }
+
+    const isSystemAdmin =
+      currentUser.role === "system_admin";
+
+    if (isSystemAdmin) {
+      if (assigneeSelect) {
+        assigneeSelect.value =
+          String(
+            lead?.assigned_to_user_id ||
+            ""
+          );
+      }
+
+      return;
+    }
+
+    if (assigneeReadonly) {
+      assigneeReadonly.value =
+        String(
+          lead?.assigned_to_name ||
+          currentUser.full_name ||
+          currentUser.email ||
+          "Staff"
+        );
+    }
+
+    if (assigneeSelect) {
+      assigneeSelect.value =
+        String(
+          currentUser.id || ""
+        );
+    }
+  }
+
+  async function loadLeadAssignmentContext() {
+    const me =
+      await api("/api/auth/me");
+
+    currentUser =
+      me?.user || null;
+
+    if (!currentUser) {
+      assignmentUsers = [];
+      populateAssigneeControls();
+      return;
+    }
+
+    if (
+      currentUser.role ===
+      "system_admin"
+    ) {
+      const usersResult =
+        await api("/api/admin/users");
+
+      assignmentUsers =
+        (Array.isArray(usersResult.users)
+          ? usersResult.users
+          : []
+        ).filter(
+          user =>
+            user?.status === "active" &&
+            [
+              "system_admin",
+              "staff"
+            ].includes(user?.role)
+        );
+    }
+    else {
+      assignmentUsers =
+        currentUser.id
+          ? [currentUser]
+          : [];
+    }
+
+    populateAssigneeControls();
+
+    const currentLead =
+      currentLeadId
+        ? leads.find(
+            item =>
+              item.id === currentLeadId
+          )
+        : null;
+
+    syncLeadAssigneeField(
+      currentLead
+    );
   }
 
   function updateSummary() {
@@ -2249,11 +2547,32 @@
     const status =
       String(filter.value || "");
 
+    const assignee =
+      String(
+        assigneeFilter?.value || ""
+      );
+
     const filtered =
       leads.filter(lead => {
         if (
           status &&
           lead.status !== status
+        ) {
+          return false;
+        }
+
+        if (
+          assignee === "__unassigned__" &&
+          lead.assigned_to_user_id
+        ) {
+          return false;
+        }
+
+        if (
+          assignee &&
+          assignee !== "__unassigned__" &&
+          lead.assigned_to_user_id !==
+            assignee
         ) {
           return false;
         }
@@ -2275,7 +2594,9 @@
             lead.domain_name,
             lead.hosting_mode,
             lead.target_timeline,
-            lead.target_date
+            lead.target_date,
+            lead.assigned_to_name,
+            lead.assigned_to_email
           ]
             .filter(Boolean)
             .join(" ")
@@ -2287,7 +2608,7 @@
     if (!filtered.length) {
       body.innerHTML = `
         <tr>
-          <td colspan="7">
+          <td colspan="8">
             <div class="sb-leads-empty">
               Tidak ada lead yang sesuai.
             </div>
@@ -2337,6 +2658,24 @@
                 statusLabel(lead.status)
               )}
             </span>
+          </td>
+
+          <td>
+            <div class="sb-lead-name">
+              <strong>
+                ${escapeHtml(
+                  lead.assigned_to_name ||
+                  "Belum ditugaskan"
+                )}
+              </strong>
+
+              <span>
+                ${escapeHtml(
+                  lead.assigned_to_email ||
+                  "-"
+                )}
+              </span>
+            </div>
           </td>
 
           <td>
@@ -2391,7 +2730,7 @@
 
       body.innerHTML = `
         <tr>
-          <td colspan="7">
+          <td colspan="8">
             <div class="sb-leads-empty">
               Gagal memuat Leads:
               ${escapeHtml(error.message)}
@@ -2647,6 +2986,10 @@
         convertArea.classList.remove("show");
       }
     }
+
+    syncLeadAssigneeField(
+      lead
+    );
 
     modal.hidden = false;
 
@@ -3171,6 +3514,18 @@
             ) || ""
           ).trim() || null
       };
+
+      if (
+        currentUser?.role ===
+          "system_admin"
+      ) {
+        payload.assigned_to_user_id =
+          String(
+            data.get(
+              "assigned_to_user_id"
+            ) || ""
+          ).trim() || null;
+      }
 
       if (
         !payload.email &&
@@ -4538,7 +4893,22 @@
     new MutationObserver(() => {
       if (!view.hidden) {
         setLeadsNavigationActive();
-        loadLeads();
+
+        void (
+          async () => {
+            try {
+              await loadLeadAssignmentContext();
+            }
+            catch (error) {
+              console.warn(
+                "LEAD_ASSIGNMENT_CONTEXT_FAILED",
+                error
+              );
+            }
+
+            await loadLeads();
+          }
+        )();
       }
     });
 
@@ -4557,20 +4927,8 @@
   setTimeout(
     async () => {
       try {
-        const me =
-          await fetch(
-            "/api/auth/me",
-            {
-              headers: {
-                Accept:
-                  "application/json"
-              }
-            }
-          );
-
-        if (me.ok) {
-          await loadLeads(true);
-        }
+        await loadLeadAssignmentContext();
+        await loadLeads(true);
       } catch {
         // silent warm-up
       }
