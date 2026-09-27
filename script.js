@@ -2171,3 +2171,95 @@ const activeObserver = new IntersectionObserver(entries => {
 sections.forEach(s => activeObserver.observe(s));
 
 updateEstimate();
+
+/* ===== ESTIMATOR FLOW STEPS R1 ===== */
+
+function setEstimatorFlowStep(step){
+  const target =
+    Math.max(
+      1,
+      Math.min(
+        3,
+        Number(step) || 1
+      )
+    );
+
+  document
+    .querySelectorAll(
+      '.pricing-flow-guide [data-estimate-step]'
+    )
+    .forEach(item => {
+      const value =
+        Number(
+          item.dataset.estimateStep
+        );
+
+      item.classList.toggle(
+        'is-done',
+        value < target
+      );
+
+      item.classList.toggle(
+        'is-current',
+        value === target
+      );
+
+      item.classList.toggle(
+        'is-next',
+        value > target
+      );
+
+      if (value === target) {
+        item.setAttribute(
+          'aria-current',
+          'step'
+        );
+      }
+      else {
+        item.removeAttribute(
+          'aria-current'
+        );
+      }
+    });
+}
+
+document
+  .querySelectorAll('.package')
+  .forEach(button => {
+    button.addEventListener(
+      'click',
+      () => {
+        setEstimatorFlowStep(2);
+      }
+    );
+  });
+
+document
+  .querySelector(
+    '.estimate-change-package'
+  )
+  ?.addEventListener(
+    'click',
+    () => {
+      setEstimatorFlowStep(1);
+    }
+  );
+
+document
+  .querySelector(
+    '#estimateForm'
+  )
+  ?.addEventListener(
+    'submit',
+    () => {
+      requestAnimationFrame(
+        () => {
+          setEstimatorFlowStep(3);
+        }
+      );
+    }
+  );
+
+setEstimatorFlowStep(1);
+
+/* ===== /ESTIMATOR FLOW STEPS R1 ===== */

@@ -7473,3 +7473,111 @@ body {
 .extra-feature-totals strong{
   text-align:right;
 }
+
+/* ===== ESTIMATOR FLOW STEPS R1 ===== */
+
+.pricing-flow-guide .estimate-flow-step {
+  position: relative;
+  min-width: 0;
+  transition:
+    border-color .2s ease,
+    background .2s ease,
+    box-shadow .2s ease,
+    opacity .2s ease,
+    transform .2s ease;
+}
+
+.pricing-flow-guide .estimate-flow-step > strong {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  transition:
+    background .2s ease,
+    color .2s ease,
+    border-color .2s ease;
+}
+
+.pricing-flow-guide .estimate-flow-step span {
+  min-width: 0;
+}
+
+.pricing-flow-guide .estimate-flow-step span b {
+  display: block;
+}
+
+.pricing-flow-guide .estimate-flow-step span small {
+  display: block;
+  margin-top: 4px;
+  line-height: 1.45;
+}
+
+.pricing-flow-guide .estimate-flow-step.is-current {
+  border-color: #ffb31a;
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255,179,26,.13),
+      rgba(255,179,26,.035)
+    );
+  box-shadow:
+    0 0 0 1px rgba(255,179,26,.08),
+    0 12px 28px rgba(0,0,0,.10);
+  transform: translateY(-1px);
+}
+
+.pricing-flow-guide .estimate-flow-step.is-current > strong {
+  background: #ffb31a;
+  color: #061725;
+}
+
+.pricing-flow-guide .estimate-flow-step.is-current span b {
+  color: #fff;
+}
+
+.pricing-flow-guide .estimate-flow-step.is-done {
+  border-color: rgba(16,185,129,.65);
+  background: rgba(16,185,129,.07);
+}
+
+.pricing-flow-guide .estimate-flow-step.is-done > strong {
+  font-size: 0;
+  background: #10b981;
+  color: #fff;
+}
+
+.pricing-flow-guide .estimate-flow-step.is-done > strong::after {
+  content: "✓";
+  font-size: 16px;
+  font-weight: 900;
+}
+
+.pricing-flow-guide .estimate-flow-step.is-done span b {
+  color: #d9fff0;
+}
+
+.pricing-flow-guide .estimate-flow-step.is-next {
+  opacity: .72;
+}
+
+.pricing-flow-guide .estimate-flow-step.is-next > strong {
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.13);
+  color: #cbd9e3;
+}
+
+.package-no::before {
+  content: "PAKET ";
+}
+
+@media (max-width: 760px) {
+  .pricing-flow-guide .estimate-flow-step {
+    width: 100%;
+  }
+
+  .pricing-flow-guide .estimate-flow-step span small {
+    font-size: 11px;
+  }
+}
