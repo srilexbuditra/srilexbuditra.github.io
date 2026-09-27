@@ -7892,3 +7892,125 @@ body {
 }
 
 /* ===== /PDF MODE R1 MODAL LAYOUT FIX ===== */
+
+/* ===== PDF CONFIRMATION EMPHASIS R1 ===== */
+
+.agreement-modal-card .modal-agreement-check,
+.agreement-modal-card .agreement-check {
+  position: relative;
+  box-sizing: border-box;
+  width: 100%;
+  margin: 18px 0 16px;
+  padding: 16px 18px;
+  border: 1.5px solid rgba(255, 179, 26, .55);
+  border-radius: 16px;
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255, 179, 26, .10),
+      rgba(7, 35, 54, .96) 42%,
+      rgba(4, 24, 39, .98)
+    );
+  box-shadow:
+    0 10px 28px rgba(0, 0, 0, .18),
+    inset 0 1px 0 rgba(255, 255, 255, .04);
+  transition:
+    border-color .2s ease,
+    background .2s ease,
+    box-shadow .2s ease,
+    transform .2s ease;
+}
+
+.agreement-modal-card .modal-agreement-check label,
+.agreement-modal-card .agreement-check label {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr);
+  align-items: start;
+  gap: 12px;
+  width: 100%;
+  margin: 0;
+  color: #dce9f0;
+  cursor: pointer;
+}
+
+.agreement-modal-card .modal-agreement-check input[type="checkbox"],
+.agreement-modal-card .agreement-check input[type="checkbox"] {
+  width: 24px !important;
+  min-width: 24px !important;
+  max-width: 24px !important;
+  height: 24px !important;
+  margin: 1px 0 0 !important;
+  padding: 0 !important;
+  accent-color: #ffb31a;
+  cursor: pointer;
+}
+
+.agreement-modal-card .modal-agreement-check strong,
+.agreement-modal-card .agreement-check strong {
+  display: block;
+  margin: 0 0 5px;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.35;
+  letter-spacing: .1px;
+}
+
+.agreement-modal-card .modal-agreement-check label,
+.agreement-modal-card .agreement-check label {
+  font-size: 11px;
+  line-height: 1.65;
+}
+
+.agreement-modal-card .modal-agreement-check:has(input:checked),
+.agreement-modal-card .agreement-check:has(input:checked) {
+  border-color: #ffb31a;
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255, 179, 26, .17),
+      rgba(7, 41, 58, .98) 46%,
+      rgba(4, 27, 43, .98)
+    );
+  box-shadow:
+    0 12px 32px rgba(0, 0, 0, .20),
+    0 0 0 1px rgba(255, 179, 26, .08),
+    inset 0 1px 0 rgba(255, 255, 255, .05);
+}
+
+.agreement-modal-card .modal-agreement-check:has(input:checked) strong,
+.agreement-modal-card .agreement-check:has(input:checked) strong {
+  color: #ffca55;
+}
+
+@media (max-width: 760px) {
+  .agreement-modal-card .modal-agreement-check,
+  .agreement-modal-card .agreement-check {
+    margin: 14px 0;
+    padding: 14px;
+    border-radius: 14px;
+  }
+
+  .agreement-modal-card .modal-agreement-check label,
+  .agreement-modal-card .agreement-check label {
+    grid-template-columns: 26px minmax(0, 1fr);
+    gap: 10px;
+    font-size: 10px;
+    line-height: 1.6;
+  }
+
+  .agreement-modal-card .modal-agreement-check input[type="checkbox"],
+  .agreement-modal-card .agreement-check input[type="checkbox"] {
+    width: 22px !important;
+    min-width: 22px !important;
+    max-width: 22px !important;
+    height: 22px !important;
+  }
+
+  .agreement-modal-card .modal-agreement-check strong,
+  .agreement-modal-card .agreement-check strong {
+    font-size: 12px;
+  }
+}
+
+/* ===== /PDF CONFIRMATION EMPHASIS R1 ===== */
