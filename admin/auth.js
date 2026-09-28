@@ -1079,24 +1079,40 @@
       }
     }
   }
+  /* SB_AUTH_SESSION_LOADING_R1 */
+  function finishAuthBoot() {
+    document.documentElement.classList.remove(
+      "sb-auth-pending"
+    );
+
+    document
+      .getElementById("sb-auth-boot")
+      ?.remove();
+
+    document
+      .getElementById("sb-auth-boot-style")
+      ?.remove();
+  }
+
+
   async function checkSession() {
-    showLogin();
-
-    if (messageEl) {
-      messageEl.textContent = "Memeriksa sesi...";
-    }
-
     try {
       const response = await api("/auth/me");
       const data = await readJson(response);
 
       if (!response.ok || !data.user) {
+        finishAuthBoot();
         showLogin();
         return;
       }
 
       if (!["system_admin", "staff"].includes(data.user.role)) {
-        showLogin("Akun ini tidak memiliki akses administrator.");
+        finishAuthBoot();
+
+        showLogin(
+          "Akun ini tidak memiliki akses administrator."
+        );
+
         return;
       }
 
@@ -1104,17 +1120,37 @@
       window.SB_AUTH_USER = currentUser;
 
       if (currentUser.must_change_password) {
+        finishAuthBoot();
+
         showRequiredPasswordChange(
           currentUser
         );
+
         return;
       }
 
       hideLogin();
-      installUserControls(currentUser);
-      applyRoleVisibility(currentUser);
+
+      installUserControls(
+        currentUser
+      );
+
+      applyRoleVisibility(
+        currentUser
+      );
+
+      /*
+       * Dashboard baru diperlihatkan setelah:
+       * session valid + role UI selesai diterapkan.
+       */
+      finishAuthBoot();
+
     } catch {
-      showLogin("Tidak dapat terhubung ke layanan autentikasi.");
+      finishAuthBoot();
+
+      showLogin(
+        "Tidak dapat terhubung ke layanan autentikasi."
+      );
     }
   }
 
