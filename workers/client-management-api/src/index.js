@@ -5564,6 +5564,45 @@ const SUPPORT_PRIORITIES = new Set([
   "urgent"
 ]);
 
+async function validateSupportAssignee(
+  request,
+  env,
+  userId
+) {
+  if (!userId) {
+    return { ok: true };
+  }
+
+  const user =
+    await env.DB.prepare(
+      `SELECT id
+       FROM users
+       WHERE id = ?
+         AND status = 'active'
+         AND role = 'staff'
+       LIMIT 1`
+    )
+      .bind(userId)
+      .first();
+
+  if (!user) {
+    return {
+      ok: false,
+      response: apiResponse(
+        request,
+        env,
+        {
+          error:
+            "Assigned user is not a valid active staff member."
+        },
+        400
+      )
+    };
+  }
+
+  return { ok: true };
+}
+
 /*
  * SUPPORT ASSIGNMENT ACCESS R1
  * system_admin: may access every support ticket.
@@ -5629,6 +5668,8 @@ async function listAdminSupportTickets(
        t.priority,
        t.status,
        t.assigned_to_user_id,
+       au.full_name AS assigned_to_name,
+       au.email AS assigned_to_email,
        t.resolved_at,
        t.closed_at,
        t.created_at,
@@ -5644,6 +5685,8 @@ async function listAdminSupportTickets(
        ) AS message_count
      FROM support_tickets t
      JOIN clients c ON c.id = t.client_id
+     LEFT JOIN users au
+       ON au.id = t.assigned_to_user_id
 
      WHERE (
        ? <> 'staff'
@@ -5693,9 +5736,13 @@ async function getAdminSupportTicket(
        t.*,
        c.client_code,
        c.full_name,
-       c.company_name
+       c.company_name,
+       au.full_name AS assigned_to_name,
+       au.email AS assigned_to_email
      FROM support_tickets t
      JOIN clients c ON c.id = t.client_id
+     LEFT JOIN users au
+       ON au.id = t.assigned_to_user_id
      WHERE t.id = ?
      LIMIT 1`
   ).bind(ticketId).first();
@@ -5777,6 +5824,15 @@ async function updateAdminSupportTicket(
       ? current.priority
       : String(body.priority).trim();
 
+  const assignedToUserId =
+    auth.user.role === "staff"
+      ? current.assigned_to_user_id
+      : body?.assigned_to_user_id === undefined
+        ? current.assigned_to_user_id
+        : nullableLeadText(
+            body.assigned_to_user_id
+          );
+
   if (!SUPPORT_STATUSES.has(status)) {
     return apiResponse(
       request,
@@ -5793,6 +5849,17 @@ async function updateAdminSupportTicket(
       { error: "Invalid support priority." },
       400
     );
+  }
+
+  const assigneeCheck =
+    await validateSupportAssignee(
+      request,
+      env,
+      assignedToUserId
+    );
+
+  if (!assigneeCheck.ok) {
+    return assigneeCheck.response;
   }
 
   const timestamp = nowIso();
@@ -5821,6 +5888,7 @@ async function updateAdminSupportTicket(
      SET
        status = ?,
        priority = ?,
+       assigned_to_user_id = ?,
        resolved_at = ?,
        closed_at = ?,
        updated_at = ?
@@ -5828,6 +5896,7 @@ async function updateAdminSupportTicket(
   ).bind(
     status,
     priority,
+    assignedToUserId,
     resolvedAt,
     closedAt,
     timestamp,
@@ -5863,6 +5932,8 @@ async function updateAdminSupportTicket(
       ticket_code: current.ticket_code,
       status,
       priority,
+      assigned_to_user_id:
+        assignedToUserId,
       resolved_at: resolvedAt,
       closed_at: closedAt,
       updated_at: timestamp

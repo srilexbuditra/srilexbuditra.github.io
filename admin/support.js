@@ -146,7 +146,7 @@
 
     .sb-admin-support-controls {
       display:grid;
-      grid-template-columns:repeat(2,minmax(0,1fr));
+      grid-template-columns:repeat(3,minmax(0,1fr));
       gap:14px;
       padding:18px 24px;
       border-bottom:1px solid #e2e8f0;
@@ -170,6 +170,17 @@
       border-radius:10px;
       background:#fff;
       font:inherit;
+    }
+
+    .sb-admin-support-assignee-readonly {
+      min-height:43px;
+      box-sizing:border-box;
+      padding:11px 12px;
+      border:1px solid #e2e8f0;
+      border-radius:10px;
+      background:#fff;
+      color:#475569;
+      line-height:1.35;
     }
 
     .sb-admin-support-thread {
@@ -331,6 +342,7 @@
               <th>Kategori</th>
               <th>Prioritas</th>
               <th>Status</th>
+              <th>Assignee</th>
               <th>Pesan</th>
               <th>Update</th>
               <th>Action</th>
@@ -389,6 +401,24 @@
           </select>
         </div>
 
+        <div class="sb-admin-support-field"
+             data-as-assignee-field>
+          <label>Ditugaskan Kepada</label>
+
+          <select data-as-assignee-select
+                  hidden>
+            <option value="">
+              Belum ditugaskan
+            </option>
+          </select>
+
+          <div class="sb-admin-support-assignee-readonly"
+               data-as-assignee-readonly
+               hidden>
+            Belum ditugaskan
+          </div>
+        </div>
+
       </div>
 
       <div class="sb-admin-support-thread"
@@ -444,6 +474,14 @@
   const thread = modal.querySelector("[data-as-thread]");
   const statusSelect = modal.querySelector("[data-as-status]");
   const prioritySelect = modal.querySelector("[data-as-priority]");
+  const assigneeSelect =
+    modal.querySelector(
+      "[data-as-assignee-select]"
+    );
+  const assigneeReadonly =
+    modal.querySelector(
+      "[data-as-assignee-readonly]"
+    );
 
   const replyForm = modal.querySelector("[data-as-reply-form]");
   const replySubmit = modal.querySelector("[data-as-reply-submit]");
@@ -451,6 +489,182 @@
 
   let currentTicketId = null;
   let currentTicket = null;
+  let currentUser = null;
+  let supportAssignees = [];
+
+  function assigneeText(ticket) {
+    if (!ticket?.assigned_to_user_id) {
+      return "Belum ditugaskan";
+    }
+
+    const name =
+      String(
+        ticket.assigned_to_name || ""
+      ).trim();
+
+    const email =
+      String(
+        ticket.assigned_to_email || ""
+      ).trim();
+
+    if (name && email) {
+      return `${name} • ${email}`;
+    }
+
+    return (
+      name ||
+      email ||
+      "Staff"
+    );
+  }
+
+  function renderAssigneeOptions() {
+    const selected =
+      assigneeSelect.value;
+
+    assigneeSelect.innerHTML = `
+      <option value="">
+        Belum ditugaskan
+      </option>
+    `;
+
+    supportAssignees.forEach(user => {
+      const option =
+        document.createElement("option");
+
+      option.value = user.id;
+
+      option.textContent =
+        user.full_name
+          ? `${user.full_name} — ${user.email}`
+          : user.email;
+
+      assigneeSelect.appendChild(option);
+    });
+
+    assigneeSelect.value = selected;
+  }
+
+  function syncAssigneeControl(ticket) {
+    const isSystemAdmin =
+      currentUser?.role ===
+        "system_admin";
+
+    assigneeSelect.hidden =
+      !isSystemAdmin;
+
+    assigneeReadonly.hidden =
+      isSystemAdmin;
+
+    if (isSystemAdmin) {
+      renderAssigneeOptions();
+
+      assigneeSelect.value =
+        ticket?.assigned_to_user_id ||
+        "";
+
+      return;
+    }
+
+    assigneeReadonly.textContent =
+      assigneeText(ticket);
+  }
+
+  async function loadSupportAssignmentContext() {
+    currentUser = null;
+    supportAssignees = [];
+
+    const meResponse =
+      await fetch(
+        "/api/auth/me",
+        {
+          credentials:
+            "same-origin",
+          headers: {
+            Accept:
+              "application/json"
+          },
+          cache:
+            "no-store"
+        }
+      );
+
+    const meData =
+      await meResponse
+        .json()
+        .catch(() => ({}));
+
+    if (!meResponse.ok) {
+      throw new Error(
+        meData.error ||
+        `HTTP ${meResponse.status}`
+      );
+    }
+
+    currentUser =
+      meData.user || null;
+
+    if (
+      currentUser?.role !==
+        "system_admin"
+    ) {
+      return;
+    }
+
+    const usersResponse =
+      await fetch(
+        "/api/admin/users",
+        {
+          credentials:
+            "same-origin",
+          headers: {
+            Accept:
+              "application/json"
+          },
+          cache:
+            "no-store"
+        }
+      );
+
+    const usersData =
+      await usersResponse
+        .json()
+        .catch(() => ({}));
+
+    if (!usersResponse.ok) {
+      throw new Error(
+        usersData.error ||
+        `HTTP ${usersResponse.status}`
+      );
+    }
+
+    supportAssignees =
+      (
+        Array.isArray(usersData.users)
+          ? usersData.users
+          : []
+      )
+        .filter(
+          user =>
+            user.role === "staff" &&
+            user.status === "active"
+        )
+        .sort(
+          (a, b) =>
+            String(
+              a.full_name ||
+              a.email ||
+              ""
+            ).localeCompare(
+              String(
+                b.full_name ||
+                b.email ||
+                ""
+              ),
+              "id"
+            )
+        );
+  }
 
   function links(name) {
     return [
@@ -477,7 +691,21 @@
     links("Support")
       .forEach(a => a.classList.add("active"));
 
-    loadTickets();
+    void (
+      async () => {
+        try {
+          await loadSupportAssignmentContext();
+        }
+        catch (error) {
+          console.warn(
+            "SUPPORT_ASSIGNMENT_CONTEXT_FAILED",
+            error
+          );
+        }
+
+        await loadTickets();
+      }
+    )();
   }
 
   function leaveView() {
@@ -492,7 +720,7 @@
 
   async function loadTickets() {
     rows.innerHTML =
-      '<tr><td colspan="8">Memuat tiket...</td></tr>';
+      '<tr><td colspan="9">Memuat tiket...</td></tr>';
 
     try {
       const response = await fetch(API, {
@@ -530,7 +758,7 @@
 
       if (!tickets.length) {
         rows.innerHTML =
-          '<tr><td colspan="8">Belum ada tiket support.</td></tr>';
+          '<tr><td colspan="9">Belum ada tiket support.</td></tr>';
         return;
       }
 
@@ -559,6 +787,8 @@
 
           <td>${esc(statusLabel(ticket.status))}</td>
 
+          <td>${esc(assigneeText(ticket))}</td>
+
           <td>${esc(ticket.message_count || 0)}</td>
 
           <td>${esc(dateTime(ticket.updated_at))}</td>
@@ -577,7 +807,7 @@
     } catch (error) {
       rows.innerHTML = `
         <tr>
-          <td colspan="8">
+          <td colspan="9">
             Gagal memuat tiket:
             ${esc(error.message || "Unknown error")}
           </td>
@@ -628,6 +858,10 @@
 
       prioritySelect.value =
         currentTicket.priority;
+
+      syncAssigneeControl(
+        currentTicket
+      );
 
       const messages =
         Array.isArray(data.messages)
@@ -696,6 +930,22 @@
     errorEl.textContent = "";
 
     try {
+      const payload = {
+        status:
+          statusSelect.value,
+        priority:
+          prioritySelect.value
+      };
+
+      if (
+        currentUser?.role ===
+          "system_admin"
+      ) {
+        payload.assigned_to_user_id =
+          assigneeSelect.value ||
+          null;
+      }
+
       const response = await fetch(
         `${API}/${encodeURIComponent(currentTicketId)}`,
         {
@@ -707,10 +957,8 @@
             "Content-Type": "application/json"
           },
 
-          body: JSON.stringify({
-            status: statusSelect.value,
-            priority: prioritySelect.value
-          })
+          body:
+            JSON.stringify(payload)
         }
       );
 
@@ -733,8 +981,20 @@
     }
   }
 
-  statusSelect.addEventListener("change", updateTicket);
-  prioritySelect.addEventListener("change", updateTicket);
+  statusSelect.addEventListener(
+    "change",
+    updateTicket
+  );
+
+  prioritySelect.addEventListener(
+    "change",
+    updateTicket
+  );
+
+  assigneeSelect.addEventListener(
+    "change",
+    updateTicket
+  );
 
   replyForm.addEventListener(
     "submit",
