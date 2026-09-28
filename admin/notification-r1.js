@@ -17,6 +17,8 @@
   const API =
     "/api/admin/activity?limit=6";
 
+  const INDICATOR_API =
+    "/api/admin/activity?limit=1";
   const button =
     document.querySelector(
       '.top-actions [aria-label="Notifikasi"]'
@@ -329,6 +331,35 @@
           0 0 0 3px rgba(22,138,99,.08);
       }
 
+      /*
+       * SB_TOPBAR_NOTIFICATION_INDICATOR_R1_1
+       */
+
+      .top-actions .icon-btn[aria-label="Notifikasi"] {
+        position: relative;
+      }
+
+      .icon-btn.sb-notification-has-new::after {
+        content: "";
+
+        position: absolute;
+        top: 6px;
+        right: 6px;
+
+        width: 8px;
+        height: 8px;
+
+        border: 2px solid #fff;
+        border-radius: 50%;
+
+        background: #16a34a;
+
+        box-sizing: content-box;
+
+        box-shadow:
+          0 0 0 1px rgba(22,163,74,.10);
+      }
+
       @media(max-width:820px) {
         .sb-notification-panel {
           right: -2px;
@@ -455,6 +486,304 @@
   let loading = false;
   let loadedUserKey = "";
 
+
+  /*
+   * ==========================================================
+   * TOPBAR NOTIFICATION INDICATOR R1.1
+   * ==========================================================
+   *
+   * First baseline:
+   * history yang sudah ada tidak langsung dianggap baru.
+   *
+   * Seen marker:
+   * disimpan per user agar System Admin dan Staff
+   * tidak saling berbagi status indikator.
+   */
+
+  const INDICATOR_EMPTY_MARKER =
+    "__none__";
+
+  const INDICATOR_STORAGE_PREFIX =
+    "sb.notification.seen.r1.1.";
+
+  const indicatorSeenFallback =
+    new Map();
+
+  let indicatorChecking = false;
+  let indicatorAuthAttempts = 0;
+  let indicatorOwnerKey = "";
+  let lastIndicatorCheckAt = 0;
+
+
+  function indicatorStorageKey() {
+    const key =
+      userKey();
+
+    if (!key) {
+      return "";
+    }
+
+    return (
+      INDICATOR_STORAGE_PREFIX +
+      key
+    );
+  }
+
+
+  function indicatorMarker(items) {
+    const first =
+      Array.isArray(items)
+        ? items[0]
+        : null;
+
+    if (!first) {
+      return INDICATOR_EMPTY_MARKER;
+    }
+
+    return [
+      String(
+        first.created_at || ""
+      ),
+      String(
+        first.id || ""
+      )
+    ].join("|");
+  }
+
+
+  function readIndicatorSeen() {
+    const key =
+      indicatorStorageKey();
+
+    if (!key) {
+      return null;
+    }
+
+    try {
+      return window.localStorage.getItem(
+        key
+      );
+
+    } catch {
+      return indicatorSeenFallback.has(
+        key
+      )
+        ? indicatorSeenFallback.get(
+            key
+          )
+        : null;
+    }
+  }
+
+
+  function writeIndicatorSeen(marker) {
+    const key =
+      indicatorStorageKey();
+
+    if (!key) {
+      return;
+    }
+
+    indicatorSeenFallback.set(
+      key,
+      marker
+    );
+
+    try {
+      window.localStorage.setItem(
+        key,
+        marker
+      );
+    } catch {
+      /*
+       * localStorage dapat diblokir browser.
+       * Fallback memory tetap menjaga sesi aktif.
+       */
+    }
+  }
+
+
+  function setNewIndicator(hasNew) {
+    const active =
+      Boolean(hasNew);
+
+    button.classList.toggle(
+      "sb-notification-has-new",
+      active
+    );
+
+    button.dataset.notificationNew =
+      active
+        ? "1"
+        : "0";
+
+    button.title =
+      active
+        ? "Ada aktivitas baru"
+        : "Notifikasi";
+  }
+
+
+  function hasNewIndicator() {
+    return button.classList.contains(
+      "sb-notification-has-new"
+    );
+  }
+
+
+  function markItemsSeen(items) {
+    writeIndicatorSeen(
+      indicatorMarker(items)
+    );
+
+    setNewIndicator(false);
+  }
+
+
+  async function checkNotificationIndicator(
+    force = false
+  ) {
+    if (
+      indicatorChecking ||
+      !panel.hidden
+    ) {
+      return;
+    }
+
+    const user =
+      window.SB_AUTH_USER;
+
+    const currentKey =
+      userKey();
+
+    if (
+      !currentKey ||
+      ![
+        "system_admin",
+        "staff"
+      ].includes(
+        user?.role
+      )
+    ) {
+      return;
+    }
+
+
+    if (
+      indicatorOwnerKey !==
+      currentKey
+    ) {
+      indicatorOwnerKey =
+        currentKey;
+
+      setNewIndicator(false);
+    }
+
+
+    const now =
+      Date.now();
+
+    if (
+      !force &&
+      now - lastIndicatorCheckAt <
+        15000
+    ) {
+      return;
+    }
+
+    lastIndicatorCheckAt =
+      now;
+
+    indicatorChecking =
+      true;
+
+
+    try {
+      const response =
+        await fetch(
+          INDICATOR_API,
+          {
+            credentials:
+              "same-origin",
+
+            headers: {
+              Accept:
+                "application/json"
+            },
+
+            cache:
+              "no-store"
+          }
+        );
+
+      const data =
+        await response
+          .json()
+          .catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(
+          data.error ||
+          `HTTP ${response.status}`
+        );
+      }
+
+
+      const items =
+        Array.isArray(
+          data.activity
+        )
+          ? data.activity
+          : [];
+
+      const latest =
+        indicatorMarker(items);
+
+      const seen =
+        readIndicatorSeen();
+
+
+      /*
+       * Baseline pertama:
+       * aktivitas lama tidak diberi tanda "baru".
+       */
+      if (seen === null) {
+        writeIndicatorSeen(
+          latest
+        );
+
+        setNewIndicator(false);
+
+        return;
+      }
+
+
+      if (
+        latest ===
+        INDICATOR_EMPTY_MARKER
+      ) {
+        setNewIndicator(false);
+
+        return;
+      }
+
+
+      setNewIndicator(
+        latest !== seen
+      );
+
+    } catch {
+      /*
+       * Indicator bersifat enhancement.
+       * Kegagalan check tidak boleh merusak
+       * Notification Panel R1 yang sudah LOCKED.
+       */
+
+    } finally {
+      indicatorChecking =
+        false;
+    }
+  }
 
   function showState(message) {
     list.innerHTML = "";
@@ -672,6 +1001,8 @@
 
       render(items);
 
+      markItemsSeen(items);
+
     } catch (error) {
       loadedUserKey = "";
 
@@ -728,7 +1059,7 @@
       );
 
       if (opening) {
-        loadNotifications();
+        loadNotifications(hasNewIndicator());
       }
     }
   );
@@ -804,5 +1135,78 @@
       closePanel();
       button.focus();
     }
+  );
+  /*
+   * ==========================================================
+   * INDICATOR STARTUP R1.1
+   * ==========================================================
+   */
+
+  function startIndicatorWhenAuthenticated() {
+    const user =
+      window.SB_AUTH_USER;
+
+    if (
+      !user ||
+      ![
+        "system_admin",
+        "staff"
+      ].includes(
+        user.role
+      )
+    ) {
+      indicatorAuthAttempts += 1;
+
+      if (
+        indicatorAuthAttempts <=
+        120
+      ) {
+        window.setTimeout(
+          startIndicatorWhenAuthenticated,
+          250
+        );
+      }
+
+      return;
+    }
+
+    indicatorAuthAttempts = 0;
+
+    checkNotificationIndicator(true);
+  }
+
+
+  startIndicatorWhenAuthenticated();
+
+
+  window.addEventListener(
+    "focus",
+    () => {
+      checkNotificationIndicator();
+    }
+  );
+
+
+  document.addEventListener(
+    "visibilitychange",
+    () => {
+      if (!document.hidden) {
+        checkNotificationIndicator();
+      }
+    }
+  );
+
+
+  /*
+   * Check ringan setiap 2 menit hanya ketika
+   * tab sedang terlihat.
+   */
+  window.setInterval(
+    () => {
+      if (!document.hidden) {
+        checkNotificationIndicator();
+      }
+    },
+    120000
   );
 })();
