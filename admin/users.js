@@ -497,9 +497,16 @@
     if (loading) return;
     if (loadedOnce && !force) return;
 
+    const authUser =
+      window.SB_AUTH_USER;
+
+    if (!authUser) {
+      return;
+    }
+
     if (
-      window.SB_AUTH_USER &&
-      window.SB_AUTH_USER.role !== "system_admin"
+      authUser.role !==
+        "system_admin"
     ) {
       return;
     }
@@ -784,10 +791,39 @@
     }
   });
 
+  let authAttempts = 0;
+
+  function loadWhenAuthenticated() {
+    const user =
+      window.SB_AUTH_USER;
+
+    if (!user) {
+      authAttempts += 1;
+
+      if (authAttempts <= 120) {
+        window.setTimeout(
+          loadWhenAuthenticated,
+          250
+        );
+      }
+
+      return;
+    }
+
+    authAttempts = 0;
+
+    if (
+      user.role === "system_admin" &&
+      !view.hidden
+    ) {
+      loadUsers();
+    }
+  }
+
   const observer =
     new MutationObserver(() => {
       if (!view.hidden) {
-        loadUsers();
+        loadWhenAuthenticated();
       }
     });
 
@@ -795,4 +831,6 @@
     attributes: true,
     attributeFilter: ["hidden"]
   });
+
+  loadWhenAuthenticated();
 })();
