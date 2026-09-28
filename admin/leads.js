@@ -2055,6 +2055,8 @@
           <input
             name="temporary_password"
             type="password"
+            minlength="6"
+            maxlength="30"
             autocomplete="new-password"
             required
           >
@@ -2068,6 +2070,7 @@
             margin:12px 0 0;
           "
         >
+          Gunakan password sementara 6-30 karakter.
           Client akan diwajibkan mengganti
           password saat login pertama.
         </p>

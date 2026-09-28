@@ -359,8 +359,8 @@
               id="sb-client-password"
               name="temporary_password"
               type="password"
-              minlength="12"
-              maxlength="128"
+              minlength="6"
+              maxlength="30"
               required
               autocomplete="new-password"
             >
@@ -368,7 +368,7 @@
         </div>
 
         <div class="sb-client-form-note">
-          Password sementara minimal 12 karakter. Client akan diwajibkan mengganti password setelah masuk.
+          Password sementara harus 6-30 karakter. Client akan diwajibkan mengganti password setelah masuk.
           Pastikan password sementara disampaikan kepada client melalui kanal yang aman.
         </div>
 

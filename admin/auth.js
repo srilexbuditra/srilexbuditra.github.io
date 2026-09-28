@@ -1023,7 +1023,7 @@
       description.tagName === "P"
     ) {
       description.textContent =
-        "Password sementara atau hasil reset harus diganti sebelum Management Console dapat digunakan.";
+        "Password sementara atau hasil reset harus diganti sebelum Management Console dapat digunakan. Gunakan password baru 6-30 karakter.";
     }
 
     const oldForm =
@@ -1058,7 +1058,8 @@
           id="sb-new-password"
           type="password"
           autocomplete="new-password"
-          minlength="12"
+          minlength="6"
+          maxlength="30"
           required
         >
       </div>
@@ -1071,7 +1072,8 @@
           id="sb-confirm-password"
           type="password"
           autocomplete="new-password"
-          minlength="12"
+          minlength="6"
+          maxlength="30"
           required
         >
       </div>

@@ -222,7 +222,7 @@
           </h2>
           <p>
             Ubah password Client Portal Anda.
-            Password baru minimal 12 karakter.
+            Password baru harus 6-30 karakter.
           </p>
         </div>
 
@@ -260,8 +260,8 @@
             id="sb-qa-new-password"
             name="new_password"
             type="password"
-            minlength="12"
-            maxlength="128"
+            minlength="6"
+            maxlength="30"
             autocomplete="new-password"
             required
           >
@@ -276,8 +276,8 @@
             id="sb-qa-confirm-password"
             name="confirm_password"
             type="password"
-            minlength="12"
-            maxlength="128"
+            minlength="6"
+            maxlength="30"
             autocomplete="new-password"
             required
           >
@@ -378,9 +378,12 @@
       securityMessage.textContent = "";
       securityMessage.style.color = "";
 
-      if (newPassword.length < 12) {
+      if (
+        newPassword.length < 6 ||
+        newPassword.length > 30
+      ) {
         securityMessage.textContent =
-          "Password baru minimal 12 karakter.";
+          "Password baru harus 6-30 karakter.";
         return;
       }
 

@@ -567,7 +567,8 @@
             <input
               name="temporary_password"
               type="password"
-              minlength="12"
+              minlength="6"
+              maxlength="30"
               required
             >
           </label>
@@ -648,7 +649,8 @@
             <input
               name="temporary_password"
               type="password"
-              minlength="12"
+              minlength="6"
+              maxlength="30"
               required
             >
           </label>

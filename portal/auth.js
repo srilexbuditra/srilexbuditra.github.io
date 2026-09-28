@@ -261,8 +261,8 @@
               id="sb-new-password"
               name="new_password"
               type="password"
-              minlength="12"
-              maxlength="128"
+              minlength="6"
+              maxlength="30"
               autocomplete="new-password"
               required
             >
@@ -274,8 +274,8 @@
               id="sb-confirm-password"
               name="confirm_password"
               type="password"
-              minlength="12"
-              maxlength="128"
+              minlength="6"
+              maxlength="30"
               autocomplete="new-password"
               required
             >
@@ -289,7 +289,7 @@
         </form>
 
         <div class="sb-portal-auth-note">
-          Password baru minimal 12 karakter. Setelah berhasil, Anda akan langsung masuk ke dashboard.
+          Password baru harus 6-30 karakter. Setelah berhasil, Anda akan langsung masuk ke dashboard.
         </div>
       </section>
     `;
@@ -474,8 +474,12 @@
 
     passwordMessage.textContent = "";
 
-    if (newPassword.length < 12) {
-      passwordMessage.textContent = "Password baru minimal 12 karakter.";
+    if (
+      newPassword.length < 6 ||
+      newPassword.length > 30
+    ) {
+      passwordMessage.textContent =
+        "Password baru harus 6-30 karakter.";
       return;
     }
 
