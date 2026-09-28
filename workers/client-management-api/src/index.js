@@ -5603,6 +5603,51 @@ async function validateSupportAssignee(
   return { ok: true };
 }
 
+async function supportAssigneeAuditLabel(
+  env,
+  userId
+) {
+  if (!userId) {
+    return "Unassigned";
+  }
+
+  const user =
+    await env.DB.prepare(
+      `SELECT
+         full_name,
+         email
+       FROM users
+       WHERE id = ?
+       LIMIT 1`
+    )
+      .bind(userId)
+      .first();
+
+  if (!user) {
+    return userId;
+  }
+
+  const name =
+    String(
+      user.full_name || ""
+    ).trim();
+
+  const email =
+    String(
+      user.email || ""
+    ).trim();
+
+  if (name && email) {
+    return `${name} (${email})`;
+  }
+
+  return (
+    name ||
+    email ||
+    userId
+  );
+}
+
 /*
  * SUPPORT ASSIGNMENT ACCESS R1
  * system_admin: may access every support ticket.
@@ -5922,6 +5967,48 @@ async function updateAdminSupportTicket(
       "support_ticket",
       ticketId,
       `Support ticket ${current.ticket_code} priority changed from ${current.priority} to ${priority}.`
+    );
+  }
+
+  if (
+    current.assigned_to_user_id !==
+    assignedToUserId
+  ) {
+    const previousAssigneeLabel =
+      await supportAssigneeAuditLabel(
+        env,
+        current.assigned_to_user_id
+      );
+
+    const nextAssigneeLabel =
+      await supportAssigneeAuditLabel(
+        env,
+        assignedToUserId
+      );
+
+    const assignmentAction =
+      !current.assigned_to_user_id
+        ? "SUPPORT_ASSIGNED"
+        : !assignedToUserId
+          ? "SUPPORT_UNASSIGNED"
+          : "SUPPORT_REASSIGNED";
+
+    const assignmentDescription =
+      assignmentAction ===
+        "SUPPORT_ASSIGNED"
+        ? `Support ticket ${current.ticket_code} assigned to ${nextAssigneeLabel}.`
+        : assignmentAction ===
+            "SUPPORT_UNASSIGNED"
+          ? `Support ticket ${current.ticket_code} unassigned from ${previousAssigneeLabel}.`
+          : `Support ticket ${current.ticket_code} reassigned from ${previousAssigneeLabel} to ${nextAssigneeLabel}.`;
+
+    await writeActivity(
+      env,
+      auth.user.id,
+      assignmentAction,
+      "support_ticket",
+      ticketId,
+      assignmentDescription
     );
   }
 
