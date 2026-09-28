@@ -192,6 +192,117 @@
         font: inherit;
         cursor: pointer;
       }
+
+      /* SB_TOPBAR_ACCOUNT_MENU_R1 */
+
+      .top-actions {
+        position: relative;
+      }
+
+      .profile {
+        cursor: pointer;
+      }
+
+      .profile[aria-expanded="true"] {
+        border-color: rgba(22,138,99,.35);
+        box-shadow: 0 0 0 3px rgba(22,138,99,.08);
+      }
+
+      .sb-account-menu {
+        position: absolute;
+        top: calc(100% + 10px);
+        right: 0;
+        z-index: 80;
+
+        width: min(300px, calc(100vw - 28px));
+
+        padding: 10px;
+
+        border: 1px solid rgba(15,23,42,.10);
+        border-radius: 14px;
+
+        background: #fff;
+        color: #0f172a;
+
+        box-shadow:
+          0 18px 45px rgba(15,23,42,.14);
+      }
+
+      .sb-account-menu[hidden] {
+        display: none !important;
+      }
+
+      .sb-account-summary {
+        padding: 9px 10px 12px;
+        border-bottom: 1px solid rgba(15,23,42,.08);
+      }
+
+      .sb-account-name {
+        display: block;
+
+        font-size: 13px;
+        font-weight: 800;
+
+        color: #0f172a;
+      }
+
+      .sb-account-email {
+        display: block;
+
+        margin-top: 3px;
+
+        font-size: 11px;
+        line-height: 1.4;
+
+        color: #64748b;
+
+        overflow-wrap: anywhere;
+      }
+
+      .sb-account-role {
+        display: inline-flex;
+
+        margin-top: 8px;
+        padding: 4px 8px;
+
+        border-radius: 999px;
+
+        background: rgba(22,138,99,.09);
+        color: #137153;
+
+        font-size: 10px;
+        font-weight: 800;
+      }
+
+      .sb-account-actions {
+        padding-top: 8px;
+      }
+
+      .sb-account-menu .sb-auth-logout {
+        width: 100%;
+
+        text-align: left;
+
+        border: 0;
+        border-radius: 9px;
+
+        padding: 10px;
+
+        background: transparent;
+
+        font-weight: 750;
+      }
+
+      .sb-account-menu .sb-auth-logout:hover {
+        background: #f8faf9;
+      }
+
+      @media(max-width:820px) {
+        .sb-account-menu {
+          right: -2px;
+          width: min(280px, calc(100vw - 20px));
+        }
+      }
     `;
     document.head.appendChild(style);
   }
@@ -334,26 +445,268 @@
   }
   function installUserControls(user) {
     applyRoleBadge(user);
-    const topbar = document.querySelector(".topbar");
-    if (!topbar || document.getElementById("sb-auth-user")) return;
 
-    const box = document.createElement("div");
-    box.id = "sb-auth-user";
-    box.className = "sb-auth-user";
+    const topActions =
+      document.querySelector(".top-actions");
 
-    const name = document.createElement("span");
-    name.className = "sb-auth-user-name";
-    name.textContent = user.full_name || user.email || "Administrator";
+    const profile =
+      document.querySelector(".profile");
 
-    const logout = document.createElement("button");
-    logout.className = "sb-auth-logout";
-    logout.type = "button";
-    logout.textContent = "Logout";
+    if (
+      !topActions ||
+      !profile ||
+      document.getElementById("sb-auth-user")
+    ) {
+      return;
+    }
 
-    logout.addEventListener("click", handleLogout);
+    profile.type = "button";
 
-    box.append(name, logout);
-    topbar.appendChild(box);
+    profile.setAttribute(
+      "aria-haspopup",
+      "menu"
+    );
+
+    profile.setAttribute(
+      "aria-expanded",
+      "false"
+    );
+
+    profile.setAttribute(
+      "aria-controls",
+      "sb-auth-user"
+    );
+
+
+    const menu =
+      document.createElement("div");
+
+    menu.id = "sb-auth-user";
+    menu.className = "sb-account-menu";
+    menu.hidden = true;
+
+    menu.setAttribute(
+      "role",
+      "menu"
+    );
+
+    menu.setAttribute(
+      "aria-label",
+      "Menu akun"
+    );
+
+
+    const summary =
+      document.createElement("div");
+
+    summary.className =
+      "sb-account-summary";
+
+
+    const name =
+      document.createElement("strong");
+
+    name.className =
+      "sb-account-name";
+
+    name.textContent =
+      user.full_name ||
+      user.email ||
+      "Administrator";
+
+
+    const email =
+      document.createElement("span");
+
+    email.className =
+      "sb-account-email";
+
+    email.textContent =
+      user.email || "";
+
+
+    const role =
+      document.createElement("span");
+
+    role.className =
+      "sb-account-role";
+
+    role.textContent =
+      user.role === "staff"
+        ? "Staff • Limited access"
+        : "System Admin • Full access";
+
+
+    summary.append(
+      name,
+      email,
+      role
+    );
+
+
+    const actions =
+      document.createElement("div");
+
+    actions.className =
+      "sb-account-actions";
+
+
+    const logout =
+      document.createElement("button");
+
+    logout.className =
+      "sb-auth-logout";
+
+    logout.type =
+      "button";
+
+    logout.textContent =
+      "Logout";
+
+    logout.setAttribute(
+      "role",
+      "menuitem"
+    );
+
+    logout.addEventListener(
+      "click",
+      handleLogout
+    );
+
+
+    actions.appendChild(
+      logout
+    );
+
+    menu.append(
+      summary,
+      actions
+    );
+
+    topActions.appendChild(
+      menu
+    );
+
+
+    function closeMenu() {
+      menu.hidden = true;
+
+      profile.setAttribute(
+        "aria-expanded",
+        "false"
+      );
+    }
+
+
+    profile.onclick =
+      event => {
+        event.preventDefault();
+        event.stopPropagation();
+
+        const opening =
+          menu.hidden;
+
+        menu.hidden =
+          !opening;
+
+        profile.setAttribute(
+          "aria-expanded",
+          opening
+            ? "true"
+            : "false"
+        );
+      };
+
+
+    if (
+      document.documentElement.dataset
+        .sbAccountMenuEventsR1 !==
+      "1"
+    ) {
+      document.documentElement.dataset
+        .sbAccountMenuEventsR1 =
+        "1";
+
+      document.addEventListener(
+        "click",
+        event => {
+          const currentMenu =
+            document.getElementById(
+              "sb-auth-user"
+            );
+
+          const currentProfile =
+            document.querySelector(
+              ".profile"
+            );
+
+          if (
+            !currentMenu ||
+            !currentProfile ||
+            currentMenu.hidden
+          ) {
+            return;
+          }
+
+          if (
+            currentMenu.contains(
+              event.target
+            ) ||
+            currentProfile.contains(
+              event.target
+            )
+          ) {
+            return;
+          }
+
+          currentMenu.hidden = true;
+
+          currentProfile.setAttribute(
+            "aria-expanded",
+            "false"
+          );
+        }
+      );
+
+
+      document.addEventListener(
+        "keydown",
+        event => {
+          if (
+            event.key !==
+            "Escape"
+          ) {
+            return;
+          }
+
+          const currentMenu =
+            document.getElementById(
+              "sb-auth-user"
+            );
+
+          const currentProfile =
+            document.querySelector(
+              ".profile"
+            );
+
+          if (
+            !currentMenu ||
+            currentMenu.hidden
+          ) {
+            return;
+          }
+
+          currentMenu.hidden = true;
+
+          currentProfile?.setAttribute(
+            "aria-expanded",
+            "false"
+          );
+
+          currentProfile?.focus();
+        }
+      );
+    }
   }
 
   /* SB_REQUIRED_PASSWORD_CHANGE_R1 */
@@ -642,6 +995,13 @@
 
     const box = document.getElementById("sb-auth-user");
     if (box) box.remove();
+
+    document
+      .querySelector(".profile")
+      ?.setAttribute(
+        "aria-expanded",
+        "false"
+      );
 
     showLogin("Anda telah keluar dari sesi administrator.");
   }
