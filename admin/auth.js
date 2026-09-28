@@ -10,6 +10,284 @@
   let passwordInput = null;
   let submitButton = null;
 
+  /* SB_AUTH_SESSION_EXPIRY_R1 */
+  let sessionExpiryHandled = false;
+  let sessionExpiryCheck = null;
+
+  const nativeFetch =
+    window.fetch.bind(window);
+
+
+  function protectedApiRequest(input) {
+    let rawUrl = "";
+
+    if (typeof input === "string") {
+      rawUrl = input;
+    } else if (input instanceof URL) {
+      rawUrl = input.href;
+    } else if (
+      input &&
+      typeof input.url === "string"
+    ) {
+      rawUrl = input.url;
+    }
+
+    if (!rawUrl) {
+      return false;
+    }
+
+    try {
+      const url =
+        new URL(
+          rawUrl,
+          window.location.href
+        );
+
+      if (
+        url.origin !==
+        window.location.origin
+      ) {
+        return false;
+      }
+
+      if (
+        !url.pathname.startsWith(
+          "/api/"
+        )
+      ) {
+        return false;
+      }
+
+      if (
+        [
+          "/api/auth/login",
+          "/api/auth/logout"
+        ].includes(
+          url.pathname
+        )
+      ) {
+        return false;
+      }
+
+      return true;
+
+    } catch {
+      return false;
+    }
+  }
+
+
+  function clearAuthenticatedUi() {
+    currentUser = null;
+    window.SB_AUTH_USER = null;
+
+    document.documentElement.dataset.sbRole =
+      "";
+
+    document
+      .getElementById("sb-auth-user")
+      ?.remove();
+
+    const profile =
+      document.querySelector(
+        ".profile"
+      );
+
+    profile?.setAttribute(
+      "aria-expanded",
+      "false"
+    );
+
+    const notificationPanel =
+      document.getElementById(
+        "sb-notification-panel"
+      );
+
+    if (notificationPanel) {
+      notificationPanel.hidden = true;
+    }
+
+    const notificationButton =
+      document.querySelector(
+        '.icon-btn[aria-label="Notifikasi"]'
+      );
+
+    notificationButton?.setAttribute(
+      "aria-expanded",
+      "false"
+    );
+
+    notificationButton?.classList.remove(
+      "sb-notification-has-new"
+    );
+  }
+
+
+  /* SB_AUTH_SESSION_EXPIRY_VERIFY_R1 */
+  function resetAuthOverlayForLogin() {
+    if (authOverlay) {
+      authOverlay.remove();
+    }
+
+    authOverlay = null;
+    messageEl = null;
+    emailInput = null;
+    passwordInput = null;
+    submitButton = null;
+  }
+
+
+  function showSessionLogin(message) {
+    clearAuthenticatedUi();
+    resetAuthOverlayForLogin();
+    showLogin(message);
+  }
+
+
+  function handleSessionExpiry() {
+    if (sessionExpiryHandled) {
+      return;
+    }
+
+    sessionExpiryHandled = true;
+
+    showSessionLogin(
+      "Sesi Anda telah berakhir. Silakan masuk kembali."
+    );
+  }
+
+
+  function handleAdminAccessLoss() {
+    if (sessionExpiryHandled) {
+      return;
+    }
+
+    sessionExpiryHandled = true;
+
+    showSessionLogin(
+      "Akun ini tidak memiliki akses administrator."
+    );
+  }
+
+
+  async function verifySessionAfterUnauthorized() {
+    if (sessionExpiryHandled) {
+      return;
+    }
+
+    if (!sessionExpiryCheck) {
+      sessionExpiryCheck =
+        (
+          async () => {
+            try {
+              const response =
+                await nativeFetch(
+                  `${API_BASE}/auth/me`,
+                  {
+                    credentials:
+                      "same-origin",
+                    headers: {
+                      Accept:
+                        "application/json"
+                    },
+                    cache:
+                      "no-store"
+                  }
+                );
+
+              const data =
+                await readJson(response);
+
+              if (
+                response.ok &&
+                data.user
+              ) {
+                if (
+                  [
+                    "system_admin",
+                    "staff"
+                  ].includes(
+                    data.user.role
+                  )
+                ) {
+                  /*
+                   * Session masih valid.
+                   * 401 berasal dari endpoint lain,
+                   * bukan session expiry.
+                   */
+                  currentUser =
+                    data.user;
+
+                  window.SB_AUTH_USER =
+                    currentUser;
+
+                  return;
+                }
+
+                handleAdminAccessLoss();
+                return;
+              }
+
+              if (
+                response.status === 401
+              ) {
+                handleSessionExpiry();
+              }
+
+              /*
+               * 5xx / network / response lain tidak
+               * otomatis dianggap session expired.
+               */
+            }
+            catch {
+              /*
+               * Kegagalan jaringan saat verifikasi
+               * tidak boleh memaksa logout.
+               */
+            }
+          }
+        )()
+          .finally(() => {
+            sessionExpiryCheck = null;
+          });
+    }
+
+    await sessionExpiryCheck;
+  }
+
+
+  window.fetch =
+    async function sbAuthenticatedFetch(
+      input,
+      options
+    ) {
+      const hadAuthenticatedUser =
+        Boolean(
+          currentUser ||
+          window.SB_AUTH_USER
+        );
+
+      const protectedRequest =
+        protectedApiRequest(input);
+
+      const response =
+        await nativeFetch(
+          input,
+          options
+        );
+
+      if (
+        response.status === 401 &&
+        hadAuthenticatedUser &&
+        protectedRequest
+      ) {
+        await verifySessionAfterUnauthorized();
+      }
+
+      return response;
+    };
+
+
   function api(path, options = {}) {
     return fetch(`${API_BASE}${path}`, {
       credentials: "same-origin",
@@ -952,6 +1230,11 @@
         throw new Error("Akun ini tidak memiliki akses administrator.");
       }
 
+      const resumeAfterSessionExpiry =
+        sessionExpiryHandled;
+
+      sessionExpiryHandled = false;
+
       currentUser = data.user;
       window.SB_AUTH_USER = currentUser;
 
@@ -959,6 +1242,15 @@
         showRequiredPasswordChange(
           currentUser
         );
+        return;
+      }
+
+      /*
+       * Setelah login ulang karena session expiry,
+       * reload agar seluruh modul memulai ulang dari state bersih.
+       */
+      if (resumeAfterSessionExpiry) {
+        window.location.reload();
         return;
       }
 
@@ -1115,6 +1407,8 @@
 
         return;
       }
+
+      sessionExpiryHandled = false;
 
       currentUser = data.user;
       window.SB_AUTH_USER = currentUser;
