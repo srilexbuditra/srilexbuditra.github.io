@@ -722,6 +722,13 @@
     }
   }
   function installUserControls(user) {
+    /*
+     * SB_ACCOUNT_MENU_STYLE_RECOVERY_R1
+     * Pastikan CSS account menu tersedia walaupun halaman
+     * langsung membuka Dashboard dari session valid.
+     */
+    addStyles();
+
     applyRoleBadge(user);
 
     const topActions =
