@@ -63,6 +63,13 @@ export default {
         return changePassword(request, env, auth);
       }
 
+      /* SB_ACCOUNT_SECURITY_BACKEND_R1 */
+      if (url.pathname === "/api/auth/profile" && method === "POST") {
+        const auth = await requireAuth(request, env);
+        if (auth.response) return auth.response;
+        return updateOwnProfile(request, env, auth);
+      }
+
       // ======================================================
       // ACTIVITY LOGS R1 - ADMIN
       // ======================================================
@@ -834,8 +841,8 @@ function validEmail(email) {
 
 function validatePassword(password) {
   if (typeof password !== "string") return "Password is required.";
-  if (password.length < 12) return "Password must contain at least 12 characters.";
-  if (password.length > 128) return "Password is too long.";
+  if (password.length < 6) return "Password must contain at least 6 characters.";
+  if (password.length > 30) return "Password must contain no more than 30 characters.";
   return null;
 }
 
@@ -1925,6 +1932,92 @@ async function changePassword(request, env, auth) {
   return apiResponse(request, env, { ok: true });
 }
 
+async function updateOwnProfile(
+  request,
+  env,
+  auth
+) {
+  const body = await readJson(request);
+
+  const fullName =
+    String(body?.full_name || "")
+      .trim();
+
+  if (
+    fullName.length < 2 ||
+    fullName.length > 120
+  ) {
+    return apiResponse(
+      request,
+      env,
+      {
+        error:
+          "Full name must contain between 2 and 120 characters."
+      },
+      400
+    );
+  }
+
+  const timestamp =
+    nowIso();
+
+  const statements = [
+    env.DB.prepare(
+      `UPDATE users
+       SET full_name = ?,
+           updated_at = ?
+       WHERE id = ?`
+    ).bind(
+      fullName,
+      timestamp,
+      auth.user.id
+    )
+  ];
+
+  if (
+    auth.user.role === "client" &&
+    auth.user.client_id
+  ) {
+    statements.push(
+      env.DB.prepare(
+        `UPDATE clients
+         SET full_name = ?,
+             updated_at = ?
+         WHERE id = ?
+           AND user_id = ?`
+      ).bind(
+        fullName,
+        timestamp,
+        auth.user.client_id,
+        auth.user.id
+      )
+    );
+  }
+
+  await env.DB.batch(statements);
+
+  await writeActivity(
+    env,
+    auth.user.id,
+    "PROFILE_UPDATED",
+    "user",
+    auth.user.id,
+    "Account profile name updated."
+  );
+
+  return apiResponse(
+    request,
+    env,
+    {
+      ok: true,
+      user: {
+        ...publicUser(auth.user),
+        full_name: fullName
+      }
+    }
+  );
+}
+
 /* ==========================================================
    USERS & ROLES R1
    ========================================================== */
@@ -2154,17 +2247,6 @@ async function updateAdminUserStatus(
     );
   }
 
-  if (target.role === "client") {
-    return apiResponse(
-      request,
-      env,
-      {
-        error:
-          "Client account status is managed through Clients."
-      },
-      400
-    );
-  }
 
   if (
     target.id === auth.user.id &&
