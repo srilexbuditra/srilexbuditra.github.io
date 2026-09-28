@@ -456,7 +456,7 @@
 
     setTopStat(
       "Open support",
-      open.length,
+      open.length + progress.length,
       progress.length
         ? `${progress.length} sedang ditangani`
         : "Tidak ada tiket in progress"
