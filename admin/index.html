@@ -7,7 +7,7 @@
 <meta name="robots" content="noindex,nofollow">
 <title>Management Console R1 &mdash; Srilex Buditra</title>
 <link rel="icon" href="/images/logo.avif">
-<link rel="stylesheet" href="../shared/styles.css?v=mobile-navigation-ux-r1">
+<link rel="stylesheet" href="../shared/styles.css?v=desktop-sidebar-collapse-r1">
 </head>
 <body>
 <div class="app">
@@ -26,6 +26,14 @@
 
 <div class="shell">
 <header class="topbar">
+    <button
+    class="desktop-sidebar-toggle"
+    data-desktop-sidebar-toggle
+    type="button"
+    aria-label="Sembunyikan sidebar"
+    aria-expanded="true"
+    title="Sembunyikan sidebar"
+  >&#9776;</button>
   <button class="menu-btn" data-menu aria-label="Buka navigasi">&#9776;</button>
   <div class="search"><input type="search" placeholder="Cari client, project, lead..." aria-label="Cari data management"></div>
   <div class="top-actions">
@@ -105,6 +113,7 @@
 <script src="../shared/app.js"></script>
 <script src="../shared/navigation-r1.js"></script>
 <script src="./mobile-navigation-r1.js?v=mobile-navigation-ux-r1"></script>
+<script src="./desktop-sidebar-r1.js?v=desktop-sidebar-collapse-r1"></script>
 <script src="./dashboard-r1.js?v=dashboard-statistics-r1"></script>
 <script src="./console-ux-r1.js"></script>
 </body>

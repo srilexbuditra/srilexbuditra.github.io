@@ -201,6 +201,53 @@ td strong{font-size:11.5px}
   .mobile-nav a{text-align:center;font-size:9px;color:#6f7d77;padding:6px 2px}
   .mobile-nav a.active{color:var(--accent);font-weight:850}
 }
+/* ===== ADMIN DESKTOP SIDEBAR COLLAPSE R1 ===== */
+.desktop-sidebar-toggle{
+  display:none;
+}
+
+@media(min-width:821px){
+
+  .sb-admin-sidebar{
+    transition:transform .22s ease;
+  }
+
+  .shell{
+    transition:margin-left .22s ease;
+  }
+
+  .desktop-sidebar-toggle{
+    display:inline-grid;
+    place-items:center;
+    flex:0 0 auto;
+
+    width:42px;
+    height:42px;
+
+    border:1px solid var(--line);
+    border-radius:10px;
+
+    background:#fff;
+    color:var(--ink);
+
+    cursor:pointer;
+  }
+
+  .desktop-sidebar-toggle:hover{
+    background:#f8faf9;
+  }
+
+  body.sb-desktop-sidebar-collapsed
+  .sb-admin-sidebar{
+    transform:translateX(-100%);
+  }
+
+  body.sb-desktop-sidebar-collapsed
+  .shell{
+    margin-left:0;
+  }
+}
+/* ===== /ADMIN DESKTOP SIDEBAR COLLAPSE R1 ===== */
 /* ===== ADMIN MOBILE NAVIGATION UX R1 ===== */
 .sb-mobile-sidebar-close,
 .sb-mobile-more-backdrop{
