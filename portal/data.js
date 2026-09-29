@@ -94,9 +94,6 @@
 
   function prepareDashboard() {
     setStat("Project aktif", "...", "Mengambil data D1");
-    setStat("Dokumen", "-", "Modul belum terhubung");
-    setStat("Invoice", "-", "Modul belum terhubung");
-    setStat("Support", "-", "Modul belum terhubung");
 
     const projectCard = findCard("Project utama");
     if (projectCard) {
@@ -140,9 +137,6 @@
 
   function renderEmpty() {
     setStat("Project aktif", "0", "Belum ada project");
-    setStat("Dokumen", "-", "Modul belum terhubung");
-    setStat("Invoice", "-", "Modul belum terhubung");
-    setStat("Support", "-", "Modul belum terhubung");
 
     const projectCard =
       findCard("Project terbaru") || findCard("Project utama");
@@ -309,10 +303,6 @@
         ? `${projects.length} total project`
         : "Belum ada project"
     );
-
-    setStat("Dokumen", "-", "Modul belum terhubung");
-    setStat("Invoice", "-", "Modul belum terhubung");
-    setStat("Support", "-", "Modul belum terhubung");
 
     if (!projects.length) {
       renderEmpty();

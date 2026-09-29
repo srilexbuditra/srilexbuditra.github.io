@@ -681,6 +681,46 @@
     });
   }
 
+  function updateDashboard(tickets) {
+    const activeCount =
+      tickets.filter(ticket =>
+        ticket.status === "open" ||
+        ticket.status === "in_progress"
+      ).length;
+
+    document.querySelectorAll(".stat").forEach(stat => {
+      const meta =
+        stat.querySelector(".meta");
+
+      const value =
+        stat.querySelector(".value");
+
+      const sub =
+        stat.querySelector(".sub");
+
+      if (
+        meta &&
+        meta.textContent.trim().toLowerCase() ===
+          "support"
+      ) {
+        if (value) {
+          value.textContent =
+            String(activeCount);
+        }
+
+        if (sub) {
+          sub.textContent =
+            activeCount === 0
+              ? "Tidak ada tiket aktif"
+              : activeCount === 1
+                ? "1 tiket aktif"
+                : `${activeCount} tiket aktif`;
+        }
+      }
+    });
+  }
+
+
   async function loadTickets() {
     rows.innerHTML =
       '<tr><td colspan="7">Memuat tiket...</td></tr>';
@@ -716,6 +756,8 @@
 
       resolvedCount.textContent =
         tickets.filter(x => x.status === "resolved").length;
+
+      updateDashboard(tickets);
 
       rows.innerHTML = "";
       empty.hidden = tickets.length !== 0;
@@ -1025,4 +1067,14 @@
       "click",
       () => detailModal.hidden = true
     );
+
+
+  window.addEventListener(
+    "sb:portal-authenticated",
+    loadTickets
+  );
+
+  if (window.SB_PORTAL_USER) {
+    loadTickets();
+  }
 })();
