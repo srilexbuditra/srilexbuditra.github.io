@@ -89,6 +89,33 @@ export default {
           auth
         );
       }
+
+      const adminActivityReadMatch =
+        url.pathname.match(
+          /^\/api\/admin\/activity\/([^/]+)\/read$/
+        );
+
+      if (
+        adminActivityReadMatch &&
+        method === "PATCH"
+      ) {
+        const auth = await requireRole(
+          request,
+          env,
+          ["system_admin", "staff"]
+        );
+
+        if (auth.response) return auth.response;
+
+        return markAdminActivityRead(
+          request,
+          env,
+          auth,
+          decodeURIComponent(
+            adminActivityReadMatch[1]
+          )
+        );
+      }
       // ======================================================
       // USERS & ROLES R1 - ADMIN
       // ======================================================
@@ -1922,6 +1949,93 @@ async function markClientNotificationRead(
    ACTIVITY LOGS R1
    ========================================================== */
 
+async function ensureAdminActivityReadBaseline(
+  env,
+  auth
+) {
+  const existing =
+    await env.DB.prepare(
+      `SELECT
+         1 AS found
+       FROM admin_activity_reads
+       WHERE user_id = ?
+       LIMIT 1`
+    )
+      .bind(
+        auth.user.id
+      )
+      .first();
+
+  if (existing) {
+    return;
+  }
+
+  const baselineAt =
+    nowIso();
+
+  await env.DB.prepare(
+    `INSERT OR IGNORE INTO admin_activity_reads
+      (
+        user_id,
+        activity_id,
+        read_at
+      )
+     SELECT
+       ?,
+       a.id,
+       ?
+     FROM activity_logs a
+     WHERE (
+       ? <> 'staff'
+       OR a.user_id = ?
+     )
+       AND a.created_at <= ?`
+  )
+    .bind(
+      auth.user.id,
+      baselineAt,
+      auth.user.role,
+      auth.user.id,
+      baselineAt
+    )
+    .run();
+}
+
+async function countAdminUnreadActivity(
+  env,
+  auth
+) {
+  const row =
+    await env.DB.prepare(
+      `SELECT
+         COUNT(*) AS unread_count
+
+       FROM activity_logs a
+
+       LEFT JOIN admin_activity_reads r
+         ON r.activity_id = a.id
+        AND r.user_id = ?
+
+       WHERE (
+         ? <> 'staff'
+         OR a.user_id = ?
+       )
+
+       AND r.activity_id IS NULL`
+    )
+      .bind(
+        auth.user.id,
+        auth.user.role,
+        auth.user.id
+      )
+      .first();
+
+  return Number(
+    row?.unread_count || 0
+  );
+}
+
+
 async function listAdminActivity(
   request,
   env,
@@ -1943,6 +2057,11 @@ async function listAdminActivity(
         )
       : 50;
 
+  await ensureAdminActivityReadBaseline(
+    env,
+    auth
+  );
+
   const rows = await env.DB.prepare(
     `SELECT
        a.id,
@@ -1953,11 +2072,17 @@ async function listAdminActivity(
        a.description,
        a.created_at,
 
+       r.read_at,
+
        u.email AS user_email,
        u.full_name AS user_full_name,
        u.role AS user_role
 
      FROM activity_logs a
+
+     LEFT JOIN admin_activity_reads r
+       ON r.activity_id = a.id
+      AND r.user_id = ?
 
      LEFT JOIN users u
        ON u.id = a.user_id
@@ -1972,11 +2097,18 @@ async function listAdminActivity(
      LIMIT ?`
   )
     .bind(
+      auth.user.id,
       auth.user.role,
       auth.user.id,
       limit
     )
     .all();
+
+  const unreadCount =
+    await countAdminUnreadActivity(
+      env,
+      auth
+    );
 
   return apiResponse(
     request,
@@ -1984,7 +2116,109 @@ async function listAdminActivity(
     {
       activity:
         rows.results || [],
+      unread_count:
+        unreadCount,
       limit
+    }
+  );
+}
+
+
+async function markAdminActivityRead(
+  request,
+  env,
+  auth,
+  activityId
+) {
+  const activity =
+    await env.DB.prepare(
+      `SELECT
+         a.id
+
+       FROM activity_logs a
+
+       WHERE a.id = ?
+
+         AND (
+           ? <> 'staff'
+           OR a.user_id = ?
+         )
+
+       LIMIT 1`
+    )
+      .bind(
+        activityId,
+        auth.user.role,
+        auth.user.id
+      )
+      .first();
+
+  if (!activity) {
+    return apiResponse(
+      request,
+      env,
+      {
+        error:
+          "Activity not found."
+      },
+      404
+    );
+  }
+
+  const readAt =
+    nowIso();
+
+  await env.DB.prepare(
+    `INSERT OR IGNORE INTO admin_activity_reads
+      (
+        user_id,
+        activity_id,
+        read_at
+      )
+     VALUES (?, ?, ?)`
+  )
+    .bind(
+      auth.user.id,
+      activityId,
+      readAt
+    )
+    .run();
+
+  const readState =
+    await env.DB.prepare(
+      `SELECT
+         read_at
+       FROM admin_activity_reads
+       WHERE user_id = ?
+         AND activity_id = ?
+       LIMIT 1`
+    )
+      .bind(
+        auth.user.id,
+        activityId
+      )
+      .first();
+
+  const unreadCount =
+    await countAdminUnreadActivity(
+      env,
+      auth
+    );
+
+  return apiResponse(
+    request,
+    env,
+    {
+      ok: true,
+      activity: {
+        id:
+          activityId,
+        read_at:
+          readState?.read_at ||
+          readAt
+      },
+      unread_count:
+        unreadCount
     }
   );
 }
