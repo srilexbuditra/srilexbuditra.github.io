@@ -736,6 +736,296 @@
       openSecurity
     );
 
+
+  /*
+   * ==========================================================
+   * PORTAL TOPBAR ACTIONS R1
+   * ==========================================================
+   */
+
+  const topbarProfile =
+    document.querySelector(".profile");
+
+  if (
+    topbarProfile &&
+    topbarProfile.dataset.sbPortalAccountR1 !== "1"
+  ) {
+    topbarProfile.dataset.sbPortalAccountR1 = "1";
+    topbarProfile.type = "button";
+
+    topbarProfile.setAttribute(
+      "aria-label",
+      "Buka Akun & Keamanan"
+    );
+
+    topbarProfile.addEventListener(
+      "click",
+      event => {
+        event.preventDefault();
+        openSecurity();
+      }
+    );
+  }
+
+
+  const notificationButton =
+    document.querySelector(
+      '.icon-btn[aria-label="Notifikasi"]'
+    );
+
+  const topActions =
+    document.querySelector(".top-actions");
+
+  if (
+    notificationButton &&
+    topActions &&
+    notificationButton.dataset
+      .sbPortalNotificationR1 !== "1"
+  ) {
+    notificationButton.dataset
+      .sbPortalNotificationR1 = "1";
+
+    notificationButton.type = "button";
+
+    notificationButton.setAttribute(
+      "aria-haspopup",
+      "dialog"
+    );
+
+    notificationButton.setAttribute(
+      "aria-expanded",
+      "false"
+    );
+
+    notificationButton.setAttribute(
+      "aria-controls",
+      "sb-portal-notification-panel"
+    );
+
+
+    if (
+      !document.getElementById(
+        "sb-portal-topbar-actions-r1-styles"
+      )
+    ) {
+      const style =
+        document.createElement("style");
+
+      style.id =
+        "sb-portal-topbar-actions-r1-styles";
+
+      style.textContent = `
+        .top-actions {
+          position: relative;
+        }
+
+        .profile {
+          cursor: pointer;
+        }
+
+        .icon-btn[aria-expanded="true"] {
+          border-color: rgba(23,107,75,.35);
+          box-shadow:
+            0 0 0 3px rgba(23,107,75,.08);
+        }
+
+        .sb-portal-notification-panel[hidden] {
+          display: none !important;
+        }
+
+        .sb-portal-notification-panel {
+          position: absolute;
+          top: calc(100% + 10px);
+          right: 0;
+          z-index: 90;
+
+          width:
+            min(
+              360px,
+              calc(100vw - 28px)
+            );
+
+          overflow: hidden;
+
+          border:
+            1px solid rgba(15,23,42,.10);
+
+          border-radius: 14px;
+          background: #fff;
+
+          box-shadow:
+            0 18px 45px
+            rgba(15,23,42,.14);
+        }
+
+        .sb-portal-notification-head {
+          padding: 14px 16px;
+
+          border-bottom:
+            1px solid rgba(15,23,42,.08);
+        }
+
+        .sb-portal-notification-head strong {
+          display: block;
+          color: #16352c;
+          font-size: 14px;
+        }
+
+        .sb-portal-notification-head span {
+          display: block;
+          margin-top: 3px;
+          color: #64748b;
+          font-size: 11px;
+        }
+
+        .sb-portal-notification-state {
+          padding: 22px 18px;
+          color: #475569;
+          font-size: 12px;
+          line-height: 1.6;
+          text-align: center;
+        }
+
+        .sb-portal-notification-state strong {
+          display: block;
+          margin-bottom: 5px;
+          color: #16352c;
+          font-size: 13px;
+        }
+
+        @media(max-width:820px) {
+          .sb-portal-notification-panel {
+            right: -2px;
+
+            width:
+              min(
+                340px,
+                calc(100vw - 20px)
+              );
+          }
+        }
+      `;
+
+      document.head.appendChild(style);
+    }
+
+
+    const notificationPanel =
+      document.createElement("div");
+
+    notificationPanel.id =
+      "sb-portal-notification-panel";
+
+    notificationPanel.className =
+      "sb-portal-notification-panel";
+
+    notificationPanel.hidden = true;
+
+    notificationPanel.setAttribute(
+      "role",
+      "dialog"
+    );
+
+    notificationPanel.setAttribute(
+      "aria-label",
+      "Notifikasi Client"
+    );
+
+    notificationPanel.innerHTML = `
+      <div class="sb-portal-notification-head">
+        <strong>Notifikasi Client</strong>
+        <span>
+          Informasi terbaru akun dan layanan Anda
+        </span>
+      </div>
+
+      <div class="sb-portal-notification-state">
+        <strong>Belum ada notifikasi baru</strong>
+
+        Notifikasi real-time Client belum diaktifkan.
+        Status project, invoice, dokumen, dan support
+        tetap dapat dipantau melalui dashboard.
+      </div>
+    `;
+
+    topActions.appendChild(
+      notificationPanel
+    );
+
+
+    function closePortalNotifications() {
+      notificationPanel.hidden = true;
+
+      notificationButton.setAttribute(
+        "aria-expanded",
+        "false"
+      );
+    }
+
+
+    notificationButton.addEventListener(
+      "click",
+      event => {
+        event.preventDefault();
+        event.stopPropagation();
+
+        const opening =
+          notificationPanel.hidden;
+
+        notificationPanel.hidden =
+          !opening;
+
+        notificationButton.setAttribute(
+          "aria-expanded",
+          opening
+            ? "true"
+            : "false"
+        );
+      }
+    );
+
+
+    topbarProfile?.addEventListener(
+      "click",
+      closePortalNotifications
+    );
+
+
+    document.addEventListener(
+      "click",
+      event => {
+        if (
+          notificationPanel.hidden ||
+          notificationPanel.contains(
+            event.target
+          ) ||
+          notificationButton.contains(
+            event.target
+          )
+        ) {
+          return;
+        }
+
+        closePortalNotifications();
+      }
+    );
+
+
+    document.addEventListener(
+      "keydown",
+      event => {
+        if (
+          event.key === "Escape" &&
+          !notificationPanel.hidden
+        ) {
+          closePortalNotifications();
+          notificationButton.focus();
+        }
+      }
+    );
+  }
+
+
   document.addEventListener(
     "keydown",
     event => {
