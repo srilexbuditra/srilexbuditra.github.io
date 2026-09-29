@@ -240,6 +240,36 @@
       line-height:1.55;
     }
 
+    /*
+     * ==========================================================
+     * SUPPORT RESOLVED / CLOSED CLIENT UX R1
+     * ==========================================================
+     */
+
+    .sb-support-status-note {
+      margin:0 24px 16px;
+      padding:12px 14px;
+
+      border:1px solid #dbe5e1;
+      border-radius:11px;
+
+      font-size:13px;
+      font-weight:600;
+      line-height:1.55;
+    }
+
+    .sb-support-status-note.resolved {
+      color:#166534;
+      background:#f0fdf4;
+      border-color:#bbf7d0;
+    }
+
+    .sb-support-status-note.closed {
+      color:#475569;
+      background:#f8fafc;
+      border-color:#cbd5e1;
+    }
+
     .sb-support-reply {
       padding:0 24px 24px;
     }
@@ -485,6 +515,11 @@
       <div class="sb-support-thread"
            data-support-thread></div>
 
+      <div class="sb-support-status-note"
+           data-support-status-note
+           role="status"
+           hidden></div>
+
       <form class="sb-support-reply"
             data-support-reply-form>
 
@@ -536,6 +571,11 @@
   const thread =
     detailModal.querySelector("[data-support-thread]");
 
+  const supportStatusNotice =
+    detailModal.querySelector(
+      "[data-support-status-note]"
+    );
+
   const replyForm =
     detailModal.querySelector("[data-support-reply-form]");
 
@@ -546,6 +586,64 @@
     detailModal.querySelector("[data-support-reply-submit]");
 
   let currentTicketId = null;
+
+
+  function syncSupportReplyState(ticket) {
+    const status =
+      String(ticket?.status || "");
+
+    const textarea =
+      replyForm.elements.message;
+
+    supportStatusNotice.hidden = true;
+    supportStatusNotice.className =
+      "sb-support-status-note";
+
+    supportStatusNotice.textContent = "";
+
+    replyForm.hidden =
+      status === "closed";
+
+    if (textarea) {
+      textarea.disabled =
+        status === "closed";
+
+      textarea.placeholder =
+        status === "resolved"
+          ? "Balas jika masalah belum selesai..."
+          : "Tulis balasan...";
+    }
+
+    replySubmit.disabled =
+      status === "closed";
+
+
+    if (status === "resolved") {
+      supportStatusNotice.hidden = false;
+
+      supportStatusNotice.classList.add(
+        "resolved"
+      );
+
+      supportStatusNotice.textContent =
+        "Tiket telah diselesaikan. Jika masalah belum selesai, kirim balasan untuk membuka kembali tiket ini.";
+
+      return;
+    }
+
+
+    if (status === "closed") {
+      supportStatusNotice.hidden = false;
+
+      supportStatusNotice.classList.add(
+        "closed"
+      );
+
+      supportStatusNotice.textContent =
+        "Tiket telah ditutup. Percakapan ini hanya dapat dibaca. Buat tiket baru jika memerlukan bantuan lanjutan.";
+    }
+  }
+
 
   function links(name) {
     return [
@@ -668,7 +766,15 @@
 
   async function openTicket(id) {
     currentTicketId = id;
+
     replyError.textContent = "";
+
+    replyForm.hidden = true;
+    replySubmit.disabled = true;
+
+    supportStatusNotice.hidden = true;
+    supportStatusNotice.textContent = "";
+
     thread.innerHTML = "Memuat percakapan...";
     detailModal.hidden = false;
 
@@ -737,11 +843,7 @@
         thread.appendChild(item);
       });
 
-      if (ticket.status === "closed") {
-        replyForm.hidden = true;
-      } else {
-        replyForm.hidden = false;
-      }
+      syncSupportReplyState(ticket);
 
     } catch (error) {
       thread.innerHTML =
