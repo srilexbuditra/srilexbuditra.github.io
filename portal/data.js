@@ -316,8 +316,33 @@
       mainButton.disabled = false;
       mainButton.textContent =
         projects.length === 1
-          ? "1 Project"
-          : `${projects.length} Projects`;
+          ? "Lihat Project (1)"
+          : `Lihat Projects (${projects.length})`;
+
+      if (
+        mainButton.dataset.sbProjectCta !== "1"
+      ) {
+        mainButton.dataset.sbProjectCta = "1";
+
+        mainButton.addEventListener(
+          "click",
+          () => {
+            const projectLink =
+              Array.from(
+                document.querySelectorAll(
+                  ".nav a, .mobile-nav a"
+                )
+              ).find(link =>
+                link.textContent
+                  .trim()
+                  .toLowerCase() ===
+                "projects"
+              );
+
+            projectLink?.click();
+          }
+        );
+      }
     }
   }
 
