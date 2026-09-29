@@ -475,6 +475,57 @@ export default {
       }
 
       // ======================================================
+      // CLIENT NOTIFICATIONS R1
+      // ======================================================
+
+      if (
+        url.pathname === "/api/client/notifications" &&
+        method === "GET"
+      ) {
+        const auth = await requireRole(
+          request,
+          env,
+          ["client"]
+        );
+
+        if (auth.response) return auth.response;
+
+        return listClientNotifications(
+          request,
+          env,
+          auth
+        );
+      }
+
+      const clientNotificationReadMatch =
+        url.pathname.match(
+          /^\/api\/client\/notifications\/([^/]+)\/read$/
+        );
+
+      if (
+        clientNotificationReadMatch &&
+        method === "PATCH"
+      ) {
+        const auth = await requireRole(
+          request,
+          env,
+          ["client"]
+        );
+
+        if (auth.response) return auth.response;
+
+        return markClientNotificationRead(
+          request,
+          env,
+          auth,
+          decodeURIComponent(
+            clientNotificationReadMatch[1]
+          )
+        );
+      }
+
+
+      // ======================================================
       // SUPPORT R1 - CLIENT
       // ======================================================
 
@@ -1629,6 +1680,242 @@ async function writeActivity(env, userId, action, entityType = null, entityId = 
     description,
     nowIso()
   ).run();
+}
+
+/* ==========================================================
+   CLIENT NOTIFICATIONS R1
+   ========================================================== */
+
+function clientSupportStatusLabel(status) {
+  const labels = {
+    open: "Open",
+    in_progress: "In Progress",
+    resolved: "Resolved",
+    closed: "Closed"
+  };
+
+  return labels[status] || String(status || "");
+}
+
+
+async function writeClientNotification(
+  env,
+  clientId,
+  actorUserId,
+  type,
+  entityType,
+  entityId,
+  title,
+  description = null
+) {
+  try {
+    const client =
+      await env.DB.prepare(
+        `SELECT user_id
+         FROM clients
+         WHERE id = ?
+         LIMIT 1`
+      )
+        .bind(clientId)
+        .first();
+
+    if (!client?.user_id) {
+      return null;
+    }
+
+    if (client.user_id === actorUserId) {
+      return null;
+    }
+
+    const notificationId =
+      crypto.randomUUID();
+
+    const createdAt =
+      nowIso();
+
+    await env.DB.prepare(
+      `INSERT INTO client_notifications
+        (
+          id,
+          recipient_user_id,
+          actor_user_id,
+          type,
+          entity_type,
+          entity_id,
+          title,
+          description,
+          read_at,
+          created_at
+        )
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, NULL, ?)`
+    ).bind(
+      notificationId,
+      client.user_id,
+      actorUserId || null,
+      type,
+      entityType || null,
+      entityId || null,
+      title,
+      description || null,
+      createdAt
+    ).run();
+
+    return {
+      id: notificationId,
+      recipient_user_id:
+        client.user_id,
+      created_at: createdAt
+    };
+  } catch (error) {
+    console.error(
+      "CLIENT_NOTIFICATION_WRITE_FAILED",
+      String(
+        error?.message ||
+        error ||
+        "Unknown error"
+      )
+    );
+
+    return null;
+  }
+}
+
+
+async function listClientNotifications(
+  request,
+  env,
+  auth
+) {
+  const url =
+    new URL(request.url);
+
+  const requestedLimit =
+    Number.parseInt(
+      url.searchParams.get("limit") || "20",
+      10
+    );
+
+  const limit =
+    Number.isFinite(requestedLimit)
+      ? Math.min(
+          Math.max(requestedLimit, 1),
+          50
+        )
+      : 20;
+
+  const rows =
+    await env.DB.prepare(
+      `SELECT
+         id,
+         type,
+         entity_type,
+         entity_id,
+         title,
+         description,
+         read_at,
+         created_at
+       FROM client_notifications
+       WHERE recipient_user_id = ?
+       ORDER BY created_at DESC
+       LIMIT ?`
+    )
+      .bind(
+        auth.user.id,
+        limit
+      )
+      .all();
+
+  const unread =
+    await env.DB.prepare(
+      `SELECT COUNT(*) AS unread_count
+       FROM client_notifications
+       WHERE recipient_user_id = ?
+         AND read_at IS NULL`
+    )
+      .bind(auth.user.id)
+      .first();
+
+  return apiResponse(
+    request,
+    env,
+    {
+      notifications:
+        rows.results || [],
+      unread_count:
+        Number(
+          unread?.unread_count || 0
+        ),
+      limit
+    }
+  );
+}
+
+
+async function markClientNotificationRead(
+  request,
+  env,
+  auth,
+  notificationId
+) {
+  const notification =
+    await env.DB.prepare(
+      `SELECT
+         id,
+         read_at
+       FROM client_notifications
+       WHERE id = ?
+         AND recipient_user_id = ?
+       LIMIT 1`
+    )
+      .bind(
+        notificationId,
+        auth.user.id
+      )
+      .first();
+
+  if (!notification) {
+    return apiResponse(
+      request,
+      env,
+      {
+        error:
+          "Notification not found."
+      },
+      404
+    );
+  }
+
+  const readAt =
+    notification.read_at ||
+    nowIso();
+
+  if (!notification.read_at) {
+    await env.DB.prepare(
+      `UPDATE client_notifications
+       SET read_at = ?
+       WHERE id = ?
+         AND recipient_user_id = ?
+         AND read_at IS NULL`
+    )
+      .bind(
+        readAt,
+        notificationId,
+        auth.user.id
+      )
+      .run();
+  }
+
+  return apiResponse(
+    request,
+    env,
+    {
+      ok: true,
+      notification: {
+        id: notificationId,
+        read_at: readAt
+      }
+    }
+  );
 }
 
 /* ==========================================================
@@ -6047,6 +6334,18 @@ async function updateAdminSupportTicket(
       ticketId,
       `Support ticket ${current.ticket_code} status changed from ${current.status} to ${status}.`
     );
+
+    // CLIENT NOTIFICATION R1 - manual status change
+    await writeClientNotification(
+      env,
+      current.client_id,
+      auth.user.id,
+      "SUPPORT_STATUS_UPDATED",
+      "support_ticket",
+      ticketId,
+      "Status tiket diperbarui",
+      `Status tiket ${current.ticket_code} berubah dari ${clientSupportStatusLabel(current.status)} menjadi ${clientSupportStatusLabel(status)}.`
+    );
   }
 
   if (priority !== current.priority) {
@@ -6246,6 +6545,20 @@ async function addAdminSupportMessage(
     ticketId,
     `Admin replied to support ticket ${ticket.ticket_code}.`
   );
+
+  // CLIENT NOTIFICATION R1 - public replies only
+  if (visibility === "public") {
+    await writeClientNotification(
+      env,
+      ticket.client_id,
+      auth.user.id,
+      "SUPPORT_MESSAGE_SENT",
+      "support_ticket",
+      ticketId,
+      "Balasan baru dari Support",
+      `Tim Support mengirim balasan baru pada tiket ${ticket.ticket_code}.`
+    );
+  }
 
   return apiResponse(
     request,
