@@ -776,6 +776,219 @@
   const topActions =
     document.querySelector(".top-actions");
 
+
+  /*
+   * ==========================================================
+   * PORTAL DESKTOP SIDEBAR TOGGLE R1
+   * ==========================================================
+   */
+
+  const portalMenu =
+    document.querySelector("[data-menu]");
+
+  if (
+    portalMenu &&
+    portalMenu.dataset.sbPortalDesktopToggleR1 !== "1"
+  ) {
+    portalMenu.dataset.sbPortalDesktopToggleR1 = "1";
+
+    if (
+      !document.getElementById(
+        "sb-portal-desktop-toggle-r1-styles"
+      )
+    ) {
+      const sidebarStyle =
+        document.createElement("style");
+
+      sidebarStyle.id =
+        "sb-portal-desktop-toggle-r1-styles";
+
+      sidebarStyle.textContent = `
+        .icon-btn {
+          display: grid;
+          place-items: center;
+          cursor: pointer;
+        }
+
+        .icon-btn svg {
+          display: block;
+          width: 20px;
+          height: 20px;
+        }
+
+        .top-actions
+        .icon-btn[aria-label="Notifikasi"] {
+          position: relative;
+        }
+
+        .icon-btn.sb-portal-notification-has-new::after {
+          content: "";
+
+          position: absolute;
+          top: 6px;
+          right: 6px;
+
+          width: 8px;
+          height: 8px;
+
+          border: 2px solid #fff;
+          border-radius: 50%;
+
+          background: #168a63;
+
+          box-shadow:
+            0 0 0 2px
+            rgba(22,138,99,.12);
+        }
+
+        @media(min-width:821px) {
+          .menu-btn {
+            display: inline-grid;
+            place-items: center;
+            cursor: pointer;
+          }
+
+          .sidebar {
+            transition:
+              transform .22s ease;
+          }
+
+          .shell {
+            transition:
+              margin-left .22s ease;
+          }
+
+          body.sb-portal-sidebar-collapsed
+          .sidebar {
+            transform:
+              translateX(-100%);
+          }
+
+          body.sb-portal-sidebar-collapsed
+          .shell {
+            margin-left: 0;
+          }
+        }
+      `;
+
+      document.head.appendChild(
+        sidebarStyle
+      );
+    }
+
+
+    function syncPortalDesktopMenu() {
+      if (window.innerWidth <= 820) {
+        document.body.classList.remove(
+          "sb-portal-sidebar-collapsed"
+        );
+
+        portalMenu.setAttribute(
+          "aria-label",
+          "Buka navigasi"
+        );
+
+        return;
+      }
+
+      const collapsed =
+        document.body.classList.contains(
+          "sb-portal-sidebar-collapsed"
+        );
+
+      portalMenu.setAttribute(
+        "aria-label",
+        collapsed
+          ? "Buka navigasi"
+          : "Tutup navigasi"
+      );
+    }
+
+
+    portalMenu.addEventListener(
+      "click",
+      event => {
+        if (window.innerWidth <= 820) {
+          return;
+        }
+
+        event.preventDefault();
+        event.stopImmediatePropagation();
+
+        document.body.classList.toggle(
+          "sb-portal-sidebar-collapsed"
+        );
+
+        syncPortalDesktopMenu();
+      },
+      true
+    );
+
+
+    window.addEventListener(
+      "resize",
+      syncPortalDesktopMenu
+    );
+
+    syncPortalDesktopMenu();
+  }
+
+
+  /*
+   * ==========================================================
+   * PORTAL NOTIFICATION INDICATOR R1
+   * ==========================================================
+   */
+
+  if (notificationButton) {
+    function setPortalNotificationCount(value) {
+      const parsed =
+        Number(value);
+
+      const count =
+        Number.isFinite(parsed)
+          ? Math.max(
+              0,
+              Math.floor(parsed)
+            )
+          : 0;
+
+      notificationButton.dataset
+        .notificationCount =
+          String(count);
+
+      notificationButton.classList.toggle(
+        "sb-portal-notification-has-new",
+        count > 0
+      );
+
+      notificationButton.title =
+        count > 0
+          ? `${count} notifikasi baru`
+          : "Notifikasi";
+    }
+
+
+    window.SB_PORTAL_SET_NOTIFICATION_COUNT =
+      setPortalNotificationCount;
+
+
+    window.addEventListener(
+      "sb:portal-notification-count",
+      event => {
+        setPortalNotificationCount(
+          event?.detail?.count ?? 0
+        );
+      }
+    );
+
+
+    setPortalNotificationCount(
+      window.SB_PORTAL_NOTIFICATION_UNREAD ?? 0
+    );
+  }
+
+
   if (
     notificationButton &&
     topActions &&
