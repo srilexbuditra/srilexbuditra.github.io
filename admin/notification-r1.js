@@ -737,50 +737,22 @@
           `HTTP ${response.status}`
         );
       }
-
-
-      const items =
-        Array.isArray(
-          data.activity
-        )
-          ? data.activity
-          : [];
-
-      const latest =
-        indicatorMarker(items);
-
-      const seen =
-        readIndicatorSeen();
-
-
-      /*
-       * Baseline pertama:
-       * aktivitas lama tidak diberi tanda "baru".
-       */
-      if (seen === null) {
-        writeIndicatorSeen(
-          latest
+      const unreadCount =
+        Number(
+          data.unread_count || 0
         );
 
-        setNewIndicator(false);
-
-        return;
-      }
-
-
-      if (
-        latest ===
-        INDICATOR_EMPTY_MARKER
-      ) {
-        setNewIndicator(false);
-
-        return;
-      }
-
+      button.dataset.notificationUnread =
+        String(unreadCount);
 
       setNewIndicator(
-        latest !== seen
+        unreadCount > 0
       );
+
+      button.title =
+        unreadCount > 0
+          ? `${unreadCount} notifikasi belum dibaca`
+          : "Notifikasi";
 
     } catch {
       /*
@@ -813,6 +785,101 @@
   }
 
 
+  async function markNotificationRead(
+    item,
+    row
+  ) {
+    if (
+      !item?.id ||
+      item.read_at
+    ) {
+      return null;
+    }
+
+    try {
+      const response =
+        await fetch(
+          `/api/admin/activity/${encodeURIComponent(
+            item.id
+          )}/read`,
+          {
+            method: "PATCH",
+            credentials:
+              "same-origin",
+            headers: {
+              Accept:
+                "application/json",
+              "Content-Type":
+                "application/json"
+            },
+            body:
+              JSON.stringify({})
+          }
+        );
+
+      const data =
+        await response
+          .json()
+          .catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(
+          data.error ||
+          `HTTP ${response.status}`
+        );
+      }
+
+      item.read_at =
+        data.activity?.read_at ||
+        item.read_at ||
+        new Date().toISOString();
+
+      if (row) {
+        row.classList.remove(
+          "is-unread"
+        );
+
+        row.dataset.readState =
+          "read";
+
+        const dot =
+          row.querySelector(
+            ".sb-notification-dot"
+          );
+
+        if (dot) {
+          dot.hidden = true;
+        }
+      }
+
+      const unreadCount =
+        Number(
+          data.unread_count || 0
+        );
+
+      button.dataset.notificationUnread =
+        String(unreadCount);
+
+      setNewIndicator(
+        unreadCount > 0
+      );
+
+      button.title =
+        unreadCount > 0
+          ? `${unreadCount} notifikasi belum dibaca`
+          : "Notifikasi";
+
+      return data;
+    } catch (error) {
+      console.error(
+        "Admin notification read-state update failed:",
+        error
+      );
+
+      return null;
+    }
+  }
+
   function render(items) {
     list.innerHTML = "";
 
@@ -830,6 +897,22 @@
 
       row.className =
         "sb-notification-item";
+
+      const isUnread =
+        !item.read_at;
+
+      row.classList.toggle(
+        "is-unread",
+        isUnread
+      );
+
+      row.dataset.activityId =
+        String(item.id || "");
+
+      row.dataset.readState =
+        isUnread
+          ? "unread"
+          : "read";
 
 
       const isSupportTarget =
@@ -855,7 +938,12 @@
         );
 
         const openSupportTarget =
-          () => {
+          async () => {
+            await markNotificationRead(
+              item,
+              row
+            );
+
             closePanel();
 
             const openSupport =
@@ -895,11 +983,64 @@
       }
 
 
+      if (
+        !isSupportTarget &&
+        isUnread
+      ) {
+        row.classList.add(
+          "is-actionable"
+        );
+
+        row.tabIndex = 0;
+
+        row.setAttribute(
+          "role",
+          "button"
+        );
+
+        row.setAttribute(
+          "aria-label",
+          "Tandai notifikasi sudah dibaca"
+        );
+
+        const markCurrentRead =
+          () => {
+            void markNotificationRead(
+              item,
+              row
+            );
+          };
+
+        row.addEventListener(
+          "click",
+          markCurrentRead
+        );
+
+        row.addEventListener(
+          "keydown",
+          event => {
+            if (
+              event.key !== "Enter" &&
+              event.key !== " "
+            ) {
+              return;
+            }
+
+            event.preventDefault();
+
+            markCurrentRead();
+          }
+        );
+      }
+
       const dot =
         document.createElement("span");
 
       dot.className =
         "sb-notification-dot";
+
+      dot.hidden =
+        !isUnread;
 
 
       const copy =
@@ -1072,9 +1213,24 @@
       loadedUserKey =
         currentKey;
 
+      const unreadCount =
+        Number(
+          data.unread_count || 0
+        );
+
       render(items);
 
-      markItemsSeen(items);
+      button.dataset.notificationUnread =
+        String(unreadCount);
+
+      setNewIndicator(
+        unreadCount > 0
+      );
+
+      button.title =
+        unreadCount > 0
+          ? `${unreadCount} notifikasi belum dibaca`
+          : "Notifikasi";
 
     } catch (error) {
       loadedUserKey = "";
