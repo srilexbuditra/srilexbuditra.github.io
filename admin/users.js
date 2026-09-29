@@ -977,5 +977,54 @@
     attributeFilter: ["hidden"]
   });
 
+
+  /*
+   * ==========================================================
+   * SB_USERS_AUTO_LOAD_ON_NAV_R1
+   * ==========================================================
+   *
+   * MutationObserver tetap dipertahankan sebagai mekanisme
+   * utama. Handler ini menjadi fallback ketika Users & Roles
+   * dibuka melalui shared navigation.
+   */
+  document.addEventListener(
+    "click",
+    event => {
+      const link =
+        event.target.closest(
+          ".nav a, .mobile-nav a"
+        );
+
+      if (!link) {
+        return;
+      }
+
+      const label =
+        String(
+          link.textContent || ""
+        )
+          .trim()
+          .toLowerCase()
+          .replace(/\s+/g, " ");
+
+      if (
+        label !==
+          "users & roles"
+      ) {
+        return;
+      }
+
+      window.setTimeout(
+        () => {
+          if (!view.hidden) {
+            loadWhenAuthenticated();
+          }
+        },
+        0
+      );
+    }
+  );
+
+
   loadWhenAuthenticated();
 })();
