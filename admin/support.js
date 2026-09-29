@@ -1089,4 +1089,14 @@
       "click",
       () => modal.hidden = true
     );
+
+
+  window.SB_ADMIN_OPEN_SUPPORT_TICKET =
+    async id => {
+      if (!id) return;
+
+      showView();
+
+      await openTicket(id);
+    };
 })();

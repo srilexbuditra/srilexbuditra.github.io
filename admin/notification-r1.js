@@ -237,6 +237,16 @@
           1px solid rgba(15,23,42,.06);
       }
 
+      .sb-notification-item.is-actionable {
+        cursor: pointer;
+      }
+
+      .sb-notification-item.is-actionable:hover,
+      .sb-notification-item.is-actionable:focus-visible {
+        background: rgba(22,138,99,.06);
+        outline: none;
+      }
+
       .sb-notification-dot {
         width: 8px;
         height: 8px;
@@ -820,6 +830,69 @@
 
       row.className =
         "sb-notification-item";
+
+
+      const isSupportTarget =
+        item.entity_type ===
+          "support_ticket" &&
+        Boolean(item.entity_id);
+
+      if (isSupportTarget) {
+        row.classList.add(
+          "is-actionable"
+        );
+
+        row.tabIndex = 0;
+
+        row.setAttribute(
+          "role",
+          "button"
+        );
+
+        row.setAttribute(
+          "aria-label",
+          "Buka tiket support"
+        );
+
+        const openSupportTarget =
+          () => {
+            closePanel();
+
+            const openSupport =
+              window
+                .SB_ADMIN_OPEN_SUPPORT_TICKET;
+
+            if (
+              typeof openSupport ===
+                "function"
+            ) {
+              void openSupport(
+                item.entity_id
+              );
+            }
+          };
+
+        row.addEventListener(
+          "click",
+          openSupportTarget
+        );
+
+        row.addEventListener(
+          "keydown",
+          event => {
+            if (
+              event.key !== "Enter" &&
+              event.key !== " "
+            ) {
+              return;
+            }
+
+            event.preventDefault();
+
+            openSupportTarget();
+          }
+        );
+      }
 
 
       const dot =
