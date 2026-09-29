@@ -1232,6 +1232,70 @@
           font-size: 13px;
         }
 
+        .sb-portal-notification-body {
+          max-height: min(420px, 70vh);
+          overflow-y: auto;
+        }
+
+        .sb-portal-notification-item {
+          position: relative;
+          display: block;
+          width: 100%;
+          padding: 13px 16px;
+          border: 0;
+          border-bottom: 1px solid rgba(15,23,42,.07);
+          background: #fff;
+          color: #334155;
+          text-align: left;
+          cursor: pointer;
+        }
+
+        .sb-portal-notification-item:hover,
+        .sb-portal-notification-item:focus-visible {
+          background: #f8fafc;
+          outline: none;
+        }
+
+        .sb-portal-notification-item.unread {
+          background: #f0fdf4;
+        }
+
+        .sb-portal-notification-item.unread::before {
+          content: "";
+          position: absolute;
+          top: 17px;
+          left: 7px;
+          width: 6px;
+          height: 6px;
+          border-radius: 999px;
+          background: #16a34a;
+        }
+
+        .sb-portal-notification-item-title {
+          display: block;
+          padding-right: 8px;
+          color: #16352c;
+          font-size: 12px;
+          font-weight: 700;
+          line-height: 1.45;
+        }
+
+        .sb-portal-notification-item-copy {
+          display: block;
+          margin-top: 4px;
+          color: #64748b;
+          font-size: 11px;
+          line-height: 1.5;
+        }
+
+        .sb-portal-notification-item-action {
+          display: block;
+          margin-top: 7px;
+          color: #178557;
+          font-size: 10px;
+          font-weight: 700;
+        }
+
         @media(max-width:820px) {
           .sb-portal-notification-panel {
             right: -2px;
@@ -1274,22 +1338,325 @@
       <div class="sb-portal-notification-head">
         <strong>Notifikasi Client</strong>
         <span>
-          Informasi terbaru akun dan layanan Anda
+          Pembaruan terbaru akun dan layanan Anda
         </span>
       </div>
 
-      <div class="sb-portal-notification-state">
-        <strong>Belum ada notifikasi baru</strong>
-
-        Notifikasi real-time Client belum diaktifkan.
-        Status project, invoice, dokumen, dan support
-        tetap dapat dipantau melalui dashboard.
+      <div
+        class="sb-portal-notification-body"
+        data-portal-notification-body
+      >
+        <div class="sb-portal-notification-state">
+          <strong>Memuat notifikasi...</strong>
+          Mohon tunggu sebentar.
+        </div>
       </div>
     `;
 
     topActions.appendChild(
       notificationPanel
     );
+
+
+    const notificationBody =
+      notificationPanel.querySelector(
+        "[data-portal-notification-body]"
+      );
+
+    let notificationLoadInFlight = false;
+
+
+    function escapePortalNotificationHtml(value) {
+      return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
+
+    function renderClientNotifications(items) {
+      const notifications =
+        Array.isArray(items)
+          ? items
+          : [];
+
+      if (!notifications.length) {
+        notificationBody.innerHTML = `
+          <div class="sb-portal-notification-state">
+            <strong>Belum ada notifikasi baru</strong>
+            Pembaruan dari Support dan layanan Client
+            akan tampil di sini.
+          </div>
+        `;
+
+        return;
+      }
+
+      notificationBody.innerHTML =
+        notifications.map(notification => {
+          const unread =
+            !notification.read_at;
+
+          const isSupport =
+            notification.entity_type ===
+              "support_ticket" &&
+            Boolean(notification.entity_id);
+
+          const actionText =
+            isSupport
+              ? "Buka tiket"
+              : unread
+                ? "Tandai telah dibaca"
+                : "Sudah dibaca";
+
+          return `
+            <button
+              type="button"
+              class="sb-portal-notification-item${unread ? " unread" : ""}"
+              data-client-notification-id="${escapePortalNotificationHtml(notification.id)}"
+              data-client-notification-unread="${unread ? "1" : "0"}"
+              data-client-notification-entity="${escapePortalNotificationHtml(notification.entity_type || "")}"
+              data-client-notification-entity-id="${escapePortalNotificationHtml(notification.entity_id || "")}"
+            >
+              <span class="sb-portal-notification-item-title">
+                ${escapePortalNotificationHtml(
+                  notification.title || "Notifikasi"
+                )}
+              </span>
+
+              ${
+                notification.description
+                  ? `
+                    <span class="sb-portal-notification-item-copy">
+                      ${escapePortalNotificationHtml(
+                        notification.description
+                      )}
+                    </span>
+                  `
+                  : ""
+              }
+
+              <span class="sb-portal-notification-item-action">
+                ${actionText}
+              </span>
+            </button>
+          `;
+        }).join("");
+    }
+
+
+    async function loadClientNotifications() {
+      if (
+        !window.SB_PORTAL_USER ||
+        notificationLoadInFlight
+      ) {
+        return;
+      }
+
+      notificationLoadInFlight = true;
+
+      try {
+        const response =
+          await fetch(
+            "/api/client/notifications?limit=20",
+            {
+              credentials: "same-origin",
+              headers: {
+                Accept: "application/json"
+              },
+              cache: "no-store"
+            }
+          );
+
+        const data =
+          await response.json().catch(() => ({}));
+
+        if (response.status === 401) {
+          return;
+        }
+
+        if (!response.ok) {
+          throw new Error(
+            data.error ||
+            `HTTP ${response.status}`
+          );
+        }
+
+        const notifications =
+          Array.isArray(data.notifications)
+            ? data.notifications
+            : [];
+
+        const unread =
+          Number(data.unread_count || 0);
+
+        window.SB_PORTAL_NOTIFICATION_UNREAD =
+          Number.isFinite(unread)
+            ? Math.max(0, unread)
+            : 0;
+
+        window
+          .SB_PORTAL_SET_NOTIFICATION_COUNT?.(
+            window.SB_PORTAL_NOTIFICATION_UNREAD
+          );
+
+        renderClientNotifications(
+          notifications
+        );
+      }
+      catch (error) {
+        console.warn(
+          "CLIENT_NOTIFICATION_LOAD_FAILED",
+          error
+        );
+
+        notificationBody.innerHTML = `
+          <div class="sb-portal-notification-state">
+            <strong>Notifikasi belum dapat dimuat</strong>
+            Silakan coba buka kembali panel notifikasi.
+          </div>
+        `;
+      }
+      finally {
+        notificationLoadInFlight = false;
+      }
+    }
+
+
+    async function markClientNotificationRead(id) {
+      const response =
+        await fetch(
+          `/api/client/notifications/${encodeURIComponent(id)}/read`,
+          {
+            method: "PATCH",
+            credentials: "same-origin",
+            headers: {
+              Accept: "application/json"
+            },
+            cache: "no-store"
+          }
+        );
+
+      const data =
+        await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(
+          data.error ||
+          `HTTP ${response.status}`
+        );
+      }
+
+      return data;
+    }
+
+
+    async function openClientNotification(
+      id,
+      entityType,
+      entityId,
+      unread
+    ) {
+      if (unread) {
+        try {
+          await markClientNotificationRead(id);
+        }
+        catch (error) {
+          console.warn(
+            "CLIENT_NOTIFICATION_READ_FAILED",
+            error
+          );
+        }
+
+        await loadClientNotifications();
+      }
+
+      closePortalNotifications();
+
+      if (
+        entityType === "support_ticket" &&
+        entityId &&
+        typeof window
+          .SB_PORTAL_OPEN_SUPPORT_TICKET ===
+            "function"
+      ) {
+        await window
+          .SB_PORTAL_OPEN_SUPPORT_TICKET(
+            entityId
+          );
+      }
+    }
+
+
+    notificationPanel.addEventListener(
+      "click",
+      event => {
+        const item =
+          event.target.closest(
+            "[data-client-notification-id]"
+          );
+
+        if (!item) return;
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        void openClientNotification(
+          item.dataset.clientNotificationId,
+          item.dataset.clientNotificationEntity,
+          item.dataset.clientNotificationEntityId,
+          item.dataset.clientNotificationUnread === "1"
+        );
+      }
+    );
+
+
+    notificationButton.addEventListener(
+      "click",
+      () => {
+        if (window.SB_PORTAL_USER) {
+          void loadClientNotifications();
+        }
+      }
+    );
+
+
+    window.addEventListener(
+      "sb:portal-authenticated",
+      () => {
+        void loadClientNotifications();
+      }
+    );
+
+
+    document.addEventListener(
+      "visibilitychange",
+      () => {
+        if (
+          document.visibilityState === "visible" &&
+          window.SB_PORTAL_USER
+        ) {
+          void loadClientNotifications();
+        }
+      }
+    );
+
+
+    window.setInterval(
+      () => {
+        if (window.SB_PORTAL_USER) {
+          void loadClientNotifications();
+        }
+      },
+      45000
+    );
+
+
+    if (window.SB_PORTAL_USER) {
+      void loadClientNotifications();
+    }
 
 
     function closePortalNotifications() {

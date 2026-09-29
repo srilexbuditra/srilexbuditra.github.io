@@ -1069,6 +1069,16 @@
     );
 
 
+  window.SB_PORTAL_OPEN_SUPPORT_TICKET =
+    async id => {
+      if (!id) return;
+
+      showView();
+
+      await openTicket(id);
+    };
+
+
   window.addEventListener(
     "sb:portal-authenticated",
     loadTickets
