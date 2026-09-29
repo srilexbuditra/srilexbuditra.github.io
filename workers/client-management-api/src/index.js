@@ -859,11 +859,17 @@ function sessionHours(env) {
   return Number.isFinite(parsed) && parsed >= 1 && parsed <= 24 ? parsed : SESSION_HOURS_DEFAULT;
 }
 
+function effectiveUserRole(user) {
+  return user?.portal_role === "lead"
+    ? "lead"
+    : user?.role || null;
+}
+
 function publicUser(user) {
   return {
     id: user.id,
     email: user.email,
-    role: user.role,
+    role: effectiveUserRole(user),
     status: user.status,
     must_change_password: Boolean(user.must_change_password),
     client_id: user.client_id || null,
@@ -1748,7 +1754,7 @@ async function login(request, env) {
 
   const user = await env.DB.prepare(
     `SELECT
-       u.id, u.email, u.password_hash, u.role, u.status, u.must_change_password,
+       u.id, u.email, u.password_hash, u.role, u.portal_role, u.status, u.must_change_password,
        COALESCE(u.full_name, c.full_name) AS full_name,
        c.id AS client_id, c.client_code, c.company_name
      FROM users u
@@ -1822,7 +1828,7 @@ async function requireAuth(request, env) {
   const timestamp = nowIso();
   const user = await env.DB.prepare(
     `SELECT
-       u.id, u.email, u.role, u.status, u.must_change_password,
+       u.id, u.email, u.role, u.portal_role, u.status, u.must_change_password,
        COALESCE(u.full_name, c.full_name) AS full_name,
        c.id AS client_id, c.client_code, c.company_name,
        s.id AS session_id, s.expires_at
@@ -1846,6 +1852,8 @@ async function requireAuth(request, env) {
       )
     };
   }
+
+  user.role = effectiveUserRole(user);
 
   await env.DB.prepare(
     `UPDATE sessions SET last_seen_at = ? WHERE id = ?`
@@ -2028,7 +2036,7 @@ async function listAdminUsers(request, env) {
        u.id,
        u.email,
        COALESCE(u.full_name, c.full_name) AS full_name,
-       u.role,
+       COALESCE(u.portal_role, u.role) AS role,
        u.status,
        u.must_change_password,
        u.created_at,
