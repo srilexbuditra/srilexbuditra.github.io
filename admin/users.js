@@ -258,7 +258,7 @@
         <div class="sb-users-kicker">Access Control • R1</div>
         <h1>Users & Roles</h1>
         <p class="sb-users-muted">
-          Kelola akun Staff dan lihat akses pengguna. Client tetap dikelola melalui modul Clients.
+          Kelola status, akses password, dan akun pengguna dari satu tempat.
         </p>
       </div>
       <div class="sb-users-actions">
@@ -396,37 +396,86 @@
 
       let actionHtml = "";
 
-      if (user.role === "staff") {
-        const active =
-          user.status === "active";
+      const statusToggleAllowed =
+        user.status === "active" ||
+        user.status === "suspended";
 
-        actionHtml = `
-          <div class="sb-users-row-actions">
+      const statusButtonHtml =
+        statusToggleAllowed
+          ? `
             <button
               class="sb-users-btn"
               data-user-status="${esc(user.id)}"
-              data-next-status="${active ? "suspended" : "active"}"
+              data-next-status="${
+                user.status === "active"
+                  ? "suspended"
+                  : "active"
+              }"
             >
-              ${active ? "Suspend" : "Activate"}
+              ${
+                user.status === "active"
+                  ? "Suspend"
+                  : "Aktifkan"
+              }
             </button>
+          `
+          : "";
 
-            <button
-              class="sb-users-btn"
-              data-user-reset="${esc(user.id)}"
-              data-user-email="${esc(user.email)}"
-            >
-              Reset Password
-            </button>
+      const resetButtonHtml = `
+        <button
+          class="sb-users-btn"
+          data-user-reset="${esc(user.id)}"
+          data-user-email="${esc(user.email)}"
+        >
+          Reset Password
+        </button>
+      `;
+
+      if (user.role === "system_admin") {
+        if (isSelf) {
+          actionHtml = `
+            <div class="sb-users-row-actions">
+              <button
+                class="sb-users-btn"
+                data-user-account
+              >
+                Kelola Akun
+              </button>
+            </div>
+          `;
+        } else {
+          actionHtml = `
+            <div class="sb-users-row-actions">
+              ${statusButtonHtml}
+              ${resetButtonHtml}
+            </div>
+          `;
+        }
+      } else if (user.role === "staff") {
+        actionHtml = `
+          <div class="sb-users-row-actions">
+            ${statusButtonHtml}
+            ${resetButtonHtml}
           </div>
         `;
       } else if (user.role === "client") {
-        actionHtml =
-          `<span class="sb-users-muted">Kelola melalui Clients</span>`;
+        actionHtml = `
+          <div class="sb-users-row-actions">
+            ${statusButtonHtml}
+            ${resetButtonHtml}
+
+            <button
+              class="sb-users-btn"
+              data-user-open-client
+            >
+              Buka Client
+            </button>
+          </div>
+        `;
       } else {
         actionHtml =
-          `<span class="sb-users-muted">${isSelf ? "Akun Anda" : "System account"}</span>`;
+          `<span class="sb-users-muted">Tidak ada action</span>`;
       }
-
       tr.innerHTML = `
         <td>
           <div class="sb-users-user">
@@ -731,9 +780,81 @@
   search.addEventListener("input", render);
   roleFilter.addEventListener("change", render);
 
+  function openOwnAccountSecurity() {
+    const accountButton =
+      Array.from(
+        document.querySelectorAll("button")
+      ).find(button =>
+        button.textContent
+          .trim() ===
+        "Akun & Keamanan"
+      );
+
+    if (!accountButton) {
+      alert(
+        "Panel Akun & Keamanan belum tersedia."
+      );
+      return;
+    }
+
+    accountButton.click();
+  }
+
+
+  function openClientManagement() {
+    const clientLink =
+      Array.from(
+        document.querySelectorAll(
+          'a[href="#clients"]'
+        )
+      )[0] ||
+      Array.from(
+        document.querySelectorAll("a")
+      ).find(link =>
+        link.textContent
+          .trim()
+          .toLowerCase() ===
+        "clients"
+      );
+
+    if (!clientLink) {
+      alert(
+        "Modul Clients belum tersedia."
+      );
+      return;
+    }
+
+    clientLink.click();
+  }
+
+
   body.addEventListener("click", async event => {
+    const accountButton =
+      event.target.closest(
+        "[data-user-account]"
+      );
+
+    if (accountButton) {
+      openOwnAccountSecurity();
+      return;
+    }
+
+
+    const openClientButton =
+      event.target.closest(
+        "[data-user-open-client]"
+      );
+
+    if (openClientButton) {
+      openClientManagement();
+      return;
+    }
+
+
     const statusButton =
-      event.target.closest("[data-user-status]");
+      event.target.closest(
+        "[data-user-status]"
+      );
 
     if (statusButton) {
       const userId =
@@ -742,9 +863,25 @@
       const nextStatus =
         statusButton.dataset.nextStatus;
 
+      const targetUser =
+        users.find(
+          item =>
+            String(item.id) ===
+            String(userId)
+        );
+
+      const actionLabel =
+        nextStatus === "active"
+          ? "Aktifkan"
+          : "Suspend";
+
+      const targetLabel =
+        targetUser?.email ||
+        "pengguna ini";
+
       if (
         !confirm(
-          `${nextStatus === "active" ? "Aktifkan" : "Suspend"} akun Staff ini?`
+          `${actionLabel} akun ${targetLabel}?`
         )
       ) {
         return;
@@ -769,15 +906,22 @@
         loadedOnce = false;
         await loadUsers(true);
       } catch (error) {
-        alert(error.message || "Gagal mengubah status.");
+        alert(
+          error.message ||
+          "Gagal mengubah status."
+        );
+
         statusButton.disabled = false;
       }
 
       return;
     }
 
+
     const resetButton =
-      event.target.closest("[data-user-reset]");
+      event.target.closest(
+        "[data-user-reset]"
+      );
 
     if (resetButton) {
       showResetPassword(
@@ -786,7 +930,6 @@
       );
     }
   });
-
   dialog.addEventListener("click", event => {
     if (event.target === dialog) {
       closeDialog();
