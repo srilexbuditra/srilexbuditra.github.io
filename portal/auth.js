@@ -318,10 +318,88 @@
     loginPanel.hidden = false;
     passwordPanel.hidden = true;
 
-    if (loginMessage) loginMessage.textContent = message;
+    const title =
+      loginPanel.querySelector("h1");
 
-    const password = overlay.querySelector("#sb-client-login-password");
-    if (password) password.value = "";
+    const description =
+      loginPanel.querySelector("p");
+
+    const form =
+      loginPanel.querySelector("[data-login-form]");
+
+    const note =
+      loginPanel.querySelector(".sb-portal-auth-note");
+
+    if (title) {
+      title.textContent = "Login Client";
+    }
+
+    if (description) {
+      description.textContent =
+        "Masuk menggunakan akun client yang diberikan oleh administrator.";
+    }
+
+    if (form) {
+      form.hidden = false;
+    }
+
+    if (note) {
+      note.hidden = false;
+    }
+
+    if (loginMessage) {
+      loginMessage.textContent = message;
+    }
+
+    const password =
+      overlay.querySelector(
+        "#sb-client-login-password"
+      );
+
+    if (password) {
+      password.value = "";
+    }
+  }
+
+  function showSessionChecking() {
+    if (!overlay) buildOverlay();
+
+    overlay.hidden = false;
+    loginPanel.hidden = false;
+    passwordPanel.hidden = true;
+
+    const title =
+      loginPanel.querySelector("h1");
+
+    const description =
+      loginPanel.querySelector("p");
+
+    const form =
+      loginPanel.querySelector("[data-login-form]");
+
+    const note =
+      loginPanel.querySelector(".sb-portal-auth-note");
+
+    if (title) {
+      title.textContent = "Memeriksa sesi...";
+    }
+
+    if (description) {
+      description.textContent =
+        "Mohon tunggu, sesi Client Portal sedang diverifikasi.";
+    }
+
+    if (form) {
+      form.hidden = true;
+    }
+
+    if (note) {
+      note.hidden = true;
+    }
+
+    if (loginMessage) {
+      loginMessage.textContent = "";
+    }
   }
 
   function showPasswordChange(user) {
@@ -565,11 +643,7 @@
   }
 
   async function checkSession() {
-    showLogin();
-
-    if (loginMessage) {
-      loginMessage.textContent = "Memeriksa sesi...";
-    }
+    showSessionChecking();
 
     try {
       const response = await api("/auth/me", {
