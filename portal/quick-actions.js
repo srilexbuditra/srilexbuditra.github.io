@@ -108,6 +108,23 @@
       line-height: 1.6;
     }
 
+    .sb-qa-security-section h3 {
+      margin: 0 0 5px;
+      color: #16352c;
+      font-size: 15px;
+    }
+    .sb-qa-security-section > p {
+      margin: 0 0 14px;
+      color: #64748b;
+      font-size: 11px;
+      line-height: 1.55;
+    }
+    .sb-qa-security-divider {
+      height: 1px;
+      margin: 22px 0;
+      background: #e2e8e5;
+    }
+
     .sb-qa-security-close {
       border: 1px solid #dbe3df;
       background: #fff;
@@ -208,7 +225,6 @@
       class="sb-qa-security-backdrop"
       data-qa-security-close
     ></div>
-
     <section
       class="sb-qa-security-card"
       role="dialog"
@@ -218,14 +234,13 @@
       <div class="sb-qa-security-head">
         <div>
           <h2 id="sbQaSecurityTitle">
-            Keamanan Akun
+            Akun &amp; Keamanan
           </h2>
           <p>
-            Ubah password Client Portal Anda.
-            Password baru harus 6-30 karakter.
+            Kelola nama akun dan password
+            Client Portal Anda.
           </p>
         </div>
-
         <button
           class="sb-qa-security-close"
           type="button"
@@ -235,122 +250,341 @@
           &times;
         </button>
       </div>
-
-      <form class="sb-qa-security-form" data-qa-security-form>
-        <div class="sb-qa-security-field">
-          <label for="sb-qa-current-password">
-            Password saat ini
-          </label>
-
-          <input
-            id="sb-qa-current-password"
-            name="current_password"
-            type="password"
-            autocomplete="current-password"
-            required
-          >
-        </div>
-
-        <div class="sb-qa-security-field">
-          <label for="sb-qa-new-password">
-            Password baru
-          </label>
-
-          <input
-            id="sb-qa-new-password"
-            name="new_password"
-            type="password"
-            minlength="6"
-            maxlength="30"
-            autocomplete="new-password"
-            required
-          >
-        </div>
-
-        <div class="sb-qa-security-field">
-          <label for="sb-qa-confirm-password">
-            Ulangi password baru
-          </label>
-
-          <input
-            id="sb-qa-confirm-password"
-            name="confirm_password"
-            type="password"
-            minlength="6"
-            maxlength="30"
-            autocomplete="new-password"
-            required
-          >
-        </div>
-
-        <div
-          class="sb-qa-security-message"
-          data-qa-security-message
-          role="alert"
-          aria-live="polite"
-        ></div>
-
-        <div class="sb-qa-security-actions">
-          <button
-            class="sb-qa-security-cancel"
-            type="button"
-            data-qa-security-close
-          >
-            Batal
-          </button>
-
-          <button
-            class="sb-qa-security-submit"
-            type="submit"
-          >
-            Simpan Password
-          </button>
-        </div>
-      </form>
+      <section class="sb-qa-security-section">
+        <h3>Profil Akun</h3>
+        <p>
+          Perbarui nama yang ditampilkan pada
+          Client Portal Anda.
+        </p>
+        <form
+          class="sb-qa-security-form"
+          data-qa-profile-form
+        >
+          <div class="sb-qa-security-field">
+            <label for="sb-qa-full-name">
+              Nama lengkap
+            </label>
+            <input
+              id="sb-qa-full-name"
+              name="full_name"
+              type="text"
+              minlength="2"
+              maxlength="120"
+              autocomplete="name"
+              required
+            >
+          </div>
+          <div
+            class="sb-qa-security-message"
+            data-qa-profile-message
+            role="status"
+            aria-live="polite"
+          ></div>
+          <div class="sb-qa-security-actions">
+            <button
+              class="sb-qa-security-submit"
+              type="submit"
+            >
+              Simpan Nama
+            </button>
+          </div>
+        </form>
+      </section>
+      <div class="sb-qa-security-divider"></div>
+      <section class="sb-qa-security-section">
+        <h3>Ubah Password</h3>
+        <p>
+          Password baru harus 6-30 karakter.
+        </p>
+        <form
+          class="sb-qa-security-form"
+          data-qa-security-form
+        >
+          <div class="sb-qa-security-field">
+            <label for="sb-qa-current-password">
+              Password saat ini
+            </label>
+            <input
+              id="sb-qa-current-password"
+              name="current_password"
+              type="password"
+              autocomplete="current-password"
+              required
+            >
+          </div>
+          <div class="sb-qa-security-field">
+            <label for="sb-qa-new-password">
+              Password baru
+            </label>
+            <input
+              id="sb-qa-new-password"
+              name="new_password"
+              type="password"
+              minlength="6"
+              maxlength="30"
+              autocomplete="new-password"
+              required
+            >
+          </div>
+          <div class="sb-qa-security-field">
+            <label for="sb-qa-confirm-password">
+              Ulangi password baru
+            </label>
+            <input
+              id="sb-qa-confirm-password"
+              name="confirm_password"
+              type="password"
+              minlength="6"
+              maxlength="30"
+              autocomplete="new-password"
+              required
+            >
+          </div>
+          <div
+            class="sb-qa-security-message"
+            data-qa-security-message
+            role="alert"
+            aria-live="polite"
+          ></div>
+          <div class="sb-qa-security-actions">
+            <button
+              class="sb-qa-security-cancel"
+              type="button"
+              data-qa-security-close
+            >
+              Batal
+            </button>
+            <button
+              class="sb-qa-security-submit"
+              type="submit"
+            >
+              Simpan Password
+            </button>
+          </div>
+        </form>
+      </section>
     </section>
   `;
 
   document.body.appendChild(securityModal);
 
+  const profileForm =
+    securityModal.querySelector(
+      "[data-qa-profile-form]"
+    );
+  const profileMessage =
+    securityModal.querySelector(
+      "[data-qa-profile-message]"
+    );
+  const profileName =
+    securityModal.querySelector(
+      "#sb-qa-full-name"
+    );
   const securityForm =
     securityModal.querySelector(
       "[data-qa-security-form]"
     );
-
   const securityMessage =
     securityModal.querySelector(
       "[data-qa-security-message]"
     );
-
+  function initials(name) {
+    const parts =
+      String(name || "Client")
+        .trim()
+        .split(/\s+/)
+        .filter(Boolean);
+    return (
+      parts
+        .slice(0, 2)
+        .map(part =>
+          part.charAt(0).toUpperCase()
+        )
+        .join("") ||
+      "CL"
+    );
+  }
+  function updatePortalIdentity(user) {
+    const profile =
+      document.querySelector(".profile");
+    if (profile) {
+      const avatar =
+        profile.querySelector(".avatar");
+      const strong =
+        profile.querySelector(
+          ".profile-copy strong"
+        );
+      if (avatar) {
+        avatar.textContent =
+          initials(user.full_name);
+      }
+      if (strong) {
+        strong.textContent =
+          user.full_name ||
+          user.email ||
+          "Client";
+      }
+    }
+    const heading =
+      document.querySelector(
+        ".page-head h1"
+      );
+    if (
+      heading &&
+      user.full_name
+    ) {
+      const firstName =
+        user.full_name
+          .trim()
+          .split(/\s+/)[0];
+      heading.textContent =
+        `Selamat datang, ${firstName}`;
+    }
+  }
   function openSecurity() {
+    const user =
+      window.SB_PORTAL_USER;
+    if (
+      !user ||
+      user.role !== "client"
+    ) {
+      return;
+    }
+    profileForm.reset();
     securityForm.reset();
+    profileMessage.textContent = "";
+    profileMessage.style.color = "";
     securityMessage.textContent = "";
     securityMessage.style.color = "";
-
+    profileName.value =
+      String(
+        user.full_name || ""
+      );
     securityModal.hidden = false;
-
     window.setTimeout(() => {
-      securityModal
-        .querySelector("#sb-qa-current-password")
-        ?.focus();
+      profileName?.focus();
     }, 0);
   }
-
   function closeSecurity() {
     securityModal.hidden = true;
+    profileForm.reset();
     securityForm.reset();
+    profileMessage.textContent = "";
+    profileMessage.style.color = "";
     securityMessage.textContent = "";
     securityMessage.style.color = "";
   }
-
   securityModal
-    .querySelectorAll("[data-qa-security-close]")
+    .querySelectorAll(
+      "[data-qa-security-close]"
+    )
     .forEach(button => {
       button.addEventListener(
         "click",
         closeSecurity
       );
     });
+  profileForm.addEventListener(
+    "submit",
+    async event => {
+      event.preventDefault();
+      const user =
+        window.SB_PORTAL_USER;
+      if (
+        !user ||
+        user.role !== "client"
+      ) {
+        profileMessage.textContent =
+          "Sesi Client Portal tidak tersedia.";
+        return;
+      }
+      const data =
+        new FormData(profileForm);
+      const fullName =
+        String(
+          data.get("full_name") || ""
+        ).trim();
+      profileMessage.textContent = "";
+      profileMessage.style.color = "";
+      if (
+        fullName.length < 2 ||
+        fullName.length > 120
+      ) {
+        profileMessage.textContent =
+          "Nama lengkap harus 2-120 karakter.";
+        return;
+      }
+      const submit =
+        profileForm.querySelector(
+          "button[type='submit']"
+        );
+      submit.disabled = true;
+      submit.textContent = "Menyimpan...";
+      try {
+        const response =
+          await fetch(
+            "/api/auth/profile",
+            {
+              method: "POST",
+              credentials: "same-origin",
+              headers: {
+                Accept: "application/json",
+                "Content-Type":
+                  "application/json"
+              },
+              body: JSON.stringify({
+                full_name: fullName
+              })
+            }
+          );
+        const result =
+          await response
+            .json()
+            .catch(() => ({}));
+        if (!response.ok) {
+          throw new Error(
+            result.error ||
+            "Nama belum dapat diperbarui."
+          );
+        }
+        const savedUser =
+          result &&
+          typeof result.user === "object" &&
+          result.user
+            ? result.user
+            : {};
+        const savedName =
+          String(
+            savedUser.full_name ||
+            fullName
+          );
+        window.SB_PORTAL_USER = {
+          ...user,
+          ...savedUser,
+          full_name: savedName
+        };
+        profileName.value =
+          savedName;
+        updatePortalIdentity(
+          window.SB_PORTAL_USER
+        );
+        profileMessage.style.color =
+          "#176b4b";
+        profileMessage.textContent =
+          "Nama berhasil diperbarui.";
+      }
+      catch (error) {
+        profileMessage.textContent =
+          error instanceof Error
+            ? error.message
+            : "Nama belum dapat diperbarui.";
+      }
+      finally {
+        submit.disabled = false;
+        submit.textContent = "Simpan Nama";
+      }
+    }
+  );
 
   securityForm.addEventListener(
     "submit",
