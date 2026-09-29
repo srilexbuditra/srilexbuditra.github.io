@@ -786,6 +786,92 @@
   const portalMenu =
     document.querySelector("[data-menu]");
 
+  const portalSidebar =
+    document.querySelector(".sidebar");
+
+
+  /*
+   * ==========================================================
+   * PORTAL MOBILE SIDEBAR CLOSE R1
+   * ==========================================================
+   */
+
+  let portalMobileSidebarClose =
+    portalSidebar?.querySelector(
+      ".sb-portal-mobile-sidebar-close"
+    );
+
+  if (
+    portalSidebar &&
+    !portalMobileSidebarClose
+  ) {
+    portalMobileSidebarClose =
+      document.createElement("button");
+
+    portalMobileSidebarClose.type =
+      "button";
+
+    portalMobileSidebarClose.className =
+      "sb-mobile-sidebar-close " +
+      "sb-portal-mobile-sidebar-close";
+
+    portalMobileSidebarClose.setAttribute(
+      "aria-label",
+      "Tutup navigasi"
+    );
+
+    portalMobileSidebarClose.setAttribute(
+      "title",
+      "Tutup navigasi"
+    );
+
+    portalMobileSidebarClose.textContent =
+      "\u00D7";
+
+    portalSidebar.appendChild(
+      portalMobileSidebarClose
+    );
+  }
+
+
+  portalMobileSidebarClose
+    ?.addEventListener(
+      "click",
+      event => {
+        event.preventDefault();
+        event.stopPropagation();
+
+        document.body.classList.remove(
+          "nav-open"
+        );
+
+        portalMenu?.focus();
+      }
+    );
+
+
+  portalSidebar
+    ?.addEventListener(
+      "click",
+      event => {
+        if (window.innerWidth > 820) {
+          return;
+        }
+
+        const link =
+          event.target.closest("a");
+
+        if (!link) {
+          return;
+        }
+
+        document.body.classList.remove(
+          "nav-open"
+        );
+      }
+    );
+
+
   if (
     portalMenu &&
     portalMenu.dataset.sbPortalDesktopToggleR1 !== "1"
@@ -816,9 +902,41 @@
           height: 20px;
         }
 
+        /*
+         * PORTAL BELL COLOR R1
+         */
+
         .top-actions
         .icon-btn[aria-label="Notifikasi"] {
           position: relative;
+
+          color: #168a63;
+          background: rgba(22,138,99,.08);
+          border-color: rgba(22,138,99,.22);
+
+          transition:
+            color .18s ease,
+            background .18s ease,
+            border-color .18s ease,
+            box-shadow .18s ease;
+        }
+
+        .top-actions
+        .icon-btn[aria-label="Notifikasi"]:hover {
+          color: #0f6f50;
+          background: rgba(22,138,99,.14);
+          border-color: rgba(22,138,99,.32);
+        }
+
+        .top-actions
+        .icon-btn[aria-label="Notifikasi"][aria-expanded="true"] {
+          color: #fff;
+          background: #168a63;
+          border-color: #168a63;
+
+          box-shadow:
+            0 0 0 3px
+            rgba(22,138,99,.12);
         }
 
         .icon-btn.sb-portal-notification-has-new::after {
@@ -834,11 +952,19 @@
           border: 2px solid #fff;
           border-radius: 50%;
 
-          background: #168a63;
+          background: #16a34a;
+
+          box-sizing: content-box;
 
           box-shadow:
-            0 0 0 2px
-            rgba(22,138,99,.12);
+            0 0 0 1px
+            rgba(22,163,74,.10);
+        }
+
+        @media(max-width:820px) {
+          .sidebar .brand {
+            padding-right: 48px;
+          }
         }
 
         @media(min-width:821px) {
