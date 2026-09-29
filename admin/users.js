@@ -16,6 +16,11 @@
       display:grid;
       gap:20px;
     }
+
+    .sb-users-view[hidden]{
+      display:none !important;
+    }
+
     .sb-users-head{
       display:flex;
       justify-content:space-between;
