@@ -104,6 +104,23 @@ export default {
           auth
         );
       }
+      /* SB_LEAD_CONSULTATION_R1 */
+      if (url.pathname === "/api/lead/consultation" && method === "POST") {
+        const auth = await requireRole(
+          request,
+          env,
+          ["lead"]
+        );
+
+        if (auth.response) return auth.response;
+
+        return saveOwnLeadConsultation(
+          request,
+          env,
+          auth
+        );
+      }
+
       // ======================================================
       // ACTIVITY LOGS R1 - ADMIN
       // ======================================================
@@ -2471,6 +2488,18 @@ async function getOwnLeadPortal(request, env, auth) {
        source,
        service_interest,
        message,
+       package_name,
+       estimated_amount,
+       extra_feature,
+       domain_mode,
+       domain_name,
+       domain_status,
+       domain_checked_at,
+       hosting_mode,
+       target_timeline,
+       target_date,
+       consultation_description,
+       consultation_submitted_at,
        status,
        created_at,
        updated_at
@@ -2527,6 +2556,23 @@ async function getOwnLeadPortal(request, env, auth) {
         source: lead.source || null,
         service_interest: lead.service_interest || null,
         message: lead.message || null,
+        package_name: lead.package_name || null,
+        estimated_amount:
+          lead.estimated_amount == null
+            ? null
+            : Number(lead.estimated_amount),
+        extra_feature: lead.extra_feature || null,
+        domain_mode: lead.domain_mode || "none",
+        domain_name: lead.domain_name || null,
+        domain_status: lead.domain_status || "none",
+        domain_checked_at: lead.domain_checked_at || null,
+        hosting_mode: lead.hosting_mode || "none",
+        target_timeline: lead.target_timeline || "flexible",
+        target_date: lead.target_date || null,
+        consultation_description:
+          lead.consultation_description || null,
+        consultation_submitted_at:
+          lead.consultation_submitted_at || null,
         status: lead.status,
         service_interests: serviceInterests,
         created_at: lead.created_at,
@@ -2536,6 +2582,529 @@ async function getOwnLeadPortal(request, env, auth) {
   );
 }
 
+async function saveOwnLeadConsultation(request, env, auth) {
+  const body = await readJson(request);
+
+  const packageName =
+    String(body?.package_name || "Professional").trim();
+
+  let rawExtraValues =
+    Array.isArray(body?.extra_values)
+      ? body.extra_values
+      : [body?.extra_value ?? "0"];
+
+  let extraValues =
+    [...new Set(
+      rawExtraValues
+        .map(value => String(value ?? "").trim())
+        .filter(Boolean)
+    )];
+
+  if (!extraValues.length) extraValues = ["0"];
+
+  if (
+    extraValues.length > 1 &&
+    extraValues.includes("0")
+  ) {
+    extraValues =
+      extraValues.filter(
+        value => value !== "0"
+      );
+  }
+
+  const domainMode =
+    String(body?.domain_mode || "none")
+      .trim()
+      .toLowerCase();
+
+  const rawDomainName =
+    nullableLeadText(body?.domain_name);
+
+  const hostingMode =
+    String(body?.hosting_mode || "none")
+      .trim()
+      .toLowerCase();
+
+  const targetTimeline =
+    String(body?.target_timeline || "flexible")
+      .trim()
+      .toLowerCase();
+
+  const rawTargetDate =
+    nullableLeadText(body?.target_date);
+
+  const consultationDescription =
+    String(
+      body?.consultation_description ??
+      body?.description ??
+      ""
+    ).trim();
+
+  const lead = await env.DB.prepare(
+    `SELECT
+       id,
+       lead_code,
+       service_interest,
+       status,
+       consultation_submitted_at
+     FROM leads
+     WHERE account_user_id = ?
+     ORDER BY created_at DESC
+     LIMIT 1`
+  ).bind(auth.user.id).first();
+
+  if (!lead) {
+    return apiResponse(
+      request,
+      env,
+      {
+        error: "Lead portal data was not found.",
+        code: "LEAD_PORTAL_NOT_FOUND"
+      },
+      404
+    );
+  }
+
+  if (!["new", "contacted"].includes(lead.status)) {
+    return apiResponse(
+      request,
+      env,
+      {
+        error:
+          "Consultation requirements are locked for this Lead status."
+      },
+      409
+    );
+  }
+
+  const project =
+    String(lead.service_interest || "").trim();
+
+  const projectAdjustments = {
+    "Website Company Profile": 300000,
+    "Web Application": 2500000,
+    "REST API / Backend": 2000000,
+    "Sistem Informasi Custom": 5000000,
+    "Database Development": 1000000,
+    "Deployment & Cloud": 500000
+  };
+
+  const packagePrices = {
+    Starter: 2500000,
+    Professional: 5000000,
+    Business: 10000000,
+    Custom: 0
+  };
+
+  const packageIncludedFeatures = {
+    Starter: ["500000"],
+    Professional: ["500000", "1000000"],
+    Business: ["500000", "1000000", "1500000", "2500000"],
+    Custom: []
+  };
+
+  const extraOptions = {
+    "0": { label: "Tidak ada", amount: 0 },
+    "500000": { label: "Form / WhatsApp", amount: 500000 },
+    "1000000": { label: "Dashboard Admin", amount: 1000000 },
+    "1500000": { label: "Login & Role", amount: 1500000 },
+    "2500000": { label: "Integrasi API", amount: 2500000 }
+  };
+
+  if (
+    !Object.prototype.hasOwnProperty.call(
+      projectAdjustments,
+      project
+    )
+  ) {
+    return apiResponse(
+      request,
+      env,
+      {
+        error:
+          "Lead primary service is not valid for consultation."
+      },
+      409
+    );
+  }
+
+  if (
+    !Object.prototype.hasOwnProperty.call(
+      packagePrices,
+      packageName
+    )
+  ) {
+    return apiResponse(
+      request,
+      env,
+      { error: "Invalid package." },
+      400
+    );
+  }
+
+  if (
+    extraValues.length > 4 ||
+    extraValues.some(
+      value =>
+        !Object.prototype.hasOwnProperty.call(
+          extraOptions,
+          value
+        )
+    )
+  ) {
+    return apiResponse(
+      request,
+      env,
+      { error: "Invalid extra feature selection." },
+      400
+    );
+  }
+
+  if (!["none", "owned", "new"].includes(domainMode)) {
+    return apiResponse(
+      request,
+      env,
+      { error: "Invalid domain_mode." },
+      400
+    );
+  }
+
+  if (!["none", "owned", "needed"].includes(hostingMode)) {
+    return apiResponse(
+      request,
+      env,
+      { error: "Invalid hosting_mode." },
+      400
+    );
+  }
+
+  if (
+    ![
+      "flexible",
+      "2_4_weeks",
+      "1_2_months",
+      "target_date"
+    ].includes(targetTimeline)
+  ) {
+    return apiResponse(
+      request,
+      env,
+      { error: "Invalid target_timeline." },
+      400
+    );
+  }
+
+  if (consultationDescription.length > 3000) {
+    return apiResponse(
+      request,
+      env,
+      {
+        error:
+          "Consultation description exceeds allowed length."
+      },
+      400
+    );
+  }
+
+  let targetDate = null;
+
+  if (targetTimeline === "target_date") {
+    if (
+      !rawTargetDate ||
+      !/^\d{4}-\d{2}-\d{2}$/.test(rawTargetDate)
+    ) {
+      return apiResponse(
+        request,
+        env,
+        {
+          error:
+            "A valid target_date is required."
+        },
+        400
+      );
+    }
+
+    const parsedTargetDate =
+      Date.parse(`${rawTargetDate}T00:00:00Z`);
+
+    if (
+      Number.isNaN(parsedTargetDate) ||
+      new Date(parsedTargetDate)
+        .toISOString()
+        .slice(0, 10) !== rawTargetDate
+    ) {
+      return apiResponse(
+        request,
+        env,
+        { error: "Invalid target_date." },
+        400
+      );
+    }
+
+    targetDate = rawTargetDate;
+  }
+
+  let domainName = null;
+  let domainStatus = "none";
+  let domainCheckedAt = null;
+
+  if (domainMode === "owned") {
+    domainName =
+      normalizeDomainForRdap(rawDomainName);
+
+    if (!domainName) {
+      return apiResponse(
+        request,
+        env,
+        {
+          error:
+            "A valid owned domain is required."
+        },
+        400
+      );
+    }
+
+    domainStatus = "owned";
+  }
+
+  if (domainMode === "new") {
+    domainName =
+      normalizeDomainForRdap(rawDomainName);
+
+    if (!domainName) {
+      return apiResponse(
+        request,
+        env,
+        {
+          error:
+            "A valid new domain is required."
+        },
+        400
+      );
+    }
+
+    try {
+      const bootstrap =
+        await getRdapBootstrap();
+
+      const rdapBaseUrl =
+        findRdapBaseUrl(
+          bootstrap,
+          domainName
+        );
+
+      if (!rdapBaseUrl) {
+        return apiResponse(
+          request,
+          env,
+          {
+            error:
+              "Domain availability could not be confirmed."
+          },
+          503
+        );
+      }
+
+      const rdapResponse =
+        await fetchRdapDomain(
+          buildRdapDomainUrl(
+            rdapBaseUrl,
+            domainName
+          )
+        );
+
+      if (rdapResponse.status === 200) {
+        return apiResponse(
+          request,
+          env,
+          {
+            error:
+              "Domain is already registered."
+          },
+          409
+        );
+      }
+
+      if (rdapResponse.status !== 404) {
+        return apiResponse(
+          request,
+          env,
+          {
+            error:
+              "Domain availability could not be confirmed."
+          },
+          503
+        );
+      }
+
+      domainStatus = "unregistered";
+      domainCheckedAt = nowIso();
+
+    } catch (error) {
+      console.error(
+        "Lead consultation domain recheck failed",
+        error
+      );
+
+      return apiResponse(
+        request,
+        env,
+        {
+          error:
+            "Domain availability could not be confirmed."
+        },
+        503
+      );
+    }
+  }
+
+  const selectedExtras =
+    extraValues
+      .filter(value => value !== "0")
+      .map(value => ({
+        value,
+        ...extraOptions[value]
+      }));
+
+  const includedExtraValues =
+    new Set(
+      packageIncludedFeatures[packageName] || []
+    );
+
+  const chargeableExtras =
+    packageName === "Custom"
+      ? []
+      : selectedExtras.filter(
+          extra =>
+            !includedExtraValues.has(
+              extra.value
+            )
+        );
+
+  const extraAmount =
+    chargeableExtras.reduce(
+      (total, extra) =>
+        total + extra.amount,
+      0
+    );
+
+  const extraLabel =
+    selectedExtras.length
+      ? selectedExtras
+          .map(extra => extra.label)
+          .join(", ")
+      : "Tidak ada";
+
+  const estimatedAmount =
+    packageName === "Custom"
+      ? null
+      : (
+          packagePrices[packageName] +
+          projectAdjustments[project] +
+          extraAmount
+        );
+
+  const timestamp = nowIso();
+
+  const updateResult =
+    await env.DB.prepare(
+      `UPDATE leads
+       SET
+         package_name = ?,
+         estimated_amount = ?,
+         extra_feature = ?,
+         domain_mode = ?,
+         domain_name = ?,
+         domain_status = ?,
+         domain_checked_at = ?,
+         hosting_mode = ?,
+         target_timeline = ?,
+         target_date = ?,
+         consultation_description = ?,
+         consultation_submitted_at =
+           COALESCE(
+             consultation_submitted_at,
+             ?
+           ),
+         updated_at = ?
+       WHERE id = ?
+         AND account_user_id = ?
+         AND status IN (
+           'new',
+           'contacted'
+         )`
+    ).bind(
+      packageName,
+      estimatedAmount,
+      extraLabel,
+      domainMode,
+      domainName,
+      domainStatus,
+      domainCheckedAt,
+      hostingMode,
+      targetTimeline,
+      targetDate,
+      consultationDescription || null,
+      timestamp,
+      timestamp,
+      lead.id,
+      auth.user.id
+    ).run();
+
+  if (
+    Number(
+      updateResult?.meta?.changes || 0
+    ) < 1
+  ) {
+    return apiResponse(
+      request,
+      env,
+      {
+        error:
+          "Consultation requirements could not be saved."
+      },
+      409
+    );
+  }
+
+  await writeActivity(
+    env,
+    auth.user.id,
+    "LEAD_CONSULTATION_SAVED",
+    "lead",
+    lead.id,
+    `Consultation requirements saved for ${lead.lead_code}.`
+  );
+
+  return apiResponse(
+    request,
+    env,
+    {
+      ok: true,
+      consultation: {
+        package_name: packageName,
+        estimated_amount: estimatedAmount,
+        extra_feature: extraLabel,
+        domain_mode: domainMode,
+        domain_name: domainName,
+        domain_status: domainStatus,
+        domain_checked_at: domainCheckedAt,
+        hosting_mode: hostingMode,
+        target_timeline: targetTimeline,
+        target_date: targetDate,
+        consultation_description:
+          consultationDescription || null,
+        consultation_submitted_at:
+          lead.consultation_submitted_at ||
+          timestamp,
+        updated_at: timestamp
+      }
+    },
+    lead.consultation_submitted_at
+      ? 200
+      : 201
+  );
+}
 async function addOwnLeadServiceInterest(request, env, auth) {
   const body = await readJson(request);
   const serviceName =
