@@ -52,6 +52,18 @@
   justify-content: center;
 }
 
+.sb-portal-entry-card:not(.sb-portal-entry-card-primary) .btn.outline {
+  background: #0f2c26;
+  border-color: #0f2c26;
+  color: #fff;
+}
+
+.sb-portal-entry-card:not(.sb-portal-entry-card-primary) .btn.outline:hover {
+  background: #167247;
+  border-color: #167247;
+  color: #fff;
+}
+
 @media (max-width: 760px) {
   .sb-portal-entry-grid {
     grid-template-columns: 1fr;
