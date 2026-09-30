@@ -259,6 +259,7 @@
 
       .sb-notification-copy {
         min-width: 0;
+        grid-column: 2;
       }
 
       .sb-notification-title {
