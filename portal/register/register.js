@@ -15,6 +15,9 @@
   const submit = document.getElementById("submitRegistration");
   const success = document.getElementById("registrationSuccess");
   const leadCode = document.getElementById("registrationLeadCode");
+  const copyLeadCode = document.getElementById("copyLeadCode");
+  const saveLeadCode = document.getElementById("saveLeadCode");
+  const leadCodeFeedback = document.getElementById("leadCodeFeedback");
   const serviceSelect = document.getElementById("service_interest");
 
   function setMessage(text, successState = false) {
@@ -36,6 +39,79 @@
     } catch {
       return {};
     }
+  }
+
+  function currentLeadCode() {
+    const value = String(leadCode?.textContent || "").trim();
+    return value && value !== "-" ? value : "";
+  }
+
+  function setLeadCodeFeedback(text) {
+    if (leadCodeFeedback) {
+      leadCodeFeedback.textContent = text || "";
+    }
+  }
+
+  async function copyCurrentLeadCode() {
+    const code = currentLeadCode();
+
+    if (!code) {
+      setLeadCodeFeedback("Kode Lead belum tersedia.");
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(code);
+      setLeadCodeFeedback("Kode Lead berhasil disalin.");
+    } catch {
+      const textarea = document.createElement("textarea");
+      textarea.value = code;
+      textarea.setAttribute("readonly", "");
+      textarea.style.position = "fixed";
+      textarea.style.opacity = "0";
+      document.body.appendChild(textarea);
+      textarea.select();
+
+      const copied = document.execCommand("copy");
+      textarea.remove();
+
+      setLeadCodeFeedback(
+        copied
+          ? "Kode Lead berhasil disalin."
+          : "Kode Lead belum dapat disalin otomatis."
+      );
+    }
+  }
+
+  function saveCurrentLeadCode() {
+    const code = currentLeadCode();
+
+    if (!code) {
+      setLeadCodeFeedback("Kode Lead belum tersedia.");
+      return;
+    }
+
+    const content = [
+      "SRILEX BUDITRA - LEAD PORTAL",
+      `Kode Lead: ${code}`,
+      `Portal: ${window.location.origin}/portal/`
+    ].join("\r\n");
+
+    const blob = new Blob([content], {
+      type: "text/plain;charset=utf-8"
+    });
+
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+
+    link.href = url;
+    link.download = `srilexbuditra-${code.toLowerCase()}.txt`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+
+    window.setTimeout(() => URL.revokeObjectURL(url), 0);
+    setLeadCodeFeedback("Kode Lead berhasil disimpan.");
   }
 
   async function handleSubmit(event) {
@@ -106,4 +182,6 @@
 
   applyServiceFromQuery();
   form.addEventListener("submit", handleSubmit);
+  copyLeadCode?.addEventListener("click", copyCurrentLeadCode);
+  saveLeadCode?.addEventListener("click", saveCurrentLeadCode);
 })();

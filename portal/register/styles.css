@@ -244,6 +244,41 @@ a {
   letter-spacing: .04em;
 }
 
+.lead-code-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin: 0 auto 10px;
+}
+
+.lead-code-action {
+  width: 100%;
+  border: 1px solid rgba(134,239,172,.24);
+  border-radius: 11px;
+  padding: 11px 13px;
+  background: rgba(34,197,94,.07);
+  color: #bbf7d0;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.lead-code-action:hover,
+.lead-code-action:focus-visible {
+  border-color: rgba(134,239,172,.48);
+  background: rgba(34,197,94,.12);
+  outline: none;
+}
+
+.lead-code-feedback {
+  min-height: 19px;
+  margin-bottom: 4px;
+  color: #86efac;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
 .portal-button {
   display: block;
   margin-top: 18px;
@@ -297,5 +332,9 @@ a {
 
   .field-wide {
     grid-column: auto;
+  }
+
+  .lead-code-actions {
+    grid-template-columns: 1fr;
   }
 }
