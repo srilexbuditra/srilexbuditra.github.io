@@ -148,6 +148,24 @@ a {
   font-weight: 900;
   box-shadow: 0 7px 20px #ffb51b22;
 }
+
+.site-header nav .nav-portal {
+  padding: 8px 13px !important;
+  border: 1px solid rgba(255, 181, 27, .65);
+  border-radius: 10px;
+  background: rgba(255, 181, 27, .08);
+  color: var(--gold);
+  font-weight: 800;
+}
+
+.site-header nav .nav-portal:hover {
+  background: rgba(255, 181, 27, .16);
+  border-color: var(--gold);
+}
+
+.site-header nav .nav-portal:after {
+  display: none;
+}
 .menu-toggle {
   display: none;
   background: none;
