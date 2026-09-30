@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0f2c26">
+<meta name="robots" content="noindex,follow">
+<title>Mulai Konsultasi | Srilex Buditra</title>
+<meta name="description" content="Mulai konsultasi kebutuhan website, aplikasi web, sistem informasi, REST API, database, atau deployment bersama Srilex Buditra.">
+<link rel="icon" href="/images/logo.avif">
+<link rel="stylesheet" href="./styles.css?v=public-lead-registration-r1c">
+</head>
+<body>
+<main class="registration-shell">
+  <section class="registration-card" aria-labelledby="registration-title">
+    <a class="registration-brand" href="/" aria-label="Kembali ke Srilex Buditra">
+      <img src="/images/logo.avif" alt="Logo Srilex Buditra">
+      <span>
+        <strong>SRILEX BUDITRA</strong>
+        <small>DIGITAL SOLUTION</small>
+      </span>
+    </a>
+
+    <div class="registration-intro">
+      <span class="registration-kicker">PORTAL &amp; KONSULTASI</span>
+      <h1 id="registration-title">Mulai Konsultasi Project</h1>
+      <p>Lengkapi kebutuhan awal Anda. Setelah registrasi berhasil, akun Portal dapat digunakan untuk mengikuti proses konsultasi.</p>
+    </div>
+
+    <form id="leadRegistrationForm" novalidate>
+      <div class="form-grid">
+        <div class="field field-wide">
+          <label for="full_name">Nama lengkap <span>*</span></label>
+          <input id="full_name" name="full_name" type="text" maxlength="120" autocomplete="name" required>
+        </div>
+
+        <div class="field">
+          <label for="company_name">Perusahaan / Organisasi</label>
+          <input id="company_name" name="company_name" type="text" maxlength="160" autocomplete="organization">
+        </div>
+
+        <div class="field">
+          <label for="phone">Nomor WhatsApp / Telepon</label>
+          <input id="phone" name="phone" type="tel" maxlength="40" autocomplete="tel">
+        </div>
+
+        <div class="field">
+          <label for="email">Email <span>*</span></label>
+          <input id="email" name="email" type="email" autocomplete="email" required>
+        </div>
+
+        <div class="field">
+          <label for="service_interest">Layanan yang dibutuhkan <span>*</span></label>
+          <select id="service_interest" name="service_interest" required>
+            <option value="">Pilih layanan</option>
+            <option value="Website Company Profile">Website Company Profile</option>
+            <option value="Web Application">Web Application</option>
+            <option value="REST API / Backend">REST API / Backend</option>
+            <option value="Sistem Informasi Custom">Sistem Informasi Custom</option>
+            <option value="Database Development">Database Development</option>
+            <option value="Deployment & Cloud">Deployment &amp; Cloud</option>
+          </select>
+        </div>
+
+        <div class="field field-wide">
+          <label for="message">Kebutuhan awal</label>
+          <textarea id="message" name="message" rows="5" maxlength="2000" placeholder="Ceritakan kebutuhan project secara singkat."></textarea>
+        </div>
+
+        <div class="field">
+          <label for="password">Buat password Portal <span>*</span></label>
+          <input id="password" name="password" type="password" minlength="6" maxlength="30" autocomplete="new-password" required>
+          <small>6-30 karakter.</small>
+        </div>
+
+        <div class="field">
+          <label for="confirm_password">Ulangi password <span>*</span></label>
+          <input id="confirm_password" name="confirm_password" type="password" minlength="6" maxlength="30" autocomplete="new-password" required>
+        </div>
+      </div>
+
+      <label class="privacy-check">
+        <input id="privacy_consent" name="privacy_consent" type="checkbox" required>
+        <span>Saya menyetujui data yang saya kirim digunakan untuk proses konsultasi, komunikasi kebutuhan project, dan pengelolaan akun Portal.</span>
+      </label>
+
+      <button class="submit-button" id="submitRegistration" type="submit">Buat Akses &amp; Mulai Konsultasi</button>
+      <div class="form-message" id="registrationMessage" role="alert" aria-live="polite"></div>
+    </form>
+
+    <section class="success-panel" id="registrationSuccess" hidden aria-live="polite">
+      <div class="success-icon" aria-hidden="true">&#10003;</div>
+      <span class="registration-kicker">REGISTRASI BERHASIL</span>
+      <h2>Akses Portal Anda sudah dibuat</h2>
+      <p>Permintaan konsultasi telah diterima. Simpan kode Lead berikut sebagai referensi.</p>
+      <strong class="lead-code" id="registrationLeadCode">-</strong>
+      <a class="portal-button" href="/portal/">Masuk Portal</a>
+      <a class="back-link" href="/">Kembali ke srilexbuditra.work</a>
+    </section>
+
+    <div class="registration-footer">
+      <a href="/">Kembali ke website</a>
+      <span>&bull;</span>
+      <a href="/portal/">Sudah punya akun? Masuk Portal</a>
+    </div>
+  </section>
+</main>
+
+<script src="./register.js?v=public-lead-registration-r1c"></script>
+</body>
+</html>

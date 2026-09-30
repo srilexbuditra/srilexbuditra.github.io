@@ -1,0 +1,67 @@
+/* PUBLIC LEAD REGISTRATION R1C - HOMEPAGE PORTAL ENTRY */
+.sb-portal-entry {
+  position: relative;
+}
+
+.sb-portal-entry-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.sb-portal-entry-card {
+  min-width: 0;
+  padding: 26px;
+  border: 1px solid rgba(15, 44, 38, .12);
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 18px 45px rgba(15, 44, 38, .06);
+}
+
+.sb-portal-entry-card-primary {
+  background:
+    linear-gradient(145deg, rgba(22, 163, 74, .08), rgba(15, 44, 38, .02)),
+    #fff;
+  border-color: rgba(22, 163, 74, .24);
+}
+
+.sb-portal-entry-kicker {
+  display: inline-block;
+  margin-bottom: 10px;
+  color: #167247;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: .12em;
+}
+
+.sb-portal-entry-card h3 {
+  margin: 0 0 10px;
+  color: #0f2c26;
+  font-size: clamp(20px, 2vw, 27px);
+}
+
+.sb-portal-entry-card p {
+  margin: 0 0 20px;
+  color: #66756f;
+  line-height: 1.7;
+}
+
+.sb-portal-entry-card .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (max-width: 760px) {
+  .sb-portal-entry-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .sb-portal-entry-card {
+    padding: 22px;
+  }
+
+  .sb-portal-entry-card .btn {
+    width: 100%;
+  }
+}
