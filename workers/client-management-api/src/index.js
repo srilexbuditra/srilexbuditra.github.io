@@ -5897,73 +5897,180 @@ async function convertLeadToClient(
     );
   }
 
-  const passwordError =
-    validatePassword(temporaryPassword);
+  let linkedUser = null;
 
-  if (passwordError) {
-    return apiResponse(
-      request,
-      env,
-      { error: passwordError },
-      400
-    );
+  if (lead.account_user_id) {
+    linkedUser = await env.DB.prepare(
+      `SELECT
+         id,
+         email,
+         role,
+         portal_role,
+         status,
+         must_change_password
+       FROM users
+       WHERE id = ?
+       LIMIT 1`
+    ).bind(
+      lead.account_user_id
+    ).first();
+
+    if (!linkedUser) {
+      return apiResponse(
+        request,
+        env,
+        {
+          error:
+            "Lead portal account could not be found."
+        },
+        409
+      );
+    }
+
+    if (
+      normalizeEmail(linkedUser.email) !== email
+    ) {
+      return apiResponse(
+        request,
+        env,
+        {
+          error:
+            "Lead email does not match the linked portal account."
+        },
+        409
+      );
+    }
+
+    if (
+      linkedUser.portal_role !== "lead"
+    ) {
+      return apiResponse(
+        request,
+        env,
+        {
+          error:
+            "Linked account is not an active Lead Portal account."
+        },
+        409
+      );
+    }
+
+    if (linkedUser.status !== "active") {
+      return apiResponse(
+        request,
+        env,
+        {
+          error:
+            "Lead Portal account is not active."
+        },
+        409
+      );
+    }
   }
 
-  const existing = await env.DB.prepare(
-    `SELECT id
-     FROM users
-     WHERE email = ?
-     LIMIT 1`
-  ).bind(email).first();
+  let userId =
+    linkedUser?.id || null;
 
-  if (existing) {
-    return apiResponse(
-      request,
-      env,
-      { error: "Email is already registered." },
-      409
-    );
+  let passwordHash = null;
+
+  if (!linkedUser) {
+    const passwordError =
+      validatePassword(temporaryPassword);
+
+    if (passwordError) {
+      return apiResponse(
+        request,
+        env,
+        { error: passwordError },
+        400
+      );
+    }
+
+    const existing =
+      await env.DB.prepare(
+        `SELECT id
+         FROM users
+         WHERE email = ?
+         LIMIT 1`
+      ).bind(email).first();
+
+    if (existing) {
+      return apiResponse(
+        request,
+        env,
+        {
+          error:
+            "Email is already registered."
+        },
+        409
+      );
+    }
+
+    userId =
+      crypto.randomUUID();
+
+    passwordHash =
+      await hashPassword(
+        temporaryPassword
+      );
   }
 
-  const userId = crypto.randomUUID();
-  const clientId = crypto.randomUUID();
+  const clientId =
+    crypto.randomUUID();
 
   const clientCode =
     `CL-${new Date().getUTCFullYear()}-${clientId
       .slice(0, 8)
       .toUpperCase()}`;
 
-  const passwordHash =
-    await hashPassword(
-      temporaryPassword
-    );
-
   const timestamp = nowIso();
 
-  await env.DB.batch([
-    env.DB.prepare(
-      `INSERT INTO users
-        (
-          id,
-          email,
-          password_hash,
-          role,
-          status,
-          must_change_password,
-          created_at,
-          updated_at
-        )
-       VALUES (
-         ?, ?, ?, 'client', 'active', 1, ?, ?
-       )`
-    ).bind(
-      userId,
-      email,
-      passwordHash,
-      timestamp,
-      timestamp
-    ),
+  const statements = [];
 
+  if (linkedUser) {
+    statements.push(
+      env.DB.prepare(
+        `UPDATE users
+         SET
+           role = 'client',
+           portal_role = NULL,
+           status = 'active',
+           updated_at = ?
+         WHERE id = ?
+           AND portal_role = 'lead'`
+      ).bind(
+        timestamp,
+        userId
+      )
+    );
+  } else {
+    statements.push(
+      env.DB.prepare(
+        `INSERT INTO users
+          (
+            id,
+            email,
+            password_hash,
+            role,
+            status,
+            must_change_password,
+            created_at,
+            updated_at
+          )
+         VALUES (
+           ?, ?, ?, 'client', 'active', 1, ?, ?
+         )`
+      ).bind(
+        userId,
+        email,
+        passwordHash,
+        timestamp,
+        timestamp
+      )
+    );
+  }
+
+  statements.push(
     env.DB.prepare(
       `INSERT INTO clients
         (
@@ -5989,11 +6096,14 @@ async function convertLeadToClient(
       lead.phone || null,
       timestamp,
       timestamp
-    ),
+    )
+  );
 
+  statements.push(
     env.DB.prepare(
       `UPDATE leads
        SET
+         account_user_id = ?,
          status = 'converted',
          converted_client_id = ?,
          converted_at = ?,
@@ -6002,12 +6112,15 @@ async function convertLeadToClient(
          AND status = 'qualified'
          AND converted_client_id IS NULL`
     ).bind(
+      userId,
       clientId,
       timestamp,
       timestamp,
       leadId
     )
-  ]);
+  );
+
+  await env.DB.batch(statements);
 
   await writeActivity(
     env,
