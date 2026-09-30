@@ -248,6 +248,19 @@ export default {
         );
       }
 
+      // ======================================================
+      // PUBLIC LEAD REGISTRATION R1B
+      // ======================================================
+      if (
+        url.pathname === "/api/public/lead/register" &&
+        method === "POST"
+      ) {
+        return registerPublicLead(
+          request,
+          env
+        );
+      }
+
       if (
         url.pathname === "/api/public/lead-share" &&
         method === "POST"
@@ -3583,6 +3596,443 @@ async function checkPublicDomainAvailability(
     );
   }
 }
+/* ==========================================================
+   PUBLIC LEAD REGISTRATION R1B
+   ========================================================== */
+
+async function registerPublicLead(
+  request,
+  env
+) {
+  const body =
+    await readJson(request);
+
+  const fullName =
+    String(
+      body?.full_name || ""
+    ).trim();
+
+  const companyName =
+    nullableLeadText(
+      body?.company_name
+    );
+
+  const email =
+    normalizeEmail(
+      body?.email
+    );
+
+  const phone =
+    nullableLeadText(
+      body?.phone
+    );
+
+  const serviceInterest =
+    String(
+      body?.service_interest || ""
+    ).trim();
+
+  const message =
+    nullableLeadText(
+      body?.message
+    );
+
+  const password =
+    body?.password;
+
+  const privacyConsent =
+    body?.privacy_consent === true;
+
+  const allowedServices =
+    new Set([
+      "Website Company Profile",
+      "Web Application",
+      "REST API / Backend",
+      "Sistem Informasi Custom",
+      "Database Development",
+      "Deployment & Cloud"
+    ]);
+
+  if (
+    !fullName ||
+    fullName.length > 120 ||
+    !validEmail(email)
+  ) {
+    return apiResponse(
+      request,
+      env,
+      {
+        error:
+          "Valid full_name and email are required."
+      },
+      400
+    );
+  }
+
+  if (
+    companyName &&
+    companyName.length > 160
+  ) {
+    return apiResponse(
+      request,
+      env,
+      {
+        error:
+          "Company name is too long."
+      },
+      400
+    );
+  }
+
+  if (
+    phone &&
+    phone.length > 40
+  ) {
+    return apiResponse(
+      request,
+      env,
+      {
+        error:
+          "Phone number is too long."
+      },
+      400
+    );
+  }
+
+  if (
+    message &&
+    message.length > 2000
+  ) {
+    return apiResponse(
+      request,
+      env,
+      {
+        error:
+          "Message is too long."
+      },
+      400
+    );
+  }
+
+  if (
+    !allowedServices.has(
+      serviceInterest
+    )
+  ) {
+    return apiResponse(
+      request,
+      env,
+      {
+        error:
+          "A valid service_interest is required."
+      },
+      400
+    );
+  }
+
+  const passwordError =
+    validatePassword(password);
+
+  if (passwordError) {
+    return apiResponse(
+      request,
+      env,
+      {
+        error:
+          passwordError
+      },
+      400
+    );
+  }
+
+  if (!privacyConsent) {
+    return apiResponse(
+      request,
+      env,
+      {
+        error:
+          "Privacy consent is required."
+      },
+      400
+    );
+  }
+
+  const existingUser =
+    await env.DB.prepare(
+      `SELECT
+         id,
+         role,
+         portal_role,
+         status
+       FROM users
+       WHERE email = ?
+       LIMIT 1`
+    )
+      .bind(email)
+      .first();
+
+  if (existingUser) {
+    return apiResponse(
+      request,
+      env,
+      {
+        error:
+          "Email is already registered. Please sign in to Portal."
+      },
+      409
+    );
+  }
+
+  /*
+   * Compatibility:
+   * If the same visitor already created an unlinked public
+   * calculator Lead, activate that Lead as the Portal Lead
+   * instead of creating a duplicate CRM record.
+   */
+  const existingLead =
+    await env.DB.prepare(
+      `SELECT
+         id,
+         lead_code,
+         service_interest,
+         status
+       FROM leads
+       WHERE LOWER(email) = ?
+         AND account_user_id IS NULL
+         AND status IN (
+           'new',
+           'contacted',
+           'qualified'
+         )
+       ORDER BY created_at DESC
+       LIMIT 1`
+    )
+      .bind(email)
+      .first();
+
+  const userId =
+    crypto.randomUUID();
+
+  const leadId =
+    existingLead?.id ||
+    crypto.randomUUID();
+
+  const leadCode =
+    existingLead?.lead_code ||
+    `LEAD-${new Date()
+      .getUTCFullYear()}-${leadId
+      .slice(0, 8)
+      .toUpperCase()}`;
+
+  const timestamp =
+    nowIso();
+
+  const passwordHash =
+    await hashPassword(password);
+
+  const statements = [
+    env.DB.prepare(
+      `INSERT INTO users
+        (
+          id,
+          email,
+          password_hash,
+          full_name,
+          role,
+          portal_role,
+          status,
+          must_change_password,
+          created_at,
+          updated_at
+        )
+       VALUES (
+         ?, ?, ?, ?,
+         'client',
+         'lead',
+         'active',
+         0,
+         ?, ?
+       )`
+    ).bind(
+      userId,
+      email,
+      passwordHash,
+      fullName,
+      timestamp,
+      timestamp
+    )
+  ];
+
+  if (existingLead) {
+    statements.push(
+      env.DB.prepare(
+        `UPDATE leads
+         SET
+           account_user_id = ?,
+           full_name = ?,
+           company_name =
+             COALESCE(?, company_name),
+           phone =
+             COALESCE(?, phone),
+           service_interest =
+             COALESCE(
+               NULLIF(service_interest, ''),
+               ?
+             ),
+           message =
+             COALESCE(?, message),
+           privacy_consent_at =
+             COALESCE(
+               privacy_consent_at,
+               ?
+             ),
+           updated_at = ?
+         WHERE id = ?
+           AND account_user_id IS NULL`
+      ).bind(
+        userId,
+        fullName,
+        companyName,
+        phone,
+        serviceInterest,
+        message,
+        timestamp,
+        timestamp,
+        leadId
+      )
+    );
+  } else {
+    statements.push(
+      env.DB.prepare(
+        `INSERT INTO leads
+          (
+            id,
+            lead_code,
+            full_name,
+            company_name,
+            email,
+            phone,
+            source,
+            service_interest,
+            message,
+            status,
+            assigned_to_user_id,
+            next_follow_up_at,
+            converted_client_id,
+            converted_at,
+            created_by_user_id,
+            privacy_consent_at,
+            account_user_id,
+            created_at,
+            updated_at
+          )
+         VALUES (
+           ?, ?, ?, ?, ?, ?,
+           'Website Lead Registration',
+           ?, ?,
+           'new',
+           NULL,
+           NULL,
+           NULL,
+           NULL,
+           NULL,
+           ?,
+           ?,
+           ?, ?
+         )`
+      ).bind(
+        leadId,
+        leadCode,
+        fullName,
+        companyName,
+        email,
+        phone,
+        serviceInterest,
+        message,
+        timestamp,
+        userId,
+        timestamp,
+        timestamp
+      )
+    );
+  }
+
+  try {
+    await env.DB.batch(
+      statements
+    );
+  } catch (error) {
+    const errorText =
+      String(
+        error?.message ||
+        error ||
+        ""
+      );
+
+    if (
+      /UNIQUE|constraint/i.test(
+        errorText
+      )
+    ) {
+      return apiResponse(
+        request,
+        env,
+        {
+          error:
+            "Email is already registered or the Lead account is already linked."
+        },
+        409
+      );
+    }
+
+    throw error;
+  }
+
+  await writeActivity(
+    env,
+    null,
+    existingLead
+      ? "PUBLIC_LEAD_PORTAL_ACTIVATED"
+      : "PUBLIC_LEAD_REGISTERED",
+    "lead",
+    leadId,
+    existingLead
+      ? `Existing public lead ${leadCode} activated for Lead Portal.`
+      : `Website Lead Registration created ${leadCode}.`
+  );
+
+  return apiResponse(
+    request,
+    env,
+    {
+      ok: true,
+      linked_existing_lead:
+        Boolean(existingLead),
+      user: {
+        id: userId,
+        email,
+        full_name:
+          fullName,
+        role: "lead"
+      },
+      lead: {
+        id: leadId,
+        lead_code:
+          leadCode,
+        status:
+          existingLead?.status ||
+          "new",
+        service_interest:
+          existingLead
+            ?.service_interest ||
+          serviceInterest
+      }
+    },
+    201
+  );
+}
+
+
 async function createPublicEstimateLead(
   request,
   env
