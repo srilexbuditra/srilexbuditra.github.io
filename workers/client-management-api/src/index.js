@@ -88,6 +88,22 @@ export default {
         );
       }
 
+      /* SB_LEAD_SERVICE_INTEREST_R1 */
+      if (url.pathname === "/api/lead/service-interests" && method === "POST") {
+        const auth = await requireRole(
+          request,
+          env,
+          ["lead"]
+        );
+
+        if (auth.response) return auth.response;
+
+        return addOwnLeadServiceInterest(
+          request,
+          env,
+          auth
+        );
+      }
       // ======================================================
       // ACTIVITY LOGS R1 - ADMIN
       // ======================================================
@@ -2478,6 +2494,24 @@ async function getOwnLeadPortal(request, env, auth) {
     );
   }
 
+  const interestRows = await env.DB.prepare(
+    `SELECT
+       service_name,
+       created_at
+     FROM lead_service_interests
+     WHERE lead_id = ?
+     ORDER BY created_at ASC`
+  ).bind(
+    lead.id
+  ).all();
+
+  const serviceInterests =
+    (interestRows.results || []).map(
+      (row) => ({
+        service_name: row.service_name,
+        created_at: row.created_at
+      })
+    );
   return apiResponse(
     request,
     env,
@@ -2494,6 +2528,7 @@ async function getOwnLeadPortal(request, env, auth) {
         service_interest: lead.service_interest || null,
         message: lead.message || null,
         status: lead.status,
+        service_interests: serviceInterests,
         created_at: lead.created_at,
         updated_at: lead.updated_at
       }
@@ -2501,6 +2536,134 @@ async function getOwnLeadPortal(request, env, auth) {
   );
 }
 
+async function addOwnLeadServiceInterest(request, env, auth) {
+  const body = await readJson(request);
+  const serviceName =
+    String(body?.service_name || "").trim();
+
+  const allowedServices =
+    new Set([
+      "Website Company Profile",
+      "Web Application",
+      "REST API / Backend",
+      "Sistem Informasi Custom",
+      "Database Development",
+      "Deployment & Cloud"
+    ]);
+
+  if (!allowedServices.has(serviceName)) {
+    return apiResponse(
+      request,
+      env,
+      { error: "A valid service_name is required." },
+      400
+    );
+  }
+
+  const lead = await env.DB.prepare(
+    `SELECT
+       id,
+       service_interest,
+       status
+     FROM leads
+     WHERE account_user_id = ?
+     ORDER BY created_at DESC
+     LIMIT 1`
+  ).bind(
+    auth.user.id
+  ).first();
+
+  if (!lead) {
+    return apiResponse(
+      request,
+      env,
+      {
+        error: "Lead portal data was not found.",
+        code: "LEAD_PORTAL_NOT_FOUND"
+      },
+      404
+    );
+  }
+
+  if (!["new", "contacted", "qualified"].includes(lead.status)) {
+    return apiResponse(
+      request,
+      env,
+      {
+        error:
+          "Service interest cannot be changed for this Lead status."
+      },
+      409
+    );
+  }
+
+  if (serviceName === lead.service_interest) {
+    return apiResponse(
+      request,
+      env,
+      {
+        ok: true,
+        created: false,
+        already_selected: true,
+        service_interest: {
+          service_name: serviceName,
+          primary: true
+        }
+      }
+    );
+  }
+
+  const interestId = crypto.randomUUID();
+  const timestamp = nowIso();
+
+  const insertResult = await env.DB.prepare(
+    `INSERT OR IGNORE INTO lead_service_interests
+      (
+        id,
+        lead_id,
+        service_name,
+        created_by_user_id,
+        created_at
+      )
+     VALUES (?, ?, ?, ?, ?)`
+  ).bind(
+    interestId,
+    lead.id,
+    serviceName,
+    auth.user.id,
+    timestamp
+  ).run();
+
+  const created =
+    Number(insertResult?.meta?.changes || 0) > 0;
+
+  if (created) {
+    await writeActivity(
+      env,
+      auth.user.id,
+      "LEAD_SERVICE_INTEREST_ADDED",
+      "lead",
+      lead.id,
+      `Service interest added: ${serviceName}`
+    );
+  }
+
+  return apiResponse(
+    request,
+    env,
+    {
+      ok: true,
+      created,
+      already_selected: !created,
+      service_interest: {
+        service_name: serviceName,
+        primary: false,
+        created_at: created ? timestamp : null
+      }
+    },
+    created ? 201 : 200
+  );
+}
 async function changePassword(request, env, auth) {
   const body = await readJson(request);
   const currentPassword = body?.current_password;
