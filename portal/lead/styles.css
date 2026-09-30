@@ -423,6 +423,54 @@ button {
   text-align: center;
 }
 
+/* SB_LEAD_SERVICE_INTEREST_FRONTEND_R1 */
+.next-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.next-actions .primary-button,
+.next-actions .ghost-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.services-grid article.is-selected {
+  border-color: rgba(34,197,94,.28);
+  background: rgba(34,197,94,.055);
+}
+
+.service-action {
+  width: 100%;
+  margin-top: 14px;
+  padding: 9px 12px;
+  border: 1px solid rgba(34,197,94,.30);
+  border-radius: 10px;
+  background: rgba(34,197,94,.08);
+  color: #bbf7d0;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.service-action:hover:not(:disabled) {
+  background: rgba(34,197,94,.14);
+}
+
+.service-action:disabled {
+  cursor: default;
+  opacity: .76;
+}
+
+.services-note.is-success {
+  color: #86efac;
+}
+
+.services-note.is-error {
+  color: var(--danger);
+}
 @media (max-width: 900px) {
   .summary-grid,
   .services-grid {
@@ -468,6 +516,11 @@ button {
 
   .lead-top-actions .ghost-button:first-child {
     display: none;
+  }
+
+  .next-actions {
+    display: grid;
+    grid-template-columns: 1fr;
   }
 
   .panel-head {

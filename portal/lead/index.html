@@ -7,7 +7,7 @@
 <meta name="robots" content="noindex,nofollow">
 <title>Lead Portal | Srilex Buditra</title>
 <link rel="icon" href="/images/logo.avif">
-<link rel="stylesheet" href="./styles.css?v=lead-portal-r1c">
+<link rel="stylesheet" href="./styles.css?v=lead-service-interest-r1">
 </head>
 <body>
 <div class="lead-app">
@@ -135,10 +135,15 @@
           </div>
           <p id="nextAction">Tim akan meninjau registrasi Anda.</p>
           <small>Perubahan status akan mengikuti proses konsultasi yang berjalan.</small>
+          <!-- SB_LEAD_SERVICE_INTEREST_FRONTEND_R1 -->
+          <div class="next-actions">
+            <button class="primary-button" id="continueConsultation" type="button">Lanjutkan Konsultasi</button>
+            <a class="ghost-button" href="/">Kembali ke Website</a>
+          </div>
         </article>
       </section>
 
-      <section class="panel">
+      <section class="panel" id="leadServices">
         <div class="panel-head">
           <div>
             <span class="eyebrow">LAYANAN SRILEX BUDITRA</span>
@@ -146,14 +151,14 @@
           </div>
         </div>
         <div class="services-grid">
-          <article><strong>Website Company Profile</strong><span>Website profesional untuk profil bisnis dan organisasi.</span></article>
-          <article><strong>Web Application</strong><span>Aplikasi web modern dan interaktif sesuai kebutuhan.</span></article>
-          <article><strong>REST API / Backend</strong><span>Backend dan API yang terstruktur untuk integrasi sistem.</span></article>
-          <article><strong>Sistem Informasi Custom</strong><span>Sistem digital yang mengikuti proses kerja organisasi.</span></article>
-          <article><strong>Database Development</strong><span>Perancangan dan pengembangan database yang siap berkembang.</span></article>
-          <article><strong>Deployment &amp; Cloud</strong><span>Deployment, hosting, VPS, dan kebutuhan cloud.</span></article>
+          <article data-service="Website Company Profile"><strong>Website Company Profile</strong><span>Website profesional untuk profil bisnis dan organisasi.</span><button class="service-action" type="button" data-service-action>Saya Tertarik</button></article>
+          <article data-service="Web Application"><strong>Web Application</strong><span>Aplikasi web modern dan interaktif sesuai kebutuhan.</span><button class="service-action" type="button" data-service-action>Saya Tertarik</button></article>
+          <article data-service="REST API / Backend"><strong>REST API / Backend</strong><span>Backend dan API yang terstruktur untuk integrasi sistem.</span><button class="service-action" type="button" data-service-action>Saya Tertarik</button></article>
+          <article data-service="Sistem Informasi Custom"><strong>Sistem Informasi Custom</strong><span>Sistem digital yang mengikuti proses kerja organisasi.</span><button class="service-action" type="button" data-service-action>Saya Tertarik</button></article>
+          <article data-service="Database Development"><strong>Database Development</strong><span>Perancangan dan pengembangan database yang siap berkembang.</span><button class="service-action" type="button" data-service-action>Saya Tertarik</button></article>
+          <article data-service="Deployment &amp; Cloud"><strong>Deployment &amp; Cloud</strong><span>Deployment, hosting, VPS, dan kebutuhan cloud.</span><button class="service-action" type="button" data-service-action>Saya Tertarik</button></article>
         </div>
-        <p class="services-note">Fitur menyatakan minat pada layanan tambahan akan tersedia pada pengembangan berikutnya.</p>
+        <p class="services-note" id="serviceFeedback">Pilih layanan tambahan yang sesuai dengan kebutuhan Anda.</p>
       </section>
     </div>
   </main>
@@ -161,6 +166,6 @@
   <footer class="lead-footer">&copy; Srilex Buditra &bull; Portal &amp; Consultation Platform R1</footer>
 </div>
 
-<script src="./lead.js?v=lead-portal-r1c"></script>
+<script src="./lead.js?v=lead-service-interest-r1"></script>
 </body>
 </html>

@@ -107,6 +107,168 @@
     document.getElementById("nextAction").textContent = state.next;
   }
 
+  /* SB_LEAD_SERVICE_INTEREST_FRONTEND_R1 */
+  function renderServiceActions(lead) {
+    const primaryService =
+      String(lead.service_interest || "").trim();
+
+    const additionalServices =
+      new Set(
+        (Array.isArray(lead.service_interests)
+          ? lead.service_interests
+          : []
+        )
+          .map((item) =>
+            String(item?.service_name || "").trim()
+          )
+          .filter(Boolean)
+      );
+
+    const canSelect =
+      ["new", "contacted", "qualified"]
+        .includes(lead.status);
+
+    document
+      .querySelectorAll(".services-grid [data-service]")
+      .forEach((card) => {
+        const serviceName =
+          String(card.dataset.service || "").trim();
+
+        const button =
+          card.querySelector("[data-service-action]");
+
+        if (!button) return;
+
+        card.classList.remove("is-selected");
+
+        if (serviceName === primaryService) {
+          card.classList.add("is-selected");
+          button.disabled = true;
+          button.textContent = "\u2713 Layanan dipilih";
+          return;
+        }
+
+        if (additionalServices.has(serviceName)) {
+          card.classList.add("is-selected");
+          button.disabled = true;
+          button.textContent = "\u2713 Sudah diminati";
+          return;
+        }
+
+        button.disabled = !canSelect;
+        button.textContent =
+          canSelect
+            ? "Saya Tertarik"
+            : "Tidak tersedia";
+      });
+
+    const feedback =
+      document.getElementById("serviceFeedback");
+
+    if (feedback) {
+      feedback.classList.remove(
+        "is-success",
+        "is-error"
+      );
+
+      feedback.textContent =
+        canSelect
+          ? "Pilih layanan tambahan yang sesuai dengan kebutuhan Anda."
+          : "Pemilihan layanan tambahan tidak tersedia pada status konsultasi ini.";
+    }
+  }
+
+  function focusServiceOptions() {
+    const section =
+      document.getElementById("leadServices");
+
+    if (!section) return;
+
+    section.scrollIntoView({
+      behavior: "smooth",
+      block: "start"
+    });
+  }
+
+  async function handleServiceInterest(event) {
+    const button =
+      event.target.closest("[data-service-action]");
+
+    if (!button || button.disabled) return;
+
+    const card =
+      button.closest("[data-service]");
+
+    const serviceName =
+      String(card?.dataset?.service || "").trim();
+
+    if (!serviceName) return;
+
+    const feedback =
+      document.getElementById("serviceFeedback");
+
+    const originalText = button.textContent;
+
+    button.disabled = true;
+    button.textContent = "Menyimpan...";
+
+    if (feedback) {
+      feedback.classList.remove(
+        "is-success",
+        "is-error"
+      );
+      feedback.textContent =
+        `Menyimpan minat untuk ${serviceName}...`;
+    }
+
+    try {
+      const response =
+        await api("/lead/service-interests", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            service_name: serviceName
+          })
+        });
+
+      const data = await readJson(response);
+
+      if (!response.ok) {
+        throw new Error(
+          data.error ||
+          "Minat layanan belum dapat disimpan."
+        );
+      }
+
+      card.classList.add("is-selected");
+      button.disabled = true;
+      button.textContent =
+        data.service_interest?.primary
+          ? "\u2713 Layanan dipilih"
+          : "\u2713 Sudah diminati";
+
+      if (feedback) {
+        feedback.classList.add("is-success");
+        feedback.textContent =
+          data.created
+            ? `${serviceName} berhasil ditambahkan ke minat layanan Anda.`
+            : `${serviceName} sudah tersimpan pada minat layanan Anda.`;
+      }
+    } catch (error) {
+      button.disabled = false;
+      button.textContent = originalText;
+
+      if (feedback) {
+        feedback.classList.add("is-error");
+        feedback.textContent =
+          error instanceof Error
+            ? error.message
+            : "Minat layanan belum dapat disimpan.";
+      }
+    }
+  }
   function render(user, lead) {
     const displayName =
       lead.full_name ||
@@ -142,6 +304,7 @@
       lead.message || "Belum ada catatan kebutuhan tambahan.";
 
     renderProgress(lead.status);
+    renderServiceActions(lead);
 
     loading.hidden = true;
     errorPanel.hidden = true;
@@ -207,6 +370,14 @@
       window.location.replace("/portal/");
     }
   }
+
+  document
+    .getElementById("continueConsultation")
+    .addEventListener("click", focusServiceOptions);
+
+  document
+    .querySelector(".services-grid")
+    .addEventListener("click", handleServiceInterest);
 
   retry.addEventListener("click", loadPortal);
   logout.addEventListener("click", handleLogout);
