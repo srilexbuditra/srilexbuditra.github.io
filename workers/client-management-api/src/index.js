@@ -71,6 +71,24 @@ export default {
       }
 
       // ======================================================
+      /* SB_LEAD_SELF_PORTAL_R1 */
+      if (url.pathname === "/api/lead/me" && method === "GET") {
+        const auth = await requireRole(
+          request,
+          env,
+          ["lead"]
+        );
+
+        if (auth.response) return auth.response;
+
+        return getOwnLeadPortal(
+          request,
+          env,
+          auth
+        );
+      }
+
+      // ======================================================
       // ACTIVITY LOGS R1 - ADMIN
       // ======================================================
 
@@ -2423,6 +2441,64 @@ async function requireRole(request, env, allowedRoles) {
     return { response: apiResponse(request, env, { error: "Forbidden." }, 403) };
   }
   return auth;
+}
+
+async function getOwnLeadPortal(request, env, auth) {
+  const lead = await env.DB.prepare(
+    `SELECT
+       id,
+       lead_code,
+       full_name,
+       company_name,
+       email,
+       phone,
+       source,
+       service_interest,
+       message,
+       status,
+       created_at,
+       updated_at
+     FROM leads
+     WHERE account_user_id = ?
+     ORDER BY created_at DESC
+     LIMIT 1`
+  ).bind(
+    auth.user.id
+  ).first();
+
+  if (!lead) {
+    return apiResponse(
+      request,
+      env,
+      {
+        error: "Lead portal data was not found.",
+        code: "LEAD_PORTAL_NOT_FOUND"
+      },
+      404
+    );
+  }
+
+  return apiResponse(
+    request,
+    env,
+    {
+      ok: true,
+      lead: {
+        id: lead.id,
+        lead_code: lead.lead_code,
+        full_name: lead.full_name,
+        company_name: lead.company_name || null,
+        email: lead.email || null,
+        phone: lead.phone || null,
+        source: lead.source || null,
+        service_interest: lead.service_interest || null,
+        message: lead.message || null,
+        status: lead.status,
+        created_at: lead.created_at,
+        updated_at: lead.updated_at
+      }
+    }
+  );
 }
 
 async function changePassword(request, env, auth) {

@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0f2c26">
+<meta name="robots" content="noindex,nofollow">
+<title>Lead Portal | Srilex Buditra</title>
+<link rel="icon" href="/images/logo.avif">
+<link rel="stylesheet" href="./styles.css?v=lead-portal-r1c">
+</head>
+<body>
+<div class="lead-app">
+  <header class="lead-topbar">
+    <a class="lead-brand" href="/" aria-label="Srilex Buditra">
+      <img src="/images/logo.avif" alt="Logo Srilex Buditra">
+      <span>
+        <strong>SRILEX BUDITRA</strong>
+        <small>Lead Portal &bull; R1</small>
+      </span>
+    </a>
+
+    <div class="lead-top-actions">
+      <a class="ghost-button" href="/">Website</a>
+      <button class="ghost-button" id="leadLogout" type="button">Logout</button>
+    </div>
+  </header>
+
+  <main class="lead-main">
+    <section class="lead-loading" id="leadLoading">
+      <span class="loading-dot"></span>
+      <strong>Memuat Portal...</strong>
+      <p>Data konsultasi Anda sedang disiapkan.</p>
+    </section>
+
+    <section class="lead-error" id="leadError" hidden>
+      <span>PORTAL STATUS</span>
+      <h1>Data konsultasi belum dapat dimuat</h1>
+      <p id="leadErrorMessage">Silakan coba kembali.</p>
+      <button class="primary-button" id="leadRetry" type="button">Coba Lagi</button>
+    </section>
+
+    <div id="leadDashboard" hidden>
+      <section class="lead-hero">
+        <div>
+          <span class="eyebrow">PORTAL KONSULTASI</span>
+          <h1 id="welcomeHeading">Selamat datang</h1>
+          <p>Ikuti perkembangan konsultasi dan kebutuhan project Anda dari satu tempat.</p>
+        </div>
+        <div class="status-card">
+          <span>Status saat ini</span>
+          <strong id="friendlyStatus">-</strong>
+          <small id="leadCode">-</small>
+        </div>
+      </section>
+
+      <section class="summary-grid" aria-label="Ringkasan konsultasi">
+        <article class="summary-card">
+          <span>Layanan dipilih</span>
+          <strong id="serviceInterest">-</strong>
+        </article>
+        <article class="summary-card">
+          <span>Perusahaan / Organisasi</span>
+          <strong id="companyName">-</strong>
+        </article>
+        <article class="summary-card">
+          <span>Email akun</span>
+          <strong id="accountEmail">-</strong>
+        </article>
+        <article class="summary-card">
+          <span>Registrasi</span>
+          <strong id="registeredAt">-</strong>
+        </article>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">
+          <div>
+            <span class="eyebrow">PROGRESS</span>
+            <h2>Perjalanan konsultasi</h2>
+          </div>
+          <strong id="progressLabel">Tahap 1 dari 5</strong>
+        </div>
+
+        <div class="progress-track" aria-hidden="true">
+          <span id="progressBar"></span>
+        </div>
+
+        <div class="progress-steps" id="progressSteps">
+          <article data-step="1">
+            <b>01</b>
+            <strong>Registrasi diterima</strong>
+            <span>Data awal telah masuk ke sistem.</span>
+          </article>
+          <article data-step="2">
+            <b>02</b>
+            <strong>Konsultasi</strong>
+            <span>Komunikasi dan klarifikasi kebutuhan.</span>
+          </article>
+          <article data-step="3">
+            <b>03</b>
+            <strong>Peninjauan kebutuhan</strong>
+            <span>Kebutuhan project telah diverifikasi.</span>
+          </article>
+          <article data-step="4">
+            <b>04</b>
+            <strong>Penawaran resmi</strong>
+            <span>Estimate resmi disiapkan pada tahap berikutnya.</span>
+          </article>
+          <article data-step="5">
+            <b>05</b>
+            <strong>Aktivasi Client</strong>
+            <span>Akun beralih menjadi Client setelah proses disetujui.</span>
+          </article>
+        </div>
+      </section>
+
+      <section class="content-grid">
+        <article class="panel">
+          <div class="panel-head">
+            <div>
+              <span class="eyebrow">KEBUTUHAN AWAL</span>
+              <h2>Ringkasan permintaan</h2>
+            </div>
+          </div>
+          <p class="request-copy" id="leadMessage">Belum ada catatan kebutuhan tambahan.</p>
+        </article>
+
+        <article class="panel next-panel">
+          <div class="panel-head">
+            <div>
+              <span class="eyebrow">TAHAP BERIKUTNYA</span>
+              <h2>Apa yang perlu dilakukan?</h2>
+            </div>
+          </div>
+          <p id="nextAction">Tim akan meninjau registrasi Anda.</p>
+          <small>Perubahan status akan mengikuti proses konsultasi yang berjalan.</small>
+        </article>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">
+          <div>
+            <span class="eyebrow">LAYANAN SRILEX BUDITRA</span>
+            <h2>Layanan yang tersedia</h2>
+          </div>
+        </div>
+        <div class="services-grid">
+          <article><strong>Website Company Profile</strong><span>Website profesional untuk profil bisnis dan organisasi.</span></article>
+          <article><strong>Web Application</strong><span>Aplikasi web modern dan interaktif sesuai kebutuhan.</span></article>
+          <article><strong>REST API / Backend</strong><span>Backend dan API yang terstruktur untuk integrasi sistem.</span></article>
+          <article><strong>Sistem Informasi Custom</strong><span>Sistem digital yang mengikuti proses kerja organisasi.</span></article>
+          <article><strong>Database Development</strong><span>Perancangan dan pengembangan database yang siap berkembang.</span></article>
+          <article><strong>Deployment &amp; Cloud</strong><span>Deployment, hosting, VPS, dan kebutuhan cloud.</span></article>
+        </div>
+        <p class="services-note">Fitur menyatakan minat pada layanan tambahan akan tersedia pada pengembangan berikutnya.</p>
+      </section>
+    </div>
+  </main>
+
+  <footer class="lead-footer">&copy; Srilex Buditra &bull; Portal &amp; Consultation Platform R1</footer>
+</div>
+
+<script src="./lead.js?v=lead-portal-r1c"></script>
+</body>
+</html>

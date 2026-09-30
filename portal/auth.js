@@ -1,6 +1,8 @@
 (() => {
   "use strict";
 
+  /* SB_UNIFIED_PORTAL_LOGIN_R1C */
+
   const API_BASE = "/api";
 
   let currentUser = null;
@@ -194,13 +196,13 @@
         <img src="/images/logo.avif" alt="Logo Srilex Buditra">
         <div>
           <strong>SRILEX BUDITRA</strong>
-          <span>Client Portal &bull; R1</span>
+          <span>Portal &bull; R1</span>
         </div>
       </div>
 
       <section class="sb-portal-auth-panel" data-login-panel>
-        <h1>Login Client</h1>
-        <p>Masuk menggunakan akun client yang diberikan oleh administrator.</p>
+        <h1>Masuk Portal</h1>
+        <p>Masuk menggunakan akun Portal Anda untuk melanjutkan.</p>
 
         <form data-login-form>
           <div class="sb-portal-auth-field">
@@ -226,7 +228,7 @@
           </div>
 
           <button class="sb-portal-auth-submit" type="submit">
-            Masuk ke Client Portal
+            Masuk Portal
           </button>
 
           <div class="sb-portal-auth-message" data-login-message role="alert"></div>
@@ -240,7 +242,7 @@
       <section class="sb-portal-auth-panel" data-password-panel hidden>
         <h1>Ganti Password Awal</h1>
         <p>
-          Untuk keamanan akun, buat password baru sebelum menggunakan Client Portal.
+          Untuk keamanan akun, buat password baru sebelum menggunakan Portal.
         </p>
 
         <form data-password-form>
@@ -331,12 +333,12 @@
       loginPanel.querySelector(".sb-portal-auth-note");
 
     if (title) {
-      title.textContent = "Login Client";
+      title.textContent = "Masuk Portal";
     }
 
     if (description) {
       description.textContent =
-        "Masuk menggunakan akun client yang diberikan oleh administrator.";
+        "Masuk menggunakan akun Portal Anda untuk melanjutkan.";
     }
 
     if (form) {
@@ -386,7 +388,7 @@
 
     if (description) {
       description.textContent =
-        "Mohon tunggu, sesi Client Portal sedang diverifikasi.";
+        "Mohon tunggu, sesi Portal sedang diverifikasi.";
     }
 
     if (form) {
@@ -507,6 +509,11 @@
         throw new Error(result.error || "Login gagal.");
       }
 
+      if (result.user.role === "lead") {
+        window.location.replace("/portal/lead/");
+        return;
+      }
+
       if (result.user.role !== "client") {
         await api("/auth/logout", {
           method: "POST",
@@ -516,7 +523,7 @@
           body: "{}"
         });
 
-        throw new Error("Akun ini bukan akun Client Portal.");
+        throw new Error("Akun ini tidak memiliki akses Portal.");
       }
 
       currentUser = result.user;
@@ -535,7 +542,7 @@
       );
     } finally {
       submit.disabled = false;
-      submit.textContent = "Masuk ke Client Portal";
+      submit.textContent = "Masuk Portal";
     }
   }
 
@@ -639,7 +646,7 @@
 
     document.getElementById("sb-portal-logout")?.remove();
 
-    showLogin("Anda telah keluar dari Client Portal.");
+    showLogin("Anda telah keluar dari Portal.");
   }
 
   async function checkSession() {
@@ -657,9 +664,14 @@
         return;
       }
 
+      if (data.user.role === "lead") {
+        window.location.replace("/portal/lead/");
+        return;
+      }
+
       if (data.user.role !== "client") {
         showLogin(
-          "Browser ini sedang memiliki sesi non-client. Gunakan akun client atau buka Client Portal melalui Incognito/Private."
+          "Browser ini sedang memiliki sesi yang tidak memiliki akses ke Portal ini. Silakan logout lalu gunakan akun Portal yang sesuai."
         );
         return;
       }
