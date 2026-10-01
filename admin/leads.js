@@ -4251,21 +4251,13 @@
       followUp?.contacted_at ||
       null;
 
-    const statusUpdatedAt =
-      followUp?.status_updated_at ||
-      null;
-
     stateElement.className =
       "sb-lead-followup-state";
 
-    if (
-      contactedAt ||
-      leadStatus === "contacted"
-    ) {
+    if (contactedAt) {
       const time =
         formatLeadFollowupTimestamp(
-          contactedAt ||
-          statusUpdatedAt
+          contactedAt
         );
 
       stateElement.classList.add(
@@ -4305,7 +4297,11 @@
         "⚪ Belum Follow-up";
     }
 
-    if (leadStatus === "new") {
+    if (
+      ["new", "contacted"].includes(
+        leadStatus
+      )
+    ) {
       markButton.hidden = false;
       markButton.disabled = false;
       markButton.textContent =
@@ -4439,7 +4435,7 @@
       );
 
       showNotice(
-        "Lead ditandai sudah dihubungi. Status Lead menjadi Contacted."
+        "Follow-up tersimpan. Lead ditandai sudah dihubungi."
       );
 
       try {

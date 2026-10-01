@@ -6795,7 +6795,7 @@ async function markAdminLeadContacted(
       env,
       {
         error:
-          "Only a New lead can be marked as Contacted."
+          "Only a New or Contacted lead can be marked as contacted."
       },
       409
     );
@@ -6889,11 +6889,28 @@ async function markAdminLeadContacted(
     );
   }
 
-  const state =
+  let state =
     await readAdminLeadFollowupState(
       env,
       leadId
     );
+
+  if (!state.contacted_at) {
+    await writeActivity(
+      env,
+      auth.user.id,
+      "LEAD_CONTACTED",
+      "lead",
+      leadId,
+      `Lead ${lead.lead_code} marked as contacted.`
+    );
+
+    state =
+      await readAdminLeadFollowupState(
+        env,
+        leadId
+      );
+  }
 
   return apiResponse(
     request,
