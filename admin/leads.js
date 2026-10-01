@@ -3276,6 +3276,12 @@
             height: 4px;
           }
 
+          .sb-lead-print-consultation-text {
+            margin-top: 6px;
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+          }
+
           .sb-lead-print-footer {
             margin-top: 12px;
             padding-top: 8px;
@@ -3367,15 +3373,44 @@
         )
       );
 
+    /* SB_LEAD_PRINT_CONSULTATION_PARITY_R1 */
+    const consultationDescription =
+      String(
+        lead.consultation_description ||
+        ""
+      ).trim();
+
+    const hasConsultation =
+      Boolean(
+        lead.consultation_submitted_at ||
+        consultationDescription
+      );
+
     const calculatorHtml =
-      lead.source ===
-        "Website Calculator"
+      (
+        lead.source ===
+          "Website Calculator" ||
+        hasConsultation
+      )
         ? formatLeadRichHtml(
             formatLeadCalculatorScope(
               lead
             )
           )
         : "";
+
+    const scopeSectionTitle =
+      lead.source ===
+        "Website Calculator"
+        ? "Calculator / Scope Data"
+        : "Scope / Consultation Data";
+
+    const consultationSubmittedText =
+      lead.consultation_submitted_at
+        ? formatDate(
+            lead.consultation_submitted_at
+          )
+        : "-";
 
     sheet.innerHTML = `
       <div class="sb-lead-print-header">
@@ -3526,10 +3561,41 @@
           ? `
             <section class="sb-lead-print-section">
               <h2>
-                Calculator / Scope Data
+                ${escapeHtml(scopeSectionTitle)}
               </h2>
 
               ${calculatorHtml}
+            </section>
+          `
+          : ""
+      }
+
+      ${
+        hasConsultation
+          ? `
+            <section class="sb-lead-print-section">
+              <h2>
+                Hasil Konsultasi Lead
+              </h2>
+
+              <div class="sb-lead-print-item">
+                <span class="sb-lead-print-item-label">
+                  Konsultasi dikirim
+                </span>
+
+                <div class="sb-lead-print-item-value">
+                  ${escapeHtml(
+                    consultationSubmittedText
+                  )}
+                </div>
+              </div>
+
+              <div class="sb-lead-print-consultation-text">
+                ${escapeHtml(
+                  consultationDescription ||
+                  "Tidak ada deskripsi konsultasi tambahan."
+                )}
+              </div>
             </section>
           `
           : ""
