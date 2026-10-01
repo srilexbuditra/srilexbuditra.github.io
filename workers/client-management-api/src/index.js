@@ -121,6 +121,62 @@ export default {
         );
       }
 
+      /* SB_LEAD_OFFICIAL_ESTIMATE_BACKEND_R1 */
+      if (url.pathname === "/api/lead/estimates" && method === "GET") {
+        const auth = await requireRole(
+          request,
+          env,
+          ["lead"]
+        );
+
+        if (auth.response) return auth.response;
+
+        return listLeadEstimates(
+          request,
+          env,
+          auth
+        );
+      }
+
+      const leadEstimateMatch =
+        url.pathname.match(/^\/api\/lead\/estimates\/([^/]+)$/);
+
+      if (leadEstimateMatch && method === "GET") {
+        const auth = await requireRole(
+          request,
+          env,
+          ["lead"]
+        );
+
+        if (auth.response) return auth.response;
+
+        return getLeadEstimate(
+          request,
+          env,
+          auth,
+          decodeURIComponent(leadEstimateMatch[1])
+        );
+      }
+
+      const leadEstimateDecisionMatch =
+        url.pathname.match(/^\/api\/lead\/estimates\/([^/]+)\/decision$/);
+
+      if (leadEstimateDecisionMatch && method === "POST") {
+        const auth = await requireRole(
+          request,
+          env,
+          ["lead"]
+        );
+
+        if (auth.response) return auth.response;
+
+        return decideLeadEstimate(
+          request,
+          env,
+          auth,
+          decodeURIComponent(leadEstimateDecisionMatch[1])
+        );
+      }
       // ======================================================
       // ACTIVITY LOGS R1 - ADMIN
       // ======================================================
@@ -7150,6 +7206,32 @@ async function convertLeadToClient(
     );
   }
 
+  if (lead.account_user_id) {
+    const approvedEstimate =
+      await env.DB.prepare(
+        `SELECT id
+         FROM estimates
+         WHERE lead_id = ?
+           AND status = 'approved'
+         ORDER BY approved_at DESC, created_at DESC
+         LIMIT 1`
+      ).bind(
+        leadId
+      ).first();
+
+    if (!approvedEstimate) {
+      return apiResponse(
+        request,
+        env,
+        {
+          error:
+            "An approved Official Estimate is required before Lead conversion."
+        },
+        409
+      );
+    }
+  }
+
   const email =
     lead.email
       ? normalizeEmail(lead.email)
@@ -7385,6 +7467,21 @@ async function convertLeadToClient(
       userId,
       clientId,
       timestamp,
+      timestamp,
+      leadId
+    )
+  );
+
+  statements.push(
+    env.DB.prepare(
+      `UPDATE estimates
+       SET
+         client_id = ?,
+         updated_at = ?
+       WHERE lead_id = ?
+         AND client_id IS NULL`
+    ).bind(
+      clientId,
       timestamp,
       leadId
     )
@@ -8637,16 +8734,19 @@ async function listAdminEstimates(request, env) {
        e.converted_invoice_id,
        e.created_at,
        e.updated_at,
-       c.id AS client_id,
+       e.client_id,
+       e.lead_id,
        c.client_code,
-       c.full_name,
-       c.company_name,
+       COALESCE(c.full_name, l.full_name) AS full_name,
+       COALESCE(c.company_name, l.company_name) AS company_name,
+       l.lead_code,
        p.id AS project_id,
        p.project_code,
        p.project_name,
        i.invoice_code AS converted_invoice_code
      FROM estimates e
-     JOIN clients c ON c.id = e.client_id
+     LEFT JOIN clients c ON c.id = e.client_id
+     LEFT JOIN leads l ON l.id = e.lead_id
      LEFT JOIN projects p ON p.id = e.project_id
      LEFT JOIN invoices i ON i.id = e.converted_invoice_id
      ORDER BY e.created_at DESC`
@@ -8662,13 +8762,15 @@ async function getAdminEstimate(request, env, estimateId) {
     `SELECT
        e.*,
        c.client_code,
-       c.full_name,
-       c.company_name,
+       COALESCE(c.full_name, l.full_name) AS full_name,
+       COALESCE(c.company_name, l.company_name) AS company_name,
+       l.lead_code,
        p.project_code,
        p.project_name,
        i.invoice_code AS converted_invoice_code
      FROM estimates e
-     JOIN clients c ON c.id = e.client_id
+     LEFT JOIN clients c ON c.id = e.client_id
+     LEFT JOIN leads l ON l.id = e.lead_id
      LEFT JOIN projects p ON p.id = e.project_id
      LEFT JOIN invoices i ON i.id = e.converted_invoice_id
      WHERE e.id = ?
@@ -8706,7 +8808,12 @@ async function getAdminEstimate(request, env, estimateId) {
 async function createAdminEstimate(request, env, auth) {
   const body = await readJson(request);
 
-  const clientId = String(body?.client_id || "").trim();
+  const clientId =
+    String(body?.client_id || "").trim() || null;
+
+  const leadId =
+    String(body?.lead_id || "").trim() || null;
+
   const projectId =
     String(body?.project_id || "").trim() || null;
 
@@ -8731,7 +8838,8 @@ async function createAdminEstimate(request, env, auth) {
       : [];
 
   if (
-    !clientId ||
+    (!clientId && !leadId) ||
+    (clientId && leadId) ||
     !title ||
     title.length > 180 ||
     !validEstimateDate(issueDate)
@@ -8783,38 +8891,92 @@ async function createAdminEstimate(request, env, auth) {
     );
   }
 
-  const client = await env.DB.prepare(
-    `SELECT id
-     FROM clients
-     WHERE id = ?
-       AND status = 'active'
-     LIMIT 1`
-  ).bind(clientId).first();
-
-  if (!client) {
+  if (leadId && projectId) {
     return apiResponse(
       request,
       env,
-      { error: "Client not found." },
-      404
+      {
+        error:
+          "Lead estimate cannot be linked to a Client project before conversion."
+      },
+      400
     );
   }
 
-  if (projectId) {
-    const project = await env.DB.prepare(
+  if (clientId) {
+    const client = await env.DB.prepare(
       `SELECT id
-       FROM projects
+       FROM clients
        WHERE id = ?
-         AND client_id = ?
+         AND status = 'active'
        LIMIT 1`
-    ).bind(projectId, clientId).first();
+    ).bind(clientId).first();
 
-    if (!project) {
+    if (!client) {
       return apiResponse(
         request,
         env,
-        { error: "Project does not belong to selected client." },
-        400
+        { error: "Client not found." },
+        404
+      );
+    }
+
+    if (projectId) {
+      const project = await env.DB.prepare(
+        `SELECT id
+         FROM projects
+         WHERE id = ?
+           AND client_id = ?
+         LIMIT 1`
+      ).bind(projectId, clientId).first();
+
+      if (!project) {
+        return apiResponse(
+          request,
+          env,
+          {
+            error:
+              "Project does not belong to selected client."
+          },
+          400
+        );
+      }
+    }
+  }
+
+  if (leadId) {
+    const lead = await env.DB.prepare(
+      `SELECT
+         id,
+         lead_code,
+         status,
+         converted_client_id
+       FROM leads
+       WHERE id = ?
+       LIMIT 1`
+    ).bind(leadId).first();
+
+    if (!lead) {
+      return apiResponse(
+        request,
+        env,
+        { error: "Lead not found." },
+        404
+      );
+    }
+
+    if (
+      lead.status !== "qualified" ||
+      lead.converted_client_id
+    ) {
+      return apiResponse(
+        request,
+        env,
+        {
+          error:
+            "Official Estimate can only be created for a qualified Lead."
+        },
+        409
       );
     }
   }
@@ -8919,6 +9081,7 @@ async function createAdminEstimate(request, env, auth) {
         (
           id,
           client_id,
+          lead_id,
           project_id,
           estimate_code,
           title,
@@ -8935,10 +9098,11 @@ async function createAdminEstimate(request, env, auth) {
           created_at,
           updated_at
         )
-       VALUES (?, ?, ?, ?, ?, ?, 'IDR', ?, ?, 'draft', ?, ?, ?, ?, ?, ?, ?)`
+       VALUES (?, ?, ?, ?, ?, ?, ?, 'IDR', ?, ?, 'draft', ?, ?, ?, ?, ?, ?, ?)`
     ).bind(
       estimateId,
       clientId,
+      leadId,
       projectId,
       estimateCode,
       title,
@@ -9002,6 +9166,8 @@ async function createAdminEstimate(request, env, auth) {
       estimate: {
         id: estimateId,
         estimate_code: estimateCode,
+        client_id: clientId,
+        lead_id: leadId,
         title,
         status: "draft",
         subtotal,
@@ -9113,6 +9279,279 @@ async function updateAdminEstimate(
   });
 }
 
+/* SB_LEAD_OFFICIAL_ESTIMATE_BACKEND_R1 */
+async function getOwnLeadEstimateOwner(env, auth) {
+  return env.DB.prepare(
+    `SELECT
+       id,
+       lead_code,
+       status
+     FROM leads
+     WHERE account_user_id = ?
+     ORDER BY created_at DESC
+     LIMIT 1`
+  ).bind(
+    auth.user.id
+  ).first();
+}
+
+async function listLeadEstimates(
+  request,
+  env,
+  auth
+) {
+  const lead =
+    await getOwnLeadEstimateOwner(
+      env,
+      auth
+    );
+
+  if (!lead) {
+    return apiResponse(
+      request,
+      env,
+      {
+        error: "Lead portal data was not found.",
+        code: "LEAD_PORTAL_NOT_FOUND"
+      },
+      404
+    );
+  }
+
+  const rows = await env.DB.prepare(
+    `SELECT
+       e.id,
+       e.estimate_code,
+       e.title,
+       e.description,
+       e.currency,
+       e.issue_date,
+       e.valid_until,
+       e.status,
+       e.subtotal,
+       e.tax_amount,
+       e.total_amount,
+       e.notes,
+       e.sent_at,
+       e.approved_at,
+       e.rejected_at,
+       e.converted_invoice_id
+     FROM estimates e
+     WHERE e.lead_id = ?
+       AND e.status IN ('sent','approved','rejected')
+     ORDER BY e.issue_date DESC, e.created_at DESC`
+  ).bind(
+    lead.id
+  ).all();
+
+  return apiResponse(request, env, {
+    estimates:
+      (rows.results || []).map(mapEstimateRow)
+  });
+}
+
+async function getLeadEstimate(
+  request,
+  env,
+  auth,
+  estimateId
+) {
+  const lead =
+    await getOwnLeadEstimateOwner(
+      env,
+      auth
+    );
+
+  if (!lead) {
+    return apiResponse(
+      request,
+      env,
+      {
+        error: "Lead portal data was not found.",
+        code: "LEAD_PORTAL_NOT_FOUND"
+      },
+      404
+    );
+  }
+
+  const estimate = await env.DB.prepare(
+    `SELECT
+       e.*
+     FROM estimates e
+     WHERE e.id = ?
+       AND e.lead_id = ?
+       AND e.status IN ('sent','approved','rejected')
+     LIMIT 1`
+  ).bind(
+    estimateId,
+    lead.id
+  ).first();
+
+  if (!estimate) {
+    return apiResponse(
+      request,
+      env,
+      { error: "Estimate not found." },
+      404
+    );
+  }
+
+  const items = await env.DB.prepare(
+    `SELECT
+       id,
+       description,
+       quantity,
+       unit_price,
+       line_total,
+       position
+     FROM estimate_items
+     WHERE estimate_id = ?
+     ORDER BY position ASC`
+  ).bind(
+    estimateId
+  ).all();
+
+  await writeActivity(
+    env,
+    auth.user.id,
+    "ESTIMATE_VIEWED",
+    "estimate",
+    estimateId,
+    `Estimate ${estimate.estimate_code} viewed by lead ${lead.lead_code}.`
+  );
+
+  return apiResponse(request, env, {
+    estimate: mapEstimateRow(estimate),
+    items: items.results || []
+  });
+}
+
+async function decideLeadEstimate(
+  request,
+  env,
+  auth,
+  estimateId
+) {
+  const body = await readJson(request);
+  const decision =
+    String(body?.decision || "").trim();
+
+  if (!["approved", "rejected"].includes(decision)) {
+    return apiResponse(
+      request,
+      env,
+      {
+        error:
+          "Decision must be approved or rejected."
+      },
+      400
+    );
+  }
+
+  const lead =
+    await getOwnLeadEstimateOwner(
+      env,
+      auth
+    );
+
+  if (!lead) {
+    return apiResponse(
+      request,
+      env,
+      {
+        error: "Lead portal data was not found.",
+        code: "LEAD_PORTAL_NOT_FOUND"
+      },
+      404
+    );
+  }
+
+  const estimate = await env.DB.prepare(
+    `SELECT
+       id,
+       estimate_code,
+       status,
+       valid_until
+     FROM estimates
+     WHERE id = ?
+       AND lead_id = ?
+     LIMIT 1`
+  ).bind(
+    estimateId,
+    lead.id
+  ).first();
+
+  if (!estimate) {
+    return apiResponse(
+      request,
+      env,
+      { error: "Estimate not found." },
+      404
+    );
+  }
+
+  const effectiveStatus =
+    effectiveEstimateStatus(
+      estimate.status,
+      estimate.valid_until
+    );
+
+  if (effectiveStatus !== "sent") {
+    return apiResponse(
+      request,
+      env,
+      {
+        error:
+          effectiveStatus === "expired"
+            ? "Estimate has expired."
+            : "Estimate can no longer be changed."
+      },
+      409
+    );
+  }
+
+  const timestamp = nowIso();
+
+  await env.DB.prepare(
+    `UPDATE estimates
+     SET
+       status = ?,
+       approved_at = ?,
+       rejected_at = ?,
+       updated_at = ?
+     WHERE id = ?
+       AND lead_id = ?
+       AND status = 'sent'`
+  ).bind(
+    decision,
+    decision === "approved" ? timestamp : null,
+    decision === "rejected" ? timestamp : null,
+    timestamp,
+    estimateId,
+    lead.id
+  ).run();
+
+  await writeActivity(
+    env,
+    auth.user.id,
+    decision === "approved"
+      ? "ESTIMATE_APPROVED"
+      : "ESTIMATE_REJECTED",
+    "estimate",
+    estimateId,
+    `Estimate ${estimate.estimate_code} ${decision} by lead ${lead.lead_code}.`
+  );
+
+  return apiResponse(request, env, {
+    ok: true,
+    estimate: {
+      id: estimateId,
+      estimate_code: estimate.estimate_code,
+      status: decision,
+      updated_at: timestamp
+    }
+  });
+}
 async function listClientEstimates(
   request,
   env,
@@ -9353,6 +9792,18 @@ async function convertEstimateToInvoice(
       env,
       { error: "Estimate not found." },
       404
+    );
+  }
+
+  if (!estimate.client_id) {
+    return apiResponse(
+      request,
+      env,
+      {
+        error:
+          "Lead estimate must be converted to a Client before invoice creation."
+      },
+      409
     );
   }
 
