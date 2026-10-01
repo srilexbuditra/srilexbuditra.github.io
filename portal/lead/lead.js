@@ -53,6 +53,10 @@
     document.getElementById("consultDomainName");
   const consultDomainNameField =
     document.getElementById("consultDomainNameField");
+  const consultDomainCheck =
+    document.getElementById("consultDomainCheck");
+  const consultDomainResult =
+    document.getElementById("consultDomainResult");
   const consultHosting =
     document.getElementById("consultHosting");
   const consultTimeline =
@@ -192,7 +196,7 @@
         button.disabled = !canSelect;
         button.textContent =
           canSelect
-            ? "Saya Tertarik"
+            ? "+ Tambah"
             : "Tidak tersedia";
       });
 
@@ -235,6 +239,204 @@
       .filter(Boolean);
   }
 
+  /* SB_LEAD_WORKFLOW_INLINE_SERVICES_DOMAIN_R1 */
+  let consultDomainCheckSequence = 0;
+
+  function normalizeConsultDomain(value) {
+    return String(value || "")
+      .trim()
+      .toLowerCase()
+      .replace(/^https?:\/\//, "")
+      .replace(/^www\./, "")
+      .split(/[/?#]/)[0]
+      .replace(/\.$/, "");
+  }
+
+  function resetConsultDomainResult() {
+    consultDomainCheckSequence += 1;
+
+    if (consultDomainCheck) {
+      const editable =
+        currentLead &&
+        ["new", "contacted"].includes(currentLead.status);
+
+      consultDomainCheck.disabled = !editable;
+      consultDomainCheck.textContent = "Cek Ketersediaan";
+    }
+
+    if (!consultDomainResult) return;
+
+    consultDomainResult.hidden = true;
+    consultDomainResult.className = "consult-domain-result";
+    consultDomainResult.textContent = "";
+  }
+
+  function showConsultDomainResult(type, title, detail = "") {
+    if (!consultDomainResult) return;
+
+    consultDomainResult.hidden = false;
+    consultDomainResult.className =
+      `consult-domain-result is-${type}`;
+
+    consultDomainResult.textContent = "";
+
+    const strong = document.createElement("strong");
+    strong.textContent = title;
+    consultDomainResult.appendChild(strong);
+
+    if (detail) {
+      const small = document.createElement("small");
+      small.textContent = detail;
+      consultDomainResult.appendChild(small);
+    }
+  }
+
+  function renderSavedConsultDomainState(lead) {
+    resetConsultDomainResult();
+
+    if (
+      consultDomainMode.value !== "new" ||
+      !lead.domain_name
+    ) {
+      return;
+    }
+
+    const domain =
+      normalizeConsultDomain(lead.domain_name);
+
+    if (!domain) return;
+
+    if (lead.domain_status === "unregistered") {
+      showConsultDomainResult(
+        "success",
+        `${domain} belum terdaftar`,
+        "Kandidat tersedia pada pengecekan terakhir. Ketersediaan akan dikonfirmasi ulang saat kebutuhan disimpan."
+      );
+      return;
+    }
+
+    if (lead.domain_status === "registered") {
+      showConsultDomainResult(
+        "error",
+        `${domain} sudah terdaftar`,
+        "Silakan gunakan nama domain lain."
+      );
+      return;
+    }
+
+    if (lead.domain_status) {
+      showConsultDomainResult(
+        "warning",
+        "Status domain belum dapat dikonfirmasi.",
+        "Gunakan Cek Ketersediaan untuk memeriksa kembali."
+      );
+    }
+  }
+
+  async function checkConsultDomainAvailability() {
+    if (
+      consultDomainMode.value !== "new" ||
+      !consultDomainCheck
+    ) {
+      return;
+    }
+
+    const domain =
+      normalizeConsultDomain(consultDomainName.value);
+
+    if (!domain) {
+      showConsultDomainResult(
+        "warning",
+        "Masukkan nama domain terlebih dahulu.",
+        "Contoh: namabisnis.com"
+      );
+      consultDomainName.focus();
+      return;
+    }
+
+    const requestNumber =
+      ++consultDomainCheckSequence;
+
+    consultDomainCheck.disabled = true;
+    consultDomainCheck.textContent = "Memeriksa...";
+
+    showConsultDomainResult(
+      "loading",
+      `Memeriksa ${domain}...`,
+      "Menghubungi registry domain."
+    );
+
+    try {
+      const response =
+        await api(
+          `/public/domain-check?domain=${encodeURIComponent(domain)}`
+        );
+
+      const data =
+        await readJson(response);
+
+      if (
+        requestNumber !== consultDomainCheckSequence
+      ) {
+        return;
+      }
+
+      if (!response.ok || !data?.ok) {
+        showConsultDomainResult(
+          "error",
+          "Nama domain tidak dapat diperiksa.",
+          data?.error || "Periksa kembali nama domain."
+        );
+        return;
+      }
+
+      const checkedDomain =
+        data.domain || domain;
+
+      if (data.status === "unregistered") {
+        showConsultDomainResult(
+          "success",
+          `${checkedDomain} belum terdaftar`,
+          "Kandidat tersedia. Ketersediaan akan dikonfirmasi ulang saat kebutuhan disimpan."
+        );
+      } else if (data.status === "registered") {
+        showConsultDomainResult(
+          "error",
+          `${checkedDomain} sudah terdaftar`,
+          "Silakan coba nama domain lain."
+        );
+      } else {
+        showConsultDomainResult(
+          "warning",
+          "Status domain belum dapat dikonfirmasi.",
+          "Silakan coba kembali atau gunakan nama domain lain."
+        );
+      }
+    } catch (error) {
+      if (
+        requestNumber !== consultDomainCheckSequence
+      ) {
+        return;
+      }
+
+      showConsultDomainResult(
+        "error",
+        "Pengecekan domain gagal.",
+        "Periksa koneksi dan coba kembali."
+      );
+    } finally {
+      if (
+        requestNumber === consultDomainCheckSequence
+      ) {
+        const editable =
+          currentLead &&
+          ["new", "contacted"].includes(currentLead.status);
+
+        consultDomainCheck.disabled = !editable;
+        consultDomainCheck.textContent = "Cek Ketersediaan";
+      }
+    }
+  }
   function syncConsultationConditionalFields() {
     const domainMode = consultDomainMode.value;
     const needsDomainName =
@@ -242,6 +444,8 @@
 
     consultDomainNameField.hidden = !needsDomainName;
     consultDomainName.required = needsDomainName;
+
+    consultDomainCheck.hidden = domainMode !== "new";
 
     const needsTargetDate =
       consultTimeline.value === "target_date";
@@ -318,6 +522,8 @@
 
     Array.from(consultationForm.elements)
       .forEach((element) => {
+        if (element.matches("[data-service-action]")) return;
+
         if (
           element instanceof HTMLButtonElement ||
           element instanceof HTMLInputElement ||
@@ -355,6 +561,7 @@
         : "Kebutuhan sudah dikunci pada tahap proses saat ini.";
 
     syncConsultationConditionalFields();
+    renderSavedConsultDomainState(lead);
 
     const continueButton =
       document.getElementById("continueConsultation");
@@ -696,7 +903,27 @@
     .addEventListener("submit", handleConsultationSubmit);
 
   consultDomainMode
-    .addEventListener("change", syncConsultationConditionalFields);
+    .addEventListener("change", () => {
+      resetConsultDomainResult();
+      syncConsultationConditionalFields();
+    });
+
+  consultDomainName
+    .addEventListener("input", resetConsultDomainResult);
+
+  consultDomainName
+    .addEventListener("keydown", (event) => {
+      if (
+        event.key === "Enter" &&
+        consultDomainMode.value === "new"
+      ) {
+        event.preventDefault();
+        checkConsultDomainAvailability();
+      }
+    });
+
+  consultDomainCheck
+    .addEventListener("click", checkConsultDomainAvailability);
 
   consultTimeline
     .addEventListener("change", syncConsultationConditionalFields);
