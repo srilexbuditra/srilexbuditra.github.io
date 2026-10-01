@@ -53,6 +53,8 @@
     document.getElementById("consultDomainName");
   const consultDomainNameField =
     document.getElementById("consultDomainNameField");
+  const consultDomainTld =
+    document.getElementById("consultDomainTld");
   const consultDomainCheck =
     document.getElementById("consultDomainCheck");
   const consultDomainResult =
@@ -252,6 +254,18 @@
       .replace(/\.$/, "");
   }
 
+  function composeConsultDomain() {
+    const input =
+      normalizeConsultDomain(consultDomainName.value);
+
+    if (!input) return "";
+
+    if (input.includes(".")) {
+      return input;
+    }
+
+    return `${input}${consultDomainTld?.value || ".com"}`;
+  }
   function resetConsultDomainResult() {
     consultDomainCheckSequence += 1;
 
@@ -342,7 +356,7 @@
     }
 
     const domain =
-      normalizeConsultDomain(consultDomainName.value);
+      composeConsultDomain();
 
     if (!domain) {
       showConsultDomainResult(
@@ -445,7 +459,13 @@
     consultDomainNameField.hidden = !needsDomainName;
     consultDomainName.required = needsDomainName;
 
+    consultDomainTld.hidden = domainMode !== "new";
     consultDomainCheck.hidden = domainMode !== "new";
+
+    consultDomainHint.textContent =
+      domainMode === "new"
+        ? "Masukkan nama tanpa www. Jika belum menulis ekstensi, pilih ekstensi di samping."
+        : "Masukkan nama domain tanpa https://";
 
     const needsTargetDate =
       consultTimeline.value === "target_date";
@@ -480,8 +500,36 @@
         ? lead.domain_mode
         : "none";
 
-    consultDomainName.value =
-      lead.domain_name || "";
+    const storedDomain =
+      normalizeConsultDomain(lead.domain_name || "");
+
+    const knownDomainTlds = [
+      ".co.id",
+      ".web.id",
+      ".my.id",
+      ".com",
+      ".id",
+      ".net",
+      ".org"
+    ];
+
+    const matchedDomainTld =
+      consultDomainMode.value === "new"
+        ? knownDomainTlds.find((tld) =>
+            storedDomain.endsWith(tld) &&
+            storedDomain.length > tld.length
+          )
+        : null;
+
+    if (matchedDomainTld) {
+      consultDomainName.value =
+        storedDomain.slice(0, -matchedDomainTld.length);
+      consultDomainTld.value =
+        matchedDomainTld;
+    } else {
+      consultDomainName.value =
+        storedDomain;
+    }
 
     consultHosting.value =
       ["none", "owned", "needed"].includes(lead.hosting_mode)
@@ -658,7 +706,11 @@
             domain_name:
               consultDomainMode.value === "none"
                 ? null
-                : consultDomainName.value.trim(),
+                : (
+                    consultDomainMode.value === "new"
+                      ? composeConsultDomain()
+                      : normalizeConsultDomain(consultDomainName.value)
+                  ),
             hosting_mode: consultHosting.value,
             target_timeline: consultTimeline.value,
             target_date:
@@ -910,6 +962,9 @@
 
   consultDomainName
     .addEventListener("input", resetConsultDomainResult);
+
+  consultDomainTld
+    .addEventListener("change", resetConsultDomainResult);
 
   consultDomainName
     .addEventListener("keydown", (event) => {

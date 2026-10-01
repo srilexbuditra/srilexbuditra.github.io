@@ -858,13 +858,18 @@ button {
 
 .consult-domain-row {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr) minmax(88px, auto) auto;
   gap: 8px;
   align-items: stretch;
 }
 
-.consult-domain-row input {
+.consult-domain-row input,
+.consult-domain-row select {
   min-width: 0;
+}
+
+.consult-domain-row select {
+  width: 96px;
 }
 
 .consult-domain-check {
@@ -931,6 +936,7 @@ button {
     grid-template-columns: 1fr;
   }
 
+  .consult-domain-row select,
   .consult-domain-check {
     width: 100%;
     min-width: 0;

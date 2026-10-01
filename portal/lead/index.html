@@ -203,7 +203,16 @@
             <div class="field" id="consultDomainNameField" hidden>
               <label class="field-label" for="consultDomainName">Nama domain</label>
               <div class="consult-domain-row">
-                <input id="consultDomainName" type="text" inputmode="url" autocomplete="off" spellcheck="false" placeholder="contoh: bisnisanda.com">
+                <input id="consultDomainName" type="text" inputmode="url" autocomplete="off" spellcheck="false" placeholder="contoh: namabisnis">
+                <select id="consultDomainTld" aria-label="Ekstensi domain" hidden>
+                  <option value=".com">.com</option>
+                  <option value=".id">.id</option>
+                  <option value=".co.id">.co.id</option>
+                  <option value=".net">.net</option>
+                  <option value=".org">.org</option>
+                  <option value=".web.id">.web.id</option>
+                  <option value=".my.id">.my.id</option>
+                </select>
                 <button class="consult-domain-check" id="consultDomainCheck" type="button" hidden>Cek Ketersediaan</button>
               </div>
               <small id="consultDomainHint">Masukkan nama domain tanpa https://</small>
@@ -273,6 +282,6 @@
   <footer class="lead-footer">&copy; Srilex Buditra &bull; Portal &amp; Consultation Platform R1</footer>
 </div>
 
-<script src="./lead.js?v=lead-workflow-domain-r1"></script>
+<script src="./lead.js?v=lead-domain-tld-r1"></script>
 </body>
 </html>
