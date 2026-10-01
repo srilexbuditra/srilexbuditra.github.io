@@ -38,6 +38,40 @@
   const retry = document.getElementById("leadRetry");
   const logout = document.getElementById("leadLogout");
 
+  /* SB_LEAD_CONSULTATION_UI_R1 */
+  const consultationForm =
+    document.getElementById("consultationForm");
+  const consultationState =
+    document.getElementById("consultationState");
+  const consultService =
+    document.getElementById("consultService");
+  const consultPackage =
+    document.getElementById("consultPackage");
+  const consultDomainMode =
+    document.getElementById("consultDomainMode");
+  const consultDomainName =
+    document.getElementById("consultDomainName");
+  const consultDomainNameField =
+    document.getElementById("consultDomainNameField");
+  const consultHosting =
+    document.getElementById("consultHosting");
+  const consultTimeline =
+    document.getElementById("consultTimeline");
+  const consultTargetDate =
+    document.getElementById("consultTargetDate");
+  const consultTargetDateField =
+    document.getElementById("consultTargetDateField");
+  const consultDescription =
+    document.getElementById("consultDescription");
+  const consultEstimate =
+    document.getElementById("consultEstimate");
+  const consultSubmit =
+    document.getElementById("consultSubmit");
+  const consultFeedback =
+    document.getElementById("consultFeedback");
+
+  let currentLead = null;
+
   function api(path, options = {}) {
     return fetch(`${API_BASE}${path}`, {
       credentials: "same-origin",
@@ -178,9 +212,172 @@
     }
   }
 
-  function focusServiceOptions() {
+  /* SB_LEAD_CONSULTATION_UI_R1 */
+  const extraValueByLabel = {
+    "Form / WhatsApp": "500000",
+    "Dashboard Admin": "1000000",
+    "Login & Role": "1500000",
+    "Integrasi API": "2500000"
+  };
+
+  function formatRupiah(value) {
+    const amount = Number(value);
+    if (!Number.isFinite(amount)) return "Konsultasi";
+    return `Rp ${new Intl.NumberFormat("id-ID").format(amount)}`;
+  }
+
+  function selectedExtraValuesFromLead(lead) {
+    return String(lead.extra_feature || "")
+      .split(",")
+      .map((item) => item.trim())
+      .filter(Boolean)
+      .map((label) => extraValueByLabel[label])
+      .filter(Boolean);
+  }
+
+  function syncConsultationConditionalFields() {
+    const domainMode = consultDomainMode.value;
+    const needsDomainName =
+      domainMode === "owned" || domainMode === "new";
+
+    consultDomainNameField.hidden = !needsDomainName;
+    consultDomainName.required = needsDomainName;
+
+    const needsTargetDate =
+      consultTimeline.value === "target_date";
+
+    consultTargetDateField.hidden = !needsTargetDate;
+    consultTargetDate.required = needsTargetDate;
+  }
+
+  function renderConsultationForm(lead) {
+    currentLead = lead;
+
+    consultService.value =
+      lead.service_interest || "Belum ditentukan";
+
+    consultPackage.value =
+      ["Starter", "Professional", "Business", "Custom"]
+        .includes(lead.package_name)
+        ? lead.package_name
+        : "Professional";
+
+    const selectedExtras =
+      new Set(selectedExtraValuesFromLead(lead));
+
+    document
+      .querySelectorAll('input[name="consultExtra"]')
+      .forEach((input) => {
+        input.checked = selectedExtras.has(input.value);
+      });
+
+    consultDomainMode.value =
+      ["none", "owned", "new"].includes(lead.domain_mode)
+        ? lead.domain_mode
+        : "none";
+
+    consultDomainName.value =
+      lead.domain_name || "";
+
+    consultHosting.value =
+      ["none", "owned", "needed"].includes(lead.hosting_mode)
+        ? lead.hosting_mode
+        : "none";
+
+    consultTimeline.value =
+      [
+        "flexible",
+        "2_4_weeks",
+        "1_2_months",
+        "target_date"
+      ].includes(lead.target_timeline)
+        ? lead.target_timeline
+        : "flexible";
+
+    consultTargetDate.value =
+      lead.target_date || "";
+
+    consultDescription.value =
+      lead.consultation_description || "";
+
+    consultEstimate.textContent =
+      lead.estimated_amount == null
+        ? "Belum dihitung"
+        : formatRupiah(lead.estimated_amount);
+
+    const submitted =
+      Boolean(lead.consultation_submitted_at);
+
+    consultationState.textContent =
+      submitted
+        ? `Dikirim ${formatDate(lead.consultation_submitted_at)}`
+        : "Belum dikirim";
+
+    const editable =
+      ["new", "contacted"].includes(lead.status);
+
+    Array.from(consultationForm.elements)
+      .forEach((element) => {
+        if (
+          element instanceof HTMLButtonElement ||
+          element instanceof HTMLInputElement ||
+          element instanceof HTMLSelectElement ||
+          element instanceof HTMLTextAreaElement
+        ) {
+          if (element.id === "consultService") {
+            element.disabled = false;
+            element.readOnly = true;
+          } else {
+            element.disabled = !editable;
+          }
+        }
+      });
+
+    consultSubmit.textContent =
+      submitted
+        ? "Simpan Perubahan Kebutuhan"
+        : "Simpan Kebutuhan Konsultasi";
+
+    consultSubmit.hidden = !editable;
+
+    consultFeedback.classList.remove(
+      "is-success",
+      "is-error"
+    );
+
+    consultFeedback.textContent =
+      editable
+        ? (
+            submitted
+              ? "Kebutuhan sudah tersimpan. Anda masih dapat memperbaruinya selama proses konsultasi."
+              : "Lengkapi kebutuhan project lalu simpan untuk melanjutkan konsultasi."
+          )
+        : "Kebutuhan sudah dikunci pada tahap proses saat ini.";
+
+    syncConsultationConditionalFields();
+
+    const continueButton =
+      document.getElementById("continueConsultation");
+
+    if (continueButton) {
+      continueButton.textContent =
+        submitted
+          ? "Lihat / Ubah Kebutuhan"
+          : "Lanjutkan Konsultasi";
+    }
+
+    if (
+      lead.status === "new" &&
+      submitted
+    ) {
+      document.getElementById("nextAction").textContent =
+        "Kebutuhan konsultasi telah dikirim. Tim akan meninjau data Anda sebelum proses berikutnya.";
+    }
+  }
+
+  function focusConsultationPanel() {
     const section =
-      document.getElementById("leadServices");
+      document.getElementById("leadConsultation");
 
     if (!section) return;
 
@@ -188,7 +385,126 @@
       behavior: "smooth",
       block: "start"
     });
+
+    setTimeout(() => {
+      const firstEditable =
+        section.querySelector(
+          "select:not(:disabled), textarea:not(:disabled), input:not([readonly]):not(:disabled)"
+        );
+
+      if (firstEditable) {
+        firstEditable.focus({
+          preventScroll: true
+        });
+      }
+    }, 350);
   }
+
+  async function handleConsultationSubmit(event) {
+    event.preventDefault();
+
+    if (!currentLead) return;
+
+    const editable =
+      ["new", "contacted"].includes(currentLead.status);
+
+    if (!editable) return;
+
+    syncConsultationConditionalFields();
+
+    if (!consultationForm.reportValidity()) {
+      return;
+    }
+
+    const extraValues =
+      Array.from(
+        document.querySelectorAll(
+          'input[name="consultExtra"]:checked'
+        )
+      ).map((input) => input.value);
+
+    consultSubmit.disabled = true;
+    consultSubmit.textContent = "Menyimpan...";
+
+    consultFeedback.classList.remove(
+      "is-success",
+      "is-error"
+    );
+
+    consultFeedback.textContent =
+      "Menyimpan kebutuhan konsultasi...";
+
+    try {
+      const response =
+        await api("/lead/consultation", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            package_name: consultPackage.value,
+            extra_values:
+              extraValues.length
+                ? extraValues
+                : ["0"],
+            domain_mode: consultDomainMode.value,
+            domain_name:
+              consultDomainMode.value === "none"
+                ? null
+                : consultDomainName.value.trim(),
+            hosting_mode: consultHosting.value,
+            target_timeline: consultTimeline.value,
+            target_date:
+              consultTimeline.value === "target_date"
+                ? consultTargetDate.value
+                : null,
+            consultation_description:
+              consultDescription.value.trim()
+          })
+        });
+
+      const data = await readJson(response);
+
+      if (!response.ok) {
+        throw new Error(
+          data.error ||
+          "Kebutuhan konsultasi belum dapat disimpan."
+        );
+      }
+
+      const saved =
+        data.consultation || {};
+
+      currentLead = {
+        ...currentLead,
+        ...saved
+      };
+
+      renderConsultationForm(currentLead);
+
+      consultFeedback.classList.add("is-success");
+      consultFeedback.textContent =
+        "Kebutuhan konsultasi berhasil disimpan.";
+
+    } catch (error) {
+      consultFeedback.classList.add("is-error");
+      consultFeedback.textContent =
+        error instanceof Error
+          ? error.message
+          : "Kebutuhan konsultasi belum dapat disimpan.";
+
+    } finally {
+      consultSubmit.disabled = false;
+
+      if (currentLead) {
+        consultSubmit.textContent =
+          currentLead.consultation_submitted_at
+            ? "Simpan Perubahan Kebutuhan"
+            : "Simpan Kebutuhan Konsultasi";
+      }
+    }
+  }
+
 
   async function handleServiceInterest(event) {
     const button =
@@ -305,6 +621,7 @@
 
     renderProgress(lead.status);
     renderServiceActions(lead);
+    renderConsultationForm(lead);
 
     loading.hidden = true;
     errorPanel.hidden = true;
@@ -373,7 +690,16 @@
 
   document
     .getElementById("continueConsultation")
-    .addEventListener("click", focusServiceOptions);
+    .addEventListener("click", focusConsultationPanel);
+
+  consultationForm
+    .addEventListener("submit", handleConsultationSubmit);
+
+  consultDomainMode
+    .addEventListener("change", syncConsultationConditionalFields);
+
+  consultTimeline
+    .addEventListener("change", syncConsultationConditionalFields);
 
   document
     .querySelector(".services-grid")

@@ -535,3 +535,195 @@ button {
 #leadServices {
   scroll-margin-top: 92px;
 }
+/* SB_LEAD_CONSULTATION_UI_R1 */
+#leadConsultation {
+  scroll-margin-top: 92px;
+}
+
+.consultation-panel {
+  margin-bottom: 20px;
+}
+
+.consultation-intro {
+  max-width: 760px;
+  margin: 0 0 20px;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.consultation-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.field {
+  min-width: 0;
+}
+
+.field-wide {
+  grid-column: 1 / -1;
+}
+
+.field > span,
+.feature-field legend {
+  display: block;
+  margin-bottom: 8px;
+  color: #dbeafe;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.field input,
+.field select,
+.field textarea {
+  width: 100%;
+  border: 1px solid var(--line-strong);
+  border-radius: 11px;
+  background: rgba(255,255,255,.035);
+  color: var(--text);
+  padding: 11px 12px;
+  outline: none;
+}
+
+.field textarea {
+  min-height: 132px;
+  resize: vertical;
+  line-height: 1.6;
+}
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  border-color: rgba(34,197,94,.55);
+  box-shadow: 0 0 0 3px rgba(34,197,94,.09);
+}
+
+.field input[readonly],
+.field input:disabled,
+.field select:disabled,
+.field textarea:disabled {
+  cursor: default;
+  opacity: .72;
+}
+
+.field small {
+  display: block;
+  margin-top: 7px;
+  color: var(--muted-2);
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+.feature-field {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.feature-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.feature-options label {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+  padding: 11px 12px;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  background: rgba(255,255,255,.025);
+  cursor: pointer;
+}
+
+.feature-options input {
+  width: auto;
+  flex: 0 0 auto;
+  accent-color: var(--brand);
+}
+
+.feature-options span {
+  min-width: 0;
+  color: #dbeafe;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.consultation-summary {
+  display: grid;
+  grid-template-columns: minmax(190px, .45fr) minmax(0, 1fr);
+  gap: 18px;
+  align-items: center;
+  margin-top: 18px;
+  padding: 15px 16px;
+  border: 1px solid rgba(34,197,94,.18);
+  border-radius: 13px;
+  background: rgba(34,197,94,.045);
+}
+
+.consultation-summary span,
+.consultation-summary strong {
+  display: block;
+}
+
+.consultation-summary span {
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.consultation-summary strong {
+  margin-top: 5px;
+  color: #bbf7d0;
+  font-size: 18px;
+}
+
+.consultation-summary small {
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.consultation-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 18px;
+}
+
+.consultation-feedback {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.consultation-feedback.is-success {
+  color: #86efac;
+}
+
+.consultation-feedback.is-error {
+  color: var(--danger);
+}
+
+#consultationState {
+  color: #86efac;
+  font-size: 12px;
+}
+
+@media (max-width: 700px) {
+  .consultation-grid,
+  .feature-options,
+  .consultation-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .consultation-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .consultation-actions .primary-button {
+    width: 100%;
+  }
+}
