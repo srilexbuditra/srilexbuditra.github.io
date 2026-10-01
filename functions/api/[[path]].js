@@ -1,4 +1,4 @@
-﻿const UPSTREAM = "https://srilexbuditra-client-management-api-r1-staging.srilexbuditra.workers.dev";
+﻿const UPSTREAM = "https://lead-consultatio-srilexbuditra-client-management-api-r1-staging.srilexbuditra.workers.dev";
 
 export async function onRequest(context) {
   const request = context.request;
@@ -6,7 +6,7 @@ export async function onRequest(context) {
   const targetUrl = new URL(sourceUrl.pathname + sourceUrl.search, UPSTREAM);
 
   const requestHeaders = new Headers(request.headers);
-  requestHeaders.set("Origin", UPSTREAM);
+  requestHeaders.set("Origin", "https://staging.srilexbuditra.work");
   requestHeaders.delete("Host");
 
   const options = {
