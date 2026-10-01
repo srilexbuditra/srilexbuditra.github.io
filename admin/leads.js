@@ -204,6 +204,21 @@
       .map(item => item.trim())
       .filter(Boolean);
   }
+  /* SB_ADMIN_LEAD_ADDITIONAL_SERVICES_R1 */
+  function leadAdditionalServiceInterests(lead) {
+    const raw =
+      String(
+        lead?.additional_service_interests ||
+        ""
+      ).trim();
+
+    if (!raw) return [];
+
+    return raw
+      .split("|||")
+      .map(item => item.trim())
+      .filter(Boolean);
+  }
 
   function leadDescription(lead) {
     const text =
@@ -334,13 +349,25 @@
   }
 
   function formatLeadCalculatorScope(lead) {
+    const hasConsultation =
+      Boolean(
+        lead?.consultation_submitted_at ||
+        String(
+          lead?.consultation_description ||
+          ""
+        ).trim()
+      );
+
     if (
       !lead ||
-      lead.source !==
-        "Website Calculator"
+      (
+        lead.source !==
+          "Website Calculator" &&
+        !hasConsultation
+      )
     ) {
       return (
-        "Tidak ada data Calculator untuk Lead ini."
+        "Tidak ada data Scope / Konsultasi untuk Lead ini."
       );
     }
 
@@ -357,6 +384,17 @@
         project
       ] ||
       project;
+
+
+    const additionalServices =
+      leadAdditionalServiceInterests(
+        lead
+      );
+
+    const additionalServicesText =
+      additionalServices.length
+        ? additionalServices.join(", ")
+        : "Tidak ada";
 
     const features =
       selectedLeadFeatures(
@@ -436,6 +474,7 @@
       "PROJECT",
       `Package: ${packageName}`,
       `Project: ${projectLabel}`,
+      `Layanan Tambahan: ${additionalServicesText}`,
       `Estimated Amount: ${estimateText}`,
       "",
       "SELECTED FEATURES",
@@ -1917,6 +1956,33 @@
               placeholder="Data Calculator akan tampil di sini."
             ></textarea>
           </div>
+          <!-- SB_ADMIN_LEAD_CONSULTATION_REVIEW_R1 -->
+          <div
+            class="sb-leads-field full"
+            data-lead-consultation-submitted-field
+            hidden
+          >
+            <label>Konsultasi Lead &mdash; Dikirim</label>
+            <input
+              type="text"
+              data-lead-consultation-submitted
+              readonly
+            >
+          </div>
+
+          <div
+            class="sb-leads-field full"
+            data-lead-consultation-description-field
+            hidden
+          >
+            <label>Hasil Konsultasi Lead</label>
+            <textarea
+              data-lead-consultation-description
+              rows="8"
+              readonly
+              placeholder="Belum ada deskripsi konsultasi dari Lead Portal."
+            ></textarea>
+          </div>
         </div>
 
         <div
@@ -2926,6 +2992,64 @@
         formatLeadCalculatorScope(
           lead
         );
+    }
+
+    /* SB_ADMIN_LEAD_CONSULTATION_REVIEW_R1 */
+    const consultationSubmittedField =
+      modal.querySelector(
+        "[data-lead-consultation-submitted-field]"
+      );
+
+    const consultationSubmittedInput =
+      modal.querySelector(
+        "[data-lead-consultation-submitted]"
+      );
+
+    const consultationDescriptionField =
+      modal.querySelector(
+        "[data-lead-consultation-description-field]"
+      );
+
+    const consultationDescriptionInput =
+      modal.querySelector(
+        "[data-lead-consultation-description]"
+      );
+
+    const consultationDescription =
+      String(
+        lead.consultation_description ||
+        ""
+      ).trim();
+
+    const hasConsultation =
+      Boolean(
+        lead.consultation_submitted_at ||
+        consultationDescription
+      );
+
+    if (consultationSubmittedField) {
+      consultationSubmittedField.hidden =
+        !hasConsultation;
+
+      if (consultationSubmittedInput) {
+        consultationSubmittedInput.value =
+          lead.consultation_submitted_at
+            ? formatDate(
+                lead.consultation_submitted_at
+              )
+            : "-";
+      }
+    }
+
+    if (consultationDescriptionField) {
+      consultationDescriptionField.hidden =
+        !hasConsultation;
+
+      if (consultationDescriptionInput) {
+        consultationDescriptionInput.value =
+          consultationDescription ||
+          "Tidak ada deskripsi konsultasi tambahan.";
+      }
     }
 
     syncLeadRichPreviews(

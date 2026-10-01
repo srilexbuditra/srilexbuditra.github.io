@@ -5891,6 +5891,9 @@ async function listAdminLeads(request, env, auth) {
        l.hosting_mode,
        l.target_timeline,
        l.target_date,
+       /* SB_ADMIN_LEAD_CONSULTATION_REVIEW_R1 */
+       l.consultation_description,
+       l.consultation_submitted_at,
        l.status,
        l.assigned_to_user_id,
        l.next_follow_up_at,
@@ -5905,6 +5908,15 @@ async function listAdminLeads(request, env, auth) {
 
        cc.client_code AS converted_client_code,
        cc.full_name AS converted_client_name,
+       /* SB_ADMIN_LEAD_ADDITIONAL_SERVICES_R1 */
+       (
+         SELECT GROUP_CONCAT(
+           lsi.service_name,
+           '|||'
+         )
+         FROM lead_service_interests lsi
+         WHERE lsi.lead_id = l.id
+       ) AS additional_service_interests,
 
        (
          SELECT COUNT(*)
