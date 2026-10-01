@@ -727,3 +727,22 @@ button {
     width: 100%;
   }
 }
+/* SB_LEAD_SELECT_OPTION_CONTRAST_R1 */
+#leadDashboard select {
+  color-scheme: dark;
+}
+
+#leadDashboard select option,
+#leadDashboard select optgroup {
+  background: #101c16;
+  color: #f8fafc;
+}
+
+#leadDashboard select option:checked {
+  background: #163524;
+  color: #ffffff;
+}
+
+#leadDashboard select option:disabled {
+  color: #64748b;
+}
