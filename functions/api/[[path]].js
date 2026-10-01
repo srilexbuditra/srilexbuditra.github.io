@@ -1,4 +1,4 @@
-﻿const UPSTREAM = "https://f1bca8cb-srilexbuditra-client-management-api-r1-staging.srilexbuditra.workers.dev";
+const UPSTREAM = "https://0ae655ac-srilexbuditra-client-management-api-r1-staging.srilexbuditra.workers.dev";
 
 export async function onRequest(context) {
   const request = context.request;
