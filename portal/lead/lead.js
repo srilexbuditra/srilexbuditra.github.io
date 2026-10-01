@@ -1132,6 +1132,7 @@
         ...saved
       };
 
+      renderProgress(currentLead.status);
       renderConsultationForm(currentLead);
 
       consultFeedback.classList.add("is-success");

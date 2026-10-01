@@ -5082,6 +5082,80 @@
       });
   }
 
+  /*
+   * SELF-SERVICE PROCESS SYNC R1
+   * Reuse detail Lead yang sudah ada untuk Admin Notification.
+   */
+  window.SB_ADMIN_OPEN_LEAD =
+    async id => {
+      const leadId =
+        String(id || "").trim();
+
+      if (!leadId) {
+        return false;
+      }
+
+      const leadNav =
+        [
+          ...document.querySelectorAll(
+            ".nav a, .mobile-nav a"
+          )
+        ].find(
+          link =>
+            String(
+              link.textContent || ""
+            )
+              .trim()
+              .toLowerCase() ===
+            "leads"
+        );
+
+      if (leadNav) {
+        leadNav.click();
+      } else {
+        [
+          ...content.children
+        ].forEach(node => {
+          if (node !== view) {
+            node.style.display =
+              "none";
+          }
+        });
+
+        view.style.removeProperty(
+          "display"
+        );
+
+        view.hidden = false;
+        setLeadsNavigationActive();
+      }
+
+      try {
+        await loadLeadAssignmentContext();
+      } catch (error) {
+        console.warn(
+          "LEAD_NOTIFICATION_CONTEXT_FAILED",
+          error
+        );
+      }
+
+      await loadLeads();
+
+      const accessible =
+        leads.some(
+          item =>
+            item.id === leadId
+        );
+
+      if (!accessible) {
+        return false;
+      }
+
+      await openEdit(leadId);
+
+      return true;
+    };
+
   const observer =
     new MutationObserver(() => {
       if (!view.hidden) {

@@ -921,6 +921,11 @@
           "support_ticket" &&
         Boolean(item.entity_id);
 
+      const isLeadTarget =
+        item.entity_type ===
+          "lead" &&
+        Boolean(item.entity_id);
+
       if (isSupportTarget) {
         row.classList.add(
           "is-actionable"
@@ -984,8 +989,71 @@
       }
 
 
+      if (isLeadTarget) {
+        row.classList.add(
+          "is-actionable"
+        );
+
+        row.tabIndex = 0;
+
+        row.setAttribute(
+          "role",
+          "button"
+        );
+
+        row.setAttribute(
+          "aria-label",
+          "Buka detail Lead"
+        );
+
+        const openLeadTarget =
+          async () => {
+            await markNotificationRead(
+              item,
+              row
+            );
+
+            closePanel();
+
+            const openLead =
+              window
+                .SB_ADMIN_OPEN_LEAD;
+
+            if (
+              typeof openLead ===
+                "function"
+            ) {
+              void openLead(
+                item.entity_id
+              );
+            }
+          };
+
+        row.addEventListener(
+          "click",
+          openLeadTarget
+        );
+
+        row.addEventListener(
+          "keydown",
+          event => {
+            if (
+              event.key !== "Enter" &&
+              event.key !== " "
+            ) {
+              return;
+            }
+
+            event.preventDefault();
+            void openLeadTarget();
+          }
+        );
+      }
+
+
       if (
         !isSupportTarget &&
+        !isLeadTarget &&
         isUnread
       ) {
         row.classList.add(

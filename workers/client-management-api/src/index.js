@@ -3062,6 +3062,11 @@ async function saveOwnLeadConsultation(request, env, auth) {
 
   const timestamp = nowIso();
 
+  const nextLeadStatus =
+    lead.status === "new"
+      ? "contacted"
+      : lead.status;
+
   const updateResult =
     await env.DB.prepare(
       `UPDATE leads
@@ -3082,6 +3087,12 @@ async function saveOwnLeadConsultation(request, env, auth) {
              consultation_submitted_at,
              ?
            ),
+         status =
+           CASE
+             WHEN status = 'new'
+               THEN 'contacted'
+             ELSE status
+           END,
          updated_at = ?
        WHERE id = ?
          AND account_user_id = ?
@@ -3123,13 +3134,18 @@ async function saveOwnLeadConsultation(request, env, auth) {
     );
   }
 
+  const firstSubmission =
+    !lead.consultation_submitted_at;
+
   await writeActivity(
     env,
     auth.user.id,
     "LEAD_CONSULTATION_SAVED",
     "lead",
     lead.id,
-    `Consultation requirements saved for ${lead.lead_code}.`
+    firstSubmission
+      ? `Lead ${lead.lead_code} mengirim kebutuhan konsultasi dan siap ditinjau.`
+      : `Lead ${lead.lead_code} memperbarui kebutuhan konsultasi.`
   );
 
   return apiResponse(
@@ -3153,6 +3169,7 @@ async function saveOwnLeadConsultation(request, env, auth) {
         consultation_submitted_at:
           lead.consultation_submitted_at ||
           timestamp,
+        status: nextLeadStatus,
         updated_at: timestamp
       }
     },
