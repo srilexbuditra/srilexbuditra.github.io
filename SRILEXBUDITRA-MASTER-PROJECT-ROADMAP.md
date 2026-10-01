@@ -27,13 +27,45 @@ Aturan:
 
 ## 3. Checkpoint Source Terakhir
 
-- Branch: `feature/client-management-r1`
-- HEAD: `de37cef`
-- Origin branch: `de37cef`
-- Working tree: clean
-- Commit terakhir: `de37cef fix: preserve notification layout after read`
+### Latest clean / pushed checkpoint
 
-> Jika source sudah bergerak setelah file ini dibuat, update bagian ini terlebih dahulu.
+- Branch: `feature/client-management-r1`
+- HEAD: `87c9b5d`
+- Origin: `origin/feature/client-management-r1 = 87c9b5d`
+- Commit pin staging: `87c9b5d chore: pin staging api to lead follow-up semantics preview`
+- Commit source PATCH B2: `d6403d4 fix: preserve explicit lead follow-up semantics`
+- Working tree terakhir: **CLEAN**
+- Staging Worker candidate Version ID: `0ae655ac-ea45-4b4e-991a-00911ef79eee`
+- Immutable preview prefix: `0ae655ac`
+- Staging proxy aktif: `functions/api/[[path]].js` → `https://0ae655ac-srilexbuditra-client-management-api-r1-staging.srilexbuditra.workers.dev`
+- D1 staging: `srilexbuditra-client-management-staging`
+- D1 UUID: `96adf8ed-2793-4db6-93a7-1ab27230b187`
+- Admin Leads cache marker: `leads.js?v=lead-followup-semantics-r1`
+- `LEAD SELF-SERVICE UX R1 — PATCH B2 FOLLOW-UP SEMANTICS`: **LOCKED / PASS**
+- Production: **HOLD** sampai Lead Self-Service / Public Lead Flow Final Closeout R1 selesai dan staging final siap release.
+
+### Bukti final PATCH B2
+
+- Candidate Worker binding diverifikasi lengkap sebelum staging dipin.
+- Direct candidate `/api/health`: HTTP `200`.
+- Staging delivery `/api/health`: HTTP `200`.
+- Frontend staging memuat cache marker PATCH B2.
+- Runtime Lead: `LEAD-2026-5B6A0C36`.
+- CRM `contacted` tanpa proof tampil **Belum Follow-up** dan tombol follow-up aktif.
+- Explicit Admin follow-up mengubah UI menjadi **Sudah dihubungi + timestamp** tanpa mengubah CRM dari `contacted`.
+- State tetap persisten setelah reload.
+- Lead Portal tetap **Konsultasi berlangsung — Tahap 2 dari 5**.
+- Final D1 proof:
+  - `lead_contacted_count = 1`
+  - action `LEAD_CONTACTED`
+  - tidak ada duplikasi activity.
+
+### Aturan continuity
+
+- Jangan kembali ke checkpoint WIP `38f6642`.
+- `38f6642` sudah superseded oleh `d6403d4` dan `87c9b5d`.
+- Jangan mengulang PATCH B2 atau modul `LOCKED/PASS` kecuali ada regression nyata.
+- Gunakan `87c9b5d` sebagai checkpoint source/staging terbaru.
 
 ## 4. Modul yang Sudah LOCKED / PASS
 
@@ -47,8 +79,10 @@ Aturan:
 8. CLIENT NOTIFICATIONS R1
 9. ADMIN DASHBOARD ACTIONS & LIVE STATS R1
 10. CLIENT DASHBOARD ACTIONS & LIVE STATS R1
+11. SELF-SERVICE PROCESS SYNC R1 — STAGING RUNTIME
+12. LEAD SELF-SERVICE UX R1 — PATCH B2 FOLLOW-UP SEMANTICS
 
-Tambahan yang sudah terbukti pada runtime sebelumnya:
+Tambahan yang sudah terbukti pada runtime:
 - Client data isolation
 - Lead cross-staff isolation
 - Support cross-staff isolation
@@ -58,6 +92,18 @@ Tambahan yang sudah terbukti pada runtime sebelumnya:
 - Client mobile navigation
 - Support create/reply flow
 - Assignment/reassignment foundation
+- Consultation Wizard save/persistence
+- Lead `new → contacted` otomatis setelah konsultasi valid
+- Lead Portal langsung sinkron ke `Konsultasi berlangsung`
+- Admin Activity/Notification Lead → detail Lead routing
+- Explicit Admin follow-up proof menggunakan `LEAD_CONTACTED` / `contacted_at`
+- Explicit follow-up tidak menduplikasi activity `LEAD_CONTACTED`
+
+### Catatan
+
+- Jangan menaikkan seluruh `Public Lead Registration / Lead Self-Service` menjadi full-flow LOCKED hanya dari PATCH B2.
+- Final closeout end-to-end tetap harus selesai sebelum Production Release R1.
+- `LEAD OFFICIAL ESTIMATE R1` sudah memiliki backend/source yang berkembang, tetapi lifecycle finalnya belum dianggap selesai.
 
 ## 5. Arah Produk yang Disepakati
 
@@ -223,19 +269,51 @@ Pekerjaan ini **ditunda sementara** sampai Public Lead Registration + Production
 ## 12. Prioritas Development Sekarang
 
 ### CURRENT FOCUS
-**PUBLIC LEAD REGISTRATION R1 + HOMEPAGE PORTAL ENTRY**
+**LEAD SELF-SERVICE / PUBLIC LEAD FLOW — FINAL CLOSEOUT R1**
 
-Urutan:
-1. Audit fondasi Lead Portal dan Public Registration.
-2. Tambahkan Homepage Portal Entry.
-3. Bangun Public Lead Registration.
-4. Pastikan service context terbawa.
-5. Bangun/aktifkan Lead Account + Lead Portal minimum.
-6. Tampilkan Lead progress.
-7. Tampilkan layanan yang diminati.
-8. Integrasikan Lead baru ke Admin Lead Management.
-9. Test staging hanya bagian baru + integrasi kritis.
-10. LOCKED/PASS.
+PATCH B2 Follow-up Semantics sudah **LOCKED / PASS**. Jangan mengulang patch tersebut.
+
+Tujuan closeout berikutnya adalah membuktikan seluruh jalur Lead tetap menyatu secara end-to-end sebelum `PRODUCTION RELEASE R1`.
+
+Urutan lanjut yang dikunci:
+
+1. Mulai dari checkpoint clean `87c9b5d`.
+2. Audit source/status sebelum perubahan baru.
+3. Lakukan smoke/regression **terarah**, bukan mengulang seluruh modul LOCKED/PASS.
+4. Verifikasi jalur utama:
+   - Homepage / Services → Public Lead Registration;
+   - registrasi sukses → `Masuk Portal`;
+   - Lead login → Lead Portal;
+   - Consultation Wizard / kebutuhan tersimpan;
+   - Lead Portal sinkron ke `Konsultasi berlangsung`;
+   - Admin dapat membuka Lead yang benar;
+   - explicit Admin follow-up semantics tetap benar;
+   - jalur Official Estimate / handoff yang sudah tersedia tidak regression.
+5. Verifikasi role/isolation hanya pada jalur yang disentuh closeout.
+6. Catat hanya gap yang benar-benar masih terbuka.
+7. Patch gap secara minimal bila ditemukan.
+8. Jika source berubah:
+   `VERIFY SOURCE → COMMIT → PUSH → STAGING RUNTIME TEST`.
+9. Jika seluruh Lead flow minimum PASS:
+   `LEAD SELF-SERVICE / PUBLIC LEAD FLOW — FINAL CLOSEOUT R1 = LOCKED/PASS`.
+10. Setelah closeout terkunci, lanjut `PRODUCTION RELEASE R1`.
+
+### PATCH B2 — status final
+
+**LOCKED / PASS**
+
+Bukti:
+- source patch `d6403d4` committed/pushed;
+- Worker candidate `0ae655ac-ea45-4b4e-991a-00911ef79eee` binding-verified;
+- staging proxy pin `87c9b5d` committed/pushed;
+- staging delivery HTTP 200;
+- runtime sebelum explicit follow-up:
+  CRM `contacted` + `Belum Follow-up` + tombol aktif;
+- runtime sesudah follow-up:
+  `Sudah dihubungi + timestamp`, CRM tetap `contacted`;
+- persistence setelah reload PASS;
+- Lead Portal tidak regression;
+- D1 proof tepat `1` activity `LEAD_CONTACTED`.
 
 ## 13. Production Release Strategy — Dikunci
 
@@ -359,13 +437,67 @@ Jika ada konflik informasi, prioritas:
 
 Tujuannya: **melanjutkan progres, bukan mengulang dari awal**.
 
+## 20. PATCH B2 Follow-up Semantics — Final Lock 2 Okt 2026
+
+Milestone:
+`LEAD SELF-SERVICE UX R1 — PATCH B2 FOLLOW-UP SEMANTICS`
+
+Status: **LOCKED / PASS**
+
+Checkpoint:
+- source commit: `d6403d4 fix: preserve explicit lead follow-up semantics`;
+- staging pin commit: `87c9b5d chore: pin staging api to lead follow-up semantics preview`;
+- Worker Version ID: `0ae655ac-ea45-4b4e-991a-00911ef79eee`;
+- preview prefix: `0ae655ac`;
+- branch: `feature/client-management-r1`;
+- HEAD = origin: `87c9b5d`;
+- working tree: clean.
+
+Runtime evidence:
+- staging API health PASS;
+- deployed Admin cache marker: `leads.js?v=lead-followup-semantics-r1`;
+- Lead `LEAD-2026-5B6A0C36` berstatus CRM `contacted`;
+- sebelum explicit follow-up tampil `Belum Follow-up`;
+- tombol `Tandai Sudah Dihubungi` tersedia;
+- setelah satu klik tampil `Sudah dihubungi` + timestamp;
+- tombol menjadi nonaktif;
+- setelah reload state tetap persisten;
+- status CRM tetap `contacted`;
+- Lead Portal tetap `Konsultasi berlangsung`, Tahap 2 dari 5;
+- final D1 query menunjukkan:
+  - `lead_contacted_count = 1`;
+  - action `LEAD_CONTACTED`;
+  - tanpa duplikasi.
+
+Semantics yang dikunci:
+- `contacted` = status CRM / proses konsultasi;
+- `contacted` bukan bukti otomatis Admin telah menghubungi Lead;
+- proof follow-up berasal dari `LEAD_CONTACTED` / `contacted_at`;
+- Lead `new` atau `contacted` tanpa `contacted_at` dapat memakai explicit follow-up;
+- explicit follow-up tidak boleh membuat `LEAD_CONTACTED` duplikat.
+
+Next focus:
+`LEAD SELF-SERVICE / PUBLIC LEAD FLOW — FINAL CLOSEOUT R1`.
+
 # CURRENT CHECKPOINT
 
-**CURRENT FOCUS:** `PUBLIC LEAD REGISTRATION R1 + HOMEPAGE PORTAL ENTRY`
+**LATEST CLEAN SOURCE / STAGING PIN:** `87c9b5d` on `feature/client-management-r1`
+
+**SOURCE PATCH B2:** `d6403d4 fix: preserve explicit lead follow-up semantics`
+
+**STAGING WORKER:** `0ae655ac-ea45-4b4e-991a-00911ef79eee` / prefix `0ae655ac`
+
+**WORKING TREE:** CLEAN sebelum update roadmap
+
+**LATEST LOCKED/PASS:** `LEAD SELF-SERVICE UX R1 — PATCH B2 FOLLOW-UP SEMANTICS`
+
+**CURRENT FOCUS:** `LEAD SELF-SERVICE / PUBLIC LEAD FLOW — FINAL CLOSEOUT R1`
+
+**NEXT CHECKPOINT:** smoke/regression terarah → tutup gap tersisa bila ada → staging end-to-end PASS → `LOCKED/PASS`.
 
 **NEXT MAJOR CHECKPOINT:** `PRODUCTION RELEASE R1`
 
-**SETELAH PRODUCTION:** Kembali ke development roadmap mulai dari Lead Service Interest / Lead Progress / Lead → Client Handoff, lalu Estimate lifecycle.
+**SETELAH PRODUCTION:** lanjut milestone berikutnya berdasarkan source/runtime terbaru tanpa mengulang modul yang sudah dikunci.
 
 ---
 
