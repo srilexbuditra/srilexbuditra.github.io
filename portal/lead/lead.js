@@ -243,6 +243,405 @@
 
   /* SB_LEAD_WORKFLOW_INLINE_SERVICES_DOMAIN_R1 */
   let consultDomainCheckSequence = 0;
+  /* SB_LEAD_CONSULTATION_WIZARD_R1 */
+  const consultationModal =
+    document.getElementById("consultationModal");
+  const consultationWizardContent =
+    document.getElementById("consultationWizardContent");
+  const consultationSuccessState =
+    document.getElementById("consultationSuccessState");
+  const openConsultationWizardButton =
+    document.getElementById("openConsultationWizard");
+  const consultBack =
+    document.getElementById("consultBack");
+  const consultNext =
+    document.getElementById("consultNext");
+  const consultSuccessReview =
+    document.getElementById("consultSuccessReview");
+  const consultSuccessClose =
+    document.getElementById("consultSuccessClose");
+  const consultWizardCounter =
+    document.getElementById("consultWizardCounter");
+  const consultWizardSteps =
+    Array.from(
+      document.querySelectorAll("[data-wizard-step]")
+    );
+  const consultWizardIndicators =
+    Array.from(
+      document.querySelectorAll("[data-wizard-indicator]")
+    );
+
+  const consultSnapshotService =
+    document.getElementById("consultSnapshotService");
+  const consultSnapshotPackage =
+    document.getElementById("consultSnapshotPackage");
+  const consultSnapshotEstimate =
+    document.getElementById("consultSnapshotEstimate");
+  const consultSnapshotMeta =
+    document.getElementById("consultSnapshotMeta");
+
+  let consultationWizardStep = 1;
+  let consultationModalReturnFocus = null;
+
+  function selectedOptionText(select) {
+    return (
+      select?.selectedOptions?.[0]?.textContent?.trim() ||
+      "-"
+    );
+  }
+
+  function selectedConsultFeatureLabels() {
+    return Array.from(
+      document.querySelectorAll(
+        'input[name="consultExtra"]:checked'
+      )
+    )
+      .map((input) =>
+        input
+          .closest("label")
+          ?.querySelector("span")
+          ?.textContent
+          ?.trim()
+      )
+      .filter(Boolean);
+  }
+
+  function selectedAdditionalServiceLabels() {
+    const primary =
+      String(consultService.value || "").trim();
+
+    return Array.from(
+      document.querySelectorAll(
+        "#leadServices [data-service]"
+      )
+    )
+      .filter((article) => {
+        const button =
+          article.querySelector("[data-service-action]");
+
+        const selected =
+          article.classList.contains("is-selected") ||
+          /sudah diminati|layanan dipilih/i.test(
+            button?.textContent || ""
+          );
+
+        return (
+          selected &&
+          String(article.dataset.service || "").trim() !== primary
+        );
+      })
+      .map((article) =>
+        String(article.dataset.service || "").trim()
+      )
+      .filter(Boolean);
+  }
+
+  function setConsultSummaryValue(name, value) {
+    const text =
+      String(value || "").trim() || "-";
+
+    document
+      .querySelectorAll(
+        `[data-consult-summary="${name}"]`
+      )
+      .forEach((element) => {
+        element.textContent = text;
+      });
+  }
+
+  function consultationDomainSummary() {
+    const mode =
+      consultDomainMode.value;
+
+    if (mode === "none") {
+      return "Belum menentukan";
+    }
+
+    if (mode === "owned") {
+      return (
+        normalizeConsultDomain(
+          consultDomainName.value
+        ) ||
+        "Domain yang sudah dimiliki"
+      );
+    }
+
+    return (
+      composeConsultDomain() ||
+      "Belum menentukan nama domain"
+    );
+  }
+
+  function updateConsultationLiveSummary() {
+    const features =
+      selectedConsultFeatureLabels();
+
+    const extraServices =
+      selectedAdditionalServiceLabels();
+
+    const domainStatus =
+      consultDomainResult &&
+      !consultDomainResult.hidden
+        ? consultDomainResult.innerText.trim()
+        : "Belum diperiksa";
+
+    const description =
+      consultDescription.value.trim();
+
+    setConsultSummaryValue(
+      "service",
+      consultService.value || "Belum ditentukan"
+    );
+
+    setConsultSummaryValue(
+      "package",
+      selectedOptionText(consultPackage)
+    );
+
+    setConsultSummaryValue(
+      "features",
+      features.length
+        ? features.join(", ")
+        : "Belum ada fitur tambahan"
+    );
+
+    setConsultSummaryValue(
+      "services",
+      extraServices.length
+        ? extraServices.join(", ")
+        : "Belum ada layanan tambahan"
+    );
+
+    setConsultSummaryValue(
+      "domain",
+      consultationDomainSummary()
+    );
+
+    setConsultSummaryValue(
+      "domainStatus",
+      domainStatus
+    );
+
+    setConsultSummaryValue(
+      "hosting",
+      selectedOptionText(consultHosting)
+    );
+
+    setConsultSummaryValue(
+      "timeline",
+      consultTimeline.value === "target_date" &&
+      consultTargetDate.value
+        ? `${selectedOptionText(consultTimeline)}: ${consultTargetDate.value}`
+        : selectedOptionText(consultTimeline)
+    );
+
+    setConsultSummaryValue(
+      "description",
+      description || "Belum ada catatan tambahan"
+    );
+
+    setConsultSummaryValue(
+      "estimate",
+      consultEstimate.textContent || "Belum dihitung"
+    );
+  }
+
+  function renderConsultationSnapshot(lead) {
+    if (!lead) return;
+
+    consultSnapshotService.textContent =
+      lead.service_interest || "Belum ditentukan";
+
+    consultSnapshotPackage.textContent =
+      lead.package_name || "Belum ditentukan";
+
+    consultSnapshotEstimate.textContent =
+      lead.estimated_amount == null
+        ? "Belum dihitung"
+        : formatRupiah(lead.estimated_amount);
+
+    consultSnapshotMeta.textContent =
+      lead.consultation_submitted_at
+        ? `Dikirim ${formatDate(
+            lead.consultation_submitted_at
+          )}`
+        : "Belum ada kebutuhan konsultasi yang disimpan.";
+  }
+
+  function updateConsultationWizardControls() {
+    const editable =
+      Boolean(
+        currentLead &&
+        ["new", "contacted"].includes(currentLead.status)
+      );
+
+    consultBack.hidden =
+      consultationWizardStep === 1;
+
+    consultNext.hidden =
+      consultationWizardStep === 4;
+
+    consultSubmit.hidden =
+      consultationWizardStep !== 4 ||
+      !editable;
+
+    consultWizardCounter.textContent =
+      `Tahap ${consultationWizardStep} dari 4`;
+
+    consultWizardIndicators.forEach((item) => {
+      const itemStep =
+        Number(item.dataset.wizardIndicator);
+
+      item.classList.toggle(
+        "is-active",
+        itemStep === consultationWizardStep
+      );
+
+      item.classList.toggle(
+        "is-complete",
+        itemStep < consultationWizardStep
+      );
+
+      if (itemStep === consultationWizardStep) {
+        item.setAttribute("aria-current", "step");
+      } else {
+        item.removeAttribute("aria-current");
+      }
+    });
+  }
+
+  function setConsultationStep(
+    step,
+    { focus = true } = {}
+  ) {
+    const normalizedStep =
+      Math.max(1, Math.min(4, Number(step) || 1));
+
+    consultationWizardStep =
+      normalizedStep;
+
+    consultWizardSteps.forEach((section) => {
+      section.hidden =
+        Number(section.dataset.wizardStep) !==
+        normalizedStep;
+    });
+
+    syncConsultationConditionalFields();
+    updateConsultationLiveSummary();
+    updateConsultationWizardControls();
+
+    if (!focus) return;
+
+    const activeStep =
+      consultWizardSteps.find(
+        (section) =>
+          Number(section.dataset.wizardStep) ===
+          normalizedStep
+      );
+
+    const firstControl =
+      activeStep?.querySelector(
+        'input:not([type="hidden"]):not(:disabled), select:not(:disabled), textarea:not(:disabled), button:not(:disabled)'
+      );
+
+    setTimeout(() => {
+      firstControl?.focus({
+        preventScroll: true
+      });
+    }, 40);
+  }
+
+  function validateConsultationStep(step) {
+    const section =
+      consultWizardSteps.find(
+        (item) =>
+          Number(item.dataset.wizardStep) === step
+      );
+
+    if (!section) return true;
+
+    if (step === 3 || step === 4) {
+      syncConsultationConditionalFields();
+    }
+
+    const controls =
+      Array.from(
+        section.querySelectorAll(
+          "input, select, textarea"
+        )
+      ).filter((control) => !control.disabled);
+
+    for (const control of controls) {
+      if (!control.checkValidity()) {
+        control.reportValidity();
+        control.focus();
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  function openConsultationWizard() {
+    if (!currentLead || !consultationModal) return;
+
+    /* SB_LEAD_CONSULTATION_WIZARD_GUARD_R1 */
+    renderConsultationForm(currentLead);
+
+    consultationModalReturnFocus =
+      document.activeElement instanceof HTMLElement
+        ? document.activeElement
+        : null;
+
+    consultationSuccessState.hidden = true;
+    consultationWizardContent.hidden = false;
+
+    consultationModal.hidden = false;
+    consultationModal.setAttribute(
+      "aria-hidden",
+      "false"
+    );
+
+    document.body.classList.add(
+      "consultation-modal-open"
+    );
+
+    setConsultationStep(1);
+  }
+
+  function closeConsultationWizard() {
+    if (!consultationModal) return;
+
+    consultationModal.hidden = true;
+    consultationModal.setAttribute(
+      "aria-hidden",
+      "true"
+    );
+
+    document.body.classList.remove(
+      "consultation-modal-open"
+    );
+
+    consultationSuccessState.hidden = true;
+    consultationWizardContent.hidden = false;
+
+    consultationModalReturnFocus?.focus?.();
+  }
+
+  function showConsultationSuccess() {
+    consultationWizardContent.hidden = true;
+    consultationSuccessState.hidden = false;
+
+    setTimeout(() => {
+      consultSuccessReview?.focus();
+    }, 40);
+  }
+
+  function showConsultationSavedReview() {
+    consultationSuccessState.hidden = true;
+    consultationWizardContent.hidden = false;
+    setConsultationStep(4);
+  }
 
   function normalizeConsultDomain(value) {
     return String(value || "")
@@ -570,7 +969,7 @@
 
     Array.from(consultationForm.elements)
       .forEach((element) => {
-        if (element.matches("[data-service-action]")) return;
+        if (element.matches("[data-service-action], [data-wizard-nav]")) return;
 
         if (
           element instanceof HTMLButtonElement ||
@@ -592,7 +991,7 @@
         ? "Simpan Perubahan Kebutuhan"
         : "Simpan Kebutuhan Konsultasi";
 
-    consultSubmit.hidden = !editable;
+    consultSubmit.hidden = !editable || consultationWizardStep !== 4;
 
     consultFeedback.classList.remove(
       "is-success",
@@ -610,15 +1009,30 @@
 
     syncConsultationConditionalFields();
     renderSavedConsultDomainState(lead);
+    renderConsultationSnapshot(lead);
+    updateConsultationLiveSummary();
+    updateConsultationWizardControls();
 
     const continueButton =
       document.getElementById("continueConsultation");
 
+    const consultationActionLabel =
+      editable
+        ? (
+            submitted
+              ? "Lihat / Ubah Kebutuhan"
+              : "Lanjutkan Konsultasi"
+          )
+        : "Lihat Kebutuhan";
+
     if (continueButton) {
       continueButton.textContent =
-        submitted
-          ? "Lihat / Ubah Kebutuhan"
-          : "Lanjutkan Konsultasi";
+        consultationActionLabel;
+    }
+
+    if (openConsultationWizardButton) {
+      openConsultationWizardButton.textContent =
+        consultationActionLabel;
     }
 
     if (
@@ -631,28 +1045,7 @@
   }
 
   function focusConsultationPanel() {
-    const section =
-      document.getElementById("leadConsultation");
-
-    if (!section) return;
-
-    section.scrollIntoView({
-      behavior: "smooth",
-      block: "start"
-    });
-
-    setTimeout(() => {
-      const firstEditable =
-        section.querySelector(
-          "select:not(:disabled), textarea:not(:disabled), input:not([readonly]):not(:disabled)"
-        );
-
-      if (firstEditable) {
-        firstEditable.focus({
-          preventScroll: true
-        });
-      }
-    }, 350);
+    openConsultationWizard();
   }
 
   async function handleConsultationSubmit(event) {
@@ -744,6 +1137,8 @@
       consultFeedback.classList.add("is-success");
       consultFeedback.textContent =
         "Kebutuhan konsultasi berhasil disimpan.";
+
+      showConsultationSuccess();
 
     } catch (error) {
       consultFeedback.classList.add("is-error");
@@ -987,6 +1382,99 @@
     .querySelector(".services-grid")
     .addEventListener("click", handleServiceInterest);
 
+  openConsultationWizardButton
+    .addEventListener("click", openConsultationWizard);
+
+  consultationForm
+    .addEventListener("input", updateConsultationLiveSummary);
+
+  consultationForm
+    .addEventListener("change", updateConsultationLiveSummary);
+
+  consultBack
+    .addEventListener("click", () => {
+      setConsultationStep(
+        consultationWizardStep - 1
+      );
+    });
+
+  consultNext
+    .addEventListener("click", () => {
+      if (
+        !validateConsultationStep(
+          consultationWizardStep
+        )
+      ) {
+        return;
+      }
+
+      setConsultationStep(
+        consultationWizardStep + 1
+      );
+    });
+
+  document
+    .querySelectorAll("[data-consult-close]")
+    .forEach((element) => {
+      element.addEventListener(
+        "click",
+        closeConsultationWizard
+      );
+    });
+
+  consultSuccessReview
+    .addEventListener(
+      "click",
+      showConsultationSavedReview
+    );
+
+  consultSuccessClose
+    .addEventListener(
+      "click",
+      closeConsultationWizard
+    );
+
+  document.addEventListener(
+    "keydown",
+    (event) => {
+      if (
+        event.key === "Escape" &&
+        !consultationModal.hidden
+      ) {
+        closeConsultationWizard();
+      }
+    }
+  );
+
+  const consultationServicesObserver =
+    new MutationObserver(
+      updateConsultationLiveSummary
+    );
+
+  consultationServicesObserver.observe(
+    document.getElementById("leadServices"),
+    {
+      subtree: true,
+      childList: true,
+      attributes: true,
+      characterData: true
+    }
+  );
+
+  const consultationDomainResultObserver =
+    new MutationObserver(
+      updateConsultationLiveSummary
+    );
+
+  consultationDomainResultObserver.observe(
+    consultDomainResult,
+    {
+      subtree: true,
+      childList: true,
+      attributes: true,
+      characterData: true
+    }
+  );
   retry.addEventListener("click", loadPortal);
   logout.addEventListener("click", handleLogout);
   loadPortal();
