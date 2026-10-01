@@ -19,6 +19,12 @@
   const saveLeadCode = document.getElementById("saveLeadCode");
   const leadCodeFeedback = document.getElementById("leadCodeFeedback");
   const serviceSelect = document.getElementById("service_interest");
+  const copyrightYear = document.getElementById("copyrightYear");
+
+  if (copyrightYear) {
+    copyrightYear.textContent =
+      String(new Date().getFullYear());
+  }
 
   function setMessage(text, successState = false) {
     message.textContent = text || "";
