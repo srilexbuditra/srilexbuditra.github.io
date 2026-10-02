@@ -1,4 +1,4 @@
-﻿"use strict";
+"use strict";
 
 const KEY="sb_client_demo_r1";
 const fresh=()=>({support:0});
@@ -139,6 +139,17 @@ if(sidebar){
 }
 
 /* DEMO EXIT BUTTON R1 */
+const demoProject=document.createElement("a");
+demoProject.href="https://srilexbuditra.work/#harga";
+demoProject.target="_blank";
+demoProject.rel="noopener";
+demoProject.className="demo-project-cta";
+demoProject.textContent="Mulai Project Nyata";
+demoProject.setAttribute(
+  "aria-label",
+  "Mulai Project Nyata bersama Srilex Buditra"
+);
+
 const demoExit=document.createElement("a");
 demoExit.href="/portal/lead/";
 demoExit.className="demo-exit-button";
@@ -146,11 +157,32 @@ demoExit.textContent="Keluar Demo";
 
 const demoProfile=document.querySelector(".top-actions .profile");
 if(demoProfile){
+  demoProfile.parentNode.insertBefore(demoProject,demoProfile);
   demoProfile.parentNode.insertBefore(demoExit,demoProfile);
 }
 
 const demoExitStyle=document.createElement("style");
 demoExitStyle.textContent=`
+.demo-project-cta{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:42px;
+  padding:0 16px;
+  border:1px solid #168a63;
+  border-radius:12px;
+  background:#168a63;
+  color:#fff;
+  font-size:13px;
+  font-weight:850;
+  text-decoration:none;
+  white-space:nowrap;
+  box-shadow:0 8px 18px rgba(22,138,99,.18);
+}
+.demo-project-cta:hover{
+  background:#107653;
+  border-color:#107653;
+}
 .demo-exit-button{
   display:inline-flex;
   align-items:center;
@@ -169,9 +201,38 @@ demoExitStyle.textContent=`
   background:#eef8f3;
 }
 @media(max-width:700px){
-  .demo-exit-button{
+  .top-actions{
+    gap:6px;
+  }
+  .demo-project-cta{
     padding:0 11px;
-    font-size:13px;
+    font-size:12px;
+  }
+  .demo-exit-button{
+    padding:0 10px;
+    font-size:12px;
+  }
+}
+@media(max-width:560px){
+  .demo-project-cta{
+    min-width:88px;
+    padding:0 8px;
+    font-size:0;
+  }
+  .demo-project-cta::after{
+    content:"Mulai Project";
+    font-size:11px;
+    font-weight:850;
+  }
+  .demo-exit-button{
+    min-width:52px;
+    padding:0 7px;
+    font-size:0;
+  }
+  .demo-exit-button::after{
+    content:"Keluar";
+    font-size:11px;
+    font-weight:700;
   }
 }
 `;
