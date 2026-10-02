@@ -1,5 +1,11 @@
 # Srilex Buditra Client & Management Platform R1 — Auth + D1 Core
 
+> **Dokumen baseline/foundation.**
+> Dokumen ini mempertahankan konteks teknis fase awal R1 dan bukan sumber status produk terbaru.
+> Status aktif, modul LOCKED/PASS, Demo Journey, dan checkpoint terbaru mengikuti:
+> - `docs/CLIENT-MANAGEMENT-R1.md`
+> - `SRILEXBUDITRA-MASTER-PROJECT-ROADMAP.md`
+
 Status: **STAGING FOUNDATION**
 
 This package extends the existing `feature/client-management-r1` branch without modifying the production `main` branch.

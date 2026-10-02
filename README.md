@@ -2,13 +2,15 @@
 
 Website profesional **Srilex Buditra** yang berfungsi sebagai pusat personal branding, layanan pengembangan web, portfolio, studi kasus, profil publik, estimasi biaya proyek, verifikasi dokumen, serta dokumentasi implementasi sistem digital.
 
-**Documentation sync:** 17 September 2026 — Aktivitas & Event Public Integration V17.19.13B.4 (pre-lock)  
-**Current public direction:** Flagship Project + Trust & Authority + Knowledge Center + Public Development Timeline + Public Event  
+**Documentation sync:** 3 Oktober 2026 - Client Management R1 / Full Demo Journey
+**Current public direction:** Flagship Project + Trust & Authority + Client Management Platform + Full Demo Journey + Knowledge Center + Public Development Timeline
 **Website:** https://srilexbuditra.work
 
 ## ✨ Fitur Utama
 
 - Desain responsif untuk desktop, laptop, tablet, dan mobile.
+- **Client Management Platform R1** untuk perjalanan `Visitor -> Lead -> Konsultasi -> Official Estimate -> Aktivasi Client -> Client Portal`.
+- **Full Demo Journey R1** pada `/portal/demo/register/` sampai `/portal/demo/`, menggunakan data simulasi tanpa API produksi atau D1.
 - Halaman **Profil & Rekam Jejak** pada `/profil/` untuk identitas publik, capability map, proof of work, dan trust principles.
 - **Knowledge Center / Insights** pada `/insights/` untuk artikel teknis berbasis implementasi nyata.
 - **Development Timeline & Activity** pada `/aktivitas/` untuk selected public milestones dan status pengembangan yang transparan.
@@ -224,6 +226,8 @@ Gunakan dokumen berikut sebagai titik awal:
 
 - **[DOCUMENTATION.md](DOCUMENTATION.md)** — indeks dokumentasi aktif dan referensi.
 - **[DOCUMENTATION_AUDIT_V11.8.md](DOCUMENTATION_AUDIT_V11.8.md)** — audit dokumentasi terbaru.
+- **[docs/CLIENT-MANAGEMENT-R1.md](docs/CLIENT-MANAGEMENT-R1.md)** - status aktif Client Management Platform, Lead Portal, Official Estimate, Client Portal, dan Full Demo Journey.
+- **[SRILEXBUDITRA-MASTER-PROJECT-ROADMAP.md](SRILEXBUDITRA-MASTER-PROJECT-ROADMAP.md)** - continuity file dan checkpoint pengembangan aktif.
 - **[CHANGELOG.md](CHANGELOG.md)** — histori perubahan.
 - **[ROADMAP-SRILEXBUDITRA-2026-2027.md](ROADMAP-SRILEXBUDITRA-2026-2027.md)** — prioritas pengembangan.
 - **[AKTIVITAS-EVENT-PUBLIC-V17.19.13B.md](AKTIVITAS-EVENT-PUBLIC-V17.19.13B.md)** — baseline integrasi Event Admin, peserta, halaman publik, SEO, gambar, dan status pengujian metadata/analytics.
@@ -244,8 +248,8 @@ Baca **[LICENSE.md](LICENSE.md)** dan **[NOTICE.md](NOTICE.md)**.
 
 ## 👤 Pemilik & Pengembang
 
-**Srilex Buditra**  
-Full Stack Developer  
+**Srilex Buditra**
+Full Stack Developer
 Website: https://srilexbuditra.work
 
 ---

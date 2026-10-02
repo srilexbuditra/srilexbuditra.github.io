@@ -2,7 +2,7 @@
 
 Dokumen ini adalah indeks dokumentasi aktif repository `srilexbuditra.github.io`. Gunakan indeks ini untuk membedakan dokumentasi operasional, panduan teknis, audit, dan referensi historis.
 
-**Current documentation baseline:** 17 September 2026 — Event Public Integration V17.19.13B.4 (pre-lock)  
+**Current documentation baseline:** 17 September 2026 — Event Public Integration V17.19.13B.4 (pre-lock)
 **Last documentation sync:** 17 September 2026
 
 ## 1. Dokumentasi Utama
@@ -11,6 +11,8 @@ Dokumen ini adalah indeks dokumentasi aktif repository `srilexbuditra.github.io`
 |---|---|---|
 | [README.md](README.md) | Active | Gambaran umum website, fitur, struktur repository, dan titik masuk dokumentasi. |
 | [CHANGELOG.md](CHANGELOG.md) | Active | Riwayat perubahan website dan modul. |
+| [docs/CLIENT-MANAGEMENT-R1.md](docs/CLIENT-MANAGEMENT-R1.md) | Active / Staging Verified | Status Client Management Platform R1, Lead Portal, Official Estimate, Client Portal, dan Full Demo Journey. |
+| [SRILEXBUDITRA-MASTER-PROJECT-ROADMAP.md](SRILEXBUDITRA-MASTER-PROJECT-ROADMAP.md) | Active Continuity | Checkpoint source, status LOCKED/PASS, workflow, dan Final Closeout R1. |
 | [DOCUMENTATION.md](DOCUMENTATION.md) | Active | Indeks dokumentasi repository. |
 | [DOCUMENTATION_AUDIT_V11.8.md](DOCUMENTATION_AUDIT_V11.8.md) | Current Audit | Audit dan sinkronisasi dokumentasi terbaru. |
 | [DOCUMENTATION_AUDIT_V11.6.md](DOCUMENTATION_AUDIT_V11.6.md) | Historical Audit | Audit dokumentasi baseline V11.6. |
@@ -138,6 +140,11 @@ File berikut adalah template operasional GitHub, bukan dokumentasi produk:
 
 ## 12. Status Saat Ini
 
+- Client Management Platform R1: **active development / staging verified / production HOLD**.
+- Full Demo Journey R1: **LOCKED/PASS** untuk desktop, mobile, dan identity handoff.
+- Demo Journey menggunakan data simulasi tanpa API produksi atau D1.
+- Real Registration -> Full Demo Handoff R1: **LOCKED/PASS**.
+- Homepage Demo Integration R1: **PLANNED**, belum LOCKED/PASS.
 - Flagship Program Ketahanan Pangan: **implemented / public case study tersedia**.
 - Profil & Rekam Jejak `/profil/`: **implemented**.
 - Trust & Authority V8: **implemented sebagai fondasi**.
@@ -154,8 +161,8 @@ File berikut adalah template operasional GitHub, bukan dokumentasi produk:
 
 ---
 
-**Documentation baseline:** 17 September 2026 — Aktivitas & Event Public Integration V17.19.13B.4 (pre-lock)  
-**Previous audit baseline:** V11.6  
+**Documentation baseline:** 17 September 2026 — Aktivitas & Event Public Integration V17.19.13B.4 (pre-lock)
+**Previous audit baseline:** V11.6
 **Last documentation update:** 17 September 2026
 
 ### Kartu Anggota Digital + QR

@@ -1,5 +1,11 @@
 # Client Management API R1
 
+> **Dokumen baseline/foundation.**
+> Dokumen ini mempertahankan konteks teknis fase awal R1 dan bukan sumber status produk terbaru.
+> Status aktif, modul LOCKED/PASS, Demo Journey, dan checkpoint terbaru mengikuti:
+> - `docs/CLIENT-MANAGEMENT-R1.md`
+> - `SRILEXBUDITRA-MASTER-PROJECT-ROADMAP.md`
+
 Backend foundation for the Srilex Buditra Client & Management Platform R1.
 
 ## Current vertical slice

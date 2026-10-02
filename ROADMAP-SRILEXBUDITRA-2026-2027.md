@@ -63,6 +63,73 @@ Mengubah fondasi implementasi menjadi solusi reusable:
 
 Target penggunaan dapat mencakup komunitas, koperasi, organisasi, UMKM, asosiasi, program sosial, atau institusi lain sesuai kebutuhan dan perjanjian.
 
+## Fase Client Management Platform R1 - Aktif
+
+Status: **active development / staging verified / production HOLD**.
+
+Tujuan fase ini adalah membangun perjalanan pelanggan Srilex Buditra yang terhubung dari pengunjung sampai Client Portal tanpa registrasi Client publik secara langsung.
+
+Alur utama:
+
+`Visitor -> Registrasi Lead -> Lead Portal -> Konsultasi -> Kebutuhan Terverifikasi -> Official Estimate -> Persetujuan -> Aktivasi Client -> Client Portal -> Project`
+
+### Status saat ini
+
+Sudah dibuktikan pada source/runtime:
+
+- Lead Self-Service UX R1.
+- Official Estimate lifecycle.
+- Lead Estimate Decision Focus Mode.
+- Lead Approved Waiting State.
+- Client Portal Interactive Demo.
+- Full Demo Journey desktop dan mobile.
+- Full Demo Journey Identity R1.
+- Demo Journey Open Graph Preview R1.
+- Client Demo Mobile Navigation R1.
+- Real Client Mobile Navigation R1.
+- Real Registration -> Full Demo Handoff R1.
+
+### Full Demo Journey
+
+Demo publik:
+
+`Demo Registrasi -> Demo Login -> Demo Lead Tahap 1-5 -> Aktivasi Client Demo -> Demo Client Dashboard`
+
+Routes:
+
+- `/portal/demo/register/`
+- `/portal/demo/login/`
+- `/portal/demo/lead/`
+- `/portal/demo/`
+
+Prinsip Demo:
+- menggunakan data simulasi;
+- tidak menulis ke D1;
+- tidak menggunakan API produksi;
+- tidak membuat Lead atau Client nyata.
+
+### Homepage Integration R1
+
+Rencana berikutnya:
+
+`Why Choose Me -> Coba Pengalaman Client -> Packages & Pricing`
+
+Section homepage akan menjelaskan empat tahap Demo dan menyediakan satu CTA utama menuju:
+
+`/portal/demo/register/`
+
+Status:
+
+`PLANNED - belum LOCKED/PASS sampai source dan staging runtime selesai.`
+
+### Production Release
+
+Production tetap **HOLD** sampai:
+- Homepage Demo Integration selesai;
+- dokumentasi tersinkron;
+- Final Closeout R1 selesai;
+- release production disetujui.
+
 ## Prinsip Utama
 
 Jangan mengejar klaim "dipercaya semua kalangan" melalui slogan. Bangun kepercayaan melalui:
@@ -77,9 +144,9 @@ Jangan mengejar klaim "dipercaya semua kalangan" melalui slogan. Bangun kepercay
 
 ---
 
-**Current phase:** Fase 3 — Pengalaman Anggota  
-**Current milestone:** Dashboard Peserta V2 ✅ + Kartu Anggota Digital + QR ✅ + Sertifikat QR ✅ + Level/Poin ✅ + Misi ✅ + Referral ✅ + Benefit ✅ + Aktivitas & Event ✅ + Public Event Integration V17.19.13B ✅ + Marketplace ✅ + Notifikasi & Informasi ✅  
-**Current verification:** OG/WhatsApp Preview, Schema.org Event, dan GA4 Event Analytics masih menjalani pengujian akhir sebelum baseline Public Event di-LOCK.  
+**Current phase:** Fase 3 — Pengalaman Anggota
+**Current milestone:** Dashboard Peserta V2 ✅ + Kartu Anggota Digital + QR ✅ + Sertifikat QR ✅ + Level/Poin ✅ + Misi ✅ + Referral ✅ + Benefit ✅ + Aktivitas & Event ✅ + Public Event Integration V17.19.13B ✅ + Marketplace ✅ + Notifikasi & Informasi ✅
+**Current verification:** OG/WhatsApp Preview, Schema.org Event, dan GA4 Event Analytics masih menjalani pengujian akhir sebelum baseline Public Event di-LOCK.
 **Next milestone:** Menunggu keputusan tim untuk pengelolaan Event, katalog Marketplace, dan fitur komunikasi lanjutan
 
 ### V13.0 Referral

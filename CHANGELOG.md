@@ -1,3 +1,50 @@
+## Client Management R1 - Demo Journey & Lead-to-Client Experience (3 Oktober 2026)
+
+**Status:** Active Development / Staging Verified / Production HOLD
+
+### Added
+- Menambahkan Full Demo Journey publik:
+  - `/portal/demo/register/`
+  - `/portal/demo/login/`
+  - `/portal/demo/lead/`
+  - `/portal/demo/`
+- Menambahkan perjalanan Demo berurutan dari Registrasi Demo sampai Client Dashboard Demo.
+- Menambahkan Stage 5 `Aktivasi Client Demo` pada Lead Portal Demo.
+- Menambahkan shared journey identity melalui `sb_demo_journey_r1`.
+- Menambahkan Open Graph preview khusus untuk empat route Demo.
+- Menambahkan CTA `Mulai Project Nyata` pada Client Demo menuju `/#harga`.
+
+### Improved
+- Lead Portal menggunakan Decision Focus Mode pada tahap Penawaran Resmi.
+- State setelah Estimate disetujui menampilkan `Penawaran Disetujui` dan `Menunggu Aktivasi Client`.
+- WhatsApp pada Lead dan Registrasi digunakan sebagai bantuan sekunder dengan konteks proses yang aman.
+- Mobile navigation Client Demo ditingkatkan menjadi Beranda, Proyek, Dokumen, dan Dukungan.
+- Mobile navigation Client Portal nyata diselaraskan secara visual tanpa mengubah mekanisme JavaScript produksi.
+- Identitas Demo dari Registrasi diteruskan sampai Client Dashboard Demo.
+- State sukses Registrasi nyata sekarang menyediakan `Coba Alur Demo Lengkap`.
+
+### Verified
+- Full Demo Journey desktop: PASS.
+- Full Demo Journey mobile: PASS.
+- Full Demo Journey Identity R1: LOCKED/PASS.
+- Demo Journey Open Graph Preview R1: LOCKED/PASS.
+- Client Demo Mobile Navigation R1: LOCKED/PASS.
+- Real Client Mobile Navigation R1: LOCKED/PASS.
+- Real Registration -> Full Demo Handoff R1: LOCKED/PASS.
+- Registrasi nyata dan Demo Registration route terverifikasi HTTP 200 pada staging.
+- Demo tetap tanpa API produksi, tanpa D1, dan tanpa mutasi data produksi.
+
+### Functional Source Baseline
+- Branch: `feature/client-management-r1`
+- Functional source baseline sebelum documentation sync: `4c79db1 feat: link real registration success to full demo journey`
+- Production tetap **HOLD** sampai Homepage Demo Integration, dokumentasi final, Final Closeout R1, dan persetujuan release selesai.
+
+### Next
+- Homepage Integration R1:
+  `Why Choose Me -> Coba Pengalaman Client -> Packages & Pricing`
+- Section homepage belum dianggap LOCKED/PASS sebelum source dan staging runtime selesai.
+
+---
 ## V17.19.13B.4 — Aktivitas & Event Public Integration (17 September 2026)
 
 **Status:** Implemented / pre-lock; final OG/Schema/GA4 verification pending.

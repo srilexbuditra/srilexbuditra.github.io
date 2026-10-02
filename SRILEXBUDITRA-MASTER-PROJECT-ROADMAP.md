@@ -1,7 +1,7 @@
 # SRILEXBUDITRA.WORK — MASTER PROJECT ROADMAP
 
-> **Status:** Master continuity file  
-> **Tujuan:** Menjadi acuan utama ketika berpindah obrolan, perangkat, atau sesi kerja agar proyek tidak diulang dari nol.  
+> **Status:** Master continuity file
+> **Tujuan:** Menjadi acuan utama ketika berpindah obrolan, perangkat, atau sesi kerja agar proyek tidak diulang dari nol.
 > **Aturan utama:** Jika ada perbedaan antara percakapan lama dan kondisi source terbaru, gunakan versi yang **paling baru, sudah diuji, di-push, di-deploy, atau dikunci (LOCKED/PASS)**.
 
 ## 1. Identitas Proyek
@@ -30,9 +30,9 @@ Aturan:
 ### Latest clean / pushed checkpoint
 
 - Branch: `feature/client-management-r1`
-- HEAD: `87c9b5d`
-- Origin: `origin/feature/client-management-r1 = 87c9b5d`
-- Commit pin staging: `87c9b5d chore: pin staging api to lead follow-up semantics preview`
+- Functional source baseline sebelum documentation sync: `4c79db1`
+- Branch baseline sudah terverifikasi pada origin: `4c79db1`
+- Latest functional source commit sebelum documentation sync: `4c79db1 feat: link real registration success to full demo journey`
 - Commit source PATCH B2: `d6403d4 fix: preserve explicit lead follow-up semantics`
 - Working tree terakhir: **CLEAN**
 - Staging Worker candidate Version ID: `0ae655ac-ea45-4b4e-991a-00911ef79eee`
@@ -44,6 +44,65 @@ Aturan:
 - `LEAD SELF-SERVICE UX R1 — PATCH B2 FOLLOW-UP SEMANTICS`: **LOCKED / PASS**
 - Production: **HOLD** sampai Lead Self-Service / Public Lead Flow Final Closeout R1 selesai dan staging final siap release.
 
+### Current R1 Closeout Checkpoint - 3 Oktober 2026
+
+Status source terbaru:
+
+- Branch: `feature/client-management-r1`
+- Functional source baseline sebelum documentation sync: `4c79db1`
+- Working tree sebelum update dokumentasi: clean.
+- Staging Worker tetap menggunakan candidate yang sudah diverifikasi; tidak ada deployment Worker baru untuk perubahan frontend Demo terbaru.
+- Production: **HOLD** sampai Homepage Demo Integration, dokumentasi final, Final Closeout R1, dan persetujuan release selesai.
+
+Status yang sudah dibuktikan source/runtime pada fase terbaru:
+
+- `LEAD OFFICIAL ESTIMATE R1` backend/source lifecycle: **LOCKED/PASS**
+- Lead Estimate Decision Focus Mode: **LOCKED/PASS**
+- Lead Approved Waiting State R1: **LOCKED/PASS**
+- Lead Portal WhatsApp Help - Tahap 4: **LOCKED/PASS**
+- Client Portal Interactive Demo R1: **LOCKED/PASS**
+- Demo Registration Success R1: **PASS**
+- Demo Login Automatic Access R2: **PASS**
+- Demo Lead Stage 5 Activation R1: **LOCKED/PASS**
+- Client Demo Real Project CTA R1: **LOCKED/PASS**
+- Client Demo Mobile Navigation R1: **LOCKED/PASS**
+- Real Client Mobile Navigation R1: **LOCKED/PASS**
+- Demo Journey Open Graph Preview R1: **LOCKED/PASS**
+- Full Demo Journey Identity R1: **LOCKED/PASS**
+- Full Demo Journey Mobile R1: **LOCKED/PASS**
+- Full Demo Journey R1: **LOCKED/PASS**
+- Real Registration -> Full Demo Handoff R1: **LOCKED/PASS**
+
+Current Demo Journey:
+
+`Demo Registrasi -> Demo Login -> Demo Lead Tahap 1-5 -> Aktivasi Client Demo -> Demo Client Dashboard`
+
+Shared Demo state:
+
+`sb_demo_journey_r1`
+
+Demo tetap:
+- tanpa API produksi;
+- tanpa D1;
+- tanpa pembuatan Lead nyata;
+- tanpa pembuatan Client nyata;
+- menggunakan data simulasi.
+
+Real Lead fixture Final Closeout tetap:
+- Estimate sudah disetujui;
+- Lead belum dikonversi menjadi Client;
+- belum membuat Invoice;
+- status menunggu Aktivasi Client.
+
+Jangan melakukan Aktivasi Client nyata tanpa persetujuan eksplisit.
+
+Homepage Integration R1 berikutnya:
+
+`Why Choose Me -> Coba Pengalaman Client -> Packages & Pricing`
+
+Status Homepage Demo Integration:
+
+`PLANNED - belum LOCKED/PASS sebelum source dan staging runtime selesai.`
 ### Bukti final PATCH B2
 
 - Candidate Worker binding diverifikasi lengkap sebelum staging dipin.
@@ -65,7 +124,7 @@ Aturan:
 - Jangan kembali ke checkpoint WIP `38f6642`.
 - `38f6642` sudah superseded oleh `d6403d4` dan `87c9b5d`.
 - Jangan mengulang PATCH B2 atau modul `LOCKED/PASS` kecuali ada regression nyata.
-- Gunakan `87c9b5d` sebagai checkpoint source/staging terbaru.
+- Gunakan `4c79db1` sebagai functional source baseline sebelum documentation sync; untuk HEAD terbaru gunakan riwayat Git.
 
 ## 4. Modul yang Sudah LOCKED / PASS
 
@@ -450,7 +509,7 @@ Checkpoint:
 - Worker Version ID: `0ae655ac-ea45-4b4e-991a-00911ef79eee`;
 - preview prefix: `0ae655ac`;
 - branch: `feature/client-management-r1`;
-- HEAD = origin: `87c9b5d`;
+- functional source baseline pada checkpoint tersebut: `4c79db1`;
 - working tree: clean.
 
 Runtime evidence:
