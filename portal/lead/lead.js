@@ -95,6 +95,9 @@
   const leadEstimateFeedback =
     document.getElementById("leadEstimateFeedback");
 
+  const leadEstimateEyebrow =
+    document.getElementById("leadEstimateEyebrow");
+
   function api(path, options = {}) {
     return fetch(`${API_BASE}${path}`, {
       credentials: "same-origin",
@@ -211,6 +214,49 @@
     };
   }
 
+  function isDecisionFocusMode(status) {
+    if (status !== "qualified") {
+      return false;
+    }
+
+    const estimate =
+      currentEstimateDetail &&
+      currentEstimateDetail.estimate
+        ? currentEstimateDetail.estimate
+        : currentEstimates[0] || null;
+
+    if (!estimate) {
+      return false;
+    }
+
+    const estimateStatus =
+      String(estimate.status || "");
+
+    return [
+      "sent",
+      "approved",
+      "rejected",
+      "expired"
+    ].indexOf(estimateStatus) !== -1;
+  }
+
+  function syncDecisionFocusMode(status) {
+    const active =
+      isDecisionFocusMode(status);
+
+    dashboard.classList.toggle(
+      "is-decision-focus",
+      active
+    );
+
+    if (leadEstimateEyebrow) {
+      leadEstimateEyebrow.textContent =
+        active
+          ? "TAHAP 4 DARI 5 • PENAWARAN RESMI"
+          : "PENAWARAN RESMI";
+    }
+  }
+
   function renderProgress(status) {
     const state = progressState(status);
     const steps = Array.from(
@@ -235,6 +281,8 @@
 
     document.getElementById("friendlyStatus").textContent = state.label;
     document.getElementById("nextAction").textContent = state.next;
+
+    syncDecisionFocusMode(status);
   }
 
   /* SB_LEAD_SERVICE_INTEREST_FRONTEND_R1 */
@@ -305,7 +353,7 @@
 
     if (status === "sent") {
       leadEstimateIntro.textContent =
-        "Penawaran resmi telah dikirim. Periksa rincian sebelum memberikan keputusan.";
+        "Silakan periksa rincian penawaran. Jika sudah sesuai, pilih Setujui Penawaran untuk melanjutkan ke Aktivasi Client.";
     } else if (status === "approved") {
       leadEstimateIntro.textContent =
         "Penawaran ini telah Anda setujui. Proses berikutnya adalah Aktivasi Client.";

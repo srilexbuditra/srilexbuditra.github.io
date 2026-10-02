@@ -675,6 +675,61 @@ button {
   }
 }
 
+/* SB_LEAD_DECISION_FOCUS_MODE_R1 */
+
+/*
+ * Pada Tahap 4, perhatian Lead diarahkan hanya ke
+ * Penawaran Resmi. Data lama tetap berada di DOM dan
+ * kembali normal di luar Decision Focus Mode.
+ */
+#leadDashboard.is-decision-focus .lead-hero,
+#leadDashboard.is-decision-focus .summary-grid,
+#leadDashboard.is-decision-focus .lead-progress-panel,
+#leadDashboard.is-decision-focus .content-grid,
+#leadDashboard.is-decision-focus #leadConsultation {
+  display: none;
+}
+
+#leadDashboard.is-decision-focus .lead-estimate-panel {
+  max-width: 920px;
+  margin: 8px auto 24px;
+}
+
+#leadDashboard.is-decision-focus .lead-estimate-panel .panel-head {
+  margin-bottom: 14px;
+}
+
+#leadDashboard.is-decision-focus .lead-estimate-intro {
+  max-width: 720px;
+  margin-bottom: 22px;
+  color: #d7e4dc;
+  font-size: 14px;
+}
+
+#leadDashboard.is-decision-focus .lead-estimate-actions {
+  padding-top: 6px;
+}
+
+#leadDashboard.is-decision-focus .lead-estimate-actions .primary-button {
+  min-width: 190px;
+  padding: 11px 18px;
+}
+
+#leadDashboard.is-decision-focus .lead-estimate-actions .secondary-button {
+  min-width: 150px;
+}
+
+@media (max-width: 700px) {
+  #leadDashboard.is-decision-focus .lead-estimate-panel {
+    margin-top: 0;
+  }
+
+  #leadDashboard.is-decision-focus .lead-estimate-actions .primary-button,
+  #leadDashboard.is-decision-focus .lead-estimate-actions .secondary-button {
+    min-width: 0;
+  }
+}
+
 /* SB_LEAD_CONSULTATION_UI_R1 */
 #leadConsultation {
   scroll-margin-top: 92px;
