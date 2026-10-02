@@ -77,6 +77,23 @@
     document.getElementById("consultFeedback");
 
   let currentLead = null;
+  let currentEstimates = [];
+  let currentEstimateDetail = null;
+
+  const leadEstimatePanel =
+    document.getElementById("leadEstimatePanel");
+
+  const leadEstimateState =
+    document.getElementById("leadEstimateState");
+
+  const leadEstimateIntro =
+    document.getElementById("leadEstimateIntro");
+
+  const leadEstimateCard =
+    document.getElementById("leadEstimateCard");
+
+  const leadEstimateFeedback =
+    document.getElementById("leadEstimateFeedback");
 
   function api(path, options = {}) {
     return fetch(`${API_BASE}${path}`, {
@@ -121,8 +138,81 @@
     }).format(date);
   }
 
+  function escapeHtml(value) {
+    return String(value == null ? "" : value)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+
+  function estimateStatusLabel(status) {
+    const labels = {
+      sent: "Menunggu keputusan Anda",
+      approved: "Disetujui",
+      rejected: "Ditolak",
+      expired: "Kedaluwarsa"
+    };
+
+    return labels[status] || status || "-";
+  }
+
+  function progressState(status) {
+    const base =
+      statusMap[status] || statusMap.new;
+
+    if (
+      status !== "qualified" ||
+      !currentEstimates.length
+    ) {
+      return base;
+    }
+
+    const estimate =
+      currentEstimates[0];
+
+    const estimateStatus =
+      String(estimate && estimate.status || "");
+
+    if (
+      [
+        "sent",
+        "approved",
+        "rejected",
+        "expired"
+      ].indexOf(estimateStatus) === -1
+    ) {
+      return base;
+    }
+
+    let next =
+      "Penawaran resmi telah tersedia. Silakan tinjau penawaran Anda.";
+
+    if (estimateStatus === "approved") {
+      next =
+        "Penawaran telah Anda setujui. Tim akan melanjutkan proses Aktivasi Client.";
+    }
+
+    if (estimateStatus === "rejected") {
+      next =
+        "Penawaran tidak disetujui. Tim akan meninjau kebutuhan dan menyiapkan tindak lanjut.";
+    }
+
+    if (estimateStatus === "expired") {
+      next =
+        "Masa berlaku penawaran telah berakhir. Tim akan menyiapkan pembaruan bila diperlukan.";
+    }
+
+    return {
+      label: "Penawaran resmi",
+      step: 4,
+      next: next
+    };
+  }
+
   function renderProgress(status) {
-    const state = statusMap[status] || statusMap.new;
+    const state = progressState(status);
     const steps = Array.from(
       document.querySelectorAll("#progressSteps [data-step]")
     );
@@ -148,6 +238,275 @@
   }
 
   /* SB_LEAD_SERVICE_INTEREST_FRONTEND_R1 */
+  async function loadOfficialEstimates() {
+    const response =
+      await api("/lead/estimates");
+
+    const data =
+      await readJson(response);
+
+    if (!response.ok) {
+      throw new Error(
+        data.error ||
+        "Penawaran resmi belum dapat dimuat."
+      );
+    }
+
+    currentEstimates =
+      Array.isArray(data.estimates)
+        ? data.estimates
+        : [];
+
+    currentEstimateDetail = null;
+
+    const latest =
+      currentEstimates[0];
+
+    if (latest && latest.id) {
+      const detailResponse =
+        await api(
+          `/lead/estimates/${encodeURIComponent(latest.id)}`
+        );
+
+      const detailData =
+        await readJson(detailResponse);
+
+      if (
+        detailResponse.ok &&
+        detailData.estimate
+      ) {
+        currentEstimateDetail =
+          detailData;
+      }
+    }
+  }
+
+  function renderOfficialEstimate() {
+    const estimate =
+      currentEstimateDetail &&
+      currentEstimateDetail.estimate
+        ? currentEstimateDetail.estimate
+        : currentEstimates[0] || null;
+
+    if (!estimate) {
+      leadEstimatePanel.hidden = true;
+      leadEstimateCard.innerHTML = "";
+      leadEstimateFeedback.textContent = "";
+      return;
+    }
+
+    leadEstimatePanel.hidden = false;
+
+    const status =
+      String(estimate.status || "");
+
+    leadEstimateState.textContent =
+      estimateStatusLabel(status);
+
+    if (status === "sent") {
+      leadEstimateIntro.textContent =
+        "Penawaran resmi telah dikirim. Periksa rincian sebelum memberikan keputusan.";
+    } else if (status === "approved") {
+      leadEstimateIntro.textContent =
+        "Penawaran ini telah Anda setujui. Proses berikutnya adalah Aktivasi Client.";
+    } else if (status === "rejected") {
+      leadEstimateIntro.textContent =
+        "Penawaran ini tidak disetujui. Tim akan meninjau tindak lanjut berikutnya.";
+    } else {
+      leadEstimateIntro.textContent =
+        "Penawaran resmi Anda tersedia pada proses saat ini.";
+    }
+
+    const items =
+      currentEstimateDetail &&
+      Array.isArray(currentEstimateDetail.items)
+        ? currentEstimateDetail.items
+        : [];
+
+    const itemsHtml =
+      items.length
+        ? items.map(function (item) {
+            return `
+              <div class="lead-estimate-item">
+                <div>
+                  <strong>${escapeHtml(item.description || "-")}</strong>
+                  <small>
+                    Qty ${escapeHtml(item.quantity == null ? "-" : item.quantity)}
+                    × ${escapeHtml(formatRupiah(item.unit_price))}
+                  </small>
+                </div>
+                <strong>${escapeHtml(formatRupiah(item.line_total))}</strong>
+              </div>
+            `;
+          }).join("")
+        : `
+            <div class="lead-estimate-empty">
+              Rincian item belum dapat ditampilkan.
+            </div>
+          `;
+
+    const decisionHtml =
+      status === "sent"
+        ? `
+            <div class="lead-estimate-actions">
+              <button
+                class="primary-button"
+                type="button"
+                data-lead-estimate-decision="approved"
+                data-estimate-id="${escapeHtml(estimate.id)}"
+              >
+                Setujui Penawaran
+              </button>
+
+              <button
+                class="secondary-button"
+                type="button"
+                data-lead-estimate-decision="rejected"
+                data-estimate-id="${escapeHtml(estimate.id)}"
+              >
+                Tolak Penawaran
+              </button>
+            </div>
+          `
+        : "";
+
+    leadEstimateCard.innerHTML = `
+      <div class="lead-estimate-card">
+        <div class="lead-estimate-summary">
+          <div>
+            <span>Kode Penawaran</span>
+            <strong>${escapeHtml(estimate.estimate_code || "-")}</strong>
+          </div>
+
+          <div>
+            <span>Judul</span>
+            <strong>${escapeHtml(estimate.title || "-")}</strong>
+          </div>
+
+          <div>
+            <span>Nilai</span>
+            <strong>${escapeHtml(formatRupiah(estimate.total_amount))}</strong>
+          </div>
+
+          <div>
+            <span>Berlaku sampai</span>
+            <strong>${escapeHtml(formatDate(estimate.valid_until))}</strong>
+          </div>
+        </div>
+
+        <div class="lead-estimate-items">
+          ${itemsHtml}
+        </div>
+
+        ${
+          estimate.notes
+            ? `
+                <div class="lead-estimate-notes">
+                  <span>Catatan</span>
+                  <p>${escapeHtml(estimate.notes)}</p>
+                </div>
+              `
+            : ""
+        }
+
+        ${decisionHtml}
+      </div>
+    `;
+  }
+
+  async function handleEstimateDecision(event) {
+    const button =
+      event.target.closest(
+        "[data-lead-estimate-decision]"
+      );
+
+    if (!button) {
+      return;
+    }
+
+    const decision =
+      button.dataset.leadEstimateDecision;
+
+    const estimateId =
+      button.dataset.estimateId;
+
+    if (
+      !estimateId ||
+      ["approved", "rejected"].indexOf(decision) === -1
+    ) {
+      return;
+    }
+
+    const approved =
+      decision === "approved";
+
+    const confirmed =
+      window.confirm(
+        approved
+          ? "Setujui Penawaran Resmi ini? Setelah disetujui, proses akan dilanjutkan ke Aktivasi Client."
+          : "Tolak Penawaran Resmi ini? Tim akan meninjau kembali kebutuhan dan penawaran."
+      );
+
+    if (!confirmed) {
+      return;
+    }
+
+    button.disabled = true;
+
+    leadEstimateFeedback.textContent =
+      approved
+        ? "Menyimpan persetujuan..."
+        : "Menyimpan keputusan...";
+
+    try {
+      const response =
+        await api(
+          `/lead/estimates/${encodeURIComponent(estimateId)}/decision`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              decision: decision
+            })
+          }
+        );
+
+      const data =
+        await readJson(response);
+
+      if (!response.ok) {
+        throw new Error(
+          data.error ||
+          "Keputusan penawaran belum dapat disimpan."
+        );
+      }
+
+      await loadOfficialEstimates();
+
+      renderOfficialEstimate();
+
+      if (currentLead) {
+        renderProgress(
+          currentLead.status
+        );
+      }
+
+      leadEstimateFeedback.textContent =
+        approved
+          ? "Penawaran berhasil disetujui."
+          : "Keputusan berhasil disimpan.";
+    } catch (error) {
+      leadEstimateFeedback.textContent =
+        error instanceof Error
+          ? error.message
+          : "Keputusan penawaran belum dapat disimpan.";
+    } finally {
+      button.disabled = false;
+    }
+  }
+
   function renderServiceActions(lead) {
     const primaryService =
       String(lead.service_interest || "").trim();
@@ -1306,8 +1665,23 @@
         throw new Error("Akun ini tidak memiliki akses Lead Portal.");
       }
 
-      const leadResponse = await api("/lead/me");
-      const data = await readJson(leadResponse);
+      const responses =
+        await Promise.all([
+          api("/lead/me"),
+          api("/lead/estimates")
+        ]);
+
+      const leadResponse =
+        responses[0];
+
+      const estimatesResponse =
+        responses[1];
+
+      const data =
+        await readJson(leadResponse);
+
+      const estimatesData =
+        await readJson(estimatesResponse);
 
       if (!leadResponse.ok || !data.lead) {
         throw new Error(
@@ -1316,7 +1690,49 @@
         );
       }
 
+      if (!estimatesResponse.ok) {
+        throw new Error(
+          estimatesData.error ||
+          "Penawaran resmi belum dapat dimuat."
+        );
+      }
+
+      currentEstimates =
+        Array.isArray(estimatesData.estimates)
+          ? estimatesData.estimates
+          : [];
+
+      currentEstimateDetail = null;
+
+      const latestEstimate =
+        currentEstimates[0];
+
+      if (
+        latestEstimate &&
+        latestEstimate.id
+      ) {
+        const detailResponse =
+          await api(
+            `/lead/estimates/${encodeURIComponent(latestEstimate.id)}`
+          );
+
+        const detailData =
+          await readJson(detailResponse);
+
+        if (
+          detailResponse.ok &&
+          detailData.estimate
+        ) {
+          currentEstimateDetail =
+            detailData;
+        }
+      }
+
+      currentLead =
+        data.lead;
+
       render(me.user, data.lead);
+      renderOfficialEstimate();
     } catch (error) {
       showError(
         error instanceof Error
@@ -1476,6 +1892,12 @@
       characterData: true
     }
   );
+  leadEstimatePanel
+    .addEventListener(
+      "click",
+      handleEstimateDecision
+    );
+
   retry.addEventListener("click", loadPortal);
   logout.addEventListener("click", handleLogout);
   loadPortal();
