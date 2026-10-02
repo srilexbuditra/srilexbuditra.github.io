@@ -90,3 +90,34 @@ document.getElementById("demoReset").onclick=()=>{
 
 document.querySelector(".sidebar-footer").innerHTML="Mode Demo &bull; Data simulasi";
 save();
+
+/* DEMO MOBILE SIDEBAR R1 */
+const menuButton=document.querySelector("[data-menu]");
+const sidebar=document.querySelector(".sidebar");
+
+function closeDemoNav(){
+  document.body.classList.remove("nav-open");
+}
+
+menuButton?.addEventListener("click",e=>{
+  e.stopPropagation();
+  document.body.classList.toggle("nav-open");
+});
+
+sidebar?.addEventListener("click",e=>{
+  e.stopPropagation();
+});
+
+document.addEventListener("click",()=>{
+  closeDemoNav();
+});
+
+document.querySelectorAll(".sidebar .nav a").forEach(a=>{
+  a.addEventListener("click",()=>{
+    closeDemoNav();
+  });
+});
+
+document.addEventListener("keydown",e=>{
+  if(e.key==="Escape") closeDemoNav();
+});
