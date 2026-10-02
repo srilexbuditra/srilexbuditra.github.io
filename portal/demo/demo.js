@@ -121,3 +121,19 @@ document.querySelectorAll(".sidebar .nav a").forEach(a=>{
 document.addEventListener("keydown",e=>{
   if(e.key==="Escape") closeDemoNav();
 });
+
+/* DEMO MOBILE CLOSE R1 */
+const demoCloseButton=document.createElement("button");
+demoCloseButton.type="button";
+demoCloseButton.className="sb-mobile-sidebar-close";
+demoCloseButton.setAttribute("aria-label","Tutup navigasi");
+demoCloseButton.innerHTML="&#10005;";
+
+if(sidebar){
+  sidebar.insertBefore(demoCloseButton,sidebar.firstChild);
+
+  demoCloseButton.addEventListener("click",e=>{
+    e.stopPropagation();
+    closeDemoNav();
+  });
+}
