@@ -8428,3 +8428,34 @@ body {
 }
 
 /* ===== /HOMEPAGE DEMO JOURNEY R1 ===== */
+
+/* ===== HOMEPAGE DEMO JOURNEY POLISH R1 ===== */
+
+/* Kurangi ruang berlebih setelah Why Choose Me */
+.sb-demo-journey {
+  padding-top: 54px;
+  scroll-margin-top: 90px;
+}
+
+/* Hindari sticky hover pada touchscreen */
+@media (hover: none), (pointer: coarse) {
+  .sb-demo-step:hover {
+    transform: none;
+    border-color: rgba(23,93,131,.75);
+    background: rgba(2,23,38,.62);
+  }
+
+  .sb-demo-step.is-client:hover {
+    border-color: rgba(16,185,129,.48);
+    background:
+      linear-gradient(145deg, rgba(7,52,57,.72), rgba(3,29,43,.9));
+  }
+}
+
+@media (max-width: 640px) {
+  .sb-demo-journey {
+    padding-top: 44px;
+  }
+}
+
+/* ===== /HOMEPAGE DEMO JOURNEY POLISH R1 ===== */
