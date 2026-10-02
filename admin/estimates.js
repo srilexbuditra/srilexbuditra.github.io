@@ -365,8 +365,8 @@
     <div class="sb-est-card">
       <div class="sb-est-modal-head">
         <div>
-          <h2>Buat Estimate</h2>
-          <p>Estimate baru akan disimpan sebagai Draft.</p>
+          <h2 data-est-modal-title>Buat Estimate</h2>
+          <p data-est-modal-copy>Estimate baru akan disimpan sebagai Draft.</p>
         </div>
         <button class="sb-est-close" type="button" data-est-close>&times;</button>
       </div>
@@ -375,7 +375,7 @@
         <div class="sb-est-grid">
 
           <div class="sb-est-field full">
-            <label>Client *</label>
+            <label data-est-owner-label>Client *</label>
             <select name="client_id" required data-est-client>
               <option value="">Pilih client</option>
             </select>
@@ -448,6 +448,23 @@
   const errorEl = modal.querySelector("[data-est-error]");
   const submit = modal.querySelector("[data-est-submit]");
 
+  const modalTitle =
+    modal.querySelector(
+      "[data-est-modal-title]"
+    );
+
+  const modalCopy =
+    modal.querySelector(
+      "[data-est-modal-copy]"
+    );
+
+  const ownerLabel =
+    modal.querySelector(
+      "[data-est-owner-label]"
+    );
+
+  let leadDraftContext = null;
+
   function links(name) {
     return [...document.querySelectorAll(".nav a, .mobile-nav a")]
       .filter(a => a.textContent.trim().toLowerCase() === name.toLowerCase());
@@ -515,6 +532,83 @@
     itemsEl.appendChild(item);
   }
 
+  function setCreateMode(context = null) {
+    const lead =
+      context?.lead?.id
+        ? context.lead
+        : null;
+
+    leadDraftContext =
+      lead
+        ? {
+            id:
+              String(lead.id),
+            lead_code:
+              String(
+                lead.lead_code ||
+                "Lead"
+              ),
+            full_name:
+              String(
+                lead.full_name ||
+                "-"
+              ),
+            company_name:
+              lead.company_name || null,
+            service_interest:
+              lead.service_interest || null
+          }
+        : null;
+
+    if (leadDraftContext) {
+      modalTitle.textContent =
+        "Buat Penawaran Resmi";
+
+      modalCopy.textContent =
+        `Penawaran resmi untuk ${leadDraftContext.lead_code}. Draft belum terlihat di Lead Portal sampai dikirim.`;
+
+      ownerLabel.textContent =
+        "Lead";
+
+      clientSelect.required = false;
+      clientSelect.disabled = true;
+      clientSelect.innerHTML = "";
+
+      const option =
+        document.createElement(
+          "option"
+        );
+
+      option.value = "";
+      option.selected = true;
+      option.textContent =
+        `${leadDraftContext.lead_code} - ${leadDraftContext.full_name}`;
+
+      clientSelect.appendChild(
+        option
+      );
+
+      projectSelect.disabled = true;
+      projectSelect.innerHTML =
+        '<option value="">Belum ada project - setelah aktivasi Client</option>';
+
+      return;
+    }
+
+    modalTitle.textContent =
+      "Buat Estimate";
+
+    modalCopy.textContent =
+      "Estimate baru akan disimpan sebagai Draft.";
+
+    ownerLabel.textContent =
+      "Client *";
+
+    clientSelect.required = true;
+    clientSelect.disabled = false;
+    projectSelect.disabled = false;
+  }
+
   async function loadReferences() {
     const [cr, pr] = await Promise.all([
       fetch(CLIENTS_API, {
@@ -565,7 +659,7 @@
       });
   }
 
-  async function openModal() {
+  async function openModal(context = null) {
     form.reset();
     itemsEl.innerHTML = "";
     addItem();
@@ -575,6 +669,19 @@
 
     form.elements.tax_amount.value = "0";
     errorEl.textContent = "";
+
+    setCreateMode(context);
+
+    if (leadDraftContext) {
+      form.elements.title.value =
+        leadDraftContext.service_interest
+          ? `Penawaran Resmi - ${leadDraftContext.service_interest}`
+          : `Penawaran Resmi - ${leadDraftContext.lead_code}`;
+
+      modal.hidden = false;
+      return;
+    }
+
     modal.hidden = false;
 
     try {
@@ -587,6 +694,7 @@
   function closeModal() {
     modal.hidden = true;
     errorEl.textContent = "";
+    leadDraftContext = null;
   }
 
   function render(estimates) {
@@ -611,7 +719,13 @@
         actions += `
           <button class="secondary"
                   data-est-status="sent"
-                  data-est-id="${esc(estimate.id)}">
+                  data-est-id="${esc(estimate.id)}"
+                  data-est-owner="${
+                    estimate.lead_id &&
+                    !estimate.client_id
+                      ? "lead"
+                      : "client"
+                  }">
             Kirim
           </button>
         `;
@@ -627,6 +741,7 @@
 
       if (
         estimate.status === "approved" &&
+        estimate.client_id &&
         !estimate.converted_invoice_id
       ) {
         actions += `
@@ -726,8 +841,16 @@
       }));
 
     const payload = {
-      client_id: clientSelect.value,
-      project_id: projectSelect.value || null,
+      client_id:
+        leadDraftContext
+          ? null
+          : clientSelect.value,
+      lead_id:
+        leadDraftContext?.id || null,
+      project_id:
+        leadDraftContext
+          ? null
+          : projectSelect.value || null,
       title: form.elements.title.value.trim(),
       issue_date: form.elements.issue_date.value,
       valid_until: form.elements.valid_until.value || null,
@@ -782,9 +905,14 @@
       const id = statusButton.dataset.estId;
       const status = statusButton.dataset.estStatus;
 
+      const ownerPortal =
+        statusButton.dataset.estOwner === "lead"
+          ? "Lead Portal"
+          : "Client Portal";
+
       if (!confirm(
         status === "sent"
-          ? "Kirim estimate ini ke Client Portal?"
+          ? `Kirim penawaran ini ke ${ownerPortal}?`
           : "Batalkan estimate ini?"
       )) return;
 
@@ -855,6 +983,24 @@
   modal.querySelector("[data-est-add]")
     .addEventListener("click", () => addItem());
 
+  window.addEventListener(
+    "sb:admin:create-lead-estimate",
+    event => {
+      const lead =
+        event.detail?.lead;
+
+      if (!lead?.id) {
+        return;
+      }
+
+      showView();
+
+      openModal({
+        lead
+      });
+    }
+  );
+
   links("Estimates").forEach(link => {
     link.addEventListener("click", event => {
       event.preventDefault();
@@ -872,7 +1018,10 @@
     .addEventListener("click", load);
 
   view.querySelector("[data-est-new]")
-    .addEventListener("click", openModal);
+    .addEventListener(
+      "click",
+      () => openModal()
+    );
 
   modal.querySelector("[data-est-close]")
     .addEventListener("click", closeModal);

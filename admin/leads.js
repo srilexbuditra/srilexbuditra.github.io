@@ -1303,6 +1303,13 @@
         font-size: 12px;
       }
 
+      .sb-leads-qualified-actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
       @media (max-width: 1050px) {
         .sb-leads-summary {
           grid-template-columns:
@@ -2038,20 +2045,29 @@
         >
           <div>
             <strong>
-              Lead sudah Qualified
+              Kebutuhan terverifikasi
             </strong>
 
             <span>
-              Buat akun Client dari lead ini.
+              Buat Penawaran Resmi terlebih dahulu. Aktivasi Client dilakukan setelah penawaran disetujui.
             </span>
           </div>
 
-          <button
-            type="button"
-            data-lead-convert
-          >
-            Aktivasi Client
-          </button>
+          <div class="sb-leads-qualified-actions">
+            <button
+              type="button"
+              data-lead-estimate
+            >
+              Buat Penawaran Resmi
+            </button>
+
+            <button
+              type="button"
+              data-lead-convert
+            >
+              Aktivasi Client
+            </button>
+          </div>
         </div>
       </form>
     </div>
@@ -4800,6 +4816,44 @@
       "[data-convert-lead-label]"
     );
 
+  function openOfficialEstimate() {
+    const lead =
+      leads.find(
+        item =>
+          item.id === currentLeadId
+      );
+
+    if (
+      !lead ||
+      lead.status !== "qualified"
+    ) {
+      return;
+    }
+
+    window.dispatchEvent(
+      new CustomEvent(
+        "sb:admin:create-lead-estimate",
+        {
+          detail: {
+            lead: {
+              id: lead.id,
+              lead_code:
+                lead.lead_code,
+              full_name:
+                lead.full_name,
+              company_name:
+                lead.company_name || null,
+              service_interest:
+                lead.service_interest || null
+            }
+          }
+        }
+      )
+    );
+
+    closeModal();
+  }
+
   function openConvert() {
     const lead =
       leads.find(
@@ -4992,6 +5046,13 @@
   ).addEventListener(
     "click",
     addNote
+  );
+
+  modal.querySelector(
+    "[data-lead-estimate]"
+  )?.addEventListener(
+    "click",
+    openOfficialEstimate
   );
 
   modal.querySelector(
