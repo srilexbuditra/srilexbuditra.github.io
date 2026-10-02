@@ -8459,3 +8459,17 @@ body {
 }
 
 /* ===== /HOMEPAGE DEMO JOURNEY POLISH R1 ===== */
+
+/* ===== HOMEPAGE DEMO JOURNEY DESKTOP SPACING R1 ===== */
+
+@media (min-width: 761px) {
+  #why {
+    padding-bottom: 42px;
+  }
+
+  .sb-demo-journey {
+    padding-top: 42px;
+  }
+}
+
+/* ===== /HOMEPAGE DEMO JOURNEY DESKTOP SPACING R1 ===== */
