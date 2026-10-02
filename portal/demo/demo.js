@@ -1,9 +1,111 @@
 "use strict";
 
 const KEY="sb_client_demo_r1";
+const JOURNEY_KEY="sb_demo_journey_r1";
+
 const fresh=()=>({support:0});
-let state=JSON.parse(sessionStorage.getItem(KEY)||"null")||fresh();
+
+let state=JSON.parse(
+  sessionStorage.getItem(KEY)||"null"
+)||fresh();
+
+function readJourney(){
+  try{
+    return JSON.parse(
+      sessionStorage.getItem(JOURNEY_KEY)||"null"
+    )||{};
+  }catch{
+    return {};
+  }
+}
+
+function safeHtml(value){
+  return String(value||"")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#39;");
+}
+
+function identityInitials(value){
+  const parts=String(value||"")
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0,2);
+
+  const initials=parts
+    .map(part=>part.charAt(0))
+    .join("")
+    .toUpperCase();
+
+  return initials||"CL";
+}
+
+const journey=readJourney();
+
+const demoIdentity={
+  fullName:
+    String(journey.full_name||"Client Demo").trim()||
+    "Client Demo",
+
+  companyName:
+    String(journey.company_name||"Client").trim()||
+    "Client",
+
+  email:
+    String(journey.email||"").trim()
+};
+
 const main=document.querySelector("main.content");
+
+function syncJourneyIdentity(){
+  const profile=document.querySelector(
+    ".top-actions .profile"
+  );
+
+  const avatar=profile?.querySelector(".avatar");
+  const name=profile?.querySelector(
+    ".profile-copy strong"
+  );
+  const company=profile?.querySelector(
+    ".profile-copy span"
+  );
+
+  if(avatar){
+    avatar.textContent=
+      identityInitials(demoIdentity.fullName);
+  }
+
+  if(name){
+    name.textContent=demoIdentity.fullName;
+  }
+
+  if(company){
+    company.textContent=demoIdentity.companyName;
+  }
+
+  if(profile){
+    profile.setAttribute(
+      "aria-label",
+      "Profil Demo " + demoIdentity.fullName
+    );
+  }
+
+  const welcome=main?.querySelector(
+    ".page-head h1"
+  );
+
+  if(welcome){
+    welcome.textContent=
+      "Selamat datang, " +
+      demoIdentity.fullName;
+  }
+}
+
+syncJourneyIdentity();
+
 const home=main.innerHTML;
 
 function save(){sessionStorage.setItem(KEY,JSON.stringify(state))}
@@ -381,9 +483,15 @@ document.addEventListener("click",e=>{
   }
 
   if(b.classList.contains("profile")){
-    demoPanel("Client Demo",`
-      <p><strong>Client Demo</strong></p>
-      <p>Role: Client</p>
+    const emailRow=demoIdentity.email
+      ? `<p>${safeHtml(demoIdentity.email)}</p>`
+      : "";
+
+    demoPanel("Profil Client Demo",`
+      <p><strong>${safeHtml(demoIdentity.fullName)}</strong></p>
+      <p>${safeHtml(demoIdentity.companyName)}</p>
+      ${emailRow}
+      <p>Role: Client Demo</p>
       <p>Status: Mode Demo</p>
       <p>Data yang Anda lihat adalah data simulasi dan tidak tersimpan ke sistem produksi.</p>
     `);
