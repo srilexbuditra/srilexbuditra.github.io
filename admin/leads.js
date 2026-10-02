@@ -481,37 +481,20 @@
       ...featureLines,
       "",
       "DOMAIN",
-      `Mode: ${domainMode} — ${domainModeLabel}`,
-      `Name: ${
+      `Mode: ${domainModeLabel}`,
+      `Nama: ${
         lead.domain_name ||
         "-"
       }`,
-      `Status: ${domainStatus} — ${
-        leadDomainStatusLabel(
-          domainStatus
-        )
-      }`,
+      `Status: ${leadDomainStatusLabel(domainStatus)}`,
       `Diperiksa Pada: ${
         lead.domain_checked_at ||
         "-"
       }`,
       "",
       "HOSTING / JADWAL",
-      `Mode Hosting: ${
-        hostingMode
-      } — ${
-        leadHostingLabel(
-          hostingMode
-        )
-      }`,
-      `Target Jadwal: ${
-        targetTimeline ||
-        "-"
-      } — ${
-        leadTimelineLabel(
-          lead
-        )
-      }`,
+      `Mode Hosting: ${leadHostingLabel(hostingMode)}`,
+      `Target Jadwal: ${leadTimelineLabel(lead)}`,
       `Tanggal Target: ${
         lead.target_date ||
         "-"
