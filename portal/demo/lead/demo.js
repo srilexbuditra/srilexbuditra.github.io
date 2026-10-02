@@ -2,6 +2,7 @@
 
 (() => {
   const KEY = "sb_lead_demo_r1";
+  const JOURNEY_KEY = "sb_demo_journey_r1";
 
   const freshState = () => ({
     stage: "registered"
@@ -16,6 +17,37 @@
   }
 
   const $ = (id) => document.getElementById(id);
+
+  function readJourney() {
+    try {
+      return JSON.parse(
+        sessionStorage.getItem(JOURNEY_KEY) || "null"
+      ) || {};
+    } catch {
+      return {};
+    }
+  }
+
+  function demoRegisteredAt(value) {
+    if (!value) {
+      return "2 Oktober 2026 \u2022 Data simulasi";
+    }
+
+    const date = new Date(value);
+
+    if (Number.isNaN(date.getTime())) {
+      return "2 Oktober 2026 \u2022 Data simulasi";
+    }
+
+    return new Intl.DateTimeFormat(
+      "id-ID",
+      {
+        day: "numeric",
+        month: "long",
+        year: "numeric"
+      }
+    ).format(date) + " \u2022 Data simulasi";
+  }
 
   const dashboard = $("leadDashboard");
   const actionButton = $("continueConsultation");
@@ -241,29 +273,40 @@
       stages[state.stage] ||
       stages.registered;
 
+    const journey = readJourney();
+
     $("welcomeHeading").textContent =
-      "Selamat datang, Pengunjung Demo";
+      "Selamat datang, " +
+      (journey.full_name || "Pengunjung Demo");
 
     $("friendlyStatus").textContent =
       current.status;
 
     $("leadCode").textContent =
+      journey.lead_code ||
       "LEAD-DEMO-2026-001";
 
     $("serviceInterest").textContent =
+      journey.service_interest ||
       "Website Company Profile";
 
     $("companyName").textContent =
+      journey.company_name ||
       "Perusahaan Demo";
 
     $("accountEmail").textContent =
+      journey.email ||
       "demo@srilexbuditra.work";
 
     $("registeredAt").textContent =
-      "2 Oktober 2026 \u2022 Data simulasi";
+      demoRegisteredAt(
+        journey.registered_at
+      );
 
     $("leadMessage").textContent =
-      current.message;
+      state.stage === "registered"
+        ? (journey.message || current.message)
+        : current.message;
 
     $("nextAction").textContent =
       current.next;

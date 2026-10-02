@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Demo Login Portal | Srilex Buditra</title>
+  <meta name="description" content="Demo Login Portal Srilex Buditra menggunakan data simulasi tanpa autentikasi atau data nyata.">
+  <link rel="icon" href="/images/logo.avif">
+  <link rel="stylesheet" href="./styles.css?v=demo-login-r1">
+</head>
+<body>
+
+<div class="sb-portal-auth-overlay">
+  <div class="sb-portal-auth-card">
+
+    <div class="sb-portal-auth-brand">
+      <img src="/images/logo.avif" alt="Logo Srilex Buditra">
+      <div>
+        <strong>SRILEX BUDITRA</strong>
+        <span>Demo Portal &bull; R1</span>
+      </div>
+    </div>
+
+    <section class="sb-portal-auth-panel">
+      <div class="sb-demo-mode">MODE DEMO &bull; LOGIN</div>
+
+      <h1>Masuk Demo Portal</h1>
+      <p>
+        Gunakan akses simulasi untuk melanjutkan perjalanan
+        ke Demo Lead Portal.
+      </p>
+
+      <form id="demoLoginForm">
+        <div class="sb-demo-login-tools">
+          <button class="sb-demo-secondary" id="fillDemoAccess" type="button">
+            Isi Akses Demo
+          </button>
+        </div>
+
+        <div class="sb-portal-auth-field">
+          <label for="demoLoginEmail">Email Demo</label>
+          <input
+            id="demoLoginEmail"
+            name="email"
+            type="email"
+            autocomplete="off"
+            required
+          >
+        </div>
+
+        <div class="sb-portal-auth-field">
+          <label for="demoLoginPassword">Password Demo</label>
+          <input
+            id="demoLoginPassword"
+            name="password"
+            type="password"
+            autocomplete="off"
+            required
+          >
+        </div>
+
+        <button class="sb-portal-auth-submit" type="submit">
+          Masuk Demo
+        </button>
+
+        <div
+          class="sb-portal-auth-message"
+          id="demoLoginMessage"
+          role="alert"
+        ></div>
+      </form>
+
+      <div class="sb-portal-auth-note">
+        MODE DEMO — Tidak menggunakan autentikasi produksi,
+        cookie akun, API, D1, atau password nyata.
+      </div>
+
+      <a class="sb-demo-back" href="/portal/demo/register/">
+        &larr; Kembali ke Demo Registrasi
+      </a>
+    </section>
+
+  </div>
+</div>
+
+<script src="./demo.js?v=demo-login-engine-r1"></script>
+</body>
+</html>
