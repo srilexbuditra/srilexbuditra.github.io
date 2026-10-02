@@ -409,10 +409,22 @@
         ? currentLead.lead_code
         : "-";
 
+    const processStatus =
+      status === "approved"
+        ? "Penawaran sudah saya setujui dan saat ini menunggu Aktivasi Client."
+        : status === "sent"
+          ? "Saya sedang meninjau Penawaran Resmi yang telah dikirim."
+          : currentLead?.status === "qualified"
+            ? "Kebutuhan saya sudah terverifikasi dan saya menunggu proses berikutnya."
+            : currentLead?.status === "contacted"
+              ? "Saya sedang berada pada tahap konsultasi."
+              : "Registrasi Lead saya sudah diterima.";
+
     const whatsappMessage =
-      "Halo Srilex Buditra, saya memerlukan bantuan terkait proses Lead saya.\n" +
-      "Lead Code: " + leadCode + "\n" +
-      "Mohon bantuannya. Terima kasih.";
+      "Halo Srilex Buditra, saya memerlukan bantuan terkait proses Lead saya.\n\n" +
+      "*Lead Code:* " + leadCode + "\n\n" +
+      processStatus + "\n" +
+      "Mohon bantuannya terkait langkah berikutnya. Terima kasih.";
 
     const whatsappUrl =
       "https://wa.me/6282136238350?text=" +
