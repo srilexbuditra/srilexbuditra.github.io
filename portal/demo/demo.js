@@ -79,7 +79,7 @@ document.body.addEventListener("click",e=>{
 
 const bar=document.createElement("div");
 bar.style.cssText="padding:10px;text-align:center;background:#dff7e9;color:#123b2e;font:600 13px system-ui";
-bar.innerHTML='MODE DEMO — Data simulasi • Perubahan tidak disimpan &nbsp; <button id="demoReset">Reset Demo</button> &nbsp; <a href="/portal/lead/">Keluar Demo</a>';
+bar.innerHTML='MODE DEMO — Data simulasi • Perubahan tidak disimpan &nbsp; <button id="demoReset">Reset Demo</button>';
 document.body.prepend(bar);
 
 document.getElementById("demoReset").onclick=()=>{
@@ -137,3 +137,42 @@ if(sidebar){
     closeDemoNav();
   });
 }
+
+/* DEMO EXIT BUTTON R1 */
+const demoExit=document.createElement("a");
+demoExit.href="/portal/lead/";
+demoExit.className="demo-exit-button";
+demoExit.textContent="Keluar Demo";
+
+const demoProfile=document.querySelector(".top-actions .profile");
+if(demoProfile){
+  demoProfile.parentNode.insertBefore(demoExit,demoProfile);
+}
+
+const demoExitStyle=document.createElement("style");
+demoExitStyle.textContent=`
+.demo-exit-button{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:42px;
+  padding:0 16px;
+  border:1px solid #cbd8d3;
+  border-radius:12px;
+  background:#fff;
+  color:#173c32;
+  font-weight:700;
+  text-decoration:none;
+  white-space:nowrap;
+}
+.demo-exit-button:hover{
+  background:#eef8f3;
+}
+@media(max-width:700px){
+  .demo-exit-button{
+    padding:0 11px;
+    font-size:13px;
+  }
+}
+`;
+document.head.appendChild(demoExitStyle);
