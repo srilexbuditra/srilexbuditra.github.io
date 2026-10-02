@@ -88,8 +88,8 @@
     },
 
     approved: {
-      step: 4,
-      status: "Menunggu Aktivasi Client",
+      step: 5,
+      status: "Aktivasi Client Demo siap",
       next: "",
       action: "",
       message: ""
@@ -128,22 +128,22 @@
       ? `
         <div class="lead-approved-next">
           <span>LANGKAH BERIKUTNYA</span>
-          <h3>Menunggu Aktivasi Client</h3>
+          <h3>Aktivasi Client Demo</h3>
           <p>
-            Penawaran Demo telah disetujui. Selanjutnya Anda dapat
-            mencoba pengalaman Client Portal menggunakan data simulasi.
+            Penawaran Demo telah disetujui. Untuk melihat pengalaman setelah
+            aktivasi, lanjutkan ke Demo Client Dashboard. Tidak ada akun Client nyata yang dibuat.
           </p>
 
           <div class="lead-approved-actions">
             <a class="lead-demo-button" href="/portal/demo/">
-              Coba Demo Dashboard Client
+              Lanjut ke Demo Client Dashboard
             </a>
 
             <a class="lead-whatsapp-button"
                href="https://wa.me/6282136238350"
                target="_blank"
                rel="noopener">
-              Butuh bantuan? WhatsApp
+              Butuh bantuan tentang proses ini? WhatsApp
             </a>
           </div>
         </div>
@@ -227,22 +227,22 @@
 
     $("leadEstimateEyebrow").textContent =
       isApproved
-        ? "TAHAP 4 DARI 5 \u2022 PENAWARAN DISETUJUI"
+        ? "TAHAP 5 DARI 5 \u2022 AKTIVASI CLIENT DEMO"
         : "TAHAP 4 DARI 5 \u2022 PENAWARAN RESMI";
 
     $("leadEstimateTitle").textContent =
       isApproved
-        ? "Penawaran Disetujui"
+        ? "Aktivasi Client Demo"
         : "Penawaran untuk Anda";
 
     $("leadEstimateState").textContent =
       isApproved
-        ? "Menunggu Aktivasi Client"
+        ? "Siap melanjutkan"
         : "Menunggu keputusan";
 
     $("leadEstimateIntro").textContent =
       isApproved
-        ? "Terima kasih. Keputusan Demo telah tersimpan. Tahap berikutnya adalah Aktivasi Client."
+        ? "Penawaran Demo telah disetujui. Tahap 5 adalah simulasi Aktivasi Client sebelum masuk ke Demo Client Dashboard."
         : "Silakan periksa rincian Penawaran Demo. Jika sudah sesuai, pilih Setujui Penawaran Demo.";
 
     estimateCard.innerHTML =
@@ -251,7 +251,7 @@
     if (isSent) {
       $("approveDemoEstimate")?.addEventListener("click", () => {
         const confirmed = window.confirm(
-          "Setujui Penawaran Demo ini? Proses simulasi akan dilanjutkan ke Menunggu Aktivasi Client."
+          "Setujui Penawaran Demo ini? Proses simulasi akan dilanjutkan ke Tahap 5 - Aktivasi Client Demo."
         );
 
         if (!confirmed) return;
