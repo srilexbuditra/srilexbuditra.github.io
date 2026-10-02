@@ -186,3 +186,23 @@ html,body{
 .sb-demo-back:hover{
   color:#bbf7d0;
 }
+/* DEMO LOGIN ACCESS HELP R1 */
+.sb-demo-secondary{
+  border-color:rgba(134,239,172,.38);
+  color:#dcfce7;
+  background:rgba(22,163,74,.08);
+}
+
+.sb-demo-secondary:hover{
+  border-color:#22c55e;
+  background:rgba(22,163,74,.14);
+}
+
+.sb-demo-access-help{
+  display:block;
+  margin-top:-2px;
+  color:#94a3b8;
+  font-size:12px;
+  line-height:1.5;
+  text-align:center;
+}
