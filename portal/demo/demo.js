@@ -204,6 +204,13 @@ demoExitStyle.textContent=`
   .top-actions{
     gap:6px;
   }
+  .top-actions .profile{
+    padding:5px;
+    gap:0;
+  }
+  .top-actions .profile .profile-copy{
+    display:none;
+  }
   .demo-project-cta{
     padding:0 11px;
     font-size:12px;
