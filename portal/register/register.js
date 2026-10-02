@@ -188,6 +188,12 @@
       form.reset();
       form.hidden = true;
       success.hidden = false;
+
+      /* REGISTRATION SUCCESS FOCUS R1 */
+      form.hidden = true;
+      document
+        .querySelector(".registration-card")
+        ?.classList.add("is-success-focus");
       leadCode.textContent = result?.lead?.lead_code || "-";
       syncRegistrationHelp();
       success.scrollIntoView({ behavior: "smooth", block: "center" });

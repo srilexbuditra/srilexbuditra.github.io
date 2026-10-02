@@ -361,3 +361,46 @@ a {
     flex-direction:column;
   }
 }
+/* REGISTRATION SUCCESS FOCUS R1 */
+.registration-card.is-success-focus{
+  display:flex;
+  flex-direction:column;
+}
+
+.registration-card.is-success-focus .registration-intro,
+.registration-card.is-success-focus #leadRegistrationForm{
+  display:none;
+}
+
+.registration-card.is-success-focus .registration-brand{
+  margin-bottom:24px;
+}
+
+.registration-card.is-success-focus .success-panel{
+  width:100%;
+  padding:12px 0 8px;
+}
+
+.registration-card.is-success-focus .lead-code{
+  margin-left:auto;
+  margin-right:auto;
+}
+
+.registration-card.is-success-focus .portal-button{
+  margin-top:22px;
+}
+
+@media(max-width:640px){
+  .registration-card.is-success-focus{
+    padding-top:22px;
+    padding-bottom:22px;
+  }
+
+  .registration-card.is-success-focus .registration-brand{
+    margin-bottom:18px;
+  }
+
+  .registration-card.is-success-focus .success-panel{
+    padding-top:4px;
+  }
+}
