@@ -1,0 +1,456 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0f2c26">
+<meta name="robots" content="noindex,nofollow">
+<title>Demo Lead Portal | Srilex Buditra</title>
+<link rel="icon" href="/images/logo.avif">
+<link rel="stylesheet" href="./styles.css?v=lead-demo-r1">
+</head>
+<body>
+<div class="lead-app">
+  <header class="lead-topbar">
+    <a class="lead-brand" href="/" aria-label="Srilex Buditra">
+      <img src="/images/logo.avif" alt="Logo Srilex Buditra">
+      <span>
+        <strong>SRILEX BUDITRA</strong>
+        <small>Demo Lead Portal &bull; R1</small>
+      </span>
+    </a>
+
+    <div class="lead-top-actions">
+      <button class="ghost-button" id="leadLogout" type="button">Keluar Demo</button>
+    </div>
+  </header>
+
+  <main class="lead-main">
+    <section class="lead-loading" id="leadLoading" hidden>
+      <span class="loading-dot"></span>
+      <strong>Memuat Portal...</strong>
+      <p>Data konsultasi Anda sedang disiapkan.</p>
+    </section>
+
+    <section class="lead-error" id="leadError" hidden>
+      <span>PORTAL STATUS</span>
+      <h1>Data konsultasi belum dapat dimuat</h1>
+      <p id="leadErrorMessage">Silakan coba kembali.</p>
+      <button class="primary-button" id="leadRetry" type="button">Coba Lagi</button>
+    </section>
+
+    <div id="leadDashboard">
+      <section class="lead-hero">
+        <div>
+          <span class="eyebrow">PORTAL KONSULTASI</span>
+          <h1 id="welcomeHeading">Selamat datang</h1>
+          <p>Ikuti perkembangan konsultasi dan kebutuhan project Anda dari satu tempat.</p>
+        </div>
+        <div class="status-card">
+          <span>Status saat ini</span>
+          <strong id="friendlyStatus">-</strong>
+          <small id="leadCode">-</small>
+        </div>
+      </section>
+
+      <section class="summary-grid" aria-label="Ringkasan konsultasi">
+        <article class="summary-card">
+          <span>Layanan dipilih</span>
+          <strong id="serviceInterest">-</strong>
+        </article>
+        <article class="summary-card">
+          <span>Perusahaan / Organisasi</span>
+          <strong id="companyName">-</strong>
+        </article>
+        <article class="summary-card">
+          <span>Email akun</span>
+          <strong id="accountEmail">-</strong>
+        </article>
+        <article class="summary-card">
+          <span>Registrasi</span>
+          <strong id="registeredAt">-</strong>
+        </article>
+      </section>
+
+      <section class="panel lead-progress-panel">
+        <div class="panel-head">
+          <div>
+            <span class="eyebrow">PROGRESS</span>
+            <h2>Perjalanan konsultasi</h2>
+          </div>
+          <strong id="progressLabel">Tahap 1 dari 5</strong>
+        </div>
+
+        <div class="progress-track" aria-hidden="true">
+          <span id="progressBar"></span>
+        </div>
+
+        <div class="progress-steps" id="progressSteps">
+          <article data-step="1">
+            <b>01</b>
+            <strong>Registrasi diterima</strong>
+            <span>Data awal telah masuk ke sistem.</span>
+          </article>
+          <article data-step="2">
+            <b>02</b>
+            <strong>Konsultasi</strong>
+            <span>Komunikasi dan klarifikasi kebutuhan.</span>
+          </article>
+          <article data-step="3">
+            <b>03</b>
+            <strong>Peninjauan kebutuhan</strong>
+            <span>Kebutuhan project telah diverifikasi.</span>
+          </article>
+          <article data-step="4">
+            <b>04</b>
+            <strong>Penawaran resmi</strong>
+            <span>Estimate resmi disiapkan pada tahap berikutnya.</span>
+          </article>
+          <article data-step="5">
+            <b>05</b>
+            <strong>Aktivasi Client</strong>
+            <span>Akun beralih menjadi Client setelah proses disetujui.</span>
+          </article>
+        </div>
+      </section>
+
+      <section class="content-grid">
+        <article class="panel">
+          <div class="panel-head">
+            <div>
+              <span class="eyebrow">KEBUTUHAN AWAL</span>
+              <h2>Ringkasan permintaan</h2>
+            </div>
+          </div>
+          <p class="request-copy" id="leadMessage">Belum ada catatan kebutuhan tambahan.</p>
+        </article>
+
+        <article class="panel next-panel">
+          <div class="panel-head">
+            <div>
+              <span class="eyebrow">TAHAP BERIKUTNYA</span>
+              <h2>Apa yang perlu dilakukan?</h2>
+            </div>
+          </div>
+          <p id="nextAction">Tim akan meninjau registrasi Anda.</p>
+          <small>Perubahan status akan mengikuti proses konsultasi yang berjalan.</small>
+          <!-- SB_LEAD_SERVICE_INTEREST_FRONTEND_R1 -->
+          <div class="next-actions">
+            <button class="primary-button" id="continueConsultation" type="button">Lanjutkan Konsultasi</button>
+          </div>
+        </article>
+      </section>
+
+      <!-- SB_LEAD_OFFICIAL_ESTIMATE_PORTAL_R1 -->
+      <section class="panel lead-estimate-panel" id="leadEstimatePanel" hidden>
+        <div class="panel-head">
+          <div>
+            <span class="eyebrow" id="leadEstimateEyebrow">PENAWARAN RESMI</span>
+            <h2 id="leadEstimateTitle">Penawaran untuk Anda</h2>
+          </div>
+          <strong id="leadEstimateState">-</strong>
+        </div>
+
+        <p class="lead-estimate-intro" id="leadEstimateIntro">
+          Penawaran resmi akan muncul setelah dikirim oleh tim.
+        </p>
+
+        <div id="leadEstimateCard"></div>
+
+        <div
+          class="lead-estimate-feedback"
+          id="leadEstimateFeedback"
+          role="status"
+          aria-live="polite"
+        ></div>
+      </section>
+
+      <!-- SB_LEAD_CONSULTATION_WIZARD_R1 -->
+      <section class="panel consultation-panel consultation-overview" id="leadConsultation">
+        <div class="panel-head">
+          <div>
+            <span class="eyebrow">LANGKAH 2 &bull; KONSULTASI</span>
+            <h2>Kebutuhan &amp; Estimasi</h2>
+          </div>
+          <strong id="consultationState">Belum dikirim</strong>
+        </div>
+
+        <p class="consultation-intro">
+          Lengkapi atau perbarui kebutuhan project melalui panduan bertahap agar proses konsultasi lebih mudah diikuti.
+        </p>
+
+        <div class="consultation-snapshot">
+          <div class="consultation-snapshot-main">
+            <span>Layanan utama</span>
+            <strong id="consultSnapshotService">Belum ditentukan</strong>
+            <small id="consultSnapshotMeta">Belum ada kebutuhan yang disimpan.</small>
+          </div>
+          <div class="consultation-snapshot-item">
+            <span>Paket</span>
+            <strong id="consultSnapshotPackage">-</strong>
+          </div>
+          <div class="consultation-snapshot-item">
+            <span>Estimasi awal</span>
+            <strong id="consultSnapshotEstimate">Belum dihitung</strong>
+          </div>
+        </div>
+
+        <div class="consultation-overview-actions">
+          <button class="primary-button" id="openConsultationWizard" type="button">Lihat / Ubah Kebutuhan</button>
+          <small>Perubahan baru tersimpan setelah Anda menekan tombol simpan pada tahap terakhir.</small>
+        </div>
+      </section>
+
+      <div class="consultation-modal" id="consultationModal" hidden aria-hidden="true">
+        <div class="consultation-modal-backdrop" data-consult-close></div>
+
+        <section class="consultation-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="consultWizardTitle">
+          <header class="consultation-modal-header">
+            <div>
+              <span class="eyebrow">KONSULTASI PROJECT</span>
+              <h2 id="consultWizardTitle">Sesuaikan Kebutuhan Project</h2>
+              <p>Isi kebutuhan secara bertahap. Ringkasan di samping akan mengikuti pilihan Anda.</p>
+            </div>
+            <button class="consultation-modal-close" id="consultModalClose" type="button" aria-label="Tutup modal" data-consult-close>&times;</button>
+          </header>
+
+          <div class="consultation-wizard-content" id="consultationWizardContent">
+            <div class="consultation-stepper" aria-label="Tahapan konsultasi">
+              <div class="consultation-stepper-item is-active" data-wizard-indicator="1">
+                <span>1</span>
+                <div><strong>Kebutuhan</strong><small>Project &amp; fitur</small></div>
+              </div>
+              <div class="consultation-stepper-item" data-wizard-indicator="2">
+                <span>2</span>
+                <div><strong>Layanan</strong><small>Tambahan</small></div>
+              </div>
+              <div class="consultation-stepper-item" data-wizard-indicator="3">
+                <span>3</span>
+                <div><strong>Domain</strong><small>&amp; Hosting</small></div>
+              </div>
+              <div class="consultation-stepper-item" data-wizard-indicator="4">
+                <span>4</span>
+                <div><strong>Ringkasan</strong><small>Jadwal &amp; simpan</small></div>
+              </div>
+            </div>
+
+            <div class="consultation-wizard-counter" id="consultWizardCounter">Tahap 1 dari 4</div>
+
+            <form id="consultationForm" class="consultation-form consultation-wizard-form" novalidate>
+              <div class="consultation-wizard-layout">
+                <div class="consultation-wizard-main">
+
+                  <section class="consultation-wizard-step" data-wizard-step="1">
+                    <div class="consultation-wizard-section-head">
+                      <span class="eyebrow">TAHAP 1</span>
+                      <h3>Kebutuhan Project</h3>
+                      <p>Tentukan paket, fitur utama, dan jelaskan kebutuhan project Anda.</p>
+                    </div>
+
+                    <div class="consultation-grid">
+                      <label class="field field-wide">
+                        <span>Layanan utama</span>
+                        <input id="consultService" type="text" readonly>
+                        <small>Layanan utama mengikuti pilihan saat registrasi.</small>
+                      </label>
+
+                      <label class="field field-wide">
+                        <span>Paket</span>
+                        <select id="consultPackage" required>
+                          <option value="Starter">Starter</option>
+                          <option value="Professional">Professional</option>
+                          <option value="Business">Business</option>
+                          <option value="Custom">Custom / Konsultasi</option>
+                        </select>
+                      </label>
+
+                      <fieldset class="field field-wide feature-field">
+                        <legend>Fitur kebutuhan</legend>
+                        <div class="feature-options">
+                          <label><input type="checkbox" name="consultExtra" value="500000"> <span>Form / WhatsApp</span></label>
+                          <label><input type="checkbox" name="consultExtra" value="1000000"> <span>Dashboard Admin</span></label>
+                          <label><input type="checkbox" name="consultExtra" value="1500000"> <span>Login &amp; Role</span></label>
+                          <label><input type="checkbox" name="consultExtra" value="2500000"> <span>Integrasi API</span></label>
+                        </div>
+                      </fieldset>
+
+                      <label class="field field-wide">
+                        <span>Deskripsi kebutuhan</span>
+                        <textarea id="consultDescription" rows="6" maxlength="3000" placeholder="Ceritakan kebutuhan utama, tujuan, alur kerja, atau catatan penting untuk project Anda."></textarea>
+                        <small>Maksimal 3.000 karakter.</small>
+                      </label>
+                    </div>
+                  </section>
+
+                  <section class="consultation-wizard-step consultation-services" id="leadServices" data-wizard-step="2" hidden>
+                    <div class="consultation-wizard-section-head">
+                      <span class="eyebrow">TAHAP 2 &bull; OPSIONAL</span>
+                      <h3>Layanan Tambahan</h3>
+                      <p>Layanan utama Anda sudah tercatat. Tambahkan layanan lain hanya jika memang dibutuhkan.</p>
+                    </div>
+
+                    <div class="services-grid">
+                      <article data-service="Website Company Profile"><strong>Website Company Profile</strong><span>Website profesional untuk profil bisnis dan organisasi.</span><button class="service-action" type="button" data-service-action>+ Tambah</button></article>
+                      <article data-service="Web Application"><strong>Web Application</strong><span>Aplikasi web modern dan interaktif sesuai kebutuhan.</span><button class="service-action" type="button" data-service-action>+ Tambah</button></article>
+                      <article data-service="REST API / Backend"><strong>REST API / Backend</strong><span>Backend dan API yang terstruktur untuk integrasi sistem.</span><button class="service-action" type="button" data-service-action>+ Tambah</button></article>
+                      <article data-service="Sistem Informasi Custom"><strong>Sistem Informasi Custom</strong><span>Sistem digital yang mengikuti proses kerja organisasi.</span><button class="service-action" type="button" data-service-action>+ Tambah</button></article>
+                      <article data-service="Database Development"><strong>Database Development</strong><span>Perancangan dan pengembangan database yang siap berkembang.</span><button class="service-action" type="button" data-service-action>+ Tambah</button></article>
+                      <article data-service="Deployment &amp; Cloud"><strong>Deployment &amp; Cloud</strong><span>Deployment, hosting, VPS, dan kebutuhan cloud.</span><button class="service-action" type="button" data-service-action>+ Tambah</button></article>
+                    </div>
+                    <p class="services-note" id="serviceFeedback">Pilih layanan tambahan yang sesuai dengan kebutuhan Anda.</p>
+                  </section>
+
+                  <section class="consultation-wizard-step" data-wizard-step="3" hidden>
+                    <div class="consultation-wizard-section-head">
+                      <span class="eyebrow">TAHAP 3</span>
+                      <h3>Domain &amp; Hosting</h3>
+                      <p>Tentukan kebutuhan domain dan infrastruktur hosting / server.</p>
+                    </div>
+
+                    <div class="consultation-grid">
+                      <label class="field">
+                        <span>Domain</span>
+                        <select id="consultDomainMode" required>
+                          <option value="none">Belum menentukan</option>
+                          <option value="owned">Sudah memiliki domain</option>
+                          <option value="new">Ingin domain baru</option>
+                        </select>
+                      </label>
+
+                      <label class="field">
+                        <span>Hosting / Server</span>
+                        <select id="consultHosting" required>
+                          <option value="none">Belum menentukan</option>
+                          <option value="owned">Sudah memiliki hosting / server</option>
+                          <option value="needed">Membutuhkan hosting / server</option>
+                        </select>
+                      </label>
+
+                      <div class="field field-wide" id="consultDomainNameField" hidden>
+                        <label class="field-label" for="consultDomainName">Nama domain</label>
+                        <div class="consult-domain-row">
+                          <input id="consultDomainName" type="text" inputmode="url" autocomplete="off" spellcheck="false" placeholder="contoh: namabisnis">
+                          <select id="consultDomainTld" aria-label="Ekstensi domain" hidden>
+                            <option value=".com">.com</option>
+                            <option value=".id">.id</option>
+                            <option value=".co.id">.co.id</option>
+                            <option value=".net">.net</option>
+                            <option value=".org">.org</option>
+                            <option value=".web.id">.web.id</option>
+                            <option value=".my.id">.my.id</option>
+                          </select>
+                          <button class="consult-domain-check" id="consultDomainCheck" type="button" hidden>Cek Ketersediaan</button>
+                        </div>
+                        <small id="consultDomainHint">Masukkan nama domain tanpa https://</small>
+                        <div class="consult-domain-result" id="consultDomainResult" role="status" aria-live="polite" hidden></div>
+                      </div>
+                    </div>
+                  </section>
+
+                  <section class="consultation-wizard-step" data-wizard-step="4" hidden>
+                    <div class="consultation-wizard-section-head">
+                      <span class="eyebrow">TAHAP 4</span>
+                      <h3>Jadwal &amp; Ringkasan</h3>
+                      <p>Tentukan target pengerjaan, lalu periksa kembali seluruh kebutuhan sebelum disimpan.</p>
+                    </div>
+
+                    <div class="consultation-grid consultation-timeline-grid">
+                      <label class="field">
+                        <span>Target waktu</span>
+                        <select id="consultTimeline" required>
+                          <option value="flexible">Fleksibel</option>
+                          <option value="2_4_weeks">2&ndash;4 minggu</option>
+                          <option value="1_2_months">1&ndash;2 bulan</option>
+                          <option value="target_date">Target tanggal tertentu</option>
+                        </select>
+                      </label>
+
+                      <label class="field" id="consultTargetDateField" hidden>
+                        <span>Target tanggal</span>
+                        <input id="consultTargetDate" type="date">
+                      </label>
+                    </div>
+
+                    <div class="consultation-final-review">
+                      <div class="consultation-final-review-head">
+                        <div>
+                          <span class="eyebrow">REVIEW SEBELUM SIMPAN</span>
+                          <h3>Ringkasan Kebutuhan Project</h3>
+                        </div>
+                        <small>Pastikan data berikut sudah sesuai.</small>
+                      </div>
+
+                      <div class="consultation-review-grid">
+                        <div><span>Layanan utama</span><strong data-consult-summary="service">-</strong></div>
+                        <div><span>Paket</span><strong data-consult-summary="package">-</strong></div>
+                        <div><span>Fitur</span><strong data-consult-summary="features">-</strong></div>
+                        <div><span>Layanan tambahan</span><strong data-consult-summary="services">-</strong></div>
+                        <div><span>Domain</span><strong data-consult-summary="domain">-</strong><small data-consult-summary="domainStatus">-</small></div>
+                        <div><span>Hosting</span><strong data-consult-summary="hosting">-</strong></div>
+                        <div><span>Target</span><strong data-consult-summary="timeline">-</strong></div>
+                        <div class="review-wide"><span>Deskripsi kebutuhan</span><strong data-consult-summary="description">-</strong></div>
+                      </div>
+                    </div>
+
+                    <div class="consultation-summary">
+                      <div>
+                        <span>Estimasi awal tersimpan</span>
+                        <strong id="consultEstimate" data-consult-summary="estimate">Belum dihitung</strong>
+                      </div>
+                      <small>Estimasi bersifat awal dan bukan penawaran resmi. Nilai terbaru dikonfirmasi kembali saat kebutuhan disimpan.</small>
+                    </div>
+                  </section>
+                </div>
+
+                <aside class="consultation-live-summary" aria-label="Ringkasan sementara">
+                  <div class="consultation-live-summary-head">
+                    <span class="eyebrow">RINGKASAN SEMENTARA</span>
+                    <strong>Input Anda saat ini</strong>
+                    <small>Input konsultasi tersimpan saat tahap terakhir disimpan. Layanan tambahan tersimpan saat dipilih.</small>
+                  </div>
+
+                  <dl>
+                    <div><dt>Project</dt><dd data-consult-summary="service">-</dd></div>
+                    <div><dt>Paket</dt><dd data-consult-summary="package">-</dd></div>
+                    <div><dt>Fitur</dt><dd data-consult-summary="features">-</dd></div>
+                    <div><dt>Layanan tambahan</dt><dd data-consult-summary="services">-</dd></div>
+                    <div><dt>Domain</dt><dd data-consult-summary="domain">-</dd><small data-consult-summary="domainStatus">-</small></div>
+                    <div><dt>Hosting</dt><dd data-consult-summary="hosting">-</dd></div>
+                    <div><dt>Target</dt><dd data-consult-summary="timeline">-</dd></div>
+                    <div><dt>Estimasi tersimpan</dt><dd data-consult-summary="estimate">Belum dihitung</dd></div>
+                  </dl>
+                </aside>
+              </div>
+
+              <div class="consultation-wizard-footer">
+                <div class="consultation-wizard-nav">
+                  <button class="secondary-button" id="consultBack" type="button" data-wizard-nav hidden>&larr; Kembali</button>
+                  <button class="primary-button" id="consultNext" type="button" data-wizard-nav>Lanjut &rarr;</button>
+                  <button class="primary-button" id="consultSubmit" type="submit" hidden>Simpan Kebutuhan Konsultasi</button>
+                </div>
+                <span class="consultation-feedback" id="consultFeedback" role="status" aria-live="polite"></span>
+              </div>
+            </form>
+          </div>
+
+          <div class="consultation-success-state" id="consultationSuccessState" hidden>
+            <div class="consultation-success-icon" aria-hidden="true">&#10003;</div>
+            <span class="eyebrow">BERHASIL DISIMPAN</span>
+            <h3>Kebutuhan berhasil disimpan</h3>
+            <p>Data konsultasi Anda telah tersimpan. Tim kami akan menggunakan informasi ini untuk proses peninjauan kebutuhan.</p>
+            <div class="consultation-success-actions">
+              <button class="secondary-button" id="consultSuccessReview" type="button">Lihat Ringkasan</button>
+              <button class="primary-button" id="consultSuccessClose" type="button">Tutup</button>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <footer class="lead-footer">&copy; Srilex Buditra &bull; Portal &amp; Consultation Platform R1</footer>
+</div>
+
+<script src="./demo.js?v=lead-demo-r1"></script>
+</body>
+</html>
