@@ -8473,3 +8473,143 @@ body {
 }
 
 /* ===== /HOMEPAGE DEMO JOURNEY DESKTOP SPACING R1 ===== */
+
+/* ===== MOBILE HOMEPAGE PRODUCTION BASELINE RESTORE R1 ===== */
+
+@media (max-width: 760px) {
+
+  /* -----------------------------------------
+     SERVICES
+     Pertahankan visual production: 2 kolom
+     ----------------------------------------- */
+
+  #layanan .cards.six {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  #layanan .card {
+    min-width: 0;
+    min-height: 160px;
+    padding: 18px 10px;
+  }
+
+  #layanan .card .icon {
+    font-size: 25px;
+  }
+
+  #layanan .card p {
+    font-size: 10px;
+    line-height: 1.5;
+  }
+
+
+  /* -----------------------------------------
+     FOOTER
+     Brand full-width + menu 2 kolom
+     ----------------------------------------- */
+
+  .footer-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 20px;
+    row-gap: 28px;
+    align-items: start;
+  }
+
+  .footer-grid > :first-child {
+    grid-column: 1 / -1;
+  }
+
+  .footer-grid > div {
+    min-width: 0;
+  }
+
+  .footer-grid > div > a,
+  .footer-grid > div > p {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    word-break: normal;
+  }
+
+  .footer {
+    padding-bottom: 15px;
+  }
+
+  .copyright {
+    margin-top: 24px;
+    padding-top: 15px;
+    padding-bottom: calc(105px + env(safe-area-inset-bottom));
+    line-height: 1.55;
+  }
+
+
+  /* -----------------------------------------
+     HOSTING / SERVER
+     Selaraskan dengan card Domain
+     ----------------------------------------- */
+
+  #hostingPicker .estimator-choice-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  #hostingPicker .estimator-choice-card {
+    display: flex !important;
+    align-items: flex-start !important;
+    justify-content: flex-start !important;
+    gap: 10px !important;
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    padding: 14px !important;
+    border: 1px solid rgba(148,163,184,.20);
+    border-radius: 14px;
+    background: rgba(255,255,255,.025);
+    text-align: left;
+  }
+
+  #hostingPicker .estimator-choice-card:has(input:checked) {
+    border-color: rgba(56,189,248,.65);
+    background: rgba(56,189,248,.08);
+  }
+
+  #hostingPicker .estimator-choice-card input[type="radio"] {
+    width: auto !important;
+    min-width: auto !important;
+    max-width: none !important;
+    margin: 3px 0 0 !important;
+    flex: 0 0 auto !important;
+  }
+
+  #hostingPicker .estimator-choice-card span {
+    display: grid;
+    gap: 4px;
+    min-width: 0;
+    flex: 1 1 auto;
+    text-align: left;
+  }
+
+  #hostingPicker .estimator-choice-card strong {
+    line-height: 1.35;
+  }
+
+  #hostingPicker .estimator-choice-card small {
+    opacity: .72;
+    line-height: 1.45;
+  }
+}
+
+@media (max-width: 380px) {
+  .footer-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 14px;
+    row-gap: 24px;
+  }
+
+  .footer-grid > :first-child {
+    grid-column: 1 / -1;
+  }
+}
+
+/* ===== /MOBILE HOMEPAGE PRODUCTION BASELINE RESTORE R1 ===== */
