@@ -254,7 +254,7 @@
     if (leadEstimateEyebrow) {
       leadEstimateEyebrow.textContent =
         active
-          ? "TAHAP 4 DARI 5 • PENAWARAN RESMI"
+          ? ((currentEstimateDetail?.estimate?.status || currentEstimates[0]?.status) === "approved" ? "TAHAP 4 DARI 5 • PENAWARAN DISETUJUI" : "TAHAP 4 DARI 5 • PENAWARAN RESMI")
           : "PENAWARAN RESMI";
     }
   }
@@ -351,7 +351,16 @@
       String(estimate.status || "");
 
     leadEstimateState.textContent =
-      estimateStatusLabel(status);
+      status === "approved"
+        ? "Menunggu Aktivasi Client"
+        : estimateStatusLabel(status);
+
+    if (leadEstimateTitle) {
+      leadEstimateTitle.textContent =
+        status === "approved"
+          ? "Penawaran Disetujui"
+          : "Penawaran untuk Anda";
+    }
 
     if (status === "sent") {
       leadEstimateIntro.textContent =
