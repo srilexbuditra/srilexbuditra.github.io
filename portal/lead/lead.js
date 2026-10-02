@@ -347,6 +347,12 @@
 
     leadEstimatePanel.hidden = false;
 
+    /* APPROVED WAITING FULL VIEW R1 */
+    leadEstimatePanel.classList.toggle(
+      "is-approved-waiting",
+      String(estimate.status || "") === "approved"
+    );
+
     const status =
       String(estimate.status || "");
 

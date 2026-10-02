@@ -1809,3 +1809,32 @@ body.consultation-modal-open {
     width:100%;
   }
 }
+/* SB_APPROVED_WAITING_FULL_VIEW_R1 */
+#leadDashboard.is-decision-focus
+.lead-estimate-panel.is-approved-waiting
+.lead-estimate-card{
+  display:flex;
+  flex-direction:column;
+}
+
+#leadDashboard.is-decision-focus
+.lead-estimate-panel.is-approved-waiting
+.lead-approved-next{
+  order:-1;
+  margin:0 0 18px;
+}
+
+#leadDashboard.is-decision-focus
+.lead-estimate-panel.is-approved-waiting
+.lead-estimate-intro{
+  margin-bottom:16px;
+}
+
+@media(max-width:700px){
+  #leadDashboard.is-decision-focus
+  .lead-estimate-panel.is-approved-waiting
+  .lead-approved-next{
+    margin-bottom:14px;
+    padding:16px;
+  }
+}
