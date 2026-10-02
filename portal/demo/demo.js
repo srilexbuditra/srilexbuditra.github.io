@@ -176,3 +176,87 @@ demoExitStyle.textContent=`
 }
 `;
 document.head.appendChild(demoExitStyle);
+
+/* DEMO DASHBOARD INTERACTION R1 */
+function demoPanel(title,body){
+  document.getElementById("demoPanelOverlay")?.remove();
+
+  const o=document.createElement("div");
+  o.id="demoPanelOverlay";
+  o.style.cssText="position:fixed;inset:0;z-index:10020;background:#061d18aa;display:grid;place-items:center;padding:20px";
+
+  o.innerHTML=`
+    <section style="width:min(520px,100%);background:#fff;color:#173c32;border-radius:18px;padding:22px;box-shadow:0 24px 70px #0005">
+      <div style="display:flex;justify-content:space-between;gap:16px;align-items:center">
+        <h2 style="margin:0">${title}</h2>
+        <button type="button" data-demo-panel-close style="font-size:20px">✕</button>
+      </div>
+      <div style="margin-top:18px;line-height:1.6">${body}</div>
+    </section>`;
+
+  document.body.appendChild(o);
+
+  o.addEventListener("click",e=>{
+    if(e.target===o || e.target.closest("[data-demo-panel-close]")) o.remove();
+  });
+}
+
+document.addEventListener("click",e=>{
+  const b=e.target.closest("button");
+  if(!b)return;
+
+  const text=b.textContent.trim();
+
+  if(text==="Detail"){
+    demoPanel("Detail Project",`
+      <p><strong>Company Website</strong></p>
+      <p>PRJ-2026-0001 • Website Development</p>
+      <p>Progress: <strong>82%</strong></p>
+      <p>Milestone berikutnya: <strong>Final UI Review</strong></p>
+      <p>Status: <strong>On Track</strong></p>
+    `);
+    return;
+  }
+
+  if(text==="Semua"){
+    demoPanel("Aktivitas Terbaru",`
+      <p>✓ Homepage UI disetujui — Hari ini</p>
+      <p>↑ Proposal final tersedia — Kemarin</p>
+      <p>✓ Development milestone diperbarui — 20 Sep</p>
+      <p>✓ Requirement selesai — 18 Sep</p>
+    `);
+    return;
+  }
+
+  if(text==="Buat tiket"){
+    openView("Support");
+    return;
+  }
+
+  if(text==="Keamanan"){
+    demoPanel("Keamanan Akun Demo",`
+      <p><strong>Mode Demo</strong></p>
+      <p>Password, autentikasi, dan perubahan akun tidak menggunakan data produksi.</p>
+      <p>Semua perubahan simulasi berakhir ketika sesi Demo direset.</p>
+    `);
+    return;
+  }
+
+  if(b.classList.contains("icon-btn")){
+    demoPanel("Notifikasi Demo",`
+      <p>● Project Company Website diperbarui.</p>
+      <p>● Proposal final tersedia.</p>
+      <p>● Milestone Development mencapai 82%.</p>
+    `);
+    return;
+  }
+
+  if(b.classList.contains("profile")){
+    demoPanel("Client Demo",`
+      <p><strong>Client Demo</strong></p>
+      <p>Role: Client</p>
+      <p>Status: Mode Demo</p>
+      <p>Data yang Anda lihat adalah data simulasi dan tidak tersimpan ke sistem produksi.</p>
+    `);
+  }
+});
