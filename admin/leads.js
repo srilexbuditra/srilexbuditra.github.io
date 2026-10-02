@@ -17,11 +17,11 @@
   }
 
   const STATUS_LABELS = {
-    new: "New",
-    contacted: "Contacted",
-    qualified: "Qualified",
-    lost: "Lost",
-    converted: "Converted"
+    new: "Registrasi diterima",
+    contacted: "Konsultasi berlangsung",
+    qualified: "Kebutuhan terverifikasi",
+    lost: "Proses tidak dilanjutkan",
+    converted: "Akun Client aktif"
   };
 
   let leads = [];
@@ -1619,34 +1619,34 @@
           type="button"
           data-leads-new
         >
-          New Lead
+          Lead Baru
         </button>
       </div>
     </div>
 
     <div class="sb-leads-summary">
       <div class="sb-leads-stat">
-        <span>New</span>
+        <span>Registrasi diterima</span>
         <strong data-leads-count="new">0</strong>
       </div>
 
       <div class="sb-leads-stat">
-        <span>Contacted</span>
+        <span>Konsultasi berlangsung</span>
         <strong data-leads-count="contacted">0</strong>
       </div>
 
       <div class="sb-leads-stat">
-        <span>Qualified</span>
+        <span>Kebutuhan terverifikasi</span>
         <strong data-leads-count="qualified">0</strong>
       </div>
 
       <div class="sb-leads-stat">
-        <span>Lost</span>
+        <span>Proses tidak dilanjutkan</span>
         <strong data-leads-count="lost">0</strong>
       </div>
 
       <div class="sb-leads-stat">
-        <span>Converted</span>
+        <span>Akun Client aktif</span>
         <strong data-leads-count="converted">0</strong>
       </div>
     </div>
@@ -1666,11 +1666,11 @@
 
         <select data-leads-filter>
           <option value="">Semua status</option>
-          <option value="new">New</option>
-          <option value="contacted">Contacted</option>
-          <option value="qualified">Qualified</option>
-          <option value="lost">Lost</option>
-          <option value="converted">Converted</option>
+          <option value="new">Registrasi diterima</option>
+          <option value="contacted">Konsultasi berlangsung</option>
+          <option value="qualified">Kebutuhan terverifikasi</option>
+          <option value="lost">Proses tidak dilanjutkan</option>
+          <option value="converted">Akun Client aktif</option>
         </select>
 
         <select
@@ -1678,7 +1678,7 @@
           hidden
         >
           <option value="">
-            Semua assignee
+            Semua penanggung jawab
           </option>
 
           <option value="__unassigned__">
@@ -1694,12 +1694,12 @@
           <thead>
             <tr>
               <th>Lead</th>
-              <th>Interest</th>
+              <th>Layanan</th>
               <th>Status</th>
-              <th>Assignee</th>
-              <th>Follow-up</th>
-              <th>Notes</th>
-              <th>Updated</th>
+              <th>Penanggung Jawab</th>
+              <th>Tindak Lanjut</th>
+              <th>Catatan</th>
+              <th>Diperbarui</th>
               <th></th>
             </tr>
           </thead>
@@ -1731,7 +1731,7 @@
       <div class="sb-leads-modal-head">
         <div>
           <h2 data-lead-modal-title>
-            New Lead
+            Lead Baru
           </h2>
 
           <p data-lead-modal-subtitle>
@@ -1769,7 +1769,7 @@
           </div>
 
           <div class="sb-leads-field">
-            <label>Company</label>
+            <label>Perusahaan</label>
             <input
               name="company_name"
               maxlength="200"
@@ -1785,7 +1785,7 @@
           </div>
 
           <div class="sb-leads-field">
-            <label>Phone / WhatsApp</label>
+            <label>Telepon / WhatsApp</label>
 
             <input
               name="phone"
@@ -1801,7 +1801,7 @@
                 type="button"
                 data-lead-whatsapp
               >
-                💬 Follow-up WhatsApp
+                💬 Tindak Lanjut WhatsApp
               </button>
 
               <button
@@ -1825,13 +1825,13 @@
               <div
                 class="sb-lead-followup-status-copy"
               >
-                <strong>Status Follow-up</strong>
+                <strong>Status Tindak Lanjut</strong>
 
                 <span
                   class="sb-lead-followup-state"
                   data-lead-followup-state
                 >
-                  ⚪ Belum Follow-up
+                  ⚪ Belum ditindaklanjuti
                 </span>
               </div>
 
@@ -1846,7 +1846,7 @@
           </div>
 
           <div class="sb-leads-field">
-            <label>Source</label>
+            <label>Sumber</label>
             <input
               name="source"
               maxlength="160"
@@ -1855,7 +1855,7 @@
           </div>
 
           <div class="sb-leads-field">
-            <label>Service Interest</label>
+            <label>Layanan Diminati</label>
             <input
               name="service_interest"
               maxlength="300"
@@ -1866,23 +1866,21 @@
             <label>Status</label>
 
             <select name="status">
-              <option value="new">New</option>
+              <option value="new">Registrasi diterima</option>
               <option value="contacted">
-                Contacted
-              </option>
+                Konsultasi berlangsung</option>
               <option value="qualified">
-                Qualified
-              </option>
-              <option value="lost">Lost</option>
+                Kebutuhan terverifikasi</option>
+              <option value="lost">Proses tidak dilanjutkan</option>
             </select>
 
             <small class="sb-leads-status-help">
-              Converted ditetapkan otomatis setelah proses Convert to Client berhasil.
+              Akun Client aktif ditetapkan otomatis setelah proses aktivasi Client berhasil.
             </small>
           </div>
 
           <div class="sb-leads-field">
-            <label>Next Follow-up</label>
+            <label>Tindak Lanjut Berikutnya</label>
 
             <input
               name="next_follow_up_at"
@@ -2345,7 +2343,7 @@
 
         assigneeFilter.innerHTML = `
           <option value="">
-            Semua assignee
+            Semua penanggung jawab
           </option>
 
           <option value="__unassigned__">
@@ -2858,7 +2856,7 @@
       null
     );
 
-    title.textContent = "New Lead";
+    title.textContent = "Lead Baru";
     modal.querySelector(
       "[data-lead-print]"
     )?.setAttribute(
@@ -4294,7 +4292,7 @@
     }
     else {
       stateElement.textContent =
-        "⚪ Belum Follow-up";
+        "⚪ Belum ditindaklanjuti";
     }
 
     if (
