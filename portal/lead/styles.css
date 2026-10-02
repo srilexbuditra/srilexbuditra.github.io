@@ -1734,3 +1734,78 @@ body.consultation-modal-open {
     width: 100%;
   }
 }
+
+/* SB_LEAD_APPROVED_WAITING_STATE_R1 */
+.lead-approved-next{
+  margin-top:20px;
+  padding:18px;
+  border:1px solid rgba(91,214,143,.22);
+  border-radius:16px;
+  background:rgba(31,122,78,.08);
+}
+
+.lead-approved-next > span{
+  display:block;
+  margin-bottom:6px;
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:.12em;
+  color:#65dc99;
+}
+
+.lead-approved-next h3{
+  margin:0 0 8px;
+}
+
+.lead-approved-next p{
+  margin:0;
+  max-width:720px;
+}
+
+.lead-approved-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-top:16px;
+}
+
+.lead-demo-button,
+.lead-whatsapp-button,
+.lead-estimate-help{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  text-decoration:none;
+  border-radius:12px;
+  font-weight:700;
+}
+
+.lead-demo-button{
+  padding:11px 16px;
+  background:#18ad5d;
+  color:#fff;
+}
+
+.lead-whatsapp-button,
+.lead-estimate-help{
+  padding:10px 14px;
+  border:1px solid rgba(255,255,255,.16);
+  color:inherit;
+  background:transparent;
+}
+
+.lead-estimate-help{
+  margin-top:14px;
+  font-size:13px;
+}
+
+@media(max-width:700px){
+  .lead-approved-actions{
+    flex-direction:column;
+  }
+
+  .lead-demo-button,
+  .lead-whatsapp-button{
+    width:100%;
+  }
+}

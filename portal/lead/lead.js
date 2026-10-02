@@ -95,6 +95,8 @@
   const leadEstimateFeedback =
     document.getElementById("leadEstimateFeedback");
 
+  const leadEstimateTitle = document.getElementById("leadEstimateTitle");
+
   const leadEstimateEyebrow =
     document.getElementById("leadEstimateEyebrow");
 
@@ -356,7 +358,7 @@
         "Silakan periksa rincian penawaran. Jika sudah sesuai, pilih Setujui Penawaran untuk melanjutkan ke Aktivasi Client.";
     } else if (status === "approved") {
       leadEstimateIntro.textContent =
-        "Penawaran ini telah Anda setujui. Proses berikutnya adalah Aktivasi Client.";
+        "Terima kasih. Keputusan Anda telah tersimpan. Tim Srilex Buditra akan memproses Aktivasi Client. Anda tidak perlu melakukan tindakan lain saat ini.";
     } else if (status === "rejected") {
       leadEstimateIntro.textContent =
         "Penawaran ini tidak disetujui. Tim akan meninjau tindak lanjut berikutnya.";
@@ -393,6 +395,20 @@
             </div>
           `;
 
+    const leadCode =
+      currentLead && currentLead.lead_code
+        ? currentLead.lead_code
+        : "-";
+
+    const whatsappMessage =
+      "Halo Srilex Buditra, saya memerlukan bantuan terkait proses Lead saya.\n" +
+      "Lead Code: " + leadCode + "\n" +
+      "Mohon bantuannya. Terima kasih.";
+
+    const whatsappUrl =
+      "https://wa.me/6282136238350?text=" +
+      encodeURIComponent(whatsappMessage);
+
     const decisionHtml =
       status === "sent"
         ? `
@@ -415,8 +431,39 @@
                 Tolak Penawaran
               </button>
             </div>
+
+            <a class="lead-estimate-help"
+               href="${escapeHtml(whatsappUrl)}"
+               target="_blank"
+               rel="noopener">
+              Butuh bantuan? WhatsApp
+            </a>
           `
-        : "";
+        : status === "approved"
+          ? `
+              <div class="lead-approved-next">
+                <span>LANGKAH BERIKUTNYA</span>
+                <h3>Menunggu Aktivasi Client</h3>
+                <p>
+                  Sambil menunggu aktivasi akun, Anda dapat
+                  mencoba pengalaman Client Portal menggunakan data simulasi.
+                </p>
+
+                <div class="lead-approved-actions">
+                  <a class="lead-demo-button" href="/portal/demo/">
+                    Coba Demo Dashboard Client
+                  </a>
+
+                  <a class="lead-whatsapp-button"
+                     href="${escapeHtml(whatsappUrl)}"
+                     target="_blank"
+                     rel="noopener">
+                    Butuh bantuan? WhatsApp
+                  </a>
+                </div>
+              </div>
+            `
+          : "";
 
     leadEstimateCard.innerHTML = `
       <div class="lead-estimate-card">
@@ -543,7 +590,7 @@
 
       leadEstimateFeedback.textContent =
         approved
-          ? "Penawaran berhasil disetujui."
+          ? ""
           : "Keputusan berhasil disimpan.";
     } catch (error) {
       leadEstimateFeedback.textContent =
