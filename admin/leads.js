@@ -455,29 +455,29 @@
       );
 
     return [
-      "CALCULATOR / SCOPE DATA",
+      "KALKULATOR / DATA RUANG LINGKUP",
       "",
       "REFERENSI",
-      `Lead Ref: ${
+      `Referensi Lead: ${
         lead.lead_code ||
         "-"
       }`,
-      `Request Ref: ${
+      `Referensi Permintaan: ${
         lead.public_request_ref ||
         "-"
       }`,
-      `Source: ${
+      `Sumber: ${
         lead.source ||
         "-"
       }`,
       "",
-      "PROJECT",
-      `Package: ${packageName}`,
-      `Project: ${projectLabel}`,
+      "PROYEK",
+      `Paket: ${packageName}`,
+      `Proyek: ${projectLabel}`,
       `Layanan Tambahan: ${additionalServicesText}`,
-      `Estimated Amount: ${estimateText}`,
+      `Estimasi Nilai: ${estimateText}`,
       "",
-      "SELECTED FEATURES",
+      "FITUR TERPILIH",
       ...featureLines,
       "",
       "DOMAIN",
@@ -491,20 +491,20 @@
           domainStatus
         )
       }`,
-      `Checked At: ${
+      `Diperiksa Pada: ${
         lead.domain_checked_at ||
         "-"
       }`,
       "",
-      "HOSTING / TIMELINE",
-      `Hosting Mode: ${
+      "HOSTING / JADWAL",
+      `Mode Hosting: ${
         hostingMode
       } — ${
         leadHostingLabel(
           hostingMode
         )
       }`,
-      `Target Timeline: ${
+      `Target Jadwal: ${
         targetTimeline ||
         "-"
       } — ${
@@ -512,7 +512,7 @@
           lead
         )
       }`,
-      `Target Date: ${
+      `Tanggal Target: ${
         lead.target_date ||
         "-"
       }`
@@ -673,15 +673,15 @@
           );
 
     return [
-      "RINGKASAN KEBUTUHAN PROJECT",
+      "RINGKASAN KEBUTUHAN PROYEK",
       "",
       "Paket",
       packageName,
       "",
-      "Jenis Project",
+      "Jenis Proyek",
       projectLabel,
       "",
-      "Penyesuaian Scope",
+      "Penyesuaian Ruang Lingkup",
       scopeText,
       "",
       "Fitur yang Dibutuhkan",
@@ -690,10 +690,10 @@
       "Nilai Fitur Termasuk Paket",
       includedText,
       "",
-      "Add-on Tambahan Berbayar",
+      "Tambahan Berbayar",
       addOnList,
       "",
-      "Total Add-on Berbayar",
+      "Total Tambahan Berbayar",
       addOnAmountText,
       "",
       "DOMAIN & INFRASTRUKTUR",
@@ -718,11 +718,11 @@
       `Estimasi Awal: ${estimateText}`,
       "",
       "REFERENSI",
-      `Lead Ref: ${
+      `Referensi Lead: ${
         lead.lead_code ||
         "-"
       }`,
-      `Request Ref: ${
+      `Referensi Permintaan: ${
         lead.public_request_ref ||
         "-"
       }`,
@@ -741,7 +741,7 @@
         ""
       },`,
       "",
-      "Saya dari Srilex Buditra ingin menindaklanjuti permintaan konsultasi project yang sebelumnya Anda kirim.",
+      "Saya dari Srilex Buditra ingin menindaklanjuti permintaan konsultasi proyek yang sebelumnya Anda kirim.",
       "",
       "*DOKUMEN ESTIMASI*",
       "• Lihat / Cetak / Simpan PDF:",
@@ -763,9 +763,9 @@
         "-"
       }`,
       "",
-      "Apakah kebutuhan project tersebut masih ingin dilanjutkan?",
+      "Apakah kebutuhan proyek tersebut masih ingin dilanjutkan?",
       "",
-      "Jika masih berlanjut, kami siap membantu membahas kebutuhan, scope, estimasi, dan langkah berikutnya.",
+      "Jika masih berlanjut, kami siap membantu membahas kebutuhan, ruang lingkup, estimasi, dan langkah berikutnya.",
       "",
       "Terima kasih.",
       "Srilex Buditra",
@@ -1612,7 +1612,7 @@
           type="button"
           data-leads-refresh
         >
-          Refresh
+          Muat Ulang
         </button>
 
         <button
@@ -1660,7 +1660,7 @@
       <div class="sb-leads-toolbar-group">
         <input
           type="search"
-          placeholder="Cari nama, company, email, kode..."
+          placeholder="Cari nama, perusahaan, email, kode..."
           data-leads-search
         >
 
@@ -1923,7 +1923,7 @@
           </div>
 
           <div class="sb-leads-field full">
-            <label>Ringkasan Kebutuhan Project</label>
+            <label>Ringkasan Kebutuhan Proyek</label>
 
             <div
               class="sb-lead-rich-preview"
@@ -1939,7 +1939,7 @@
           </div>
 
           <div class="sb-leads-field full">
-            <label>Calculator / Scope Data</label>
+            <label>Kalkulator / Data Ruang Lingkup</label>
 
             <div
               class="sb-lead-rich-preview"
@@ -2018,7 +2018,7 @@
           data-lead-notes-section
           hidden
         >
-          <h3>Notes & Follow-up</h3>
+          <h3>Catatan & Tindak Lanjut</h3>
 
           <p>
             Riwayat catatan internal untuk lead ini.
@@ -2030,7 +2030,7 @@
           >
             <textarea
               maxlength="5000"
-              placeholder="Tambahkan catatan follow-up..."
+              placeholder="Tambahkan catatan tindak lanjut..."
               data-lead-note-text
             ></textarea>
 
@@ -2039,7 +2039,7 @@
               type="button"
               data-lead-note-add
             >
-              Add Note
+              Tambah Catatan
             </button>
           </div>
 
@@ -2067,7 +2067,7 @@
             type="button"
             data-lead-convert
           >
-            Convert to Client
+            Aktivasi Client
           </button>
         </div>
       </form>
@@ -2091,10 +2091,10 @@
     >
       <div class="sb-leads-modal-head">
         <div>
-          <h2>Convert to Client</h2>
+          <h2>Aktivasi Client</h2>
 
           <p data-convert-lead-label>
-            Qualified lead
+            Lead dengan kebutuhan terverifikasi
           </p>
         </div>
 
@@ -3400,8 +3400,8 @@
     const scopeSectionTitle =
       lead.source ===
         "Website Calculator"
-        ? "Calculator / Scope Data"
-        : "Scope / Consultation Data";
+        ? "Kalkulator / Data Ruang Lingkup"
+        : "Data Ruang Lingkup / Konsultasi";
 
     const consultationSubmittedText =
       lead.consultation_submitted_at
@@ -3423,7 +3423,7 @@
         </div>
 
         <div class="sb-lead-print-title">
-          <strong>Lead Detail / Project Requirement</strong>
+          <strong>Detail Lead / Kebutuhan Proyek</strong>
 
           <span>
             ${escapeHtml(
@@ -3450,7 +3450,7 @@
 
         <div class="sb-lead-print-item">
           <span class="sb-lead-print-item-label">
-            Company
+            Perusahaan
           </span>
 
           <div class="sb-lead-print-item-value">
@@ -3476,7 +3476,7 @@
 
         <div class="sb-lead-print-item">
           <span class="sb-lead-print-item-label">
-            Phone / WhatsApp
+            Telepon / WhatsApp
           </span>
 
           <div class="sb-lead-print-item-value">
@@ -3489,7 +3489,7 @@
 
         <div class="sb-lead-print-item">
           <span class="sb-lead-print-item-label">
-            Source
+            Sumber
           </span>
 
           <div class="sb-lead-print-item-value">
@@ -3502,7 +3502,7 @@
 
         <div class="sb-lead-print-item">
           <span class="sb-lead-print-item-label">
-            Service Interest
+            Layanan Diminati
           </span>
 
           <div class="sb-lead-print-item-value">
@@ -3529,7 +3529,7 @@
 
         <div class="sb-lead-print-item">
           <span class="sb-lead-print-item-label">
-            Next Follow-up
+            Tindak Lanjut Berikutnya
           </span>
 
           <div class="sb-lead-print-item-value">
@@ -3548,7 +3548,7 @@
 
       <section class="sb-lead-print-section">
         <h2>
-          Ringkasan Kebutuhan Project
+          Ringkasan Kebutuhan Proyek
         </h2>
 
         ${requirementHtml}
@@ -3608,7 +3608,7 @@
 
         <br>
 
-        Dokumen ini merupakan ringkasan data Lead / kebutuhan project.
+        Dokumen ini merupakan ringkasan data Lead / kebutuhan proyek.
       </div>
     `;
 
@@ -3723,7 +3723,7 @@
         !payload.phone
       ) {
         formError.textContent =
-          "Isi minimal Email atau Phone.";
+          "Isi minimal Email atau Telepon.";
 
         return;
       }
@@ -3787,18 +3787,18 @@
     const standaloneLabels =
       new Set([
         "Paket",
-        "Jenis Project",
-        "Penyesuaian Scope",
+        "Jenis Proyek",
+        "Penyesuaian Ruang Lingkup",
         "Fitur yang Dibutuhkan",
         "Nilai Fitur Termasuk Paket",
-        "Add-on Tambahan Berbayar",
-        "Total Add-on Berbayar"
+        "Tambahan Berbayar",
+        "Total Tambahan Berbayar"
       ]);
 
     const importantLabels =
       new Set([
-        "Total Add-on Berbayar",
-        "Estimated Amount",
+        "Total Tambahan Berbayar",
+        "Estimasi Nilai",
         "Estimasi Awal"
       ]);
 
@@ -4433,7 +4433,7 @@
       );
 
       showNotice(
-        "Follow-up tersimpan. Lead ditandai sudah dihubungi."
+        "Tindak lanjut tersimpan. Lead ditandai sudah dihubungi."
       );
 
       try {
@@ -4550,7 +4550,7 @@
         )
       ) {
         throw new Error(
-          "Secure Document Link belum tersedia."
+          "Tautan Dokumen Aman belum tersedia."
         );
       }
     }
@@ -4564,7 +4564,7 @@
 
       formError.textContent =
         error?.message ||
-        "Secure Document Link belum dapat disiapkan.";
+        "Tautan Dokumen Aman belum dapat disiapkan.";
 
       console.error(
         "LEAD_WHATSAPP_FOLLOWUP_PREPARE_FAILED",
@@ -4627,7 +4627,7 @@
       );
 
       showNotice(
-        "WhatsApp follow-up dibuka dengan Secure Document Link. Status Lead tetap manual."
+        "Tindak lanjut WhatsApp dibuka dengan Tautan Dokumen Aman. Status Lead tetap manual."
       );
     }
     catch (error) {
