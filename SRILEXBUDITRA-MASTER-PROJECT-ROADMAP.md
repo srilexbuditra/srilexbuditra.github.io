@@ -479,27 +479,55 @@ Semantics yang dikunci:
 Next focus:
 `LEAD SELF-SERVICE / PUBLIC LEAD FLOW — FINAL CLOSEOUT R1`.
 
+## 21. LEAD UI INDONESIA R1 — Final Lock 2 Okt 2026
+
+Milestone:
+`LEAD UI INDONESIA R1`
+
+Status: **LOCKED / PASS**
+
+Bukti source:
+- `35cb816 feat: localize admin lead ui to Indonesian`
+- `1266126 feat: complete Indonesian lead admin copy`
+- `3f3bd5f fix: hide raw lead enum values in admin ui`
+
+Bukti staging runtime:
+- Status Lead tampil Bahasa Indonesia:
+  `Registrasi diterima`,
+  `Konsultasi berlangsung`,
+  `Kebutuhan terverifikasi`,
+  `Proses tidak dilanjutkan`,
+  `Akun Client aktif`.
+- Semantik PATCH B2 tetap terjaga:
+  CRM `contacted` tidak otomatis berarti Admin sudah menghubungi Lead.
+- Modal Lead, Kalkulator / Data Ruang Lingkup, Catatan & Tindak Lanjut, dan Print Preview tervalidasi.
+- Raw enum seperti `none` dan `flexible` tidak lagi ditampilkan kepada Admin.
+- Nama teknis layanan `Website Company Profile` tetap dipertahankan.
+- Tidak ada regression visual yang ditemukan pada staging.
+- Jangan mengulang `LEAD UI INDONESIA R1` kecuali ada regression nyata.
+
 # CURRENT CHECKPOINT
 
-**LATEST CLEAN SOURCE / STAGING PIN:** `87c9b5d` on `feature/client-management-r1`
+**LATEST CLEAN SOURCE / STAGING FRONTEND:** `3f3bd5f` on `feature/client-management-r1`
 
-**SOURCE PATCH B2:** `d6403d4 fix: preserve explicit lead follow-up semantics`
-
-**STAGING WORKER:** `0ae655ac-ea45-4b4e-991a-00911ef79eee` / prefix `0ae655ac`
+**STAGING API WORKER:** `0ae655ac-ea45-4b4e-991a-00911ef79eee` / prefix `0ae655ac`
 
 **WORKING TREE:** CLEAN sebelum update roadmap
 
-**LATEST LOCKED/PASS:** `LEAD SELF-SERVICE UX R1 — PATCH B2 FOLLOW-UP SEMANTICS`
+**LATEST LOCKED/PASS:** `LEAD UI INDONESIA R1`
+
+**PRESERVED LOCKED/PASS:** `LEAD SELF-SERVICE UX R1 — PATCH B2 FOLLOW-UP SEMANTICS`
 
 **CURRENT FOCUS:** `LEAD SELF-SERVICE / PUBLIC LEAD FLOW — FINAL CLOSEOUT R1`
 
-**NEXT CHECKPOINT:** smoke/regression terarah → tutup gap tersisa bila ada → staging end-to-end PASS → `LOCKED/PASS`.
+**NEXT OPEN GAP:** `LEAD → PENAWARAN RESMI HANDOFF R1 — ADMIN UI`
+
+**BACKEND FOUNDATION:** `LEAD OFFICIAL ESTIMATE R1` sudah tersedia; frontend Admin handoff dari Lead qualified ke Penawaran Resmi masih harus ditutup.
+
+**NEXT CHECKPOINT:** audit source Admin Leads + Estimates → implementasi frontend handoff minimal → verify source → commit → push → staging runtime test → lanjut Final Closeout end-to-end.
 
 **NEXT MAJOR CHECKPOINT:** `PRODUCTION RELEASE R1`
 
-**SETELAH PRODUCTION:** lanjut milestone berikutnya berdasarkan source/runtime terbaru tanpa mengulang modul yang sudah dikunci.
+**PRODUCTION:** HOLD sampai Final Closeout R1 benar-benar `LOCKED / PASS`.
 
----
-
-**Srilex Buditra — srilexbuditra.work**  
-`Build → Test → Lock → Release → Continue`
+**RULE:** jangan mengulang modul yang sudah `LOCKED / PASS` kecuali ada regression nyata.
