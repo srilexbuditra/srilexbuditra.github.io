@@ -41,8 +41,8 @@ Support:()=>`
 
 function active(name){
   document.querySelectorAll(".sidebar .nav a,.mobile-nav a").forEach(a=>{
-    const n=a.textContent.trim();
-    a.classList.toggle("active",n===name||(name==="Dashboard"&&n==="Home"));
+    const n=a.dataset.view||a.textContent.trim();
+    a.classList.toggle("active",n===name);
   });
 }
 
@@ -55,7 +55,7 @@ function openView(name){
 document.querySelectorAll(".sidebar .nav a,.mobile-nav a").forEach(a=>{
   a.onclick=e=>{
     e.preventDefault();
-    const n=a.textContent.trim();
+    const n=a.dataset.view||a.textContent.trim();
     openView(n==="Home"?"Dashboard":n);
   };
 });
@@ -244,6 +244,67 @@ demoExitStyle.textContent=`
 }
 `;
 document.head.appendChild(demoExitStyle);
+
+const demoMobileNavStyle=document.createElement("style");
+demoMobileNavStyle.textContent=`
+@media(max-width:820px){
+  .mobile-nav{
+    gap:6px;
+    padding:8px 10px max(9px,env(safe-area-inset-bottom));
+    background:rgba(255,255,255,.98);
+    border-top:1px solid #dfe8e4;
+    box-shadow:0 -10px 30px rgba(15,44,38,.08);
+  }
+
+  .mobile-nav a{
+    min-height:52px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:4px;
+    padding:6px 4px;
+    border-radius:14px;
+    color:#6f7d77;
+    font-size:10px;
+    font-weight:700;
+    line-height:1;
+    transition:background .18s ease,color .18s ease,transform .18s ease;
+  }
+
+  .mobile-nav-icon{
+    width:21px;
+    height:21px;
+    fill:none;
+    stroke:currentColor;
+    stroke-width:1.8;
+    stroke-linecap:round;
+    stroke-linejoin:round;
+  }
+
+  .mobile-nav-label{
+    display:block;
+    font-size:10px;
+    line-height:1;
+  }
+
+  .mobile-nav a.active{
+    background:#e8f7f1;
+    color:#12694f;
+    font-weight:850;
+    box-shadow:inset 0 0 0 1px rgba(22,138,99,.10);
+  }
+
+  .mobile-nav a.active .mobile-nav-icon{
+    transform:translateY(-1px);
+  }
+
+  .content{
+    padding-bottom:108px;
+  }
+}
+`;
+document.head.appendChild(demoMobileNavStyle);
 
 /* DEMO DASHBOARD INTERACTION R1 */
 function demoPanel(title,body){
