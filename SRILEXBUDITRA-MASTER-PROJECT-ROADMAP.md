@@ -590,3 +590,122 @@ Bukti staging runtime:
 **PRODUCTION:** HOLD sampai Final Closeout R1 benar-benar `LOCKED / PASS`.
 
 **RULE:** jangan mengulang modul yang sudah `LOCKED / PASS` kecuali ada regression nyata.
+
+---
+
+## BRAND IDENTITY GOVERNANCE — LOCKED
+
+Seluruh pekerjaan visual, metadata, favicon, PWA, Open Graph, Portal,
+Dashboard, Demo, dokumen, portfolio, dan asset generation wajib mengikuti:
+
+`SRILEXBUDITRA-BRAND-IDENTITY-LOCK.md`
+
+Canonical primary brand mark:
+
+`/images/logo.avif`
+
+Primary identity type:
+
+`PHOTO-BASED PERSONAL BRAND`
+
+Aturan utama:
+
+- foto/logo Srilex Buditra tetap menjadi primary identity;
+- secondary signature resmi adalah `SB DIGITAL`;
+- bentuk visual dan gaya/font `SB` yang sudah disetujui wajib dipertahankan;
+- tulisan `DIGITAL` hanya menjadi supporting text;
+- badge identitas permanen tidak menggunakan tahun;
+- tidak boleh melakukan automatic rebranding;
+- visual yang sudah LOCKED harus dipertahankan;
+- perubahan primary identity membutuhkan persetujuan eksplisit;
+- prinsip pengembangan: `PRESERVE BRAND IDENTITY FIRST`.
+
+Status:
+
+`SRILEXBUDITRA BRAND IDENTITY R1 = LOCKED`
+
+---
+
+### MASTER VISUAL GOVERNANCE — LOCKED
+
+Canonical visual branding homepage/social preview mengikuti:
+
+`SRILEXBUDITRA-BRAND-IDENTITY-LOCK.md`
+
+Status visual:
+
+`SRILEXBUDITRA MASTER VISUAL R1 = LOCKED`
+
+Canonical MASTER asset:
+
+`/images/og/home/homepage-master-portrait-r1.png`
+
+Dimensions:
+
+`1024 × 1536 px`
+
+SHA256:
+
+`3AB96F32E7A77D4F96BAF73E50590292CABA3F1C49F6205D3643BB670F5B3979`
+
+
+Prinsip wajib:
+
+`EDIT MASTER — NOT REDESIGN MASTER`
+
+Aturan:
+
+- gambar MASTER yang telah disetujui wajib dipertahankan;
+- tidak boleh menggambar ulang desain MASTER;
+- tidak boleh membuat interpretasi layout baru;
+- perubahan hanya boleh berupa patch minimal;
+- secondary signature resmi adalah `SB DIGITAL`;
+- bentuk visual/font `SB` wajib dipertahankan;
+- foto/logo tetap menjadi primary identity;
+- seluruh AVIF, JPG, Open Graph, social preview, dan asset turunan harus berasal dari MASTER yang sama;
+- resize, crop, compression, dan format conversion tidak boleh mengubah karakter visual MASTER.
+
+## HOMEPAGE SOCIAL VISUAL R1 - LOCKED / PASS
+
+Canonical MASTER:
+
+`/images/og/home/homepage-master-portrait-r1.png`
+
+Canonical social derivatives:
+
+`/images/og/home/homepage-social-portrait-r1.avif`
+`/images/og/home/homepage-social-portrait-r1.jpg`
+
+Dimensions:
+
+`1024 x 1536 px`
+
+AVIF SHA256:
+
+`5CF8B2D3DA20A70618B265939589916D61269E2723E9BEF6E3A15110AF3626D2`
+
+JPG SHA256:
+
+`CC1FDA00CE6F12B2C868FAEDFD3D18510FE10AA971DBEA1BE374F6F79D390FA6`
+
+Validation:
+
+- visual MASTER dibandingkan langsung dengan social derivative;
+- visual MASTER = PASS;
+- visual SOCIAL = PASS;
+- tidak menggunakan crop;
+- tidak menggunakan padding;
+- tidak mengubah aspect ratio;
+- tidak melakukan redesign;
+- komposisi visual MASTER tetap dipertahankan.
+
+A4 derivative bukan canonical social asset karena perubahan aspect ratio
+mengubah keseimbangan visual MASTER.
+
+Prinsip tetap:
+
+`EDIT MASTER - NOT REDESIGN MASTER`
+
+Status:
+
+`HOMEPAGE SOCIAL VISUAL R1 = LOCKED / PASS`

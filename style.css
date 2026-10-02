@@ -8613,3 +8613,54 @@ body {
 }
 
 /* ===== /MOBILE HOMEPAGE PRODUCTION BASELINE RESTORE R1 ===== */
+
+/* ===== HOMEPAGE HERO DEMO CTA R1 ===== */
+
+.sb-hero-demo-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: -10px;
+  color: #9fd9c6;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .03em;
+  text-decoration: none;
+  transition: color .2s ease, transform .2s ease;
+}
+
+.sb-hero-demo-link span {
+  color: #10b981;
+  font-size: 8px;
+}
+
+.sb-hero-demo-link b {
+  color: #f2a900;
+  transition: transform .2s ease;
+}
+
+.sb-hero-demo-link:hover {
+  color: #fff;
+}
+
+.sb-hero-demo-link:hover b {
+  transform: translateX(3px);
+}
+
+.sb-hero-demo-link:focus-visible {
+  outline: 3px solid #ffd04d;
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+@media (max-width: 760px) {
+  .sb-hero-demo-link {
+    width: 100%;
+    justify-content: center;
+    margin-top: -8px;
+    padding: 4px 0;
+    font-size: 12px;
+  }
+}
+
+/* ===== /HOMEPAGE HERO DEMO CTA R1 ===== */
