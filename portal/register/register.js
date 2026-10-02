@@ -17,6 +17,7 @@
   const leadCode = document.getElementById("registrationLeadCode");
   const copyLeadCode = document.getElementById("copyLeadCode");
   const saveLeadCode = document.getElementById("saveLeadCode");
+  const registrationWhatsappHelp = document.getElementById("registrationWhatsappHelp");
   const leadCodeFeedback = document.getElementById("leadCodeFeedback");
   const serviceSelect = document.getElementById("service_interest");
   const copyrightYear = document.getElementById("copyrightYear");
@@ -45,6 +46,21 @@
     } catch {
       return {};
     }
+  }
+
+  function syncRegistrationHelp() {
+    const code = currentLeadCode();
+    if (!registrationWhatsappHelp || !code) return;
+
+    const text =
+      "Halo Srilex Buditra, saya memerlukan bantuan terkait proses Lead saya.\n\n" +
+      "*Lead Code:* " + code + "\n\n" +
+      "Registrasi Lead saya sudah diterima.\n" +
+      "Mohon bantuannya terkait langkah berikutnya. Terima kasih.";
+
+    registrationWhatsappHelp.href =
+      "https://wa.me/6282136238350?text=" +
+      encodeURIComponent(text);
   }
 
   function currentLeadCode() {
@@ -173,6 +189,7 @@
       form.hidden = true;
       success.hidden = false;
       leadCode.textContent = result?.lead?.lead_code || "-";
+      syncRegistrationHelp();
       success.scrollIntoView({ behavior: "smooth", block: "center" });
     } catch (error) {
       setMessage(
