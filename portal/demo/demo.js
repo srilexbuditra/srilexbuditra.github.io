@@ -180,14 +180,8 @@ document.body.addEventListener("click",e=>{
 });
 
 const bar=document.createElement("div");
-bar.className="sb-demo-toolbar";
-bar.innerHTML=`
-  <div class="sb-demo-toolbar-copy">
-    <strong>MODE DEMO</strong>
-    <span>Data simulasi • Perubahan tidak disimpan</span>
-  </div>
-  <button id="demoReset" type="button">Reset Demo</button>
-`;
+bar.style.cssText="padding:10px;text-align:center;background:#dff7e9;color:#123b2e;font:600 13px system-ui";
+bar.innerHTML='MODE DEMO — Data simulasi • Perubahan tidak disimpan &nbsp; <button id="demoReset">Reset Demo</button>';
 document.body.prepend(bar);
 
 document.getElementById("demoReset").onclick=()=>{
