@@ -146,6 +146,19 @@
 
     allViews.forEach(view => {
 
+      if (isPortal) {
+        const hidden =
+          view !== target;
+
+        view.classList.toggle(
+          "sb-portal-view-hidden",
+          hidden
+        );
+
+        view.hidden = hidden;
+        return;
+      }
+
       if (view === target) {
 
         view.style.removeProperty("display");
