@@ -212,3 +212,423 @@
 .sb-portal-view-hidden {
   display: none !important;
 }
+
+/* PORTAL QUICK ACTIONS STRICT CSP R3 */
+/* Security / Profile */
+.sb-qa-security[hidden] {
+      display: none !important;
+    }
+
+    .sb-qa-security {
+      position: fixed;
+      inset: 0;
+      z-index: 10000;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+    }
+
+    .sb-qa-security-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(15, 23, 42, .58);
+      backdrop-filter: blur(4px);
+    }
+
+    .sb-qa-security-card {
+      position: relative;
+      width: min(100%, 460px);
+      max-height: calc(100vh - 40px);
+      overflow: auto;
+      background: #fff;
+      border: 1px solid rgba(15, 23, 42, .10);
+      border-radius: 18px;
+      box-shadow: 0 24px 70px rgba(15, 23, 42, .22);
+      padding: 24px;
+    }
+
+    .sb-qa-security-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 20px;
+    }
+
+    .sb-qa-security-head h2 {
+      margin: 0 0 5px;
+      font-size: 21px;
+      color: #16352c;
+    }
+
+    .sb-qa-security-head p {
+      margin: 0;
+      color: #64748b;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .sb-qa-security-section h3 {
+      margin: 0 0 5px;
+      color: #16352c;
+      font-size: 15px;
+    }
+    .sb-qa-security-section > p {
+      margin: 0 0 14px;
+      color: #64748b;
+      font-size: 11px;
+      line-height: 1.55;
+    }
+    .sb-qa-security-divider {
+      height: 1px;
+      margin: 22px 0;
+      background: #e2e8e5;
+    }
+
+    .sb-qa-security-close {
+      border: 1px solid #dbe3df;
+      background: #fff;
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      font-size: 22px;
+      line-height: 1;
+      cursor: pointer;
+    }
+
+    .sb-qa-security-form {
+      display: grid;
+      gap: 14px;
+    }
+
+    .sb-qa-security-field {
+      display: grid;
+      gap: 7px;
+    }
+
+    .sb-qa-security-field label {
+      font-size: 11px;
+      font-weight: 800;
+      color: #334155;
+    }
+
+    .sb-qa-security-field input {
+      width: 100%;
+      box-sizing: border-box;
+      border: 1px solid #dbe3df;
+      border-radius: 11px;
+      padding: 12px 13px;
+      font: inherit;
+      outline: none;
+    }
+
+    .sb-qa-security-field input:focus {
+      border-color: #2f7d5d;
+      box-shadow: 0 0 0 3px rgba(47, 125, 93, .10);
+    }
+
+    .sb-qa-security-message {
+      min-height: 18px;
+      color: #b42318;
+      font-size: 11px;
+      line-height: 1.5;
+    }
+
+    .sb-qa-security-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 9px;
+      margin-top: 3px;
+    }
+
+    .sb-qa-security-actions button {
+      border-radius: 11px;
+      padding: 11px 15px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .sb-qa-security-cancel {
+      border: 1px solid #dbe3df;
+      background: #fff;
+      color: #334155;
+    }
+
+    .sb-qa-security-submit {
+      border: 1px solid #176b4b;
+      background: #176b4b;
+      color: #fff;
+    }
+
+    @media (max-width: 560px) {
+      .sb-qa-security {
+        padding: 12px;
+      }
+
+      .sb-qa-security-card {
+        padding: 20px 16px;
+        border-radius: 15px;
+      }
+    }
+
+/* Desktop / Notification Icon */
+.icon-btn {
+          display: grid;
+          place-items: center;
+          cursor: pointer;
+        }
+
+        .icon-btn svg {
+          display: block;
+          width: 20px;
+          height: 20px;
+        }
+
+        /*
+         * PORTAL BELL COLOR R1
+         */
+
+        .top-actions
+        .icon-btn[aria-label="Notifikasi"] {
+          position: relative;
+
+          color: #168a63;
+          background: rgba(22,138,99,.08);
+          border-color: rgba(22,138,99,.22);
+
+          transition:
+            color .18s ease,
+            background .18s ease,
+            border-color .18s ease,
+            box-shadow .18s ease;
+        }
+
+        .top-actions
+        .icon-btn[aria-label="Notifikasi"]:hover {
+          color: #0f6f50;
+          background: rgba(22,138,99,.14);
+          border-color: rgba(22,138,99,.32);
+        }
+
+        .top-actions
+        .icon-btn[aria-label="Notifikasi"][aria-expanded="true"] {
+          color: #fff;
+          background: #168a63;
+          border-color: #168a63;
+
+          box-shadow:
+            0 0 0 3px
+            rgba(22,138,99,.12);
+        }
+
+        .icon-btn.sb-portal-notification-has-new::after {
+          content: "";
+
+          position: absolute;
+          top: 6px;
+          right: 6px;
+
+          width: 8px;
+          height: 8px;
+
+          border: 2px solid #fff;
+          border-radius: 50%;
+
+          background: #16a34a;
+
+          box-sizing: content-box;
+
+          box-shadow:
+            0 0 0 1px
+            rgba(22,163,74,.10);
+        }
+
+        @media(max-width:820px) {
+          .sidebar .brand {
+            padding-right: 48px;
+          }
+        }
+
+        @media(min-width:821px) {
+          .menu-btn {
+            display: inline-grid;
+            place-items: center;
+            cursor: pointer;
+          }
+
+          .sidebar {
+            transition:
+              transform .22s ease;
+          }
+
+          .shell {
+            transition:
+              margin-left .22s ease;
+          }
+
+          body.sb-portal-sidebar-collapsed
+          .sidebar {
+            transform:
+              translateX(-100%);
+          }
+
+          body.sb-portal-sidebar-collapsed
+          .shell {
+            margin-left: 0;
+          }
+        }
+
+/* Topbar / Notification Panel */
+.top-actions {
+          position: relative;
+        }
+
+        .profile {
+          cursor: pointer;
+        }
+
+        .icon-btn[aria-expanded="true"] {
+          border-color: rgba(23,107,75,.35);
+          box-shadow:
+            0 0 0 3px rgba(23,107,75,.08);
+        }
+
+        .sb-portal-notification-panel[hidden] {
+          display: none !important;
+        }
+
+        .sb-portal-notification-panel {
+          position: absolute;
+          top: calc(100% + 10px);
+          right: 0;
+          z-index: 90;
+
+          width:
+            min(
+              360px,
+              calc(100vw - 28px)
+            );
+
+          overflow: hidden;
+
+          border:
+            1px solid rgba(15,23,42,.10);
+
+          border-radius: 14px;
+          background: #fff;
+
+          box-shadow:
+            0 18px 45px
+            rgba(15,23,42,.14);
+        }
+
+        .sb-portal-notification-head {
+          padding: 14px 16px;
+
+          border-bottom:
+            1px solid rgba(15,23,42,.08);
+        }
+
+        .sb-portal-notification-head strong {
+          display: block;
+          color: #16352c;
+          font-size: 14px;
+        }
+
+        .sb-portal-notification-head span {
+          display: block;
+          margin-top: 3px;
+          color: #64748b;
+          font-size: 11px;
+        }
+
+        .sb-portal-notification-state {
+          padding: 22px 18px;
+          color: #475569;
+          font-size: 12px;
+          line-height: 1.6;
+          text-align: center;
+        }
+
+        .sb-portal-notification-state strong {
+          display: block;
+          margin-bottom: 5px;
+          color: #16352c;
+          font-size: 13px;
+        }
+
+        .sb-portal-notification-body {
+          max-height: min(420px, 70vh);
+          overflow-y: auto;
+        }
+
+        .sb-portal-notification-item {
+          position: relative;
+          display: block;
+          width: 100%;
+          padding: 13px 16px;
+          border: 0;
+          border-bottom: 1px solid rgba(15,23,42,.07);
+          background: #fff;
+          color: #334155;
+          text-align: left;
+          cursor: pointer;
+        }
+
+        .sb-portal-notification-item:hover,
+        .sb-portal-notification-item:focus-visible {
+          background: #f8fafc;
+          outline: none;
+        }
+
+        .sb-portal-notification-item.unread {
+          background: #f0fdf4;
+        }
+
+        .sb-portal-notification-item.unread::before {
+          content: "";
+          position: absolute;
+          top: 17px;
+          left: 7px;
+          width: 6px;
+          height: 6px;
+          border-radius: 999px;
+          background: #16a34a;
+        }
+
+        .sb-portal-notification-item-title {
+          display: block;
+          padding-right: 8px;
+          color: #16352c;
+          font-size: 12px;
+          font-weight: 700;
+          line-height: 1.45;
+        }
+
+        .sb-portal-notification-item-copy {
+          display: block;
+          margin-top: 4px;
+          color: #64748b;
+          font-size: 11px;
+          line-height: 1.5;
+        }
+
+        .sb-portal-notification-item-action {
+          display: block;
+          margin-top: 7px;
+          color: #178557;
+          font-size: 10px;
+          font-weight: 700;
+        }
+
+        @media(max-width:820px) {
+          .sb-portal-notification-panel {
+            right: -2px;
+
+            width:
+              min(
+                340px,
+                calc(100vw - 20px)
+              );
+          }
+        }
