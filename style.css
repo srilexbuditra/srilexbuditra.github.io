@@ -8667,8 +8667,11 @@ body {
 /* ===== MOBILE TOP-GLOW OVERFLOW FIX R1 ===== */
 @media (max-width: 760px) {
   .top-glow {
-    width: min(700px, 100vw);
-    max-width: 100vw;
+    left: 0;
+    right: 0;
+    width: auto;
+    max-width: 100%;
+    transform: none;
   }
 }
 /* ===== /MOBILE TOP-GLOW OVERFLOW FIX R1 ===== */
