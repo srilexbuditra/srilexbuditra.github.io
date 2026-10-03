@@ -140,7 +140,7 @@ Social preview homepage wajib mempertahankan identitas foto Srilex Buditra.
 Visual OG boleh memiliki:
 
 - portrait utama
-- SB 2026 badge
+- SB DIGITAL badge
 - text branding
 - service cards
 - technology stack

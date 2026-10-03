@@ -52,7 +52,7 @@ Status source terbaru:
 - Functional source baseline sebelum documentation sync: `4c79db1`
 - Working tree sebelum update dokumentasi: clean.
 - Staging Worker tetap menggunakan candidate yang sudah diverifikasi; tidak ada deployment Worker baru untuk perubahan frontend Demo terbaru.
-- Production: **HOLD** sampai Homepage Demo Integration, dokumentasi final, Final Closeout R1, dan persetujuan release selesai.
+- Production: **HOLD** sampai dokumentasi final tersinkron, Final Closeout R1 selesai, dan persetujuan release diberikan.
 
 Status yang sudah dibuktikan source/runtime pada fase terbaru:
 
@@ -96,13 +96,24 @@ Real Lead fixture Final Closeout tetap:
 
 Jangan melakukan Aktivasi Client nyata tanpa persetujuan eksplisit.
 
-Homepage Integration R1 berikutnya:
+Homepage Integration R1:
 
 `Why Choose Me -> Coba Pengalaman Client -> Packages & Pricing`
 
 Status Homepage Demo Integration:
 
-`PLANNED - belum LOCKED/PASS sebelum source dan staging runtime selesai.`
+`LOCKED/PASS - source dan staging runtime desktop/mobile sudah diverifikasi.`
+- Hero Demo CTA desktop + mobile: **LOCKED/PASS**.
+- Mobile Horizontal Overflow Fix R1: **LOCKED/PASS**.
+- Hero `SB DIGITAL` desktop + mobile: **LOCKED/PASS**.
+- Homepage metadata / Open Graph source / PWA / social asset staging: **PASS**.
+- Meta production preview final menunggu Production Release karena asset canonical OG baru belum tersedia di production selama status HOLD.
+
+Bukti source terbaru:
+- `8603a9a` - homepage brand, social metadata, manifest, dan Demo CTA.
+- `35ef6a9` - final mobile top-glow overflow fix.
+- `fd7f14a` - Hero badge diselaraskan menjadi `SB DIGITAL`.
+
 ### Bukti final PATCH B2
 
 - Candidate Worker binding diverifikasi lengkap sebelum staging dipin.
@@ -567,23 +578,23 @@ Bukti staging runtime:
 
 # CURRENT CHECKPOINT
 
-**LATEST CLEAN SOURCE / STAGING FRONTEND:** `3f3bd5f` on `feature/client-management-r1`
+**LATEST CLEAN SOURCE / STAGING FRONTEND:** `fd7f14a` on `feature/client-management-r1`
 
 **STAGING API WORKER:** `0ae655ac-ea45-4b4e-991a-00911ef79eee` / prefix `0ae655ac`
 
 **WORKING TREE:** CLEAN sebelum update roadmap
 
-**LATEST LOCKED/PASS:** `LEAD UI INDONESIA R1`
+**LATEST LOCKED/PASS:** `HOMEPAGE HERO R1 / HOMEPAGE DEMO INTEGRATION R1`
 
 **PRESERVED LOCKED/PASS:** `LEAD SELF-SERVICE UX R1 — PATCH B2 FOLLOW-UP SEMANTICS`
 
 **CURRENT FOCUS:** `LEAD SELF-SERVICE / PUBLIC LEAD FLOW — FINAL CLOSEOUT R1`
 
-**NEXT OPEN GAP:** `LEAD → PENAWARAN RESMI HANDOFF R1 — ADMIN UI`
+**NEXT OPEN GAP:** `FINAL CLOSEOUT R1 - targeted end-to-end regression + release readiness`
 
-**BACKEND FOUNDATION:** `LEAD OFFICIAL ESTIMATE R1` sudah tersedia; frontend Admin handoff dari Lead qualified ke Penawaran Resmi masih harus ditutup.
+**BACKEND FOUNDATION:** `LEAD OFFICIAL ESTIMATE R1`, Demo Journey, dan Homepage Integration sudah tersedia serta staging verified.
 
-**NEXT CHECKPOINT:** audit source Admin Leads + Estimates → implementasi frontend handoff minimal → verify source → commit → push → staging runtime test → lanjut Final Closeout end-to-end.
+**NEXT CHECKPOINT:** final documentation sync -> targeted Final Closeout R1 -> production release decision.
 
 **NEXT MAJOR CHECKPOINT:** `PRODUCTION RELEASE R1`
 

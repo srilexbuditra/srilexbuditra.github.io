@@ -37,12 +37,23 @@
 ### Functional Source Baseline
 - Branch: `feature/client-management-r1`
 - Functional source baseline sebelum documentation sync: `4c79db1 feat: link real registration success to full demo journey`
-- Production tetap **HOLD** sampai Homepage Demo Integration, dokumentasi final, Final Closeout R1, dan persetujuan release selesai.
+- Current staging frontend head: `fd7f14a fix: align homepage hero badge with SB DIGITAL brand`
+- Production tetap **HOLD** sampai dokumentasi final tersinkron, Final Closeout R1 selesai, dan persetujuan release diberikan.
+
+### Homepage Demo Integration R1
+- Alur homepage:
+  `Why Choose Me -> Coba Pengalaman Client -> Packages & Pricing`
+- Homepage Demo Integration R1: **LOCKED/PASS**.
+- Hero Demo CTA desktop + mobile: **LOCKED/PASS**.
+- Mobile Horizontal Overflow Fix R1: **LOCKED/PASS**.
+- Hero `SB DIGITAL` desktop + mobile: **LOCKED/PASS**.
+- Homepage metadata, Open Graph source, PWA manifest, dan social asset staging: **PASS**.
+- Preview Meta production final menunggu Production Release karena canonical `og:image` menunjuk domain produksi dan asset baru belum tersedia di production selama status HOLD.
 
 ### Next
-- Homepage Integration R1:
-  `Why Choose Me -> Coba Pengalaman Client -> Packages & Pricing`
-- Section homepage belum dianggap LOCKED/PASS sebelum source dan staging runtime selesai.
+- Final documentation sync.
+- Final Closeout R1.
+- Production Release R1 setelah persetujuan release.
 
 ---
 ## V17.19.13B.4 — Aktivitas & Event Public Integration (17 September 2026)

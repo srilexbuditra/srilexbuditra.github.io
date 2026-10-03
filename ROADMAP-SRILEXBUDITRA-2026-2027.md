@@ -110,23 +110,27 @@ Prinsip Demo:
 
 ### Homepage Integration R1
 
-Rencana berikutnya:
+Status implementasi:
 
 `Why Choose Me -> Coba Pengalaman Client -> Packages & Pricing`
 
-Section homepage akan menjelaskan empat tahap Demo dan menyediakan satu CTA utama menuju:
+Section homepage menjelaskan empat tahap Demo dan menyediakan satu CTA utama menuju:
 
 `/portal/demo/register/`
 
 Status:
 
-`PLANNED - belum LOCKED/PASS sampai source dan staging runtime selesai.`
+`LOCKED/PASS - source dan staging runtime desktop/mobile sudah diverifikasi.`
+- Hero Demo CTA desktop + mobile: **LOCKED/PASS**.
+- Mobile Horizontal Overflow Fix R1: **LOCKED/PASS**.
+- Hero `SB DIGITAL` desktop + mobile: **LOCKED/PASS**.
+- Homepage metadata / Open Graph source / PWA / social asset staging: **PASS**.
+- Meta production preview final menunggu Production Release karena asset canonical OG baru belum tersedia di production selama status HOLD.
 
 ### Production Release
 
 Production tetap **HOLD** sampai:
-- Homepage Demo Integration selesai;
-- dokumentasi tersinkron;
+- dokumentasi final tersinkron;
 - Final Closeout R1 selesai;
 - release production disetujui.
 

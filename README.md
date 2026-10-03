@@ -2,7 +2,7 @@
 
 Website profesional **Srilex Buditra** yang berfungsi sebagai pusat personal branding, layanan pengembangan web, portfolio, studi kasus, profil publik, estimasi biaya proyek, verifikasi dokumen, serta dokumentasi implementasi sistem digital.
 
-**Documentation sync:** 3 Oktober 2026 - Client Management R1 / Full Demo Journey
+**Documentation sync:** 3 Oktober 2026 - Client Management R1 / Homepage Demo Integration R1 / Brand & Social Metadata
 **Current public direction:** Flagship Project + Trust & Authority + Client Management Platform + Full Demo Journey + Knowledge Center + Public Development Timeline
 **Website:** https://srilexbuditra.work
 
@@ -11,6 +11,7 @@ Website profesional **Srilex Buditra** yang berfungsi sebagai pusat personal bra
 - Desain responsif untuk desktop, laptop, tablet, dan mobile.
 - **Client Management Platform R1** untuk perjalanan `Visitor -> Lead -> Konsultasi -> Official Estimate -> Aktivasi Client -> Client Portal`.
 - **Full Demo Journey R1** pada `/portal/demo/register/` sampai `/portal/demo/`, menggunakan data simulasi tanpa API produksi atau D1.
+- **Homepage Demo Integration R1** pada section `Coba Pengalaman Client` dengan Hero Demo CTA, desktop/mobile runtime verified, Mobile Horizontal Overflow Fix R1, dan Hero `SB DIGITAL`; status **LOCKED/PASS**.
 - Halaman **Profil & Rekam Jejak** pada `/profil/` untuk identitas publik, capability map, proof of work, dan trust principles.
 - **Knowledge Center / Insights** pada `/insights/` untuk artikel teknis berbasis implementasi nyata.
 - **Development Timeline & Activity** pada `/aktivitas/` untuk selected public milestones dan status pengembangan yang transparan.

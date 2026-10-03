@@ -144,7 +144,11 @@ File berikut adalah template operasional GitHub, bukan dokumentasi produk:
 - Full Demo Journey R1: **LOCKED/PASS** untuk desktop, mobile, dan identity handoff.
 - Demo Journey menggunakan data simulasi tanpa API produksi atau D1.
 - Real Registration -> Full Demo Handoff R1: **LOCKED/PASS**.
-- Homepage Demo Integration R1: **PLANNED**, belum LOCKED/PASS.
+- Homepage Demo Integration R1: **LOCKED/PASS** untuk desktop, mobile, Hero Demo CTA, dan section `Coba Pengalaman Client`.
+- Homepage Hero `SB DIGITAL` desktop/mobile: **LOCKED/PASS**.
+- Mobile Horizontal Overflow Fix R1: **LOCKED/PASS**.
+- Homepage metadata / Open Graph source / PWA / social asset staging: **PASS**.
+- Meta production preview final menunggu Production Release karena canonical `og:image` menunjuk domain produksi dan asset baru belum tersedia selama status HOLD.
 - Flagship Program Ketahanan Pangan: **implemented / public case study tersedia**.
 - Profil & Rekam Jejak `/profil/`: **implemented**.
 - Trust & Authority V8: **implemented sebagai fondasi**.
