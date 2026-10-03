@@ -115,9 +115,7 @@
       const list = activityCard.querySelector(".list");
       if (list) {
         list.innerHTML = `
-          <div style="padding:18px;color:#64748b">
-            Aktivitas project belum tersedia pada API R1.
-          </div>
+          <div class="sb-client-activity-unavailable">Aktivitas project belum tersedia pada API R1.</div>
         `;
       }
     }

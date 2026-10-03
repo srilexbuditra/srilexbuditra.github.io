@@ -632,3 +632,14 @@
               );
           }
         }
+
+/* SB_CLIENT_ACTIVITY_UNAVAILABLE_R6 */
+.sb-client-activity-unavailable {
+  padding: 18px;
+  color: #64748b;
+}
+
+[data-activity-all]:disabled {
+  opacity: .55;
+  cursor: not-allowed;
+}
