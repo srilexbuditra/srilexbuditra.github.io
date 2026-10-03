@@ -131,7 +131,11 @@ Status:
 
 Final Closeout R1: **LOCKED/PASS**.
 
-Latest staging/frontend checkpoint: `36b508b`.
+Final Closeout checkpoint: `36b508b`.
+
+Latest staging-tested content: `1cafcc7`.
+
+Release-candidate base: `63fbe32`.
 
 Production tetap **HOLD** sampai release production disetujui dan merge ke `main` dilakukan secara eksplisit.
 

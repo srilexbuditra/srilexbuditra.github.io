@@ -578,7 +578,11 @@ Bukti staging runtime:
 
 # CURRENT CHECKPOINT
 
-**LATEST CLEAN SOURCE / STAGING FRONTEND:** `36b508b` on `feature/client-management-r1`
+**FINAL CLOSEOUT CHECKPOINT:** `36b508b`
+
+**LATEST STAGING-TESTED CONTENT:** `1cafcc7` on `feature/client-management-r1`
+
+**RELEASE-CANDIDATE BASE:** `63fbe32` on `feature/client-management-r1`
 
 **STAGING API WORKER:** `0ae655ac-ea45-4b4e-991a-00911ef79eee` / prefix `0ae655ac`
 

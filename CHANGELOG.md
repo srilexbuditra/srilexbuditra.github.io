@@ -40,7 +40,8 @@
 ### Functional Source Baseline
 - Branch: `feature/client-management-r1`
 - Functional source baseline sebelum documentation sync: `4c79db1 feat: link real registration success to full demo journey`
-- Current staging frontend head: `36b508b fix: clarify demo dashboard uses local simulated data`
+- Latest staging-tested content: `1cafcc7 fix: preserve production mobile css deltas`
+- Release-candidate base: `63fbe32 chore: reconcile main history for production release r1`
 - Production tetap **HOLD** sampai persetujuan release diberikan; belum merge ke `main`.
 
 ### Homepage Demo Integration R1

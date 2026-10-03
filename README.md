@@ -12,7 +12,7 @@ Website profesional **Srilex Buditra** yang berfungsi sebagai pusat personal bra
 - **Client Management Platform R1** untuk perjalanan `Visitor -> Lead -> Konsultasi -> Official Estimate -> Aktivasi Client -> Client Portal`.
 - **Full Demo Journey R1** pada `/portal/demo/register/` sampai `/portal/demo/`, menggunakan data simulasi tanpa API produksi atau D1.
 - **Homepage Demo Integration R1** pada section `Coba Pengalaman Client` dengan Hero Demo CTA, desktop/mobile runtime verified, Mobile Horizontal Overflow Fix R1, dan Hero `SB DIGITAL`; status **LOCKED/PASS**.
-- **Final Closeout R1:** **LOCKED/PASS** pada staging; latest verified staging/frontend checkpoint `36b508b`.
+- **Final Closeout R1:** **LOCKED/PASS** pada staging; Final Closeout checkpoint `36b508b`, latest staging-tested content `1cafcc7`, release-candidate base `63fbe32`.
 - **Production:** tetap **HOLD**; `PRODUCTION RELEASE R1` adalah checkpoint berikutnya dan belum merge ke `main`.
 - Halaman **Profil & Rekam Jejak** pada `/profil/` untuk identitas publik, capability map, proof of work, dan trust principles.
 - **Knowledge Center / Insights** pada `/insights/` untuk artikel teknis berbasis implementasi nyata.

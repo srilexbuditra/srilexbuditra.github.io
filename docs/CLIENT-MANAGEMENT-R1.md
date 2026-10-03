@@ -186,9 +186,17 @@ Branch:
 
 `feature/client-management-r1`
 
-Latest verified staging/frontend checkpoint:
+Final Closeout checkpoint:
 
 `36b508b fix: clarify demo dashboard uses local simulated data`
+
+Latest staging-tested content:
+
+`1cafcc7 fix: preserve production mobile css deltas`
+
+Release-candidate base:
+
+`63fbe32 chore: reconcile main history for production release r1`
 
 Final Closeout R1: **LOCKED/PASS**.
 

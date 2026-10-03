@@ -144,7 +144,7 @@ File berikut adalah template operasional GitHub, bukan dokumentasi produk:
 - Full Demo Journey R1: **LOCKED/PASS** untuk desktop, mobile, dan identity handoff.
 - Demo Journey menggunakan data simulasi tanpa API produksi atau D1.
 - Demo Isolation R1: **LOCKED/PASS**; Demo menggunakan state lokal/sessionStorage dan tidak memanggil API/D1 produksi.
-- Final Closeout R1: **LOCKED/PASS**; latest verified staging/frontend checkpoint `36b508b`.
+- Final Closeout R1: **LOCKED/PASS**; Final Closeout checkpoint `36b508b`, latest staging-tested content `1cafcc7`, release-candidate base `63fbe32`.
 - Fixture closeout: Lead tetap `qualified`, Official Estimate `approved` Rp5.300.000, Client belum diaktivasi, dan Invoice belum dibuat.
 - Real Registration -> Full Demo Handoff R1: **LOCKED/PASS**.
 - Homepage Demo Integration R1: **LOCKED/PASS** untuk desktop, mobile, Hero Demo CTA, dan section `Coba Pengalaman Client`.
