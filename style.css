@@ -8664,3 +8664,11 @@ body {
 }
 
 /* ===== /HOMEPAGE HERO DEMO CTA R1 ===== */
+/* ===== MOBILE TOP-GLOW OVERFLOW FIX R1 ===== */
+@media (max-width: 760px) {
+  .top-glow {
+    width: min(700px, 100vw);
+    max-width: 100vw;
+  }
+}
+/* ===== /MOBILE TOP-GLOW OVERFLOW FIX R1 ===== */
