@@ -1034,7 +1034,7 @@
   view.querySelector("[data-support-dashboard]")
     .addEventListener("click", () => {
       leaveView();
-      links("Home")[0]?.click();
+      links("Dashboard")[0]?.click();
     });
 
   view.querySelector("[data-support-refresh]")
