@@ -2,7 +2,7 @@
 
 > Status: ACTIVE DEVELOPMENT / STAGING VERIFIED
 > Branch: `feature/client-management-r1`
-> Production: HOLD sampai Final Closeout R1 selesai.
+> Production: HOLD sampai release production disetujui dan merge ke `main` dilakukan secara eksplisit.
 
 ## 1. Tujuan Platform
 
@@ -186,16 +186,14 @@ Branch:
 
 `feature/client-management-r1`
 
-Latest verified functional source checkpoint sebelum documentation sync:
+Latest verified staging/frontend checkpoint:
 
-`4c79db1 feat: link real registration success to full demo journey`
+`36b508b fix: clarify demo dashboard uses local simulated data`
+
+Final Closeout R1: **LOCKED/PASS**.
 
 Production tetap:
 
 `HOLD`
 
-sampai:
-- Homepage Demo Integration selesai;
-- dokumentasi final tersinkron;
-- Final Closeout R1 selesai;
-- release production disetujui.
+sampai release production disetujui dan merge ke `main` dilakukan secara eksplisit.

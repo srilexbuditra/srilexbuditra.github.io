@@ -11,7 +11,7 @@ Dokumen ini adalah indeks dokumentasi aktif repository `srilexbuditra.github.io`
 |---|---|---|
 | [README.md](README.md) | Active | Gambaran umum website, fitur, struktur repository, dan titik masuk dokumentasi. |
 | [CHANGELOG.md](CHANGELOG.md) | Active | Riwayat perubahan website dan modul. |
-| [docs/CLIENT-MANAGEMENT-R1.md](docs/CLIENT-MANAGEMENT-R1.md) | Active / Staging Verified | Status Client Management Platform R1, Lead Portal, Official Estimate, Client Portal, dan Full Demo Journey. |
+| [docs/CLIENT-MANAGEMENT-R1.md](docs/CLIENT-MANAGEMENT-R1.md) | Final Closeout LOCKED/PASS / Production HOLD | Status Client Management Platform R1, Lead Portal, Official Estimate, Client Portal, dan Full Demo Journey. |
 | [SRILEXBUDITRA-MASTER-PROJECT-ROADMAP.md](SRILEXBUDITRA-MASTER-PROJECT-ROADMAP.md) | Active Continuity | Checkpoint source, status LOCKED/PASS, workflow, dan Final Closeout R1. |
 | [DOCUMENTATION.md](DOCUMENTATION.md) | Active | Indeks dokumentasi repository. |
 | [DOCUMENTATION_AUDIT_V11.8.md](DOCUMENTATION_AUDIT_V11.8.md) | Current Audit | Audit dan sinkronisasi dokumentasi terbaru. |
@@ -143,6 +143,9 @@ File berikut adalah template operasional GitHub, bukan dokumentasi produk:
 - Client Management Platform R1: **active development / staging verified / production HOLD**.
 - Full Demo Journey R1: **LOCKED/PASS** untuk desktop, mobile, dan identity handoff.
 - Demo Journey menggunakan data simulasi tanpa API produksi atau D1.
+- Demo Isolation R1: **LOCKED/PASS**; Demo menggunakan state lokal/sessionStorage dan tidak memanggil API/D1 produksi.
+- Final Closeout R1: **LOCKED/PASS**; latest verified staging/frontend checkpoint `36b508b`.
+- Fixture closeout: Lead tetap `qualified`, Official Estimate `approved` Rp5.300.000, Client belum diaktivasi, dan Invoice belum dibuat.
 - Real Registration -> Full Demo Handoff R1: **LOCKED/PASS**.
 - Homepage Demo Integration R1: **LOCKED/PASS** untuk desktop, mobile, Hero Demo CTA, dan section `Coba Pengalaman Client`.
 - Homepage Hero `SB DIGITAL` desktop/mobile: **LOCKED/PASS**.

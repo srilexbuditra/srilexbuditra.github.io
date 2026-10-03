@@ -129,10 +129,11 @@ Status:
 
 ### Production Release
 
-Production tetap **HOLD** sampai:
-- dokumentasi final tersinkron;
-- Final Closeout R1 selesai;
-- release production disetujui.
+Final Closeout R1: **LOCKED/PASS**.
+
+Latest staging/frontend checkpoint: `36b508b`.
+
+Production tetap **HOLD** sampai release production disetujui dan merge ke `main` dilakukan secara eksplisit.
 
 ## Prinsip Utama
 

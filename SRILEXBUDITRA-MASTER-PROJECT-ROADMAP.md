@@ -42,7 +42,7 @@ Aturan:
 - D1 UUID: `96adf8ed-2793-4db6-93a7-1ab27230b187`
 - Admin Leads cache marker: `leads.js?v=lead-followup-semantics-r1`
 - `LEAD SELF-SERVICE UX R1 — PATCH B2 FOLLOW-UP SEMANTICS`: **LOCKED / PASS**
-- Production: **HOLD** sampai Lead Self-Service / Public Lead Flow Final Closeout R1 selesai dan staging final siap release.
+- Production: **HOLD** sampai persetujuan release diberikan; belum merge ke `main`.
 
 ### Current R1 Closeout Checkpoint - 3 Oktober 2026
 
@@ -52,7 +52,7 @@ Status source terbaru:
 - Functional source baseline sebelum documentation sync: `4c79db1`
 - Working tree sebelum update dokumentasi: clean.
 - Staging Worker tetap menggunakan candidate yang sudah diverifikasi; tidak ada deployment Worker baru untuk perubahan frontend Demo terbaru.
-- Production: **HOLD** sampai dokumentasi final tersinkron, Final Closeout R1 selesai, dan persetujuan release diberikan.
+- Production: **HOLD** sampai persetujuan release diberikan; belum merge ke `main`.
 
 Status yang sudah dibuktikan source/runtime pada fase terbaru:
 
@@ -339,11 +339,11 @@ Pekerjaan ini **ditunda sementara** sampai Public Lead Registration + Production
 ## 12. Prioritas Development Sekarang
 
 ### CURRENT FOCUS
-**LEAD SELF-SERVICE / PUBLIC LEAD FLOW — FINAL CLOSEOUT R1**
+**PRODUCTION RELEASE R1 — RELEASE DECISION / PRODUCTION READINESS**
 
 PATCH B2 Follow-up Semantics sudah **LOCKED / PASS**. Jangan mengulang patch tersebut.
 
-Tujuan closeout berikutnya adalah membuktikan seluruh jalur Lead tetap menyatu secara end-to-end sebelum `PRODUCTION RELEASE R1`.
+Final Closeout R1 telah selesai dan seluruh jalur minimum yang ditargetkan telah terverifikasi sebelum `PRODUCTION RELEASE R1`.
 
 Urutan lanjut yang dikunci:
 
@@ -578,27 +578,27 @@ Bukti staging runtime:
 
 # CURRENT CHECKPOINT
 
-**LATEST CLEAN SOURCE / STAGING FRONTEND:** `fd7f14a` on `feature/client-management-r1`
+**LATEST CLEAN SOURCE / STAGING FRONTEND:** `36b508b` on `feature/client-management-r1`
 
 **STAGING API WORKER:** `0ae655ac-ea45-4b4e-991a-00911ef79eee` / prefix `0ae655ac`
 
-**WORKING TREE:** CLEAN sebelum update roadmap
+**WORKING TREE:** CLEAN pada checkpoint verifikasi Final Closeout R1 sebelum documentation sync
 
-**LATEST LOCKED/PASS:** `HOMEPAGE HERO R1 / HOMEPAGE DEMO INTEGRATION R1`
+**LATEST LOCKED/PASS:** `FINAL CLOSEOUT R1 / DEMO ISOLATION R1 / REAL LEAD + OFFICIAL ESTIMATE`
 
 **PRESERVED LOCKED/PASS:** `LEAD SELF-SERVICE UX R1 — PATCH B2 FOLLOW-UP SEMANTICS`
 
-**CURRENT FOCUS:** `LEAD SELF-SERVICE / PUBLIC LEAD FLOW — FINAL CLOSEOUT R1`
+**CURRENT FOCUS:** `PRODUCTION RELEASE R1 - release decision / production readiness`
 
-**NEXT OPEN GAP:** `FINAL CLOSEOUT R1 - targeted end-to-end regression + release readiness`
+**NEXT OPEN GAP:** `PRODUCTION RELEASE R1`
 
 **BACKEND FOUNDATION:** `LEAD OFFICIAL ESTIMATE R1`, Demo Journey, dan Homepage Integration sudah tersedia serta staging verified.
 
-**NEXT CHECKPOINT:** final documentation sync -> targeted Final Closeout R1 -> production release decision.
+**NEXT CHECKPOINT:** production release decision; merge/release hanya setelah persetujuan eksplisit.
 
 **NEXT MAJOR CHECKPOINT:** `PRODUCTION RELEASE R1`
 
-**PRODUCTION:** HOLD sampai Final Closeout R1 benar-benar `LOCKED / PASS`.
+**PRODUCTION:** HOLD sampai persetujuan release; belum merge ke `main`.
 
 **RULE:** jangan mengulang modul yang sudah `LOCKED / PASS` kecuali ada regression nyata.
 

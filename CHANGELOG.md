@@ -33,12 +33,15 @@
 - Real Registration -> Full Demo Handoff R1: LOCKED/PASS.
 - Registrasi nyata dan Demo Registration route terverifikasi HTTP 200 pada staging.
 - Demo tetap tanpa API produksi, tanpa D1, dan tanpa mutasi data produksi.
+- Demo Isolation R1: **LOCKED/PASS**; footer Demo Client telah diperjelas menjadi `data simulasi lokal`.
+- Final Closeout R1: **LOCKED/PASS**.
+- Real Lead + Official Estimate closeout: Lead `qualified`, Estimate `approved`, total Rp5.300.000, Client belum diaktivasi, dan Invoice belum dibuat.
 
 ### Functional Source Baseline
 - Branch: `feature/client-management-r1`
 - Functional source baseline sebelum documentation sync: `4c79db1 feat: link real registration success to full demo journey`
-- Current staging frontend head: `fd7f14a fix: align homepage hero badge with SB DIGITAL brand`
-- Production tetap **HOLD** sampai dokumentasi final tersinkron, Final Closeout R1 selesai, dan persetujuan release diberikan.
+- Current staging frontend head: `36b508b fix: clarify demo dashboard uses local simulated data`
+- Production tetap **HOLD** sampai persetujuan release diberikan; belum merge ke `main`.
 
 ### Homepage Demo Integration R1
 - Alur homepage:
@@ -51,9 +54,8 @@
 - Preview Meta production final menunggu Production Release karena canonical `og:image` menunjuk domain produksi dan asset baru belum tersedia di production selama status HOLD.
 
 ### Next
-- Final documentation sync.
-- Final Closeout R1.
-- Production Release R1 setelah persetujuan release.
+- `PRODUCTION RELEASE R1` - release decision / production readiness.
+- Merge/release ke `main` hanya setelah persetujuan eksplisit.
 
 ---
 ## V17.19.13B.4 — Aktivitas & Event Public Integration (17 September 2026)
