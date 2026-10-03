@@ -160,9 +160,10 @@
 
   function showDocuments() {
     [...content.children].forEach(node => {
-      if (node !== view) node.style.display = "none";
+      if (node !== view) node.classList.add("sb-portal-view-hidden");
     });
 
+    view.classList.remove("sb-portal-view-hidden");
     view.hidden = false;
 
     document.querySelectorAll(".nav a, .mobile-nav a")
@@ -177,7 +178,7 @@
     view.hidden = true;
 
     [...content.children].forEach(node => {
-      if (node !== view) node.style.removeProperty("display");
+      if (node !== view) node.classList.remove("sb-portal-view-hidden");
     });
   }
 

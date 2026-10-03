@@ -208,3 +208,7 @@
         font: inherit;
         cursor: pointer;
       }
+
+.sb-portal-view-hidden {
+  display: none !important;
+}

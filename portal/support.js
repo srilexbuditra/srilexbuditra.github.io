@@ -655,10 +655,10 @@
 
   function showView() {
     [...content.children].forEach(node => {
-      if (node !== view) node.style.display = "none";
+      if (node !== view) node.classList.add("sb-portal-view-hidden");
     });
 
-    view.style.removeProperty("display");
+    view.classList.remove("sb-portal-view-hidden");
     view.hidden = false;
 
     document
@@ -676,7 +676,7 @@
 
     [...content.children].forEach(node => {
       if (node !== view) {
-        node.style.removeProperty("display");
+        node.classList.remove("sb-portal-view-hidden");
       }
     });
   }
