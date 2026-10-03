@@ -42,7 +42,7 @@ Aturan:
 - D1 UUID: `96adf8ed-2793-4db6-93a7-1ab27230b187`
 - Admin Leads cache marker: `leads.js?v=lead-followup-semantics-r1`
 - `LEAD SELF-SERVICE UX R1 — PATCH B2 FOLLOW-UP SEMANTICS`: **LOCKED / PASS**
-- Production: **HOLD** sampai persetujuan release diberikan; belum merge ke `main`.
+- Production Release R1: **LOCKED/PASS**; release content `4495cd6` telah diterbitkan ke `main` dan production runtime verified.
 
 ### Current R1 Closeout Checkpoint - 3 Oktober 2026
 
@@ -52,7 +52,7 @@ Status source terbaru:
 - Functional source baseline sebelum documentation sync: `4c79db1`
 - Working tree sebelum update dokumentasi: clean.
 - Staging Worker tetap menggunakan candidate yang sudah diverifikasi; tidak ada deployment Worker baru untuk perubahan frontend Demo terbaru.
-- Production: **HOLD** sampai persetujuan release diberikan; belum merge ke `main`.
+- Production Release R1: **LOCKED/PASS**; release content `4495cd6` telah diterbitkan ke `main` dan production runtime verified.
 
 Status yang sudah dibuktikan source/runtime pada fase terbaru:
 
@@ -107,7 +107,7 @@ Status Homepage Demo Integration:
 - Mobile Horizontal Overflow Fix R1: **LOCKED/PASS**.
 - Hero `SB DIGITAL` desktop + mobile: **LOCKED/PASS**.
 - Homepage metadata / Open Graph source / PWA / social asset staging: **PASS**.
-- Meta production preview final menunggu Production Release karena asset canonical OG baru belum tersedia di production selama status HOLD.
+- Asset canonical OG baru telah tersedia di production setelah Production Release R1; validasi ulang scraper Meta tetap terpisah.
 
 Bukti source terbaru:
 - `8603a9a` - homepage brand, social metadata, manifest, dan Demo CTA.
@@ -339,7 +339,7 @@ Pekerjaan ini **ditunda sementara** sampai Public Lead Registration + Production
 ## 12. Prioritas Development Sekarang
 
 ### CURRENT FOCUS
-**PRODUCTION RELEASE R1 — RELEASE DECISION / PRODUCTION READINESS**
+**PRODUCTION RELEASE R1 — LOCKED/PASS**
 
 PATCH B2 Follow-up Semantics sudah **LOCKED / PASS**. Jangan mengulang patch tersebut.
 
@@ -432,7 +432,7 @@ Kembali ke development berikutnya
 11. Activity / Audit Trail refinement
 12. Cross-module End-to-End Business Flow
 13. Responsive / Security / Regression
-14. Production readiness checkpoint berikutnya
+14. Production Release R1 selesai; lanjut post-release monitoring / prioritas roadmap berikutnya
 
 ## 15. Full Business Journey Target
 
@@ -592,17 +592,17 @@ Bukti staging runtime:
 
 **PRESERVED LOCKED/PASS:** `LEAD SELF-SERVICE UX R1 — PATCH B2 FOLLOW-UP SEMANTICS`
 
-**CURRENT FOCUS:** `PRODUCTION RELEASE R1 - release decision / production readiness`
+**CURRENT FOCUS:** `POST-RELEASE MONITORING / NEXT ROADMAP PRIORITY`
 
-**NEXT OPEN GAP:** `PRODUCTION RELEASE R1`
+**NEXT OPEN GAP:** tidak ada untuk Production Release R1; prioritas roadmap berikutnya akan ditentukan setelah post-release monitoring.
 
 **BACKEND FOUNDATION:** `LEAD OFFICIAL ESTIMATE R1`, Demo Journey, dan Homepage Integration sudah tersedia serta staging verified.
 
-**NEXT CHECKPOINT:** production release decision; merge/release hanya setelah persetujuan eksplisit.
+**NEXT CHECKPOINT:** post-release monitoring dan penentuan prioritas roadmap berikutnya.
 
-**NEXT MAJOR CHECKPOINT:** `PRODUCTION RELEASE R1`
+**NEXT MAJOR CHECKPOINT:** prioritas roadmap berikutnya setelah Production Release R1.
 
-**PRODUCTION:** HOLD sampai persetujuan release; belum merge ke `main`.
+**PRODUCTION:** `PRODUCTION RELEASE R1 = LOCKED/PASS`; release content `4495cd6` telah diterbitkan ke `main` dan production runtime verified.
 
 **RULE:** jangan mengulang modul yang sudah `LOCKED / PASS` kecuali ada regression nyata.
 

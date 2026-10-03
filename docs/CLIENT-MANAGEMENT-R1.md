@@ -1,8 +1,8 @@
 # Srilex Buditra Client Management Platform - R1
 
-> Status: ACTIVE DEVELOPMENT / STAGING VERIFIED
+> Status: PRODUCTION RELEASE R1 **LOCKED/PASS**
 > Branch: `feature/client-management-r1`
-> Production: HOLD sampai release production disetujui dan merge ke `main` dilakukan secara eksplisit.
+> Production Release R1: **LOCKED/PASS**. Release content `4495cd6` telah diterbitkan ke `main` dan production runtime telah diverifikasi.
 
 ## 1. Tujuan Platform
 

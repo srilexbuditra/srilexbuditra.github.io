@@ -1,6 +1,6 @@
 ## Client Management R1 - Demo Journey & Lead-to-Client Experience (3 Oktober 2026)
 
-**Status:** Active Development / Staging Verified / Production HOLD
+**Status:** Production Release R1 **LOCKED/PASS**
 
 ### Added
 - Menambahkan Full Demo Journey publik:
@@ -42,7 +42,7 @@
 - Functional source baseline sebelum documentation sync: `4c79db1 feat: link real registration success to full demo journey`
 - Latest staging-tested content: `1cafcc7 fix: preserve production mobile css deltas`
 - Release-candidate base: `63fbe32 chore: reconcile main history for production release r1`
-- Production tetap **HOLD** sampai persetujuan release diberikan; belum merge ke `main`.
+- Production Release R1: **LOCKED/PASS**; release content `4495cd6` telah diterbitkan ke `main` dan diverifikasi di runtime production.
 
 ### Homepage Demo Integration R1
 - Alur homepage:
@@ -52,10 +52,10 @@
 - Mobile Horizontal Overflow Fix R1: **LOCKED/PASS**.
 - Hero `SB DIGITAL` desktop + mobile: **LOCKED/PASS**.
 - Homepage metadata, Open Graph source, PWA manifest, dan social asset staging: **PASS**.
-- Preview Meta production final menunggu Production Release karena canonical `og:image` menunjuk domain produksi dan asset baru belum tersedia di production selama status HOLD.
+- Asset canonical `og:image` telah tersedia di production setelah Production Release R1; validasi ulang preview melalui scraper Meta tetap merupakan pemeriksaan eksternal terpisah.
 
 ### Next
-- `PRODUCTION RELEASE R1` - release decision / production readiness.
+- `PRODUCTION RELEASE R1` - **LOCKED/PASS**; released to `main`, production runtime verified.
 - Merge/release ke `main` hanya setelah persetujuan eksplisit.
 
 ---

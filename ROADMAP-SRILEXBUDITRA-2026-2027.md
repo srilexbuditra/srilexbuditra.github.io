@@ -125,7 +125,7 @@ Status:
 - Mobile Horizontal Overflow Fix R1: **LOCKED/PASS**.
 - Hero `SB DIGITAL` desktop + mobile: **LOCKED/PASS**.
 - Homepage metadata / Open Graph source / PWA / social asset staging: **PASS**.
-- Meta production preview final menunggu Production Release karena asset canonical OG baru belum tersedia di production selama status HOLD.
+- Asset canonical OG baru telah tersedia di production setelah Production Release R1; validasi ulang scraper Meta tetap terpisah.
 
 ### Production Release
 
@@ -137,7 +137,7 @@ Latest staging-tested content: `1cafcc7`.
 
 Release-candidate base: `63fbe32`.
 
-Production tetap **HOLD** sampai release production disetujui dan merge ke `main` dilakukan secara eksplisit.
+Production Release R1: **LOCKED/PASS**; release content `4495cd6` telah diterbitkan ke `main` dan production runtime telah diverifikasi.
 
 ## Prinsip Utama
 

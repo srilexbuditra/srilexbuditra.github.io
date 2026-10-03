@@ -11,7 +11,7 @@ Dokumen ini adalah indeks dokumentasi aktif repository `srilexbuditra.github.io`
 |---|---|---|
 | [README.md](README.md) | Active | Gambaran umum website, fitur, struktur repository, dan titik masuk dokumentasi. |
 | [CHANGELOG.md](CHANGELOG.md) | Active | Riwayat perubahan website dan modul. |
-| [docs/CLIENT-MANAGEMENT-R1.md](docs/CLIENT-MANAGEMENT-R1.md) | Final Closeout LOCKED/PASS / Production HOLD | Status Client Management Platform R1, Lead Portal, Official Estimate, Client Portal, dan Full Demo Journey. |
+| [docs/CLIENT-MANAGEMENT-R1.md](docs/CLIENT-MANAGEMENT-R1.md) | Final Closeout LOCKED/PASS / Production Release R1 LOCKED/PASS | Status Client Management Platform R1, Lead Portal, Official Estimate, Client Portal, dan Full Demo Journey. |
 | [SRILEXBUDITRA-MASTER-PROJECT-ROADMAP.md](SRILEXBUDITRA-MASTER-PROJECT-ROADMAP.md) | Active Continuity | Checkpoint source, status LOCKED/PASS, workflow, dan Final Closeout R1. |
 | [DOCUMENTATION.md](DOCUMENTATION.md) | Active | Indeks dokumentasi repository. |
 | [DOCUMENTATION_AUDIT_V11.8.md](DOCUMENTATION_AUDIT_V11.8.md) | Current Audit | Audit dan sinkronisasi dokumentasi terbaru. |
@@ -151,7 +151,7 @@ File berikut adalah template operasional GitHub, bukan dokumentasi produk:
 - Homepage Hero `SB DIGITAL` desktop/mobile: **LOCKED/PASS**.
 - Mobile Horizontal Overflow Fix R1: **LOCKED/PASS**.
 - Homepage metadata / Open Graph source / PWA / social asset staging: **PASS**.
-- Meta production preview final menunggu Production Release karena canonical `og:image` menunjuk domain produksi dan asset baru belum tersedia selama status HOLD.
+- Asset canonical `og:image` sekarang tersedia di production setelah Production Release R1; validasi ulang scraper Meta tetap terpisah.
 - Flagship Program Ketahanan Pangan: **implemented / public case study tersedia**.
 - Profil & Rekam Jejak `/profil/`: **implemented**.
 - Trust & Authority V8: **implemented sebagai fondasi**.
