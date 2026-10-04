@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Visitor Analytics & Privacy - System Case Study | Srilex Buditra</title>
+  <meta name="description" content="System case study Visitor Analytics Srilex Buditra: Cloudflare Workers, D1, anonymous visitor ID, protected statistics endpoint, Analytics V4, V5 period filter, dan centralized privacy-aware analytics.">
+  <link rel="canonical" href="https://srilexbuditra.work/portfolio/visitor-analytics/">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://srilexbuditra.work/portfolio/visitor-analytics/">
+  <meta property="og:title" content="Visitor Analytics & Privacy - System Case Study">
+  <meta property="og:description" content="Cloudflare Workers + D1 visitor analytics dengan anonymous visitor ID, protected statistics, dan privacy guardrail.">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Visitor Analytics & Privacy - System Case Study">
+  <meta name="twitter:description" content="Centralized visitor analytics dengan Workers, D1, anonymous ID, dan privacy guardrail.">
+  <meta name="theme-color" content="#031426">
+  <link rel="icon" type="image/avif" href="/images/logo.avif">
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/portfolio/ketahanan-pangan/case-study.css">
+  <link rel="stylesheet" href="/portfolio/portfolio.css">
+</head>
+<body class="case-page">
+
+<header class="portfolio-case-top">
+  <div class="container">
+    <a class="portfolio-case-brand" href="/">
+      <img src="/images/logo.avif" alt="Srilex Buditra" width="1920" height="1916">
+      <span><strong>SRILEX BUDITRA</strong><small>FULL STACK DEVELOPER</small></span>
+    </a>
+    <nav class="case-nav" aria-label="Navigasi case study">
+      <a href="/">Beranda</a>
+      <a href="/portfolio/">Portfolio</a>
+      <a href="/aktivitas/">Timeline</a>
+      <a class="nav-cta btn outline" href="/#kontak">Hubungi Saya</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="case-hero">
+    <div class="container case-hero-grid">
+      <div>
+        <span class="case-live"><i aria-hidden="true"></i> SYSTEM CASE STUDY &bull; ACTIVE ANALYTICS</span>
+        <div class="case-overline">ANALYTICS / PRIVACY / CLOUD</div>
+        <h1>Visitor Analytics<br><span>&amp; Privacy.</span></h1>
+        <p class="case-lead">Centralized visitor analytics berbasis Cloudflare Workers dan D1 yang mencatat event kunjungan dengan anonymous visitor ID, melindungi endpoint statistik, dan membatasi pengiriman data pribadi atau nilai form sensitif.</p>
+        <div class="case-actions">
+          <a class="btn primary" href="/aktivitas/">Lihat Development Timeline</a>
+          <a class="btn outline" href="/portfolio/">Lihat Portfolio</a>
+        </div>
+        <p class="case-role"><b>Status:</b> Analytics V4 aktif dan telah diuji; arsitektur terus dikembangkan secara centralized.</p>
+      </div>
+
+      <div class="case-hero-media system-case-hero-media" aria-label="Visual alur Visitor Analytics">
+        <div class="system-case-visual">
+          <b>PRIVACY-AWARE ANALYTICS FLOW</b>
+          <div class="system-case-visual-flow">
+            <div class="system-case-node"><strong>Page Event</strong><small>Kunjungan publik menghasilkan event analytics.</small></div>
+            <div class="system-case-node"><strong>Anonymous ID</strong><small>Visitor ID tidak dirancang sebagai identitas pribadi.</small></div>
+            <div class="system-case-node"><strong>Worker + D1</strong><small>Backend dan event storage terpusat pada Cloudflare.</small></div>
+            <div class="system-case-node"><strong>Protected Stats</strong><small>Statistik dilindungi menggunakan secret STATS_API_KEY.</small></div>
+          </div>
+          <div class="system-case-visual-note">Halaman admin/sensitif dikecualikan dan tracker global tidak mengirim data pribadi atau nilai form sensitif.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="case-section">
+    <div class="container">
+      <div class="case-section-title">
+        <span>01 / SYSTEM SNAPSHOT</span>
+        <h2>Analytics yang mengutamakan observability tanpa menjadikan identitas pribadi sebagai tujuan.</h2>
+        <p>Nilai statistik bersifat dinamis; dokumentasi menyimpan arsitektur dan aturan, bukan angka kunjungan tetap.</p>
+      </div>
+
+      <div class="summary-grid">
+        <article><small>Status</small><strong>Analytics V4 Active</strong><p>Foundation aktif dan telah diuji pada website.</p></article>
+        <article><small>Backend</small><strong>Cloudflare Workers</strong><p>Event analytics diproses melalui Worker terpusat.</p></article>
+        <article><small>Database</small><strong>Cloudflare D1</strong><p>Visit events disimpan pada database untuk statistik.</p></article>
+        <article><small>Privacy</small><strong>Anonymous Visitor ID</strong><p>Analytics tidak dirancang untuk mengetahui identitas pribadi visitor.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="case-section case-dark">
+    <div class="container">
+      <div class="case-section-title">
+        <span>02 / CHALLENGE - APPROACH</span>
+        <h2>Traffic perlu dipahami tanpa mengubah tracker menjadi pengumpul data sensitif.</h2>
+      </div>
+
+      <div class="challenge-grid">
+        <article><b>Challenge</b><h3>Data kunjungan terus berubah.</h3><p>Sistem membutuhkan event-based analytics yang dapat dibaca sebagai tren tanpa menaruh angka statis di dokumentasi.</p></article>
+        <article><b>Approach</b><h3>Centralized analytics source.</h3><p>Visitor Analytics menggunakan Worker dan D1 sebagai source terpusat dengan anonymous visitor ID.</p></article>
+        <article><b>Outcome</b><h3>Foundation yang dapat dikembangkan.</h3><p>V5 menambahkan Filter Periode dan arsitektur analytics kemudian dipusatkan bersama konfigurasi GA4 site-wide.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="case-section">
+    <div class="container">
+      <div class="case-section-title">
+        <span>03 / EVENT JOURNEY</span>
+        <h2>Dari kunjungan publik sampai statistik terproteksi.</h2>
+      </div>
+
+      <div class="journey">
+        <div><b>01</b><h3>Page Visit</h3><p>Pengunjung membuka halaman publik yang eligible.</p></div><i>&rarr;</i>
+        <div><b>02</b><h3>Tracker</h3><p>Tracker menghasilkan event kunjungan.</p></div><i>&rarr;</i>
+        <div><b>03</b><h3>Worker</h3><p>Backend menerima dan memproses event.</p></div><i>&rarr;</i>
+        <div><b>04</b><h3>D1</h3><p>Event disimpan untuk agregasi statistik.</p></div><i>&rarr;</i>
+        <div><b>05</b><h3>Stats Access</h3><p>Endpoint statistik dilindungi dengan secret.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="case-section case-dark">
+    <div class="container">
+      <div class="case-section-title">
+        <span>04 / PRIVACY GUARDRAILS</span>
+        <h2>Analytics memiliki batas data yang eksplisit.</h2>
+      </div>
+
+      <div class="challenge-grid">
+        <article><b>NO SENSITIVE FORM DATA</b><h3>Tracker global dibatasi.</h3><p>NIK, KK, WhatsApp, email, password, session token, dan nilai form tidak dikirim dari tracker global.</p></article>
+        <article><b>EXCLUDED AREAS</b><h3>Admin dan halaman sensitif dikecualikan.</h3><p>Area yang sudah dikecualikan tidak dikirim ke GA4 maupun Visitor Analytics.</p></article>
+        <article><b>PROTECTED STATS</b><h3>Dashboard tidak terbuka bebas.</h3><p>STATS_API_KEY disimpan sebagai Cloudflare Worker Secret untuk akses statistik.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="case-section case-roadmap">
+    <div class="container">
+      <div class="case-section-title">
+        <span>05 / EVOLUTION</span>
+        <h2>Foundation berkembang tanpa mengganti sumber arsitektur secara sembarang.</h2>
+      </div>
+
+      <div class="roadmap-grid">
+        <article><b>V4</b><h3>Active Foundation</h3><p>Cloudflare Workers + D1, visit events, anonymous visitor ID, dan protected statistics.</p></article>
+        <article><b>V5</b><h3>Period Filter</h3><p>Filter periode ditambahkan pada foundation Analytics V4.</p></article>
+        <article><b>CENTRALIZED</b><h3>Site-Wide Architecture</h3><p>GA4 dan Visitor Analytics diarahkan menggunakan centralized analytics source dan privacy guardrail yang sama.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="case-cta">
+    <div class="container">
+      <span>OBSERVABILITY WITH PRIVACY GUARDRAILS</span>
+      <h2>Butuh analytics yang lebih terstruktur untuk website atau platform?</h2>
+      <p>Srilex Buditra mengembangkan event tracking, backend analytics, database, dashboard, dan privacy boundary sesuai kebutuhan implementasi.</p>
+      <div class="case-actions">
+        <a class="btn primary" href="/#estimasi">Hitung Estimasi</a>
+        <a class="btn outline" href="/portfolio/">Kembali ke Portfolio</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="container case-footer">
+    <a class="brand" href="/"><span class="brand-mark"><img src="/images/logo.avif" alt="Srilex Buditra Logo" width="1920" height="1916"></span><span><strong>SRILEX <b>BUDITRA</b></strong><small>FULL STACK DEVELOPER</small></span></a>
+    <p>System Case Study &bull; Visitor Analytics &amp; Privacy</p>
+    <div><a href="/portfolio/">Portfolio</a><a href="/privacy.html">Privasi</a><a href="/security.html">Keamanan</a><a href="/terms.html">Ketentuan</a></div>
+  </div>
+</footer>
+
+<script src="/assets/js/visitor-analytics.js" defer></script>
+</body>
+</html>

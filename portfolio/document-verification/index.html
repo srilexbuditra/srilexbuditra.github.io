@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Official Document Verification - System Case Study | Srilex Buditra</title>
+  <meta name="description" content="System case study Official Document Verification Srilex Buditra: Document ID, QR verification, fingerprint, static registry, optional Worker/KV publisher API, fallback, dan publisher security V31.">
+  <link rel="canonical" href="https://srilexbuditra.work/portfolio/document-verification/">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://srilexbuditra.work/portfolio/document-verification/">
+  <meta property="og:title" content="Official Document Verification - System Case Study">
+  <meta property="og:description" content="Trust layer untuk verifikasi dokumen menggunakan Document ID, QR, fingerprint, registry/API fallback, dan publisher security.">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Official Document Verification - System Case Study">
+  <meta name="twitter:description" content="Document ID, QR verification, fingerprint, registry/API fallback, dan publisher security V31.">
+  <meta name="theme-color" content="#031426">
+  <link rel="icon" type="image/avif" href="/images/logo.avif">
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/portfolio/ketahanan-pangan/case-study.css">
+  <link rel="stylesheet" href="/portfolio/portfolio.css">
+</head>
+<body class="case-page">
+
+<header class="portfolio-case-top">
+  <div class="container">
+    <a class="portfolio-case-brand" href="/">
+      <img src="/images/logo.avif" alt="Srilex Buditra" width="1920" height="1916">
+      <span><strong>SRILEX BUDITRA</strong><small>FULL STACK DEVELOPER</small></span>
+    </a>
+    <nav class="case-nav" aria-label="Navigasi case study">
+      <a href="/">Beranda</a>
+      <a href="/portfolio/">Portfolio</a>
+      <a href="/verify/">Verification</a>
+      <a class="nav-cta btn outline" href="/#kontak">Hubungi Saya</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="case-hero">
+    <div class="container case-hero-grid">
+      <div>
+        <span class="case-live"><i aria-hidden="true"></i> SYSTEM CASE STUDY &bull; ACTIVE FOUNDATION</span>
+        <div class="case-overline">VERIFICATION / TRUST LAYER</div>
+        <h1>Official Document<br><span>Verification.</span></h1>
+        <p class="case-lead">Sistem verifikasi publik yang memisahkan identitas dokumen, QR, publisher workflow, dan data sensitif agar proses pemeriksaan dapat dilakukan secara jelas tanpa menaruh data pribadi di dalam QR.</p>
+        <div class="case-actions">
+          <a class="btn primary" href="/verify/">Buka Verification</a>
+          <a class="btn outline" href="/portfolio/">Lihat Portfolio</a>
+        </div>
+        <p class="case-role"><b>Status:</b> public verification foundation aktif; publisher security mengikuti hardening V31.</p>
+      </div>
+
+      <div class="case-hero-media system-case-hero-media" aria-label="Visual alur Document Verification">
+        <div class="system-case-visual">
+          <b>DOCUMENT TRUST FLOW</b>
+          <div class="system-case-visual-flow">
+            <div class="system-case-node"><strong>Document ID</strong><small>Identitas dokumen yang diperiksa.</small></div>
+            <div class="system-case-node"><strong>QR Verification</strong><small>QR membawa URL dan Document ID.</small></div>
+            <div class="system-case-node"><strong>API / Registry</strong><small>API dapat diperiksa lebih dulu dengan registry sebagai fallback.</small></div>
+            <div class="system-case-node"><strong>Verified Status</strong><small>Record valid menggunakan status Verified.</small></div>
+          </div>
+          <div class="system-case-visual-note">Publisher flow dipisahkan dari akses publik dan token tidak disimpan permanen di localStorage.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="case-section">
+    <div class="container">
+      <div class="case-section-title">
+        <span>01 / SYSTEM SNAPSHOT</span>
+        <h2>Trust layer yang fokus pada pemeriksaan, bukan sekadar QR.</h2>
+        <p>QR adalah pintu masuk. Keaslian tetap ditentukan oleh record verifikasi dan status dokumen.</p>
+      </div>
+
+      <div class="summary-grid">
+        <article><small>Status</small><strong>Active Foundation</strong><p>Halaman verifikasi publik dan registry tersedia sebagai fondasi pemeriksaan.</p></article>
+        <article><small>Identity</small><strong>Document ID</strong><p>Record diverifikasi menggunakan Document ID yang sesuai.</p></article>
+        <article><small>QR Boundary</small><strong>No personal data</strong><p>QR hanya membawa URL verifikasi dan Document ID.</p></article>
+        <article><small>Security</small><strong>Publisher V31</strong><p>Publisher Token tidak disimpan permanen pada localStorage.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="case-section case-dark">
+    <div class="container">
+      <div class="case-section-title">
+        <span>02 / CHALLENGE - APPROACH</span>
+        <h2>Dokumen resmi membutuhkan mekanisme verifikasi yang dapat diperiksa ulang.</h2>
+      </div>
+
+      <div class="challenge-grid">
+        <article><b>Challenge</b><h3>QR saja tidak cukup.</h3><p>Kode visual perlu terhubung ke sumber pemeriksaan yang dapat menentukan apakah Document ID benar-benar memiliki record valid.</p></article>
+        <article><b>Approach</b><h3>Pisahkan public verification dan publishing.</h3><p>Public verification membaca record, sementara publisher action membutuhkan jalur authenticated dan secret server-side.</p></article>
+        <article><b>Outcome</b><h3>Verification dengan fallback.</h3><p>Verification page dapat memeriksa API dan memakai static registry sebagai fallback tanpa mengubah QR target.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="case-section">
+    <div class="container">
+      <div class="case-section-title">
+        <span>03 / VERIFICATION JOURNEY</span>
+        <h2>Alur publik tetap sederhana.</h2>
+      </div>
+
+      <div class="journey">
+        <div><b>01</b><h3>Document ID</h3><p>Dokumen memiliki identitas yang akan diperiksa.</p></div><i>&rarr;</i>
+        <div><b>02</b><h3>QR</h3><p>QR membuka route verifikasi dengan Document ID.</p></div><i>&rarr;</i>
+        <div><b>03</b><h3>Public Verify</h3><p>Halaman memulai proses pemeriksaan.</p></div><i>&rarr;</i>
+        <div><b>04</b><h3>API / Registry</h3><p>Sumber record diperiksa dengan fallback.</p></div><i>&rarr;</i>
+        <div><b>05</b><h3>Verified</h3><p>Status ditampilkan bila record memenuhi aturan.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="case-section case-dark">
+    <div class="container">
+      <div class="case-section-title">
+        <span>04 / ARCHITECTURE &amp; SECURITY</span>
+        <h2>Public verification dan publisher memiliki batas akses yang berbeda.</h2>
+      </div>
+
+      <div class="challenge-grid">
+        <article><b>REGISTRY</b><h3>Static fallback</h3><p>documents.json dapat menjadi fallback untuk record yang sudah dipublikasikan.</p></article>
+        <article><b>WORKER / KV</b><h3>Optional publisher API</h3><p>Worker/KV dapat digunakan untuk automatic publishing dengan action yang terautentikasi.</p></article>
+        <article><b>V31</b><h3>Token lebih terbatas</h3><p>Publisher Token menggunakan sessionStorage dan legacy localStorage token dihapus.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="case-section case-roadmap">
+    <div class="container">
+      <div class="case-section-title">
+        <span>05 / SYSTEM BOUNDARIES</span>
+        <h2>Yang publik dan yang privat dipisahkan dengan jelas.</h2>
+      </div>
+
+      <div class="roadmap-grid">
+        <article><b>PUBLIC</b><h3>Verification Page</h3><p>Document ID dapat diperiksa melalui halaman verifikasi publik.</p></article>
+        <article><b>PROTECTED</b><h3>Publisher Action</h3><p>Publishing membutuhkan authenticated action dan secret server-side.</p></article>
+        <article><b>PRIVACY</b><h3>QR Minimal Data</h3><p>QR tidak menjadi tempat penyimpanan data pribadi.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="case-cta">
+    <div class="container">
+      <span>VERIFICATION AS A TRUST LAYER</span>
+      <h2>Butuh mekanisme verifikasi dokumen yang dapat diperiksa publik?</h2>
+      <p>Srilex Buditra membangun alur verification, backend, registry, QR, dan security sesuai kebutuhan sistem.</p>
+      <div class="case-actions">
+        <a class="btn primary" href="/#estimasi">Hitung Estimasi</a>
+        <a class="btn outline" href="/portfolio/">Kembali ke Portfolio</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="container case-footer">
+    <a class="brand" href="/"><span class="brand-mark"><img src="/images/logo.avif" alt="Srilex Buditra Logo" width="1920" height="1916"></span><span><strong>SRILEX <b>BUDITRA</b></strong><small>FULL STACK DEVELOPER</small></span></a>
+    <p>System Case Study &bull; Official Document Verification</p>
+    <div><a href="/portfolio/">Portfolio</a><a href="/privacy.html">Privasi</a><a href="/security.html">Keamanan</a><a href="/terms.html">Ketentuan</a></div>
+  </div>
+</footer>
+
+<script src="/assets/js/visitor-analytics.js" defer></script>
+</body>
+</html>
