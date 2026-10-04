@@ -18,3 +18,133 @@
 @media(max-width:980px){.authority-nav a:not(.nav-cta){display:none}.authority-hero-grid,.authority-proof-grid,.authority-next-grid{grid-template-columns:1fr}.authority-profile-card{max-width:480px}.identity-grid,.trust-authority-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.capability-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.authority-footer{grid-template-columns:1fr}}
 @media(max-width:760px){.site-header .authority-nav{display:flex;position:static;background:transparent;border:0;padding:0;flex-direction:row;align-items:center}.site-header .authority-nav a{padding:9px 13px}.site-header .authority-nav a:not(.nav-cta){display:none}}
 @media(max-width:620px){.authority-hero{padding:54px 0 50px}.authority-copy h1{font-size:46px;letter-spacing:-2px}.authority-lead{font-size:14px}.authority-actions .btn{width:100%}.identity-grid,.capability-grid,.trust-authority-grid{grid-template-columns:1fr}.authority-section{padding:64px 0}.authority-title h2,.authority-next h2{font-size:31px}.authority-profile-card{max-width:100%}.authority-footer>div{flex-wrap:wrap}}
+
+/* PROFIL V2 AUTHORITY EXTENSIONS */
+.authority-v2-role,
+.authority-v2-evidence{
+  position:relative;
+}
+
+.authority-role-grid{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:14px;
+  margin-top:28px;
+}
+
+.authority-role-card{
+  min-height:245px;
+  padding:23px;
+  border:1px solid #175d83;
+  border-radius:17px;
+  background:linear-gradient(145deg,#072b45f5,#031a2af5);
+  box-shadow:inset 0 1px 0 #ffffff08,0 18px 45px #0002;
+}
+
+.authority-role-card small,
+.authority-evidence-card small{
+  color:#75a3bc;
+  font-size:8px;
+  font-weight:900;
+  letter-spacing:1.3px;
+}
+
+.authority-role-card h3,
+.authority-evidence-card h3{
+  margin:14px 0 8px;
+  font-size:21px;
+}
+
+.authority-role-card p,
+.authority-evidence-card p{
+  margin:0;
+  color:var(--muted);
+  font-size:11px;
+  line-height:1.7;
+}
+
+.authority-role-card:nth-child(2){
+  border-color:rgba(255,181,27,.48);
+}
+
+.authority-role-card:nth-child(2) h3{
+  color:var(--gold);
+}
+
+.authority-evidence-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:14px;
+  margin-top:28px;
+}
+
+.authority-evidence-card{
+  display:block;
+  min-height:230px;
+  padding:23px;
+  border:1px solid #175d83;
+  border-radius:17px;
+  background:linear-gradient(145deg,#072b45f5,#031a2af5);
+  transition:.25s;
+}
+
+.authority-evidence-card:hover{
+  transform:translateY(-5px);
+  border-color:#d49f24;
+}
+
+.authority-evidence-card b{
+  display:block;
+  margin-top:22px;
+  color:var(--gold);
+  font-size:10px;
+}
+
+.authority-system-links{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap:10px;
+  margin-top:24px;
+}
+
+.authority-system-links a{
+  padding:9px 12px;
+  border:1px solid rgba(72,136,170,.35);
+  border-radius:999px;
+  color:#b8ccda;
+  font-size:10px;
+}
+
+.authority-system-links a:hover{
+  border-color:rgba(255,181,27,.55);
+  color:var(--gold);
+}
+
+@media(max-width:980px){
+  .authority-role-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+
+  .authority-evidence-grid{
+    grid-template-columns:1fr;
+  }
+
+  .authority-evidence-card{
+    min-height:0;
+  }
+}
+
+@media(max-width:620px){
+  .authority-role-grid{
+    grid-template-columns:1fr;
+  }
+
+  .authority-role-card{
+    min-height:0;
+  }
+
+  .authority-system-links{
+    justify-content:flex-start;
+  }
+}
