@@ -1,3 +1,38 @@
+## Site Content Architecture V2 - Documentation Baseline (4 Oktober 2026)
+
+**Status:** Documentation baseline; implementasi halaman publik V2 belum dimulai.
+
+### Added
+- Menetapkan namespace arsitektur halaman publik:
+  - `Home V2`
+  - `Portfolio V2`
+  - `Profil V2`
+  - `Insights V2`
+  - `Aktivitas V2`
+- Menetapkan tanggung jawab setiap halaman agar project yang sama tidak diduplikasi dengan fungsi dan narasi yang sama.
+- Menetapkan `docs/ROADMAP.md` sebagai master arah Site Content Architecture V2.
+- Menetapkan `docs/PLATFORM.md` sebagai master untuk Insights V2 dan Aktivitas V2.
+
+### Versioning Convention
+- Nama halaman publik menggunakan `V1`, `V2`, `V3`, dan seterusnya sesuai evolusi arsitektur halaman.
+- Versi modul/project tetap menggunakan namespace versi modul masing-masing.
+- Nama release teknis `R1`, `R2`, dan seterusnya yang sudah sah tetap dipertahankan.
+- `Cloudflare R2` adalah object storage, bukan versi halaman.
+- Historical release/version tidak diubah massal.
+
+### Current Direction
+- Home V2: kurangi duplikasi Featured Projects dan Case Studies melalui hierarchy yang lebih jelas.
+- Portfolio V2: pertahankan live implementations, tambah system case studies, dan pisahkan project samples.
+- Profil V2: tetap menjadi authority page, bukan portfolio kedua.
+- Insights V2: perluas engineering notes dari Ketahanan Pangan ke implementasi lintas project.
+- Aktivitas V2: lanjutkan timeline menggunakan milestone terverifikasi sampai perkembangan terbaru.
+- Tahap berikutnya adalah `V2 Evidence & Timeline Audit` sebelum perubahan public HTML/CSS.
+
+### Scope
+- Sinkronisasi ini hanya memperbarui dokumentasi existing.
+- Tidak membuat file Markdown baru.
+- Tidak mengubah HTML, CSS, JavaScript, Worker, API, database, autentikasi, atau runtime production.
+
 ## Client Management R1 - Demo Journey & Lead-to-Client Experience (3 Oktober 2026)
 
 **Status:** Production Release R1 **LOCKED/PASS**

@@ -2,8 +2,9 @@
 
 Dokumen ini adalah indeks dokumentasi aktif repository `srilexbuditra.github.io`. Gunakan indeks ini untuk membedakan dokumentasi operasional, panduan teknis, audit, dan referensi historis.
 
-**Current documentation baseline:** 17 September 2026 — Event Public Integration V17.19.13B.4 (pre-lock)
-**Last documentation sync:** 17 September 2026
+**Current documentation baseline:** 4 Oktober 2026 - Site Content Architecture V2 documentation baseline
+**Last documentation sync:** 4 Oktober 2026
+**Current site content architecture:** V2 documentation baseline; implementasi public page V2 masih pending V2 Evidence & Timeline Audit.
 
 ## 1. Dokumentasi Utama
 
@@ -125,7 +126,7 @@ File berikut adalah template operasional GitHub, bukan dokumentasi produk:
 
 ## 12. Status Saat Ini
 
-- Client Management Platform R1: **active development / staging verified / production HOLD**.
+- Client Management Platform R1: **Production Release R1 LOCKED/PASS**; production baseline aktif dan terverifikasi.
 - Full Demo Journey R1: **LOCKED/PASS** untuk desktop, mobile, dan identity handoff.
 - Demo Journey menggunakan data simulasi tanpa API produksi atau D1.
 - Demo Isolation R1: **LOCKED/PASS**; Demo menggunakan state lokal/sessionStorage dan tidak memanggil API/D1 produksi.
@@ -138,6 +139,9 @@ File berikut adalah template operasional GitHub, bukan dokumentasi produk:
 - Homepage metadata / Open Graph source / PWA / social asset staging: **PASS**.
 - Asset canonical `og:image` sekarang tersedia di production setelah Production Release R1; validasi ulang scraper Meta tetap terpisah.
 - Flagship Program Ketahanan Pangan: **implemented / public case study tersedia**.
+- Portfolio Hub `/portfolio/`: **production verified**; live implementations dan public case studies aktif pada baseline production terbaru.
+- Site Content Architecture V2: **documentation baseline / current development**; Home V2, Portfolio V2, Profil V2, Insights V2, dan Aktivitas V2 belum dianggap selesai sebelum source, visual, dan production verification masing-masing PASS.
+
 - Profil & Rekam Jejak `/profil/`: **implemented**.
 - Trust & Authority V8: **implemented sebagai fondasi**.
 - Knowledge Center / Insights: **implemented sebagai foundation pada V11.9**.
@@ -153,9 +157,9 @@ File berikut adalah template operasional GitHub, bukan dokumentasi produk:
 
 ---
 
-**Documentation baseline:** 17 September 2026 — Aktivitas & Event Public Integration V17.19.13B.4 (pre-lock)
+**Documentation baseline:** 4 Oktober 2026 - Site Content Architecture V2
 **Previous audit baseline:** V11.6
-**Last documentation update:** 17 September 2026
+**Last documentation update:** 4 Oktober 2026
 
 ### Kartu Anggota Digital + QR
 

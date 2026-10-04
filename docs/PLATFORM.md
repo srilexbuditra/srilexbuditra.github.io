@@ -17,6 +17,57 @@
 - `/insights/` - Knowledge Center / Insights hub.
 - `/aktivitas/` - Development Timeline / Activity.
 
+## Site Content Architecture V2 - Current Direction
+
+**Status:** documentation baseline; public page implementation pending.
+
+Platform publik V2 mempertahankan fungsi setiap halaman agar tidak menjadi duplikasi satu sama lain:
+
+- Home V2: discovery dan selected proof.
+- Portfolio V2: complete proof-of-work.
+- Profil V2: authority dan trust.
+- Insights V2: engineering knowledge.
+- Aktivitas V2: verified development timeline.
+
+### Insights V2
+
+Insights V2 memperluas foundation V11.9 dari tiga artikel awal Ketahanan Pangan menjadi knowledge layer lintas implementasi.
+
+Kandidat editorial hanya boleh dipublikasikan setelah evidence audit, antara lain:
+
+- Client Journey dan Official Estimate.
+- Safe Demo vs Production Data.
+- Digital Journey Jemaah Umroh.
+- Document Verification as a Trust Layer.
+- Privacy-Aware Visitor Analytics.
+- Responsive UX dan architecture lessons dari implementasi nyata.
+
+Artikel tidak boleh menjadi salinan Case Study. Portfolio menjelaskan apa yang dibangun; Insights menjelaskan mengapa dan bagaimana keputusan engineering dibuat.
+
+### Aktivitas V2
+
+Aktivitas V2 mempertahankan timeline historis V12.0 dan memperbaruinya dengan milestone yang dapat diverifikasi dari source, Git history, deployment, dan production status.
+
+Aturan:
+
+- Jangan menebak tanggal milestone.
+- Jangan menampilkan roadmap sebagai fitur live.
+- Timeline website dipisahkan dari roadmap internal Program Ketahanan Pangan atau module lain.
+- Milestone Client Management, Umroh, Featured Projects, Portfolio Hub, dan Case Study baru hanya ditambahkan setelah V2 Evidence & Timeline Audit.
+- `Level & Poin` tetap dapat menjadi milestone/module Program Ketahanan Pangan, tetapi tidak lagi otomatis menjadi roadmap utama seluruh srilexbuditra.work.
+
+### Cross-Page Rule
+
+Satu project boleh muncul pada Home, Portfolio, Profil, Insights, dan Aktivitas jika fungsi narasinya berbeda:
+
+- Home: discovery.
+- Portfolio: proof / case study.
+- Profil: capability proof.
+- Insights: engineering lesson.
+- Aktivitas: dated milestone.
+
+Duplikasi narasi dan card dengan fungsi identik harus dihindari.
+
 ## Knowledge Center — Historical Foundation V11.9
 
 # Knowledge Center V11.9 — Insights & Engineering Notes
@@ -89,7 +140,7 @@ Timeline publik tidak dimaksudkan sebagai log internal lengkap. Informasi sensit
 4. Tanggal digunakan untuk milestone yang memang tercatat; fase yang berlangsung bertahap dapat menggunakan label bulan/periode.
 5. Timeline harus menjadi proof-of-work, bukan klaim berlebihan.
 
-## Next
+## Historical Next (V12.0 snapshot)
 
 Setelah timeline publik stabil, prioritas berikutnya adalah monitoring discoverability/Search Console dan persiapan **Fase 3 — Pengalaman Anggota**, dimulai dari Dashboard V2 dan Kartu Anggota + QR.
 

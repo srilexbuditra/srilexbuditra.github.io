@@ -30,6 +30,67 @@ Urutan keutamaan ketika terdapat perbedaan informasi:
 
 ---
 
+## Site Content Architecture V2
+
+Status: **documentation baseline / current development**.
+
+Site Content Architecture V2 menjadi arah site-level setelah Portfolio Hub dan live case studies tersedia di production. Public page V2 belum dianggap selesai sampai perubahan source, visual review, commit/push, dan production verification masing-masing PASS.
+
+### Versioning Convention
+
+- `Home V2`, `Portfolio V2`, `Profil V2`, `Insights V2`, dan `Aktivitas V2` adalah nama versi arsitektur halaman publik.
+- Penamaan `V` pada module/project lain tetap scoped ke module tersebut dan tidak otomatis berarti versi website utama.
+- Release teknis existing seperti `Client Management R1`, `Demo Login Automatic Access R2`, dan release identifier lain tetap dipertahankan.
+- `Cloudflare R2` adalah object storage dan tidak memiliki hubungan dengan versi halaman.
+- Historical version dan release tidak boleh diganti massal hanya untuk menyamakan istilah.
+
+### Page Responsibility
+
+**Home V2**
+- Menjadi discovery layer yang ringkas.
+- Prioritaskan live implementations, system highlights, selected project samples, dan CTA.
+- Hindari duplikasi katalog antara Featured Projects dan Case Studies.
+
+**Portfolio V2**
+- Menjadi pusat proof-of-work lengkap.
+- Pertahankan Live Implementations.
+- Tambahkan System Case Studies berdasarkan bukti source/runtime.
+- Pertahankan Project Samples sebagai kategori terpisah.
+
+**Profil V2**
+- Menjadi authority page.
+- Fokus pada identitas profesional, capability, trust principles, dan proof network.
+- Tidak menjadi portfolio kedua.
+
+**Insights V2**
+- Menjadi engineering knowledge layer lintas project.
+- Artikel menjelaskan keputusan, prinsip, arsitektur, workflow, verification/trust, backend/cloud, dan responsive UX berdasarkan implementasi yang dapat diverifikasi.
+
+**Aktivitas V2**
+- Menjadi public development timeline terkurasi.
+- Pertahankan milestone historis yang benar.
+- Tambahkan milestone baru hanya dari tanggal/status yang dapat dibuktikan.
+- Roadmap site-level dipisahkan dari roadmap module/program.
+
+### Implementation Sequence
+
+1. Dokumentasi Site Content Architecture V2 menjadi baseline.
+2. Jalankan `V2 Evidence & Timeline Audit`.
+3. Implementasikan Home V2.
+4. Implementasikan Portfolio V2.
+5. Implementasikan Profil V2.
+6. Implementasikan Insights V2.
+7. Implementasikan Aktivitas V2.
+8. Setiap halaman melalui source review, visual review desktop/mobile, commit/push, dan production verification sebelum dinyatakan selesai.
+
+### Current Production Foundation
+
+- Program Ketahanan Pangan: flagship live implementation.
+- Umroh Semi Private Bengkulu: live implementation dan public case study.
+- Client Management Platform R1: Production Release R1 LOCKED/PASS dan public case study.
+- Portfolio Hub: production verified.
+- Selected project samples tetap dipisahkan dari live implementations.
+
 ## Strategic Roadmap 2026–2027
 
 > Bagian ini mempertahankan roadmap strategis, fase produk, dan urutan prioritas pengembangan.
@@ -99,9 +160,9 @@ Mengubah fondasi implementasi menjadi solusi reusable:
 
 Target penggunaan dapat mencakup komunitas, koperasi, organisasi, UMKM, asosiasi, program sosial, atau institusi lain sesuai kebutuhan dan perjanjian.
 
-## Fase Client Management Platform R1 - Aktif
+## Client Management Platform R1 - Production Baseline
 
-Status: **active development / staging verified / production HOLD**.
+Status: **Production Release R1 LOCKED/PASS; production baseline aktif dan terverifikasi.**
 
 Tujuan fase ini adalah membangun perjalanan pelanggan Srilex Buditra yang terhubung dari pengunjung sampai Client Portal tanpa registrasi Client publik secara langsung.
 
