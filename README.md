@@ -122,16 +122,15 @@ Project utama menggunakan frontend statis dan layanan pendukung berbasis edge/cl
 │   └── V31_PUBLISHER_SECURITY.md
 │
 ├── README.md
-├── DOCUMENTATION.md
-├── DOCUMENTATION_AUDIT_V11.8.md
+├── docs/README.md
+├── docs/REPOSITORY-AUDIT.md
 ├── CHANGELOG.md
-├── ROADMAP-SRILEXBUDITRA-2026-2027.md
-├── TRUST-AUTHORITY-V8.md
-├── KNOWLEDGE-CENTER-V11.9.md
-├── PROJECT-TIMELINE-V12.0.md
+├── docs/ROADMAP.md
+├── docs/BRAND.md
+├── docs/PLATFORM.md
 ├── DASHBOARD-PESERTA-V2.md
 ├── KARTU-ANGGOTA-QR-V12.2.md
-├── ANALYTICS-V4.md
+├── docs/ANALYTICS.md
 ├── SECURITY.md
 ├── PRIVACY.md
 ├── TERMS.md
@@ -141,7 +140,7 @@ Project utama menggunakan frontend statis dan layanan pendukung berbasis edge/cl
 └── CNAME
 ```
 
-Daftar dokumentasi aktif dan historis tersedia di **[DOCUMENTATION.md](DOCUMENTATION.md)**.
+Daftar dokumentasi aktif dan historis tersedia di **[docs/README.md](docs/README.md)**.
 
 ## 🌾 Flagship — Program Ketahanan Pangan
 
@@ -166,19 +165,20 @@ Dokumentasi internal folder program tersedia di **[program/ketahanan-pangan/READ
 
 Halaman `/profil/` memperkuat identitas publik Srilex Buditra melalui profil, kemampuan teknis, proof of work, flagship implementation, dan prinsip kepercayaan. Tahap ini tidak dimaksudkan untuk membuat klaim berlebihan; reputasi dibangun melalui implementasi yang dapat dilihat, dokumentasi, keamanan, dan konsistensi pengalaman pengguna.
 
-Dokumentasi tahap: **[TRUST-AUTHORITY-V8.md](TRUST-AUTHORITY-V8.md)**.
+Dokumentasi tahap: **[docs/BRAND.md](docs/BRAND.md)**.
 
 ## 🧠 Knowledge Center / Insights
 
 Route `/insights/` menjadi pusat artikel teknis Srilex Buditra yang membahas keputusan dan pelajaran dari implementasi nyata. Artikel awal mencakup perjalanan digital peserta, QR verification/sertifikat digital, dan responsive-first pada portal peserta.
 
-Dokumentasi tahap: **[KNOWLEDGE-CENTER-V11.9.md](KNOWLEDGE-CENTER-V11.9.md)**.
+Dokumentasi tahap: **[docs/PLATFORM.md](docs/PLATFORM.md)**.
 
 ## 🧭 Development Timeline / Activity
 
 Route `/aktivitas/` merangkum selected public milestones perkembangan srilexbuditra.work dengan status yang jelas antara completed, live system, dan roadmap. Halaman ini menjadi proof-of-work tambahan tanpa membuka secret atau data pribadi.
 
-Dokumentasi tahap: **[PROJECT-TIMELINE-V12.0.md](PROJECT-TIMELINE-V12.0.md)**.
+Dokumentasi tahap: **[docs/PLATFORM.md](docs/PLATFORM.md)**.
+
 
 ## 🧮 Project Cost Estimator & Print/PDF
 
@@ -200,8 +200,6 @@ Panduan teknis:
 - [verify/README.md](verify/README.md)
 - [verify/V30_VERIFICATION_SETUP.md](verify/V30_VERIFICATION_SETUP.md)
 - [verify/V31_PUBLISHER_SECURITY.md](verify/V31_PUBLISHER_SECURITY.md)
-- [VERIFY_DATABASE_README.md](VERIFY_DATABASE_README.md)
-
 ## 🔎 Search, SEO & Accessibility
 
 Website menyediakan pencarian internal dengan suggestions, history/trending search, navigasi keyboard, dan atribut ARIA. Discoverability didukung metadata halaman, canonical URL, structured data, sitemap, robots directives, OpenSearch, serta internal search index.
@@ -212,7 +210,7 @@ Komitmen aksesibilitas tersedia di **[ACCESSIBILITY.md](ACCESSIBILITY.md)**.
 
 Analytics V4 menggunakan Cloudflare Workers + D1 dan visitor ID anonim pada browser untuk membedakan kunjungan baru dan kembali tanpa mengambil identitas akun sosial secara tersembunyi. Dashboard statistik tersedia pada `admin/stats.html`; kredensial akses harus tetap berada di secret server/Worker, bukan source publik.
 
-Dokumentasi teknis: **[ANALYTICS-V4.md](ANALYTICS-V4.md)**.
+Dokumentasi teknis: **[docs/ANALYTICS.md](docs/ANALYTICS.md)**.
 
 ## 🚀 Menjalankan Secara Lokal
 
@@ -227,12 +225,11 @@ Dokumentasi teknis: **[ANALYTICS-V4.md](ANALYTICS-V4.md)**.
 
 Gunakan dokumen berikut sebagai titik awal:
 
-- **[DOCUMENTATION.md](DOCUMENTATION.md)** — indeks dokumentasi aktif dan referensi.
-- **[DOCUMENTATION_AUDIT_V11.8.md](DOCUMENTATION_AUDIT_V11.8.md)** — audit dokumentasi terbaru.
-- **[docs/CLIENT-MANAGEMENT-R1.md](docs/CLIENT-MANAGEMENT-R1.md)** - status aktif Client Management Platform, Lead Portal, Official Estimate, Client Portal, dan Full Demo Journey.
-- **[SRILEXBUDITRA-MASTER-PROJECT-ROADMAP.md](SRILEXBUDITRA-MASTER-PROJECT-ROADMAP.md)** - continuity file dan checkpoint pengembangan aktif.
+- **[docs/README.md](docs/README.md)** — indeks dokumentasi aktif dan referensi.
+- **[docs/REPOSITORY-AUDIT.md](docs/REPOSITORY-AUDIT.md)** — audit repository, privasi, dan histori dokumentasi.
+- **[docs/CLIENT-MANAGEMENT.md](docs/CLIENT-MANAGEMENT.md)** - status aktif Client Management Platform, Lead Portal, Official Estimate, Client Portal, dan Full Demo Journey.
+- **[docs/ROADMAP.md](docs/ROADMAP.md)** — master roadmap, continuity, source-of-truth, checkpoint, dan prioritas pengembangan.
 - **[CHANGELOG.md](CHANGELOG.md)** — histori perubahan.
-- **[ROADMAP-SRILEXBUDITRA-2026-2027.md](ROADMAP-SRILEXBUDITRA-2026-2027.md)** — prioritas pengembangan.
 - **[AKTIVITAS-EVENT-PUBLIC-V17.19.13B.md](AKTIVITAS-EVENT-PUBLIC-V17.19.13B.md)** — baseline integrasi Event Admin, peserta, halaman publik, SEO, gambar, dan status pengujian metadata/analytics.
 - **[SECURITY.md](SECURITY.md)** — kebijakan keamanan.
 - **[PRIVACY.md](PRIVACY.md)** — kebijakan privasi.

@@ -1,3 +1,19 @@
+# Srilex Buditra Analytics
+
+> Dokumentasi utama Analytics srilexbuditra.work.
+> Menggabungkan Visitor Analytics V4, enhancement V5, dan arsitektur GA4/Visitor Analytics terpusat.
+
+## Current Architecture
+
+- Central tracker: `/assets/js/visitor-analytics.js`
+- Backend: Cloudflare Workers
+- Database: Cloudflare D1
+- Dashboard: `/admin/stats.html`
+- Statistik dilindungi dengan `STATS_API_KEY`.
+- Data pribadi dan credential tidak boleh dikirim ke analytics.
+
+## Analytics V4 — Active Foundation
+
 # Srilex Buditra Website Analytics V4
 
 Sistem analytics visitor untuk **srilexbuditra.work** menggunakan
@@ -240,3 +256,90 @@ Domain: srilexbuditra.work
 ------------------------------------------------------------------------
 
 © 2026 Srilex Buditra --- Website Analytics
+
+
+---
+
+## Analytics V5 — Period Filtering Development
+
+# Srilex Buditra Analytics V5
+
+V5 menambahkan **Filter Periode** ke Analytics V4.
+
+## Tambahan V5
+- Preset Hari Ini, 7 Hari, 30 Hari, Semua
+- Tanggal mulai/akhir kustom
+- Top Pages, Traffic Sources, Visit Trend, dan Recent Visits mengikuti periode
+- Export CSV memakai nama periode aktif
+- Refresh tetap tersedia
+- API Key tetap tidak disimpan di source publik
+
+## Instalasi
+1. Pasang `worker.js` V5 ke Cloudflare Worker dan klik **Deploy**.
+2. Upload Website Analytics V5 ke GitHub.
+3. Buka `/admin/stats.html`, lakukan hard refresh.
+4. Masukkan `STATS_API_KEY`, lalu uji tombol filter.
+
+> Data event historis tersedia sejak Analytics V4 mulai aktif. Periode sebelum itu tidak direkonstruksi.
+
+
+---
+
+## GA4 + Visitor Analytics — Centralized Architecture
+
+# GA4 + Visitor Analytics V13.6.4
+
+## Arsitektur final
+
+Tracking website menggunakan **satu file pusat**:
+
+`/assets/js/visitor-analytics.js`
+
+Semua halaman HTML memanggil file yang sama melalui:
+
+```html
+<script src="/assets/js/visitor-analytics.js" defer></script>
+```
+
+Tidak ada lagi salinan `visitor-analytics.js` di setiap folder halaman.
+
+## Tujuan
+
+- Struktur repository lebih rapi.
+- Perubahan analytics cukup dilakukan pada satu file.
+- GA4 event tracking tetap berlaku di seluruh halaman publik.
+- Visitor Analytics Cloudflare/D1 tetap berjalan dari satu source code.
+- Folder/halaman dikenali otomatis melalui `location.pathname`.
+- Query string dan hash tidak dikirim sebagai `page_location` global.
+- Tidak mengirim NIK, KK, nomor WhatsApp, email, password, session token, atau nilai form ke GA4 dari tracker global.
+- Halaman admin/sensitif yang sudah dikecualikan tetap tidak dikirim ke GA4 maupun Visitor Analytics.
+
+## Event global yang dipertahankan
+
+- page_view / page config GA4
+- site_link_click
+- internal_navigation
+- outbound_click
+- file_download
+- WhatsApp / email / phone / anchor classification
+- registration_start
+- status_check_start
+- login_start
+
+Event khusus yang sudah dipanggil modul website tetap dapat menggunakan `window.gtag` setelah loader global aktif.
+
+## Versi
+
+Website baseline: **V13.6.4**
+Analytics architecture: **Centralized Site-Wide Visitor Analytics**
+
+
+---
+
+## Maintenance
+
+- Gunakan satu centralized analytics source.
+- Jangan menyimpan secret di repository.
+- Jangan mengirim data pribadi atau nilai form sensitif ke GA4.
+- Status fitur mengikuti source dan runtime yang benar-benar aktif.
+- Dokumen versi lama tetap tersedia melalui Git history.

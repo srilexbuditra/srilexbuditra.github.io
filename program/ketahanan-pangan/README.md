@@ -76,6 +76,6 @@ Identitas program dan organisasi terkait harus ditampilkan sesuai peran aktual. 
 
 Roadmap tingkat website/program dikelola pada:
 
-`/ROADMAP-SRILEXBUDITRA-2026-2027.md`
+`/docs/ROADMAP.md`
 
 Fondasi Trust & Authority, Knowledge Center, Timeline publik, dan Search Console monitoring sudah dibangun. Fase pengalaman anggota pada repository saat ini telah mencakup **Dashboard Peserta V2, Verifikasi Anggota + Foto, Kartu Anggota Digital + QR, Sertifikat QR, Level/Poin, Misi, Referral, Benefit, Aktivitas & Event, Marketplace, serta Notifikasi & Informasi**. Event kini dapat dikelola dari Dashboard Admin, dipublikasikan dengan gambar dan slug publik, ditampilkan pada Dashboard Peserta, serta dibuka melalui halaman detail publik yang dilayani Cloudflare Worker. Implementasi OG/WhatsApp, Schema.org Event, dan GA4 Event Analytics masih menjalani pengujian akhir sebelum baseline Public Event di-LOCK. Arah milestone berikut mengikuti keputusan tim dan roadmap aktif.

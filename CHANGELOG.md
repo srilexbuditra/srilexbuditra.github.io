@@ -575,3 +575,51 @@ Dokumen ini menggunakan dua riwayat versi agar nomor versi website utama tidak t
 - Seluruh halaman HTML menggunakan satu tracker global.
 - Salinan tracker di folder-folder halaman dihapus.
 - Event GA4, privacy filter, Visitor Analytics, dan fungsi website V13.6.2 dipertahankan.
+
+---
+
+## V13.6.14.x — Mobile Consent & Floating Controls
+
+> Consolidated historical changelog untuk perbaikan viewport, consent mobile, pinch guard, dan floating controls.
+
+### V13.6.14.5 — Visual Viewport Consent Lock
+
+- Mobile consent menggunakan `window.visualViewport` untuk menghitung posisi aktual.
+- Mengatasi card yang masih bergeser akibat perbedaan layout viewport dan visual viewport.
+- Posisi disinkronkan ulang pada resize, perubahan orientasi, dan perubahan visual viewport.
+- CSS `100dvw` tetap digunakan sebagai fallback.
+- Desktop, TTS, context-aware text, dan Consent Mode tidak diubah.
+
+### V13.6.14.8 — Free Scroll Fixed Consent
+
+- Menghapus body-fixed hard scroll lock V13.6.14.7.
+- Mengembalikan scroll halaman mobile secara normal.
+- Mempertahankan penguncian posisi consent ke visual viewport.
+- Mempertahankan ResizeObserver untuk kestabilan posisi card.
+- Mempertahankan TTS auto-hide selama consent terbuka.
+- Tidak mengubah layout/visual halaman website di belakang.
+
+### V13.6.14.9 — Consent Pinch Guard
+
+- Memblokir pinch zoom / multi-touch hanya selama panel consent terbuka di mobile.
+- Scroll satu jari tetap normal.
+- Tidak mengubah meta viewport global.
+- Setelah panel consent ditutup, pinch zoom browser dikembalikan normal.
+- Desktop, TTS, visual layout, dan Consent Mode tidak diubah.
+
+### V13.6.14.11 — Global Mobile Pinch Guard
+
+- Pinch zoom dua jari diblokir pada seluruh halaman mobile.
+- Scroll satu jari tetap dipertahankan.
+- Tombol Privacy launcher dikunci ke visual viewport kanan bawah.
+- Tidak memakai `user-scalable=no`.
+- TTS, Consent Mode, GA4, desktop, dan visual layout yang sudah stabil dipertahankan.
+
+### V13.6.14.12 — Floating Controls Viewport Lock
+
+- Mengunci TTS ke kiri bawah visual viewport.
+- Mengunci Privacy launcher ke kanan bawah visual viewport.
+- Menambahkan sinkronisasi pada window scroll, visualViewport scroll/resize,
+  orientation change, dan resize.
+- Menambahkan ResizeObserver agar perubahan ukuran control tidak menggeser posisi.
+- Tidak mengubah CSS, Consent Mode, GA4, atau fungsi TTS.

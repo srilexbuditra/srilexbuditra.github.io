@@ -1,3 +1,21 @@
+# Srilex Buditra Brand & Trust
+
+> **Authority:** Master Brand Identity Policy
+> **Brand:** srilexbuditra.work
+> **Primary Identity:** Srilex Buditra
+> Dokumen ini menjadi sumber utama Brand Identity dan Trust principles.
+
+## Current Authority
+
+- Brand Identity R1 tetap berstatus LOCKED.
+- Primary brand mark tetap `/images/logo.avif`.
+- Photo-based personal brand tetap menjadi primary identity.
+- `SB DIGITAL` hanya secondary signature badge.
+- Tidak boleh melakukan automatic rebranding.
+- Perubahan visual besar membutuhkan persetujuan eksplisit dan staging verification.
+
+## Master Brand Identity Policy — CURRENT / LOCKED
+
 # SRILEXBUDITRA BRAND IDENTITY LOCK
 
 Status: LOCKED
@@ -370,3 +388,56 @@ Status:
 `HOMEPAGE SOCIAL VISUAL R1 = LOCKED / PASS`
 
 End of policy.
+
+---
+
+## Trust & Authority — Historical Foundation V8
+
+> Bagian berikut mempertahankan rekam jejak fondasi Trust & Authority.
+> Bagian 'Tahap Berikutnya' pada snapshot V8 bersifat historis dan bukan status roadmap aktif.
+
+# Trust & Authority V8
+
+**Status:** Implemented as foundation
+**Public route:** `/profil/`
+**Documentation sync:** 13 September 2026
+
+Tahap ini memperkuat identitas publik Srilex Buditra tanpa mengubah sistem inti Program Ketahanan Pangan.
+
+## Perubahan yang Sudah Diterapkan
+
+- Halaman baru `/profil/` untuk profil, rekam jejak, capability map, public identity, proof of work, dan trust principles.
+- Homepage memperoleh link ke halaman Profil & Rekam Jejak dari area yang relevan.
+- Profil publik dihubungkan dengan flagship implementation Program Ketahanan Pangan.
+- `search-index.json` mengenali halaman profil.
+- `sitemap.xml` mencakup `/profil/`.
+- Tidak ada perubahan pada API, Worker, registrasi, verifikasi, dashboard, sertifikat, atau data peserta sebagai bagian dari tahap ini.
+
+## Prinsip
+
+Trust & Authority tidak dibangun melalui klaim bahwa Srilex Buditra "dipercaya semua kalangan". Fondasinya adalah:
+
+- identitas publik yang konsisten,
+- implementasi nyata,
+- proof of work,
+- dokumentasi,
+- keamanan dan privasi,
+- serta hubungan yang jelas antara layanan profesional dan project yang benar-benar dikerjakan.
+
+## Tahap Berikutnya
+
+**Knowledge Center / Insights** menjadi milestone berikutnya sebelum ekspansi penuh fitur engagement anggota.
+
+Artikel/insight harus berbasis pengalaman implementasi nyata, tidak membuka data pribadi peserta, dan tidak membuat klaim organisasi/kemitraan yang belum disepakati secara resmi.
+
+
+---
+
+## Maintenance Rules
+
+- PRESERVE BRAND IDENTITY FIRST.
+- EDIT MASTER — NOT REDESIGN MASTER.
+- Jangan mengganti primary photo/logo dengan monogram atau logo alternatif tanpa persetujuan eksplisit.
+- Trust & Authority harus berbasis identitas konsisten, implementasi nyata, proof-of-work, dokumentasi, keamanan, dan privasi.
+- Status roadmap mengikuti dokumentasi roadmap aktif, bukan bagian historical V8.
+- Dokumen sumber lama tetap tersedia melalui Git history.

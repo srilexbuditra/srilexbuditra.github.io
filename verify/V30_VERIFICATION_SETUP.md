@@ -14,7 +14,7 @@ A record is verified when its exact Document ID exists in `verify/data/documents
 6. The form will automatically POST each newly generated document record during **Konfirmasi & Buat PDF**.
 7. A scanned QR opens `/verify/?id=...`; the verification page checks the API first and falls back to `documents.json`.
 
-The publisher token is kept only in localStorage on the publisher device and is never hard-coded in the public source. For higher-security production use, replace the simple bearer token with an authenticated publisher dashboard or server-side signing scheme.
+**Security update V31:** aturan penyimpanan token pada baseline V30 telah diperbarui. Publisher Token sekarang menggunakan `sessionStorage` dan legacy token pada `localStorage` dihapus. API endpoint tetap boleh berada di `localStorage` karena bukan secret. Lihat `V31_PUBLISHER_SECURITY.md`. Token tidak boleh di-hard-code pada public source. Untuk keamanan lebih tinggi, gunakan autentikasi server-side atau short-lived credential.
 
 ### API contract
 - `POST /documents` with Authorization: Bearer TOKEN

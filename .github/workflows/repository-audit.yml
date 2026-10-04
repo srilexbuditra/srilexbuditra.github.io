@@ -49,4 +49,4 @@ jobs:
 
       - name: Confirm public audit policy exists
         shell: bash
-        run: test -f PUBLIC_REPOSITORY_AUDIT.md
+        run: test -f docs/REPOSITORY-AUDIT.md
