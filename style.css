@@ -8819,3 +8819,24 @@ body {
   .featured-live-proof { grid-template-columns: 1fr; }
   .featured-live-badge { top: 12px; left: 12px; }
 }
+
+/* =========================================================
+   PORTFOLIO HUB R1 HOMEPAGE CTA
+   ========================================================= */
+.featured-live-actions {
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:16px;
+  margin-top:2px;
+}
+.featured-live-actions .text-link {
+  margin-top:0 !important;
+}
+@media (max-width:560px) {
+  .featured-live-actions {
+    flex-direction:column;
+    align-items:flex-start;
+    gap:10px;
+  }
+}
