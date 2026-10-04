@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#031426">
+  <meta name="author" content="Srilex Buditra">
+  <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+  <title>Membangun Demo Login srilexbuditra.work dengan Automatic Access yang Aman Tanpa Menyentuh Data Produksi | Srilex Buditra</title>
+  <meta name="description" content="Catatan teknis tentang Demo Login srilexbuditra.work dengan Automatic Access yang menggunakan kredensial simulasi, sessionStorage, redirect terkontrol, dan pemisahan penuh dari autentikasi serta data produksi.">
+  <link rel="canonical" href="https://srilexbuditra.work/insights/demo-login-automatic-access/">
+  <meta property="og:type" content="article"><meta property="og:site_name" content="Srilex Buditra"><meta property="og:locale" content="id_ID">
+  <meta property="og:url" content="https://srilexbuditra.work/insights/demo-login-automatic-access/"><meta property="og:title" content="Membangun Demo Login srilexbuditra.work dengan Automatic Access yang Aman Tanpa Menyentuh Data Produksi"><meta property="og:description" content="Catatan teknis tentang Demo Login srilexbuditra.work dengan Automatic Access yang menggunakan kredensial simulasi, sessionStorage, redirect terkontrol, dan pemisahan penuh dari autentikasi serta data produksi.">
+  <meta property="og:image" content="https://srilexbuditra.work/images/og/home/homepage-social-portrait-r1.jpg">
+  <meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Membangun Demo Login srilexbuditra.work dengan Automatic Access yang Aman Tanpa Menyentuh Data Produksi"><meta name="twitter:description" content="Catatan teknis tentang Demo Login srilexbuditra.work dengan Automatic Access yang menggunakan kredensial simulasi, sessionStorage, redirect terkontrol, dan pemisahan penuh dari autentikasi serta data produksi."><meta name="twitter:image" content="https://srilexbuditra.work/images/og/home/homepage-social-portrait-r1.jpg">
+  <link rel="icon" href="/images/favicon.ico"><link rel="apple-touch-icon" href="/images/apple-touch-icon.avif">
+  <link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="/insights/insights.css">
+  <script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Article","headline":"Membangun Demo Login srilexbuditra.work dengan Automatic Access yang Aman Tanpa Menyentuh Data Produksi","description":"Catatan teknis tentang Demo Login srilexbuditra.work dengan Automatic Access yang menggunakan kredensial simulasi, sessionStorage, redirect terkontrol, dan pemisahan penuh dari autentikasi serta data produksi.","datePublished":"2026-10-05","dateModified":"2026-10-05","inLanguage":"id-ID","mainEntityOfPage":"https://srilexbuditra.work/insights/demo-login-automatic-access/","image":"https://srilexbuditra.work/images/og/home/homepage-social-portrait-r1.jpg","author":{"@type":"Person","name":"Srilex Buditra","url":"https://srilexbuditra.work/profil/"},"publisher":{"@type":"Person","name":"Srilex Buditra","url":"https://srilexbuditra.work/profil/"},"about":"Demo Login dan Automatic Access"}
+</script>
+</head>
+<body class="insights-page insights-article-color-match">
+<a class="skip-link" href="#konten-utama">Lewati ke konten utama</a>
+<header class="site-header"><div class="container nav-wrap"><a class="brand" href="/" aria-label="Srilex Buditra"><span class="brand-mark"><img src="/images/logo.avif" alt="Srilex Buditra Logo" width="1920" height="1916" decoding="async"></span><span><strong>SRILEX <b>BUDITRA</b></strong><small>FULL STACK DEVELOPER</small></span></a><nav class="insights-nav" aria-label="Navigasi artikel"><a href="/insights/">Insights</a><a href="/profil/">Profil</a><a href="/portfolio/ketahanan-pangan/">Flagship</a><a class="nav-cta" href="/#kontak">Hubungi Saya</a></nav></div></header>
+<main id="konten-utama">
+  <section class="insights-hero">
+    <div class="container">
+      <span class="insights-eyebrow">DEMO LOGIN / AUTOMATIC ACCESS / CATATAN TEKNIS</span>
+      <h1>Membangun <span>Demo Login srilexbuditra.work</span> dengan Automatic Access yang Aman</h1>
+      <p>Automatic Access mengisi kredensial Demo secara otomatis, pengguna tetap memilih Masuk Demo, validasi dilakukan di sisi Demo, lalu state sesi sementara disimpan di sessionStorage sebelum pengguna diarahkan ke Demo Lead Portal.</p>
+      <div class="article-meta"><span>5 Okt 2026</span><span>Catatan Teknis</span><a href="/profil/">Srilex Buditra</a></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+
+      <div class="section-title">
+        <span></span>
+        <h2>Catatan Teknis</h2>
+        <span></span>
+        <p>Catatan teknis berdasarkan implementasi Demo Login srilexbuditra.work dengan Automatic Access, validasi lokal, sessionStorage, redirect terkontrol, serta pemisahan penuh dari autentikasi dan data produksi.</p>
+      </div>
+
+      <div class="insights-principle">
+        <h2>Ringkasan</h2>
+        <p>Demo Login tidak mencoba meniru autentikasi produksi secara penuh. Sistem menggunakan akses simulasi, pengisian kredensial Demo otomatis, validasi lokal, state sesi sementara, dan redirect ke Demo Lead Portal agar alur dapat dicoba tanpa akun produksi, password nyata, API produksi, D1, atau data produksi.</p>
+      </div>
+
+      <div class="insights-grid">
+
+        <article class="insight-card">
+          <small>DEMO LOGIN / AUTOMATIC ACCESS / CATATAN TEKNIS</small>
+          <h2>Demo Login Memiliki Tujuan yang Berbeda dari Login Produksi</h2>
+          <p>Demo Login menyediakan jalur eksplorasi untuk mencoba alur Client Management Platform tanpa membuka autentikasi produksi. Identitas, kredensial, state, dan data yang digunakan berada dalam konteks simulasi.</p>
+        </article>
+
+        <article class="insight-card">
+          <small>DEMO LOGIN / AUTOMATIC ACCESS / CATATAN TEKNIS</small>
+          <h2>Automatic Access Mengisi Kredensial Demo, Bukan Melewati Login</h2>
+          <p>Tombol Automatic Access mengisi email dan password Demo secara otomatis agar pengguna tidak perlu memasukkan kredensial pribadi. Pengguna tetap memilih Masuk Demo sebelum proses dilanjutkan.</p>
+        </article>
+
+        <article class="insight-card">
+          <small>DEMO LOGIN / AUTOMATIC ACCESS / CATATAN TEKNIS</small>
+          <h2>Validasi Tetap Terjadi Sebelum Akses Dilanjutkan</h2>
+          <p>Setelah formulir dikirim, nilai yang dimasukkan diperiksa terhadap kredensial Demo yang diharapkan. Hanya setelah validasi berhasil, state login Demo diperbarui dan alur dapat diteruskan.</p>
+        </article>
+
+        <article class="insight-card">
+          <small>DEMO LOGIN / AUTOMATIC ACCESS / CATATAN TEKNIS</small>
+          <h2>sessionStorage Menjaga State Demo Tetap Lokal</h2>
+          <p>State alur Demo disimpan sementara menggunakan sessionStorage. Pendekatan ini mempertahankan konteks antarhalaman Demo tanpa menjadikannya akun atau sesi autentikasi produksi.</p>
+        </article>
+
+        <article class="insight-card">
+          <small>DEMO LOGIN / AUTOMATIC ACCESS / CATATAN TEKNIS</small>
+          <h2>Login Demo Mengarahkan Pengguna ke Demo Lead Portal</h2>
+          <p>Setelah login Demo berhasil, pengguna diarahkan ke Demo Lead Portal. Jalur ini melanjutkan simulasi dari registrasi menuju konsultasi, penawaran, dan tahap berikutnya tanpa mencampurkan data produksi.</p>
+        </article>
+
+        <article class="insight-card">
+          <small>DEMO LOGIN / AUTOMATIC ACCESS / CATATAN TEKNIS</small>
+          <h2>Demo Tidak Menggunakan Autentikasi Produksi</h2>
+          <p>Halaman Demo secara eksplisit dipisahkan dari autentikasi produksi, cookie akun, dan password nyata. Tujuannya adalah memberikan pengalaman eksplorasi tanpa membuka akses ke akun atau data produksi.</p>
+        </article>
+
+        <article class="insight-card">
+          <small>DEMO LOGIN / AUTOMATIC ACCESS / CATATAN TEKNIS</small>
+          <h2>Data Simulasi Dipisahkan dari API, D1, dan Data Nyata</h2>
+          <p>Jalur Demo tidak menulis ke API, D1, atau sistem produksi. Data yang ditampilkan dan diubah selama simulasi tetap terpisah dari Lead, Client, dan data operasional yang nyata.</p>
+        </article>
+
+        <article class="insight-card">
+          <small>DEMO LOGIN / AUTOMATIC ACCESS / CATATAN TEKNIS</small>
+          <h2>Reset Demo Mengakhiri Perubahan Simulasi</h2>
+          <p>Perubahan dalam Demo bersifat sementara dan dapat diakhiri melalui reset sesi Demo. Reset mengembalikan pengalaman simulasi tanpa memengaruhi data atau baseline produksi.</p>
+        </article>
+
+      </div>
+
+<div class="insights-principle">
+        <h2>Tentang Penulis</h2>
+<div class="article-author"><img src="/assets/profile.avif" alt="Srilex Buditra" width="1008" height="1008" loading="lazy" decoding="async"><div><strong>Srilex Buditra</strong><p>Full Stack Developer. Catatan ini merupakan bagian dari Knowledge Center srilexbuditra.work dan ditulis dari pengalaman pengembangan sistem digital yang terdokumentasi.</p><a class="text-link" href="/profil/">Lihat Profil &amp; Rekam Jejak →</a></div></div>
+<p class="article-back"><a class="text-link" href="/insights/">← Kembali ke semua Insights</a></p>
+      </div>
+
+      <div class="section-title">
+        <span></span>
+        <h2>Konteks Terkait</h2>
+        <span></span>
+        <p>Lanjutkan dari catatan teknis ini menuju Client Management Platform, mulai simulasi dari Registrasi Demo, atau buka Demo Login untuk mencoba Automatic Access secara langsung.</p>
+      </div>
+
+      <div class="insights-grid">
+
+        <article class="insight-card">
+          <small>ALUR SEBELUMNYA</small>
+          <h2>Client Management Platform</h2>
+          <p>Baca bagaimana Lead, Official Estimate, aktivasi Client, Client Portal, Management Console, serta jalur Demo dan produksi dipisahkan di dalam platform.</p>
+          <div class="insight-meta"><span>Insights</span><span>Client Management</span><span>Catatan Teknis</span></div>
+          <a class="text-link" href="/insights/client-management-platform/">Baca catatan sebelumnya &rarr;</a>
+        </article>
+
+        <article class="insight-card">
+          <small>COBA DEMO</small>
+          <h2>Mulai dari Registrasi Demo</h2>
+          <p>Mulai alur simulasi dari registrasi menggunakan data Demo sebelum melanjutkan ke Login Demo dan Demo Lead Portal.</p>
+          <div class="insight-meta"><span>Demo</span><span>Registrasi</span><span>Data Simulasi</span></div>
+          <a class="text-link" href="/portal/demo/register/">Mulai demo &rarr;</a>
+        </article>
+
+        <article class="insight-card">
+          <small>LOGIN DEMO</small>
+          <h2>Buka Demo Login</h2>
+          <p>Gunakan Automatic Access untuk mengisi kredensial Demo, lalu pilih Masuk Demo untuk melanjutkan ke Demo Lead Portal.</p>
+          <div class="insight-meta"><span>Demo Login</span><span>Automatic Access</span><span>Aman</span></div>
+          <a class="text-link" href="/portal/demo/login/">Buka Demo Login &rarr;</a>
+        </article>
+
+      </div>
+
+    </div>
+  </section>
+</main>
+<footer class="footer"><div class="container case-footer"><a class="brand" href="/"><span class="brand-mark"><img src="/images/logo.avif" alt="Srilex Buditra Logo" width="1920" height="1916" decoding="async"></span><span><strong>SRILEX <b>BUDITRA</b></strong><small>FULL STACK DEVELOPER</small></span></a><p>Knowledge Center • srilexbuditra.work</p><div><a href="/insights/">Insights</a><a href="/profil/">Profil</a><a href="/privacy.html">Privasi</a></div></div><div class="copyright">© 2026 Srilex Buditra. All Rights Reserved. <span>Full Stack. Full Solution. Full Impact.</span></div></footer>
+<script src="/tts.js" defer></script>
+  <script src="/assets/js/visitor-analytics.js" defer></script>
+</body></html>
