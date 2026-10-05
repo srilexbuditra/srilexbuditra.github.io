@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#031426">
+  <meta name="author" content="Srilex Buditra">
+  <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+  <title>Membangun Official Document Verification srilexbuditra.work dengan Document ID, QR, dan Batas Verifikasi yang Eksplisit | Srilex Buditra</title>
+  <meta name="description" content="Catatan teknis tentang Official Document Verification srilexbuditra.work yang menghubungkan Document ID, QR, runtime verifikasi berbasis API, fingerprint, serta publisher/Worker security dengan batas verifikasi yang eksplisit.">
+  <link rel="canonical" href="https://srilexbuditra.work/insights/official-document-verification/">
+  <meta property="og:type" content="article"><meta property="og:site_name" content="Srilex Buditra"><meta property="og:locale" content="id_ID">
+  <meta property="og:url" content="https://srilexbuditra.work/insights/official-document-verification/"><meta property="og:title" content="Membangun Official Document Verification srilexbuditra.work dengan Document ID, QR, dan Batas Verifikasi yang Eksplisit"><meta property="og:description" content="Catatan teknis tentang Official Document Verification srilexbuditra.work yang menghubungkan Document ID, QR, runtime verifikasi berbasis API, fingerprint, serta publisher/Worker security dengan batas verifikasi yang eksplisit.">
+  <meta property="og:image" content="https://srilexbuditra.work/images/og/home/homepage-social-portrait-r1.jpg">
+  <meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Membangun Official Document Verification srilexbuditra.work dengan Document ID, QR, dan Batas Verifikasi yang Eksplisit"><meta name="twitter:description" content="Catatan teknis tentang Official Document Verification srilexbuditra.work yang menghubungkan Document ID, QR, runtime verifikasi berbasis API, fingerprint, serta publisher/Worker security dengan batas verifikasi yang eksplisit."><meta name="twitter:image" content="https://srilexbuditra.work/images/og/home/homepage-social-portrait-r1.jpg">
+  <link rel="icon" href="/images/favicon.ico"><link rel="apple-touch-icon" href="/images/apple-touch-icon.avif">
+  <link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="/insights/insights.css">
+  <script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Article","headline":"Membangun Official Document Verification srilexbuditra.work dengan Document ID, QR, dan Batas Verifikasi yang Eksplisit","description":"Catatan teknis tentang Official Document Verification srilexbuditra.work yang menghubungkan Document ID, QR, runtime verifikasi berbasis API, fingerprint, serta publisher/Worker security dengan batas verifikasi yang eksplisit.","datePublished":"2026-10-05","dateModified":"2026-10-05","inLanguage":"id-ID","mainEntityOfPage":"https://srilexbuditra.work/insights/official-document-verification/","image":"https://srilexbuditra.work/images/og/home/homepage-social-portrait-r1.jpg","author":{"@type":"Person","name":"Srilex Buditra","url":"https://srilexbuditra.work/profil/"},"publisher":{"@type":"Person","name":"Srilex Buditra","url":"https://srilexbuditra.work/profil/"},"about":"Official Document Verification — srilexbuditra.work"}
+</script>
+</head>
+<body class="insights-page insights-article-color-match">
+<a class="skip-link" href="#konten-utama">Lewati ke konten utama</a>
+<header class="site-header"><div class="container nav-wrap"><a class="brand" href="/" aria-label="Srilex Buditra"><span class="brand-mark"><img src="/images/logo.avif" alt="Srilex Buditra Logo" width="1920" height="1916" decoding="async"></span><span><strong>SRILEX <b>BUDITRA</b></strong><small>FULL STACK DEVELOPER</small></span></a><nav class="insights-nav" aria-label="Navigasi artikel"><a href="/insights/">Insights</a><a href="/profil/">Profil</a><a href="/portfolio/ketahanan-pangan/">Flagship</a><a class="nav-cta" href="/#kontak">Hubungi Saya</a></nav></div></header>
+<main id="konten-utama">
+  <section class="insights-hero">
+    <div class="container">
+      <span class="insights-eyebrow">OFFICIAL DOCUMENT VERIFICATION / DOCUMENT ID / CATATAN TEKNIS</span>
+      <h1>Membangun <span>Official Document Verification srilexbuditra.work</span> dengan Document ID, QR, dan Batas Verifikasi yang Eksplisit</h1>
+      <p>Official Document Verification dirancang untuk memberi jalur pemeriksaan publik melalui Document ID dan QR, kemudian mengambil status verifikasi melalui runtime berbasis API. Status, issued date, client, project, dan fingerprint ditampilkan dengan batas yang jelas agar QR maupun fingerprint tidak diposisikan melebihi bukti yang benar-benar tersedia.</p>
+      <div class="article-meta"><span>5 Okt 2026</span><span>Catatan Teknis</span><a href="/profil/">Srilex Buditra</a></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+
+      <div class="section-title">
+        <span></span>
+        <h2>Catatan Teknis</h2>
+        <span></span>
+        <p>Catatan teknis berdasarkan implementasi Official Document Verification srilexbuditra.work yang menghubungkan Document ID, QR, halaman verifikasi publik, runtime berbasis API, fingerprint, serta publisher/Worker security dengan batas klaim yang eksplisit.</p>
+      </div>
+
+      <div class="insights-principle">
+        <h2>Ringkasan</h2>
+        <p>Lapisan verifikasi dokumen srilexbuditra.work menghubungkan Project Cost Estimate, Document ID, QR, halaman verifikasi publik, runtime berbasis API, fingerprint, serta publisher/Worker security. Dokumentasi V30 mencatat arsitektur API-first dengan fallback ke documents.json, sementara runtime frontend saat ini tidak membuktikan fallback direct tersebut.</p>
+      </div>
+
+      <div class="insights-grid">
+
+        <article class="insight-card">
+          <small>OFFICIAL DOCUMENT VERIFICATION / DOCUMENT ID / CATATAN TEKNIS</small>
+          <h2>Document ID Menjadi Kunci Pemeriksaan Dokumen</h2>
+          <p>Document ID digunakan sebagai identitas pemeriksaan pada verification flow. Nilai ini membawa pemeriksaan menuju record yang relevan tanpa menjadikan tampilan dokumen atau QR sebagai satu-satunya dasar status verifikasi.</p>
+        </article>
+
+        <article class="insight-card">
+          <small>OFFICIAL DOCUMENT VERIFICATION / DOCUMENT ID / CATATAN TEKNIS</small>
+          <h2>QR Mengarahkan Pengguna ke Route Verifikasi, Bukan Menjadi Bukti Keaslian</h2>
+          <p>QR didokumentasikan membawa URL verifikasi bersama Document ID sehingga pengguna dapat membuka pemeriksaan publik. QR berfungsi sebagai jalur menuju verification flow dan tidak diposisikan sebagai bukti keaslian yang berdiri sendiri.</p>
+        </article>
+
+        <article class="insight-card">
+          <small>OFFICIAL DOCUMENT VERIFICATION / DOCUMENT ID / CATATAN TEKNIS</small>
+          <h2>Runtime Verifikasi Publik Bersifat API-Oriented</h2>
+          <p>Runtime verification.js menggunakan fetch dan identifier SB_VERIFY_API untuk meminta data verifikasi. Source runtime saat ini tidak mereferensikan documents.json secara langsung, sehingga fallback static registry tidak diklaim sebagai perilaku frontend aktif.</p>
+        </article>
+
+        <article class="insight-card">
+          <small>OFFICIAL DOCUMENT VERIFICATION / DOCUMENT ID / CATATAN TEKNIS</small>
+          <h2>Status Verified Menjadi Kondisi Pemeriksaan Record</h2>
+          <p>Verification flow memeriksa Document ID dan status Verified sebagai bagian dari kondisi record. Pada integrasi Project Cost Estimate, verifikasi resmi ditampilkan setelah dokumen berhasil didaftarkan ke alur verifikasi.</p>
+        </article>
+
+        <article class="insight-card">
+          <small>OFFICIAL DOCUMENT VERIFICATION / DOCUMENT ID / CATATAN TEKNIS</small>
+          <h2>Halaman Publik Menampilkan Data Verifikasi yang Terukur</h2>
+          <p>Halaman verifikasi publik menyediakan field untuk Document ID, status, issued date, client, project, dan fingerprint. Field tersebut dipakai untuk memberi konteks pemeriksaan tanpa memperluas klaim melampaui data yang memang ditampilkan oleh implementasi.</p>
+        </article>
+
+        <article class="insight-card">
+          <small>OFFICIAL DOCUMENT VERIFICATION / DOCUMENT ID / CATATAN TEKNIS</small>
+          <h2>Fingerprint Ditampilkan sebagai Penanda Teknis, Bukan Bukti Kriptografis</h2>
+          <p>Fingerprint tersedia sebagai field dan identifier teknis pada beberapa bagian implementasi. Audit source tidak membuktikan bahwa fingerprint tersebut merupakan cryptographic hash atau bukti integritas byte/PDF, sehingga klaim itu sengaja tidak digunakan.</p>
+        </article>
+
+        <article class="insight-card">
+          <small>OFFICIAL DOCUMENT VERIFICATION / DOCUMENT ID / CATATAN TEKNIS</small>
+          <h2>V30 Mendokumentasikan API-First dan Fallback documents.json</h2>
+          <p>Dokumentasi V30 menjelaskan verification page yang memeriksa API terlebih dahulu lalu melakukan fallback ke documents.json. Boundary ini diperlakukan sebagai arsitektur yang terdokumentasi karena verification.js saat ini tidak membuktikan direct frontend fallback tersebut.</p>
+        </article>
+
+        <article class="insight-card">
+          <small>OFFICIAL DOCUMENT VERIFICATION / DOCUMENT ID / CATATAN TEKNIS</small>
+          <h2>Publisher dan Worker Dipisahkan sebagai Layer Keamanan</h2>
+          <p>Publisher, Worker, KV, verification endpoint, serta pemeriksaan authorization muncul pada layer implementasi dan dokumentasi keamanan yang terpisah dari halaman verifikasi publik. Pemisahan ini menjaga fungsi penerbitan dan pemeriksaan publik tetap memiliki boundary yang jelas tanpa mengekspos nilai secret.</p>
+        </article>
+
+      </div>
+
+<div class="insights-principle">
+        <h2>Tentang Penulis</h2>
+<div class="article-author"><img src="/assets/profile.avif" alt="Srilex Buditra" width="1008" height="1008" loading="lazy" decoding="async"><div><strong>Srilex Buditra</strong><p>Full Stack Developer. Catatan ini merupakan bagian dari Knowledge Center srilexbuditra.work dan ditulis dari pengalaman pengembangan sistem digital yang terdokumentasi.</p><a class="text-link" href="/profil/">Lihat Profil &amp; Rekam Jejak →</a></div></div>
+<p class="article-back"><a class="text-link" href="/insights/">← Kembali ke semua Insights</a></p>
+      </div>
+
+      <div class="section-title">
+        <span></span>
+        <h2>Konteks Terkait</h2>
+        <span></span>
+        <p>Lanjutkan dari catatan teknis ini menuju studi kasus Official Document Verification, halaman verifikasi publik, atau Client Management Platform yang terhubung dengan Document ID dan verification flow.</p>
+      </div>
+
+      <div class="insights-grid">
+
+        <article class="insight-card">
+          <small>STUDI KASUS</small>
+          <h2>Official Document Verification</h2>
+          <p>Lihat bagaimana Official Document Verification dirancang sebagai studi kasus observability dengan sumber analytics terpusat, batas data yang eksplisit, dan akses statistik terproteksi.</p>
+          <div class="insight-meta"><span>Insights</span><span>Client Management</span><span>Catatan Teknis</span></div>
+          <a class="text-link" href="/portfolio/document-verification/">Baca catatan sebelumnya &rarr;</a>
+        </article>
+
+        <article class="insight-card">
+          <small>VERIFIKASI</small>
+          <h2>Halaman Verifikasi Dokumen</h2>
+          <p>Buka halaman verifikasi publik untuk memeriksa Document ID dan melihat status, issued date, client, project, serta fingerprint yang tersedia pada record verifikasi.</p>
+          <div class="insight-meta"><span>Demo</span><span>Registrasi</span><span>Data Simulasi</span></div>
+          <a class="text-link" href="/verify/">Mulai demo &rarr;</a>
+        </article>
+
+        <article class="insight-card">
+          <small>PLATFORM</small>
+          <h2>Client Management Platform</h2>
+          <p>Lihat bagaimana Lead, client, project, Official Estimate, Document ID, fingerprint, dan verify URL dihubungkan dalam konteks Client Management Platform.</p>
+          <div class="insight-meta"><span>Official Document Verification</span><span>Document ID</span><span>Catatan Teknis</span></div>
+          <a class="text-link" href="/insights/client-management-platform/">Client Management Platform &rarr;</a>
+        </article>
+
+      </div>
+
+    </div>
+  </section>
+</main>
+<footer class="footer"><div class="container case-footer"><a class="brand" href="/"><span class="brand-mark"><img src="/images/logo.avif" alt="Srilex Buditra Logo" width="1920" height="1916" decoding="async"></span><span><strong>SRILEX <b>BUDITRA</b></strong><small>FULL STACK DEVELOPER</small></span></a><p>Knowledge Center • srilexbuditra.work</p><div><a href="/insights/">Insights</a><a href="/profil/">Profil</a><a href="/privacy.html">Privasi</a></div></div><div class="copyright">© 2026 Srilex Buditra. All Rights Reserved. <span>Full Stack. Full Solution. Full Impact.</span></div></footer>
+<script src="/tts.js" defer></script>
+  <script src="/assets/js/visitor-analytics.js" defer></script>
+</body></html>
