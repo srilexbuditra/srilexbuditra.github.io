@@ -1,3 +1,23 @@
+## Platform Baseline 2026.10.06.0001
+
+Platform Baseline : 2026.10.06.0001
+Recorded At       : 2026-10-06 05:02:28 WIB
+Timezone          : Asia/Jakarta (UTC+07:00)
+Time Format       : 24-hour (HH:mm:ss)
+
+Maintainer        : Srilex Buditra
+Role              : Senior Full Stack Developer
+Location          : Bengkulu, Indonesia
+
+Changed Area      : Platform Governance + Site Content Architecture V2.01
+Status            : SOURCE COMMITTED
+
+- Established SRILEXBUDITRA.WORK Platform Baseline governance using YYYY.MM.DD.NNNN.
+- Established Asia/Jakarta / WIB as the official project timezone using 24-hour HH:mm:ss time.
+- Aligned current Site Content Architecture naming to V2.01 while preserving historical V2 records.
+- Preserved module-specific version namespaces independently.
+- No new Markdown file was created.
+
 ## Site Content Architecture V2 - Documentation Baseline (4 Oktober 2026)
 
 **Status:** Documentation baseline; implementasi halaman publik V2 belum dimulai.

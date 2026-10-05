@@ -1,5 +1,23 @@
 # Srilex Buditra Roadmap
 
+<!-- PLATFORM-BASELINE:START -->
+
+## SRILEXBUDITRA.WORK Platform Baseline
+
+Platform Baseline : 2026.10.06.0001
+Recorded At       : 2026-10-06 05:02:28 WIB
+Timezone          : Asia/Jakarta (UTC+07:00)
+Time Format       : 24-hour (HH:mm:ss)
+
+Maintainer        : Srilex Buditra
+Role              : Senior Full Stack Developer
+Location          : Bengkulu, Indonesia
+
+Changed Area      : Platform Governance + Site Content Architecture V2.01
+Status            : SOURCE COMMITTED
+
+<!-- PLATFORM-BASELINE:END -->
+
 > Master roadmap dan continuity document srilexbuditra.work.
 > Roadmap strategis dipisahkan dari checkpoint historis agar status lama tidak dibaca sebagai kondisi source terkini.
 
@@ -30,15 +48,15 @@ Urutan keutamaan ketika terdapat perbedaan informasi:
 
 ---
 
-## Site Content Architecture V2
+## Site Content Architecture V2.01
 
-Status: **documentation baseline / current development**.
+Status: **ACTIVE ARCHITECTURE / CURRENT DEVELOPMENT**.
 
-Site Content Architecture V2 menjadi arah site-level setelah Portfolio Hub dan live case studies tersedia di production. Public page V2 belum dianggap selesai sampai perubahan source, visual review, commit/push, dan production verification masing-masing PASS.
+Site Content Architecture V2.01 menjadi arah site-level setelah Portfolio Hub dan live case studies tersedia di production. Setiap area V2.01 hanya dinyatakan selesai setelah source review, visual review, controlled commit/push, dan production verification masing-masing PASS.
 
 ### Versioning Convention
 
-- `Home V2`, `Portfolio V2`, `Profil V2`, `Insights V2`, dan `Aktivitas V2` adalah nama versi arsitektur halaman publik.
+- `Home V2.01`, `Portfolio V2.01`, `Profil V2.01`, `Insights V2.01`, dan `Aktivitas V2.01` adalah nama versi arsitektur halaman publik.
 - Penamaan `V` pada module/project lain tetap scoped ke module tersebut dan tidak otomatis berarti versi website utama.
 - Release teknis existing seperti `Client Management R1`, `Demo Login Automatic Access R2`, dan release identifier lain tetap dipertahankan.
 - `Cloudflare R2` adalah object storage dan tidak memiliki hubungan dengan versi halaman.
@@ -46,27 +64,27 @@ Site Content Architecture V2 menjadi arah site-level setelah Portfolio Hub dan l
 
 ### Page Responsibility
 
-**Home V2**
+**Home V2.01**
 - Menjadi discovery layer yang ringkas.
 - Prioritaskan live implementations, system highlights, selected project samples, dan CTA.
 - Hindari duplikasi katalog antara Featured Projects dan Case Studies.
 
-**Portfolio V2**
+**Portfolio V2.01**
 - Menjadi pusat proof-of-work lengkap.
 - Pertahankan Live Implementations.
 - Tambahkan System Case Studies berdasarkan bukti source/runtime.
 - Pertahankan Project Samples sebagai kategori terpisah.
 
-**Profil V2**
+**Profil V2.01**
 - Menjadi authority page.
 - Fokus pada identitas profesional, capability, trust principles, dan proof network.
 - Tidak menjadi portfolio kedua.
 
-**Insights V2**
+**Insights V2.01**
 - Menjadi engineering knowledge layer lintas project.
 - Artikel menjelaskan keputusan, prinsip, arsitektur, workflow, verification/trust, backend/cloud, dan responsive UX berdasarkan implementasi yang dapat diverifikasi.
 
-**Aktivitas V2**
+**Aktivitas V2.01**
 - Menjadi public development timeline terkurasi.
 - Pertahankan milestone historis yang benar.
 - Tambahkan milestone baru hanya dari tanggal/status yang dapat dibuktikan.
@@ -74,13 +92,13 @@ Site Content Architecture V2 menjadi arah site-level setelah Portfolio Hub dan l
 
 ### Implementation Sequence
 
-1. Dokumentasi Site Content Architecture V2 menjadi baseline.
+1. Dokumentasi Site Content Architecture V2.01 menjadi baseline.
 2. Jalankan `V2 Evidence & Timeline Audit`.
-3. Implementasikan Home V2.
-4. Implementasikan Portfolio V2.
-5. Implementasikan Profil V2.
-6. Implementasikan Insights V2.
-7. Implementasikan Aktivitas V2.
+3. Implementasikan Home V2.01.
+4. Implementasikan Portfolio V2.01.
+5. Implementasikan Profil V2.01.
+6. Implementasikan Insights V2.01.
+7. Implementasikan Aktivitas V2.01.
 8. Setiap halaman melalui source review, visual review desktop/mobile, commit/push, dan production verification sebelum dinyatakan selesai.
 
 ### Current Production Foundation
@@ -93,7 +111,7 @@ Site Content Architecture V2 menjadi arah site-level setelah Portfolio Hub dan l
 
 ### Project Validation & Continuity Snapshot
 
-> Snapshot status ini menjadi referensi aktif untuk menentukan bagian Site Content Architecture V2 yang sudah selesai, bagian yang masih berjalan, dan langkah berikutnya. Catatan historis di bawah tetap dipertahankan sebagai continuity record.
+> Snapshot status ini menjadi referensi aktif untuk menentukan bagian Site Content Architecture V2.01 yang sudah selesai, bagian yang masih berjalan, dan langkah berikutnya. Catatan historis di bawah tetap dipertahankan sebagai continuity record.
 
 #### Current Production Baseline
 
@@ -106,18 +124,18 @@ Site Content Architecture V2 menjadi arah site-level setelah Portfolio Hub dan l
 
 | Area | Status | Validation / Baseline |
 | --- | --- | --- |
-| Home V2 | **COMPLETED / LOCKED** | `8056b5e88d80aebda34e53ac300776097c78e277` - `feat: implement home v2 content architecture` |
-| Portfolio V2 | **COMPLETED / LOCKED** | `7e1a5724dab19ebec5ca05f2c24798d6cd61aed3` - `feat: implement portfolio v2 content architecture` |
-| Profil V2 | **COMPLETED / LOCKED** | `89b6214474b2de2acfbd29f6b575ee48c6b7d91f` - `feat: implement profil v2 content architecture` |
-| Insights V2 | **COMPLETED / LOCKED** | Final validated content baseline `20123286d84fc9f939a3341c54f3320c83113fc9` |
+| Home V2.01 | **COMPLETED / LOCKED** | `8056b5e88d80aebda34e53ac300776097c78e277` - `feat: implement home v2 content architecture` |
+| Portfolio V2.01 | **COMPLETED / LOCKED** | `7e1a5724dab19ebec5ca05f2c24798d6cd61aed3` - `feat: implement portfolio v2 content architecture` |
+| Profil V2.01 | **COMPLETED / LOCKED** | `89b6214474b2de2acfbd29f6b575ee48c6b7d91f` - `feat: implement profil v2 content architecture` |
+| Insights V2.01 | **COMPLETED / LOCKED** | Final validated content baseline `20123286d84fc9f939a3341c54f3320c83113fc9` |
 | Insights Author Consistency Migration V2.01 | **PRODUCTION COMPLETE / LOCKED** | 11/11 artikel menggunakan identitas publik `Srilex Buditra - Senior Full Stack Developer` dan metadata author yang konsisten |
 | Insights Article #7 - Cloudflare Infrastructure | **LOCKED** | `89e31f93f4e86fad663e29d5eae4102d49935e9c` - `feat: add cloudflare infrastructure insight` |
 
 #### Current / Active
 
-- Site Content Architecture V2 tetap menjadi arsitektur konten publik aktif.
-- Empat halaman pertama pada sequence V2 - Home, Portfolio, Profil, dan Insights - sudah selesai dan tidak perlu dibuka ulang kecuali ada regression nyata atau perubahan baru yang memang menyentuh scope tersebut.
-- Tidak ada pekerjaan koreksi wajib yang masih terbuka pada Insights V2.
+- Site Content Architecture V2.01 tetap menjadi arsitektur konten publik aktif.
+- Empat halaman pertama pada sequence V2.01 - Home, Portfolio, Profil, dan Insights - sudah selesai dan tidak perlu dibuka ulang kecuali ada regression nyata atau perubahan baru yang memang menyentuh scope tersebut.
+- Tidak ada pekerjaan koreksi wajib yang masih terbuka pada Insights V2.01.
 
 #### Master Project Validation Matrix
 
@@ -125,7 +143,7 @@ Site Content Architecture V2 menjadi arah site-level setelah Portfolio Hub dan l
 
 | Project / Area | Current Status | Validation / Evidence | Next Step |
 | --- | --- | --- | --- |
-| Site Content Architecture V2 | **ACTIVE ARCHITECTURE / 4 AREAS COMPLETED & LOCKED / AKTIVITAS V2 NEXT** | Home V2, Portfolio V2, Profil V2, dan Insights V2 sudah **COMPLETED / LOCKED**; Aktivitas V2 adalah site-level page architecture yang belum dimulai. | Mulai evidence dan timeline audit Aktivitas V2. Area yang sudah LOCKED tidak dibuka ulang tanpa regression nyata atau approved scope change. |
+| Site Content Architecture V2.01 | **ACTIVE ARCHITECTURE / 4 AREAS COMPLETED & LOCKED / AKTIVITAS V2.01 CURRENT DEVELOPMENT** | Home V2.01, Portfolio V2.01, Profil V2.01, dan Insights V2.01 sudah **COMPLETED / LOCKED**; Aktivitas V2.01 telah menyelesaikan discovery, scope audit, Evidence & Timeline Audit, dan milestone selection telah disepakati; source implementation belum dilakukan. | Lanjutkan Controlled Source Change Plan dan implementasi Aktivitas V2.01. Area yang sudah LOCKED tidak dibuka ulang tanpa regression nyata atau approved scope change. |
 | Client Management Platform R1 | **PRODUCTION VERIFIED** | `docs/CLIENT-MANAGEMENT.md`: production baseline aktif dan terverifikasi; R1 telah melewati development, staging, release candidate, production promotion, dan repository maintenance. | Maintenance only; buka kembali hanya jika ada regression atau approved scope change. |
 | Brand & Trust | **CURRENT / LOCKED** | `docs/BRAND.md`: Brand Identity R1 tetap LOCKED dan Master Brand Identity Policy berstatus CURRENT / LOCKED. | Pertahankan governance visual/brand; perubahan besar memerlukan persetujuan eksplisit dan staging verification. |
 | Analytics | **ACTIVE / VERIFIED FOUNDATION** | `docs/ANALYTICS.md`: Analytics V4 aktif dan telah diuji; nilai live mengikuti dashboard/runtime. | Monitoring dan maintenance berkelanjutan; jangan membekukan angka statistik dinamis di dokumentasi. |
@@ -142,29 +160,30 @@ Site Content Architecture V2 menjadi arah site-level setelah Portfolio Hub dan l
 - `ACTIVE` atau `ACTIVE / VERIFIED FOUNDATION` berarti sistem masih hidup dan dipelihara; bukan berarti seluruh roadmap project selesai.
 - `ACTIVE / PRE-LOCK` tidak boleh dipromosikan menjadi `LOCKED` sebelum final verification selesai.
 - `CURRENT GOVERNANCE / MAINTENANCE` adalah aturan teknis aktif, bukan milestone produk baru.
-- **Aktivitas V2** adalah halaman publik site-level dan masih `NEXT / NOT STARTED`.
+- **Aktivitas V2.01** adalah halaman publik site-level dan berada pada **CURRENT DEVELOPMENT**; discovery, scope audit, Evidence & Timeline Audit, dan milestone selection telah selesai/disepakati; source implementation belum dilakukan.
 - **Aktivitas & Event Public Integration** adalah modul Program Ketahanan Pangan dan sudah `ACTIVE / PRE-LOCK`.
 - Kedua istilah Aktivitas tersebut harus tetap dipisahkan.
 
 #### Next Step
 
-- **Aktivitas V2: NEXT / NOT STARTED**.
-- Tahap berikutnya adalah audit evidence dan timeline Aktivitas V2 sebelum source implementation apa pun dilakukan.
-- Aktivitas V2 harus menggunakan milestone yang dapat dibuktikan dari source, Git history, deployment, atau production verification.
+- **Aktivitas V2.01: CURRENT DEVELOPMENT / SOURCE IMPLEMENTATION NEXT**.
+- Discovery, Scope Audit, Evidence & Timeline Audit, dan milestone selection Aktivitas V2.01 telah selesai/disepakati.
+- Tahap berikutnya adalah Controlled Source Change Plan dan implementasi Aktivitas V2.01 menggunakan milestone yang dapat dibuktikan dari source, Git history, deployment, atau production verification.
 - Roadmap site-level tetap dipisahkan dari roadmap internal Program Ketahanan Pangan dan module/project lain.
 
 #### Validation History
 
-- Home V2: source review, visual review, controlled commit/push, dan production verification telah selesai; status **COMPLETED / LOCKED**.
-- Portfolio V2: source review, visual review, controlled commit/push, dan production verification telah selesai; status **COMPLETED / LOCKED**.
-- Profil V2: source review, visual review, controlled commit/push, dan production verification telah selesai; status **COMPLETED / LOCKED**.
-- Insights V2 Base: `a8df5322144b31bb7950135ba5fefcd20d8b8aad` - `feat: implement insights v2 content architecture`.
+- Home V2.01: source review, visual review, controlled commit/push, dan production verification telah selesai; status **COMPLETED / LOCKED**.
+- Portfolio V2.01: source review, visual review, controlled commit/push, dan production verification telah selesai; status **COMPLETED / LOCKED**.
+- Profil V2.01: source review, visual review, controlled commit/push, dan production verification telah selesai; status **COMPLETED / LOCKED**.
+- Insights V2.01 Base: `a8df5322144b31bb7950135ba5fefcd20d8b8aad` - `feat: implement insights v2 content architecture`.
 - Insights Article #7 Cloudflare Infrastructure: production verification selesai dan dikunci pada `89e31f93f4e86fad663e29d5eae4102d49935e9c`.
 - Author Consistency Migration V2.01: commit `20123286d84fc9f939a3341c54f3320c83113fc9` - `chore: standardize insights author identity`.
 - Production verification Author Consistency: **11/11 artikel HTTP 200**, author standard **11/11 consistent**, canonical terverifikasi, Insights Hub HTTP 200, sitemap HTTP 200 dengan **12 Insights URLs**, dan Insights CSS HTTP 200.
 - Insights Completion / Gap Audit V2.01 setelah koreksi link parser: **HIGH 0 / MEDIUM 0 / LOW 6**.
-- Keputusan final Insights V2: **NO BLOCKER; OPTIONAL LOW-PRIORITY IMPROVEMENTS REMAIN**.
-- Insights V2 kemudian ditetapkan **COMPLETED / LOCKED**.
+- Keputusan final Insights V2.01: **NO BLOCKER; OPTIONAL LOW-PRIORITY IMPROVEMENTS REMAIN**.
+- Insights V2.01 kemudian ditetapkan **COMPLETED / LOCKED**.
+- Aktivitas V2.01: Discovery, Scope Audit, dan Evidence & Timeline Audit V2.01 **PASS**; milestone selection telah disepakati; source implementation belum dilakukan.
 
 #### Optional Backlog
 

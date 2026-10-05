@@ -1,3 +1,21 @@
+<!-- PLATFORM-BASELINE:START -->
+
+## SRILEXBUDITRA.WORK Platform Baseline
+
+Platform Baseline : 2026.10.06.0001
+Recorded At       : 2026-10-06 05:02:28 WIB
+Timezone          : Asia/Jakarta (UTC+07:00)
+Time Format       : 24-hour (HH:mm:ss)
+
+Maintainer        : Srilex Buditra
+Role              : Senior Full Stack Developer
+Location          : Bengkulu, Indonesia
+
+Changed Area      : Platform Governance + Site Content Architecture V2.01
+Status            : SOURCE COMMITTED
+
+<!-- PLATFORM-BASELINE:END -->
+
 <p align="center">
   <a href="https://srilexbuditra.work/">
     <img
@@ -100,27 +118,27 @@ Panduan utama: **[verify/README.md](verify/README.md)**
 
 Security update: **[verify/V31_PUBLISHER_SECURITY.md](verify/V31_PUBLISHER_SECURITY.md)**
 
-## Site Content Architecture V2
+## Site Content Architecture V2.01
 
 Arsitektur konten publik srilexbuditra.work menggunakan penamaan versi per halaman agar perkembangan website mudah dilacak tanpa mencampur versi halaman dengan release teknis project.
 
-| Halaman | Peran V2 |
+| Halaman | Peran V2.01 |
 |---|---|
-| **Home V2** | Discovery terkurasi: live implementations, system highlights, selected project samples, dan CTA utama. |
-| **Portfolio V2** | Pusat proof-of-work: live implementations, system case studies, dan project samples. |
-| **Profil V2** | Authority page: identitas profesional, capability, trust principles, dan proof network. |
-| **Insights V2** | Engineering knowledge layer: keputusan, prinsip, dan pembelajaran lintas implementasi. |
-| **Aktivitas V2** | Public development timeline: milestone terverifikasi, status, dan perkembangan platform. |
+| **Home V2.01** | Discovery terkurasi: live implementations, system highlights, selected project samples, dan CTA utama. |
+| **Portfolio V2.01** | Pusat proof-of-work: live implementations, system case studies, dan project samples. |
+| **Profil V2.01** | Authority page: identitas profesional, capability, trust principles, dan proof network. |
+| **Insights V2.01** | Engineering knowledge layer: keputusan, prinsip, dan pembelajaran lintas implementasi. |
+| **Aktivitas V2.01** | Public development timeline: milestone terverifikasi, status, dan perkembangan platform. |
 
 Konvensi versioning:
 
-- `Home V2`, `Portfolio V2`, `Profil V2`, `Insights V2`, dan `Aktivitas V2` adalah versi arsitektur halaman publik.
+- `Home V2.01`, `Portfolio V2.01`, `Profil V2.01`, `Insights V2.01`, dan `Aktivitas V2.01` adalah versi arsitektur halaman publik.
 - Versi modul/project seperti `Dashboard Peserta V2`, `Umroh Platform V3.9.0`, atau versi Secure Document tetap mengikuti namespace modul masing-masing.
 - Nama release teknis yang sudah sah seperti `Client Management R1` atau `Demo Login Automatic Access R2` tetap dipertahankan.
 - `Cloudflare R2` berarti object storage dan bukan versi halaman.
 - Historical version/release tidak boleh diubah dengan find/replace massal.
 
-Status: **documentation baseline**. Implementasi halaman publik V2 dilakukan bertahap setelah V2 Evidence & Timeline Audit.
+Status: **Site Content Architecture V2.01 active**. Home V2.01, Portfolio V2.01, Profil V2.01, dan Insights V2.01 sudah **COMPLETED / LOCKED**; Aktivitas V2.01 berada pada **CURRENT DEVELOPMENT** setelah Evidence & Timeline Audit dan milestone selection.
 
 ## Teknologi
 

@@ -1,10 +1,30 @@
 # Documentation Index — Srilex Buditra Portfolio
 
+<!-- PLATFORM-BASELINE:START -->
+
+## SRILEXBUDITRA.WORK Platform Baseline
+
+Platform Baseline : 2026.10.06.0001
+Recorded At       : 2026-10-06 05:02:28 WIB
+Timezone          : Asia/Jakarta (UTC+07:00)
+Time Format       : 24-hour (HH:mm:ss)
+
+Maintainer        : Srilex Buditra
+Role              : Senior Full Stack Developer
+Location          : Bengkulu, Indonesia
+
+Changed Area      : Platform Governance + Site Content Architecture V2.01
+Status            : SOURCE COMMITTED
+
+<!-- PLATFORM-BASELINE:END -->
+
+
+
 Dokumen ini adalah indeks dokumentasi aktif repository `srilexbuditra.github.io`. Gunakan indeks ini untuk membedakan dokumentasi operasional, panduan teknis, audit, dan referensi historis.
 
-**Current documentation baseline:** 4 Oktober 2026 - Site Content Architecture V2 documentation baseline
-**Last documentation sync:** 4 Oktober 2026
-**Current site content architecture:** V2 documentation baseline; implementasi public page V2 masih pending V2 Evidence & Timeline Audit.
+**Current documentation baseline:** 6 Oktober 2026 - Platform Baseline 2026.10.06.0001 / Site Content Architecture V2.01
+**Last documentation sync:** 6 Oktober 2026
+**Current site content architecture:** V2.01 active; Home V2.01, Portfolio V2.01, Profil V2.01, dan Insights V2.01 **COMPLETED / LOCKED**; Aktivitas V2.01 **CURRENT DEVELOPMENT** setelah Evidence & Timeline Audit dan milestone selection.
 
 ## 1. Dokumentasi Utama
 
@@ -140,7 +160,7 @@ File berikut adalah template operasional GitHub, bukan dokumentasi produk:
 - Asset canonical `og:image` sekarang tersedia di production setelah Production Release R1; validasi ulang scraper Meta tetap terpisah.
 - Flagship Program Ketahanan Pangan: **implemented / public case study tersedia**.
 - Portfolio Hub `/portfolio/`: **production verified**; live implementations dan public case studies aktif pada baseline production terbaru.
-- Site Content Architecture V2: **documentation baseline / current development**; Home V2, Portfolio V2, Profil V2, Insights V2, dan Aktivitas V2 belum dianggap selesai sebelum source, visual, dan production verification masing-masing PASS.
+- Site Content Architecture V2.01: **ACTIVE ARCHITECTURE / 4 AREAS COMPLETED & LOCKED / AKTIVITAS V2.01 CURRENT DEVELOPMENT**; Aktivitas V2.01 telah menyelesaikan Evidence & Timeline Audit dan milestone selection; source implementation tetap harus melalui source review, visual review, controlled commit/push, dan production verification.
 
 - Profil & Rekam Jejak `/profil/`: **implemented**.
 - Trust & Authority V8: **implemented sebagai fondasi**.
@@ -157,9 +177,9 @@ File berikut adalah template operasional GitHub, bukan dokumentasi produk:
 
 ---
 
-**Documentation baseline:** 4 Oktober 2026 - Site Content Architecture V2
+**Documentation baseline:** 6 Oktober 2026 - Platform Baseline 2026.10.06.0001 / Site Content Architecture V2.01
 **Previous audit baseline:** V11.6
-**Last documentation update:** 4 Oktober 2026
+**Last documentation update:** 6 Oktober 2026
 
 ### Kartu Anggota Digital + QR
 

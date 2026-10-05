@@ -1,5 +1,25 @@
 # Srilex Buditra Platform
 
+<!-- PLATFORM-BASELINE:START -->
+
+## SRILEXBUDITRA.WORK Platform Baseline
+
+Platform Baseline : 2026.10.06.0001
+Recorded At       : 2026-10-06 05:02:28 WIB
+Timezone          : Asia/Jakarta (UTC+07:00)
+Time Format       : 24-hour (HH:mm:ss)
+
+Maintainer        : Srilex Buditra
+Role              : Senior Full Stack Developer
+Location          : Bengkulu, Indonesia
+
+Changed Area      : Platform Governance + Site Content Architecture V2.01
+Status            : SOURCE COMMITTED
+
+<!-- PLATFORM-BASELINE:END -->
+
+
+
 > Dokumentasi platform publik srilexbuditra.work.
 > Mencakup Knowledge Center / Insights dan Development Timeline / Activity.
 
@@ -17,23 +37,23 @@
 - `/insights/` - Knowledge Center / Insights hub.
 - `/aktivitas/` - Development Timeline / Activity.
 
-## Site Content Architecture V2 - Current Direction
+## Site Content Architecture V2.01 - Current Direction
 
-**Status:** documentation baseline; public page implementation pending.
+**Status:** Site Content Architecture V2.01 aktif; Home, Portfolio, Profil, dan Insights **COMPLETED / LOCKED**; Aktivitas V2.01 **CURRENT DEVELOPMENT** setelah Evidence & Timeline Audit dan milestone selection.
 
-Platform publik V2 mempertahankan fungsi setiap halaman agar tidak menjadi duplikasi satu sama lain:
+Platform publik V2.01 mempertahankan fungsi setiap halaman agar tidak menjadi duplikasi satu sama lain:
 
-- Home V2: discovery dan selected proof.
-- Portfolio V2: complete proof-of-work.
-- Profil V2: authority dan trust.
-- Insights V2: engineering knowledge.
-- Aktivitas V2: verified development timeline.
+- Home V2.01: discovery dan selected proof.
+- Portfolio V2.01: complete proof-of-work.
+- Profil V2.01: authority dan trust.
+- Insights V2.01: engineering knowledge.
+- Aktivitas V2.01: verified development timeline.
 
-### Insights V2
+### Insights V2.01
 
-Insights V2 memperluas foundation V11.9 dari tiga artikel awal Ketahanan Pangan menjadi knowledge layer lintas implementasi.
+Insights V2.01 memperluas foundation V11.9 dari tiga artikel awal Ketahanan Pangan menjadi knowledge layer lintas implementasi.
 
-Kandidat editorial hanya boleh dipublikasikan setelah evidence audit, antara lain:
+Cakupan editorial Insights V2.01 yang dibangun dari implementasi dan evidence terverifikasi meliputi:
 
 - Client Journey dan Official Estimate.
 - Safe Demo vs Production Data.
@@ -44,9 +64,9 @@ Kandidat editorial hanya boleh dipublikasikan setelah evidence audit, antara lai
 
 Artikel tidak boleh menjadi salinan Case Study. Portfolio menjelaskan apa yang dibangun; Insights menjelaskan mengapa dan bagaimana keputusan engineering dibuat.
 
-### Aktivitas V2
+### Aktivitas V2.01
 
-Aktivitas V2 mempertahankan timeline historis V12.0 dan memperbaruinya dengan milestone yang dapat diverifikasi dari source, Git history, deployment, dan production status.
+Aktivitas V2.01 mempertahankan timeline historis V12.0 dan memperbaruinya dengan milestone yang dapat diverifikasi dari source, Git history, deployment, dan production status.
 
 Aturan:
 
