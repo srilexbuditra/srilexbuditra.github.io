@@ -91,6 +91,99 @@ Site Content Architecture V2 menjadi arah site-level setelah Portfolio Hub dan l
 - Portfolio Hub: production verified.
 - Selected project samples tetap dipisahkan dari live implementations.
 
+### Project Validation & Continuity Snapshot
+
+> Snapshot status ini menjadi referensi aktif untuk menentukan bagian Site Content Architecture V2 yang sudah selesai, bagian yang masih berjalan, dan langkah berikutnya. Catatan historis di bawah tetap dipertahankan sebagai continuity record.
+
+#### Current Production Baseline
+
+- Validated site-content baseline sebelum pembaruan dokumentasi ini: `20123286d84fc9f939a3341c54f3320c83113fc9`.
+- Branch production: `main`.
+- Local `main` dan `origin/main` telah diverifikasi sinkron pada baseline tersebut sebelum snapshot ini ditulis.
+- Pembaruan bagian ini bersifat dokumentasi saja dan tidak mengubah runtime halaman publik.
+
+#### Completed / Locked
+
+| Area | Status | Validation / Baseline |
+| --- | --- | --- |
+| Home V2 | **COMPLETED / LOCKED** | `8056b5e88d80aebda34e53ac300776097c78e277` - `feat: implement home v2 content architecture` |
+| Portfolio V2 | **COMPLETED / LOCKED** | `7e1a5724dab19ebec5ca05f2c24798d6cd61aed3` - `feat: implement portfolio v2 content architecture` |
+| Profil V2 | **COMPLETED / LOCKED** | `89b6214474b2de2acfbd29f6b575ee48c6b7d91f` - `feat: implement profil v2 content architecture` |
+| Insights V2 | **COMPLETED / LOCKED** | Final validated content baseline `20123286d84fc9f939a3341c54f3320c83113fc9` |
+| Insights Author Consistency Migration V2.01 | **PRODUCTION COMPLETE / LOCKED** | 11/11 artikel menggunakan identitas publik `Srilex Buditra - Senior Full Stack Developer` dan metadata author yang konsisten |
+| Insights Article #7 - Cloudflare Infrastructure | **LOCKED** | `89e31f93f4e86fad663e29d5eae4102d49935e9c` - `feat: add cloudflare infrastructure insight` |
+
+#### Current / Active
+
+- Site Content Architecture V2 tetap menjadi arsitektur konten publik aktif.
+- Empat halaman pertama pada sequence V2 - Home, Portfolio, Profil, dan Insights - sudah selesai dan tidak perlu dibuka ulang kecuali ada regression nyata atau perubahan baru yang memang menyentuh scope tersebut.
+- Tidak ada pekerjaan koreksi wajib yang masih terbuka pada Insights V2.
+
+#### Master Project Validation Matrix
+
+> Matriks ini merangkum status project-family utama berdasarkan source dokumentasi aktif. Status tidak boleh dinaikkan melebihi bukti source. Dokumen project masing-masing tetap menjadi authority untuk detail teknis.
+
+| Project / Area | Current Status | Validation / Evidence | Next Step |
+| --- | --- | --- | --- |
+| Site Content Architecture V2 | **ACTIVE ARCHITECTURE / 4 AREAS COMPLETED & LOCKED / AKTIVITAS V2 NEXT** | Home V2, Portfolio V2, Profil V2, dan Insights V2 sudah **COMPLETED / LOCKED**; Aktivitas V2 adalah site-level page architecture yang belum dimulai. | Mulai evidence dan timeline audit Aktivitas V2. Area yang sudah LOCKED tidak dibuka ulang tanpa regression nyata atau approved scope change. |
+| Client Management Platform R1 | **PRODUCTION VERIFIED** | `docs/CLIENT-MANAGEMENT.md`: production baseline aktif dan terverifikasi; R1 telah melewati development, staging, release candidate, production promotion, dan repository maintenance. | Maintenance only; buka kembali hanya jika ada regression atau approved scope change. |
+| Brand & Trust | **CURRENT / LOCKED** | `docs/BRAND.md`: Brand Identity R1 tetap LOCKED dan Master Brand Identity Policy berstatus CURRENT / LOCKED. | Pertahankan governance visual/brand; perubahan besar memerlukan persetujuan eksplisit dan staging verification. |
+| Analytics | **ACTIVE / VERIFIED FOUNDATION** | `docs/ANALYTICS.md`: Analytics V4 aktif dan telah diuji; nilai live mengikuti dashboard/runtime. | Monitoring dan maintenance berkelanjutan; jangan membekukan angka statistik dinamis di dokumentasi. |
+| Engineering | **CURRENT GOVERNANCE / MAINTENANCE** | `docs/ENGINEERING.md`: Current Engineering Principles aktif; GitHub Actions dan runtime verification tetap bagian dari proses perubahan. | Terapkan aturan engineering pada perubahan berikutnya; tidak ada standalone release upgrade yang diasumsikan. |
+| Program Ketahanan Pangan | **ACTIVE / PUBLIC EVENT FINAL VERIFICATION PENDING** | `program/ketahanan-pangan/README.md`: ekosistem peserta sudah mencakup Dashboard Peserta V2 dan modul terkait; OG/WhatsApp, Schema.org Event, serta GA4 Event Analytics untuk Public Event masih menjalani pengujian akhir. | Selesaikan final verification Public Event sebelum baseline Event dinyatakan LOCK. |
+| Umroh Semi Private Bengkulu | **FRONTEND STABLE / DESIGN LOCKED / BACKEND NEXT** | `program/umroh-semi-private-bengkulu/README.md`: Frontend Foundation Stable V2.5.1; Design System V1 dan Visual Asset System V1 LOCKED. | Lanjutkan fase autentikasi/backend sesuai architecture docs tanpa membongkar shell dan identitas visual yang sudah stabil. |
+| Official Document Verification | **CURRENT TECHNICAL BASELINE / SECURITY HARDENING** | `verify/README.md`: V30 tetap technical/deployment baseline; V31 adalah security hardening terbaru. | Pertahankan V30 baseline dengan aturan keamanan V31; jangan mengekspos secret dan jangan menurunkan token policy. |
+| Aktivitas & Event Public Integration | **ACTIVE / PRE-LOCK** | `AKTIVITAS-EVENT-PUBLIC-V17.19.13B.md`: public route, Gambar R2, Admin -> Published -> Peserta -> Public Page, dan Rich Summary verified; OG/WhatsApp Preview, Schema.org Event, serta GA4 Event Analytics masih testing pending. | Selesaikan tiga production test yang pending sebelum status dinaikkan menjadi Verified / Stable / LOCKED. |
+
+**Status interpretation:**
+
+- `COMPLETED / LOCKED` hanya digunakan untuk scope yang sudah selesai dan tervalidasi.
+- `PRODUCTION VERIFIED` berarti baseline production telah melewati validasi sesuai source project.
+- `ACTIVE` atau `ACTIVE / VERIFIED FOUNDATION` berarti sistem masih hidup dan dipelihara; bukan berarti seluruh roadmap project selesai.
+- `ACTIVE / PRE-LOCK` tidak boleh dipromosikan menjadi `LOCKED` sebelum final verification selesai.
+- `CURRENT GOVERNANCE / MAINTENANCE` adalah aturan teknis aktif, bukan milestone produk baru.
+- **Aktivitas V2** adalah halaman publik site-level dan masih `NEXT / NOT STARTED`.
+- **Aktivitas & Event Public Integration** adalah modul Program Ketahanan Pangan dan sudah `ACTIVE / PRE-LOCK`.
+- Kedua istilah Aktivitas tersebut harus tetap dipisahkan.
+
+#### Next Step
+
+- **Aktivitas V2: NEXT / NOT STARTED**.
+- Tahap berikutnya adalah audit evidence dan timeline Aktivitas V2 sebelum source implementation apa pun dilakukan.
+- Aktivitas V2 harus menggunakan milestone yang dapat dibuktikan dari source, Git history, deployment, atau production verification.
+- Roadmap site-level tetap dipisahkan dari roadmap internal Program Ketahanan Pangan dan module/project lain.
+
+#### Validation History
+
+- Home V2: source review, visual review, controlled commit/push, dan production verification telah selesai; status **COMPLETED / LOCKED**.
+- Portfolio V2: source review, visual review, controlled commit/push, dan production verification telah selesai; status **COMPLETED / LOCKED**.
+- Profil V2: source review, visual review, controlled commit/push, dan production verification telah selesai; status **COMPLETED / LOCKED**.
+- Insights V2 Base: `a8df5322144b31bb7950135ba5fefcd20d8b8aad` - `feat: implement insights v2 content architecture`.
+- Insights Article #7 Cloudflare Infrastructure: production verification selesai dan dikunci pada `89e31f93f4e86fad663e29d5eae4102d49935e9c`.
+- Author Consistency Migration V2.01: commit `20123286d84fc9f939a3341c54f3320c83113fc9` - `chore: standardize insights author identity`.
+- Production verification Author Consistency: **11/11 artikel HTTP 200**, author standard **11/11 consistent**, canonical terverifikasi, Insights Hub HTTP 200, sitemap HTTP 200 dengan **12 Insights URLs**, dan Insights CSS HTTP 200.
+- Insights Completion / Gap Audit V2.01 setelah koreksi link parser: **HIGH 0 / MEDIUM 0 / LOW 6**.
+- Keputusan final Insights V2: **NO BLOCKER; OPTIONAL LOW-PRIORITY IMPROVEMENTS REMAIN**.
+- Insights V2 kemudian ditetapkan **COMPLETED / LOCKED**.
+
+#### Optional Backlog
+
+- Enam sinyal internal-linking pada Insights bersifat **optional improvement**, bukan error dan bukan blocker.
+- Artikel yang saat audit belum menerima contextual inbound link dari artikel Insights lain:
+  - `cloudflare-infrastructure`
+  - `demo-login-automatic-access`
+  - `ekosistem-digital-umroh-semi-private-bengkulu`
+  - `membangun-alur-digital-peserta`
+  - `qr-verification-sertifikat-digital`
+  - `responsive-first-portal-peserta`
+- Tidak perlu membuka ulang artikel yang sudah stabil hanya untuk mengejar jumlah internal link.
+- **Tidak ada asumsi Article #8.** Artikel baru hanya dibuat jika ada kebutuhan editorial/teknis yang nyata dan disepakati.
+
+#### Change-Control Rule
+
+- Status `COMPLETED / LOCKED` tidak boleh diturunkan atau dikerjakan ulang tanpa regression nyata, perubahan scope yang disetujui, atau bukti production baru yang mengharuskan koreksi.
+- Sebelum berpindah milestone, update snapshot ini berdasarkan kondisi source/runtime terbaru yang benar-benar telah diverifikasi.
+
 ## Strategic Roadmap 2026–2027
 
 > Bagian ini mempertahankan roadmap strategis, fase produk, dan urutan prioritas pengembangan.
