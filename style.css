@@ -8841,3 +8841,21 @@ body {
     gap:10px;
   }
 }
+
+/* ============================================================
+   HOME SECTION DETAIL ARCHITECTURE
+   Platform Baseline: 2026.10.07.0001
+   ============================================================ */
+
+.home-section-more{
+  display:flex;
+  justify-content:center;
+  text-align:center;
+  margin-top:22px;
+}
+
+@media (max-width:680px){
+  .home-section-more{
+    margin-top:18px;
+  }
+}
