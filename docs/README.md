@@ -4,7 +4,7 @@
 
 ## SRILEXBUDITRA.WORK Platform Baseline
 
-Platform Baseline : 2026.10.07.0001
+Platform Baseline : 2026.10.07.0002
 Recorded At       : 2026-10-06 23:37:35 WIB
 Timezone          : Asia/Jakarta (UTC+07:00)
 Time Format       : 24-hour (HH:mm:ss)
@@ -22,7 +22,7 @@ Status            : PRODUCTION VERIFIED / COMPLETED / LOCKED
 
 Dokumen ini adalah indeks dokumentasi aktif repository `srilexbuditra.github.io`. Gunakan indeks ini untuk membedakan dokumentasi operasional, panduan teknis, audit, dan referensi historis.
 
-**Current documentation baseline:** 7 Oktober 2026 - Platform Baseline 2026.10.07.0001 / Home Section Detail Architecture
+**Current documentation baseline:** 7 Oktober 2026 - Platform Baseline 2026.10.07.0002 / Premium Navigation + Smart Explore + Cache Resilience
 **Last documentation sync:** 6 Oktober 2026
 **Current site content architecture:** Site Content Architecture V2.02 tetap **PRODUCTION VERIFIED / COMPLETED / LOCKED**; `/mengapa-memilih-saya/` telah **PRODUCTION VERIFIED / COMPLETED / LOCKED** sebagai Public Trust / Client Decision Layer dengan implementation commit `80b3bb18caecc3dce72256747cdf3c9dee8aa511`.
 
@@ -157,6 +157,18 @@ File berikut adalah template operasional GitHub, bukan dokumentasi produk:
 - Revision governance: gunakan `REVISION N` untuk iterasi pengeditan; Platform Baseline tetap menggunakan `YYYY.MM.DD.NNNN`.
 - V2.01, V2.02, Engineering, dan Mengapa Memilih Saya tetap pada status locked masing-masing.
 
+### Premium Navigation, Smart Explore & Cache Resilience
+
+- Platform Baseline `2026.10.07.0002`: **PRODUCTION VERIFIED / COMPLETED / LOCKED**.
+- Premium Navigation + Mega Menu + Smart Explore + Premium Footer aktif pada production commit `d95f5b2dd3cc2c40a81a3b7d377186b779c77c58`.
+- Premium Footer Safe Space telah diverifikasi pada desktop/mobile.
+- Static Asset Cache Busting `?v=20261007-r7` aktif pada production commit `807dadae0560c93d79fa107cfa6f8191279d027c`.
+- Stale stylesheet regression: **RESOLVED**.
+- Local stale-cache trap, production HTML references, versioned asset HTTP 200, key routes, dan production visual verification: **PASS / LOCKED**.
+- REVISION 4 tetap tercatat sebagai rolled-back attempt / source unchanged; REVISION 5 adalah implementation, REVISION 6 adalah refinement, REVISION 7 adalah cache-busting fix, dan REVISION 8 adalah documentation closeout.
+- Protected namespaces `program/*` dan `portal/*` tetap **UNTOUCHED**.
+- Home Section Detail Architecture baseline `2026.10.07.0001` tetap merupakan historical locked baseline dan tidak ditulis ulang.
+
 - Client Management Platform R1: **Production Release R1 LOCKED/PASS**; production baseline aktif dan terverifikasi.
 - Full Demo Journey R1: **LOCKED/PASS** untuk desktop, mobile, dan identity handoff.
 - Demo Journey menggunakan data simulasi tanpa API produksi atau D1.
@@ -190,9 +202,9 @@ File berikut adalah template operasional GitHub, bukan dokumentasi produk:
 
 ---
 
-**Documentation baseline:** 7 Oktober 2026 - Platform Baseline 2026.10.07.0001 / Home Section Detail Architecture
+**Documentation baseline:** 7 Oktober 2026 - Platform Baseline 2026.10.07.0002 / Premium Navigation + Smart Explore + Cache Resilience
 **Previous audit baseline:** V11.6
-**Last documentation update:** 6 Oktober 2026
+**Last documentation update:** 7 Oktober 2026
 
 ### Kartu Anggota Digital + QR
 

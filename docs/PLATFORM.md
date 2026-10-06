@@ -4,7 +4,7 @@
 
 ## SRILEXBUDITRA.WORK Platform Baseline
 
-Platform Baseline : 2026.10.07.0001
+Platform Baseline : 2026.10.07.0002
 Recorded At       : 2026-10-06 23:37:35 WIB
 Timezone          : Asia/Jakarta (UTC+07:00)
 Time Format       : 24-hour (HH:mm:ss)
@@ -213,6 +213,68 @@ Home tetap berfungsi sebagai discovery layer dan kini memiliki centralized CTA m
 - Visual Desktop: **PASS / LOCKED**.
 - Visual Mobile: **PASS / LOCKED**.
 - Production Verification: **PASS / LOCKED**.
+
+## Premium Navigation, Smart Explore & Cache Resilience - Current Experience Layer
+
+**Status:** PRODUCTION VERIFIED / COMPLETED / LOCKED
+
+**Platform Baseline:** `2026.10.07.0002`
+
+**Production commits:**
+
+- Premium experience: `d95f5b2dd3cc2c40a81a3b7d377186b779c77c58`
+- Static asset cache-busting: `807dadae0560c93d79fa107cfa6f8191279d027c`
+
+### Public Experience
+
+- Navbar publik tetap ringkas dan menggunakan root-safe Home anchors pada jalur yang sesuai.
+- Mega Menu `Jelajahi` melengkapi navbar tanpa mengubah navbar menjadi katalog.
+- Dedicated pages tetap menjadi depth layer untuk konten yang membutuhkan penjelasan lebih lengkap.
+- Smart Explore menjadi direct discovery layer untuk layanan, portfolio, teknologi, dan solusi.
+- Premium Footer menyediakan CTA project, public navigation, system/engineering access, portfolio access, legal links, dan contact paths.
+
+### Revision History
+
+- REVISION 4 — initial premium-navigation implementation attempt; **ROLLED BACK / SOURCE UNCHANGED**.
+- REVISION 5 — Premium Navigation + Mega Menu + Smart Explore + Premium Footer; production commit `d95f5b2dd3cc2c40a81a3b7d377186b779c77c58`.
+- REVISION 6 — footer safe-space refinement untuk floating Audio dan Privacy controls; included in `d95f5b2dd3cc2c40a81a3b7d377186b779c77c58`.
+- REVISION 7 — global static asset cache-busting `?v=20261007-r7`; production commit `807dadae0560c93d79fa107cfa6f8191279d027c`.
+- REVISION 8 — documentation closeout; tidak mengubah runtime/source public.
+
+### Cache Regression Resolution
+
+Production visual regression sempat memperlihatkan native-looking `Jelajahi` control dan footer yang tidak menerima premium styling.
+
+Investigation menolak Service Worker sebagai root cause karena tidak terdapat active registration maupun Cache Storage yang relevan. Production asset headers memperlihatkan `Cache-Control: max-age=14400`, sementara global CSS/JS masih menggunakan URL tanpa version token.
+
+Resolution dilakukan dengan versioning global public asset URL:
+
+- `style.css?v=20261007-r7`
+- `script.js?v=20261007-r7`
+- `/search-enhancer.js?v=20261007-r7`
+
+Local stale-cache trap membuktikan browser meminta asset R7 baru dan tidak menggunakan stale unversioned asset.
+
+### Verification
+
+- Source Review: **PASS / LOCKED**.
+- Local cache-busting test: **PASS / LOCKED**.
+- Production HTML references: **PASS / LOCKED**.
+- Versioned production assets HTTP 200: **PASS / LOCKED**.
+- Production key routes: **PASS / LOCKED**.
+- Production visual verification dengan browser normal: **PASS / LOCKED**.
+- Stale stylesheet regression: **RESOLVED**.
+- Protected namespaces `program/*` dan `portal/*`: **UNTOUCHED**.
+
+### Governance
+
+- Anchor Navbar = quick Home summaries.
+- Mega Menu = full exploration.
+- Dedicated pages = depth.
+- Search / Smart Explore = direct discovery.
+- Navbar tidak menjadi katalog; Search dan Mega Menu menjadi mesin eksplorasi.
+- `REVISION N` tetap merupakan edit-iteration governance dan tidak menggantikan Platform Baseline `YYYY.MM.DD.NNNN`.
+- Scope yang sudah LOCKED tidak dibuka ulang kecuali ada regression nyata atau approved scope change.
 
 ## Knowledge Center — Historical Foundation V11.9
 
