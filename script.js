@@ -2847,12 +2847,12 @@ window.addEventListener(
   }
 );
 const sections = $$('main section[id], main section.hero');
-const navLinks = $$('#mainNav a[href^="#"]');
+const navLinks = $$('#mainNav a[data-home-anchor]');
 const activeObserver = new IntersectionObserver(entries => {
   entries.forEach(entry => {
     if(entry.isIntersecting){
       const id = entry.target.id || 'beranda';
-      navLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#'+id));
+      navLinks.forEach(a => a.classList.toggle('active', (a.dataset.homeAnchor || '') === id));
     }
   });
 },{rootMargin:'-35% 0px -55% 0px'});
@@ -3029,3 +3029,88 @@ document
 setEstimatorFlowStep(1);
 
 /* ===== /ESTIMATOR FLOW STEPS R1 ===== */
+
+/* ============================================================
+   PREMIUM MEGA MENU REVISION 5
+   ============================================================ */
+(() => {
+  const explore = document.getElementById('sbExplore');
+  const toggle = document.getElementById('sbExploreToggle');
+  const panel = document.getElementById('sbMegaMenu');
+  const menuToggleR5 = document.getElementById('menuToggle');
+  const mainNavR5 = document.getElementById('mainNav');
+
+  if (!explore || !toggle || !panel) return;
+
+  const isCompact = () => window.innerWidth <= 1120;
+
+  const setMegaOpen = (open, returnFocus = false) => {
+    toggle.setAttribute('aria-expanded', String(open));
+    panel.hidden = !open;
+
+    if (!open) {
+      panel.querySelectorAll('.sb-mega-group-toggle').forEach((button) => {
+        if (isCompact()) button.setAttribute('aria-expanded', 'false');
+      });
+      if (returnFocus) toggle.focus();
+    }
+  };
+
+  toggle.addEventListener('click', (event) => {
+    event.stopPropagation();
+    setMegaOpen(toggle.getAttribute('aria-expanded') !== 'true');
+  });
+
+  panel.querySelectorAll('.sb-mega-group-toggle').forEach((button) => {
+    button.addEventListener('click', () => {
+      if (!isCompact()) return;
+      const open = button.getAttribute('aria-expanded') === 'true';
+      panel.querySelectorAll('.sb-mega-group-toggle').forEach((other) => {
+        other.setAttribute('aria-expanded', other === button && !open ? 'true' : 'false');
+      });
+    });
+  });
+
+  panel.querySelectorAll('a').forEach((link) => {
+    link.addEventListener('click', () => setMegaOpen(false));
+  });
+
+  panel.querySelector('[data-search-jump]')?.addEventListener('click', () => {
+    setMegaOpen(false);
+    const searchInput = document.getElementById('siteSearchInput');
+    if (!searchInput) return;
+    searchInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    window.setTimeout(() => {
+      searchInput.focus();
+      searchInput.dispatchEvent(new Event('input', { bubbles: true }));
+    }, 260);
+  });
+
+  document.addEventListener('click', (event) => {
+    if (toggle.getAttribute('aria-expanded') === 'true' && !explore.contains(event.target)) {
+      setMegaOpen(false);
+    }
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && toggle.getAttribute('aria-expanded') === 'true') {
+      setMegaOpen(false, true);
+    }
+  });
+
+  menuToggleR5?.addEventListener('click', () => {
+    if (mainNavR5 && !mainNavR5.classList.contains('open')) {
+      setMegaOpen(false);
+    }
+  });
+
+  const syncGroups = () => {
+    panel.querySelectorAll('.sb-mega-group-toggle').forEach((button) => {
+      button.setAttribute('aria-expanded', isCompact() ? 'false' : 'true');
+    });
+  };
+
+  window.addEventListener('resize', syncGroups);
+  syncGroups();
+})();
+/* ===== /PREMIUM MEGA MENU REVISION 5 ===== */

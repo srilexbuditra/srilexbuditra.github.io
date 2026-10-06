@@ -22,7 +22,7 @@
     'Portfolio',
     'Harga Website',
     'SEO',
-    'Full Stack Developer Bengkulu'
+    'Senior Full Stack Developer Bengkulu'
   ];
 
   const phrases = [
@@ -40,7 +40,17 @@
     ['pos', 'Aplikasi POS'],
     ['administrasi', 'Sistem Administrasi'],
     ['react', 'Frontend React'],
-    ['node', 'Node.js Backend']
+    ['node', 'Node.js Backend'],
+    ['keahlian', 'Keahlian Teknis'],
+    ['layanan digital', 'Layanan Digital'],
+    ['proses', 'Proses Kerja'],
+    ['transparansi', 'Kepercayaan & Transparansi'],
+    ['mengapa', 'Mengapa Memilih Saya'],
+    ['engineering', 'Kemampuan Sistem'],
+    ['verifikasi', 'Verification & Trust'],
+    ['insights', 'Insights & Engineering Notes'],
+    ['aktivitas', 'Development Timeline'],
+    ['portfolio', 'Semua Portfolio']
   ];
 
   const getHistory = () => {
@@ -428,4 +438,20 @@
   input.removeAttribute(
     'aria-activedescendant'
   );
+
+  /* SMART EXPLORE SHORTCUT REVISION 5 */
+  input.setAttribute('aria-keyshortcuts', 'Control+K Meta+K');
+
+  document.addEventListener('keydown', (event) => {
+    const shortcut =
+      (event.ctrlKey || event.metaKey) &&
+      String(event.key).toLowerCase() === 'k';
+
+    if (!shortcut) return;
+
+    event.preventDefault();
+    input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    input.focus();
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+  });
 })();

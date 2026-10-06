@@ -76,15 +76,101 @@
 <div class="top-glow"></div>
 <header class="site-header" id="beranda">
   <div class="container nav-wrap">
-    <a class="brand" href="#beranda" aria-label="Srilex Buditra">
+    <a class="brand" href="/#beranda" data-home-anchor="beranda" aria-label="Srilex Buditra">
       <span class="brand-mark"><img src="/images/logo.avif" alt="Srilex Buditra Logo" width="1920" height="1916" decoding="async"></span>
-      <span><strong>SRILEX <b>BUDITRA</b></strong><small>FULL STACK DEVELOPER</small></span>
+      <span><strong>SRILEX <b>BUDITRA</b></strong><small>SENIOR FULL STACK DEVELOPER</small></span>
     </a>
+
     <button class="menu-toggle" id="menuToggle" type="button" aria-label="Buka menu" aria-expanded="false" aria-controls="mainNav">☰</button>
+
     <nav id="mainNav" aria-label="Navigasi utama">
-      <a href="#beranda">Beranda</a><a href="#tentang">Tentang</a><a href="#keahlian">Keahlian</a>
-      <a href="#layanan">Layanan</a><a href="#portfolio">Portfolio</a><a href="#harga">Harga</a>
-      <a href="#faq">FAQ</a><a class="nav-portal" href="/portal/">Portal</a><a class="nav-cta" href="#kontak">Hubungi Saya</a>
+      <a href="/#beranda" data-home-anchor="beranda">Beranda</a>
+      <a href="/#tentang" data-home-anchor="tentang">Tentang</a>
+      <a href="/#layanan" data-home-anchor="layanan">Layanan</a>
+      <a href="/#portfolio" data-home-anchor="portfolio">Portfolio</a>
+      <a href="/insights/">Insights</a>
+
+      <div class="sb-explore" id="sbExplore">
+        <button class="sb-explore-toggle" id="sbExploreToggle" type="button" aria-expanded="false" aria-controls="sbMegaMenu">
+          <span>Jelajahi</span>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 9 5 5 5-5"/></svg>
+        </button>
+
+        <div class="sb-mega-panel" id="sbMegaMenu" aria-label="Jelajahi Srilex Buditra" hidden>
+          <div class="sb-mega-head">
+            <div>
+              <span class="sb-mega-eyebrow">JELAJAHI SRILEXBUDITRA.WORK</span>
+              <strong>Temukan solusi, kemampuan sistem, dan project.</strong>
+            </div>
+
+            <button class="sb-mega-search-jump" type="button" data-search-jump>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6"/><path d="m16 16 4 4"/></svg>
+              <span>Cari cepat</span>
+              <kbd>Ctrl K</kbd>
+            </button>
+          </div>
+
+          <div class="sb-mega-grid">
+            <section class="sb-mega-group sb-accent-cyan">
+              <button class="sb-mega-group-toggle" type="button" aria-expanded="false">
+                <span>Solusi</span>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 9 5 5 5-5"/></svg>
+              </button>
+              <div class="sb-mega-group-body">
+                <a class="sb-mega-visual" href="/layanan/" tabindex="-1" aria-hidden="true"><img src="/assets/images/mega-menu/mega-solusi-digital.avif" alt="" width="753" height="352" loading="lazy" decoding="async"></a>
+                <a class="sb-mega-item" href="/keahlian-teknis/"><span class="sb-menu-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 9-4 3 4 3M16 9l4 3-4 3M14 5l-4 14"/></svg></span><span><strong>Keahlian Teknis</strong><small>Teknologi dan kompetensi pengembangan sistem.</small></span></a>
+                <a class="sb-mega-item" href="/layanan/"><span class="sb-menu-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="6" height="6"/><rect x="14" y="4" width="6" height="6"/><rect x="4" y="14" width="6" height="6"/><rect x="14" y="14" width="6" height="6"/></svg></span><span><strong>Layanan</strong><small>Solusi digital dari perencanaan hingga deployment.</small></span></a>
+                <a class="sb-mega-item" href="/proses-kerja/"><span class="sb-menu-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="2"/><circle cx="19" cy="6" r="2"/><circle cx="19" cy="18" r="2"/><path d="M7 12h4l4-6h2M11 12l4 6h2"/></svg></span><span><strong>Proses Kerja</strong><small>Alur project yang jelas, terstruktur, dan transparan.</small></span></a>
+              </div>
+            </section>
+
+            <section class="sb-mega-group sb-accent-mint">
+              <button class="sb-mega-group-toggle" type="button" aria-expanded="false"><span>Kepercayaan</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 9 5 5 5-5"/></svg></button>
+              <div class="sb-mega-group-body">
+                <a class="sb-mega-visual" href="/kepercayaan-transparansi/" tabindex="-1" aria-hidden="true"><img src="/assets/images/mega-menu/mega-kepercayaan.avif" alt="" width="752" height="352" loading="lazy" decoding="async"></a>
+                <a class="sb-mega-item" href="/mengapa-memilih-saya/"><span class="sb-menu-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 2.4 4.9 5.4.8-3.9 3.8.9 5.4-4.8-2.5-4.8 2.5.9-5.4-3.9-3.8 5.4-.8Z"/></svg></span><span><strong>Mengapa Memilih Saya</strong><small>Nilai yang saya bawa ke setiap project.</small></span></a>
+                <a class="sb-mega-item" href="/kepercayaan-transparansi/"><span class="sb-menu-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 5 6v5c0 4.7 2.8 7.8 7 10 4.2-2.2 7-5.3 7-10V6l-7-3Z"/><path d="m9 12 2 2 4-4"/></svg></span><span><strong>Kepercayaan &amp; Transparansi</strong><small>Komitmen sebelum, selama, dan setelah project.</small></span></a>
+                <a class="sb-mega-item" href="/profil/"><span class="sb-menu-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3"/><path d="M5 20c.7-4 3-6 7-6s6.3 2 7 6"/></svg></span><span><strong>Profil &amp; Rekam Jejak</strong><small>Identitas profesional dan perjalanan pengembangan.</small></span></a>
+              </div>
+            </section>
+
+            <section class="sb-mega-group sb-accent-gold">
+              <button class="sb-mega-group-toggle" type="button" aria-expanded="false"><span>Engineering</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 9 5 5 5-5"/></svg></button>
+              <div class="sb-mega-group-body">
+                <a class="sb-mega-visual" href="/engineering/" tabindex="-1" aria-hidden="true"><img src="/assets/images/mega-menu/mega-engineering.avif" alt="" width="753" height="330" loading="lazy" decoding="async"></a>
+                <a class="sb-mega-item" href="/engineering/"><span class="sb-menu-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1"/></svg></span><span><strong>Kemampuan Sistem</strong><small>System capabilities dan technical proof.</small></span></a>
+                <a class="sb-mega-item" href="/insights/"><span class="sb-menu-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18h6M10 21h4M8 14c-1.2-1-2-2.5-2-4a6 6 0 1 1 12 0c0 1.5-.8 3-2 4-1 .8-1 1.5-1 2H9c0-.5 0-1.2-1-2Z"/></svg></span><span><strong>Insights &amp; Engineering Notes</strong><small>Catatan teknis, arsitektur, dan pembelajaran sistem.</small></span></a>
+                <a class="sb-mega-item" href="/aktivitas/"><span class="sb-menu-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 2"/></svg></span><span><strong>Development Timeline</strong><small>Aktivitas dan perkembangan platform dari waktu ke waktu.</small></span></a>
+              </div>
+            </section>
+
+            <section class="sb-mega-group sb-accent-violet">
+              <button class="sb-mega-group-toggle" type="button" aria-expanded="false"><span>Portfolio</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 9 5 5 5-5"/></svg></button>
+              <div class="sb-mega-group-body">
+                <a class="sb-mega-visual" href="/portfolio/" tabindex="-1" aria-hidden="true"><img src="/assets/images/mega-menu/mega-portfolio.avif" alt="" width="752" height="330" loading="lazy" decoding="async"></a>
+                <a class="sb-mega-item" href="/portfolio/"><span class="sb-menu-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="6" width="16" height="13" rx="2"/><path d="M9 6V4h6v2M4 11h16"/></svg></span><span><strong>Semua Portfolio</strong><small>Lihat implementasi dan project yang telah dibangun.</small></span></a>
+                <a class="sb-mega-item" href="/portfolio/ketahanan-pangan/"><span class="sb-menu-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19c8 0 13-5 14-14-9 1-14 6-14 14Z"/><path d="M6 18c3-4 6-7 11-10"/></svg></span><span><strong>Ketahanan Pangan</strong><small>Platform digital peserta dan sistem keanggotaan.</small></span></a>
+                <a class="sb-mega-item" href="/portfolio/umroh-semi-private-bengkulu/"><span class="sb-menu-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20h14M7 20V9l5-4 5 4v11M10 20v-5h4v5"/></svg></span><span><strong>Umroh Semi Private Bengkulu</strong><small>Ekosistem digital perjalanan dan pelayanan jamaah.</small></span></a>
+                <a class="sb-mega-item" href="/portfolio/client-management-platform/"><span class="sb-menu-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2"/><path d="M3 20c.5-4 2.5-6 6-6s5.5 2 6 6M15 15c3 0 5 1.7 5.5 5"/></svg></span><span><strong>Client Management Platform</strong><small>Workflow client, project, dokumen, dan operasional.</small></span></a>
+              </div>
+            </section>
+          </div>
+
+          <div class="sb-mega-feature">
+            <img src="/assets/images/mega-menu/mega-start-project.avif" alt="" width="1516" height="296" loading="lazy" decoding="async">
+            <div class="sb-mega-feature-copy">
+              <span>SIAP MEMULAI?</span>
+              <strong>Punya project atau sistem yang ingin dibangun?</strong>
+              <p>Mulai dari kebutuhan, bukan template.</p>
+              <a class="sb-mega-feature-cta" href="/#estimasi" data-home-anchor="estimasi">Diskusikan Project →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <a href="/#harga" data-home-anchor="harga">Harga</a>
+      <a class="nav-portal" href="/portal/">Portal</a>
+      <a class="nav-cta" href="/#kontak" data-home-anchor="kontak">Hubungi Saya</a>
     </nav>
   </div>
 </header>
@@ -105,6 +191,7 @@
   aria-controls="siteSearchSuggestions"
   aria-expanded="false"
   aria-haspopup="listbox">
+          <kbd class="sb-search-shortcut" aria-hidden="true">Ctrl K</kbd>
         <button class="site-search-submit" type="submit" aria-label="Cari">
           <span aria-hidden="true">Cari</span><b aria-hidden="true">↗</b>
         </button>
@@ -119,7 +206,17 @@
   aria-label="Saran pencarian">
 </div>
         </div>
-        <div class="search-panel-section search-history-section">
+        <div class="search-panel-section sb-search-explore-section">
+  <div class="search-panel-label"><span aria-hidden="true">✦</span> Jelajah cepat</div>
+  <div class="sb-search-explore-grid">
+    <a href="/layanan/"><span>Solusi</span><strong>Layanan Digital</strong></a>
+    <a href="/engineering/"><span>Engineering</span><strong>Kemampuan Sistem</strong></a>
+    <a href="/portfolio/"><span>Project</span><strong>Semua Portfolio</strong></a>
+    <a href="/insights/"><span>Knowledge</span><strong>Insights</strong></a>
+    <a href="/#harga"><span>Home</span><strong>Harga &amp; Estimator</strong></a>
+  </div>
+</div>
+<div class="search-panel-section search-history-section">
           <div class="search-panel-label"><span aria-hidden="true">◷</span> Riwayat pencarian <button type="button" id="clearSearchHistory">Hapus</button></div>
           <div class="search-chip-list" id="siteSearchHistory"></div>
         </div>
@@ -1506,15 +1603,84 @@
 </section>
 </main>
 
-<footer class="footer">
-  <div class="container footer-grid">
-    <div><a class="brand" href="#beranda"><span class="brand-mark"><img src="/images/logo.avif" alt="Srilex Buditra Logo" width="1920" height="1916" decoding="async"></span><span><strong>SRILEX <b>BUDITRA</b></strong><small>FULL STACK DEVELOPER</small></span></a><p>Building digital solutions with code, clarity and impact.</p></div>
-    <div><h2>Explore</h2><a href="/profil/">Profil &amp; Rekam Jejak</a><a href="/aktivitas/">Development Timeline</a><a href="/insights/">Insights &amp; Engineering Notes</a><a href="#tentang">Tentang</a><a href="#keahlian">Keahlian</a><a href="#layanan">Layanan</a><a href="#portfolio">Portfolio</a></div>
-    <div><h2>Project</h2><a href="/portfolio/">Semua Portfolio</a><a href="/portfolio/ketahanan-pangan/">Ketahanan Pangan — Flagship</a><a href="/portfolio/umroh-semi-private-bengkulu/">Umroh Semi Private Bengkulu</a><a href="/portfolio/client-management-platform/">Client Management Platform</a><a href="/portfolio/website-sekolah/project-detail.html">Website Sekolah</a><a href="/portfolio/aplikasi-pos/detail.html">Aplikasi POS</a><a href="/portfolio/sistem-administrasi/detail.html">Sistem Administrasi</a><a href="#harga">Paket &amp; Harga</a><a href="#estimasi">Estimator</a><a href="/proses-kerja/">Proses Kerja</a><a href="#faq">FAQ</a><a href="/kepercayaan-transparansi/">Kepercayaan &amp; Transparansi</a></div>
-    <div><h2>Legal</h2><a href="/privacy.html">Kebijakan Privasi</a><a href="/terms.html">Ketentuan Layanan</a><a href="/security.html">Keamanan</a></div>
-    <div><h2>Contact</h2><p>WhatsApp: +62 821-3623-8350</p><p>Email: srilexbuditra@gmail.com</p><p>Bengkulu, Indonesia</p></div>
+<footer class="footer sb-premium-footer">
+  <div class="container">
+    <section class="sb-footer-cta" aria-label="Mulai project">
+      <div>
+        <span class="sb-footer-kicker">PUNYA PROJECT ATAU SISTEM YANG INGIN DIBANGUN?</span>
+        <h2>Mari ubah kebutuhan Anda menjadi solusi digital yang terstruktur, aman, dan siap digunakan.</h2>
+      </div>
+      <div class="sb-footer-cta-actions">
+        <a class="btn primary" href="/#estimasi">Diskusikan Project</a>
+        <a class="btn outline" href="/portfolio/">Lihat Portfolio</a>
+      </div>
+    </section>
+
+    <div class="sb-footer-directory">
+      <div class="sb-footer-brand">
+        <a class="brand" href="/#beranda" aria-label="Srilex Buditra">
+          <span class="brand-mark"><img src="/images/logo.avif" alt="Srilex Buditra Logo" width="1920" height="1916" loading="lazy" decoding="async"></span>
+          <span><strong>SRILEX <b>BUDITRA</b></strong><small>SENIOR FULL STACK DEVELOPER</small></span>
+        </a>
+        <p>Digital Solution</p>
+        <span>Bengkulu, Indonesia</span>
+      </div>
+
+      <div class="sb-footer-column">
+        <h2>Jelajahi</h2>
+        <a href="/#tentang">Tentang</a>
+        <a href="/keahlian-teknis/">Keahlian Teknis</a>
+        <a href="/layanan/">Layanan</a>
+        <a href="/insights/">Insights</a>
+        <a href="/#harga">Harga &amp; Estimator</a>
+      </div>
+
+      <div class="sb-footer-column">
+        <h2>Cara Kerja</h2>
+        <a href="/proses-kerja/">Proses Kerja</a>
+        <a href="/mengapa-memilih-saya/">Mengapa Memilih Saya</a>
+        <a href="/kepercayaan-transparansi/">Kepercayaan &amp; Transparansi</a>
+        <a href="/profil/">Profil &amp; Rekam Jejak</a>
+      </div>
+
+      <div class="sb-footer-column">
+        <h2>Sistem &amp; Engineering</h2>
+        <a href="/engineering/">Kemampuan Sistem</a>
+        <a href="/aktivitas/">Development Timeline</a>
+        <a href="/insights/">Engineering Notes</a>
+        <a href="/engineering/">Technical Proof</a>
+      </div>
+
+      <div class="sb-footer-column">
+        <h2>Project</h2>
+        <a href="/portfolio/">Semua Portfolio</a>
+        <a href="/portfolio/ketahanan-pangan/">Ketahanan Pangan</a>
+        <a href="/portfolio/umroh-semi-private-bengkulu/">Umroh Semi Private Bengkulu</a>
+        <a href="/portfolio/client-management-platform/">Client Management Platform</a>
+      </div>
+    </div>
+
+    <div class="sb-footer-utility">
+      <div class="sb-footer-legal">
+        <a href="/privacy.html">Kebijakan Privasi</a>
+        <a href="/terms.html">Ketentuan Layanan</a>
+        <a href="/security.html">Keamanan</a>
+      </div>
+      <div class="sb-footer-contact">
+        <a href="https://wa.me/6282136238350" target="_blank" rel="noopener">WhatsApp</a>
+        <a href="mailto:srilexbuditra@gmail.com">Email</a>
+        <a href="/portal/">Portal</a>
+      </div>
+    </div>
+
+    <div class="sb-footer-signature">
+      <div>
+        <strong>© 2026 Srilex Buditra</strong>
+        <span>Senior Full Stack Developer • Bengkulu, Indonesia</span>
+      </div>
+      <span>Full Stack. Full Solution. Full Impact.</span>
+    </div>
   </div>
-  <div class="copyright">© 2026 Srilex Buditra. All Rights Reserved. <span>Full Stack. Full Solution. Full Impact.</span></div>
 </footer>
 <script src="local-qrcode.js" defer></script>
 <script src="/verify/config.js"></script>
