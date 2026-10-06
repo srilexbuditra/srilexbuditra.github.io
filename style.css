@@ -6882,6 +6882,7 @@ body {
 .activity-home-card p{margin:0;color:var(--muted);font-size:11px;line-height:1.7}
 .activity-home-card .text-link{margin-top:auto;padding-top:20px}
 .activity-home-more{display:flex;justify-content:center;margin-top:22px}
+.why-home-more{display:flex;justify-content:center;margin-top:22px}
 @media(max-width:980px){.activity-home-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:620px){.activity-home-grid{grid-template-columns:1fr}.activity-home-card{min-height:0}.activity-home-more .btn{width:100%}}
 
