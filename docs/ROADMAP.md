@@ -4,8 +4,8 @@
 
 ## SRILEXBUDITRA.WORK Platform Baseline
 
-Platform Baseline : 2026.10.06.0001
-Recorded At       : 2026-10-06 05:02:28 WIB
+Platform Baseline : 2026.10.06.0002
+Recorded At       : 2026-10-06 08:37:34 WIB
 Timezone          : Asia/Jakarta (UTC+07:00)
 Time Format       : 24-hour (HH:mm:ss)
 
@@ -13,8 +13,8 @@ Maintainer        : Srilex Buditra
 Role              : Senior Full Stack Developer
 Location          : Bengkulu, Indonesia
 
-Changed Area      : Platform Governance + Site Content Architecture V2.01
-Status            : SOURCE COMMITTED
+Changed Area      : Site Content Architecture V2.02
+Status            : APPROVED SCOPE / DOCUMENTATION BASELINE
 
 <!-- PLATFORM-BASELINE:END -->
 
@@ -134,7 +134,7 @@ Site Content Architecture V2.01 menjadi arah site-level setelah Portfolio Hub da
 
 #### Current / Active
 
-- Site Content Architecture V2.01 tetap menjadi arsitektur konten publik aktif.
+- Site Content Architecture V2.01 tetap menjadi **COMPLETED / LOCKED baseline**; scope site-level baru dicatat melalui Site Content Architecture V2.02 tanpa membuka ulang V2.01.
 - Kelima area Site Content Architecture V2.01 - Home, Portfolio, Profil, Insights, dan Aktivitas - sudah **COMPLETED / LOCKED** dan tidak perlu dibuka ulang kecuali ada regression nyata atau approved scope change.
 - Tidak ada pekerjaan koreksi wajib yang masih terbuka pada Insights V2.01.
 
@@ -144,6 +144,7 @@ Site Content Architecture V2.01 menjadi arah site-level setelah Portfolio Hub da
 
 | Project / Area | Current Status | Validation / Evidence | Next Step |
 | --- | --- | --- | --- |
+| Site Content Architecture V2.02 | **APPROVED SCOPE / DOCUMENTATION BASELINE** | Engineering / System Highlights Expansion; planned Home CTA dan planned `/engineering/`; implementation belum dimulai. V2.01 tetap 5/5 locked. | Controlled Discovery / Scope Audit V2.02. |
 | Site Content Architecture V2.01 | **COMPLETED / LOCKED — 5/5 AREAS** | Home V2.01, Portfolio V2.01, Profil V2.01, Insights V2.01, dan Aktivitas V2.01 seluruhnya **COMPLETED / LOCKED**. Aktivitas V2.01 production-verified pada commit `4a7a31e`. | Maintenance only; buka kembali hanya jika ada regression nyata atau approved scope change. |
 | Client Management Platform R1 | **PRODUCTION VERIFIED** | `docs/CLIENT-MANAGEMENT.md`: production baseline aktif dan terverifikasi; R1 telah melewati development, staging, release candidate, production promotion, dan repository maintenance. | Maintenance only; buka kembali hanya jika ada regression atau approved scope change. |
 | Brand & Trust | **CURRENT / LOCKED** | `docs/BRAND.md`: Brand Identity R1 tetap LOCKED dan Master Brand Identity Policy berstatus CURRENT / LOCKED. | Pertahankan governance visual/brand; perubahan besar memerlukan persetujuan eksplisit dan staging verification. |
@@ -167,6 +168,7 @@ Site Content Architecture V2.01 menjadi arah site-level setelah Portfolio Hub da
 
 #### Next Step
 
+- **Site Content Architecture V2.02: APPROVED SCOPE / DOCUMENTATION BASELINE**; next step Controlled Discovery / Scope Audit V2.02.
 - **Aktivitas V2.01: COMPLETED / LOCKED / PRODUCTION VERIFIED**.
 - Discovery, Scope Audit, Evidence & Timeline Audit, milestone selection, source implementation, Source Review, Visual Review, Controlled Commit/Push, dan Production Verification Aktivitas V2.01 seluruhnya **PASS**.
 - Production baseline Aktivitas V2.01 adalah commit `4a7a31e`; tidak ada source implementation gap yang masih terbuka. Maintenance hanya dilakukan jika ada regression nyata atau approved scope change.
@@ -204,6 +206,60 @@ Site Content Architecture V2.01 menjadi arah site-level setelah Portfolio Hub da
 - Status `COMPLETED / LOCKED` tidak boleh diturunkan atau dikerjakan ulang tanpa regression nyata, perubahan scope yang disetujui, atau bukti production baru yang mengharuskan koreksi.
 - Sebelum berpindah milestone, update snapshot ini berdasarkan kondisi source/runtime terbaru yang benar-benar telah diverifikasi.
 
+## Site Content Architecture V2.02
+
+Status: **APPROVED SCOPE / DOCUMENTATION BASELINE**.
+
+Scope: **Engineering / System Highlights Expansion**.
+
+### Baseline Rule
+
+- Site Content Architecture V2.01 tetap **5/5 AREAS COMPLETED / LOCKED**.
+- V2.02 adalah scope baru dan tidak menurunkan atau membuka ulang status V2.01.
+- Tidak ada HTML, CSS, JavaScript, Worker, API, database, atau runtime production yang diubah pada documentation baseline ini.
+
+### Approved Scope
+
+- Pertahankan tiga card System Highlights existing di Home.
+- Tambahkan satu CTA Home: `Lihat Semua System Engineering ->`.
+- Planned public route: `/engineering/`.
+- `/engineering/` menjadi planned capability + technical proof hub.
+- Hindari duplikasi fungsi Portfolio, Profil, Insights, dan Aktivitas.
+
+### Planned Engineering Domains
+
+1. Verification & Trust.
+2. Digital Identity & Membership.
+3. Analytics & Privacy.
+4. Client Management & Workflow.
+5. Backend, API & Data Architecture.
+6. Cloud Deployment & Reliability.
+
+### Governance
+
+- docs/ENGINEERING.md tetap authority untuk engineering governance/principles.
+- /engineering/ adalah planned public-facing capability/proof page.
+- Bukti implementasi hanya boleh berasal dari source, Git history, deployment, atau production yang dapat diverifikasi.
+- Jangan mengubah protected module/release namespaces seperti Dashboard Peserta V2, Analytics V4, Client Management Platform R1, V30/V31, Frontend Foundation Stable V2.5.1, atau Cloudflare R2.
+
+### Implementation Sequence
+
+1. Documentation Baseline V2.02.
+2. Controlled Discovery / Scope Audit V2.02.
+3. Engineering content/evidence mapping.
+4. Controlled Source Change Plan.
+5. Implement Home CTA + `/engineering/`.
+6. Source Review.
+7. Visual Review desktop/mobile.
+8. Controlled staging/commit/push.
+9. Production Verification.
+10. Closeout only after all verification PASS.
+
+**Implementation:** NOT STARTED.
+
+**Next:** Controlled Discovery / Scope Audit V2.02.
+
+---
 ## Strategic Roadmap 2026–2027
 
 > Bagian ini mempertahankan roadmap strategis, fase produk, dan urutan prioritas pengembangan.

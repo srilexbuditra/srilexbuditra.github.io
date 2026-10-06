@@ -4,8 +4,8 @@
 
 ## SRILEXBUDITRA.WORK Platform Baseline
 
-Platform Baseline : 2026.10.06.0001
-Recorded At       : 2026-10-06 05:02:28 WIB
+Platform Baseline : 2026.10.06.0002
+Recorded At       : 2026-10-06 08:37:34 WIB
 Timezone          : Asia/Jakarta (UTC+07:00)
 Time Format       : 24-hour (HH:mm:ss)
 
@@ -13,8 +13,8 @@ Maintainer        : Srilex Buditra
 Role              : Senior Full Stack Developer
 Location          : Bengkulu, Indonesia
 
-Changed Area      : Platform Governance + Site Content Architecture V2.01
-Status            : SOURCE COMMITTED
+Changed Area      : Site Content Architecture V2.02
+Status            : APPROVED SCOPE / DOCUMENTATION BASELINE
 
 <!-- PLATFORM-BASELINE:END -->
 
@@ -87,6 +87,41 @@ Satu project boleh muncul pada Home, Portfolio, Profil, Insights, dan Aktivitas 
 - Aktivitas: dated milestone.
 
 Duplikasi narasi dan card dengan fungsi identik harus dihindari.
+
+## Site Content Architecture V2.02 - Engineering / System Highlights Expansion
+
+**Status:** APPROVED SCOPE / DOCUMENTATION BASELINE.
+
+V2.02 adalah scope site-level baru. V2.01 tetap **5/5 AREAS COMPLETED / LOCKED**.
+
+### Planned Public Experience
+
+- Home mempertahankan tiga System Highlights existing agar discovery layer tetap ringkas.
+- Home direncanakan memiliki satu CTA `Lihat Semua System Engineering ->`.
+- Planned public route: `/engineering/`.
+- `/engineering/` akan menghubungkan capability dengan technical proof yang sudah dapat diverifikasi.
+
+### Planned Engineering Domains
+
+1. Verification & Trust.
+2. Digital Identity & Membership.
+3. Analytics & Privacy.
+4. Client Management & Workflow.
+5. Backend, API & Data Architecture.
+6. Cloud Deployment & Reliability.
+
+### Responsibility
+
+- Home tetap discovery layer.
+- Portfolio tetap proof-of-work dan case study.
+- Insights tetap engineering knowledge layer.
+- Aktivitas tetap development record.
+- `/engineering/` direncanakan menjadi capability + technical proof hub.
+- `docs/ENGINEERING.md` tetap authority untuk governance/prinsip engineering.
+
+**Implementation:** NOT STARTED.
+
+**Next:** Controlled Discovery / Scope Audit V2.02.
 
 ## Knowledge Center — Historical Foundation V11.9
 

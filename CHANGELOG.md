@@ -1,3 +1,31 @@
+## Platform Baseline 2026.10.06.0002
+
+Platform Baseline : 2026.10.06.0002
+Recorded At       : 2026-10-06 08:37:34 WIB
+Timezone          : Asia/Jakarta (UTC+07:00)
+Time Format       : 24-hour (HH:mm:ss)
+
+Maintainer        : Srilex Buditra
+Role              : Senior Full Stack Developer
+Location          : Bengkulu, Indonesia
+
+Changed Area      : Site Content Architecture V2.02
+Status            : APPROVED SCOPE / DOCUMENTATION BASELINE
+
+### Site Content Architecture V2.02 - Engineering / System Highlights Expansion
+
+- Site Content Architecture V2.01 tetap **5/5 AREAS COMPLETED / LOCKED** dan tidak dibuka ulang oleh scope ini.
+- V2.02 membuka scope baru untuk memperluas representasi system engineering tanpa membuat Home menjadi padat.
+- Tiga card System Highlights existing di Home tetap dipertahankan: Verification & Trust, Digital Identity, dan Analytics & Privacy.
+- Planned Home CTA: `Lihat Semua System Engineering ->`.
+- Planned public route: `/engineering/`.
+- Halaman `/engineering/` direncanakan sebagai pusat system capabilities + technical proof, bukan pengganti Portfolio, Insights, Profil, atau Aktivitas.
+- Planned domains: Verification & Trust; Digital Identity & Membership; Analytics & Privacy; Client Management & Workflow; Backend, API & Data Architecture; Cloud Deployment & Reliability.
+- `docs/ENGINEERING.md` tetap menjadi authority untuk engineering governance; planned `/engineering/` adalah halaman publik capability/proof.
+- Implementation status: **NOT STARTED**.
+- Next step: **Controlled Discovery / Scope Audit V2.02**.
+- Tidak membuat file Markdown baru pada documentation baseline ini.
+
 ## Platform Baseline 2026.10.06.0001
 
 Platform Baseline : 2026.10.06.0001

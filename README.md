@@ -2,8 +2,8 @@
 
 ## SRILEXBUDITRA.WORK Platform Baseline
 
-Platform Baseline : 2026.10.06.0001
-Recorded At       : 2026-10-06 05:02:28 WIB
+Platform Baseline : 2026.10.06.0002
+Recorded At       : 2026-10-06 08:37:34 WIB
 Timezone          : Asia/Jakarta (UTC+07:00)
 Time Format       : 24-hour (HH:mm:ss)
 
@@ -11,8 +11,8 @@ Maintainer        : Srilex Buditra
 Role              : Senior Full Stack Developer
 Location          : Bengkulu, Indonesia
 
-Changed Area      : Platform Governance + Site Content Architecture V2.01
-Status            : SOURCE COMMITTED
+Changed Area      : Site Content Architecture V2.02
+Status            : APPROVED SCOPE / DOCUMENTATION BASELINE
 
 <!-- PLATFORM-BASELINE:END -->
 
@@ -139,6 +139,21 @@ Konvensi versioning:
 - Historical version/release tidak boleh diubah dengan find/replace massal.
 
 Status: **Site Content Architecture V2.01 — 5/5 AREAS COMPLETED / LOCKED**. Home V2.01, Portfolio V2.01, Profil V2.01, Insights V2.01, dan Aktivitas V2.01 seluruhnya sudah **COMPLETED / LOCKED**. Aktivitas V2.01 telah melewati Source Review, Visual Review, Controlled Commit/Push, dan Production Verification dengan production commit `4a7a31e`.
+
+## Site Content Architecture V2.02
+
+Status: **APPROVED SCOPE / DOCUMENTATION BASELINE**.
+
+Scope: **Engineering / System Highlights Expansion**.
+
+- Site Content Architecture V2.01 tetap **5/5 AREAS COMPLETED / LOCKED**.
+- Pertahankan tiga card System Highlights existing di Home.
+- Tambahkan satu CTA Home menuju planned route `/engineering/`.
+- Planned CTA: `Lihat Semua System Engineering ->`.
+- `/engineering/` direncanakan sebagai pusat capability + technical proof.
+- Planned domains: Verification & Trust; Digital Identity & Membership; Analytics & Privacy; Client Management & Workflow; Backend, API & Data Architecture; Cloud Deployment & Reliability.
+- Implementation: **NOT STARTED**.
+- Next: **Controlled Discovery / Scope Audit V2.02**.
 
 ## Teknologi
 
