@@ -1,3 +1,32 @@
+## Platform Baseline 2026.10.07.0001
+
+Platform Baseline : 2026.10.07.0001
+Date              : 7 Oktober 2026
+Changed Area      : Home Section Detail Architecture
+Status            : PRODUCTION VERIFIED / COMPLETED / LOCKED
+
+### Home Section Detail Architecture - Final Closeout
+
+- Home Section Detail Architecture telah selesai dan **PRODUCTION VERIFIED / COMPLETED / LOCKED**.
+- Implementation commit: `569edbfa899dc11d5770e75acab5a2c3c3d74a4b` - `feat: add home section detail architecture`.
+- Empat route detail baru aktif: `/keahlian-teknis/`, `/layanan/`, `/proses-kerja/`, dan `/kepercayaan-transparansi/`.
+- Home tetap menjadi discovery layer; halaman detail menyediakan penjelasan yang lebih lengkap tanpa membuat Home terlalu padat.
+- `/engineering/` tetap menjadi System Capabilities + Technical Proof dan tidak dibuka ulang oleh scope ini.
+- `/mengapa-memilih-saya/` tetap menjadi Public Trust / Client Decision Layer dan tidak dibuka ulang oleh scope ini.
+- **REVISION 1** - Initial Home Section Detail Architecture: struktur Home, empat halaman detail, shared stylesheet, sitemap, dan CTA discovery.
+- **REVISION 2** - Typography Color Alignment: warna heading, highlight, eyebrow, dan body text diselaraskan dengan visual language halaman Insights.
+- **REVISION 3** - CTA Consistency: CTA Keahlian Teknis, Layanan, Proses Kerja, dan Kepercayaan & Transparansi diselaraskan dengan CTA Kemampuan Sistem menggunakan pola `btn outline`.
+- Source Review: **PASS / LOCKED**.
+- Visual Desktop: **PASS / LOCKED**.
+- Visual Mobile: **PASS / LOCKED**.
+- Production Verification: **PASS / LOCKED**.
+- Revision naming rule: setiap iterasi pengeditan menggunakan `REVISION N`; penamaan `REVISION` tidak menggantikan Platform Baseline.
+- Site Content Architecture V2.01 tetap **COMPLETED / LOCKED**.
+- Site Content Architecture V2.02 tetap **PRODUCTION VERIFIED / COMPLETED / LOCKED**.
+- Mengapa Memilih Saya tetap **PRODUCTION VERIFIED / COMPLETED / LOCKED**.
+
+---
+
 ## Platform Baseline 2026.10.06.0004
 
 Platform Baseline : 2026.10.06.0004

@@ -2,7 +2,7 @@
 
 ## SRILEXBUDITRA.WORK Platform Baseline
 
-Platform Baseline : 2026.10.06.0004
+Platform Baseline : 2026.10.07.0001
 Recorded At       : 2026-10-06 23:37:35 WIB
 Timezone          : Asia/Jakarta (UTC+07:00)
 Time Format       : 24-hour (HH:mm:ss)
@@ -11,7 +11,7 @@ Maintainer        : Srilex Buditra
 Role              : Senior Full Stack Developer
 Location          : Bengkulu, Indonesia
 
-Changed Area      : Public Trust & Client Decision Layer - Mengapa Memilih Saya
+Changed Area      : Home Section Detail Architecture
 Status            : PRODUCTION VERIFIED / COMPLETED / LOCKED
 
 <!-- PLATFORM-BASELINE:END -->
@@ -168,6 +168,32 @@ Public route: `/mengapa-memilih-saya/`.
 - Implementation commit: `80b3bb18caecc3dce72256747cdf3c9dee8aa511` - `feat: add mengapa memilih saya page`.
 - Source, desktop/mobile visual, production route, scoped CSS, sitemap, dan core links telah diverifikasi.
 - Site Content Architecture V2.02 tetap **PRODUCTION VERIFIED / COMPLETED / LOCKED**.
+
+## Home Section Detail Architecture
+
+Status: **PRODUCTION VERIFIED / COMPLETED / LOCKED**
+
+Home Section Detail Architecture memperluas Home sebagai discovery layer tanpa membuka ulang Site Content Architecture V2.01, V2.02, atau Mengapa Memilih Saya.
+
+Route detail:
+
+- `/keahlian-teknis/` - teknologi dan kompetensi yang digunakan.
+- `/layanan/` - layanan dan solusi digital yang dapat dibangun.
+- `/proses-kerja/` - lifecycle project 7 tahap.
+- `/kepercayaan-transparansi/` - komitmen, transparansi, keamanan, dokumentasi, dan keberlanjutan.
+- `/engineering/` tetap menjadi Kemampuan Sistem + Technical Proof.
+
+Revision history:
+
+- **REVISION 1** - Initial Home Section Detail Architecture.
+- **REVISION 2** - Typography Color Alignment mengikuti visual language Insights.
+- **REVISION 3** - CTA Consistency menggunakan pola `btn outline`.
+
+Implementation commit: `569edbfa899dc11d5770e75acab5a2c3c3d74a4b`.
+
+Source, visual desktop, visual mobile, dan production verification seluruhnya **PASS / LOCKED**.
+
+> Revision governance: setiap iterasi pengeditan menggunakan `REVISION N`. Revision number adalah nomor iterasi pekerjaan dan tidak menggantikan Platform Baseline `YYYY.MM.DD.NNNN`.
 
 ## Teknologi
 

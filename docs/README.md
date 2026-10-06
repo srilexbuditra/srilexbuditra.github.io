@@ -4,7 +4,7 @@
 
 ## SRILEXBUDITRA.WORK Platform Baseline
 
-Platform Baseline : 2026.10.06.0004
+Platform Baseline : 2026.10.07.0001
 Recorded At       : 2026-10-06 23:37:35 WIB
 Timezone          : Asia/Jakarta (UTC+07:00)
 Time Format       : 24-hour (HH:mm:ss)
@@ -13,7 +13,7 @@ Maintainer        : Srilex Buditra
 Role              : Senior Full Stack Developer
 Location          : Bengkulu, Indonesia
 
-Changed Area      : Public Trust & Client Decision Layer - Mengapa Memilih Saya
+Changed Area      : Home Section Detail Architecture
 Status            : PRODUCTION VERIFIED / COMPLETED / LOCKED
 
 <!-- PLATFORM-BASELINE:END -->
@@ -22,7 +22,7 @@ Status            : PRODUCTION VERIFIED / COMPLETED / LOCKED
 
 Dokumen ini adalah indeks dokumentasi aktif repository `srilexbuditra.github.io`. Gunakan indeks ini untuk membedakan dokumentasi operasional, panduan teknis, audit, dan referensi historis.
 
-**Current documentation baseline:** 6 Oktober 2026 - Platform Baseline 2026.10.06.0004 / Public Trust & Client Decision Layer - Mengapa Memilih Saya
+**Current documentation baseline:** 7 Oktober 2026 - Platform Baseline 2026.10.07.0001 / Home Section Detail Architecture
 **Last documentation sync:** 6 Oktober 2026
 **Current site content architecture:** Site Content Architecture V2.02 tetap **PRODUCTION VERIFIED / COMPLETED / LOCKED**; `/mengapa-memilih-saya/` telah **PRODUCTION VERIFIED / COMPLETED / LOCKED** sebagai Public Trust / Client Decision Layer dengan implementation commit `80b3bb18caecc3dce72256747cdf3c9dee8aa511`.
 
@@ -145,6 +145,17 @@ File berikut adalah template operasional GitHub, bukan dokumentasi produk:
 8. Dokumentasi tidak boleh mengklaim fitur sebagai live jika fitur tersebut masih roadmap.
 
 ## 12. Status Saat Ini
+### Home Section Detail Architecture
+
+- Platform Baseline `2026.10.07.0001`: **PRODUCTION VERIFIED / COMPLETED / LOCKED**.
+- Implementation commit: `569edbfa899dc11d5770e75acab5a2c3c3d74a4b`.
+- Route aktif: `/keahlian-teknis/`, `/layanan/`, `/proses-kerja/`, `/kepercayaan-transparansi/`.
+- Home centralized CTA dan `/engineering/` telah diverifikasi di production.
+- **REVISION 1** - Initial Architecture.
+- **REVISION 2** - Insights Typography Color Alignment.
+- **REVISION 3** - CTA Consistency.
+- Revision governance: gunakan `REVISION N` untuk iterasi pengeditan; Platform Baseline tetap menggunakan `YYYY.MM.DD.NNNN`.
+- V2.01, V2.02, Engineering, dan Mengapa Memilih Saya tetap pada status locked masing-masing.
 
 - Client Management Platform R1: **Production Release R1 LOCKED/PASS**; production baseline aktif dan terverifikasi.
 - Full Demo Journey R1: **LOCKED/PASS** untuk desktop, mobile, dan identity handoff.
@@ -179,7 +190,7 @@ File berikut adalah template operasional GitHub, bukan dokumentasi produk:
 
 ---
 
-**Documentation baseline:** 6 Oktober 2026 - Platform Baseline 2026.10.06.0004 / Public Trust & Client Decision Layer - Mengapa Memilih Saya
+**Documentation baseline:** 7 Oktober 2026 - Platform Baseline 2026.10.07.0001 / Home Section Detail Architecture
 **Previous audit baseline:** V11.6
 **Last documentation update:** 6 Oktober 2026
 

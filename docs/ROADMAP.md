@@ -4,7 +4,7 @@
 
 ## SRILEXBUDITRA.WORK Platform Baseline
 
-Platform Baseline : 2026.10.06.0004
+Platform Baseline : 2026.10.07.0001
 Recorded At       : 2026-10-06 23:37:35 WIB
 Timezone          : Asia/Jakarta (UTC+07:00)
 Time Format       : 24-hour (HH:mm:ss)
@@ -13,7 +13,7 @@ Maintainer        : Srilex Buditra
 Role              : Senior Full Stack Developer
 Location          : Bengkulu, Indonesia
 
-Changed Area      : Public Trust & Client Decision Layer - Mengapa Memilih Saya
+Changed Area      : Home Section Detail Architecture
 Status            : PRODUCTION VERIFIED / COMPLETED / LOCKED
 
 <!-- PLATFORM-BASELINE:END -->
@@ -1084,6 +1084,55 @@ Bukti staging runtime:
 - Nama teknis layanan `Website Company Profile` tetap dipertahankan.
 - Tidak ada regression visual yang ditemukan pada staging.
 - Jangan mengulang `LEAD UI INDONESIA R1` kecuali ada regression nyata.
+
+## 22. HOME SECTION DETAIL ARCHITECTURE - FINAL LOCK 7 Okt 2026
+
+Status: **PRODUCTION VERIFIED / COMPLETED / LOCKED**
+
+Platform Baseline: `2026.10.07.0001`
+
+Implementation commit: `569edbfa899dc11d5770e75acab5a2c3c3d74a4b`
+
+### Locked Public Architecture
+
+- Home = summary / discovery.
+- Keahlian Teknis = technologies / skills yang digunakan.
+- Layanan = solusi digital yang dapat dibangun.
+- Proses Kerja = lifecycle project.
+- Kepercayaan & Transparansi = komitmen dan ekspektasi client.
+- Engineering = system capabilities + technical proof.
+- Portfolio = proof of real work.
+- Mengapa Memilih Saya = client decision + trust/value layer.
+
+### Locked Routes
+
+- `/keahlian-teknis/`
+- `/layanan/`
+- `/proses-kerja/`
+- `/kepercayaan-transparansi/`
+- `/engineering/` tetap existing protected route.
+
+### Revision Record
+
+1. **REVISION 1** - Initial Home Section Detail Architecture.
+2. **REVISION 2** - Typography Color Alignment mengikuti Insights.
+3. **REVISION 3** - CTA Consistency menggunakan standard `btn outline`.
+
+### Revision Governance
+
+- Setiap iterasi pengeditan dicatat sebagai `REVISION 1`, `REVISION 2`, dan seterusnya.
+- `REVISION N` digunakan untuk script / edit iteration.
+- Platform Baseline tetap menggunakan format `YYYY.MM.DD.NNNN`.
+- Revision tidak menggantikan atau menaikkan namespace V2.01 / V2.02.
+- Scope baru tidak membuka ulang V2.01, V2.02, Engineering, atau Mengapa Memilih Saya.
+
+### Verification
+
+- Source Review: **PASS / LOCKED**
+- Visual Desktop: **PASS / LOCKED**
+- Visual Mobile: **PASS / LOCKED**
+- Production Verification: **PASS / LOCKED**
+- Repository source commit: **SYNCHRONIZED / CLEAN**
 
 # CURRENT CHECKPOINT
 

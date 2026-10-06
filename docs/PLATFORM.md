@@ -4,7 +4,7 @@
 
 ## SRILEXBUDITRA.WORK Platform Baseline
 
-Platform Baseline : 2026.10.06.0004
+Platform Baseline : 2026.10.07.0001
 Recorded At       : 2026-10-06 23:37:35 WIB
 Timezone          : Asia/Jakarta (UTC+07:00)
 Time Format       : 24-hour (HH:mm:ss)
@@ -13,7 +13,7 @@ Maintainer        : Srilex Buditra
 Role              : Senior Full Stack Developer
 Location          : Bengkulu, Indonesia
 
-Changed Area      : Public Trust & Client Decision Layer - Mengapa Memilih Saya
+Changed Area      : Home Section Detail Architecture
 Status            : PRODUCTION VERIFIED / COMPLETED / LOCKED
 
 <!-- PLATFORM-BASELINE:END -->
@@ -167,6 +167,52 @@ Route `/mengapa-memilih-saya/` menjelaskan alasan client memilih dan bekerja lan
 - Sitemap dan existing Engineering route tetap terverifikasi.
 - Existing-profile cache issue terverifikasi sebagai PWA / Service Worker cache; tidak diperlukan source patch.
 - Site Content Architecture V2.02 tetap **UNTOUCHED / LOCKED**.
+
+## Home Section Detail Architecture - Current Platform Layer
+
+**Status:** PRODUCTION VERIFIED / COMPLETED / LOCKED
+
+### Public Experience
+
+Home tetap berfungsi sebagai discovery layer dan kini memiliki centralized CTA menuju halaman detail untuk:
+
+- Keahlian Teknis
+- Layanan
+- Proses Kerja
+- Kepercayaan & Transparansi
+- Kemampuan Sistem / Engineering
+
+### Public Routes
+
+- `/keahlian-teknis/`
+- `/layanan/`
+- `/proses-kerja/`
+- `/kepercayaan-transparansi/`
+- `/engineering/` - existing protected Engineering route; tetap menjadi System Capabilities + Technical Proof.
+
+### Revision History
+
+- **REVISION 1** - Initial Architecture: Home discovery CTA + empat halaman detail + shared detail stylesheet + sitemap.
+- **REVISION 2** - Color Alignment: typography colors diselaraskan dengan Insights visual language.
+- **REVISION 3** - CTA Consistency: centralized Home CTA diselaraskan menggunakan pola `btn outline`.
+
+### Governance
+
+- Script / edit iteration menggunakan `REVISION N`.
+- Platform release identity tetap menggunakan `YYYY.MM.DD.NNNN`.
+- `REVISION N` tidak menggantikan Platform Baseline.
+- Site Content Architecture V2.01 tetap **COMPLETED / LOCKED**.
+- Site Content Architecture V2.02 tetap **PRODUCTION VERIFIED / COMPLETED / LOCKED**.
+- Mengapa Memilih Saya tetap **PRODUCTION VERIFIED / COMPLETED / LOCKED**.
+- Engineering dan Mengapa Memilih Saya tidak dimodifikasi oleh scope ini.
+
+### Verification
+
+- Implementation commit: `569edbfa899dc11d5770e75acab5a2c3c3d74a4b`.
+- Source Review: **PASS / LOCKED**.
+- Visual Desktop: **PASS / LOCKED**.
+- Visual Mobile: **PASS / LOCKED**.
+- Production Verification: **PASS / LOCKED**.
 
 ## Knowledge Center — Historical Foundation V11.9
 
