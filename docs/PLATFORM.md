@@ -4,8 +4,8 @@
 
 ## SRILEXBUDITRA.WORK Platform Baseline
 
-Platform Baseline : 2026.10.06.0003
-Recorded At       : 2026-10-06 15:11:46 WIB
+Platform Baseline : 2026.10.06.0004
+Recorded At       : 2026-10-06 23:37:35 WIB
 Timezone          : Asia/Jakarta (UTC+07:00)
 Time Format       : 24-hour (HH:mm:ss)
 
@@ -13,7 +13,7 @@ Maintainer        : Srilex Buditra
 Role              : Senior Full Stack Developer
 Location          : Bengkulu, Indonesia
 
-Changed Area      : Site Content Architecture V2.02 Final Closeout
+Changed Area      : Public Trust & Client Decision Layer - Mengapa Memilih Saya
 Status            : PRODUCTION VERIFIED / COMPLETED / LOCKED
 
 <!-- PLATFORM-BASELINE:END -->
@@ -21,7 +21,7 @@ Status            : PRODUCTION VERIFIED / COMPLETED / LOCKED
 
 
 > Dokumentasi platform publik srilexbuditra.work.
-> Mencakup Knowledge Center / Insights, Development Timeline / Activity, dan System Engineering / Technical Proof.
+> Mencakup Knowledge Center / Insights, Development Timeline / Activity, System Engineering / Technical Proof, serta Public Trust / Client Decision Layer.
 
 ## Current Platform Principles
 
@@ -37,6 +37,7 @@ Status            : PRODUCTION VERIFIED / COMPLETED / LOCKED
 - `/insights/` - Knowledge Center / Insights hub.
 - `/aktivitas/` - Development Timeline / Activity.
 - `/engineering/` - System Engineering / Technical Proof hub.
+- `/mengapa-memilih-saya/` - Public Trust / Client Decision Layer.
 ## Site Content Architecture V2.01 - Current Direction
 
 **Status:** Site Content Architecture V2.01 **5/5 AREAS COMPLETED / LOCKED**; Home, Portfolio, Profil, Insights, dan Aktivitas V2.01 seluruhnya **COMPLETED / LOCKED**.
@@ -133,6 +134,40 @@ V2.02 telah diimplementasikan dan diverifikasi di production. V2.01 tetap **5/5 
 **Implementation:** PRODUCTION VERIFIED / COMPLETED / LOCKED.
 
 **Next:** Maintenance only; reopen only for a real regression or approved scope change.
+## Mengapa Memilih Saya - Public Trust & Client Decision Layer
+
+**Status:** PRODUCTION VERIFIED / COMPLETED / LOCKED.
+
+Route `/mengapa-memilih-saya/` menjelaskan alasan client memilih dan bekerja langsung dengan Srilex Buditra tanpa mengambil alih fungsi halaman publik lain.
+
+### Public Experience
+
+- Home menampilkan 4 kartu ringkas sebagai discovery.
+- CTA `Lihat Alasan Lengkap ->` menuju halaman dedicated.
+- Dedicated page menampilkan 10 alasan memilih Srilex Buditra.
+- `Cara Saya Bekerja` menjelaskan 7 langkah dari Analisis Kebutuhan sampai Documentation & Maintenance.
+
+### Responsibility
+
+- Home: discovery / entry layer.
+- Portfolio: proof-of-work / case studies.
+- Profil: professional authority.
+- Insights: engineering knowledge.
+- Aktivitas: verified development record.
+- Engineering: system capabilities + technical proof.
+- Mengapa Memilih Saya: client decision + trust/value layer.
+
+### Verification
+
+- Implementation commit: `80b3bb18caecc3dce72256747cdf3c9dee8aa511`.
+- Source Review: **PASS / LOCKED**.
+- Desktop Visual Review: **PASS / LOCKED**.
+- Mobile Visual Review: **PASS / LOCKED**.
+- Production Verification: **PASS / LOCKED**.
+- Sitemap dan existing Engineering route tetap terverifikasi.
+- Existing-profile cache issue terverifikasi sebagai PWA / Service Worker cache; tidak diperlukan source patch.
+- Site Content Architecture V2.02 tetap **UNTOUCHED / LOCKED**.
+
 ## Knowledge Center — Historical Foundation V11.9
 
 # Knowledge Center V11.9 — Insights & Engineering Notes

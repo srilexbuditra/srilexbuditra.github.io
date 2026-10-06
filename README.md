@@ -2,8 +2,8 @@
 
 ## SRILEXBUDITRA.WORK Platform Baseline
 
-Platform Baseline : 2026.10.06.0003
-Recorded At       : 2026-10-06 15:11:46 WIB
+Platform Baseline : 2026.10.06.0004
+Recorded At       : 2026-10-06 23:37:35 WIB
 Timezone          : Asia/Jakarta (UTC+07:00)
 Time Format       : 24-hour (HH:mm:ss)
 
@@ -11,7 +11,7 @@ Maintainer        : Srilex Buditra
 Role              : Senior Full Stack Developer
 Location          : Bengkulu, Indonesia
 
-Changed Area      : Site Content Architecture V2.02 Final Closeout
+Changed Area      : Public Trust & Client Decision Layer - Mengapa Memilih Saya
 Status            : PRODUCTION VERIFIED / COMPLETED / LOCKED
 
 <!-- PLATFORM-BASELINE:END -->
@@ -156,6 +156,19 @@ Scope: **Engineering / System Highlights Expansion**.
 - Source Review, Visual Review desktop/mobile, Controlled Staging/Commit/Push, Production Source Verification, dan Production Visual Verification telah **PASS / LOCKED**.
 - Implementation commit: `bf7ac6aa2a93cb51e648d149f3cdb8762cef9092` — `feat: implement system engineering v2.02`.
 - Status setelah closeout: maintenance only.
+## Mengapa Memilih Saya
+
+Status: **PRODUCTION VERIFIED / COMPLETED / LOCKED**.
+
+Public route: `/mengapa-memilih-saya/`.
+
+- Home menampilkan tepat 4 alasan utama dan CTA `Lihat Alasan Lengkap ->`.
+- Dedicated page memperluasnya menjadi 10 alasan dan 7-step `Cara Saya Bekerja`.
+- Scope ini berfungsi sebagai **client decision + trust/value layer** dan tidak menggantikan Portfolio, Profil, Insights, Aktivitas, atau System Engineering.
+- Implementation commit: `80b3bb18caecc3dce72256747cdf3c9dee8aa511` - `feat: add mengapa memilih saya page`.
+- Source, desktop/mobile visual, production route, scoped CSS, sitemap, dan core links telah diverifikasi.
+- Site Content Architecture V2.02 tetap **PRODUCTION VERIFIED / COMPLETED / LOCKED**.
+
 ## Teknologi
 
 Platform menggunakan teknologi sesuai kebutuhan masing-masing layanan:

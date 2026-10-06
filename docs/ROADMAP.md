@@ -4,8 +4,8 @@
 
 ## SRILEXBUDITRA.WORK Platform Baseline
 
-Platform Baseline : 2026.10.06.0003
-Recorded At       : 2026-10-06 15:11:46 WIB
+Platform Baseline : 2026.10.06.0004
+Recorded At       : 2026-10-06 23:37:35 WIB
 Timezone          : Asia/Jakarta (UTC+07:00)
 Time Format       : 24-hour (HH:mm:ss)
 
@@ -13,7 +13,7 @@ Maintainer        : Srilex Buditra
 Role              : Senior Full Stack Developer
 Location          : Bengkulu, Indonesia
 
-Changed Area      : Site Content Architecture V2.02 Final Closeout
+Changed Area      : Public Trust & Client Decision Layer - Mengapa Memilih Saya
 Status            : PRODUCTION VERIFIED / COMPLETED / LOCKED
 
 <!-- PLATFORM-BASELINE:END -->
@@ -144,6 +144,7 @@ Site Content Architecture V2.01 menjadi arah site-level setelah Portfolio Hub da
 
 | Project / Area | Current Status | Validation / Evidence | Next Step |
 | --- | --- | --- | --- |
+| Mengapa Memilih Saya / Public Trust & Client Decision Layer | **PRODUCTION VERIFIED / COMPLETED / LOCKED** | `/mengapa-memilih-saya/`; Home 4-card discovery + CTA; dedicated 10 reasons + 7-step workflow; implementation `80b3bb1`; source/visual/production verification PASS. | Maintenance only; reopen only for regression nyata atau approved scope change. |
 | Site Content Architecture V2.02 | **PRODUCTION VERIFIED / COMPLETED / LOCKED** | Engineering / System Highlights Expansion aktif di production; Home CTA + `/engineering/`; 6 Engineering domains; implementation `bf7ac6a`; source/visual/production verification PASS. V2.01 tetap 5/5 locked. | Maintenance only; buka kembali hanya jika ada regression nyata atau approved scope change. |
 | Site Content Architecture V2.01 | **COMPLETED / LOCKED — 5/5 AREAS** | Home V2.01, Portfolio V2.01, Profil V2.01, Insights V2.01, dan Aktivitas V2.01 seluruhnya **COMPLETED / LOCKED**. Aktivitas V2.01 production-verified pada commit `4a7a31e`. | Maintenance only; buka kembali hanya jika ada regression nyata atau approved scope change. |
 | Client Management Platform R1 | **PRODUCTION VERIFIED** | `docs/CLIENT-MANAGEMENT.md`: production baseline aktif dan terverifikasi; R1 telah melewati development, staging, release candidate, production promotion, dan repository maintenance. | Maintenance only; buka kembali hanya jika ada regression atau approved scope change. |
@@ -265,6 +266,46 @@ Scope: **Engineering / System Highlights Expansion**.
 
 **Next:** Maintenance only; reopen only for a real regression or approved scope change.
 ---
+## Mengapa Memilih Saya - Public Trust & Client Decision Layer
+
+Status: **PRODUCTION VERIFIED / COMPLETED / LOCKED**.
+
+Scope ini merupakan perkembangan baru setelah Site Content Architecture V2.02 dan **tidak membuka ulang atau mengganti V2.02**.
+
+### Production Experience
+
+- Home mempertahankan tepat 4 kartu `Mengapa Memilih Saya`.
+- CTA `Lihat Alasan Lengkap ->` aktif menuju `/mengapa-memilih-saya/`.
+- Dedicated page menampilkan 10 alasan memilih Srilex Buditra.
+- `Cara Saya Bekerja` menampilkan 7-step workflow dari analisis sampai documentation & maintenance.
+- Technical proof tetap diarahkan ke `/engineering/` dan `/portfolio/`.
+- Contact conversion tetap diarahkan ke `/#kontak` dan `/#estimasi`.
+
+### Responsibility Boundary
+
+- Home = discovery.
+- Portfolio = proof-of-work.
+- Profil = authority.
+- Insights = engineering knowledge.
+- Aktivitas = development record.
+- Engineering = system capabilities + technical proof.
+- Mengapa Memilih Saya = client decision + trust/value layer.
+
+### Production Baseline
+
+- Implementation commit: `80b3bb18caecc3dce72256747cdf3c9dee8aa511`.
+- Commit message: `feat: add mengapa memilih saya page`.
+- Source Review: **PASS / LOCKED**.
+- Desktop/Mobile Visual Review: **PASS / LOCKED**.
+- Controlled staging/commit/push: **PASS / LOCKED**.
+- Production route, Home integration, scoped CSS, sitemap, Engineering preservation, dan core links: **PASS / LOCKED**.
+- Existing-profile CTA issue terverifikasi sebagai PWA / Service Worker cache; tidak diperlukan source patch.
+- Platform documentation closeout baseline: `2026.10.06.0004`.
+
+**Next:** Maintenance only; reopen only for a real regression or approved scope change.
+
+---
+
 ## Strategic Roadmap 2026–2027
 
 > Bagian ini mempertahankan roadmap strategis, fase produk, dan urutan prioritas pengembangan.
