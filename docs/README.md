@@ -24,7 +24,7 @@ Dokumen ini adalah indeks dokumentasi aktif repository `srilexbuditra.github.io`
 
 **Current documentation baseline:** 6 Oktober 2026 - Platform Baseline 2026.10.06.0001 / Site Content Architecture V2.01
 **Last documentation sync:** 6 Oktober 2026
-**Current site content architecture:** V2.01 active; Home V2.01, Portfolio V2.01, Profil V2.01, dan Insights V2.01 **COMPLETED / LOCKED**; Aktivitas V2.01 **CURRENT DEVELOPMENT** setelah Evidence & Timeline Audit dan milestone selection.
+**Current site content architecture:** V2.01 **5/5 AREAS COMPLETED / LOCKED**; Home V2.01, Portfolio V2.01, Profil V2.01, Insights V2.01, dan Aktivitas V2.01 seluruhnya **COMPLETED / LOCKED**.
 
 ## 1. Dokumentasi Utama
 
@@ -160,7 +160,7 @@ File berikut adalah template operasional GitHub, bukan dokumentasi produk:
 - Asset canonical `og:image` sekarang tersedia di production setelah Production Release R1; validasi ulang scraper Meta tetap terpisah.
 - Flagship Program Ketahanan Pangan: **implemented / public case study tersedia**.
 - Portfolio Hub `/portfolio/`: **production verified**; live implementations dan public case studies aktif pada baseline production terbaru.
-- Site Content Architecture V2.01: **ACTIVE ARCHITECTURE / 4 AREAS COMPLETED & LOCKED / AKTIVITAS V2.01 CURRENT DEVELOPMENT**; Aktivitas V2.01 telah menyelesaikan Evidence & Timeline Audit dan milestone selection; source implementation tetap harus melalui source review, visual review, controlled commit/push, dan production verification.
+- Site Content Architecture V2.01: **5/5 AREAS COMPLETED / LOCKED**; Home V2.01, Portfolio V2.01, Profil V2.01, Insights V2.01, dan Aktivitas V2.01 seluruhnya **COMPLETED / LOCKED**. Aktivitas V2.01 telah melewati source review, visual review, controlled commit/push, dan production verification dengan commit `4a7a31e`.
 
 - Profil & Rekam Jejak `/profil/`: **implemented**.
 - Trust & Authority V8: **implemented sebagai fondasi**.
