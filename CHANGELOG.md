@@ -1,3 +1,31 @@
+## Platform Baseline 2026.10.07.0004
+
+Platform Baseline : 2026.10.07.0004
+Status            : PRODUCTION VERIFIED / COMPLETED / LOCKED
+Date              : 7 Oktober 2026
+Runtime Anchor    : `475618f96100fbfd0cede52352afc335eff6feec`
+Parent Baseline   : 2026.10.07.0003
+
+### Scope
+
+- REVISION 17 — Portal Demo static asset cache-busting untuk route register, login, Lead Demo, dan Client Demo.
+- REVISION 17.1 — Lead Demo CSP compatibility; styling dinamis dipindahkan ke stylesheet eksternal tanpa melemahkan CSP.
+- REVISION 18 — Client Demo CSP compatibility dan visual parity; styling modal, header CTA, mobile navigation, dan progress dipindahkan ke pola external/scoped CSS yang kompatibel dengan production CSP.
+
+### Production verification
+
+- REVISION 17 commit: `ade066995ad40e725daec9892a247e5ad668a1ce`.
+- REVISION 17.1 commit: `36a173d7d265092e2be42f946c807b06150e58ee`.
+- REVISION 18 commit / runtime anchor: `475618f96100fbfd0cede52352afc335eff6feec`.
+- Lead Demo desktop/mobile production verification: PASS.
+- Client Demo localhost desktop/mobile verification: PASS.
+- Client Demo production visual confirmation: PASS.
+- Client Demo progress 82%, modal, header CTA, dan mobile navigation: PASS.
+- Strict production CSP dipertahankan; CSP policy tidak diubah atau dilemahkan.
+- Global stylesheet tidak diubah oleh REVISION 18.
+- Program Ketahanan Pangan dan namespace di luar scoped Portal Demo tidak dibuka ulang oleh closeout ini.
+- Working tree dan `origin/main` terverifikasi sinkron pada runtime anchor REVISION 18.
+
 ## Platform Baseline 2026.10.07.0003
 
 Platform Baseline : 2026.10.07.0003

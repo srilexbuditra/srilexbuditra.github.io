@@ -4,8 +4,8 @@
 
 ## SRILEXBUDITRA.WORK Platform Baseline
 
-Platform Baseline : 2026.10.07.0003
-Recorded At       : 2026-10-07 09:38:30 WIB
+Platform Baseline : 2026.10.07.0004
+Recorded At       : 2026-10-07 14:01:40 WIB
 Timezone          : Asia/Jakarta (UTC+07:00)
 Time Format       : 24-hour (HH:mm:ss)
 
@@ -13,7 +13,7 @@ Maintainer        : Srilex Buditra
 Role              : Senior Full Stack Developer
 Location          : Bengkulu, Indonesia
 
-Changed Area      : Home Section Detail Architecture
+Changed Area      : Portal Demo CSP Compatibility & Visual Parity
 Status            : PRODUCTION VERIFIED / COMPLETED / LOCKED
 
 <!-- PLATFORM-BASELINE:END -->
@@ -22,7 +22,7 @@ Status            : PRODUCTION VERIFIED / COMPLETED / LOCKED
 
 Dokumen ini adalah indeks dokumentasi aktif repository `srilexbuditra.github.io`. Gunakan indeks ini untuk membedakan dokumentasi operasional, panduan teknis, audit, dan referensi historis.
 
-**Current documentation baseline:** 7 Oktober 2026 - Platform Baseline 2026.10.07.0003 / FAQ Architecture + Mobile Footer + Typography Alignment
+**Current documentation baseline:** 7 Oktober 2026 - Platform Baseline 2026.10.07.0004 / Portal Demo CSP Compatibility + Visual Parity
 **Last documentation sync:** 7 Oktober 2026
 **Current site content architecture:** Site Content Architecture V2.02 tetap **PRODUCTION VERIFIED / COMPLETED / LOCKED**; `/mengapa-memilih-saya/` telah **PRODUCTION VERIFIED / COMPLETED / LOCKED** sebagai Public Trust / Client Decision Layer dengan implementation commit `80b3bb18caecc3dce72256747cdf3c9dee8aa511`.
 
@@ -202,7 +202,7 @@ File berikut adalah template operasional GitHub, bukan dokumentasi produk:
 
 ---
 
-**Documentation baseline:** 7 Oktober 2026 - Platform Baseline 2026.10.07.0003 / FAQ Architecture + Mobile Footer + Typography Alignment
+**Documentation baseline:** 7 Oktober 2026 - Platform Baseline 2026.10.07.0004 / Portal Demo CSP Compatibility + Visual Parity
 **Previous audit baseline:** V11.6
 **Last documentation update:** 7 Oktober 2026
 
@@ -214,6 +214,27 @@ File berikut adalah template operasional GitHub, bukan dokumentasi produk:
 
 ## VERIFIED MEMBER + Foto
 - [VERIFIED-MEMBER-FOTO-V12.3.md](../VERIFIED-MEMBER-FOTO-V12.3.md) — alur kamera, penyimpanan foto private, review admin, dan aktivasi kartu anggota.
+
+## Platform Baseline 2026.10.07.0004 — Portal Demo CSP Compatibility & Visual Parity
+
+Status: **PRODUCTION VERIFIED / COMPLETED / LOCKED**
+
+Runtime production anchor:
+
+`475618f96100fbfd0cede52352afc335eff6feec`
+
+Parent baseline: `2026.10.07.0003`
+
+Closeout ini mencatat:
+
+- **REVISION 17** — cache-busting asset Portal Demo pada route register, login, Lead Demo, dan Client Demo; implementation commit `ade066995ad40e725daec9892a247e5ad668a1ce`.
+- **REVISION 17.1** — Lead Demo CSP compatibility; dynamic stylesheet dipindahkan ke stylesheet eksternal; production desktop/mobile **PASS**; commit `36a173d7d265092e2be42f946c807b06150e58ee`.
+- **REVISION 18** — Client Demo CSP compatibility + visual parity; modal, header CTA, mobile navigation, dan progress 82% tervalidasi pada localhost dan production; commit `475618f96100fbfd0cede52352afc335eff6feec`.
+- Strict production CSP tetap dipertahankan dan tidak dilemahkan.
+- Global stylesheet tidak diubah oleh REVISION 18.
+- Perubahan dibatasi pada Portal Demo yang disetujui; area program dan source lain di luar scope tetap dipertahankan.
+
+Platform Baseline `2026.10.07.0003` tetap disimpan sebagai historical locked baseline.
 
 ## Platform Baseline 2026.10.07.0003
 

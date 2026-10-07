@@ -4,8 +4,8 @@
 
 ## SRILEXBUDITRA.WORK Platform Baseline
 
-Platform Baseline : 2026.10.07.0003
-Recorded At       : 2026-10-07 09:38:30 WIB
+Platform Baseline : 2026.10.07.0004
+Recorded At       : 2026-10-07 14:01:40 WIB
 Timezone          : Asia/Jakarta (UTC+07:00)
 Time Format       : 24-hour (HH:mm:ss)
 
@@ -13,7 +13,7 @@ Maintainer        : Srilex Buditra
 Role              : Senior Full Stack Developer
 Location          : Bengkulu, Indonesia
 
-Changed Area      : Home Section Detail Architecture
+Changed Area      : Portal Demo CSP Compatibility & Visual Parity
 Status            : PRODUCTION VERIFIED / COMPLETED / LOCKED
 
 <!-- PLATFORM-BASELINE:END -->
@@ -400,6 +400,7 @@ Sudah dibuktikan pada source/runtime:
 - Client Demo Mobile Navigation R1.
 - Real Client Mobile Navigation R1.
 - Real Registration -> Full Demo Handoff R1.
+- Lead Demo + Client Demo CSP Compatibility / Visual Parity: **PRODUCTION VERIFIED / LOCKED** pada Platform Baseline 2026.10.07.0004.
 
 ### Full Demo Journey
 
@@ -1426,3 +1427,39 @@ Production validation:
   - documentation siap menuju final read-only review.
 
 Platform Baseline aktif setelah REVISION 16 documentation closeout: 2026.10.07.0003.
+
+---
+
+## Platform Baseline 2026.10.07.0004 — Closeout
+
+Runtime production anchor: `475618f96100fbfd0cede52352afc335eff6feec`
+
+Parent baseline: `2026.10.07.0003`
+
+Status milestone:
+
+- REVISION 17 — **COMPLETED / DEPLOYED**
+  - Portal Demo static asset cache-busting pada register, login, Lead Demo, dan Client Demo.
+  - Implementation commit `ade066995ad40e725daec9892a247e5ad668a1ce`.
+
+- REVISION 17.1 — **COMPLETED / PRODUCTION VERIFIED / LOCKED**
+  - Lead Demo dynamic styling dipindahkan ke stylesheet eksternal untuk strict CSP compatibility.
+  - Desktop dan mobile production verification: PASS.
+  - Implementation commit `36a173d7d265092e2be42f946c807b06150e58ee`.
+
+- REVISION 18 — **COMPLETED / PRODUCTION VERIFIED / LOCKED**
+  - Client Demo dynamic/inline styling dependency dipindahkan ke scoped external stylesheet.
+  - Header CTA, modal, mobile navigation, dan progress 82% tervalidasi.
+  - Local desktop/mobile verification: PASS.
+  - Production visual confirmation: PASS.
+  - Implementation commit `475618f96100fbfd0cede52352afc335eff6feec`.
+
+Safety boundary:
+
+- strict production CSP dipertahankan;
+- CSP policy tidak diubah atau dilemahkan;
+- global stylesheet tidak diubah oleh REVISION 18;
+- perubahan runtime REV17.1/REV18 dibatasi pada Portal Demo yang disetujui;
+- documentation closeout REV19 hanya menyinkronkan lima dokumen platform dan tidak mengubah HTML/CSS/JavaScript runtime.
+
+Platform Baseline aktif setelah REV19 documentation closeout: `2026.10.07.0004`.
