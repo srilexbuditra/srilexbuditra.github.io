@@ -1,3 +1,34 @@
+## Platform Baseline 2026.10.07.0005
+
+Platform Baseline : 2026.10.07.0005
+Status            : PRODUCTION VERIFIED / COMPLETED / LOCKED
+Date              : 7 Oktober 2026
+Runtime Anchor    : `38d1c02139b20bd7ff739684f3d0733817914a8e`
+Parent Baseline   : 2026.10.07.0004
+
+### Scope
+
+- REV20 - Mobile Portfolio Alignment untuk Umroh Semi Private Bengkulu dan Client Management Platform pada mobile.
+- REV20 - reciprocal navigation UX antara Portal Login dan Portal Register.
+- REV20 - penyelarasan copy section Portal & Konsultasi pada Home.
+- REV20 - penyelarasan visible professional identity menjadi Senior Full Stack Developer Bengkulu.
+
+### Production verification
+
+- REV20 runtime commit / runtime anchor: `38d1c02139b20bd7ff739684f3d0733817914a8e`.
+- Source Review: PASS.
+- Local desktop/mobile visual verification: PASS.
+- Production desktop/mobile visual verification: PASS / USER CONFIRMED.
+- Tepat 9 runtime files berada dalam implementation scope.
+- Global `style.css` tetap tidak berubah.
+- `portfolio/case-study.css` tetap tidak berubah.
+- `portal/register/register.js` tetap tidak berubah.
+- Backend, D1, Worker, dan CSP policy tidak dibuka atau diubah.
+- PWA / Service Worker belum disentuh pada REV20.
+- Local HEAD = origin/main = GitHub main pada runtime anchor; ahead/behind 0 0.
+- Platform Baseline 2026.10.07.0004 dipertahankan sebagai historical locked baseline.
+- REV21 Premium PWA Install Experience tercatat sebagai PLANNED / NOT LIVE.
+
 ## Platform Baseline 2026.10.07.0004
 
 Platform Baseline : 2026.10.07.0004

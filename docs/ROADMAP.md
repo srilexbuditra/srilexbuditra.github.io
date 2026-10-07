@@ -4,8 +4,8 @@
 
 ## SRILEXBUDITRA.WORK Platform Baseline
 
-Platform Baseline : 2026.10.07.0004
-Recorded At       : 2026-10-07 14:01:40 WIB
+Platform Baseline : 2026.10.07.0005
+Recorded At       : 2026-10-07 16:32:43 WIB
 Timezone          : Asia/Jakarta (UTC+07:00)
 Time Format       : 24-hour (HH:mm:ss)
 
@@ -13,7 +13,7 @@ Maintainer        : Srilex Buditra
 Role              : Senior Full Stack Developer
 Location          : Bengkulu, Indonesia
 
-Changed Area      : Portal Demo CSP Compatibility & Visual Parity
+Changed Area      : REV20 UX & Content Alignment
 Status            : PRODUCTION VERIFIED / COMPLETED / LOCKED
 
 <!-- PLATFORM-BASELINE:END -->
@@ -1463,3 +1463,41 @@ Safety boundary:
 - documentation closeout REV19 hanya menyinkronkan lima dokumen platform dan tidak mengubah HTML/CSS/JavaScript runtime.
 
 Platform Baseline aktif setelah REV19 documentation closeout: `2026.10.07.0004`.
+
+---
+
+## Platform Baseline 2026.10.07.0005 - REV20 UX & Content Alignment Closeout
+
+Runtime production anchor: `38d1c02139b20bd7ff739684f3d0733817914a8e`
+
+Parent baseline: `2026.10.07.0004`
+
+Status milestone:
+
+- REV20 - **COMPLETED / PRODUCTION VERIFIED / LOCKED**
+  - Mobile hero alignment untuk dua portfolio target tervalidasi pada desktop/mobile.
+  - Portal Login dan Portal Register memiliki reciprocal secondary navigation.
+  - Home Portal & Konsultasi copy telah diselaraskan.
+  - Visible professional identity telah diselaraskan menjadi Senior Full Stack Developer Bengkulu.
+  - Source Review: PASS.
+  - Local desktop/mobile visual verification: PASS.
+  - Production desktop/mobile visual verification: PASS / USER CONFIRMED.
+  - Runtime implementation commit: `38d1c02139b20bd7ff739684f3d0733817914a8e`.
+
+Safety boundary:
+
+- runtime scope dibatasi tepat pada 9 file REV20 yang disetujui;
+- global `style.css` tidak berubah;
+- `portfolio/case-study.css` tidak berubah;
+- `portal/register/register.js` tidak berubah;
+- backend, D1, dan Worker tidak dibuka;
+- CSP policy tidak berubah atau dilemahkan;
+- PWA dan Service Worker tidak dibuka pada REV20;
+- documentation closeout baseline 2026.10.07.0005 hanya menyinkronkan lima dokumen platform dan tidak mengubah HTML/CSS/JavaScript runtime.
+
+Next planned revision:
+
+- **REV21 - Premium PWA Install Experience - PLANNED / NOT LIVE**.
+- REV21 harus dimulai dari READ-ONLY audit terhadap manifest, Service Worker, installability, icon assets, cache behavior, dan strict CSP sebelum implementasi apa pun.
+
+Platform Baseline aktif setelah REV20 documentation closeout: `2026.10.07.0005`.

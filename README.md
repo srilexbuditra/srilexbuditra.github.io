@@ -2,8 +2,8 @@
 
 ## SRILEXBUDITRA.WORK Platform Baseline
 
-Platform Baseline : 2026.10.07.0004
-Recorded At       : 2026-10-07 14:01:40 WIB
+Platform Baseline : 2026.10.07.0005
+Recorded At       : 2026-10-07 16:32:43 WIB
 Timezone          : Asia/Jakarta (UTC+07:00)
 Time Format       : 24-hour (HH:mm:ss)
 
@@ -11,7 +11,7 @@ Maintainer        : Srilex Buditra
 Role              : Senior Full Stack Developer
 Location          : Bengkulu, Indonesia
 
-Changed Area      : Portal Demo CSP Compatibility & Visual Parity
+Changed Area      : REV20 UX & Content Alignment
 Status            : PRODUCTION VERIFIED / COMPLETED / LOCKED
 
 <!-- PLATFORM-BASELINE:END -->
@@ -324,6 +324,38 @@ Bengkulu, Indonesia
 ---
 
 © 2026 Srilex Buditra. All Rights Reserved.
+
+## Platform Baseline 2026.10.07.0005 - REV20 UX & Content Alignment
+
+Status: **PRODUCTION VERIFIED / COMPLETED / LOCKED**
+
+Runtime production anchor:
+
+`38d1c02139b20bd7ff739684f3d0733817914a8e`
+
+Parent baseline: `2026.10.07.0004`
+
+Closeout ini mencatat:
+
+- **REV20 - Mobile Portfolio Alignment** - hero visual pada `/portfolio/umroh-semi-private-bengkulu/` dan `/portfolio/client-management-platform/` disejajarkan pada mobile melalui scoped styling tanpa mengubah desktop layout.
+- **REV20 - Portal Login/Register Navigation UX** - `/portal/` dan `/portal/register/` memiliki secondary reciprocal navigation agar pengguna dapat berpindah antara login dan registrasi/konsultasi tanpa mengubah authentication/backend flow.
+- **REV20 - Home Portal & Konsultasi Copy** - copy dua kartu diperjelas untuk membedakan pengguna yang sudah memiliki akun Portal dengan calon pengguna yang memulai konsultasi.
+- **REV20 - Professional Identity Alignment** - visible homepage identity diselaraskan menjadi `Srilex Buditra - Senior Full Stack Developer Bengkulu`.
+- Source Review: **PASS**.
+- Local desktop/mobile visual verification: **PASS**.
+- Production desktop/mobile visual verification: **PASS / USER CONFIRMED**.
+- Runtime implementation dibatasi tepat pada 9 file yang disetujui.
+- Global `style.css` tidak diubah.
+- `portfolio/case-study.css` tidak diubah.
+- `portal/register/register.js` tidak diubah.
+- Backend, D1, dan Worker tidak dibuka atau diubah.
+- CSP policy tidak diubah atau dilemahkan.
+- PWA dan Service Worker belum dibuka pada REV20.
+- Local HEAD, `origin/main`, dan GitHub `main` terverifikasi pada runtime anchor REV20 dengan ahead/behind `0 0`.
+
+Platform Baseline `2026.10.07.0004` tetap disimpan sebagai historical locked baseline.
+
+Next planned revision: **REV21 - Premium PWA Install Experience - PLANNED / NOT LIVE**.
 
 ## Platform Baseline 2026.10.07.0004 — Portal Demo CSP Compatibility & Visual Parity
 
