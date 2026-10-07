@@ -2,8 +2,8 @@
 
 ## SRILEXBUDITRA.WORK Platform Baseline
 
-Platform Baseline : 2026.10.07.0002
-Recorded At       : 2026-10-06 23:37:35 WIB
+Platform Baseline : 2026.10.07.0003
+Recorded At       : 2026-10-07 09:38:30 WIB
 Timezone          : Asia/Jakarta (UTC+07:00)
 Time Format       : 24-hour (HH:mm:ss)
 
@@ -324,3 +324,35 @@ Bengkulu, Indonesia
 ---
 
 © 2026 Srilex Buditra. All Rights Reserved.
+
+## Platform Baseline 2026.10.07.0003 — FAQ Architecture + Mobile Footer
+
+Status: **PRODUCTION VERIFIED / COMPLETED / LOCKED**
+
+Runtime production anchor:
+
+`68c89f9a6fb4c6dd2ab389619c3a4026cdb07368`
+
+Baseline ini menutup:
+
+- **REVISION 9** — Mobile Footer + FAQ Architecture.
+- **REVISION 10** — FAQ Typography Color Alignment.
+- **REVISION 11** — failed closeout attempt / rolled back / source unchanged.
+- **REVISION 12** — documentation closeout implementation / source review refinement.
+- **REVISION 13** — documentation metadata + Markdown refinement / source review.
+- **REVISION 14** — failed validation attempt / rolled back.
+- **REVISION 15** — failed validator-scope attempt / rolled back.
+- **REVISION 16** — scoped Markdown token correction / final documentation closeout.
+- Home FAQ sebanyak 6 pertanyaan bernilai tinggi.
+- Dedicated `/faq/` dengan 16 pertanyaan dalam 8 kategori.
+- Canonical dan `FAQPage` structured data pada dedicated FAQ.
+- Mobile footer phone layout 2 kolom × 2 baris untuk empat grup navigasi.
+- Brand footer tetap full width.
+- Footer safe-space untuk Audio / Privasi dipertahankan.
+- Tipografi FAQ mengikuti visual Insights.
+- Search dan sitemap mengenali `/faq/`.
+- Public stylesheet menggunakan `?v=20261007-r9`.
+- Protected namespaces `program/*` dan `portal/*` tidak disentuh.
+- `script.js` dan `search-enhancer.js` tidak berubah.
+
+Platform Baseline 2026.10.07.0003 menggantikan 2026.10.07.0002 sebagai baseline aktif setelah REVISION 16 documentation closeout.

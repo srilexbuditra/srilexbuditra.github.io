@@ -4,8 +4,8 @@
 
 ## SRILEXBUDITRA.WORK Platform Baseline
 
-Platform Baseline : 2026.10.07.0002
-Recorded At       : 2026-10-06 23:37:35 WIB
+Platform Baseline : 2026.10.07.0003
+Recorded At       : 2026-10-07 09:38:30 WIB
 Timezone          : Asia/Jakarta (UTC+07:00)
 Time Format       : 24-hour (HH:mm:ss)
 
@@ -22,8 +22,8 @@ Status            : PRODUCTION VERIFIED / COMPLETED / LOCKED
 
 Dokumen ini adalah indeks dokumentasi aktif repository `srilexbuditra.github.io`. Gunakan indeks ini untuk membedakan dokumentasi operasional, panduan teknis, audit, dan referensi historis.
 
-**Current documentation baseline:** 7 Oktober 2026 - Platform Baseline 2026.10.07.0002 / Premium Navigation + Smart Explore + Cache Resilience
-**Last documentation sync:** 6 Oktober 2026
+**Current documentation baseline:** 7 Oktober 2026 - Platform Baseline 2026.10.07.0003 / FAQ Architecture + Mobile Footer + Typography Alignment
+**Last documentation sync:** 7 Oktober 2026
 **Current site content architecture:** Site Content Architecture V2.02 tetap **PRODUCTION VERIFIED / COMPLETED / LOCKED**; `/mengapa-memilih-saya/` telah **PRODUCTION VERIFIED / COMPLETED / LOCKED** sebagai Public Trust / Client Decision Layer dengan implementation commit `80b3bb18caecc3dce72256747cdf3c9dee8aa511`.
 
 ## 1. Dokumentasi Utama
@@ -202,7 +202,7 @@ File berikut adalah template operasional GitHub, bukan dokumentasi produk:
 
 ---
 
-**Documentation baseline:** 7 Oktober 2026 - Platform Baseline 2026.10.07.0002 / Premium Navigation + Smart Explore + Cache Resilience
+**Documentation baseline:** 7 Oktober 2026 - Platform Baseline 2026.10.07.0003 / FAQ Architecture + Mobile Footer + Typography Alignment
 **Previous audit baseline:** V11.6
 **Last documentation update:** 7 Oktober 2026
 
@@ -214,3 +214,35 @@ File berikut adalah template operasional GitHub, bukan dokumentasi produk:
 
 ## VERIFIED MEMBER + Foto
 - [VERIFIED-MEMBER-FOTO-V12.3.md](../VERIFIED-MEMBER-FOTO-V12.3.md) — alur kamera, penyimpanan foto private, review admin, dan aktivasi kartu anggota.
+
+## Platform Baseline 2026.10.07.0003
+
+Status: **PRODUCTION VERIFIED / COMPLETED / LOCKED**
+
+Runtime production anchor: `68c89f9a6fb4c6dd2ab389619c3a4026cdb07368`
+
+Closeout mencatat:
+
+- REVISION 9 — Mobile Footer + FAQ Architecture.
+- REVISION 10 — FAQ Typography Color Alignment.
+- REVISION 11 — failed / rolled back / source unchanged.
+- REVISION 12 — documentation closeout implementation / source review refinement.
+- REVISION 13 — documentation metadata + Markdown refinement / source review.
+- REVISION 14 — failed validation attempt / rolled back.
+- REVISION 15 — failed validator-scope attempt / rolled back.
+- REVISION 16 — scoped Markdown token correction / final documentation closeout.
+- Home FAQ: 6 pertanyaan.
+- Dedicated `/faq/`: 16 pertanyaan / 8 kategori.
+- `FAQPage` schema dan canonical: verified.
+- Mobile footer phone 2 × 2: verified / locked.
+- Audio / Privasi safe-space: verified.
+- FAQ typography aligned with Insights: verified.
+- Search `/faq/`: verified.
+- Sitemap `/faq/`: verified.
+- Public stylesheet R9: verified.
+- Production visual confirmation: PASS.
+- Protected namespaces dan JavaScript platform tidak disentuh.
+
+Platform Baseline 2026.10.07.0002 tetap merupakan historical locked baseline.
+
+Platform Baseline 2026.10.07.0003 aktif setelah REVISION 16 documentation closeout.

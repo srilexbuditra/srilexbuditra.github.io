@@ -4,8 +4,8 @@
 
 ## SRILEXBUDITRA.WORK Platform Baseline
 
-Platform Baseline : 2026.10.07.0002
-Recorded At       : 2026-10-06 23:37:35 WIB
+Platform Baseline : 2026.10.07.0003
+Recorded At       : 2026-10-07 09:38:30 WIB
 Timezone          : Asia/Jakarta (UTC+07:00)
 Time Format       : 24-hour (HH:mm:ss)
 
@@ -363,3 +363,74 @@ Setelah timeline publik stabil, prioritas berikutnya adalah monitoring discovera
 - Timeline publik harus tetap menjadi proof-of-work terkurasi.
 - Status platform aktif mengikuti source/runtime terbaru, bukan bagian Next dari snapshot versi lama.
 - Dokumen versi lama tetap tersedia melalui Git history.
+
+## Platform Baseline 2026.10.07.0003 — FAQ Architecture + Mobile Footer
+
+**Status:** PRODUCTION VERIFIED / COMPLETED / LOCKED
+
+**Runtime production anchor:** `68c89f9a6fb4c6dd2ab389619c3a4026cdb07368`
+
+**Parent baseline:** 2026.10.07.0002
+
+### Revision governance
+
+- REVISION 9 — Mobile Footer + FAQ Architecture.
+- REVISION 10 — FAQ Typography Color Alignment.
+- REVISION 11 — failed documentation attempt; fully rolled back.
+- REVISION 12 — Documentation Closeout Implementation / Source Review.
+- REVISION 13 — Documentation Metadata + Markdown Refinement / Source Review.
+- REVISION 14 — Failed Validation Attempt / Rolled Back.
+- REVISION 15 — Failed Validator-Scope Attempt / Rolled Back.
+- REVISION 16 — Scoped Markdown Token Correction / Final Documentation Closeout.
+- REVISION N tetap merupakan edit-iteration governance dan tidak menggantikan Platform Baseline `YYYY.MM.DD.NNNN`.
+
+### FAQ architecture
+
+- Home FAQ: 6 pertanyaan.
+- Dedicated `/faq/`: 16 pertanyaan dalam 8 kategori.
+- Canonical `/faq/`: verified.
+- `FAQPage` structured data: verified.
+- CTA Home FAQ menuju `/faq/` dan `/#estimasi`.
+- Search dan sitemap telah mengikutsertakan FAQ.
+
+### Mobile footer
+
+Phone layout dikunci menjadi:
+
+- baris 1: JELAJAHI + CARA KERJA;
+- baris 2: SISTEM & ENGINEERING + PROJECT;
+- brand full width;
+- safe-space Audio / Privasi tetap tersedia.
+
+### Visual alignment
+
+FAQ mengikuti bahasa visual Insights:
+
+- white untuk primary text;
+- orange untuk brand / hero emphasis;
+- green / teal untuk kicker dan category label;
+- blue-gray untuk supporting text.
+
+### Cache resilience
+
+Public HTML menggunakan:
+
+`style.css?v=20261007-r9`
+
+Production verification:
+
+- R7 public reference: 0;
+- R9 active;
+- REVISION 9 CSS active;
+- REVISION 10 CSS active.
+
+### Safety boundary
+
+Tidak ada perubahan pada:
+
+- `program/*`;
+- `portal/*`;
+- `script.js`;
+- `search-enhancer.js`.
+
+REVISION 16 menutup dokumentasi. Runtime production tetap ditambatkan pada commit `68c89f9a6fb4c6dd2ab389619c3a4026cdb07368`.

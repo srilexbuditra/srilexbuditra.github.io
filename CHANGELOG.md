@@ -1,3 +1,40 @@
+## Platform Baseline 2026.10.07.0003
+
+Platform Baseline : 2026.10.07.0003
+Status            : PRODUCTION VERIFIED / COMPLETED / LOCKED
+Date              : 7 Oktober 2026
+Runtime Anchor    : `68c89f9a6fb4c6dd2ab389619c3a4026cdb07368`
+Parent Baseline   : 2026.10.07.0002
+
+### Scope
+
+- REVISION 9 — Mobile Footer + FAQ Architecture.
+- REVISION 10 — FAQ Typography Color Alignment.
+- REVISION 11 — failed documentation closeout attempt; rolled back with source unchanged.
+- REVISION 12 — documentation closeout implementation; source review required metadata/Markdown refinement before staging.
+- REVISION 13 — metadata + Markdown refinement; source review menemukan satu malformed inline-code token.
+- REVISION 14 — token correction attempt; validation marker mismatch memicu rollback penuh.
+- REVISION 15 — token correction attempt; validator memindai code fence historis yang sah dan memicu rollback penuh.
+- REVISION 16 — scoped Markdown token correction dan final documentation closeout untuk Platform Baseline 2026.10.07.0003.
+
+### Production verification
+
+- Home FAQ production berisi 6 pertanyaan utama.
+- CTA Home FAQ menuju `/faq/` dan `/#estimasi`.
+- Dedicated `/faq/` berisi 16 pertanyaan dalam 8 kategori.
+- Canonical `/faq/` dan `FAQPage` structured data terverifikasi.
+- Mobile footer phone layout menggunakan directory 2 × 2 dengan brand full width.
+- Footer safe-space untuk Audio / Privasi tetap terjaga.
+- Tipografi FAQ disejajarkan dengan visual Insights.
+- Search dan sitemap mengenali `/faq/`.
+- Public stylesheet menggunakan cache token `?v=20261007-r9`.
+- Referensi stylesheet R7 pada public pages: 0.
+- Production visual confirmation: PASS.
+- `program/*` dan `portal/*` tidak disentuh.
+- `script.js` dan `search-enhancer.js` tidak disentuh.
+- Runtime production anchor tetap `68c89f9a6fb4c6dd2ab389619c3a4026cdb07368`.
+- Documentation closeout tidak mengubah runtime public source.
+
 ## Platform Baseline 2026.10.07.0002
 
 Platform Baseline : 2026.10.07.0002

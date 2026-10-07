@@ -4,8 +4,8 @@
 
 ## SRILEXBUDITRA.WORK Platform Baseline
 
-Platform Baseline : 2026.10.07.0002
-Recorded At       : 2026-10-06 23:37:35 WIB
+Platform Baseline : 2026.10.07.0003
+Recorded At       : 2026-10-07 09:38:30 WIB
 Timezone          : Asia/Jakarta (UTC+07:00)
 Time Format       : 24-hour (HH:mm:ss)
 
@@ -1195,7 +1195,7 @@ Resolution:
 - Gunakan Mega Menu dan Search sebagai exploration engine.
 - Jangan membuka kembali scope ini tanpa regression nyata atau approved scope change.
 - Home Section Detail Architecture `2026.10.07.0001` tetap historical locked baseline.
-- Platform Baseline aktif setelah documentation closeout: `2026.10.07.0002`.
+- Historical Platform Baseline sebelum FAQ closeout: `2026.10.07.0002`.
 
 # CURRENT CHECKPOINT
 
@@ -1357,3 +1357,72 @@ Status:
 - Jangan menyimpan password, token, cookie, secret, credential, atau data pribadi di roadmap.
 - Update bagian current terlebih dahulu ketika arah produk berubah.
 - Checkpoint lama tetap tersedia sebagai rekam jejak dan melalui Git history.
+
+## Platform Baseline 2026.10.07.0003 — Closeout
+
+Runtime production anchor: `68c89f9a6fb4c6dd2ab389619c3a4026cdb07368`
+
+Status milestone:
+
+- REVISION 9 — **COMPLETED / PRODUCTION VERIFIED / LOCKED**
+  - Mobile Footer Optimization.
+  - Home FAQ Architecture.
+  - Dedicated `/faq/`.
+  - Search + sitemap discovery.
+  - Public stylesheet cache token R9.
+
+- REVISION 10 — **COMPLETED / PRODUCTION VERIFIED / LOCKED**
+  - FAQ Typography Color Alignment.
+  - Visual language aligned with Insights.
+
+- REVISION 11 — **FAILED / ROLLED BACK**
+  - documentation write attempt;
+  - git diff --check mendeteksi trailing whitespace;
+  - semua 5 file dipulihkan;
+  - runtime dan repository history tidak berubah.
+
+- REVISION 12 — **DOCUMENTATION CLOSEOUT IMPLEMENTATION / SOURCE REVIEW**
+  - runtime source unchanged;
+  - protected namespaces unchanged;
+  - JavaScript unchanged;
+  - documentation synchronized to production state.
+
+Production validation:
+
+- Home FAQ: 6 questions — PASS.
+- Dedicated FAQ: 16 questions / 8 categories — PASS.
+- `FAQPage` schema — PASS.
+- Canonical `/faq/` — PASS.
+- Mobile footer phone 2 × 2 — PASS.
+- Audio / Privasi safe-space — PASS.
+- Search — PASS.
+- Sitemap — PASS.
+- R7 public stylesheet references — 0.
+- R9 stylesheet — ACTIVE.
+- Production visual confirmation — PASS.
+
+- REVISION 13 — **DOCUMENTATION METADATA + MARKDOWN REFINEMENT / SOURCE REVIEW**
+  - baseline timestamp metadata aligned;
+  - documentation sync date aligned;
+  - inline-code Markdown restored;
+  - runtime source unchanged.
+
+- REVISION 14 — **FAILED VALIDATION ATTEMPT / ROLLED BACK**
+  - token correction sempat berhasil;
+  - validation marker mismatch memicu rollback;
+  - tidak ada stage, commit, atau push.
+
+- REVISION 15 — **FAILED VALIDATOR-SCOPE ATTEMPT / ROLLED BACK**
+  - token correction kembali berhasil;
+  - validator salah memeriksa code fence historis yang sah;
+  - rollback memulihkan REVISION 13 state;
+  - tidak ada stage, commit, atau push.
+
+- REVISION 16 — **SCOPED MARKDOWN TOKEN CORRECTION / FINAL DOCUMENTATION CLOSEOUT**
+  - malformed stylesheet inline-code token dikoreksi;
+  - backtick validation dibatasi ke section Platform Baseline 2026.10.07.0003;
+  - historical Markdown code fence tetap dipertahankan;
+  - runtime source tidak berubah;
+  - documentation siap menuju final read-only review.
+
+Platform Baseline aktif setelah REVISION 16 documentation closeout: 2026.10.07.0003.
