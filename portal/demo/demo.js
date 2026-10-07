@@ -180,7 +180,7 @@ document.body.addEventListener("click",e=>{
 });
 
 const bar=document.createElement("div");
-bar.style.cssText="padding:10px;text-align:center;background:#dff7e9;color:#123b2e;font:600 13px system-ui";
+bar.className="client-demo-banner";
 bar.innerHTML='MODE DEMO — Data simulasi • Perubahan tidak disimpan &nbsp; <button id="demoReset">Reset Demo</button>';
 document.body.prepend(bar);
 
@@ -263,150 +263,7 @@ if(demoProfile){
   demoProfile.parentNode.insertBefore(demoExit,demoProfile);
 }
 
-const demoExitStyle=document.createElement("style");
-demoExitStyle.textContent=`
-.demo-project-cta{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  min-height:42px;
-  padding:0 16px;
-  border:1px solid #168a63;
-  border-radius:12px;
-  background:#168a63;
-  color:#fff;
-  font-size:13px;
-  font-weight:850;
-  text-decoration:none;
-  white-space:nowrap;
-  box-shadow:0 8px 18px rgba(22,138,99,.18);
-}
-.demo-project-cta:hover{
-  background:#107653;
-  border-color:#107653;
-}
-.demo-exit-button{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  min-height:42px;
-  padding:0 16px;
-  border:1px solid #cbd8d3;
-  border-radius:12px;
-  background:#fff;
-  color:#173c32;
-  font-weight:700;
-  text-decoration:none;
-  white-space:nowrap;
-}
-.demo-exit-button:hover{
-  background:#eef8f3;
-}
-@media(max-width:700px){
-  .top-actions{
-    gap:6px;
-  }
-  .top-actions .profile{
-    padding:5px;
-    gap:0;
-  }
-  .top-actions .profile .profile-copy{
-    display:none;
-  }
-  .demo-project-cta{
-    padding:0 11px;
-    font-size:12px;
-  }
-  .demo-exit-button{
-    padding:0 10px;
-    font-size:12px;
-  }
-}
-@media(max-width:560px){
-  .demo-project-cta{
-    min-width:88px;
-    padding:0 8px;
-    font-size:0;
-  }
-  .demo-project-cta::after{
-    content:"Mulai Project";
-    font-size:11px;
-    font-weight:850;
-  }
-  .demo-exit-button{
-    min-width:52px;
-    padding:0 7px;
-    font-size:0;
-  }
-  .demo-exit-button::after{
-    content:"Keluar";
-    font-size:11px;
-    font-weight:700;
-  }
-}
-`;
-document.head.appendChild(demoExitStyle);
-
-const demoMobileNavStyle=document.createElement("style");
-demoMobileNavStyle.textContent=`
-@media(max-width:820px){
-  .mobile-nav{
-    gap:6px;
-    padding:8px 10px max(9px,env(safe-area-inset-bottom));
-    background:rgba(255,255,255,.98);
-    border-top:1px solid #dfe8e4;
-    box-shadow:0 -10px 30px rgba(15,44,38,.08);
-  }
-
-  .mobile-nav a{
-    min-height:52px;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-    gap:4px;
-    padding:6px 4px;
-    border-radius:14px;
-    color:#6f7d77;
-    font-size:10px;
-    font-weight:700;
-    line-height:1;
-    transition:background .18s ease,color .18s ease,transform .18s ease;
-  }
-
-  .mobile-nav-icon{
-    width:21px;
-    height:21px;
-    fill:none;
-    stroke:currentColor;
-    stroke-width:1.8;
-    stroke-linecap:round;
-    stroke-linejoin:round;
-  }
-
-  .mobile-nav-label{
-    display:block;
-    font-size:10px;
-    line-height:1;
-  }
-
-  .mobile-nav a.active{
-    background:#e8f7f1;
-    color:#12694f;
-    font-weight:850;
-    box-shadow:inset 0 0 0 1px rgba(22,138,99,.10);
-  }
-
-  .mobile-nav a.active .mobile-nav-icon{
-    transform:translateY(-1px);
-  }
-
-  .content{
-    padding-bottom:108px;
-  }
-}
-`;
-document.head.appendChild(demoMobileNavStyle);
+/* REV18: portal styling moved to external styles.css for CSP compatibility. */
 
 /* DEMO DASHBOARD INTERACTION R1 */
 function demoPanel(title,body){
@@ -414,15 +271,15 @@ function demoPanel(title,body){
 
   const o=document.createElement("div");
   o.id="demoPanelOverlay";
-  o.style.cssText="position:fixed;inset:0;z-index:10020;background:#061d18aa;display:grid;place-items:center;padding:20px";
+  o.className="demo-panel-overlay";
 
   o.innerHTML=`
-    <section style="width:min(520px,100%);background:#fff;color:#173c32;border-radius:18px;padding:22px;box-shadow:0 24px 70px #0005">
-      <div style="display:flex;justify-content:space-between;gap:16px;align-items:center">
-        <h2 style="margin:0">${title}</h2>
-        <button type="button" data-demo-panel-close style="font-size:20px">✕</button>
+    <section class="demo-panel-card" role="dialog" aria-modal="true" aria-labelledby="demo-panel-title">
+      <div class="demo-panel-head">
+        <h2 id="demo-panel-title" class="demo-panel-title">${title}</h2>
+        <button type="button" data-demo-panel-close class="demo-panel-close" aria-label="Tutup dialog">✕</button>
       </div>
-      <div style="margin-top:18px;line-height:1.6">${body}</div>
+      <div class="demo-panel-body">${body}</div>
     </section>`;
 
   document.body.appendChild(o);
