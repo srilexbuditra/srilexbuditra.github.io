@@ -1849,3 +1849,91 @@ body.consultation-modal-open {
     font-size:12px;
   }
 }
+
+/* REV17.1 - Lead Demo CSP-compatible styles (moved unchanged from demo.js) */
+    .lead-demo-mode{
+      width:min(100% - 32px,1180px);
+      margin:16px auto 0;
+      padding:12px 14px;
+      border:1px solid var(--line);
+      border-radius:14px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+      background:var(--surface);
+    }
+
+    .lead-demo-mode div{
+      display:flex;
+      align-items:center;
+      flex-wrap:wrap;
+      gap:8px 12px;
+    }
+
+    .lead-demo-mode strong{
+      font-size:12px;
+      letter-spacing:.08em;
+    }
+
+    .lead-demo-mode span{
+      color:var(--muted);
+      font-size:12px;
+    }
+
+    .lead-demo-mode button{
+      border:1px solid var(--line);
+      border-radius:10px;
+      padding:8px 12px;
+      background:transparent;
+      color:inherit;
+      cursor:pointer;
+      font-weight:700;
+    }
+
+    .lead-demo-estimate-actions{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      margin-top:18px;
+    }
+
+    .lead-demo-estimate-actions small{
+      color:var(--muted);
+      line-height:1.5;
+    }
+
+    .lead-demo-estimate-item{
+      display:grid;
+      gap:7px;
+      margin-top:16px;
+      padding:16px;
+      border:1px solid var(--line);
+      border-radius:14px;
+    }
+
+    .lead-demo-estimate-item span,
+    .lead-demo-estimate-item small{
+      color:var(--muted);
+    }
+
+    .lead-demo-estimate-item span{
+      font-size:11px;
+      letter-spacing:.08em;
+    }
+
+    .lead-demo-estimate-item b{
+      margin-top:5px;
+    }
+
+    @media(max-width:640px){
+      .lead-demo-mode{
+        width:min(100% - 20px,1180px);
+        align-items:stretch;
+        flex-direction:column;
+      }
+
+      .lead-demo-mode button{
+        width:100%;
+      }
+    }
