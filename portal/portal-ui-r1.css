@@ -643,3 +643,27 @@
   opacity: .55;
   cursor: not-allowed;
 }
+
+/* REV20 PORTAL AUTH RECIPROCAL NAV */
+.sb-portal-auth-secondary {
+  display: grid;
+  gap: 4px;
+  margin-top: 14px;
+  color: #94a3b8;
+  font-size: 12px;
+  line-height: 1.55;
+  text-align: center;
+}
+
+.sb-portal-auth-secondary a {
+  color: #86efac;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.sb-portal-auth-secondary a:hover,
+.sb-portal-auth-secondary a:focus-visible {
+  color: #bbf7d0;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}

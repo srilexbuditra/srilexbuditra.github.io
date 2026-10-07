@@ -404,3 +404,29 @@ a {
     padding-top:4px;
   }
 }
+
+/* REV20 REGISTER RECIPROCAL NAV */
+.registration-login-link {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px 7px;
+  margin-top: 14px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.55;
+  text-align: center;
+}
+
+.registration-login-link a {
+  color: #86efac;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.registration-login-link a:hover,
+.registration-login-link a:focus-visible {
+  color: #bbf7d0;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}

@@ -84,6 +84,11 @@
           </button>
 
           <div class="sb-portal-auth-message" data-login-message role="alert"></div>
+
+          <div class="sb-portal-auth-secondary">
+            <span>Belum punya akun Portal?</span>
+            <a href="/portal/register/">Mulai Konsultasi / Daftar sekarang →</a>
+          </div>
         </form>
 
         <div class="sb-portal-auth-note">
