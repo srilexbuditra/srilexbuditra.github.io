@@ -4,8 +4,8 @@
 
 ## SRILEXBUDITRA.WORK Platform Baseline
 
-Platform Baseline : 2026.10.07.0005
-Recorded At       : 2026-10-07 16:32:43 WIB
+Platform Baseline : 2026.10.07.0006
+Recorded At       : 2026-10-08 16:09:17 WIB
 Timezone          : Asia/Jakarta (UTC+07:00)
 Time Format       : 24-hour (HH:mm:ss)
 
@@ -13,7 +13,7 @@ Maintainer        : Srilex Buditra
 Role              : Senior Full Stack Developer
 Location          : Bengkulu, Indonesia
 
-Changed Area      : REV20 UX & Content Alignment
+Changed Area      : REV21 Premium PWA Install Experience
 Status            : PRODUCTION VERIFIED / COMPLETED / LOCKED
 
 <!-- PLATFORM-BASELINE:END -->
@@ -363,6 +363,41 @@ Setelah timeline publik stabil, prioritas berikutnya adalah monitoring discovera
 - Timeline publik harus tetap menjadi proof-of-work terkurasi.
 - Status platform aktif mengikuti source/runtime terbaru, bukan bagian Next dari snapshot versi lama.
 - Dokumen versi lama tetap tersedia melalui Git history.
+
+## Platform Baseline 2026.10.07.0006 - REV21 Premium PWA Install Experience
+
+Status: **PRODUCTION VERIFIED / COMPLETED / LOCKED**
+
+Runtime production anchor:
+
+`f941709dd3c1ca16629488e4cceb1c10080bde69`
+
+Parent baseline: `2026.10.07.0005`
+
+Closeout ini mencatat:
+
+- **REV21 - Premium PWA Install Experience** - custom install card premium aktif pada homepage.
+- Chromium install lifecycle menggunakan `beforeinstallprompt` dan `appinstalled`.
+- Android real-device production installation: **PASS / USER CONFIRMED**.
+- Home-screen app icon: **PASS**.
+- Post-install hidden state: **PASS**.
+- iOS/iPadOS Add to Home Screen guidance: **LOCAL VERIFIED**.
+- Maskable PNG 512x512 ditambahkan.
+- Source Review: **PASS**.
+- Local visual + interaction verification: **PASS**.
+- Production desktop visual verification: **PASS**.
+- Privacy/TTS overlap correction: **PASS**.
+- Runtime scope tepat 5 file.
+- Global `style.css` tidak diubah.
+- Global `script.js` tidak diubah.
+- Service Worker tidak ditambahkan.
+- Backend, API, D1, dan Worker tidak dibuka atau diubah.
+- CSP policy tidak diubah atau dilemahkan.
+- Documentation closeout tidak mengubah runtime source.
+
+Platform Baseline `2026.10.07.0005` tetap dipertahankan sebagai historical locked baseline.
+
+Next planned revision: **REV22 - Web Push & Notification Subscription - PLANNED / NOT LIVE**.
 
 ## Platform Baseline 2026.10.07.0005 - REV20 UX & Content Alignment
 

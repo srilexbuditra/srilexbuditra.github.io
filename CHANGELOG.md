@@ -1,3 +1,34 @@
+## Platform Baseline 2026.10.07.0006
+
+Platform Baseline : 2026.10.07.0006
+Status            : PRODUCTION VERIFIED / COMPLETED / LOCKED
+Date              : 8 Oktober 2026
+Runtime Anchor    : `f941709dd3c1ca16629488e4cceb1c10080bde69`
+Parent Baseline   : 2026.10.07.0005
+
+### Scope
+
+- REV21 - Premium PWA Install Experience.
+- Premium homepage install card.
+- Chromium install lifecycle dan iOS/iPadOS guidance.
+- Maskable application icon 512x512.
+- Post-install hidden state.
+- Privacy/TTS overlap correction.
+
+### Verification
+
+- Source Review: PASS.
+- Local visual + interaction verification: PASS.
+- Production desktop visual verification: PASS.
+- Production Android real-device installation: PASS / USER CONFIRMED.
+- Home-screen app icon: PASS.
+- Post-install hidden state: PASS.
+- Global `style.css` unchanged.
+- Global `script.js` unchanged.
+- Service Worker tidak ditambahkan.
+- CSP policy tidak berubah.
+- Historical baseline 2026.10.07.0005 retained.
+- REV22 - Web Push & Notification Subscription - PLANNED / NOT LIVE.
 ## Platform Baseline 2026.10.07.0005
 
 Platform Baseline : 2026.10.07.0005

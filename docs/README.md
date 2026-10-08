@@ -4,8 +4,8 @@
 
 ## SRILEXBUDITRA.WORK Platform Baseline
 
-Platform Baseline : 2026.10.07.0005
-Recorded At       : 2026-10-07 16:32:43 WIB
+Platform Baseline : 2026.10.07.0006
+Recorded At       : 2026-10-08 16:09:17 WIB
 Timezone          : Asia/Jakarta (UTC+07:00)
 Time Format       : 24-hour (HH:mm:ss)
 
@@ -13,7 +13,7 @@ Maintainer        : Srilex Buditra
 Role              : Senior Full Stack Developer
 Location          : Bengkulu, Indonesia
 
-Changed Area      : REV20 UX & Content Alignment
+Changed Area      : REV21 Premium PWA Install Experience
 Status            : PRODUCTION VERIFIED / COMPLETED / LOCKED
 
 <!-- PLATFORM-BASELINE:END -->
@@ -22,8 +22,8 @@ Status            : PRODUCTION VERIFIED / COMPLETED / LOCKED
 
 Dokumen ini adalah indeks dokumentasi aktif repository `srilexbuditra.github.io`. Gunakan indeks ini untuk membedakan dokumentasi operasional, panduan teknis, audit, dan referensi historis.
 
-**Current documentation baseline:** 7 Oktober 2026 - Platform Baseline 2026.10.07.0005 / REV20 UX & Content Alignment
-**Last documentation sync:** 7 Oktober 2026
+**Current documentation baseline:** 8 Oktober 2026 - Platform Baseline 2026.10.07.0006 / REV21 Premium PWA Install Experience
+**Last documentation sync:** 8 Oktober 2026
 **Current site content architecture:** Site Content Architecture V2.02 tetap **PRODUCTION VERIFIED / COMPLETED / LOCKED**; `/mengapa-memilih-saya/` telah **PRODUCTION VERIFIED / COMPLETED / LOCKED** sebagai Public Trust / Client Decision Layer dengan implementation commit `80b3bb18caecc3dce72256747cdf3c9dee8aa511`.
 
 ## 1. Dokumentasi Utama
@@ -202,9 +202,9 @@ File berikut adalah template operasional GitHub, bukan dokumentasi produk:
 
 ---
 
-**Documentation baseline:** 7 Oktober 2026 - Platform Baseline 2026.10.07.0005 / REV20 UX & Content Alignment
+**Documentation baseline:** 8 Oktober 2026 - Platform Baseline 2026.10.07.0006 / REV21 Premium PWA Install Experience
 **Previous audit baseline:** V11.6
-**Last documentation update:** 7 Oktober 2026
+**Last documentation update:** 8 Oktober 2026
 
 ### Kartu Anggota Digital + QR
 
@@ -214,6 +214,41 @@ File berikut adalah template operasional GitHub, bukan dokumentasi produk:
 
 ## VERIFIED MEMBER + Foto
 - [VERIFIED-MEMBER-FOTO-V12.3.md](../VERIFIED-MEMBER-FOTO-V12.3.md) — alur kamera, penyimpanan foto private, review admin, dan aktivasi kartu anggota.
+
+## Platform Baseline 2026.10.07.0006 - REV21 Premium PWA Install Experience
+
+Status: **PRODUCTION VERIFIED / COMPLETED / LOCKED**
+
+Runtime production anchor:
+
+`f941709dd3c1ca16629488e4cceb1c10080bde69`
+
+Parent baseline: `2026.10.07.0005`
+
+Closeout ini mencatat:
+
+- **REV21 - Premium PWA Install Experience** - custom install card premium aktif pada homepage.
+- Chromium install lifecycle menggunakan `beforeinstallprompt` dan `appinstalled`.
+- Android real-device production installation: **PASS / USER CONFIRMED**.
+- Home-screen app icon: **PASS**.
+- Post-install hidden state: **PASS**.
+- iOS/iPadOS Add to Home Screen guidance: **LOCAL VERIFIED**.
+- Maskable PNG 512x512 ditambahkan.
+- Source Review: **PASS**.
+- Local visual + interaction verification: **PASS**.
+- Production desktop visual verification: **PASS**.
+- Privacy/TTS overlap correction: **PASS**.
+- Runtime scope tepat 5 file.
+- Global `style.css` tidak diubah.
+- Global `script.js` tidak diubah.
+- Service Worker tidak ditambahkan.
+- Backend, API, D1, dan Worker tidak dibuka atau diubah.
+- CSP policy tidak diubah atau dilemahkan.
+- Documentation closeout tidak mengubah runtime source.
+
+Platform Baseline `2026.10.07.0005` tetap dipertahankan sebagai historical locked baseline.
+
+Next planned revision: **REV22 - Web Push & Notification Subscription - PLANNED / NOT LIVE**.
 
 ## Platform Baseline 2026.10.07.0005 - REV20 UX & Content Alignment
 

@@ -4,8 +4,8 @@
 
 ## SRILEXBUDITRA.WORK Platform Baseline
 
-Platform Baseline : 2026.10.07.0005
-Recorded At       : 2026-10-07 16:32:43 WIB
+Platform Baseline : 2026.10.07.0006
+Recorded At       : 2026-10-08 16:09:17 WIB
 Timezone          : Asia/Jakarta (UTC+07:00)
 Time Format       : 24-hour (HH:mm:ss)
 
@@ -13,7 +13,7 @@ Maintainer        : Srilex Buditra
 Role              : Senior Full Stack Developer
 Location          : Bengkulu, Indonesia
 
-Changed Area      : REV20 UX & Content Alignment
+Changed Area      : REV21 Premium PWA Install Experience
 Status            : PRODUCTION VERIFIED / COMPLETED / LOCKED
 
 <!-- PLATFORM-BASELINE:END -->
@@ -1501,3 +1501,40 @@ Next planned revision:
 - REV21 harus dimulai dari READ-ONLY audit terhadap manifest, Service Worker, installability, icon assets, cache behavior, dan strict CSP sebelum implementasi apa pun.
 
 Platform Baseline aktif setelah REV20 documentation closeout: `2026.10.07.0005`.
+
+---
+
+## Platform Baseline 2026.10.07.0006 - REV21 Premium PWA Install Experience Closeout
+
+Runtime production anchor: `f941709dd3c1ca16629488e4cceb1c10080bde69`
+
+Parent baseline: `2026.10.07.0005`
+
+Status milestone:
+
+- REV21 - **COMPLETED / PRODUCTION VERIFIED / LOCKED**
+  - Premium install card production verified.
+  - Chromium install lifecycle verified.
+  - Android real-device installation verified.
+  - Home-screen app icon verified.
+  - Post-install hidden state verified.
+  - iOS/iPadOS guidance locally verified.
+  - Maskable icon 512x512 added.
+  - Privacy/TTS overlap fixed and verified.
+
+Safety boundary:
+
+- runtime scope tetap tepat 5 file;
+- global `style.css` unchanged;
+- global `script.js` unchanged;
+- Service Worker tidak ditambahkan;
+- backend/API/D1/Worker tidak dibuka;
+- CSP policy tidak berubah;
+- documentation closeout hanya mengubah lima Markdown.
+
+Next planned revision:
+
+- **REV22 - Web Push & Notification Subscription - PLANNED / NOT LIVE**.
+- REV22 harus dimulai dari READ-ONLY audit sebelum implementasi.
+
+Platform Baseline aktif: `2026.10.07.0006`.
