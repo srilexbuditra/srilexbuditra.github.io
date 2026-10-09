@@ -30,6 +30,14 @@
   let busy = false;
   let publicKeyReady = null;
 
+  // R3.5: gentle, local-only activation invitation. It is NOT a push send,
+  // and permission is never requested until the visitor presses the button.
+  const inviteSeenKey = "sb-rev22-r35-optin-last-shown";
+  const inviteDelayMs = 4500;
+  const inviteCooldownMs = 7 * 24 * 60 * 60 * 1000;
+  let inviteTimer = null;
+  let inviteShownInPage = false;
+
   const ios = () => {
     const ua = navigator.userAgent || "";
     return /iPad|iPhone|iPod/i.test(ua) ||
@@ -180,6 +188,46 @@
 
   const newOwner = () => Array.from(crypto.getRandomValues(new Uint8Array(32)))
     .map(byte => byte.toString(16).padStart(2, "0")).join("");
+
+  const markInviteSeen = () => {
+    inviteShownInPage = true;
+    try { localStorage.setItem(inviteSeenKey, String(Date.now())); } catch { }
+  };
+
+  const stopInviteTimer = () => {
+    if (inviteTimer !== null) clearTimeout(inviteTimer);
+    inviteTimer = null;
+  };
+
+  const scheduleInvite = () => {
+    if (
+      previewMode || inviteShownInPage || busy ||
+      !supported() || (ios() && !standalone()) ||
+      Notification.permission === "denied" ||
+      document.visibilityState !== "visible" ||
+      !panel.hidden || launcher.dataset.state !== "inactive"
+    ) return;
+
+    try {
+      const previous = Number(localStorage.getItem(inviteSeenKey));
+      if (previous > 0 && Date.now() - previous < inviteCooldownMs) return;
+    } catch {
+      // If storage is disabled, the invitation is still limited to this load.
+    }
+
+    stopInviteTimer();
+    inviteTimer = setTimeout(() => {
+      inviteTimer = null;
+      if (
+        busy || inviteShownInPage ||
+        document.visibilityState !== "visible" ||
+        launcher.dataset.state !== "inactive" || !panel.hidden ||
+        !supported() || Notification.permission === "denied"
+      ) return;
+      markInviteSeen();
+      setOpen(true);
+    }, inviteDelayMs);
+  };
 
   const setOpen = (open) => {
     panel.hidden = !open;
@@ -664,10 +712,16 @@
     }
 
     launcher.addEventListener("click", () => {
+      stopInviteTimer();
+      markInviteSeen(); // respect visitors who prefer to open the panel themselves
       setOpen(launcher.getAttribute("aria-expanded") !== "true");
     });
 
-    close.addEventListener("click", () => setOpen(false));
+    close.addEventListener("click", () => {
+      stopInviteTimer();
+      if (inviteShownInPage) markInviteSeen();
+      setOpen(false);
+    });
 
     button.addEventListener("click", async () => {
       if (launcher.dataset.state === "sync") {
@@ -839,6 +893,9 @@
       await retryPendingCleanup();
     }
     await refresh();
+    // Opens only the existing activation panel for eligible, inactive visitors.
+    // Returning active subscribers keep the R3.4 launcher hidden.
+    scheduleInvite();
   };
 
   if (document.readyState === "loading") {
