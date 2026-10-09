@@ -11,6 +11,12 @@
   const INTERACTION_DELAY = 1500;
   const PREVIEW_DELAY = 600;
 
+  // R3.6: keep REV21 PWA installation available, but do not show its
+  // automatic card on top of the REV22 notification invitation.
+  // The bounded startup wait also preserves PWA if the push script fails.
+  const PUSH_GATE_EVENT = "sb:rev22:push-invite-priority";
+  const PUSH_STARTUP_GRACE = 12000;
+
   const localHosts = new Set(["localhost", "127.0.0.1", "::1"]);
 
   const query = new URLSearchParams(window.location.search);
@@ -35,6 +41,9 @@
   let iosGuide = null;
   let revealTimer = null;
   let interactionSeen = false;
+  let pushPriority = "pending";
+  let pushPromptShownThisVisit = false;
+  const pushStartupDeadline = Date.now() + PUSH_STARTUP_GRACE;
 
   let readyAt =
     Date.now() + (previewMode ? PREVIEW_DELAY : NORMAL_DELAY);
@@ -391,12 +400,21 @@
     iosMode ||
     Boolean(deferredPrompt);
 
+  const waitingForPush = () =>
+    pushPriority === "scheduled" ||
+    (pushPriority === "pending" && Date.now() < pushStartupDeadline);
+
   const revealInstallCard = () => {
     if (
       isStandalone() ||
       isCoolingDown() ||
-      !eligibleForCard()
-    ) {
+      !eligibleForCard() ||
+      pushPromptShownThisVisit ||
+      document.visibilityState === "hidden"
+    ) return;
+
+    if (waitingForPush()) {
+      if (pushPriority === "pending") scheduleReveal();
       return;
     }
 
@@ -410,21 +428,24 @@
   };
 
   const scheduleReveal = () => {
+    if (revealTimer) {
+      window.clearTimeout(revealTimer);
+      revealTimer = null;
+    }
+
     if (
       isStandalone() ||
       isCoolingDown() ||
-      !eligibleForCard()
-    ) {
-      return;
-    }
-
-    if (revealTimer) {
-      window.clearTimeout(revealTimer);
-    }
+      !eligibleForCard() ||
+      pushPromptShownThisVisit ||
+      pushPriority === "scheduled" ||
+      document.visibilityState === "hidden"
+    ) return;
 
     const wait = Math.max(
       0,
-      readyAt - Date.now()
+      readyAt - Date.now(),
+      pushPriority === "pending" ? pushStartupDeadline - Date.now() : 0
     );
 
     revealTimer = window.setTimeout(
@@ -432,6 +453,31 @@
       wait
     );
   };
+
+
+  // The Web Push script is loaded after this script (both are deferred).
+  // It announces when an opt-in invitation is scheduled or actually shown.
+  // Once push has appeared we suppress automatic PWA for this page visit,
+  // but keep the native beforeinstallprompt event and browser installation.
+  window.addEventListener(PUSH_GATE_EVENT, (event) => {
+    const state = event && event.detail && event.detail.state;
+    if (!new Set(["scheduled", "shown", "released"]).has(state)) return;
+
+    if (state === "shown") pushPromptShownThisVisit = true;
+    pushPriority = state;
+    if (state === "scheduled" || state === "shown") {
+      if (revealTimer) window.clearTimeout(revealTimer);
+      revealTimer = null;
+      hideInstallCard(0);
+      return;
+    }
+
+    if (!pushPromptShownThisVisit) scheduleReveal();
+  });
+
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible") scheduleReveal();
+  });
 
   const onFirstInteraction = () => {
     if (interactionSeen) return;

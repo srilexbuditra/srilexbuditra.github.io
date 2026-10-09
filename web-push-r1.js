@@ -37,6 +37,13 @@
   const inviteCooldownMs = 7 * 24 * 60 * 60 * 1000;
   let inviteTimer = null;
   let inviteShownInPage = false;
+  // R3.6: announce only prompt priority; no subscription or permission change.
+  const invitePriorityEvent = "sb:rev22:push-invite-priority";
+  const announceInvite = state => {
+    window.dispatchEvent(new CustomEvent(invitePriorityEvent, {
+      detail: { state }
+    }));
+  };
 
   const ios = () => {
     const ua = navigator.userAgent || "";
@@ -206,11 +213,17 @@
       Notification.permission === "denied" ||
       document.visibilityState !== "visible" ||
       !panel.hidden || launcher.dataset.state !== "inactive"
-    ) return;
+    ) {
+      announceInvite("released");
+      return;
+    }
 
     try {
       const previous = Number(localStorage.getItem(inviteSeenKey));
-      if (previous > 0 && Date.now() - previous < inviteCooldownMs) return;
+      if (previous > 0 && Date.now() - previous < inviteCooldownMs) {
+        announceInvite("released");
+        return;
+      }
     } catch {
       // If storage is disabled, the invitation is still limited to this load.
     }
@@ -223,10 +236,14 @@
         document.visibilityState !== "visible" ||
         launcher.dataset.state !== "inactive" || !panel.hidden ||
         !supported() || Notification.permission === "denied"
-      ) return;
+      ) {
+        announceInvite("released");
+        return;
+      }
       markInviteSeen();
       setOpen(true);
     }, inviteDelayMs);
+    announceInvite("scheduled");
   };
 
   const setOpen = (open) => {
@@ -234,6 +251,7 @@
     launcher.setAttribute("aria-expanded", String(open));
 
     if (open) {
+      announceInvite("shown");
       requestAnimationFrame(() => panel.classList.add("is-visible"));
     }
     else {
