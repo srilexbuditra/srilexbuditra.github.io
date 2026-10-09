@@ -1,0 +1,10 @@
+{
+  "name": "srilexbuditra-web-push-api-r1",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Dedicated Web Push backend for srilexbuditra.work REV22 R1.",
+  "dependencies": {
+    "web-push": "3.6.7"
+  }
+}

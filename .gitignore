@@ -31,3 +31,6 @@ Thumbs.db
 *.bak
 # Cloudflare Wrangler local cache
 .wrangler/
+
+# REV22 Web Push local secrets
+/workers/web-push-api-r1/.dev.vars
