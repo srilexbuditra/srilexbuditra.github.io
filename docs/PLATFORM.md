@@ -554,3 +554,41 @@ Tidak ada perubahan pada:
 - `search-enhancer.js`.
 
 REVISION 16 menutup dokumentasi. Runtime production tetap ditambatkan pada commit `68c89f9a6fb4c6dd2ab389619c3a4026cdb07368`.
+
+## Verified Site Publishing Architecture - 2026-10-09
+
+**Status:** AUDITED CONFIGURATION / DOCUMENTATION ONLY.
+
+### Main Website - GitHub Pages
+
+- Repository: srilexbuditra/srilexbuditra.github.io.
+- Publishing branch: main.
+- Public domains: srilexbuditra.work and www.srilexbuditra.work.
+- Cloudflare DNS root A/AAAA records target GitHub Pages addresses; www CNAME targets srilexbuditra.github.io.
+- Cloudflare DNS proxy is enabled for the website records.
+- GitHub Pages build and deployment completed successfully for the reviewed commits.
+
+### Staging Website - Cloudflare Pages
+
+- Cloudflare Pages project: srilexbuditra-github-io.
+- Custom domain: staging.srilexbuditra.work (Active, SSL enabled).
+- Additional project domain: srilexbuditra-github-io.pages.dev.
+- Git integration: srilexbuditra/srilexbuditra.github.io.
+- Production branch of the Pages project: main.
+- Automatic deployments: enabled.
+- Deployment of commit 1f33e12 completed successfully.
+- The Production label inside Cloudflare Pages refers to its own environment and does not mean the main srilexbuditra.work website is served by that Pages project.
+
+### Deployment Safety Boundary
+
+- Both publishing paths currently depend on GitHub main; push to main can trigger automatic publishing on both platforms.
+- GitHub Actions quality and repository audit workflows are validation processes; GitHub Pages has a separate pages-build-deployment process.
+- REV21 remains PRODUCTION LOCKED; changes require explicit review and authorization.
+- REV22 Web Push remains DEPLOYMENT HOLD; local uncommitted source must not be accidentally staged, committed, or published.
+- Cloudflare D1 databases and R2 application objects are separate from Git repository content; publishing documentation does not create or restore backups.
+- Unified Backup & Recovery V1.0 remains APPROVED POLICY SCOPE / IMPLEMENTATION NOT STARTED.
+- DNS, Pages project settings, Workers, secrets, production database migrations, and production restores require separate authorization.
+
+### Evidence Boundary
+
+The configuration above is based on GitHub Actions, Cloudflare Pages Deployments and Custom domains, and Cloudflare DNS screenshots reviewed on 2026-10-09. It does not certify complete runtime health, application data integrity, or every Cloudflare routing rule.

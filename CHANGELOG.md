@@ -1,3 +1,31 @@
+## Site Publishing Architecture Audit - 2026-10-09
+
+**Status:** DOCUMENTATION UPDATED / NO INFRASTRUCTURE CHANGE.
+**Reference commit:** 1f33e12.
+
+### Verified Configuration
+
+- Main website srilexbuditra.work and www use GitHub Pages through Cloudflare DNS/proxy.
+- Staging uses Cloudflare Pages project srilexbuditra-github-io with custom domain staging.srilexbuditra.work.
+- Cloudflare Pages staging domain is Active and SSL enabled.
+- Both publication systems use the GitHub main branch and can publish automatically.
+- GitHub Actions Public Repository Audit and Repository Quality Check were verified successful.
+- GitHub Pages build/deployment and Cloudflare Pages deployment were verified successful for the reviewed commits.
+
+### Governance Recorded
+
+- Technical topology documented in docs/PLATFORM.md.
+- Deployment safety roadmap documented in docs/ROADMAP.md.
+- Documentation maintenance rules updated in docs/README.md.
+- Main publishing overview updated in README.md.
+- REV21 production baseline remains LOCKED.
+- REV22 Web Push remains DEPLOYMENT HOLD.
+- Unified Backup & Recovery V1.0 remains POLICY APPROVED / IMPLEMENTATION NOT STARTED.
+
+No application code, DNS record, Cloudflare Worker, D1 database, R2 bucket, or production deployment setting was modified by this documentation patch.
+
+---
+
 ## Unified Backup & Recovery V1.0 - Policy Baseline
 
 Date: 9 Oktober 2026

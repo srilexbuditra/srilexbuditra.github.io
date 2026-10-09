@@ -351,3 +351,27 @@ Closeout mencatat:
 Platform Baseline 2026.10.07.0002 tetap merupakan historical locked baseline.
 
 Platform Baseline 2026.10.07.0003 aktif setelah REVISION 16 documentation closeout.
+
+## Verified Site Architecture - Documentation Governance
+
+**Audit date:** 2026-10-09.
+**Status:** DOCUMENTATION BASELINE / NO CONFIGURATION CHANGE.
+
+The verified publishing architecture is maintained in the existing documentation:
+
+- README.md: high-level summary of main website and staging paths.
+- docs/PLATFORM.md: technical mapping of GitHub Pages, Cloudflare Pages, DNS/proxy, and deployment boundaries.
+- docs/ROADMAP.md: release safety controls and future improvements.
+- docs/README.md: documentation governance and update rules.
+- CHANGELOG.md: historical record of the architecture audit.
+
+### Maintenance Rules
+
+1. Preserve historic baseline entries and decisions marked LOCKED.
+2. Verify GitHub Pages, Cloudflare Pages, DNS, and deployment triggers before changing the architecture description.
+3. Separate observed configuration from planned safety improvements.
+4. Document evidence date, source revision, and any unresolved uncertainty.
+5. Do not publish REV22 Web Push changes while deployment is HOLD.
+6. Keep D1/R2 backup policy separate from claims of backup automation being active.
+7. Do not create new Markdown files for this Site Architecture update; maintain the five existing documentation files.
+8. Do not commit or push unrelated local source files when publishing documentation.

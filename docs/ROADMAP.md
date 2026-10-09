@@ -1574,3 +1574,34 @@ Next planned revision:
 - REV22 harus dimulai dari READ-ONLY audit sebelum implementasi.
 
 Platform Baseline aktif: `2026.10.07.0006`.
+
+## Site Publishing Safety Roadmap - 2026-10-09
+
+**Status:** DOCUMENTATION BASELINE / SAFETY IMPROVEMENTS NOT IMPLEMENTED.
+
+### Verified Current Publishing Paths
+
+- Main website: GitHub Pages with Cloudflare DNS/proxy, using srilexbuditra.work and www.srilexbuditra.work.
+- Staging website: Cloudflare Pages project srilexbuditra-github-io, using staging.srilexbuditra.work.
+- GitHub main currently feeds the website publication paths; pushes may trigger automatic publication.
+- GitHub Pages and Cloudflare Pages deployments were reviewed as successful for the relevant commits.
+
+### Planned Safety Improvements
+
+1. Document and periodically verify GitHub Pages, Cloudflare Pages, and DNS publishing configuration.
+2. Evaluate isolating staging source from production source to reduce accidental publication risk.
+3. Require an explicit release gate before publishing application changes from main.
+4. Verify the exact staged file list, commit scope, and deployment impact before every push.
+5. Preserve a tested rollback strategy for published static assets and separate backend changes.
+6. Keep database migrations, Cloudflare Worker releases, secrets, and DNS changes behind independent approvals.
+7. Distinguish deployment success from runtime checks, security checks, and database integrity verification.
+8. Keep GitHub Actions repository validation and GitHub Pages deployment status independently recorded.
+9. Preserve REV21 production LOCKED and REV22 Web Push DEPLOYMENT HOLD until specifically authorized.
+10. Implement Unified Backup & Recovery V1.0 only after independent backup, encryption, and recovery testing.
+
+### Release Completion Gate
+
+- Document affected files, source revision, target environment, approvals, and rollback steps.
+- Verify staging before authorizing production application changes.
+- Do not treat documentation-only updates as permission to deploy unfinished source changes.
+- Mark a publishing architecture change VERIFIED only after collecting fresh evidence.

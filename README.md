@@ -464,3 +464,19 @@ Baseline ini menutup:
 - `script.js` dan `search-enhancer.js` tidak berubah.
 
 Platform Baseline 2026.10.07.0003 menggantikan 2026.10.07.0002 sebagai baseline aktif setelah REVISION 16 documentation closeout.
+
+## Site Publishing Architecture - Verified 2026-10-09
+
+**Main website:** https://srilexbuditra.work/ is published through GitHub Pages with Cloudflare DNS/proxy.
+
+**Staging website:** https://staging.srilexbuditra.work/ uses Cloudflare Pages project srilexbuditra-github-io.
+
+- Source repository: srilexbuditra/srilexbuditra.github.io.
+- Publishing source branch: main.
+- GitHub Pages and Cloudflare Pages can both publish automatically following changes to main.
+- Cloudflare Pages project Production environment is separate from the main public website served via GitHub Pages.
+- REV21 production baseline remains LOCKED.
+- REV22 Web Push remains DEPLOYMENT HOLD.
+- Unified Backup & Recovery V1.0 remains a documented policy; backup automation is not yet active.
+
+Technical architecture, DNS evidence, security boundaries, and deployment governance are maintained in docs/PLATFORM.md and docs/ROADMAP.md.
