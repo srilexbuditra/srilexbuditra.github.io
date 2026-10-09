@@ -27,6 +27,14 @@ Status            : PRODUCTION VERIFIED / COMPLETED / LOCKED
 - **Aturan dokumentasi:** gunakan dan perbarui file Markdown master **yang sudah ada**. Jangan membuat file `.md` baru apabila dokumen relevan sudah tersedia.
 - Checkpoint REV21 dan status REV22 HOLD pada bagian arsip/riwayat adalah catatan historis. Status produksi terbaru mengikuti evidence runtime dan checkpoint R3.7 ini.
 <!-- CONTINUITY-REV22-R37:END -->
+<!-- OG-INTERNAL-ROADMAP-V1:START -->
+## Active Project Index - Homepage Internal Links: Banner & OG Portrait
+
+- **Status:** rencana disetujui, belum implementasi. Master tahapan, inventaris kandidat, status per gate, dan kriteria selesai: [`ROADMAP.md`](ROADMAP.md) bagian `PROYEK AKTIF - Internal Page Banner + Open Graph Portrait AVIF`.
+- **Spesifikasi teknis:** [`PLATFORM.md`](PLATFORM.md). **Riwayat:** [`../CHANGELOG.md`](../CHANGELOG.md). **Ringkasan:** [`../README.md`](../README.md).
+- **Scope:** halaman publik internal yang berasal dari homepage; **semua `/program/` dikecualikan**, route privat/duplikat/noindex tidak ditangani otomatis; nama gambar `.avif` sesuai judul masing-masing halaman, ukuran 1024 x 1536 portrait.
+- **Aturan:** jangan tambah file Markdown baru; jangan ulang pengujian yang sudah PASS, jangan menyentuh REV21/REV22 R3.7 dan asset visual homepage LOCKED di luar scope.
+<!-- OG-INTERNAL-ROADMAP-V1:END -->
 
 
 

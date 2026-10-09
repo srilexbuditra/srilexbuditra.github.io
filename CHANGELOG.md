@@ -8,6 +8,15 @@
 - **Dokumentasi:** revisi hanya file Markdown master yang sudah ada (`README.md`, `CHANGELOG.md`, `docs/README.md`, `docs/ROADMAP.md`, `docs/PLATFORM.md`); tidak membuat `.md` baru.
 - **Scope entri ini:** dokumentasi dan governance saja; bukan perubahan aplikasi atau infrastruktur.
 <!-- CONTINUITY-REV22-R37:END -->
+<!-- OG-INTERNAL-ROADMAP-V1:START -->
+## 2026-10-10 - Approved Plan: Internal Link OG Portrait & Missing Page Banners
+
+- **Scope:** dokumentasi rencana saja; HTML/runtime, assets, GitHub/Cloudflare infrastructure, API, Worker, D1 dan `/program/` belum disentuh.
+- **Proyek:** melengkapi halaman publik internal dari homepage yang terkonfirmasi belum memiliki banner atau metadata OG lengkap; format gambar `.avif` 1024 x 1536 portrait dan nama file mengikuti title halaman.
+- **Rencana resmi:** `docs/ROADMAP.md` Gate 0-8: dokumentasi -> satu kali matriks gap -> mapping title/asset -> batch visual -> scoped banner -> scoped metadata -> targeted QA -> controlled production release -> final closeout.
+- **Protected baselines:** documented Git main `cc1c73e`; verified application `ec12c92` (REV22 R3.7 FINAL/LOCKED), REV21 LOCKED, homepage master visual LOCKED; produksi tetap aman sampai ada commit implementasi yang disetujui.
+- **Existing docs only:** `README.md`, `CHANGELOG.md`, `docs/README.md`, `docs/ROADMAP.md`, `docs/PLATFORM.md` diperbarui tanpa membuat `.md` baru. Status tahap berikutnya ditulis pada file-file ini, tanpa mengulang pekerjaan yang sudah sukses.
+<!-- OG-INTERNAL-ROADMAP-V1:END -->
 
 ## Site Publishing Architecture Audit - 2026-10-09
 

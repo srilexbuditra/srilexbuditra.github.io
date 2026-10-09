@@ -29,6 +29,16 @@ Status            : PRODUCTION VERIFIED / COMPLETED / LOCKED
 - **Verifikasi:** URL Cloudflare Pages dan domain utama `https://srilexbuditra.work/` telah diuji pengguna di Microsoft Edge untuk alur antarmuka; pengiriman native Web Push telah diverifikasi pada milestone sebelumnya, bukan diuji ulang pada R3.7.
 - **Continuity:** lanjutkan setiap pengembangan dari baseline terverifikasi terbaru. Kebijakan lengkap: `docs/ROADMAP.md`. Pertahankan dokumentasi di file `.md` master yang sudah ada.
 <!-- CONTINUITY-REV22-R37:END -->
+<!-- OG-INTERNAL-ROADMAP-V1:START -->
+## Active Planned Scope - Internal Page Banner & Open Graph AVIF Portrait
+
+**Status:** DOCUMENTATION BASELINE / IMPLEMENTATION NOT STARTED. Rencana berurutan dan source of truth berada pada [`docs/ROADMAP.md`](ROADMAP.md) bagian `PROYEK AKTIF - Internal Page Banner + Open Graph Portrait AVIF`.
+- Dari navigasi homepage, tetapkan sekali matriks URL valid dan gap metadata/banner. Daftar 40 URL sebelumnya hanyalah kandidat yang akan disaring; jangan mengubah halaman dengan OG dan banner yang sudah PASS.
+- **Ketentuan visual:** AVIF **1024 x 1536 portrait**, nama aset dalam bentuk slug **judul halaman** (bukan `og-preview.avif` generik), style identitas homepage/master visual LOCKED dan `docs/BRAND.md`, tidak crop atau distorsi. In-page banner hanya pada halaman publik yang memang belum memilikinya.
+- **Ketentuan head:** title, description, canonical, robots sesuai existing, theme color, OG image/title/description/url/type/dimensions/alt, Twitter/X, serta itemprop bila relevan; URL gambar absolut HTTPS. Verifikasi dukungan preview AVIF per platform; fallback gambar alternatif hanya jika dibutuhkan dan berbasis desain yang sama.
+- **Batas:** jangan menyentuh `/program/` beserta turunannya, homepage visual master LOCKED, dashboard/auth/portal privat/noindex, atau kode REV21/REV22 R3.7. Metadata dan aset yang sudah benar dipertahankan.
+- **Delivery:** source changes minimal per batch dengan backup/rollback; targeted review + staging/production verification; catat status ke Markdown yang sudah ada; tidak perlu tes ulang fitur LOCKED yang tidak terkait.
+<!-- OG-INTERNAL-ROADMAP-V1:END -->
 
 
 

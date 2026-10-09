@@ -45,6 +45,54 @@ Status            : PRODUCTION VERIFIED / COMPLETED / LOCKED
 
 **Supersession:** pernyataan historis di bawah yang menyebut `REV22 PLANNED`, `NOT LIVE`, atau `DEPLOYMENT HOLD` berlaku untuk checkpoint lama dan **tidak lagi menjelaskan status REV22 R3.7 saat ini**. Jangan menghapus/mengganti catatan sejarahnya; gunakan bagian ini sebagai otoritas operasional terbaru.
 <!-- CONTINUITY-REV22-R37:END -->
+<!-- OG-INTERNAL-ROADMAP-V1:START -->
+## PROYEK AKTIF - Internal Page Banner + Open Graph Portrait AVIF (Scope di luar /program/)
+
+**Status:** APPROVED SCOPE / DOCUMENTATION BASELINE ONLY - IMPLEMENTATION NOT STARTED.
+**Disetujui:** 10 Oktober 2026 (Asia/Jakarta).
+**Repository reference before project:** `main` documentation commit `cc1c73e`; application functional baseline `ec12c92` (REV22 R3.7 FINAL / LOCKED). Perubahan proyek selanjutnya harus memakai HEAD terbaru yang benar-benar terverifikasi; kedua hash ini adalah checkpoint awal, bukan instruksi reset.
+**Tujuan:** melengkapi banner halaman yang masih kosong, gambar Open Graph masing-masing halaman (AVIF portrait 1024 x 1536), dan metadata HTML/OG/Twitter untuk halaman publik internal yang dituju dari Home, tanpa membuat ulang fitur atau konten yang sudah selesai.
+
+### Batas Scope - WAJIB
+- **IN:** halaman publik mandiri yang ditemukan lewat navigation, mega menu, search, CTA, konten, atau footer homepage `https://srilexbuditra.work/`, dan halaman turunan publik terkait. Fokus hanya pada URL yang benar-benar aktif, canonical, relevan, serta masih memiliki gap banner atau metadata.
+- **OUT ABSOLUT:** seluruh `/program/` termasuk descendant dan query/redirect menuju area tersebut. Jangan mengubah konten maupun metadata modul program pada pekerjaan ini.
+- **OUT NORMAL:** homepage yang sudah LOCKED; area admin/auth/client account/dashboard, formulir berisi data pribadi, API, non-indexable pages, serta URL redirect/duplikat, kecuali ada persetujuan scoped terpisah dan alasan keamanan/SEO yang tervalidasi.
+- Inventaris diskusi awal berisi **40 URL kandidat**, bukan 40 pekerjaan wajib dan bukan bukti bahwa 40 URL tidak memiliki Open Graph. Final target adalah hanya URL publik valid yang hasil **satu kali audit awal** mengonfirmasi gap. Jangan mengulang audit yang sudah PASS kecuali konten berubah atau muncul regresi nyata.
+- Halaman yang sudah mempunyai metadata, OG image atau banner yang benar harus **dipertahankan**, bukan diganti massal. Halaman yang menggunakan gambar umum hanya diubah bila perbaikan memang diperlukan dan disetujui.
+
+### Inventaris Awal Untuk Disaring Sekali Pada Gate 1
+1. **Public hubs (11 kandidat):** `/profil/`, `/keahlian-teknis/`, `/layanan/`, `/proses-kerja/`, `/mengapa-memilih-saya/`, `/kepercayaan-transparansi/`, `/engineering/`, `/aktivitas/`, `/portfolio/`, `/insights/`, `/faq/`.
+2. **Insights (11 kandidat):** `/insights/membangun-alur-digital-peserta/`, `/insights/qr-verification-sertifikat-digital/`, `/insights/responsive-first-portal-peserta/`, `/insights/ekosistem-digital-umroh-semi-private-bengkulu/`, `/insights/client-management-platform/`, `/insights/cloudflare-infrastructure/`, `/insights/official-document-verification/`, `/insights/visitor-analytics-privacy/`, `/insights/demo-login-automatic-access/`, `/insights/alur-pengunjung-menjadi-klien/`, `/insights/membangun-srilexbuditra-work-sebagai-digital-platform/`.
+3. **Portfolio (14 kandidat):** `/portfolio/ketahanan-pangan/`, `/portfolio/umroh-semi-private-bengkulu/`, `/portfolio/client-management-platform/`, `/portfolio/document-verification/`, `/portfolio/digital-membership-qr/`, `/portfolio/visitor-analytics/`, `/portfolio/website-sekolah/project-detail.html`, `/portfolio/aplikasi-pos/detail.html`, `/portfolio/sistem-administrasi/detail.html`, `/portfolio/website-sekolah/`, `/portfolio/aplikasi-pos/`, `/portfolio/sistem-administrasi/`, `/portfolio/website-sekolah/detail.html`, `/portfolio/website-sekolah/tjkt-smkn1kotabengkulu/`.
+4. **Legal/utility (4 kandidat):** `/privacy.html`, `/terms.html`, `/security.html`, `/verify/verify.html`. Terapkan perubahan bila halaman publik memang perlu, tanpa mengubah naskah legal atau logic verifikasi. `/verify/` redirect ditangani sebagai redirect, bukan target banner.
+5. **Review terpisah:** `/portal/`, registration, auth, demo, admin, dan route bertanda `noindex`. Jangan mengubah `robots` atau memasukkan data sensitif agar mengejar OG.
+
+### Gate dan Urutan Pengerjaan (sekuensial, tidak diulang)
+**Gate 0 - Documentation Baseline (sekarang).** Catat seluruh rencana di lima master Markdown EXISTING. Status `APPROVED SCOPE / IMPLEMENTATION NOT STARTED`. Tidak menyentuh aplikasi, assets, Workers, D1, atau deployment. PASS setelah commit dokumentasi saja dan working tree clean.
+
+**Gate 1 - Complete Existing Inventory & Gap Matrix (tanpa audit ulang).** Gunakan inventaris awal 40 kandidat yang **sudah ditelusuri** dari homepage/sitemap/source. Hanya lengkapi bukti yang belum diperiksa: HTTP/canonical/robots, `<head>`, dan aset/banner. Jangan merayapi ulang URL yang statusnya sudah pasti kecuali ditemukan perubahan atau regresi nyata. Untuk tiap URL rekam tepat satu keputusan: `READY-NEEDS-OG`, `READY-NEEDS-BANNER`, `READY-NEEDS-BOTH`, `ALREADY-PASS`, `EXCLUDED-REDIRECT-DUPLICATE`, `EXCLUDED-PRIVATE`, atau `PENDING-EVIDENCE`. Simpan status ringkas pada bagian proyek aktif di `docs/ROADMAP.md` dan catatan teknis di `docs/PLATFORM.md`, tidak membuat `.md` baru. Jangan menyatakan gap jika belum terbukti.
+
+**Gate 2 - Title, Copy, Asset Mapping & Visual Approval.** Kunci judul sesuai `<title>` aktual (normalisasi hanya suffix brand jika diperlukan), deskripsi ringkas unik, canonical, `og:type`, nama file per halaman dalam bentuk slug judul: huruf kecil, kata dipisah `-`, ekstensi `.avif` (contoh `keahlian-teknis.avif`). Ukuran setiap MASTER turunan halaman **1024 x 1536 px portrait**, tidak diputar atau dipotong. Lokasi aset publik konsisten, misalnya `/images/og/internal/<slug-title>.avif`. Hindari duplikasi nama, benturan dengan file LOCKED, teks yang terlalu dekat batas, dan identitas/logo yang tidak disetujui. Selaraskan gaya dengan visual master homepage yang telah LOCKED sesuai `docs/BRAND.md`; **EDIT MASTER - NOT REDESIGN MASTER**. Setujui mapping sebelum produksi massal.
+
+**Gate 3 - Produce and Validate Image Assets in Batches.** Buat gambar AVIF portrait tiap halaman target yang membutuhkan; uji dimensi `1024 x 1536`, kemampuan decode, ukuran berkas, kesesuaian tema/judul, dan keterbacaan HP/desktop. Simpan master/aset dalam folder yang sesuai; gunakan file nama sesuai title. Hindari perubahan gambar pada halaman yang sudah PASS. Jika crawler sosial tidak menerima AVIF atau memotong portrait, boleh menyediakan turunan JPG/landscape dari desain yang sama **hanya setelah preview test**, sambil tetap menyediakan AVIF portrait yang diminta; jangan menyatakan WhatsApp/Facebook/LinkedIn pasti menampilkan portrait utuh.
+
+**Gate 4 - Scoped In-Page Banner (hanya halaman tanpa banner).** Tambahkan hero/banner ke halaman publik yang benar-benar belum mempunyai, gunakan komponen/CSS scoped, `width/height`, lazy/eager sesuai LCP, `object-fit:contain` untuk menjaga komposisi portrait, alt bermakna, layout mobile/desktop; pertahankan navbar, footer, CTA, analytics consent, Web Push, PWA, Translate, dan seluruh interaksi yang sudah stabil. Banner halaman tidak wajib identik dengan crop OG dan tidak boleh menutupi konten. Jangan menambah banner ke portal privat, formulir atau redirect.
+
+**Gate 5 - Scoped SEO/Open Graph/Twitter Metadata.** Lengkapi hanya `<head>` halaman target: `<title>`, meta description, canonical, robots sesuai existing policy, theme-color, OG type/title/description/url/image/secure_url/image:type/width/height/alt, Twitter card/title/description/image/alt, dan schema/itemprop bila relevan. Gunakan URL absolut HTTPS, path aset faktual, `image/avif` hanya jika benar-benar AVIF, `width=1024`, `height=1536`; pertahankan OG yang sudah benar. `twitter:card=summary_large_image` tidak menjamin seluruh portrait terlihat. Jangan duplicate canonical/OG tags, jangan memodifikasi `robots=noindex` demi share preview, jangan membocorkan data.
+
+**Gate 6 - One-Time Scope QA per Batch.** Cek setiap URL yang diubah: HTML/head unik, tidak ada tag OG ganda, canonical benar, gambar AVIF 200 dan decode, dimensions akurat, SEO description/title sesuai halaman, tautan navigasi tidak putus, responsif desktop/mobile, share preview pada platform relevan, aksesibilitas alt, tanpa layout shift atau crop paksa. Pilih representatif yang diperlukan untuk preview platform; catat hasil per URL/batch. Tidak mengulang pengujian modul lain yang telah PASS.
+
+**Gate 7 - Controlled Release per Batch.** Pekerjaan dimulai dari `main` terbaru yang tersinkron dan bersih; backup + file allowlist hanya untuk URL aset/frontends terkait; review diff; commit/push batch kecil sesuai prioritas `public hubs -> Insights -> Portfolio -> eligible legal/utility`. Verifikasi preview/staging lalu domain utama; rollback spesifik batch jika regresi. Jangan membuat/merge archive, menyentuh `/program/`, Worker, D1, VAPID, secrets, API routes, atau REV21/REV22 R3.7. Dokumentasi hasil per batch di file master yang sudah ada saja.
+
+**Gate 8 - Final Coverage and Closeout.** Cocokkan matriks Gate 1 dengan target final: semua `READY-...` selesai/terverifikasi, `ALREADY-PASS` tidak disentuh, `EXCLUDED` tetap di luar scope, `PENDING` tidak dilabeli PASS. Pastikan preview platform sesuai kemampuan masing-masing dan di production halaman publik tampil benar. Perbarui `docs/ROADMAP.md`, `docs/PLATFORM.md`, `CHANGELOG.md` existing dengan bukti commits, URL, coverage, aset, known limitations dan baseline terbaru; tandai `PRODUCTION VERIFIED / COMPLETED / LOCKED` hanya setelah pengguna menyetujui bukti akhir.
+
+### Prinsip Eksekusi / Larangan Rework
+- Lanjutkan dari baseline Git paling baru yang telah diverifikasi; jangan reset ke `ec12c92` atau membuat ulang hasil `cc1c73e`.
+- **Tidak mengulang pengujian REV21, REV22 R3.7 atau fitur lain yang sudah PASS**, kecuali temuan regresi spesifik menunjukkan dampak nyata. Gunakan regresi *terarah* ke halaman yang dimodifikasi.
+- Satu kali audit awal -> mapping terkunci -> produksi gambar per batch -> metadata/banner terarah -> QA terarah -> release -> closeout. Setelah setiap Gate PASS, lanjut ke Gate berikutnya.
+- `docs/ROADMAP.md` menjadi status master, `docs/PLATFORM.md` sebagai spesifikasi teknis; `README.md` dan `docs/README.md` menunjuk ke status; `CHANGELOG.md` mencatat milestone. **Dilarang menambah file `.md` baru untuk proyek ini.**
+- Setiap perubahan hanya disetujui jika site layout/brand dan keempat fitur visitor UX R3.7 tetap berfungsi serta tidak memengaruhi `/program/`.
+<!-- OG-INTERNAL-ROADMAP-V1:END -->
 
 
 > Master roadmap dan continuity document srilexbuditra.work.

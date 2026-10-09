@@ -27,6 +27,15 @@ Status            : PRODUCTION VERIFIED / COMPLETED / LOCKED
 - **Dokumentasi:** perbarui Markdown master yang **sudah ada**, khususnya `docs/ROADMAP.md` sebagai sumber continuity. Jangan membuat file `.md` baru tanpa persetujuan khusus.
 - Catatan baseline REV21 bertanggal sebelumnya tetap merupakan **riwayat sah**, bukan pengganti checkpoint R3.7 yang lebih baru.
 <!-- CONTINUITY-REV22-R37:END -->
+<!-- OG-INTERNAL-ROADMAP-V1:START -->
+## Pekerjaan Berikutnya - Internal Page OG + Banner (Direncanakan)
+
+- **Status:** APPROVED SCOPE / DOCUMENTATION BASELINE ONLY; implementasi aset dan HTML **BELUM DIMULAI**.
+- Target: halaman publik internal yang dituju dari homepage, di luar seluruh `/program/`. Lengkapi banner yang benar-benar belum ada, OG preview AVIF **1024 x 1536 portrait**, nama file mengikuti **judul halaman**, dan metadata lengkap tanpa mengganti aset/fitur yang sudah PASS.
+- Urutan terkunci: inventaris dan gap sekali -> mapping judul + aset -> desain/gambar batch -> banner scoped -> metadata scoped -> targeted QA -> controlled release -> final verified closeout.
+- **Dokumen utama:** [`docs/ROADMAP.md`](docs/ROADMAP.md); spesifikasi teknis [`docs/PLATFORM.md`](docs/PLATFORM.md). Catat progress hanya pada file `.md` EXISTING.
+- **Protected:** REV21, REV22 R3.7 (`ec12c92`), status dokumentasi `cc1c73e`, visual master homepage, program, Worker, D1, API, PWA, Push, Privasi, dan Translate; jangan mengulang pekerjaan yang telah terverifikasi.
+<!-- OG-INTERNAL-ROADMAP-V1:END -->
 
 
 <p align="center">
