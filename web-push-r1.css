@@ -390,3 +390,20 @@ body:has(.sb-pwa-install.is-visible) .sb-push-panel {
 @media print {
   .sb-push-foreground { display: none !important; }
 }
+
+/* REV22 R3.4 — no persistent floating bell after verified activation.
+   Footer opt-out remains available without disturbing existing layouts. */
+.sb-push-launcher[hidden],
+.sb-push-manage-link[hidden] { display: none !important; }
+.sb-push-manage-link {
+  font: inherit;
+  color: inherit;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+.sb-push-manage-link:hover,
+.sb-push-manage-link:focus-visible { color: #ffcf43; }

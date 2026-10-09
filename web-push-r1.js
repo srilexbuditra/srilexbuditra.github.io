@@ -24,6 +24,8 @@
   let button;
   let badge;
   let statusText;
+  let manageButton = null;
+  let permissionRefreshTimer = null;
   let subscription = null;
   let busy = false;
   let publicKeyReady = null;
@@ -209,6 +211,15 @@
     badge.textContent = labels[state] || "Status";
     statusText.textContent = message;
 
+    // R3.4: an active subscriber does not need a permanent floating bell.
+    // A discreet footer control preserves opt-out without adding clutter.
+    const isActive = state === "active" &&
+      (previewMode || (supported() && Notification.permission === "granted"));
+    const managing = state === "busy" && manageButton && !manageButton.hidden;
+    launcher.hidden = isActive || Boolean(managing);
+    if (manageButton) manageButton.hidden = !(isActive || managing);
+    if (isActive) setOpen(false);
+
     if (state === "active") {
       button.textContent = "Nonaktifkan Notifikasi";
       button.disabled = false;
@@ -286,7 +297,16 @@
     }
 
     if (Notification.permission === "denied") {
+      subscription = null;
       setState("blocked", "Izin notifikasi sedang diblokir. Ubah izin situs melalui pengaturan browser.");
+      return;
+    }
+
+    // Browser permission may have been changed from its address-bar control.
+    // An existing browser push endpoint alone must not be shown as active.
+    if (Notification.permission !== "granted") {
+      subscription = null;
+      setState("inactive", "Izin notifikasi browser belum aktif. Klik Aktifkan Notifikasi untuk berlangganan kembali.");
       return;
     }
 
@@ -538,6 +558,7 @@
     launcher.type = "button";
     launcher.className = "sb-push-launcher";
     launcher.dataset.state = "inactive";
+    launcher.hidden = true; // avoid a brief bell flash for returning subscribers
     launcher.setAttribute("aria-controls", "sbPushPanel");
     launcher.setAttribute("aria-expanded", "false");
     launcher.setAttribute("aria-label", "Buka pengaturan notifikasi");
@@ -628,6 +649,20 @@
     panel.append(card);
     document.body.append(panel, launcher);
 
+    // Keep the old "Nonaktifkan Notifikasi" capability available after the
+    // floating control is hidden. This non-floating link lives in the footer.
+    const footerLegal = document.querySelector(".sb-footer-legal");
+    if (footerLegal) {
+      manageButton = document.createElement("button");
+      manageButton.type = "button";
+      manageButton.className = "sb-push-manage-link";
+      manageButton.textContent = "Kelola Notifikasi";
+      manageButton.setAttribute("aria-controls", "sbPushPanel");
+      manageButton.hidden = true;
+      footerLegal.append(manageButton);
+      manageButton.addEventListener("click", () => setOpen(true));
+    }
+
     launcher.addEventListener("click", () => {
       setOpen(launcher.getAttribute("aria-expanded") !== "true");
     });
@@ -638,7 +673,7 @@
       if (launcher.dataset.state === "sync") {
         await activate();
       }
-      else if (subscription || launcher.dataset.state === "active") {
+      else if (launcher.dataset.state === "active") {
         await deactivate();
       }
       else {
@@ -752,8 +787,42 @@
     }, 10000);
   };
 
+  // Read-only sync after browser permission changes (address-bar site controls).
+  // No automatic permission prompts, push requests, or D1 mutations.
+  const watchPermission = () => {
+    const schedule = () => {
+      if (previewMode || busy) return;
+      if (permissionRefreshTimer !== null) clearTimeout(permissionRefreshTimer);
+      permissionRefreshTimer = setTimeout(async () => {
+        permissionRefreshTimer = null;
+        if (busy || document.visibilityState !== "visible") return;
+        const wasActive = launcher.dataset.state === "active";
+        await refresh();
+        const noLongerActive = launcher.dataset.state !== "active";
+        if (wasActive && noLongerActive && document.visibilityState === "visible") {
+          setOpen(true); // show the original panel again after browser opt-out
+        }
+      }, 200);
+    };
+
+    window.addEventListener("focus", schedule);
+    window.addEventListener("pageshow", schedule);
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "visible") schedule();
+    });
+    if (navigator.permissions?.query) {
+      void navigator.permissions.query({ name: "notifications" })
+        .then(permission => {
+          if (permission.addEventListener) permission.addEventListener("change", schedule);
+          else permission.onchange = schedule;
+        })
+        .catch(() => {});
+    }
+  };
+
   const init = async () => {
     build();
+    if (!previewMode && supported()) watchPermission();
     if (!previewMode && supported()) {
       navigator.serviceWorker.addEventListener("message", event => {
         showForegroundBanner(event.data);
