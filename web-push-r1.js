@@ -665,8 +665,105 @@
     });
   };
 
+  // R3.3: optional foreground banner; native system Web Push is unchanged.
+  // Render with textContent only. Never treat notification data as HTML.
+  let floatingBanner = null;
+  let floatingTimer = null;
+
+  const sameOriginPath = value => {
+    try {
+      const url = new URL(
+        typeof value === "string" && value.trim() ? value : "/",
+        location.origin
+      );
+      return url.origin === location.origin
+        ? `${url.pathname}${url.search}${url.hash}`
+        : "/";
+    }
+    catch { return "/"; }
+  };
+
+  const showForegroundBanner = detail => {
+    if (
+      previewMode ||
+      !detail ||
+      detail.type !== "SB_REV22_FOREGROUND_PUSH_V1" ||
+      document.visibilityState !== "visible" ||
+      !document.body ||
+      !supported() ||
+      Notification.permission !== "granted"
+    ) return;
+
+    if (!floatingBanner) {
+      const wrap = document.createElement("aside");
+      wrap.className = "sb-push-foreground";
+      wrap.hidden = true;
+      wrap.setAttribute("role", "status");
+      wrap.setAttribute("aria-live", "polite");
+      wrap.setAttribute("aria-atomic", "true");
+
+      const mark = document.createElement("span");
+      mark.className = "sb-push-foreground-mark";
+      mark.textContent = "🔔";
+      mark.setAttribute("aria-hidden", "true");
+
+      const copy = document.createElement("div");
+      copy.className = "sb-push-foreground-copy";
+      const headline = document.createElement("strong");
+      headline.className = "sb-push-foreground-title";
+      const message = document.createElement("p");
+      message.className = "sb-push-foreground-body";
+      copy.append(headline, message);
+
+      const dismiss = document.createElement("button");
+      dismiss.type = "button";
+      dismiss.className = "sb-push-foreground-close";
+      dismiss.setAttribute("aria-label", "Tutup pesan notifikasi");
+      dismiss.textContent = "×";
+
+      const open = document.createElement("a");
+      open.className = "sb-push-foreground-link";
+      open.textContent = "Buka";
+
+      wrap.append(mark, copy, dismiss, open);
+      document.body.append(wrap);
+      dismiss.addEventListener("click", () => {
+        if (floatingTimer !== null) clearTimeout(floatingTimer);
+        floatingTimer = null;
+        wrap.hidden = true;
+      });
+      floatingBanner = { wrap, headline, message, open };
+    }
+
+    const title = typeof detail.title === "string" && detail.title.trim()
+      ? detail.title.trim().slice(0, 120) : "Srilex Buditra";
+    const body = typeof detail.body === "string" && detail.body.trim()
+      ? detail.body.trim().slice(0, 320) : "Ada pembaruan dari srilexbuditra.work.";
+
+    floatingBanner.headline.textContent = title;
+    floatingBanner.message.textContent = body;
+    floatingBanner.open.href = sameOriginPath(detail.url);
+    floatingBanner.wrap.hidden = false;
+
+    if (floatingTimer !== null) clearTimeout(floatingTimer);
+    floatingTimer = setTimeout(() => {
+      floatingBanner.wrap.hidden = true;
+      floatingTimer = null;
+    }, 10000);
+  };
+
   const init = async () => {
     build();
+    if (!previewMode && supported()) {
+      navigator.serviceWorker.addEventListener("message", event => {
+        showForegroundBanner(event.data);
+      });
+      // Existing subscribers receive the updated SW on their next page visit;
+      // no permission prompt or subscription change is needed.
+      void navigator.serviceWorker.getRegistration(SW_SCOPE)
+        .then(registration => registration && registration.update())
+        .catch(() => {});
+    }
     if (!previewMode) {
       // Background GET only: never ask for browser permission on page load.
       void loadPublicKey().catch(() => {});

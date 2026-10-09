@@ -296,3 +296,97 @@ body:has(.sb-pwa-install.is-visible) .sb-push-panel {
     display: none !important;
   }
 }
+
+/* REV22 R3.3 — in-page banner only while the homepage is visible.
+   Existing Android/Windows notification channels remain unchanged. */
+.sb-push-foreground[hidden] { display: none !important; }
+.sb-push-foreground {
+  position: fixed;
+  top: max(12px, calc(env(safe-area-inset-top) + 12px));
+  right: max(12px, env(safe-area-inset-right));
+  z-index: 2147482450;
+  width: min(410px, calc(100vw - 24px));
+  max-height: min(220px, 50dvh);
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr) 32px;
+  gap: 10px;
+  align-items: start;
+  padding: 16px 13px 14px;
+  overflow: auto;
+  border: 1px solid rgba(74, 176, 221, .52);
+  border-radius: 17px;
+  background: linear-gradient(142deg, #082e44, #031426);
+  color: #f7fbff;
+  box-shadow: 0 20px 48px rgba(0, 0, 0, .45);
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  animation: sb-push-foreground-in .22s ease-out;
+}
+.sb-push-foreground::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 70%;
+  height: 2px;
+  background: linear-gradient(90deg, #22c5ee, #ffb51b, transparent);
+}
+.sb-push-foreground-mark {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(34, 197, 238, .15);
+  font-size: 18px;
+}
+.sb-push-foreground-copy { min-width: 0; }
+.sb-push-foreground-title {
+  display: block;
+  margin: 1px 0 6px;
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+.sb-push-foreground-body {
+  margin: 0;
+  color: #c9dbe5;
+  font-size: 12px;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+.sb-push-foreground-close {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 1px solid rgba(140, 192, 217, .32);
+  border-radius: 50%;
+  background: rgba(2, 15, 28, .68);
+  color: #e6f6ff;
+  font: 22px/1 system-ui, sans-serif;
+  cursor: pointer;
+}
+.sb-push-foreground-link {
+  grid-column: 2 / 3;
+  justify-self: start;
+  margin-top: -1px;
+  color: #ffd04d;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  font: 700 11px/1.4 Inter, system-ui, sans-serif;
+}
+.sb-push-foreground-close:focus-visible,
+.sb-push-foreground-link:focus-visible { outline: 2px solid #ffd04d; outline-offset: 2px; }
+@keyframes sb-push-foreground-in {
+  from { opacity: 0; transform: translateY(-12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sb-push-foreground { animation: none; }
+}
+@media print {
+  .sb-push-foreground { display: none !important; }
+}

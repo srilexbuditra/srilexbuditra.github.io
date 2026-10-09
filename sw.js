@@ -64,8 +64,10 @@ self.addEventListener("push", event => {
 
   const target = safePath(payload.url);
 
-  event.waitUntil(
-    self.registration.showNotification(title, {
+  // Preserve the native system notification, even when a website tab is open.
+  // A visible homepage additionally receives a small in-page banner.
+  event.waitUntil((async () => {
+    await self.registration.showNotification(title, {
       body,
       icon: DEFAULT_ICON,
       tag:
@@ -76,8 +78,35 @@ self.addEventListener("push", event => {
       data: {
         url: target
       }
-    })
-  );
+    });
+
+    try {
+      const pages = await self.clients.matchAll({
+        type: "window",
+        includeUncontrolled: true
+      });
+
+      for (const page of pages) {
+        const pageUrl = new URL(page.url);
+        if (
+          page.visibilityState !== "visible" ||
+          pageUrl.origin !== self.location.origin ||
+          !["/", "/index.html"].includes(pageUrl.pathname)
+        ) continue;
+
+        page.postMessage({
+          type: "SB_REV22_FOREGROUND_PUSH_V1",
+          title,
+          body,
+          url: target
+        });
+        break; // Only one visible homepage gets the extra banner.
+      }
+    }
+    catch {
+      // In-page display is optional; native Web Push remains intact.
+    }
+  })());
 });
 
 self.addEventListener("notificationclick", event => {
