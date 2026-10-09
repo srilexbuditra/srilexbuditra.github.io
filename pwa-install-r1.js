@@ -43,7 +43,10 @@
   let interactionSeen = false;
   let pushPriority = "pending";
   let pushPromptShownThisVisit = false;
-  const pushStartupDeadline = Date.now() + PUSH_STARTUP_GRACE;
+  let pushStartupDeadline = Date.now() + PUSH_STARTUP_GRACE;
+  let manualInstallLink = null;
+  const privacyReady = () => window.SBVisitorPromptGate?.isReady() === true;
+  const FOLLOW_UP_DELAY = 8500;
 
   let readyAt =
     Date.now() + (previewMode ? PREVIEW_DELAY : NORMAL_DELAY);
@@ -404,16 +407,17 @@
     pushPriority === "scheduled" ||
     (pushPriority === "pending" && Date.now() < pushStartupDeadline);
 
-  const revealInstallCard = () => {
+  const revealInstallCard = (manual = false) => {
+    if (!privacyReady()) return;
     if (
       isStandalone() ||
-      isCoolingDown() ||
-      !eligibleForCard() ||
-      pushPromptShownThisVisit ||
+      (!manual && isCoolingDown()) ||
+      (!manual && !eligibleForCard()) ||
+      (!manual && pushPromptShownThisVisit) ||
       document.visibilityState === "hidden"
     ) return;
 
-    if (waitingForPush()) {
+    if (!manual && waitingForPush()) {
       if (pushPriority === "pending") scheduleReveal();
       return;
     }
@@ -434,11 +438,13 @@
     }
 
     if (
+      !privacyReady() ||
       isStandalone() ||
       isCoolingDown() ||
       !eligibleForCard() ||
       pushPromptShownThisVisit ||
       pushPriority === "scheduled" ||
+      pushPriority === "shown" ||
       document.visibilityState === "hidden"
     ) return;
 
@@ -455,25 +461,67 @@
   };
 
 
-  // The Web Push script is loaded after this script (both are deferred).
-  // It announces when an opt-in invitation is scheduled or actually shown.
-  // Once push has appeared we suppress automatic PWA for this page visit,
-  // but keep the native beforeinstallprompt event and browser installation.
-  window.addEventListener(PUSH_GATE_EVENT, (event) => {
-    const state = event && event.detail && event.detail.state;
-    if (!new Set(["scheduled", "shown", "released"]).has(state)) return;
-
+  // Web Push and privacy decisions are independent. Do not permanently
+  // suppress PWA after push is dismissed; queue a considerate follow-up.
+  window.addEventListener(PUSH_GATE_EVENT, event => {
+    const state = event?.detail?.state;
+    if (!["privacy-pending", "scheduled", "shown", "released", "closed"].includes(state)) return;
     if (state === "shown") pushPromptShownThisVisit = true;
     pushPriority = state;
-    if (state === "scheduled" || state === "shown") {
+    if (["privacy-pending", "scheduled", "shown"].includes(state)) {
       if (revealTimer) window.clearTimeout(revealTimer);
       revealTimer = null;
       hideInstallCard(0);
       return;
     }
-
+    if (state === "closed") {
+      pushPromptShownThisVisit = false;
+      readyAt = Math.max(readyAt, Date.now() + FOLLOW_UP_DELAY);
+    }
     if (!pushPromptShownThisVisit) scheduleReveal();
   });
+
+  window.addEventListener("sb:visitor:privacy-state", event => {
+    if (!event.detail?.ready) {
+      if (revealTimer) window.clearTimeout(revealTimer);
+      revealTimer = null;
+      hideInstallCard(0);
+      return;
+    }
+    if (pushPromptShownThisVisit) {
+      // A privacy settings dialog interrupted the push card; resume the
+      // non-intrusive PWA queue only after the privacy choice is finished.
+      pushPromptShownThisVisit = false;
+      readyAt = Math.max(readyAt, Date.now() + FOLLOW_UP_DELAY);
+    } else {
+      readyAt = Math.max(readyAt, Date.now() + NORMAL_DELAY);
+    }
+    pushStartupDeadline = Date.now() + PUSH_STARTUP_GRACE;
+    scheduleReveal();
+  });
+
+  // The install option remains accessible even if an automatic offer is delayed.
+  const updateManualLink = () => {
+    if (manualInstallLink) manualInstallLink.hidden = isStandalone();
+  };
+  const installFooterLink = () => {
+    const footer = document.querySelector(".sb-footer-legal");
+    if (!footer || manualInstallLink) return;
+    manualInstallLink = createElement("button", "sb-push-manage-link", "Pasang Aplikasi");
+    manualInstallLink.type = "button";
+    manualInstallLink.hidden = true;
+    footer.append(manualInstallLink);
+    manualInstallLink.addEventListener("click", () => {
+      if (!privacyReady() || isStandalone()) return;
+      window.dispatchEvent(new CustomEvent("sb:visitor:pwa-manual-open"));
+      revealInstallCard(true);
+      if (!eligibleForCard()) setStatus("Jika tombol instalasi browser belum tersedia, gunakan menu browser untuk memasang aplikasi.");
+    });
+    updateManualLink();
+  };
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", installFooterLink, { once: true });
+  } else installFooterLink();
 
   document.addEventListener("visibilitychange", () => {
     if (document.visibilityState === "visible") scheduleReveal();
@@ -500,7 +548,7 @@
       event.preventDefault();
 
       deferredPrompt = event;
-
+      updateManualLink();
       scheduleReveal();
     }
   );
@@ -509,6 +557,7 @@
     "appinstalled",
     () => {
       deferredPrompt = null;
+      updateManualLink();
 
       clearTimestamp(DISMISS_KEY);
       clearTimestamp(CANCEL_KEY);

@@ -39,6 +39,7 @@
   let inviteShownInPage = false;
   // R3.6: announce only prompt priority; no subscription or permission change.
   const invitePriorityEvent = "sb:rev22:push-invite-priority";
+  const privacyReady = () => window.SBVisitorPromptGate?.isReady() === true;
   const announceInvite = state => {
     window.dispatchEvent(new CustomEvent(invitePriorityEvent, {
       detail: { state }
@@ -207,6 +208,11 @@
   };
 
   const scheduleInvite = () => {
+    stopInviteTimer();
+    if (!privacyReady()) {
+      announceInvite("privacy-pending");
+      return;
+    }
     if (
       previewMode || inviteShownInPage || busy ||
       !supported() || (ios() && !standalone()) ||
@@ -232,7 +238,7 @@
     inviteTimer = setTimeout(() => {
       inviteTimer = null;
       if (
-        busy || inviteShownInPage ||
+        busy || inviteShownInPage || !privacyReady() ||
         document.visibilityState !== "visible" ||
         launcher.dataset.state !== "inactive" || !panel.hidden ||
         !supported() || Notification.permission === "denied"
@@ -246,16 +252,18 @@
     announceInvite("scheduled");
   };
 
-  const setOpen = (open) => {
+  const setOpen = (open, reason = "closed") => {
+    if (open && !privacyReady()) return;
+    const wasOpen = !panel.hidden;
     panel.hidden = !open;
     launcher.setAttribute("aria-expanded", String(open));
 
     if (open) {
       announceInvite("shown");
       requestAnimationFrame(() => panel.classList.add("is-visible"));
-    }
-    else {
+    } else {
       panel.classList.remove("is-visible");
+      if (wasOpen) announceInvite(reason === "privacy" ? "privacy-pending" : "closed");
     }
   };
 
@@ -763,12 +771,26 @@
       if (
         panel.hidden ||
         panel.contains(event.target) ||
-        launcher.contains(event.target)
-      ) {
-        return;
-      }
-
+        launcher.contains(event.target) ||
+        event.target.closest?.("#sb-privacy-consent, #sb-privacy-launcher")
+      ) return;
       setOpen(false);
+    });
+
+    window.addEventListener("sb:visitor:privacy-state", event => {
+      if (!event.detail?.ready) {
+        stopInviteTimer();
+        if (!panel.hidden) setOpen(false, "privacy");
+        announceInvite("privacy-pending");
+      } else {
+        scheduleInvite();
+      }
+    });
+
+    // An explicit PWA choice may interrupt the automatic push invitation.
+    window.addEventListener("sb:visitor:pwa-manual-open", () => {
+      stopInviteTimer();
+      announceInvite("released");
     });
   };
 
