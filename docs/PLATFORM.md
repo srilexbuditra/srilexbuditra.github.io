@@ -355,6 +355,38 @@ Setelah timeline publik stabil, prioritas berikutnya adalah monitoring discovera
 
 ---
 
+## Unified Backup & Recovery V1.0 - Technical Architecture
+
+**Status:** APPROVED POLICY SCOPE / IMPLEMENTATION NOT STARTED.
+
+### Storage Architecture
+
+- Cloudflare D1 merupakan sumber data utama; database production tidak dipindahkan ke PC atau laptop.
+- D1 Time Travel digunakan sebagai lapisan pemulihan jangka pendek sesuai masa retensi yang tersedia.
+- Cloudflare R2 direncanakan sebagai lokasi utama backup terenkripsi pada bucket PRIVATE khusus, terpisah dari bucket dokumen dan media aplikasi.
+- Repository GitHub PRIVATE khusus direncanakan menyimpan salinan kedua dalam bentuk ciphertext terenkripsi; repository website publik tidak boleh menerima backup database.
+- Kunci enkripsi/dekripsi dan recovery material disimpan terpisah dari file backup, R2, dan GitHub, dengan akses minimum dan prosedur pemulihan yang terdokumentasi.
+
+### Backup Triggers and Consistency
+
+- Source code dikelola dengan Git; backup database tidak disamakan dengan Git commit.
+- Perubahan record harian dilindungi oleh Time Travel dalam jendela retensinya dan backup terjadwal, bukan janji full export setiap transaksi.
+- Sebelum migrasi skema, penghapusan massal, atau perubahan data berisiko, operator wajib memverifikasi backup/titik pemulihan dan menyiapkan rollback.
+- Sesudah perubahan berisiko, operator memverifikasi integritas data, kesesuaian schema, dan kondisi layanan.
+- Ekspor D1 remote dapat menimbulkan gangguan sementara; jadwal dan metode backup wajib mempertimbangkan ketersediaan layanan.
+- Backup D1 dan backup objek R2 aplikasi diperlakukan sebagai cakupan terpisah; referensi dokumen harus tetap dapat dipulihkan bersama data yang membutuhkannya.
+
+### Security and Recovery
+
+- Tidak ada SQL mentah, data pribadi, password, token, atau private key pada GitHub publik.
+- Backup GitHub hanya berupa arsip terenkripsi yang memenuhi batas ukuran, retensi, dan kontrol akses repository PRIVATE.
+- Backup diberi timestamp, identitas sumber, versi skema, checksum, dan status verifikasi.
+- Restore hanya dilakukan setelah identitas database target diverifikasi dan ada otorisasi; restore production otomatis dilarang.
+- Uji pemulihan terjadwal dilakukan pada database terisolasi agar tidak menimpa database aktif.
+- Kegagalan backup harus tercatat dan menghasilkan pemberitahuan kepada pengelola sebelum operasi berisiko dilanjutkan.
+
+**Implementation gate:** belum ada bucket backup, GitHub backup repository, encryption pipeline, jadwal otomatis, atau restore procedure yang dinyatakan aktif sampai selesai implementasi dan verifikasi.
+
 ## Maintenance Rules
 
 - Jangan menulis roadmap seolah-olah sudah live.

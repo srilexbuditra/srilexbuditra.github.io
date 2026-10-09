@@ -1,3 +1,32 @@
+## Unified Backup & Recovery V1.0 - Policy Baseline
+
+Date: 9 Oktober 2026
+Status: APPROVED POLICY SCOPE / IMPLEMENTATION NOT STARTED
+Scope: Documentation and governance only; no production changes.
+
+### Approved Policy
+
+- Satu standar backup dan recovery lintas proyek srilexbuditra.work.
+- Cloudflare D1 tetap menjadi sumber database utama.
+- Cloudflare R2 direncanakan sebagai penyimpanan backup utama pada bucket PRIVATE khusus.
+- Repository GitHub PRIVATE terpisah direncanakan sebagai salinan kedua yang hanya menyimpan backup terenkripsi.
+- D1 Time Travel dan backup terjadwal menjadi lapisan perlindungan perubahan data sesuai retensi.
+- Verifikasi titik pemulihan wajib sebelum migrasi atau operasi database berisiko.
+- Enkripsi, pembatasan akses, retensi, checksum, notifikasi kegagalan, dan uji pemulihan diwajibkan dalam implementasi.
+- Backup objek R2 aplikasi dikelola terpisah dari backup database D1.
+- Kebijakan didokumentasikan hanya dalam README.md, docs/PLATFORM.md, docs/ROADMAP.md, docs/README.md, dan CHANGELOG.md; tidak membuat file Markdown baru.
+
+### Audit Evidence and Limitations
+
+- Empat database D1 dan lima bucket R2 berhasil diinventarisasi.
+- Struktur empat database D1 dan bookmark Time Travel berhasil diperiksa.
+- Schema-only export database Visitors berhasil dibuat secara lokal dan diverifikasi dengan SHA-256.
+- Backup lengkap, bucket backup R2, GitHub Private backup repository, automation, encryption pipeline, dan restore test belum diterapkan.
+- Ekspor D1 remote dapat mengganggu ketersediaan layanan sementara; implementasi wajib mempertimbangkan hal ini.
+- REV21 production baseline tetap LOCKED dan REV22 deployment tetap HOLD.
+
+---
+
 ## Platform Baseline 2026.10.07.0006
 
 Platform Baseline : 2026.10.07.0006

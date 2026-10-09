@@ -297,6 +297,26 @@ Dokumentasi CORE dipisahkan berdasarkan domain agar README utama tetap ringkas d
 5. Worker, KV, dan D1 hanya diperlukan untuk fitur yang memang menggunakan layanan tersebut.
 6. Jangan memasukkan secret produksi ke repository publik.
 
+## Unified Backup & Recovery V1.0
+
+**Status:** APPROVED POLICY SCOPE / IMPLEMENTATION NOT STARTED.
+
+Kebijakan ini berlaku untuk seluruh proyek srilexbuditra.work tanpa mengubah baseline production yang telah LOCKED.
+
+- Cloudflare D1 tetap menjadi database utama aplikasi.
+- Cloudflare R2 direncanakan sebagai penyimpanan utama backup terenkripsi pada bucket khusus yang privat.
+- Repository GitHub PRIVATE khusus, terpisah dari repository publik website, direncanakan sebagai lokasi salinan kedua dalam bentuk arsip terenkripsi yang memenuhi batas ukuran dan kebijakan retensi GitHub.
+- Kunci dekripsi dan material pemulihan wajib disimpan secara aman dan terpisah dari R2, GitHub, serta source repository.
+- Perubahan data harian dilindungi melalui D1 Time Travel sesuai retensi layanan dan backup terjadwal; backup penuh setiap perubahan record tidak diasumsikan tersedia.
+- Sebelum migrasi, penghapusan massal, atau perubahan berisiko, wajib ada backup atau titik pemulihan yang telah diverifikasi dan rencana rollback.
+- Backup harus memiliki metadata waktu, cakupan, integritas, enkripsi, retensi, serta hasil verifikasi; pemulihan diuji secara berkala pada lingkungan terisolasi.
+- Backup database D1 tidak otomatis mencakup dokumen atau media dalam bucket R2 aplikasi; perlindungan objek R2 harus dirancang terpisah.
+- SQL mentah, data pribadi, token, password, dan secret tidak boleh dimasukkan ke repository GitHub publik maupun ke backup GitHub tanpa enkripsi.
+- Restore production memerlukan otorisasi dan pemeriksaan target; tidak ada restore otomatis yang diizinkan.
+- Otomasi R2, GitHub, backup, dan restore belum diterapkan atau diverifikasi. Tidak boleh diklaim aktif sebelum pengujian selesai.
+
+Rincian arsitektur, roadmap implementasi, dan governance mengikuti docs/PLATFORM.md, docs/ROADMAP.md, serta docs/README.md.
+
 ## Security, Privacy & Legal
 
 Keamanan, privasi, aksesibilitas, dan penggunaan source mengikuti dokumen resmi repository:

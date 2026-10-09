@@ -144,6 +144,23 @@ File berikut adalah template operasional GitHub, bukan dokumentasi produk:
 7. Jangan menyimpan token, secret, password, private key, data KTP/KK/NIK, atau kredensial layanan pada Markdown/source publik.
 8. Dokumentasi tidak boleh mengklaim fitur sebagai live jika fitur tersebut masih roadmap.
 
+### Unified Backup & Recovery V1.0 - Documentation Governance
+
+**Status:** APPROVED POLICY SCOPE / IMPLEMENTATION NOT STARTED.
+
+- Standar backup dan pemulihan berlaku bagi seluruh proyek srilexbuditra.work.
+- Ringkasan kebijakan dicantumkan di README.md.
+- Arsitektur D1, R2, GitHub PRIVATE, enkripsi, retensi, dan recovery dicantumkan di docs/PLATFORM.md.
+- Tahapan implementasi, pengujian, dan persyaratan operasional dicantumkan di docs/ROADMAP.md.
+- Riwayat persetujuan kebijakan dicatat di CHANGELOG.md.
+- Pembaruan kebijakan menggunakan file Markdown yang sudah tersedia; tidak membuat file .md baru untuk Unified Backup & Recovery V1.0.
+- Catatan versi historis dan status LOCKED tidak boleh ditulis ulang.
+- Data pribadi, SQL mentah, password, token, private key, serta kredensial pemulihan tidak boleh dicantumkan dalam dokumentasi publik.
+- Hasil audit, backup, enkripsi, dan uji recovery harus dipisahkan antara PLANNED, VERIFIED, dan ACTIVE berdasarkan bukti.
+- Setiap perubahan kebijakan harus diperiksa menggunakan git diff sebelum staging, commit, push, atau deployment.
+
+Dokumentasi kebijakan tidak berarti backup otomatis telah aktif. Implementasi memerlukan tahap dan persetujuan tersendiri.
+
 ## 12. Status Saat Ini
 ### Home Section Detail Architecture
 

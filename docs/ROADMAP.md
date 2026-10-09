@@ -306,6 +306,42 @@ Scope ini merupakan perkembangan baru setelah Site Content Architecture V2.02 da
 
 ---
 
+## Unified Backup & Recovery V1.0 - Implementation Roadmap
+
+**Status:** APPROVED POLICY SCOPE / IMPLEMENTATION NOT STARTED.
+
+Kebijakan ini berlaku lintas proyek Visitor Analytics, Ketahanan Pangan, Umroh Semi Private Bengkulu, Client Management, serta Web Push setelah database-nya tersedia.
+
+### Implementation Gates
+
+1. Inventory D1 dan R2, klasifikasi sensitivitas data, dan audit recovery capability.
+2. Tetapkan retensi, jadwal backup, pemilik operasional, serta target pemulihan per aplikasi.
+3. Rancang bucket R2 PRIVATE khusus backup terenkripsi tanpa mengubah bucket dokumen/media aplikasi.
+4. Rancang repository GitHub PRIVATE khusus salinan ciphertext terenkripsi, terpisah dari repository website publik; periksa batas ukuran dan retensi.
+5. Tetapkan manajemen kunci, prosedur rotasi, penyimpanan recovery key di luar Cloudflare/GitHub, dan pembatasan akses.
+6. Implementasikan backup terjadwal yang mempertimbangkan potensi gangguan saat ekspor D1 remote.
+7. Tetapkan gate backup/titik pemulihan wajib sebelum migrasi, reset, penghapusan massal, dan deployment berisiko.
+8. Validasi checksum, cakupan data/schema, status enkripsi, serta notifikasi kegagalan backup.
+9. Uji pemulihan secara berkala pada database dan storage terisolasi; jangan menguji restore langsung pada production.
+10. Aktifkan otomasi hanya setelah pengujian, review keamanan, dan otorisasi perubahan terpisah.
+
+### Current Audit Evidence
+
+- Empat database D1 Cloudflare telah diinventarisasi dan struktur tabelnya diperiksa menggunakan query SELECT read-only.
+- D1 Time Travel info berhasil mengembalikan bookmark pada keempat database; restore belum diuji.
+- Lima bucket R2 aplikasi terinventarisasi; bucket khusus backup belum dibuat.
+- Schema-only export srilexbuditra-visitors berhasil dibuat secara lokal; belum merupakan backup data lengkap.
+- Backup lengkap terenkripsi, salinan GitHub Private, jadwal otomatis, dan uji restore belum diimplementasikan.
+- REV21 tetap LOCKED; REV22 Web Push deployment HOLD.
+
+### Completion Criteria
+
+- Backup dapat dibuat, diverifikasi, dienkripsi, dan disalin ke lokasi yang disetujui tanpa mengekspos data pribadi.
+- Salinan kedua di GitHub memenuhi kontrol akses, batas ukuran, serta kebijakan enkripsi dan retensi.
+- Prosedur pemulihan dapat dijalankan pada lingkungan terisolasi dan hasilnya terdokumentasi.
+- Sistem memberikan peringatan ketika backup gagal dan tidak mengklaim backup aktif sebelum bukti tersedia.
+- Tidak ada perubahan pada baseline production yang LOCKED tanpa persetujuan baru.
+
 ## Strategic Roadmap 2026–2027
 
 > Bagian ini mempertahankan roadmap strategis, fase produk, dan urutan prioritas pengembangan.

@@ -29,3 +29,5 @@ Thumbs.db
 # Temporary files
 *.tmp
 *.bak
+# Cloudflare Wrangler local cache
+.wrangler/
