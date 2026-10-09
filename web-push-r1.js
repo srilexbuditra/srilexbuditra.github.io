@@ -1,0 +1,684 @@
+(() => {
+  "use strict";
+
+  const API = "/api/push";
+  const SW_URL = "/sw.js";
+  const SW_SCOPE = "/";
+  const PREVIEW_PARAM = "push-preview";
+
+  const localHosts = new Set(["localhost", "127.0.0.1", "::1"]);
+  const previewValue = localHosts.has(location.hostname)
+    ? new URLSearchParams(location.search).get(PREVIEW_PARAM)
+    : null;
+
+  const previewMode = new Set([
+    "eligible",
+    "active",
+    "ios",
+    "blocked",
+    "unsupported"
+  ]).has(previewValue);
+
+  let launcher;
+  let panel;
+  let button;
+  let badge;
+  let statusText;
+  let subscription = null;
+  let busy = false;
+  let publicKeyReady = null;
+
+  const ios = () => {
+    const ua = navigator.userAgent || "";
+    return /iPad|iPhone|iPod/i.test(ua) ||
+      (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  };
+
+  const standalone = () =>
+    (window.matchMedia &&
+      window.matchMedia("(display-mode: standalone)").matches) ||
+    navigator.standalone === true;
+
+  const supported = () =>
+    "serviceWorker" in navigator &&
+    "PushManager" in window &&
+    "Notification" in window;
+
+  const base64UrlToBytes = (value) => {
+    const padding = "=".repeat((4 - value.length % 4) % 4);
+    const base64 = (value + padding)
+      .replace(/-/g, "+")
+      .replace(/_/g, "/");
+    const raw = atob(base64);
+    return Uint8Array.from(raw, char => char.charCodeAt(0));
+  };
+
+  const api = async (path, options = {}) => {
+    const headers = new Headers(options.headers || {});
+
+    if (options.body && !headers.has("Content-Type")) {
+      headers.set("Content-Type", "application/json");
+    }
+
+    const response = await fetch(`${API}${path}`, {
+      ...options,
+      headers,
+      credentials: "same-origin",
+      cache: "no-store"
+    });
+
+    let payload = null;
+
+    try {
+      payload = await response.json();
+    }
+    catch {
+      payload = null;
+    }
+
+    if (!response.ok) {
+      throw new Error(
+        payload && typeof payload.error === "string"
+          ? payload.error
+          : `Push API error (${response.status}).`
+      );
+    }
+
+    return payload || {};
+  };
+
+  // Fetch backend readiness without prompting. A permission request must be
+  // called directly in the user's button event, not after awaited network IO.
+  const loadPublicKey = async () => {
+    const payload = await api("/public-key", { method: "GET" });
+    const value = payload && typeof payload.public_key === "string"
+      ? payload.public_key.trim()
+      : "";
+    if (!/^[A-Za-z0-9_-]{87}$/.test(value)) {
+      throw new Error("VAPID public key belum tersedia atau tidak valid.");
+    }
+    publicKeyReady = value;
+    return value;
+  };
+
+  // Persistent capability is scoped to this origin and to one endpoint.
+  // Never put it in a URL or an API response; site data deletion may lose it.
+  const storagePrefix = "sb-rev22-push-owner-v1:";
+  const endpointStorageKey = async endpoint => {
+    const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(endpoint));
+    return storagePrefix + Array.from(new Uint8Array(digest))
+      .map(byte => byte.toString(16).padStart(2, "0")).join("");
+  };
+  const storedOwner = async endpoint => {
+    try {
+      const value = localStorage.getItem(await endpointStorageKey(endpoint));
+      return /^[a-f0-9]{64}$/.test(value || "") ? value : null;
+    } catch { return null; }
+  };
+  const saveOwner = async (endpoint, token) => {
+    try {
+      localStorage.setItem(await endpointStorageKey(endpoint), token);
+      return localStorage.getItem(await endpointStorageKey(endpoint)) === token;
+    } catch { return false; }
+  };
+  const clearOwner = async endpoint => {
+    try { localStorage.removeItem(await endpointStorageKey(endpoint)); } catch { }
+  };
+  // A pending marker is written BEFORE local browser removal. Keep the existing
+  // endpoint-scoped ownership credential until the server confirms deletion.
+  const pendingPrefix = "sb-rev22-push-pending-v1:";
+  const pendingKey = async endpoint => pendingPrefix +
+    (await endpointStorageKey(endpoint)).slice(storagePrefix.length);
+  const savePending = async endpoint => {
+    try {
+      const key = await pendingKey(endpoint);
+      localStorage.setItem(key, endpoint);
+      return localStorage.getItem(key) === endpoint;
+    } catch { return false; }
+  };
+  const clearPending = async endpoint => {
+    try { localStorage.removeItem(await pendingKey(endpoint)); } catch { }
+  };
+  const retryPendingCleanup = async () => {
+    // If SW state cannot be read, avoid potentially deleting an active device.
+    let current;
+    try { current = await existingSubscription(); } catch { return; }
+    let endpoints = [];
+    try {
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith(pendingPrefix)) {
+          const endpoint = localStorage.getItem(key);
+          if (typeof endpoint === "string" && endpoint) endpoints.push(endpoint);
+        }
+      }
+    } catch { return; }
+    for (const endpoint of endpoints) {
+      if (current?.endpoint === endpoint) continue;
+      const owner = await storedOwner(endpoint);
+      if (!owner) continue; // Lost credential cannot be reconstructed safely.
+      try {
+        const checked = await api("/status", {
+          method: "POST",
+          body: JSON.stringify({ endpoint, ownership_token: owner })
+        });
+        if (checked.status !== "missing") {
+          await api("/unsubscribe", {
+            method: "POST",
+            body: JSON.stringify({ endpoint, ownership_token: owner })
+          });
+        }
+        await clearPending(endpoint);
+        await clearOwner(endpoint);
+      } catch {
+        // Leave both marker and credential intact for a future retry.
+      }
+    }
+  };
+
+  const newOwner = () => Array.from(crypto.getRandomValues(new Uint8Array(32)))
+    .map(byte => byte.toString(16).padStart(2, "0")).join("");
+
+  const setOpen = (open) => {
+    panel.hidden = !open;
+    launcher.setAttribute("aria-expanded", String(open));
+
+    if (open) {
+      requestAnimationFrame(() => panel.classList.add("is-visible"));
+    }
+    else {
+      panel.classList.remove("is-visible");
+    }
+  };
+
+  const setState = (state, message) => {
+    launcher.dataset.state = state;
+    panel.dataset.state = state;
+    badge.dataset.state = state;
+
+    const labels = {
+      inactive: "Belum aktif",
+      active: "Aktif",
+      blocked: "Diblokir",
+      unsupported: "Tidak tersedia",
+      install: "Perlu dipasang",
+      busy: "Memproses",
+      sync: "Perlu Sinkronisasi"
+    };
+
+    badge.textContent = labels[state] || "Status";
+    statusText.textContent = message;
+
+    if (state === "active") {
+      button.textContent = "Nonaktifkan Notifikasi";
+      button.disabled = false;
+    }
+    else if (state === "sync") {
+      button.textContent = "Sinkronkan Ulang";
+      button.disabled = false;
+    }
+    else if (state === "blocked") {
+      button.textContent = "Izin Diblokir Browser";
+      button.disabled = true;
+    }
+    else if (state === "unsupported") {
+      button.textContent = "Browser Belum Mendukung";
+      button.disabled = true;
+    }
+    else if (state === "install") {
+      button.textContent = "Pasang Aplikasi Dulu";
+      button.disabled = true;
+    }
+    else if (state === "busy") {
+      button.textContent = "Memproses…";
+      button.disabled = true;
+    }
+    else {
+      button.textContent = "Aktifkan Notifikasi";
+      button.disabled = false;
+    }
+  };
+
+  const existingSubscription = async () => {
+    const registration =
+      await navigator.serviceWorker.getRegistration(SW_SCOPE);
+
+    return registration
+      ? registration.pushManager.getSubscription()
+      : null;
+  };
+
+  const refresh = async () => {
+    if (previewMode) {
+      if (previewValue === "active") {
+        subscription = { preview: true };
+        setState("active", "Mode preview: perangkat ditampilkan sebagai sudah berlangganan.");
+        return;
+      }
+
+      if (previewValue === "ios") {
+        setState("install", "Di iPhone/iPad, pasang srilexbuditra.work ke Layar Utama terlebih dahulu.");
+        return;
+      }
+
+      if (previewValue === "blocked") {
+        setState("blocked", "Mode preview: izin notifikasi ditampilkan sebagai diblokir.");
+        return;
+      }
+
+      if (previewValue === "unsupported") {
+        setState("unsupported", "Mode preview: browser ditampilkan sebagai belum mendukung Web Push.");
+        return;
+      }
+
+      setState("inactive", "Mode preview lokal. Tidak ada permission, Service Worker, atau subscription yang dibuat.");
+      return;
+    }
+
+    if (!supported()) {
+      setState("unsupported", "Browser ini belum mendukung Service Worker, Notification API, dan Push API.");
+      return;
+    }
+
+    if (ios() && !standalone()) {
+      setState("install", "Di iPhone/iPad, pasang srilexbuditra.work ke Layar Utama terlebih dahulu, lalu buka aplikasinya.");
+      return;
+    }
+
+    if (Notification.permission === "denied") {
+      setState("blocked", "Izin notifikasi sedang diblokir. Ubah izin situs melalui pengaturan browser.");
+      return;
+    }
+
+    try {
+      subscription = await existingSubscription();
+    }
+    catch {
+      subscription = null;
+    }
+
+    if (subscription) {
+      const token = await storedOwner(subscription.endpoint);
+      if (!token) {
+        setState("active", "Subscription browser ditemukan, tetapi bukti pengelolaan server tidak tersedia. Nonaktifkan perangkat ini melalui tombol jika ingin mengatur ulang.");
+        return;
+      }
+      try {
+        const checked = await api("/status", {
+          method: "POST",
+          body: JSON.stringify({ endpoint: subscription.endpoint, ownership_token: token })
+        });
+        if (checked.status === "active") {
+          setState("active", "Perangkat ini sudah terdaftar untuk menerima update dari srilexbuditra.work.");
+        } else {
+          setState("sync", "Subscription browser tersedia, tetapi server belum sinkron. Tekan Sinkronkan Ulang.");
+        }
+      } catch {
+        setState("sync", "Subscription browser tersedia, tetapi koneksi ke server belum dapat diverifikasi. Tekan Sinkronkan Ulang untuk mencoba kembali.");
+      }
+      return;
+    }
+
+    setState(
+      "inactive",
+      Notification.permission === "granted"
+        ? "Izin browser sudah tersedia. Aktifkan subscription perangkat untuk menerima update."
+        : "Notifikasi hanya akan diminta setelah Anda menekan tombol Aktifkan Notifikasi."
+    );
+  };
+
+  const activate = async () => {
+    if (busy) return;
+
+    if (previewMode) {
+      subscription = { preview: true };
+      setState("active", "Mode preview: notifikasi ditampilkan sebagai aktif tanpa meminta izin browser.");
+      return;
+    }
+
+    if (!supported() || (ios() && !standalone())) {
+      await refresh();
+      return;
+    }
+
+    if (Notification.permission === "denied") {
+      setState("blocked", "Izin notifikasi diblokir. Ubah izin situs melalui pengaturan browser.");
+      return;
+    }
+
+    // If first-load preflight is pending, finish it without asking permission.
+    // A second deliberate click will then request permission with user activation.
+    if (!publicKeyReady) {
+      busy = true;
+      setState("busy", "Memeriksa kesiapan layanan notifikasi…");
+      try {
+        await loadPublicKey();
+        setState("inactive", "Layanan siap. Tekan Aktifkan Notifikasi sekali lagi untuk memberi izin browser.");
+      }
+      catch (error) {
+        setState("inactive", error?.message || "Layanan notifikasi belum siap. Silakan coba kembali.");
+      }
+      finally { busy = false; }
+      return;
+    }
+
+    // No awaited operation may precede this prompt: Safari/iOS requires the
+    // notification-permission request to be initiated by the user's gesture.
+    let permissionPromise;
+    try {
+      permissionPromise = Notification.permission === "granted"
+        ? Promise.resolve("granted")
+        : Notification.requestPermission();
+    }
+    catch {
+      setState("inactive", "Browser belum dapat meminta izin notifikasi.");
+      return;
+    }
+
+    busy = true;
+    setState("busy", "Mengaktifkan notifikasi perangkat…");
+
+    let createdSubscription = null;
+
+    try {
+      const permission = await permissionPromise;
+      if (permission !== "granted") {
+        subscription = null;
+        setState(permission === "denied" ? "blocked" : "inactive",
+          permission === "denied"
+            ? "Izin notifikasi ditolak atau diblokir oleh browser."
+            : "Notifikasi belum diaktifkan karena izin belum diberikan.");
+        return;
+      }
+
+      const registration = await navigator.serviceWorker.register(
+        SW_URL,
+        { scope: SW_SCOPE, updateViaCache: "none" }
+      );
+
+      const readyRegistration =
+        (await navigator.serviceWorker.ready) || registration;
+
+      let current =
+        await readyRegistration.pushManager.getSubscription();
+
+      if (!current) {
+        current = await readyRegistration.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey:
+            base64UrlToBytes(publicKeyReady)
+        });
+
+        createdSubscription = current;
+      }
+
+      let owner = await storedOwner(current.endpoint);
+      if (!owner) {
+        owner = newOwner();
+        if (!(await saveOwner(current.endpoint, owner))) {
+          throw new Error("Penyimpanan credential perangkat tidak tersedia. Periksa pengaturan browser.");
+        }
+      }
+      await api("/subscribe", {
+        method: "POST",
+        body: JSON.stringify({
+          subscription: current.toJSON(),
+          ownership_token: owner
+        })
+      });
+
+      subscription = current;
+
+      setState(
+        "active",
+        "Notifikasi aktif. Perangkat ini siap menerima update dari srilexbuditra.work."
+      );
+    }
+    catch (error) {
+      // Keep a newly created browser subscription when a server response is
+      // uncertain. The persisted credential permits a safe retry by clicking
+      // Aktifkan again; do not silently orphan a possibly accepted DB record.
+      const errorMessage = error && typeof error.message === "string"
+        ? error.message
+        : "Notifikasi belum dapat diaktifkan.";
+
+      const existing = await existingSubscription().catch(() => null);
+      const existingOwner = existing
+        ? await storedOwner(existing.endpoint)
+        : null;
+
+      if (existing && existingOwner) {
+        subscription = existing;
+        setState("sync", "Sinkronisasi gagal: " + errorMessage);
+      } else {
+        subscription = null;
+        setState("inactive", errorMessage);
+      }
+    }
+    finally {
+      busy = false;
+    }
+  };
+
+  const deactivate = async () => {
+    if (busy) return;
+
+    if (previewMode) {
+      subscription = null;
+      setState("inactive", "Mode preview: subscription ditampilkan sebagai nonaktif.");
+      return;
+    }
+
+    busy = true;
+    setState("busy", "Menonaktifkan notifikasi perangkat…");
+
+    try {
+      const current =
+        subscription || await existingSubscription();
+
+      if (!current) {
+        subscription = null;
+        setState("inactive", "Tidak ada subscription aktif pada perangkat ini.");
+        return;
+      }
+
+      const endpoint = current.endpoint;
+      const owner = await storedOwner(endpoint);
+      let serverRemoved = false;
+      if (owner) {
+        try {
+          await api("/unsubscribe", {
+            method: "POST",
+            body: JSON.stringify({ endpoint, ownership_token: owner })
+          });
+          serverRemoved = true;
+        } catch {
+          // Do not claim the server has been cleaned up.
+        }
+      }
+      // If server deletion is uncertain, persist the retry marker first.
+      // Without durable storage, keep browser subscription and credential.
+      if (!serverRemoved && owner && !(await savePending(endpoint))) {
+        subscription = current;
+        setState("active", "Server belum dapat dihubungi dan penyimpanan pemulihan tidak tersedia. Coba nonaktifkan lagi nanti.");
+        return;
+      }
+      const browserRemoved = await current.unsubscribe();
+      subscription = browserRemoved ? null : await existingSubscription().catch(() => current);
+      if (browserRemoved) {
+        if (serverRemoved) {
+          await clearPending(endpoint);
+          await clearOwner(endpoint);
+        } else if (!owner) {
+          // No credential was available: never falsely report server cleanup.
+          setState("inactive", "Subscription browser dinonaktifkan; data server tidak dapat diverifikasi karena credential hilang.");
+          return;
+        }
+        setState("inactive", serverRemoved
+          ? "Notifikasi telah dinonaktifkan pada perangkat ini."
+          : "Subscription browser dinonaktifkan; penghapusan server akan dicoba kembali saat halaman dibuka.");
+      } else {
+        if (!serverRemoved) await clearPending(endpoint);
+        setState("active", "Browser belum berhasil menonaktifkan subscription. Silakan coba lagi.");
+      }
+    }
+    catch (error) {
+      subscription = await existingSubscription().catch(() => null);
+      setState(subscription ? "active" : "inactive",
+        error?.message || "Penonaktifan belum dapat dikonfirmasi.");
+    }
+    finally {
+      busy = false;
+    }
+  };
+
+  const build = () => {
+    launcher = document.createElement("button");
+    launcher.id = "sbPushLauncher";
+    launcher.type = "button";
+    launcher.className = "sb-push-launcher";
+    launcher.dataset.state = "inactive";
+    launcher.setAttribute("aria-controls", "sbPushPanel");
+    launcher.setAttribute("aria-expanded", "false");
+    launcher.setAttribute("aria-label", "Buka pengaturan notifikasi");
+
+    const icon = document.createElement("span");
+    icon.className = "sb-push-launcher-icon";
+    icon.setAttribute("aria-hidden", "true");
+    icon.textContent = "🔔";
+
+    const text = document.createElement("span");
+    text.className = "sb-push-launcher-text";
+    text.textContent = "Notifikasi";
+
+    const dot = document.createElement("span");
+    dot.className = "sb-push-launcher-dot";
+    dot.setAttribute("aria-hidden", "true");
+
+    launcher.append(icon, text, dot);
+
+    panel = document.createElement("section");
+    panel.id = "sbPushPanel";
+    panel.className = "sb-push-panel";
+    panel.hidden = true;
+    panel.dataset.state = "inactive";
+    panel.setAttribute("aria-labelledby", "sbPushTitle");
+    panel.setAttribute("aria-describedby", "sbPushStatusText");
+
+    const card = document.createElement("div");
+    card.className = "sb-push-card";
+
+    const close = document.createElement("button");
+    close.type = "button";
+    close.className = "sb-push-close";
+    close.textContent = "×";
+    close.setAttribute("aria-label", "Tutup pengaturan notifikasi");
+
+    const kicker = document.createElement("span");
+    kicker.className = "sb-push-kicker";
+    kicker.textContent = "WEB PUSH";
+
+    const title = document.createElement("h2");
+    title.id = "sbPushTitle";
+    title.className = "sb-push-title";
+    title.textContent = "Update langsung dari srilexbuditra.work";
+
+    const copy = document.createElement("p");
+    copy.className = "sb-push-copy";
+    copy.textContent =
+      "Aktifkan notifikasi untuk menerima pembaruan penting. Izin browser hanya diminta setelah Anda memilih untuk mengaktifkannya.";
+
+    const statusRow = document.createElement("div");
+    statusRow.className = "sb-push-status-row";
+
+    badge = document.createElement("span");
+    badge.className = "sb-push-status-badge";
+    badge.dataset.state = "inactive";
+    badge.textContent = "Belum aktif";
+
+    statusRow.append(badge);
+
+    statusText = document.createElement("p");
+    statusText.id = "sbPushStatusText";
+    statusText.className = "sb-push-status-text";
+    statusText.setAttribute("aria-live", "polite");
+    statusText.textContent = "Memeriksa dukungan browser…";
+
+    button = document.createElement("button");
+    button.type = "button";
+    button.className = "sb-push-primary";
+    button.textContent = "Aktifkan Notifikasi";
+
+    const privacy = document.createElement("p");
+    privacy.className = "sb-push-privacy";
+    privacy.textContent =
+      "Tidak ada izin notifikasi saat halaman pertama dibuka. Subscription dapat dinonaktifkan kembali dari perangkat ini.";
+
+    card.append(
+      close,
+      kicker,
+      title,
+      copy,
+      statusRow,
+      statusText,
+      button,
+      privacy
+    );
+
+    panel.append(card);
+    document.body.append(panel, launcher);
+
+    launcher.addEventListener("click", () => {
+      setOpen(launcher.getAttribute("aria-expanded") !== "true");
+    });
+
+    close.addEventListener("click", () => setOpen(false));
+
+    button.addEventListener("click", async () => {
+      if (launcher.dataset.state === "sync") {
+        await activate();
+      }
+      else if (subscription || launcher.dataset.state === "active") {
+        await deactivate();
+      }
+      else {
+        await activate();
+      }
+    });
+
+    document.addEventListener("keydown", event => {
+      if (event.key === "Escape") {
+        setOpen(false);
+      }
+    });
+
+    document.addEventListener("pointerdown", event => {
+      if (
+        panel.hidden ||
+        panel.contains(event.target) ||
+        launcher.contains(event.target)
+      ) {
+        return;
+      }
+
+      setOpen(false);
+    });
+  };
+
+  const init = async () => {
+    build();
+    if (!previewMode) {
+      // Background GET only: never ask for browser permission on page load.
+      void loadPublicKey().catch(() => {});
+      await retryPendingCleanup();
+    }
+    await refresh();
+  };
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init, { once: true });
+  }
+  else {
+    void init();
+  }
+})();
