@@ -18,6 +18,19 @@ Status            : PRODUCTION VERIFIED / COMPLETED / LOCKED
 
 <!-- PLATFORM-BASELINE:END -->
 
+<!-- CONTINUITY-REV22-R37:START -->
+## Current Production Visitor Experience — REV22 R3.7
+
+- **Status:** 9 Oktober 2026 — production verified / FINAL / LOCKED; runtime reference commit `ec12c92` pada branch `main`.
+- **Alur tampilan:** banner persetujuan Privasi & Analitik (bila belum dipilih) → Web Push opt-in (bila memenuhi syarat) → instalasi PWA (bila tersedia dan sesuai jeda); tidak ada promosi yang menimpa panel aktif.
+- **Akses fitur:** Web Push dan PWA tetap dapat dikelola melalui kontrol website yang tersedia; Translate tetap fitur independen milik browser.
+- **Source frontend R3.7:** `index.html`, `web-push-r1.js`, `pwa-install-r1.js`, `visitor-prompt-coordinator-r37.js`.
+- **Batas perubahan:** jangan mengubah Worker Web Push, D1, VAPID/Secrets, routing REV21, service worker, atau analytics backend saat hanya memperbaiki koordinasi panel.
+- **Verifikasi:** URL Cloudflare Pages dan domain utama `https://srilexbuditra.work/` telah diuji pengguna di Microsoft Edge untuk alur antarmuka; pengiriman native Web Push telah diverifikasi pada milestone sebelumnya, bukan diuji ulang pada R3.7.
+- **Continuity:** lanjutkan setiap pengembangan dari baseline terverifikasi terbaru. Kebijakan lengkap: `docs/ROADMAP.md`. Pertahankan dokumentasi di file `.md` master yang sudah ada.
+<!-- CONTINUITY-REV22-R37:END -->
+
+
 
 
 > Dokumentasi platform publik srilexbuditra.work.

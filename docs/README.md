@@ -18,12 +18,23 @@ Status            : PRODUCTION VERIFIED / COMPLETED / LOCKED
 
 <!-- PLATFORM-BASELINE:END -->
 
+<!-- CONTINUITY-REV22-R37:START -->
+## Checkpoint Dokumentasi Aktif — 9 Oktober 2026
+
+- **Acuan produksi terbaru:** REV22 R3.7 Unified Visitor Experience — commit `ec12c92` — FINAL / LOCKED, diverifikasi pada domain utama dan Cloudflare Pages.
+- **Master continuity:** [`docs/ROADMAP.md`](ROADMAP.md). Mulai pekerjaan baru dari kondisi yang stabil dan terverifikasi; **bukan mengulang dari awal**.
+- **Dokumentasi teknis frontend:** [`docs/PLATFORM.md`](PLATFORM.md); ringkasan [`README.md`](../README.md); riwayat [`CHANGELOG.md`](../CHANGELOG.md).
+- **Aturan dokumentasi:** gunakan dan perbarui file Markdown master **yang sudah ada**. Jangan membuat file `.md` baru apabila dokumen relevan sudah tersedia.
+- Checkpoint REV21 dan status REV22 HOLD pada bagian arsip/riwayat adalah catatan historis. Status produksi terbaru mengikuti evidence runtime dan checkpoint R3.7 ini.
+<!-- CONTINUITY-REV22-R37:END -->
+
+
 
 
 Dokumen ini adalah indeks dokumentasi aktif repository `srilexbuditra.github.io`. Gunakan indeks ini untuk membedakan dokumentasi operasional, panduan teknis, audit, dan referensi historis.
 
-**Current documentation baseline:** 8 Oktober 2026 - Platform Baseline 2026.10.07.0006 / REV21 Premium PWA Install Experience
-**Last documentation sync:** 8 Oktober 2026
+**Current documentation baseline:** 9 Oktober 2026 - REV22 R3.7 FINAL / LOCKED (Git ec12c92); REV21 protected historical baseline.
+**Last documentation sync:** 9 Oktober 2026
 **Current site content architecture:** Site Content Architecture V2.02 tetap **PRODUCTION VERIFIED / COMPLETED / LOCKED**; `/mengapa-memilih-saya/` telah **PRODUCTION VERIFIED / COMPLETED / LOCKED** sebagai Public Trust / Client Decision Layer dengan implementation commit `80b3bb18caecc3dce72256747cdf3c9dee8aa511`.
 
 ## 1. Dokumentasi Utama

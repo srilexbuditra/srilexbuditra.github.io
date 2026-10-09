@@ -18,6 +18,35 @@ Status            : PRODUCTION VERIFIED / COMPLETED / LOCKED
 
 <!-- PLATFORM-BASELINE:END -->
 
+<!-- CONTINUITY-REV22-R37:START -->
+## Current Verified Continuity — REV22 R3.7 (9 Oktober 2026)
+
+**Status:** PRODUCTION VERIFIED / COMPLETED / FINAL / LOCKED.
+**Current application baseline:** `main` commit `ec12c92`.
+**Verified environments:** Cloudflare Pages deployment dan domain produksi `https://srilexbuditra.work/` (uji Microsoft Edge, dikonfirmasi pengguna).
+
+### Aturan Operasional Wajib
+
+1. **CONTINUE FROM LATEST STABLE BASELINE — NEVER RESTART FROM ZERO.** Mulai dari commit, deploy, dan kondisi runtime terbaru yang sudah diverifikasi; jangan mengulang atau membongkar modul `LOCKED/PASS` tanpa regression nyata atau perubahan scope yang disetujui.
+2. Sebelum perubahan: audit read-only pada `main`, bandingkan `HEAD` dengan `origin/main`, cek working tree, baca dokumen master aktif, dan identifikasi jalur produksi serta dampak deployment.
+3. Terapkan patch terkecil sesuai scope; lindungi tampilan/branding, fungsi stabil, konfigurasi Cloudflare, D1, Worker, Secret, dan route API di luar scope perubahan.
+4. Lakukan source review, uji lokal/staging untuk area terdampak, backup/rollback, controlled commit/push, lalu verifikasi produksi. Jangan menyatakan status `FINAL/LOCKED` sebelum ada bukti.
+5. Saat melanjutkan dari chat/perangkat baru: gunakan status **terbaru yang terverifikasi**, bukan checkpoint historis lama. Simpan progres pada file master `.md` yang sudah ada; **jangan membuat `.md` baru** bila dokumen yang relevan sudah tersedia.
+6. Perubahan fitur harus menjaga fungsi yang telah disetujui; perubahan dokumentasi saja tidak boleh mengubah runtime.
+
+### REV22 R3.7 — Locked Feature Contracts
+
+- **Privasi & Analitik:** pengguna memilih persetujuan terlebih dahulu; menerima/menolak analitik tidak berarti menerima/menolak Web Push.
+- **Web Push:** ajakan opt-in terkontrol untuk pengguna belum aktif; tidak meminta izin browser tanpa tindakan pengguna; subscription, pengiriman native, dan banner notifikasi R3.3 dipertahankan.
+- **PWA install:** penawaran tidak menimpa Web Push, dapat mengikuti setelah jeda, tetap dapat dijangkau melalui akses manual di footer jika didukung browser.
+- **Smart Visibility R3.4 dan opt-in R3.5:** tetap dipertahankan; koordinasi R3.6 disempurnakan oleh R3.7.
+- **Translate:** fitur bawaan browser, tidak dijadikan dependensi atau dikendalikan paksa oleh website.
+- **Backend:** REV21, Worker, D1, Secrets, route produksi, dan arsip source REV22 R3.4 tetap di luar scope perubahan R3.7.
+
+**Supersession:** pernyataan historis di bawah yang menyebut `REV22 PLANNED`, `NOT LIVE`, atau `DEPLOYMENT HOLD` berlaku untuk checkpoint lama dan **tidak lagi menjelaskan status REV22 R3.7 saat ini**. Jangan menghapus/mengganti catatan sejarahnya; gunakan bagian ini sebagai otoritas operasional terbaru.
+<!-- CONTINUITY-REV22-R37:END -->
+
+
 > Master roadmap dan continuity document srilexbuditra.work.
 > Roadmap strategis dipisahkan dari checkpoint historis agar status lama tidak dibaca sebagai kondisi source terkini.
 

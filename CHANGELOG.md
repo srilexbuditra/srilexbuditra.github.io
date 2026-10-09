@@ -1,3 +1,14 @@
+<!-- CONTINUITY-REV22-R37:START -->
+## 2026-10-09 — REV22 R3.7 Final & Continuity Governance
+
+- **Release aplikasi:** REV22 R3.7 Unified Visitor Experience, Git `main` commit `ec12c92` — **PRODUCTION VERIFIED / FINAL / LOCKED**.
+- **Verifikasi pengguna:** Cloudflare Pages dan `https://srilexbuditra.work/` pada Microsoft Edge; Privasi & Analitik, Web Push opt-in, PWA Install, dan Translate independen berjalan sesuai urutan/tampilan yang disepakati.
+- **Kompatibilitas:** Web Push native, banner R3.3, Smart Visibility R3.4, undangan R3.5, PWA REV21, Worker, D1, Secrets, dan route produksi dipertahankan.
+- **Keputusan continuity:** semua pengembangan berikutnya **WAJIB melanjutkan dari kondisi produksi terakhir yang stabil dan terverifikasi; jangan mengulang dari awal**. Jangan mengulang modul LOCKED tanpa regression atau approved scope change.
+- **Dokumentasi:** revisi hanya file Markdown master yang sudah ada (`README.md`, `CHANGELOG.md`, `docs/README.md`, `docs/ROADMAP.md`, `docs/PLATFORM.md`); tidak membuat `.md` baru.
+- **Scope entri ini:** dokumentasi dan governance saja; bukan perubahan aplikasi atau infrastruktur.
+<!-- CONTINUITY-REV22-R37:END -->
+
 ## Site Publishing Architecture Audit - 2026-10-09
 
 **Status:** DOCUMENTATION UPDATED / NO INFRASTRUCTURE CHANGE.

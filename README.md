@@ -16,6 +16,19 @@ Status            : PRODUCTION VERIFIED / COMPLETED / LOCKED
 
 <!-- PLATFORM-BASELINE:END -->
 
+<!-- CONTINUITY-REV22-R37:START -->
+## Continuity Pengembangan Terkini — 9 Oktober 2026
+
+- **Aturan wajib:** pengembangan `srilexbuditra.work` selalu dilanjutkan dari kondisi produksi terakhir yang **stabil, teruji, dan terverifikasi**; **jangan mengulang pekerjaan dari awal**.
+- **Current verified application baseline:** Git `main` commit `ec12c92` — **REV22 R3.7 Unified Visitor Experience, FINAL / LOCKED**.
+- **Protected:** REV21 Premium PWA Install Experience dan fungsi Web Push yang telah terverifikasi; perubahan baru tidak boleh merusak fitur yang sudah LOCKED.
+- **Pengalaman pengunjung:** Privasi & Analitik → ajakan Web Push → ajakan instalasi PWA; Translate browser tetap independen. Uji visual selesai pada Cloudflare Pages dan `https://srilexbuditra.work/`.
+- **Ketika memulai pekerjaan baru:** verifikasi `main`, source/runtime, status Git dan dokumen aktif; rencanakan perubahan minimal dengan pengujian hanya pada scope terdampak.
+- **Dokumentasi:** perbarui Markdown master yang **sudah ada**, khususnya `docs/ROADMAP.md` sebagai sumber continuity. Jangan membuat file `.md` baru tanpa persetujuan khusus.
+- Catatan baseline REV21 bertanggal sebelumnya tetap merupakan **riwayat sah**, bukan pengganti checkpoint R3.7 yang lebih baru.
+<!-- CONTINUITY-REV22-R37:END -->
+
+
 <p align="center">
   <a href="https://srilexbuditra.work/">
     <img
