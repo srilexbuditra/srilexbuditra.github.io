@@ -6,13 +6,13 @@
   <meta name="theme-color" content="#031426">
   <meta name="author" content="Srilex Buditra">
   <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
-  <title>Membangun Infrastruktur Cloudflare srilexbuditra.work dengan Workers, D1, KV, dan Batas Implementasi yang Eksplisit | Srilex Buditra</title>
-  <meta name="description" content="Catatan teknis tentang lapisan infrastruktur Cloudflare pada beberapa subsystem srilexbuditra.work yang menggunakan Workers, D1, KV, API, serta konfigurasi environment dengan batas implementasi yang eksplisit.">
+  <title>Infrastruktur Cloudflare: Workers, D1, dan KV di srilexbuditra.work | Srilex Buditra</title>
+  <meta name="description" content="Lapisan infrastruktur Cloudflare menggunakan Workers, D1, KV, dan API dengan batas penerapan yang jelas.">
   <link rel="canonical" href="https://srilexbuditra.work/insights/cloudflare-infrastructure/">
   <meta property="og:type" content="article"><meta property="og:site_name" content="Srilex Buditra"><meta property="og:locale" content="id_ID">
-  <meta property="og:url" content="https://srilexbuditra.work/insights/cloudflare-infrastructure/"><meta property="og:title" content="Membangun Infrastruktur Cloudflare srilexbuditra.work dengan Workers, D1, KV, dan Batas Implementasi yang Eksplisit"><meta property="og:description" content="Catatan teknis tentang lapisan infrastruktur Cloudflare pada beberapa subsystem srilexbuditra.work yang menggunakan Workers, D1, KV, API, serta konfigurasi environment dengan batas implementasi yang eksplisit.">
-  <meta property="og:image" content="https://srilexbuditra.work/images/og/home/homepage-social-portrait-r1.jpg">
-  <meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Membangun Infrastruktur Cloudflare srilexbuditra.work dengan Workers, D1, KV, dan Batas Implementasi yang Eksplisit"><meta name="twitter:description" content="Catatan teknis tentang lapisan infrastruktur Cloudflare pada beberapa subsystem srilexbuditra.work yang menggunakan Workers, D1, KV, API, serta konfigurasi environment dengan batas implementasi yang eksplisit."><meta name="twitter:image" content="https://srilexbuditra.work/images/og/home/homepage-social-portrait-r1.jpg">
+  <meta property="og:url" content="https://srilexbuditra.work/insights/cloudflare-infrastructure/"><meta property="og:title" content="Infrastruktur Cloudflare: Workers, D1, dan KV di srilexbuditra.work | Srilex Buditra"><meta property="og:description" content="Lapisan infrastruktur Cloudflare menggunakan Workers, D1, KV, dan API dengan batas penerapan yang jelas.">
+  <meta property="og:image" content="https://srilexbuditra.work/images/og/internal/membangun-infrastruktur-cloudflare-srilexbuditra-work-dengan-workers-d1-kv-dan-batas-implementa.avif">
+  <meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Infrastruktur Cloudflare: Workers, D1, dan KV di srilexbuditra.work | Srilex Buditra"><meta name="twitter:description" content="Lapisan infrastruktur Cloudflare menggunakan Workers, D1, KV, dan API dengan batas penerapan yang jelas."><meta name="twitter:image" content="https://srilexbuditra.work/images/og/internal/membangun-infrastruktur-cloudflare-srilexbuditra-work-dengan-workers-d1-kv-dan-batas-implementa.avif">
   <link rel="icon" href="/images/favicon.ico"><link rel="apple-touch-icon" href="/images/apple-touch-icon.avif">
   <link rel="stylesheet" href="/style.css?v=20261007-r9"><link rel="stylesheet" href="/insights/insights.css">
   <script type="application/ld+json">
@@ -40,6 +40,15 @@
                }
 }
 </script>
+  <meta itemprop="name" content="Infrastruktur Cloudflare: Workers, D1, dan KV di srilexbuditra.work | Srilex Buditra">
+  <meta itemprop="description" content="Lapisan infrastruktur Cloudflare menggunakan Workers, D1, KV, dan API dengan batas penerapan yang jelas.">
+  <meta property="og:image:type" content="image/avif">
+  <meta property="og:image:secure_url" content="https://srilexbuditra.work/images/og/internal/membangun-infrastruktur-cloudflare-srilexbuditra-work-dengan-workers-d1-kv-dan-batas-implementa.avif">
+  <meta property="og:image:width" content="1024">
+  <meta property="og:image:height" content="1536">
+  <meta property="og:image:alt" content="Gambar pratinjau Infrastruktur Cloudflare: Workers, D1, dan KV di srilexbuditra.work | Srilex Buditra">
+  <meta name="twitter:image:alt" content="Gambar pratinjau Infrastruktur Cloudflare: Workers, D1, dan KV di srilexbuditra.work | Srilex Buditra">
+  <meta itemprop="image" content="https://srilexbuditra.work/images/og/internal/membangun-infrastruktur-cloudflare-srilexbuditra-work-dengan-workers-d1-kv-dan-batas-implementa.avif">
 </head>
 <body class="insights-page insights-article-color-match">
 <a class="skip-link" href="#konten-utama">Lewati ke konten utama</a>
@@ -49,6 +58,8 @@
     <div class="container">
       <span class="insights-eyebrow">CLOUDFLARE INFRASTRUCTURE / WORKERS / D1 / KV / CATATAN TEKNIS</span>
       <h1>Membangun <span>Infrastruktur Cloudflare srilexbuditra.work</span> dengan Workers, D1, KV, dan Batas Implementasi yang Eksplisit</h1>
+<figure data-internal-og-banner="v1" style="width:min(100%,390px);margin:1.5rem auto 2rem;border-radius:18px;overflow:hidden;box-shadow:0 16px 46px rgba(0,0,0,.15)"><img src="/images/og/internal/membangun-infrastruktur-cloudflare-srilexbuditra-work-dengan-workers-d1-kv-dan-batas-implementa.avif" width="1024" height="1536" loading="lazy" decoding="async" style="display:block;width:100%;height:auto;object-fit:contain" alt="Spanduk Infrastruktur Cloudflare: Workers, D1, dan KV di srilexbuditra.work | Srilex Buditra"></figure>
+
       <p>Cloudflare digunakan sebagai lapisan infrastruktur pada beberapa subsystem srilexbuditra.work—mulai dari runtime Worker dan API, penyimpanan D1, hingga KV pada alur tertentu. Implementasinya tidak seragam di setiap sistem, sehingga artikel ini memisahkan komponen yang benar-benar terbukti dari asumsi bahwa seluruh platform menggunakan stack yang sama.</p>
       <div class="article-meta"><span>5 Okt 2026</span><span>Catatan Teknis</span><a href="/profil/">Srilex Buditra</a></div>
     </div>

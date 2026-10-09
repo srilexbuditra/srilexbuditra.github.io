@@ -1682,3 +1682,18 @@ Platform Baseline aktif: `2026.10.07.0006`.
 - Verify staging before authorizing production application changes.
 - Do not treat documentation-only updates as permission to deploy unfinished source changes.
 - Mark a publishing architecture change VERIFIED only after collecting fresh evidence.
+
+## Rilis Massal Pratinjau OG Internal — 40 Halaman [INTERNAL-OG-V1-BULK-ASSET-RELEASE]
+
+- Acuan kode sebelum penerapan: commit `120ddd2` pada `main`; acuan fungsi aplikasi: `ec12c92` (REV22 R3.7 FINAL / LOCKED).
+- Cakupan rilis: 40 gambar AVIF portrait 1024 × 1536 piksel dan perubahan HTML hanya pada 40 halaman internal yang tercantum dalam inventaris.
+- Perlindungan wajib: seluruh `/program/`, sistem inti REV21/REV22, Worker, D1, API, notifikasi Web Push, instalasi PWA, terjemahan browser, dan persetujuan privasi tetap dipertahankan.
+- Kebijakan gambar: hanya mengganti pratinjau OG yang kosong atau masih memakai logo/gambar halaman utama; gambar OG khusus yang sesuai tetap dipertahankan.
+- Pengujian akhir: setiap URL di domain produksi diverifikasi setelah commit dan push berhasil; jangan mengulang pengujian fitur yang sudah dinyatakan lulus.
+
+## Penyesuaian Metadata ke Bahasa Indonesia [INTERNAL-OG-V1-LOCALE-ID-RECOVERY]
+
+- Judul, deskripsi, metadata Open Graph, metadata Twitter, serta teks alternatif gambar pada 40 halaman inventaris telah diseragamkan ke Bahasa Indonesia. Nama produk, singkatan, dan istilah teknis resmi tetap digunakan seperlunya.
+- Catatan rilis proyek pada file `CHANGELOG.md` dan `docs/ROADMAP.md` yang sudah ada menggunakan Bahasa Indonesia; catatan historis sebelum proyek ini tidak ditulis ulang.
+- Gambar AVIF, URL canonical, aturan robots, konten utama halaman, fitur REV21/REV22, dan seluruh `/program/` tidak diubah oleh tahap penyesuaian bahasa ini.
+- Status: hasil akhir diperiksa pada domain produksi per halaman setelah commit dan push berhasil.
