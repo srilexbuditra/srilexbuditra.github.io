@@ -1,0 +1,971 @@
+/* Banner OG V2: visual pendamping kontekstual, bukan pengganti hero. */
+/* Berlaku hanya pada banner internal OG yang telah dipasang dan kartu editorial Engineering. */
+figure[data-internal-og-banner="v1"].internal-og-portrait {
+  box-sizing: border-box;
+  display: block;
+  width: min(100%, 184px);
+  max-width: 100%;
+  margin: 20px 0 0;
+  padding: 4px;
+  border: 1px solid rgba(216,188,104,.30);
+  border-radius: 16px;
+  background: linear-gradient(145deg,rgba(216,188,104,.10),rgba(105,224,189,.025));
+  box-shadow: 0 14px 32px rgba(0,0,0,.17);
+  overflow: hidden;
+}
+figure[data-internal-og-banner="v1"].internal-og-portrait img {
+  display:block;
+  width:100%;
+  height:auto;
+  aspect-ratio:2/3;
+  object-fit:contain;
+  border-radius:11px;
+}
+/* Desktop dan tablet: poster tetap di samping teks dan CTA, bukan setelah tombol. */
+@media (min-width: 700px) {
+  .detail-page .detail-hero .detail-shell:has(> figure.internal-og-portrait) {
+    display:grid;
+    grid-template-columns:minmax(0,1fr) clamp(138px,19vw,198px);
+    grid-template-rows:repeat(4,auto);
+    column-gap:clamp(18px,3.2vw,52px);
+    align-items:start;
+  }
+  .detail-page .detail-hero .detail-shell:has(> figure.internal-og-portrait) > :not(figure){
+    grid-column:1;
+    min-width:0;
+  }
+  .detail-page .detail-hero .detail-shell > figure.internal-og-portrait {
+    grid-column:2;
+    grid-row:1 / span 4;
+    align-self:center;
+    justify-self:end;
+    width:100%;
+    margin:0;
+  }
+  .detail-page .detail-hero .detail-shell:has(> figure.internal-og-portrait) h1 {
+    font-size:clamp(2.25rem,4.8vw,4.55rem);
+  }
+}
+/* FAQ / Profil alasan / artikel: lebar teks dilindungi pada tablet. */
+@media (min-width: 860px) {
+  .why-page-hero .container:has(>figure.internal-og-portrait),
+  .faq-page-hero .faq-page-shell:has(>figure.internal-og-portrait),
+  .insights-hero .container:has(>figure.internal-og-portrait){
+    display:grid;
+    grid-template-columns:minmax(0,1fr) minmax(140px,185px);
+    grid-template-rows:repeat(4,auto);
+    column-gap:clamp(22px,4vw,58px);
+    align-items:start;
+  }
+  .why-page-hero .container:has(>figure.internal-og-portrait) > :not(figure),
+  .faq-page-hero .faq-page-shell:has(>figure.internal-og-portrait) > :not(figure),
+  .insights-hero .container:has(>figure.internal-og-portrait) > :not(figure) {
+    grid-column:1;
+    min-width:0;
+  }
+  .why-page-hero .container > figure.internal-og-portrait,
+  .faq-page-hero .faq-page-shell > figure.internal-og-portrait,
+  .insights-hero .container > figure.internal-og-portrait {
+    grid-column:2;
+    grid-row:1 / span 4;
+    width:100%;
+    margin:0;
+    align-self:center;
+    justify-self:end;
+  }
+  .why-page-hero .container:has(> figure.internal-og-portrait) h1 {font-size:clamp(42px,4.5vw,66px)}
+  .insights-hero .container:has(> figure.internal-og-portrait) h1 {font-size:clamp(34px,3.9vw,58px);letter-spacing:-.03em;overflow-wrap:anywhere}
+}
+/* Lebar transisi: gunakan poster mini, tidak memenuhi satu layar. */
+@media (min-width: 600px) and (max-width: 859px) {
+  .why-page-hero figure.internal-og-portrait,
+  .faq-page-hero figure.internal-og-portrait,
+  .insights-hero figure.internal-og-portrait {
+    width: min(24vw,130px);
+    margin:18px 0 0;
+  }
+}
+@media (min-width: 600px) and (max-width: 699px) {
+  .detail-page figure.internal-og-portrait {
+    width:min(24vw,126px);
+    margin:16px 0 0;
+  }
+}
+/* HP: konten dan tombol tetap prioritas. Poster OG tidak mengambil tinggi halaman. */
+@media (max-width: 599px) {
+  figure[data-internal-og-banner="v1"].internal-og-portrait {
+    display:none;
+  }
+}
+/* Rekayasa sistem: ilustrasi editorial di ringkasan, tanpa menyentuh hero existing. */
+.engineering-page figure.engineering-og-editorial-v2 {
+  box-sizing:border-box;
+  width:min(100%,190px);
+  margin:0;
+  padding:5px;
+  border:1px solid rgba(255,181,27,.26);
+  border-radius:16px;
+  background:linear-gradient(145deg,rgba(255,181,27,.09),rgba(110,231,183,.04));
+  box-shadow:0 14px 34px rgba(0,0,0,.18);
+  overflow:hidden;
+}
+.engineering-page figure.engineering-og-editorial-v2 a {display:block;text-decoration:none;color:inherit}
+.engineering-page figure.engineering-og-editorial-v2 img {display:block;width:100%;height:auto;aspect-ratio:2/3;object-fit:contain;border-radius:11px}
+.engineering-page figure.engineering-og-editorial-v2 figcaption {font-size:.72rem;line-height:1.4;text-align:center;color:var(--eng-muted);padding:8px 3px 3px}
+@media (min-width: 760px) {
+  .engineering-page .engineering-overview .engineering-intro:has(>figure.engineering-og-editorial-v2) {
+    display:grid;
+    grid-template-columns:minmax(0,1fr) minmax(145px,190px);
+    grid-template-rows:repeat(3,auto);
+    column-gap:clamp(20px,4vw,56px);
+    align-items:center;
+    max-width:1100px;
+  }
+  .engineering-page .engineering-overview .engineering-intro > :not(figure.engineering-og-editorial-v2){grid-column:1;min-width:0}
+  .engineering-page .engineering-overview .engineering-intro > figure.engineering-og-editorial-v2 {grid-column:2;grid-row:1 / span 3;justify-self:end}
+}
+@media (max-width: 759px) {
+  .engineering-page .engineering-overview figure.engineering-og-editorial-v2{width:min(35vw,118px);margin-top:20px}
+}
+
+/* MOBILE V2 EDITORIAL CARD - KEAHLIAN TEKNIS ONLY */
+.detail-page .detail-hero .detail-shell > figure.internal-og-portrait .mobile-v2-editorial-caption {
+  display: none;
+}
+
+@media (max-width: 599px) {
+  .detail-page .detail-hero .detail-shell > figure.internal-og-portrait:has(> img[src="/images/og/internal/keahlian-teknis.avif"]) {
+    display: grid;
+    grid-template-columns: 88px minmax(0, 1fr);
+    align-items: center;
+    gap: 13px;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 360px;
+    margin: 16px auto 0;
+    padding: 11px;
+    border: 1px solid rgba(216,188,104,.34);
+    border-radius: 16px;
+    background: linear-gradient(135deg,#172b36,#0c1b25);
+    box-shadow: 0 10px 25px rgba(0,0,0,.14);
+  }
+
+  .detail-page .detail-hero .detail-shell > figure.internal-og-portrait > img[src="/images/og/internal/keahlian-teknis.avif"] {
+    width: 88px;
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+  }
+
+  .detail-page .detail-hero .detail-shell > figure.internal-og-portrait .mobile-v2-editorial-caption {
+    display: grid;
+    gap: 7px;
+    min-width: 0;
+    line-height: 1.45;
+  }
+
+  .mobile-v2-editorial-caption strong {
+    color: #ffcb58;
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  .mobile-v2-editorial-caption span {
+    color: #c4d0da;
+    font-size: 12px;
+    overflow-wrap: anywhere;
+  }
+}
+
+
+/* MOBILE V2 EXTENSION - LAYANAN AND ENGINEERING */
+
+/* Caption baru disembunyikan pada tablet dan desktop. */
+.detail-page .detail-hero .detail-shell > figure.internal-og-portrait:has(> img[src="/images/og/internal/layanan-digital.avif"]) .mobile-v2-editorial-caption,
+.engineering-page figure.engineering-og-editorial-v2 .engineering-mobile-note {
+  display: none;
+}
+
+@media (max-width: 599px) {
+
+  /* Layanan Digital: kartu editorial seperti Keahlian Teknis. */
+  .detail-page .detail-hero .detail-shell > figure.internal-og-portrait:has(> img[src="/images/og/internal/layanan-digital.avif"]) {
+    display: grid;
+    grid-template-columns: 88px minmax(0, 1fr);
+    align-items: center;
+    gap: 13px;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 360px;
+    margin: 16px auto 0;
+    padding: 11px;
+    border: 1px solid rgba(216,188,104,.34);
+    border-radius: 16px;
+    background: linear-gradient(135deg,#172b36,#0c1b25);
+    box-shadow: 0 10px 25px rgba(0,0,0,.14);
+  }
+
+  .detail-page .detail-hero .detail-shell > figure.internal-og-portrait > img[src="/images/og/internal/layanan-digital.avif"] {
+    width: 88px;
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+  }
+
+  .detail-page .detail-hero .detail-shell > figure.internal-og-portrait:has(> img[src="/images/og/internal/layanan-digital.avif"]) .mobile-v2-editorial-caption {
+    display: grid;
+    gap: 7px;
+    min-width: 0;
+    line-height: 1.45;
+  }
+
+  /* Engineering: kartu tetap di Engineering Overview. */
+  .engineering-page .engineering-overview .engineering-intro > figure.engineering-og-editorial-v2 {
+    display: grid;
+    grid-template-columns: 88px minmax(0, 1fr);
+    align-items: center;
+    gap: 13px;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 360px;
+    margin: 16px auto 0;
+    padding: 11px;
+    border: 1px solid rgba(216,188,104,.34);
+    border-radius: 16px;
+    background: linear-gradient(135deg,#172b36,#0c1b25);
+    box-shadow: 0 10px 25px rgba(0,0,0,.14);
+  }
+
+  .engineering-page .engineering-overview .engineering-intro > figure.engineering-og-editorial-v2 > a {
+    display: block;
+    width: 88px;
+    max-width: 100%;
+  }
+
+  .engineering-page .engineering-overview .engineering-intro > figure.engineering-og-editorial-v2 figcaption {
+    padding: 0;
+    min-width: 0;
+    text-align: left;
+    color: #ffcb58;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.45;
+  }
+
+  .engineering-page .engineering-overview .engineering-intro > figure.engineering-og-editorial-v2 .engineering-mobile-note {
+    display: block;
+    margin-top: 7px;
+    color: #c4d0da;
+    font-size: 12px;
+    font-weight: 400;
+    overflow-wrap: anywhere;
+  }
+}
+
+/* MOBILE V2 NEXT DETAIL PAGES - PROSES KERJA + KEPERCAYAAN */
+
+/* Caption hanya terlihat pada perangkat mobile. */
+.detail-page .detail-hero .detail-shell > figure.internal-og-editorial-v2-extended .mobile-v2-editorial-caption {
+  display: none;
+}
+
+@media (max-width: 599px) {
+  .detail-page .detail-hero .detail-shell > figure.internal-og-editorial-v2-extended {
+    display: grid;
+    grid-template-columns: 88px minmax(0, 1fr);
+    align-items: center;
+    gap: 13px;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 360px;
+    margin: 16px auto 0;
+    padding: 11px;
+    border: 1px solid rgba(216,188,104,.34);
+    border-radius: 16px;
+    background: linear-gradient(135deg,#172b36,#0c1b25);
+    box-shadow: 0 10px 25px rgba(0,0,0,.14);
+  }
+
+  .detail-page .detail-hero .detail-shell > figure.internal-og-editorial-v2-extended > img {
+    display: block;
+    width: 88px;
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+  }
+
+  .detail-page .detail-hero .detail-shell > figure.internal-og-editorial-v2-extended .mobile-v2-editorial-caption {
+    display: grid;
+    gap: 7px;
+    min-width: 0;
+    line-height: 1.45;
+  }
+}
+
+/* MOBILE V2 WHY FAQ - 20261010 */
+
+/* Keterangan tambahan hanya untuk HP. */
+.why-page-hero .container > figure.internal-og-editorial-v2-next .mobile-v2-editorial-caption,
+.faq-page-hero .faq-page-shell > figure.internal-og-editorial-v2-next .mobile-v2-editorial-caption {
+  display: none;
+}
+
+@media (max-width: 599px) {
+  .why-page-hero .container > figure.internal-og-editorial-v2-next,
+  .faq-page-hero .faq-page-shell > figure.internal-og-editorial-v2-next {
+    display: grid;
+    grid-template-columns: 88px minmax(0,1fr);
+    align-items: center;
+    gap: 13px;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 360px;
+    min-width: 0;
+    margin: 16px auto 0;
+    padding: 11px;
+    border: 1px solid rgba(216,188,104,.34);
+    border-radius: 16px;
+    background: linear-gradient(135deg,#172b36,#0c1b25);
+    box-shadow: 0 10px 25px rgba(0,0,0,.14);
+  }
+
+  .why-page-hero .container > figure.internal-og-editorial-v2-next > img,
+  .faq-page-hero .faq-page-shell > figure.internal-og-editorial-v2-next > img {
+    display: block;
+    width: 88px;
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+  }
+
+  .why-page-hero .container > figure.internal-og-editorial-v2-next .mobile-v2-editorial-caption,
+  .faq-page-hero .faq-page-shell > figure.internal-og-editorial-v2-next .mobile-v2-editorial-caption {
+    display: grid;
+    gap: 7px;
+    min-width: 0;
+    line-height: 1.45;
+    text-align: left;
+  }
+
+  .why-page-hero figure.internal-og-editorial-v2-next .mobile-v2-editorial-caption strong,
+  .faq-page-hero figure.internal-og-editorial-v2-next .mobile-v2-editorial-caption strong {
+    color: #ffcb58;
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  .why-page-hero figure.internal-og-editorial-v2-next .mobile-v2-editorial-caption span,
+  .faq-page-hero figure.internal-og-editorial-v2-next .mobile-v2-editorial-caption span {
+    color: #c4d0da;
+    font-size: 12px;
+    overflow-wrap: anywhere;
+  }
+}
+
+
+/* MOBILE V2 SPACING + TABLET WHY FAQ - 20261010 */
+
+/* Tablet: teks dan poster proporsional dalam dua kolom. */
+@media (min-width: 700px) and (max-width: 859px) {
+  .why-page-hero .container:has(> figure.internal-og-editorial-v2-next),
+  .faq-page-hero .faq-page-shell:has(> figure.internal-og-editorial-v2-next) {
+    display: grid;
+    grid-template-columns: minmax(0,1fr) clamp(132px,20vw,164px);
+    grid-template-rows: repeat(4,auto);
+    column-gap: clamp(18px,3.2vw,32px);
+    align-items: center;
+  }
+
+  .why-page-hero .container:has(> figure.internal-og-editorial-v2-next) > :not(figure),
+  .faq-page-hero .faq-page-shell:has(> figure.internal-og-editorial-v2-next) > :not(figure) {
+    grid-column: 1;
+    min-width: 0;
+  }
+
+  .why-page-hero .container > figure.internal-og-editorial-v2-next,
+  .faq-page-hero .faq-page-shell > figure.internal-og-editorial-v2-next {
+    grid-column: 2;
+    grid-row: 1 / span 4;
+    align-self: center;
+    justify-self: end;
+    width: 100%;
+    max-width: 164px;
+    margin: 0;
+  }
+
+  .why-page-hero .container:has(> figure.internal-og-editorial-v2-next) h1 {
+    font-size: clamp(2.35rem,4.8vw,3.4rem);
+    line-height: 1.1;
+  }
+
+  .faq-page-hero .faq-page-shell:has(> figure.internal-og-editorial-v2-next) h1 {
+    font-size: clamp(2.25rem,4.8vw,3.2rem);
+    line-height: 1.1;
+  }
+}
+
+/* HP: jarak kartu dan perpindahan antarbagian dirapikan. */
+@media (max-width: 599px) {
+  .why-page-hero,
+  .faq-page-hero {
+    min-height: 0;
+    padding-bottom: 14px;
+  }
+
+  .why-page-hero .container > figure.internal-og-editorial-v2-next,
+  .faq-page-hero .faq-page-shell > figure.internal-og-editorial-v2-next {
+    margin-top: 12px;
+    margin-bottom: 0;
+  }
+
+  .why-page-section#alasan {
+    padding-top: 8px;
+  }
+
+  .faq-page-hero + * {
+    margin-top: 0;
+    padding-top: 14px;
+  }
+}
+
+
+/* MOBILE V2 VERTICAL SPACING - FIVE APPROVED PAGES */
+
+/*
+   Empat halaman detail menggunakan struktur hero yang sama.
+   Engineering menggunakan Overview dan Domains tersendiri.
+   Aturan ini hanya berlaku untuk lebar HP.
+*/
+
+@media (max-width: 599px) {
+
+  /* Keahlian, Layanan, Proses, Kepercayaan */
+  body.detail-page .detail-hero:has(> .detail-shell > figure.internal-og-portrait) {
+    padding-bottom: 16px;
+  }
+
+  body.detail-page .detail-hero:has(> .detail-shell > figure.internal-og-portrait) + .detail-section {
+    padding-top: 8px;
+  }
+
+  /* Engineering: kartu tetap pada Engineering Overview. */
+  body.engineering-page .engineering-overview:has(.engineering-intro > figure.engineering-og-editorial-v2) {
+    padding-bottom: 14px;
+  }
+
+  body.engineering-page .engineering-overview:has(.engineering-intro > figure.engineering-og-editorial-v2) + .engineering-domains {
+    padding-top: 0;
+  }
+}
+
+
+/* INSIGHTS CLOUDFLARE MOBILE EDITORIAL V2 - 20261010 */
+/* CLOUDFLARE V2 TABLET + SPACING REFINED */
+
+/* Desktop: gunakan poster asli tanpa caption. */
+body.insights-page .insights-hero .container > figure.internal-og-editorial-cloudflare-v2 .mobile-v2-editorial-caption {
+  display: none;
+}
+
+/* HP dan tablet kecil: kartu editorial horizontal. */
+@media (max-width: 699px) {
+
+  body.insights-page .insights-hero:has(figure.internal-og-editorial-cloudflare-v2) {
+    padding-bottom: 8px;
+  }
+
+  body.insights-page .insights-hero:has(figure.internal-og-editorial-cloudflare-v2) + section.section {
+    padding-top: 8px;
+  }
+
+  body.insights-page .insights-hero .container > figure.internal-og-editorial-cloudflare-v2 {
+    display: grid;
+    grid-template-columns: 88px minmax(0,1fr);
+    align-items: center;
+    gap: 13px;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 520px;
+    min-width: 0;
+    height: auto;
+    max-height: none;
+    margin: 16px 0 0;
+    padding: 11px;
+    border: 1px solid rgba(216,188,104,.34);
+    border-radius: 16px;
+    background: linear-gradient(135deg,#172b36,#0c1b25);
+    box-shadow: 0 10px 25px rgba(0,0,0,.14);
+    position: static;
+    transform: none;
+  }
+
+  body.insights-page .insights-hero .container > figure.internal-og-editorial-cloudflare-v2 > img {
+    display: block;
+    width: 88px;
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+  }
+
+  body.insights-page .insights-hero .container > figure.internal-og-editorial-cloudflare-v2 .mobile-v2-editorial-caption {
+    display: grid;
+    gap: 7px;
+    min-width: 0;
+    padding: 0;
+    margin: 0;
+    line-height: 1.45;
+    text-align: left;
+  }
+
+  body.insights-page .insights-hero .container > figure.internal-og-editorial-cloudflare-v2 .mobile-v2-editorial-caption strong {
+    color: #ffcb58;
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  body.insights-page .insights-hero .container > figure.internal-og-editorial-cloudflare-v2 .mobile-v2-editorial-caption span {
+    color: #c4d0da;
+    font-size: 12px;
+    font-weight: 400;
+    overflow-wrap: anywhere;
+  }
+}
+
+/* Tablet 700-859px: teks kiri, poster portrait kanan. */
+@media (min-width: 700px) and (max-width: 859px) {
+
+  body.insights-page .insights-hero:has(figure.internal-og-editorial-cloudflare-v2) {
+    padding-top: 50px;
+    padding-bottom: 28px;
+  }
+
+  body.insights-page .insights-hero:has(figure.internal-og-editorial-cloudflare-v2) + section.section {
+    padding-top: 34px;
+  }
+
+  body.insights-page .insights-hero .container:has(> figure.internal-og-editorial-cloudflare-v2) {
+    display: grid;
+    grid-template-columns: minmax(0,1fr) minmax(130px,160px);
+    column-gap: 22px;
+    align-items: start;
+  }
+
+  body.insights-page .insights-hero .container:has(> figure.internal-og-editorial-cloudflare-v2) > :not(figure) {
+    grid-column: 1;
+    min-width: 0;
+  }
+
+  body.insights-page .insights-hero .container > figure.internal-og-editorial-cloudflare-v2 {
+    display: block;
+    grid-column: 2;
+    grid-row: 1 / span 4;
+    justify-self: end;
+    align-self: center;
+    width: 100%;
+    max-width: 160px;
+    height: auto;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    position: static;
+    transform: none;
+  }
+
+  body.insights-page .insights-hero .container > figure.internal-og-editorial-cloudflare-v2 > img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 12px;
+  }
+
+  body.insights-page .insights-hero .container > figure.internal-og-editorial-cloudflare-v2 .mobile-v2-editorial-caption {
+    display: none;
+  }
+
+  body.insights-page .insights-hero .container:has(> figure.internal-og-editorial-cloudflare-v2) h1 {
+    font-size: clamp(30px,4.4vw,36px);
+    line-height: 1.08;
+    letter-spacing: -.03em;
+    overflow-wrap: anywhere;
+  }
+
+  body.insights-page .insights-hero .container:has(> figure.internal-og-editorial-cloudflare-v2) p {
+    font-size: 14px;
+    line-height: 1.7;
+  }
+}
+
+/* INSIGHTS OFFICIAL DOCUMENT VERIFICATION MOBILE EDITORIAL V2 - 20261010 */
+/* CLOUDFLARE V2 TABLET + SPACING REFINED */
+
+/* Desktop: gunakan poster asli tanpa caption. */
+body.insights-page .insights-hero .container > figure.internal-og-editorial-official-verification-v2 .mobile-v2-editorial-caption {
+  display: none;
+}
+
+/* HP dan tablet kecil: kartu editorial horizontal. */
+@media (max-width: 699px) {
+
+  body.insights-page .insights-hero:has(figure.internal-og-editorial-official-verification-v2) {
+    padding-bottom: 8px;
+  }
+
+  body.insights-page .insights-hero:has(figure.internal-og-editorial-official-verification-v2) + section.section {
+    padding-top: 8px;
+  }
+
+  body.insights-page .insights-hero .container > figure.internal-og-editorial-official-verification-v2 {
+    display: grid;
+    grid-template-columns: 88px minmax(0,1fr);
+    align-items: center;
+    gap: 13px;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 520px;
+    min-width: 0;
+    height: auto;
+    max-height: none;
+    margin: 16px 0 0;
+    padding: 11px;
+    border: 1px solid rgba(216,188,104,.34);
+    border-radius: 16px;
+    background: linear-gradient(135deg,#172b36,#0c1b25);
+    box-shadow: 0 10px 25px rgba(0,0,0,.14);
+    position: static;
+    transform: none;
+  }
+
+  body.insights-page .insights-hero .container > figure.internal-og-editorial-official-verification-v2 > img {
+    display: block;
+    width: 88px;
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+  }
+
+  body.insights-page .insights-hero .container > figure.internal-og-editorial-official-verification-v2 .mobile-v2-editorial-caption {
+    display: grid;
+    gap: 7px;
+    min-width: 0;
+    padding: 0;
+    margin: 0;
+    line-height: 1.45;
+    text-align: left;
+  }
+
+  body.insights-page .insights-hero .container > figure.internal-og-editorial-official-verification-v2 .mobile-v2-editorial-caption strong {
+    color: #ffcb58;
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  body.insights-page .insights-hero .container > figure.internal-og-editorial-official-verification-v2 .mobile-v2-editorial-caption span {
+    color: #c4d0da;
+    font-size: 12px;
+    font-weight: 400;
+    overflow-wrap: anywhere;
+  }
+}
+
+/* Tablet 700-859px: teks kiri, poster portrait kanan. */
+@media (min-width: 700px) and (max-width: 859px) {
+
+  body.insights-page .insights-hero:has(figure.internal-og-editorial-official-verification-v2) {
+    padding-top: 50px;
+    padding-bottom: 28px;
+  }
+
+  body.insights-page .insights-hero:has(figure.internal-og-editorial-official-verification-v2) + section.section {
+    padding-top: 34px;
+  }
+
+  body.insights-page .insights-hero .container:has(> figure.internal-og-editorial-official-verification-v2) {
+    display: grid;
+    grid-template-columns: minmax(0,1fr) minmax(130px,160px);
+    column-gap: 22px;
+    align-items: start;
+  }
+
+  body.insights-page .insights-hero .container:has(> figure.internal-og-editorial-official-verification-v2) > :not(figure) {
+    grid-column: 1;
+    min-width: 0;
+  }
+
+  body.insights-page .insights-hero .container > figure.internal-og-editorial-official-verification-v2 {
+    display: block;
+    grid-column: 2;
+    grid-row: 1 / span 4;
+    justify-self: end;
+    align-self: center;
+    width: 100%;
+    max-width: 160px;
+    height: auto;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    position: static;
+    transform: none;
+  }
+
+  body.insights-page .insights-hero .container > figure.internal-og-editorial-official-verification-v2 > img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 12px;
+  }
+
+  body.insights-page .insights-hero .container > figure.internal-og-editorial-official-verification-v2 .mobile-v2-editorial-caption {
+    display: none;
+  }
+
+  body.insights-page .insights-hero .container:has(> figure.internal-og-editorial-official-verification-v2) h1 {
+    font-size: clamp(30px,4.4vw,36px);
+    line-height: 1.08;
+    letter-spacing: -.03em;
+    overflow-wrap: anywhere;
+  }
+
+  body.insights-page .insights-hero .container:has(> figure.internal-og-editorial-official-verification-v2) p {
+    font-size: 14px;
+    line-height: 1.7;
+  }
+}
+
+/* PORTFOLIO DOCUMENT V2 - CONSOLIDATED HERO */
+/* Hanya aktif jika poster AVIF menjadi anak langsung hero grid. */
+
+body.case-page .case-hero .case-hero-grid:has(> figure.portfolio-document-og-v2) {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+  gap: 20px;
+}
+
+body.case-page .case-hero .case-hero-grid:has(> figure.portfolio-document-og-v2) > div:first-child {
+  min-width: 0;
+}
+
+body.case-page .case-hero .case-hero-grid > figure.portfolio-document-og-v2 {
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: 88px minmax(0,1fr);
+  align-items: center;
+  gap: 13px;
+  width: 100%;
+  max-width: 360px;
+  min-width: 0;
+  margin: 0;
+  padding: 11px;
+  border: 1px solid rgba(216,188,104,.34);
+  border-radius: 16px;
+  background: linear-gradient(135deg,#172b36,#0c1b25);
+  box-shadow: 0 10px 25px rgba(0,0,0,.14);
+}
+
+body.case-page .case-hero .case-hero-grid > figure.portfolio-document-og-v2 > img {
+  display: block;
+  grid-column: 1;
+  grid-row: 1;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 2 / 3;
+  object-fit: contain;
+  border-radius: 10px;
+}
+
+body.case-page .case-hero .case-hero-grid > figure.portfolio-document-og-v2 > figcaption {
+  display: grid;
+  grid-column: 2;
+  grid-row: 1;
+  gap: 7px;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  line-height: 1.45;
+  text-align: left;
+}
+
+body.case-page .case-hero figure.portfolio-document-og-v2 figcaption strong {
+  font-size: 14px;
+  font-weight: 700;
+  color: #ffcb58;
+}
+
+body.case-page .case-hero figure.portfolio-document-og-v2 figcaption span {
+  font-size: 12px;
+  color: #c4d0da;
+  overflow-wrap: anywhere;
+}
+
+body.case-page .case-hero .case-hero-grid:has(> figure.portfolio-document-og-v2) > .system-case-hero-media {
+  min-width: 0;
+  margin: 0;
+  align-self: start;
+}
+
+/* HP: teks, poster horizontal, lalu Trust Flow. */
+@media (max-width: 699px) {
+  body.case-page .case-hero .case-hero-grid > figure.portfolio-document-og-v2 {
+    justify-self: center;
+  }
+}
+
+/* Tablet: poster kanan, Trust Flow lebar penuh di bawah. */
+@media (min-width: 700px) and (max-width: 1199px) {
+  body.case-page .case-hero .case-hero-grid:has(> figure.portfolio-document-og-v2) {
+    grid-template-columns: minmax(0,1fr) clamp(160px,27vw,215px);
+    column-gap: 20px;
+    row-gap: 24px;
+  }
+
+  body.case-page .case-hero .case-hero-grid:has(> figure.portfolio-document-og-v2) > div:first-child {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  body.case-page .case-hero .case-hero-grid > figure.portfolio-document-og-v2 {
+    grid-column: 2;
+    grid-row: 1;
+    align-self: end;
+    grid-template-columns: minmax(0,1fr);
+    max-width: none;
+    padding: 10px;
+  }
+
+  body.case-page .case-hero .case-hero-grid > figure.portfolio-document-og-v2 > img {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  body.case-page .case-hero .case-hero-grid > figure.portfolio-document-og-v2 > figcaption {
+    display: none;
+  }
+
+  body.case-page .case-hero .case-hero-grid:has(> figure.portfolio-document-og-v2) > .system-case-hero-media {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    width: 100%;
+    max-width: 760px;
+    justify-self: center;
+  }
+
+
+  /* PORTFOLIO DOCUMENT MEASURED TABLET SPACING V2 */
+  body.case-page main > .case-hero:has(figure.portfolio-document-og-v2) {
+    padding-bottom: 24px;
+  }
+
+  body.case-page main > .case-hero:has(figure.portfolio-document-og-v2) + .case-section {
+    padding-top: 24px;
+  }
+}
+
+/* PORTFOLIO DOCUMENT V2 - COMPACT CARDS DESKTOP */
+/* Scoped: hanya Portfolio Document Verification >= 1200px. */
+@media (min-width: 1200px) {
+
+  body.case-page .case-hero .case-hero-grid:has(> figure.portfolio-document-og-v2) {
+    grid-template-columns: minmax(0,1.3fr) minmax(320px,.8fr);
+    column-gap: clamp(24px,3.5vw,52px);
+    row-gap: 18px;
+    align-items: start;
+  }
+
+  body.case-page .case-hero .case-hero-grid:has(> figure.portfolio-document-og-v2) > div:first-child {
+    grid-column: 1;
+    grid-row: 1;
+    align-self: center;
+    min-width: 0;
+  }
+
+  /* Poster: ukuran lebih ringkas dan terpusat. */
+  body.case-page .case-hero .case-hero-grid > figure.portfolio-document-og-v2 {
+    grid-column: 2;
+    grid-row: 1;
+    display: grid;
+    grid-template-columns: minmax(0,1fr);
+    width: 100%;
+    max-width: 350px;
+    margin: 0;
+    padding: 12px;
+    gap: 8px;
+    justify-self: center;
+    align-self: end;
+  }
+
+  body.case-page .case-hero .case-hero-grid > figure.portfolio-document-og-v2 > img {
+    grid-column: 1;
+    grid-row: 1;
+    width: min(100%,180px);
+    max-width: 100%;
+    height: auto;
+    justify-self: center;
+    object-fit: contain;
+  }
+
+  body.case-page .case-hero .case-hero-grid > figure.portfolio-document-og-v2 > figcaption {
+    display: grid;
+    grid-column: 1;
+    grid-row: 2;
+    gap: 4px;
+    text-align: center;
+  }
+
+  /* Hilangkan tinggi minimum bawaan pada pembungkus Trust Flow. */
+  body.case-page .case-hero .case-hero-grid:has(> figure.portfolio-document-og-v2) > .system-case-hero-media {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    box-sizing: border-box;
+    display: block;
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+    min-height: 0 !important;
+    height: auto !important;
+    aspect-ratio: auto !important;
+    margin: 0;
+    padding: 0;
+    align-self: start;
+  }
+
+  body.case-page .case-hero .case-hero-grid:has(> figure.portfolio-document-og-v2) .system-case-visual {
+    box-sizing: border-box;
+    display: block;
+    min-height: 0 !important;
+    height: auto !important;
+    aspect-ratio: auto !important;
+    padding: 20px 24px;
+  }
+
+  /* Empat informasi dalam satu baris yang ringkas. */
+  body.case-page .case-hero .case-hero-grid:has(> figure.portfolio-document-og-v2) .system-case-visual-flow {
+    display: grid;
+    grid-template-columns: repeat(4,minmax(0,1fr));
+    gap: 12px;
+  }
+
+  body.case-page .case-hero .case-hero-grid:has(> figure.portfolio-document-og-v2) .system-case-node {
+    min-height: 0;
+    height: auto;
+  }
+
+  body.case-page main > .case-hero:has(figure.portfolio-document-og-v2) {
+    padding-bottom: 26px;
+  }
+
+  body.case-page main > .case-hero:has(figure.portfolio-document-og-v2) + .case-section {
+    padding-top: 24px;
+  }
+}
+/* Kurangi ruang kosong antarseksi hanya pada halaman ini. */
+body.case-page .case-hero:has(figure.portfolio-document-og-v2) {
+  padding-bottom: 48px;
+}
+
+body.case-page .case-hero:has(figure.portfolio-document-og-v2) + .case-section {
+  padding-top: 56px;
+}
