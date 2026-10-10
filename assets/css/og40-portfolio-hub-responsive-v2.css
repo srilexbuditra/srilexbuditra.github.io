@@ -1,0 +1,147 @@
+/* OG40 PORTFOLIO HUB RESPONSIVE V2 R1 */
+/* Hanya untuk halaman Portfolio Hub. */
+
+body.portfolio-hub-page .portfolio-hub-hero {
+  padding:68px 0 44px;
+}
+
+body.portfolio-hub-page .portfolio-hub-hero > .container {
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(200px,255px);
+  column-gap:clamp(20px,3.5vw,50px);
+  align-items:center;
+}
+
+body.portfolio-hub-page .portfolio-hub-hero > .container > :not(.portfolio-hub-og40-v2) {
+  grid-column:1;
+  min-width:0;
+}
+
+body.portfolio-hub-page .portfolio-hub-hero h1 {
+  font-size:clamp(46px,5.5vw,78px);
+  letter-spacing:-2.8px;
+}
+
+body.portfolio-hub-page .portfolio-hub-og40-v2 {
+  box-sizing:border-box;
+  grid-column:2;
+  grid-row:1 / span 4;
+  justify-self:end;
+  align-self:center;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:10px;
+  width:100%;
+  min-width:0;
+  margin:0;
+  padding:12px;
+  border:1px solid rgba(255,191,70,.34);
+  border-radius:17px;
+  background:linear-gradient(145deg,#122a39,#071b29);
+  box-shadow:0 14px 36px rgba(0,0,0,.16);
+}
+
+body.portfolio-hub-page .portfolio-hub-og40-v2 img {
+  display:block;
+  width:100%;
+  max-width:185px;
+  height:auto;
+  aspect-ratio:2/3;
+  object-fit:contain;
+  border-radius:10px;
+}
+
+body.portfolio-hub-page .portfolio-hub-og40-v2 figcaption {
+  display:flex;
+  flex-direction:column;
+  align-self:stretch;
+  gap:5px;
+  color:#b8cedb;
+  font-size:12px;
+  line-height:1.45;
+  text-align:center;
+}
+
+body.portfolio-hub-page .portfolio-hub-og40-v2 strong {
+  color:#ffcb62;
+  font-size:13px;
+}
+
+body.portfolio-hub-page #live {
+  padding-top:55px;
+}
+
+/* Tablet: teks kiri, poster kanan */
+@media (min-width:700px) and (max-width:1023px) {
+  body.portfolio-hub-page .portfolio-hub-hero {
+    padding:54px 0 32px;
+  }
+
+  body.portfolio-hub-page .portfolio-hub-hero > .container {
+    grid-template-columns:minmax(0,1fr) minmax(170px,205px);
+    column-gap:22px;
+  }
+
+  body.portfolio-hub-page .portfolio-hub-hero h1 {
+    font-size:clamp(38px,5vw,49px);
+    letter-spacing:-1.7px;
+  }
+
+  body.portfolio-hub-page .portfolio-hub-og40-v2 {
+    padding:10px;
+  }
+
+  body.portfolio-hub-page #live {
+    padding-top:42px;
+  }
+}
+
+/* HP: poster kiri dan caption kanan */
+@media (max-width:699px) {
+  body.portfolio-hub-page .portfolio-hub-hero {
+    padding:46px 0 18px;
+  }
+
+  body.portfolio-hub-page .portfolio-hub-hero > .container {
+    grid-template-columns:minmax(0,1fr);
+    row-gap:0;
+  }
+
+  body.portfolio-hub-page .portfolio-hub-hero h1 {
+    font-size:clamp(43px,11vw,52px);
+    letter-spacing:-2px;
+  }
+
+  body.portfolio-hub-page .portfolio-hub-og40-v2 {
+    grid-column:1;
+    grid-row:auto;
+    justify-self:stretch;
+    display:grid;
+    grid-template-columns:88px minmax(0,1fr);
+    align-items:center;
+    gap:13px;
+    width:100%;
+    max-width:none;
+    margin-top:21px;
+    padding:10px;
+  }
+
+  body.portfolio-hub-page .portfolio-hub-og40-v2 img {
+    grid-column:1;
+    grid-row:1;
+    max-width:none;
+    width:100%;
+  }
+
+  body.portfolio-hub-page .portfolio-hub-og40-v2 figcaption {
+    grid-column:2;
+    grid-row:1;
+    min-width:0;
+    text-align:left;
+  }
+
+  body.portfolio-hub-page #live {
+    padding-top:36px;
+  }
+}
