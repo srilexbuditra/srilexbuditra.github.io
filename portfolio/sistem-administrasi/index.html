@@ -42,6 +42,91 @@
   <meta property="og:image:height" content="1024">
   <meta name="twitter:image:alt" content="Gambar pratinjau Adminfolio — Portofolio Sistem Administrasi">
   <meta itemprop="image" content="https://srilexbuditra.work/assets/portfolio-sistem-administrasi.avif">
+  <style id="og40-sistem-administrasi-responsive-v2-r1">
+    /*
+      OG40 Sistem Administrasi Responsive V2 R1.
+      Pertahankan sidebar, konten, poster, dan script asli.
+    */
+
+    /* Tablet: gunakan perilaku sidebar mobile. */
+    @media (min-width:761px) and (max-width:900px) {
+      :root {
+        --sidebar:250px;
+      }
+
+      .sidebar {
+        transform:translateX(-100%);
+        transition:transform .25s ease;
+      }
+
+      .sidebar.open {
+        transform:translateX(0);
+      }
+
+      .main {
+        margin-left:0;
+        width:100%;
+        min-width:0;
+      }
+
+      .mobile-only {
+        display:block;
+      }
+
+      .topbar {
+        padding-left:16px;
+        padding-right:16px;
+      }
+    }
+
+    /* HP dan tablet: pisahkan dua tombol melayang. */
+    @media (max-width:900px) {
+      body > a[href="detail.html"][style*="position:fixed"] {
+        right:18px !important;
+        bottom:78px !important;
+        max-width:calc(100vw - 36px);
+      }
+    }
+  </style>
+<style id="og40-sistem-administrasi-case-study-r2">
+  /* Sumber tautan tetap ada, tetapi tidak melayang. */
+  body > a[href="detail.html"] {
+    display:none !important;
+  }
+
+  /* Tiga tombol hero boleh membungkus bila ruang sempit. */
+  .app .hero-actions {
+    flex-wrap:wrap;
+  }
+
+  .app .og40-inline-case-study-r2 {
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    box-sizing:border-box;
+    max-width:100%;
+    padding:12px 16px;
+    border-radius:12px;
+    background:#55d7ff;
+    color:#06111f !important;
+    font-weight:800;
+    line-height:1.25;
+    text-align:center;
+    text-decoration:none !important;
+    white-space:normal;
+    overflow-wrap:break-word;
+  }
+
+  .app .og40-inline-case-study-r2:hover {
+    background:#38c9f3;
+  }
+
+  @media (max-width:760px) {
+    .app .og40-inline-case-study-r2 {
+      width:100%;
+    }
+  }
+</style>
 </head>
 <body><a href="detail.html" style="position:fixed;z-index:999;right:18px;bottom:18px;padding:10px 14px;border-radius:12px;background:#55d7ff;color:#06111f;font-weight:800;text-decoration:none;box-shadow:0 10px 30px rgba(0,0,0,.25)">Full Case Study ↗</a>
   <div class="app">
@@ -161,5 +246,82 @@
   <div class="lightbox" id="lightbox"><button id="lightboxClose">×</button><img id="lightboxImg" alt="Preview screenshot"></div>
   <script src="script.js"></script>
   <script src="/assets/js/visitor-analytics.js" defer></script>
+<script id="og40-sistem-administrasi-case-study-r2-script">
+(function () {
+  'use strict';
+
+  function placeCaseStudy() {
+    var app = document.querySelector('.app');
+    var source = document.querySelector(
+      'body > a[href="detail.html"]'
+    );
+
+    if (!app || !source) return;
+
+    var actions = app.querySelector('.hero-actions');
+
+    if (!actions) {
+      var candidates = Array.from(
+        app.querySelectorAll('a,button')
+      );
+
+      var portfolioButton = candidates.find(function (item) {
+        return /lihat\s+portofolio/i.test(
+          (item.textContent || '').trim()
+        );
+      });
+
+      if (portfolioButton) {
+        actions = portfolioButton.parentElement;
+      }
+    }
+
+    if (!actions) return;
+
+    if (actions.querySelector(
+      '.og40-inline-case-study-r2'
+    )) return;
+
+    var link = document.createElement('a');
+
+    link.className = 'og40-inline-case-study-r2';
+    link.href = source.getAttribute('href');
+    link.textContent = 'Full Case Study ↗';
+    link.setAttribute(
+      'aria-label',
+      'Buka Full Case Study Sistem Administrasi'
+    );
+
+    actions.appendChild(link);
+  }
+
+  function start() {
+    placeCaseStudy();
+
+    var app = document.querySelector('.app');
+
+    if (app) {
+      var observer = new MutationObserver(function () {
+        placeCaseStudy();
+      });
+
+      observer.observe(app, {
+        childList:true,
+        subtree:true
+      });
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener(
+      'DOMContentLoaded',
+      start,
+      {once:true}
+    );
+  } else {
+    start();
+  }
+})();
+</script>
 </body>
 </html>
