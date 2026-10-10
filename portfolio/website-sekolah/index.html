@@ -19,13 +19,13 @@
     <meta content="https://srilexbuditra.work/portfolio/website-sekolah/" property="og:url"/>
     <meta content="Srilex Buditra" property="og:site_name"/>
     <meta property="og:locale" content="id_ID">
-    <meta property="og:image" content="https://srilexbuditra.work/portfolio/website-sekolah/assets/school-preview.avif">
+    <meta property="og:image" content="https://srilexbuditra.work/images/og/internal/website-sekolah-project-detail.avif">
     <meta property="og:image:alt" content="Gambar pratinjau Portofolio Sekolah | SMP Negeri 1 Kota Bengkulu">
     <!-- Twitter -->
     <meta content="summary_large_image" name="twitter:card"/>
     <meta content="Portofolio Sekolah | SMP Negeri 1 Kota Bengkulu" name="twitter:title"/>
     <meta content="Portofolio sekolah dengan informasi institusi dan kegiatan pendidikan SMP Negeri 1 Kota Bengkulu." name="twitter:description"/>
-    <meta content="https://srilexbuditra.work/portfolio/website-sekolah/assets/school-preview.avif" name="twitter:image"/>
+    <meta content="https://srilexbuditra.work/images/og/internal/website-sekolah-project-detail.avif" name="twitter:image"/>
     <!-- Favicon -->
     <link href="/images/favicon.ico" rel="icon"/>
     <link href="/images/apple-touch-icon.avif" rel="apple-touch-icon"/>
@@ -38,10 +38,40 @@
     <link rel="stylesheet" href="style.css">
     <meta itemprop="name" content="Portofolio Sekolah | SMP Negeri 1 Kota Bengkulu">
   <meta property="og:image:type" content="image/avif">
-  <meta property="og:image:width" content="1536">
-  <meta property="og:image:height" content="1024">
+  <meta property="og:image:width" content="1024">
+  <meta property="og:image:height" content="1536">
   <meta name="twitter:image:alt" content="Gambar pratinjau Portofolio Sekolah | SMP Negeri 1 Kota Bengkulu">
   <meta itemprop="image" content="https://srilexbuditra.work/portfolio/website-sekolah/assets/school-preview.avif">
+  <style id="og40-website-sekolah-hero-spacing-v2-r1">
+    /*
+      OG40 Website Sekolah V2 R1.
+      Fokus: jarak gambar preview dan konten hero.
+      Desktop, H1, gambar, dan fitur asli dipertahankan.
+    */
+
+    /* HP dan tablet: jangan pertahankan minimum tinggi desktop. */
+    @media (max-width:950px) {
+      .hero .hero-grid {
+        min-height:0;
+      }
+    }
+
+    /* Tablet: rapikan ruang sebelum judul dan tombol. */
+    @media (min-width:601px) and (max-width:950px) {
+      .hero .hero-grid > div {
+        padding-top:22px;
+        padding-bottom:30px;
+      }
+    }
+
+    /* HP: kurangi jarak antara preview dan judul. */
+    @media (max-width:600px) {
+      .hero .hero-grid > div {
+        padding-top:12px;
+        padding-bottom:24px;
+      }
+    }
+  </style>
 </head>
   <body>
     <header>
