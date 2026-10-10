@@ -32,6 +32,226 @@
   <meta property="og:image:height" content="630">
   <meta name="twitter:image:alt" content="Gambar pratinjau Platform Pengelolaan Klien — Studi Kasus | Srilex Buditra">
   <meta itemprop="image" content="https://srilexbuditra.work/portal/demo/assets/demo-client-dashboard-og.avif">
+  <style id="og40-client-portfolio-hero-v2-r3">
+    /* H1: desktop, laptop, tablet dan HP. */
+    body.case-page .case-hero h1 {
+      width:100%;
+      max-width:100%;
+      font-size:clamp(37px,3.5vw,52px);
+      line-height:1.08;
+      letter-spacing:-1.6px;
+      text-wrap:balance;
+      overflow-wrap:break-word;
+    }
+
+    /* Tidak menggandakan caption desktop yang sudah ada. */
+    body.case-page .og40-client-hero-caption {
+      display:none;
+    }
+
+    /* HP dan tablet: gambar kiri, kalimat di kanan. */
+    @media (max-width:980px) {
+      body.case-page .case-hero-grid {
+        row-gap:24px;
+      }
+
+      body.case-page .case-hero h1 {
+        font-size:clamp(35px,5.2vw,43px);
+        line-height:1.10;
+        letter-spacing:-1.25px;
+      }
+
+      body.case-page .case-hero-media {
+        display:grid;
+        grid-template-columns:minmax(0,150px) minmax(0,1fr);
+        align-items:center;
+        column-gap:16px;
+        width:100%;
+        max-width:620px;
+        padding:12px;
+      }
+
+      body.case-page .case-hero-picture {
+        display:block;
+        width:100%;
+        height:auto;
+        aspect-ratio:1200/630;
+        overflow:hidden;
+        border-radius:11px;
+      }
+
+      body.case-page .case-hero-media img {
+        display:block;
+        width:100%;
+        height:100%;
+        object-fit:contain;
+      }
+
+      body.case-page .case-hero-media > span {
+        display:none;
+      }
+
+      body.case-page .og40-client-hero-caption {
+        display:block;
+        min-width:0;
+        margin:0;
+        text-align:left;
+      }
+
+      body.case-page .og40-client-hero-caption strong {
+        display:block;
+        color:#ffbf38;
+        font-size:15px;
+        line-height:1.25;
+        font-weight:800;
+        overflow-wrap:break-word;
+      }
+
+      body.case-page .og40-client-hero-caption p {
+        margin:6px 0 0;
+        color:#afc7d6;
+        font-size:12px;
+        line-height:1.55;
+        overflow-wrap:break-word;
+      }
+    }
+
+    /* HP: ukuran kartu dan judul lebih proporsional. */
+    @media (max-width:620px) {
+      body.case-page .case-hero h1 {
+        font-size:clamp(30px,8.1vw,34px);
+        line-height:1.12;
+        letter-spacing:-1px;
+      }
+
+      body.case-page .case-hero-media {
+        grid-template-columns:minmax(0,104px) minmax(0,1fr);
+        column-gap:12px;
+        padding:10px;
+        border-radius:16px;
+      }
+
+      body.case-page .og40-client-hero-caption strong {
+        font-size:13px;
+      }
+
+      body.case-page .og40-client-hero-caption p {
+        margin-top:5px;
+        font-size:11px;
+        line-height:1.45;
+      }
+    }
+
+    /* V2 R2 - Tablet: vertical rhythm lebih ringkas. */
+    @media (min-width:621px) and (max-width:980px) {
+      body.case-page .case-hero {
+        padding-top:48px;
+        padding-bottom:34px;
+      }
+
+      body.case-page .case-hero-grid {
+        row-gap:19px;
+      }
+
+      body.case-page .case-overline {
+        margin-top:14px;
+        margin-bottom:8px;
+      }
+
+      body.case-page .case-hero h1 {
+        margin-bottom:0;
+      }
+
+      body.case-page .case-lead {
+        margin-top:15px;
+        line-height:1.65;
+      }
+
+      body.case-page .case-actions {
+        margin-top:19px;
+      }
+
+      body.case-page .case-role {
+        margin-top:13px;
+      }
+
+      body.case-page .case-hero + .case-section {
+        padding-top:46px;
+      }
+    }
+
+    /* V2 R2 - HP: H1 dan jarak vertikal. */
+    @media (max-width:620px) {
+      body.case-page .case-hero {
+        padding-top:36px;
+        padding-bottom:26px;
+      }
+
+      body.case-page .case-hero-grid {
+        row-gap:16px;
+      }
+
+      body.case-page .case-overline {
+        margin-top:12px;
+        margin-bottom:7px;
+      }
+
+      body.case-page .case-hero h1 {
+        width:100%;
+        max-width:100%;
+        margin:0;
+        font-size:clamp(27px,7.6vw,30px);
+        line-height:1.13;
+        letter-spacing:-0.85px;
+        text-wrap:balance;
+        overflow-wrap:normal;
+        word-break:normal;
+      }
+
+      body.case-page .case-lead {
+        margin-top:14px;
+        line-height:1.62;
+      }
+
+      body.case-page .case-actions {
+        margin-top:18px;
+      }
+
+      body.case-page .case-role {
+        margin-top:12px;
+        line-height:1.55;
+      }
+
+      body.case-page .case-hero + .case-section {
+        padding-top:38px;
+      }
+    }
+
+    /* OG40 Client Portfolio V2 R3 - H1 HP 2 baris */
+    @media (max-width:620px) {
+      body.case-page .case-hero h1 {
+        width:100%;
+        max-width:100%;
+        margin:0;
+        font-size:clamp(19px,5.6vw,21px);
+        line-height:1.18;
+        letter-spacing:-0.8px;
+        white-space:nowrap;
+        text-wrap:nowrap;
+        overflow-wrap:normal;
+        word-break:normal;
+      }
+
+      body.case-page .case-hero h1 br {
+        display:none;
+      }
+
+      body.case-page .case-hero h1 span {
+        display:block;
+        white-space:nowrap;
+      }
+    }
+  </style>
 </head>
 <body class="case-page rev20-mobile-hero-center">
 
@@ -69,6 +289,10 @@
           <img src="/portal/demo/assets/demo-client-dashboard-og.avif" alt="Client Management Platform — Dashboard Client">
         </picture>
         <span>CLIENT PORTAL • PROJECTS • DOCUMENTS • ESTIMATES • INVOICES • SUPPORT</span>
+        <figcaption class="og40-client-hero-caption">
+          <strong>Client Management Platform</strong>
+          <p>Lead, Official Estimate, Client Portal, dan Project dalam satu alur.</p>
+        </figcaption>
       </figure>
     </div>
   </section>
