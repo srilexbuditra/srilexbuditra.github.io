@@ -1,0 +1,169 @@
+/* OG40 PUBLIC HUBS RESPONSIVE V2 */
+/* Scoped: activity and insights hero only */
+
+:is(.activity-hero,.insights-hero) > .container:has(> .og40-hub-poster) {
+  display:grid;
+  grid-template-columns:minmax(0,1fr) clamp(190px,25vw,265px);
+  column-gap:clamp(20px,3.5vw,48px);
+  row-gap:0;
+  align-items:start;
+}
+
+:is(.activity-hero,.insights-hero) > .container > :not(.og40-hub-poster) {
+  grid-column:1;
+  min-width:0;
+}
+
+:is(.activity-hero,.insights-hero) .og40-hub-poster {
+  box-sizing:border-box;
+  grid-column:2;
+  grid-row:1 / span 4;
+  align-self:center;
+  justify-self:end;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  width:100%;
+  max-width:265px;
+  min-width:0;
+  margin:0;
+  padding:12px;
+  border:1px solid rgba(221,185,102,.36);
+  border-radius:18px;
+  background:linear-gradient(145deg,#142b39,#081c2a);
+  box-shadow:0 14px 36px rgba(0,0,0,.15);
+}
+
+:is(.activity-hero,.insights-hero) .og40-hub-poster img {
+  display:block;
+  width:100%;
+  height:auto;
+  aspect-ratio:2/3;
+  object-fit:contain;
+  border-radius:11px;
+}
+
+:is(.activity-hero,.insights-hero) .og40-hub-poster figcaption {
+  display:flex;
+  flex-direction:column;
+  gap:5px;
+  color:#bfced9;
+  font-size:12px;
+  line-height:1.5;
+}
+
+:is(.activity-hero,.insights-hero) .og40-hub-poster strong {
+  color:#ffd17c;
+  font-size:13px;
+  line-height:1.35;
+}
+
+@media(max-width:699px) {
+  :is(.activity-hero,.insights-hero) > .container:has(> .og40-hub-poster) {
+    grid-template-columns:minmax(0,1fr);
+  }
+
+  :is(.activity-hero,.insights-hero) .og40-hub-poster {
+    grid-column:1;
+    grid-row:auto;
+    justify-self:stretch;
+    display:grid;
+    grid-template-columns:clamp(80px,24vw,100px) minmax(0,1fr);
+    gap:13px;
+    max-width:none;
+    margin-top:23px;
+    padding:10px;
+    align-items:center;
+  }
+
+  :is(.activity-hero,.insights-hero) .og40-hub-poster figcaption {
+    grid-column:2;
+    min-width:0;
+  }
+
+  :is(.activity-hero,.insights-hero) .og40-hub-poster strong {
+    font-size:13px;
+  }
+}
+
+@media(min-width:700px) and (max-width:900px) {
+  :is(.activity-hero,.insights-hero) > .container:has(> .og40-hub-poster) {
+    grid-template-columns:minmax(0,1fr) 190px;
+    column-gap:22px;
+  }
+}
+
+/* OG40 ACTIVITY V2 - VERTICAL SPACING R1 */
+/* Mengatur ritme vertikal tanpa mengubah layout poster. */
+
+body.activity-page .activity-hero {
+  padding-top:64px;
+  padding-bottom:36px;
+}
+
+body.activity-page .activity-summary {
+  padding-top:30px;
+  padding-bottom:28px;
+}
+
+body.activity-page .activity-section {
+  padding-top:44px;
+}
+
+/* Tablet */
+@media (min-width:700px) and (max-width:1024px) {
+  body.activity-page .activity-hero {
+    padding-top:60px;
+    padding-bottom:32px;
+  }
+
+  body.activity-page .activity-summary {
+    padding-top:28px;
+    padding-bottom:26px;
+  }
+
+  body.activity-page .activity-section {
+    padding-top:40px;
+  }
+}
+
+/* HP */
+@media (max-width:699px) {
+  body.activity-page .activity-hero {
+    padding-top:50px;
+    padding-bottom:12px;
+  }
+
+  body.activity-page .activity-hero-links {
+    margin-top:23px;
+  }
+
+  body.activity-page .activity-hero .og40-hub-poster {
+    margin-top:18px;
+  }
+
+  body.activity-page .activity-summary {
+    padding-top:12px;
+    padding-bottom:26px;
+  }
+
+  body.activity-page .activity-section {
+    padding-top:38px;
+  }
+}
+
+
+/* OG40 INSIGHTS HUB - MOBILE SPACING R1 */
+/* Hanya merapatkan hero dan Artikel Terbaru pada HP. */
+
+@media (max-width:699px) {
+
+  body.insights-page .insights-hero {
+    padding-bottom:12px;
+  }
+
+  body.insights-page .insights-hero + .section {
+    padding-top:22px;
+  }
+
+}
