@@ -148,3 +148,123 @@
     justify-content:flex-start;
   }
 }
+
+/* OG40 PROFILE RESPONSIVE SPACING V2 R1 */
+/* Foto dan kartu identitas asli dipertahankan. */
+
+/* TABLET */
+@media (min-width:700px) and (max-width:980px) {
+
+  body.authority-page .authority-hero {
+    padding-top:48px;
+    padding-bottom:32px;
+  }
+
+  body.authority-page .authority-hero-grid {
+    grid-template-columns:minmax(0,1fr) minmax(240px,.75fr);
+    column-gap:24px;
+    row-gap:24px;
+    align-items:center;
+  }
+
+  body.authority-page .authority-profile-card {
+    width:100%;
+    max-width:310px;
+    justify-self:end;
+  }
+
+  body.authority-page .authority-copy h1 {
+    font-size:clamp(37px,4.8vw,51px);
+    letter-spacing:-1.8px;
+  }
+
+  body.authority-page .authority-lead {
+    margin-top:16px;
+    font-size:14px;
+    line-height:1.65;
+  }
+
+  body.authority-page .authority-actions {
+    margin-top:20px;
+  }
+
+  body.authority-page .authority-proofline {
+    margin-top:14px;
+  }
+
+  body.authority-page .authority-public {
+    padding-top:38px;
+  }
+}
+
+/* HP */
+@media (max-width:699px) {
+
+  body.authority-page .authority-hero {
+    padding-top:44px;
+    padding-bottom:16px;
+  }
+
+  body.authority-page .authority-hero-grid {
+    grid-template-columns:minmax(0,1fr);
+    row-gap:20px;
+  }
+
+  body.authority-page .authority-lead {
+    margin-top:18px;
+  }
+
+  body.authority-page .authority-actions {
+    margin-top:20px;
+  }
+
+  body.authority-page .authority-proofline {
+    margin-top:14px;
+  }
+
+  body.authority-page .authority-profile-card {
+    width:100%;
+    max-width:100%;
+  }
+
+  body.authority-page .authority-public {
+    padding-top:26px;
+  }
+}
+
+/* OG40 PROFILE ROLE H3 SINGLE LINE R1 */
+/* Scope: hanya empat kartu Role Context / Responsibility. */
+
+/* Laptop: dua kolom, judul tetap terbaca besar */
+@media (min-width:981px) and (max-width:1279px) {
+
+  body.authority-page .authority-v2-role .authority-role-grid {
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+
+  body.authority-page .authority-v2-role .authority-role-card h3 {
+    font-size:20px;
+    line-height:1.35;
+    letter-spacing:-.35px;
+    white-space:nowrap;
+  }
+}
+
+/* Desktop: empat kolom dengan lebar proporsional */
+@media (min-width:1280px) {
+
+  body.authority-page .authority-v2-role > .container {
+    max-width:1320px;
+  }
+
+  body.authority-page .authority-v2-role .authority-role-grid {
+    grid-template-columns:repeat(4,minmax(0,1fr));
+  }
+
+  body.authority-page .authority-v2-role .authority-role-card h3 {
+    font-size:clamp(14px,1.15vw,16px);
+    line-height:1.4;
+    letter-spacing:-.35px;
+    white-space:nowrap;
+  }
+}
