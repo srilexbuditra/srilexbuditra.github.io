@@ -36,6 +36,18 @@ Status            : PRODUCTION VERIFIED / COMPLETED / LOCKED
 - **Aturan:** jangan tambah file Markdown baru; jangan ulang pengujian yang sudah PASS, jangan menyentuh REV21/REV22 R3.7 dan asset visual homepage LOCKED di luar scope.
 <!-- OG-INTERNAL-ROADMAP-V1:END -->
 
+<!-- OG40-GATE8-FINAL-R40:START -->
+## OG40 — Current Project Status
+
+- **Milestone:** Gate 8 / PRODUCTION VERIFIED / COMPLETED / LOCKED.
+- R15 local: 40/40 PASS; R16 live: 40/40 PASS.
+- Latest publication checkpoint: `4930704`.
+- Master tracking: [ROADMAP.md](ROADMAP.md).
+- Technical closeout and limitations: [PLATFORM.md](PLATFORM.md).
+- The older OG planning section below is retained as historical Gate 0 documentation.
+- Latest Pages deployment `4930704` verified successful; no new Markdown files; Gate 8 closed.
+<!-- OG40-GATE8-FINAL-R40:END -->
+
 
 
 

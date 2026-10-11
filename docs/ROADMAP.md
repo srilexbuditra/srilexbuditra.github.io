@@ -94,6 +94,39 @@ Status            : PRODUCTION VERIFIED / COMPLETED / LOCKED
 - Setiap perubahan hanya disetujui jika site layout/brand dan keempat fitur visitor UX R3.7 tetap berfungsi serta tidak memengaruhi `/program/`.
 <!-- OG-INTERNAL-ROADMAP-V1:END -->
 
+<!-- OG40-GATE8-FINAL-R40:START -->
+## OG40 — Gate 8 Final Coverage and Closeout
+
+**Status:** PRODUCTION VERIFIED / COMPLETED / LOCKED.
+**Tanggal:** 2026-10-11 (Asia/Jakarta).
+**Current publication checkpoint:** `4930704` on main.
+
+### Verified prior milestones
+- R15: one-time local validation reported 40/40 PASS.
+- R16: production validation reported 40/40 PASS at `d8d6b56`.
+- Approved responsive corrections subsequently published at `8d1b99a`.
+- Client Management inline CSS/CSP correction subsequently published at `4930704`.
+- These are historical verification milestones, not a claim that all 40 URL were recrawled after `4930704`.
+
+### Protected scope
+- Preserve the approved 40 public page / portrait AVIF mapping, 1024 x 1536.
+- All `/program/` and `/portal/` are excluded from modification.
+- Do not alter private/admin/auth routes, Worker, D1, API, secrets or locked features.
+- No additional visual redesign or asset regeneration.
+
+### Final release evidence
+- GitHub Pages workflow for `4930704`: completed / success; three related repository workflows also completed / success.
+- Client Management public page: previous inline-style CSP error was absent in the latest user-provided Chrome Console screenshot.
+- Preserve accepted HP/tablet/desktop visual appearance and existing text colors.
+- Retain R15/R16 40/40 evidence; retest only pages affected by a real regression.
+- Gate 8 closeout approved for documentation-only publication; status PRODUCTION VERIFIED / COMPLETED / LOCKED. R15/R16 coverage remains historical evidence, not a new 40-URL crawl.
+
+### Known limitations
+- AVIF portrait does not guarantee identical preview/cropping on every social platform.
+- R39.1 deployment is supported by GitHub Actions results and user browser evidence; no independent automated recrawl of all 40 URLs was performed.
+- Original Gate 0 scope and decisions remain below as historical project planning.
+<!-- OG40-GATE8-FINAL-R40:END -->
+
 
 > Master roadmap dan continuity document srilexbuditra.work.
 > Roadmap strategis dipisahkan dari checkpoint historis agar status lama tidak dibaca sebagai kondisi source terkini.

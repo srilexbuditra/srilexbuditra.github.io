@@ -40,6 +40,22 @@ Status            : PRODUCTION VERIFIED / COMPLETED / LOCKED
 - **Delivery:** source changes minimal per batch dengan backup/rollback; targeted review + staging/production verification; catat status ke Markdown yang sudah ada; tidak perlu tes ulang fitur LOCKED yang tidak terkait.
 <!-- OG-INTERNAL-ROADMAP-V1:END -->
 
+<!-- OG40-GATE8-FINAL-R40:START -->
+## OG40 — Gate 8 Technical Closeout
+
+**Stage:** PRODUCTION VERIFIED / COMPLETED / LOCKED — Gate 8.
+
+- Public scope: 40 previously verified HTML pages and 40 unique portrait AVIF assets at 1024 x 1536.
+- R15 local and R16 live validation: 40/40 PASS at earlier milestones.
+- Responsive page-level changes: published commit `8d1b99a`.
+- CSP hardening: original Client Management inline CSS externalized without changing CSS declarations, published commit `4930704`.
+- Preserve original canonical, robots/noindex, SEO, OG and Twitter rules as previously scoped.
+- Do not claim identical AVIF rendering across WhatsApp, Facebook, LinkedIn and other preview systems.
+- Excluded from this closeout: `/program/`, `/portal/`, dashboards/auth, Workers, D1, API and protected infrastructure.
+- Gate 8 modifies existing documentation only, not HTML/CSS/JS/AVIF.
+- Latest Pages workflow `4930704` completed successfully. The live Client Management CSP regression was checked in Chrome; Gate 8 is documentation-only and LOCKED.
+<!-- OG40-GATE8-FINAL-R40:END -->
+
 
 
 

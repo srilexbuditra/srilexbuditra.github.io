@@ -18,6 +18,18 @@
 - **Existing docs only:** `README.md`, `CHANGELOG.md`, `docs/README.md`, `docs/ROADMAP.md`, `docs/PLATFORM.md` diperbarui tanpa membuat `.md` baru. Status tahap berikutnya ditulis pada file-file ini, tanpa mengulang pekerjaan yang sudah sukses.
 <!-- OG-INTERNAL-ROADMAP-V1:END -->
 
+<!-- OG40-GATE8-FINAL-R40:START -->
+## 2026-10-11 — OG40 Gate 8 Final Closeout / LOCKED
+
+- R15: local OG40 audit 40/40 PASS (bukti milestone sebelumnya).
+- R16: public OG40 verification 40/40 PASS, checkpoint `d8d6b56`.
+- Responsive visual refinements published: `8d1b99a`, 20 approved files.
+- Client Management CSP external stylesheet published: `4930704`, 2 files.
+- Scope unchanged: no `/program/`, `/portal/`, protected backend, Worker, D1 or secrets changes.
+- Gate 8 completed in exactly five existing Markdown files; no new Markdown, frontend, or infrastructure changes.
+- All four GitHub Actions workflows for `4930704` completed successfully; live Client Management CSP check showed no previous error. OG40 status: PRODUCTION VERIFIED / COMPLETED / LOCKED.
+<!-- OG40-GATE8-FINAL-R40:END -->
+
 ## Site Publishing Architecture Audit - 2026-10-09
 
 **Status:** DOCUMENTATION UPDATED / NO INFRASTRUCTURE CHANGE.

@@ -37,6 +37,17 @@ Status            : PRODUCTION VERIFIED / COMPLETED / LOCKED
 - **Protected:** REV21, REV22 R3.7 (`ec12c92`), status dokumentasi `cc1c73e`, visual master homepage, program, Worker, D1, API, PWA, Push, Privasi, dan Translate; jangan mengulang pekerjaan yang telah terverifikasi.
 <!-- OG-INTERNAL-ROADMAP-V1:END -->
 
+<!-- OG40-GATE8-FINAL-R40:START -->
+## OG40 — Status Terbaru (Gate 8)
+
+- **Status:** PRODUCTION VERIFIED / COMPLETED / LOCKED — Gate 8 (2026-10-11); deployment `4930704` verified.
+- **Coverage sebelumnya:** R15 local 40/40 PASS dan R16 production 40/40 PASS.
+- **Visual:** perbaikan responsif telah dipublikasikan pada commit `8d1b99a`.
+- **CSP:** inline CSS Client Management dipindahkan ke stylesheet eksternal melalui commit `4930704`.
+- **Sumber status:** [docs/ROADMAP.md](docs/ROADMAP.md); teknis: [docs/PLATFORM.md](docs/PLATFORM.md).
+- Bagian perencanaan OG internal sebelumnya dipertahankan sebagai riwayat Gate 0; status terkini mengikuti Gate 8.
+<!-- OG40-GATE8-FINAL-R40:END -->
+
 
 <p align="center">
   <a href="https://srilexbuditra.work/">
