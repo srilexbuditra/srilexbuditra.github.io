@@ -1,0 +1,21 @@
+/* PROSES KERJA DETAIL-EYEBROW MOBILE R26 */
+@media (max-width: 767px) {
+  html body .detail-eyebrow.detail-eyebrow {
+    white-space: nowrap !important;
+    overflow-wrap: normal !important;
+    word-break: normal !important;
+    hyphens: none !important;
+
+    font-size: clamp(8px, 2.5vw, 11px) !important;
+    line-height: 1.3 !important;
+    letter-spacing: -.02em !important;
+
+    max-width: 100% !important;
+  }
+
+  html body .detail-eyebrow.detail-eyebrow > span,
+  html body .detail-eyebrow.detail-eyebrow > em {
+    white-space: nowrap !important;
+  }
+}
+/* END PROSES KERJA DETAIL-EYEBROW R26 */

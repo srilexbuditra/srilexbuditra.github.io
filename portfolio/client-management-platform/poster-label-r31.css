@@ -1,0 +1,309 @@
+/* CLIENT MANAGEMENT POSTER LABEL R31 */
+
+/* All devices: poster above, labels below */
+html body figure.case-hero-media {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  height: auto !important;
+  max-height: none !important;
+  min-height: 0 !important;
+  aspect-ratio: auto !important;
+  overflow: hidden !important;
+}
+
+/* Poster remains the first element */
+html body figure.case-hero-media > picture.case-hero-picture {
+  order: 1 !important;
+  display: block !important;
+  position: relative !important;
+  inset: auto !important;
+  transform: none !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  flex: 0 0 auto !important;
+}
+
+/* Move the label below the poster */
+html body figure.case-hero-media > span {
+  order: 2 !important;
+  position: static !important;
+  inset: auto !important;
+  transform: none !important;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  z-index: auto !important;
+
+  box-sizing: border-box !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  height: auto !important;
+  margin: 0 !important;
+  padding: 12px 14px !important;
+
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+  text-overflow: clip !important;
+  line-height: 1.45 !important;
+}
+
+/* Keep the original caption text below the label */
+html body figure.case-hero-media > figcaption.og40-client-hero-caption {
+  order: 3 !important;
+  position: static !important;
+  inset: auto !important;
+  transform: none !important;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  z-index: auto !important;
+
+  box-sizing: border-box !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  height: auto !important;
+  max-height: none !important;
+  margin: 0 !important;
+  padding: 14px !important;
+
+  white-space: normal !important;
+  overflow: visible !important;
+}
+
+/* Preserve content order and prevent text clipping */
+html body figure.case-hero-media > figcaption.og40-client-hero-caption > strong,
+html body figure.case-hero-media > figcaption.og40-client-hero-caption > p {
+  position: static !important;
+  max-width: 100% !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+}
+
+/* END CLIENT MANAGEMENT POSTER LABEL R31 */
+
+/* CLIENT MANAGEMENT POSTER LAYOUT R32 BEGIN */
+
+/* Semua perangkat: gambar kiri, caption kanan */
+html body figure.case-hero-media.case-hero-media {
+  display: grid !important;
+  grid-template-columns: minmax(0, 43%) minmax(0, 1fr) !important;
+  grid-template-rows: auto auto !important;
+  align-items: start !important;
+  column-gap: clamp(8px, 1.5vw, 18px) !important;
+  row-gap: 0 !important;
+
+  width: 100% !important;
+  min-width: 0 !important;
+  height: auto !important;
+  max-height: none !important;
+  aspect-ratio: auto !important;
+  overflow: hidden !important;
+}
+
+/* Poster di sebelah kiri */
+html body figure.case-hero-media.case-hero-media
+> picture.case-hero-picture {
+  grid-column: 1 !important;
+  grid-row: 1 !important;
+  align-self: start !important;
+  min-width: 0 !important;
+  width: 100% !important;
+  height: auto !important;
+}
+
+html body figure.case-hero-media.case-hero-media
+> picture.case-hero-picture > img {
+  display: block !important;
+  width: 100% !important;
+  height: auto !important;
+  max-width: 100% !important;
+  max-height: none !important;
+  aspect-ratio: auto !important;
+  object-fit: contain !important;
+}
+
+/* Caption di sebelah kanan poster */
+html body figure.case-hero-media.case-hero-media
+> figcaption.og40-client-hero-caption {
+  grid-column: 2 !important;
+  grid-row: 1 !important;
+  align-self: start !important;
+
+  display: block !important;
+  position: static !important;
+  inset: auto !important;
+  transform: none !important;
+
+  min-width: 0 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  height: auto !important;
+  max-height: none !important;
+
+  margin: 0 !important;
+  padding: clamp(8px, 1.5vw, 18px) !important;
+  box-sizing: border-box !important;
+
+  text-align: left !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+  overflow: visible !important;
+}
+
+/* Pertahankan teks dan warna asli */
+html body figure.case-hero-media.case-hero-media
+> figcaption.og40-client-hero-caption > strong {
+  display: block !important;
+  font-size: clamp(12px, 1.4vw, 20px) !important;
+  line-height: 1.3 !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+}
+
+html body figure.case-hero-media.case-hero-media
+> figcaption.og40-client-hero-caption > p {
+  display: block !important;
+  font-size: clamp(11px, 1.05vw, 15px) !important;
+  line-height: 1.5 !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+}
+
+/* Label tetap di bawah, tidak menutupi poster */
+html body figure.case-hero-media.case-hero-media > span {
+  grid-column: 1 / -1 !important;
+  grid-row: 2 !important;
+  position: static !important;
+  transform: none !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+}
+
+/* Penyesuaian khusus HP */
+@media (max-width: 767px) {
+  html body figure.case-hero-media.case-hero-media {
+    grid-template-columns: minmax(0, 41%) minmax(0, 1fr) !important;
+    column-gap: 8px !important;
+  }
+
+  html body figure.case-hero-media.case-hero-media
+  > figcaption.og40-client-hero-caption {
+    padding: 8px 4px !important;
+  }
+
+  html body figure.case-hero-media.case-hero-media
+  > figcaption.og40-client-hero-caption > strong {
+    font-size: clamp(11px, 3.4vw, 15px) !important;
+    line-height: 1.25 !important;
+  }
+
+  html body figure.case-hero-media.case-hero-media
+  > figcaption.og40-client-hero-caption > p {
+    font-size: clamp(10px, 2.9vw, 13px) !important;
+    line-height: 1.45 !important;
+  }
+}
+
+/* CLIENT MANAGEMENT POSTER LAYOUT R32 END */
+
+/* CLIENT POSTER FULL IMAGE R33 BEGIN */
+
+/* HP dan tablet: tampilkan seluruh gambar portrait */
+@media (max-width: 1024px) {
+
+  html body figure.case-hero-media.case-hero-media {
+    grid-template-rows: max-content max-content !important;
+    height: auto !important;
+    max-height: none !important;
+    min-height: 0 !important;
+    aspect-ratio: auto !important;
+  }
+
+  html body figure.case-hero-media.case-hero-media
+  > picture.case-hero-picture {
+    display: block !important;
+    position: static !important;
+    inset: auto !important;
+    transform: none !important;
+
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+
+    aspect-ratio: auto !important;
+    overflow: visible !important;
+    box-sizing: border-box !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+    align-self: start !important;
+  }
+
+  html body figure.case-hero-media.case-hero-media
+  > picture.case-hero-picture > img {
+    display: block !important;
+    position: static !important;
+    inset: auto !important;
+    transform: none !important;
+
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-width: 100% !important;
+    max-height: none !important;
+
+    aspect-ratio: auto !important;
+    object-fit: contain !important;
+    object-position: center center !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+    border-radius: inherit;
+  }
+}
+
+/* CLIENT POSTER FULL IMAGE R33 END */
+
+/* CLIENT HERO VERTICAL SPACING R34 BEGIN */
+
+@media (max-width: 1024px) {
+
+  /* Hindari tinggi kosong setelah kartu poster */
+  html body main > section.case-hero {
+    min-height: 0 !important;
+    height: auto !important;
+    padding-bottom: clamp(8px, 1.8vw, 18px) !important;
+  }
+
+  html body main > section.case-hero
+  > .container.case-hero-grid {
+    min-height: 0 !important;
+    height: auto !important;
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+  }
+
+  html body main > section.case-hero
+  figure.case-hero-media.case-hero-media {
+    margin-bottom: 0 !important;
+  }
+
+  /* Dekatkan Project Snapshot ke bagian poster */
+  html body main > section.case-hero + section.case-section {
+    margin-top: 0 !important;
+    padding-top: clamp(12px, 2vw, 22px) !important;
+  }
+
+  html body main > section.case-hero + section.case-section
+  .case-section-title {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+  }
+}
+
+/* CLIENT HERO VERTICAL SPACING R34 END */

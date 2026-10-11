@@ -1,0 +1,73 @@
+/* PROSES KERJA POSTER CAPTION R27 */
+@media (min-width: 768px) {
+  html body.detail-page figure.internal-og-portrait.internal-og-editorial-v2-extended {
+    display: flex !important;
+    flex-direction: column !important;
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  html body.detail-page figure.internal-og-portrait.internal-og-editorial-v2-extended > figcaption.mobile-v2-editorial-caption {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 6px !important;
+
+    position: relative !important;
+    inset: auto !important;
+    transform: none !important;
+
+    visibility: visible !important;
+    opacity: 1 !important;
+
+    width: 100% !important;
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+
+    box-sizing: border-box !important;
+    margin: 0 !important;
+    padding: clamp(12px, 1.5vw, 20px) !important;
+
+    text-align: left !important;
+  }
+
+  html body.detail-page figure.internal-og-portrait.internal-og-editorial-v2-extended > figcaption.mobile-v2-editorial-caption > strong {
+    display: block !important;
+    font-size: clamp(15px, 1.5vw, 21px) !important;
+    line-height: 1.25 !important;
+  }
+
+  html body.detail-page figure.internal-og-portrait.internal-og-editorial-v2-extended > figcaption.mobile-v2-editorial-caption > span {
+    display: block !important;
+    font-size: clamp(12px, 1.05vw, 15px) !important;
+    line-height: 1.5 !important;
+  }
+}
+/* END PROSES KERJA POSTER CAPTION R27 */
+
+/* PROSES KERJA POSTER TITLE R28 BEGIN */
+@media (min-width: 768px) {
+  html body.detail-page
+  figure.internal-og-portrait.internal-og-editorial-v2-extended
+  > figcaption.mobile-v2-editorial-caption > strong {
+    display: block !important;
+    white-space: nowrap !important;
+    overflow-wrap: normal !important;
+    word-break: keep-all !important;
+    hyphens: none !important;
+    font-size: clamp(12px, 0.95vw, 15px) !important;
+    line-height: 1.15 !important;
+    letter-spacing: -0.035em !important;
+    color: #d4a017 !important;
+    margin: 0 0 8px !important;
+  }
+
+  html body.detail-page
+  figure.internal-og-portrait.internal-og-editorial-v2-extended
+  > figcaption.mobile-v2-editorial-caption > span {
+    color: inherit !important;
+  }
+}
+/* PROSES KERJA POSTER TITLE R28 END */

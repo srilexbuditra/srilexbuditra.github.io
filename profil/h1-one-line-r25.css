@@ -1,0 +1,22 @@
+/* PROFIL H1 ONE LINE R25 */
+html body h1.profil-h1-one-r25.profil-h1-one-r25 {
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  font-size: clamp(12px, 2.4vw, 33px) !important;
+  line-height: 1.15 !important;
+  letter-spacing: -.035em !important;
+  white-space: nowrap !important;
+  overflow-wrap: normal !important;
+  word-break: normal !important;
+  overflow: visible !important;
+}
+
+html body h1.profil-h1-one-r25.profil-h1-one-r25 span,
+html body h1.profil-h1-one-r25.profil-h1-one-r25 em,
+html body h1.profil-h1-one-r25.profil-h1-one-r25 strong {
+  display: inline !important;
+  font-size: inherit !important;
+  white-space: nowrap !important;
+}
+/* END PROFIL H1 ONE LINE R25 */

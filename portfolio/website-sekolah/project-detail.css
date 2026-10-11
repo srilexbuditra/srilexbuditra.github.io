@@ -55,3 +55,73 @@
 }
 
 /* OG40 SCHOOL FULL PORTRAIT R18 END */
+
+/* OG40 SCHOOL MOBILE SIDE-BY-SIDE R21 BEGIN */
+/* R21.2 - HP: poster kiri, teks kanan, label harus satu baris */
+@media (max-width: 767px) {
+  .sb-detail .sb-hero .sb-hero-grid .og40-school-cover-r1 {
+    display: grid !important;
+    grid-template-columns: minmax(96px, 35%) minmax(0, 1fr) !important;
+    align-items: start !important;
+    gap: 10px !important;
+    padding: 12px !important;
+  }
+
+  .sb-detail .sb-hero .sb-hero-grid .og40-school-cover-r1 > * {
+    min-width: 0 !important;
+  }
+
+  .sb-detail .sb-hero .sb-hero-grid .og40-school-cover-r1 > img,
+  .sb-detail .sb-hero .sb-hero-grid .og40-school-cover-r1 > :first-child img {
+    display: block !important;
+    width: 100% !important;
+    height: auto !important;
+    max-width: 100% !important;
+    max-height: none !important;
+    aspect-ratio: 2 / 3 !important;
+    object-fit: contain !important;
+    object-position: center top !important;
+    margin: 0 !important;
+    border-radius: 14px !important;
+    align-self: start !important;
+  }
+
+  .sb-detail .sb-hero .sb-hero-grid .og40-school-cover-r1 > :last-child,
+  .sb-detail .sb-hero .sb-hero-grid .og40-school-cover-r1 .og40-school-copy-r1 {
+    min-width: 0 !important;
+    width: 100% !important;
+    align-self: start !important;
+    padding-top: 0 !important;
+  }
+
+  .sb-detail .sb-hero .sb-hero-grid .og40-school-cover-r1 .sb-label,
+  .sb-detail .sb-hero .sb-hero-grid .og40-school-cover-r1 .eyebrow,
+  .sb-detail .sb-hero .sb-hero-grid .og40-school-cover-r1 .section-eyebrow,
+  .sb-detail .sb-hero .sb-hero-grid .og40-school-cover-r1 .kicker {
+    display: block !important;
+    width: 100% !important;
+    margin: 0 0 8px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: clip !important;
+    overflow-wrap: normal !important;
+    word-break: normal !important;
+    font-size: 8px !important;
+    line-height: 1.2 !important;
+    letter-spacing: 0.02em !important;
+  }
+
+  .sb-detail .sb-hero .sb-hero-grid .og40-school-cover-r1 h2,
+  .sb-detail .sb-hero .sb-hero-grid .og40-school-cover-r1 h3 {
+    margin: 0 0 8px !important;
+    font-size: 13px !important;
+    line-height: 1.2 !important;
+  }
+
+  .sb-detail .sb-hero .sb-hero-grid .og40-school-cover-r1 p {
+    margin: 0 0 8px !important;
+    font-size: 11px !important;
+    line-height: 1.45 !important;
+  }
+}
+/* OG40 SCHOOL MOBILE SIDE-BY-SIDE R21 END */

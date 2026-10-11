@@ -1,0 +1,25 @@
+/* PORTFOLIO H1 MOBILE TWO LINES R23 */
+html body h1.portfolio-h1-r23 > br.portfolio-mobile-break-r23 {
+  display: none !important;
+}
+@media (max-width: 767px) {
+  html body h1.portfolio-h1-r23.portfolio-h1-r23 {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    font-size: clamp(16px, 5.8vw, 26px) !important;
+    line-height: 1.18 !important;
+    letter-spacing: -.04em !important;
+    white-space: nowrap !important;
+    overflow-wrap: normal !important;
+    word-break: normal !important;
+  }
+  html body h1.portfolio-h1-r23 > span,
+  html body h1.portfolio-h1-r23 > em {
+    display: inline !important;
+  }
+  html body h1.portfolio-h1-r23 > br {
+    display: initial !important;
+  }
+}
+/* END PORTFOLIO H1 MOBILE R23 */

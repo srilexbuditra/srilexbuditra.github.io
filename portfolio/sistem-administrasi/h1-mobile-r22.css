@@ -1,0 +1,25 @@
+/* SISTEM ADMINISTRASI H1 MOBILE R22.1 */
+@media (max-width: 767px) {
+  html body h1.sa-h1-mobile-r22.sa-h1-mobile-r22.sa-h1-mobile-r22 {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    font-size: clamp(11px, 3.55vw, 17px) !important;
+    line-height: 1.2 !important;
+    letter-spacing: -.045em !important;
+    white-space: nowrap !important;
+    overflow-wrap: normal !important;
+    word-break: normal !important;
+  }
+
+  html body h1.sa-h1-mobile-r22 .sa-h1-break-r22 {
+    display: none !important;
+  }
+
+  html body h1.sa-h1-mobile-r22.sa-h1-mobile-r22 span,
+  html body h1.sa-h1-mobile-r22.sa-h1-mobile-r22 em {
+    display: inline !important;
+    white-space: nowrap !important;
+  }
+}
+/* END SISTEM ADMINISTRASI H1 MOBILE R22.1 */

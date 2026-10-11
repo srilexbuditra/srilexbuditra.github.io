@@ -1,0 +1,22 @@
+/* DOCUMENT VERIFICATION H1 MOBILE R24 */
+@media (max-width: 767px) {
+  html body h1.dv-h1-mobile-r24.dv-h1-mobile-r24.dv-h1-mobile-r24 {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    font-size: clamp(12px, 3.8vw, 17px) !important;
+    line-height: 1.18 !important;
+    letter-spacing: -.045em !important;
+    white-space: nowrap !important;
+    overflow-wrap: normal !important;
+    word-break: normal !important;
+  }
+  html body h1.dv-h1-mobile-r24 > br {
+    display: inline !important;
+  }
+  html body h1.dv-h1-mobile-r24 > span,
+  html body h1.dv-h1-mobile-r24 > em {
+    display: inline !important;
+  }
+}
+/* END DOCUMENT VERIFICATION H1 MOBILE R24 */

@@ -1,0 +1,21 @@
+/* DIGITAL MEMBERSHIP H1 ONE LINE R30 */
+html body h1.dm-h1-one-line-r30.dm-h1-one-line-r30 {
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  font-size: clamp(10px, 2.1vw, 30px) !important;
+  line-height: 1.16 !important;
+  letter-spacing: -.035em !important;
+  white-space: nowrap !important;
+  overflow-wrap: normal !important;
+  word-break: normal !important;
+}
+
+html body h1.dm-h1-one-line-r30.dm-h1-one-line-r30 span,
+html body h1.dm-h1-one-line-r30.dm-h1-one-line-r30 em,
+html body h1.dm-h1-one-line-r30.dm-h1-one-line-r30 strong {
+  display: inline !important;
+  font-size: inherit !important;
+  white-space: nowrap !important;
+}
+/* END DIGITAL MEMBERSHIP H1 R30 */
