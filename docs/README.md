@@ -48,6 +48,17 @@ Status            : PRODUCTION VERIFIED / COMPLETED / LOCKED
 - Latest Pages deployment `4930704` verified successful; no new Markdown files; Gate 8 closed.
 <!-- OG40-GATE8-FINAL-R40:END -->
 
+<!-- SITEMAP-V12-R48-GSC:START -->
+## Sitemap V12 - Production and Google Search Console
+
+- **Status master:** Sitemap V12 `PRODUCTION VERIFIED / COMPLETED / LOCKED`, rilis `4e18095` (12 Okt 2026).
+- **Live:** [`https://srilexbuditra.work/sitemap.xml`](https://srilexbuditra.work/sitemap.xml), 60 URL / 61 referensi gambar dengan XSL/CSS navy-gold; dua kolom HP dan tablet.
+- **Google identity:** `WebSite.name` dalam Microdata homepage adalah `Srilex Buditra`; tidak membuat duplikasi schema.
+- **Google Search Console:** sitemap Success, homepage indexed, Live Test PASS, Request Indexing diterima; pembacaan ulang oleh Google masih menunggu.
+- **Master status/known limits:** [`ROADMAP.md`](ROADMAP.md). **Spesifikasi XML/visual/schema:** [`PLATFORM.md`](PLATFORM.md). **Riwayat:** [`../CHANGELOG.md`](../CHANGELOG.md).
+- Hasil OG40 Gate 8 (`b8fe124`) tetap terkunci. Tidak ada file `.md` baru untuk catatan ini.
+<!-- SITEMAP-V12-R48-GSC:END -->
+
 
 
 

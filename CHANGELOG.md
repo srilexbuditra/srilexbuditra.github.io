@@ -30,6 +30,19 @@
 - All four GitHub Actions workflows for `4930704` completed successfully; live Client Management CSP check showed no previous error. OG40 status: PRODUCTION VERIFIED / COMPLETED / LOCKED.
 <!-- OG40-GATE8-FINAL-R40:END -->
 
+<!-- SITEMAP-V12-R48-GSC:START -->
+## 2026-10-12 - Sitemap V12 and Google Site Identity: Production Verified
+
+- R42-R43: audit sumber mengidentifikasi 60 URL sitemap, 40 halaman dengan internal OG portrait, dan Microdata `WebSite`/`Person` yang sudah ada.
+- R44.1: pemetaan menemukan 47 halaman dengan gambar lokal, 12 halaman Umroh dengan gambar pada subdomain media, serta homepage dengan dua `og:image`.
+- R44.2-R44.3: sitemap XML diperluas menjadi 60 URL / 61 `image:loc`, stylesheet `/sitemap-v12.xsl` dan `/sitemap-v12.css` ditambahkan; desain navy-gold disetujui untuk dua kolom HP dan tablet.
+- R45.3: `WebSite.name` disetel ke `Srilex Buditra` melalui satu properti Microdata di `index.html`; `<title>` SEO, `WebPage`, dan `Person` dipertahankan. Tidak menambah `Organization` atau JSON-LD.
+- R46: final preflight lokal PASS. R47: **commit `4e18095`** dipush ke `main`, tepat empat file (`index.html`, `sitemap.xml`, `sitemap-v12.xsl`, `sitemap-v12.css`); XML 60/61, 12 gambar media Umroh dan 7 `lastmod` terverifikasi.
+- R47 production: **4/4 GitHub Actions success** (Repository Quality Check, Link/Anchor/Sitemap Integrity, Public Repository Audit, Pages Build and Deployment). Tampilan `sitemap.xml` publik diperiksa pada desktop, HP 360/390 px dan tablet 768 px.
+- Search Console: sitemap **processed successfully**, terakhir dibaca **6 Okt 2026** dengan 53 discovered pages; angka ini bukan audit 60 URL terbaru atau jumlah halaman terindeks. Homepage canonical dan indeks valid; last crawl **27 Sep 2026**, Live Test PASS; **Request Indexing accepted 12 Okt 2026**.
+- **Closeout:** Sitemap V12 PRODUCTION VERIFIED / LOCKED. Menunggu recrawl Google dan perubahan nama situs pada hasil pencarian; tidak dijamin waktunya. Modul OG40, `/program/`, `/portal/`, Worker, D1, API, dan `robots.txt` tidak diubah oleh R47.
+<!-- SITEMAP-V12-R48-GSC:END -->
+
 ## Site Publishing Architecture Audit - 2026-10-09
 
 **Status:** DOCUMENTATION UPDATED / NO INFRASTRUCTURE CHANGE.

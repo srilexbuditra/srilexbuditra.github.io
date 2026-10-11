@@ -56,6 +56,26 @@ Status            : PRODUCTION VERIFIED / COMPLETED / LOCKED
 - Latest Pages workflow `4930704` completed successfully. The live Client Management CSP regression was checked in Chrome; Gate 8 is documentation-only and LOCKED.
 <!-- OG40-GATE8-FINAL-R40:END -->
 
+<!-- SITEMAP-V12-R48-GSC:START -->
+## Sitemap V12 - Technical Baseline and Google Identity
+
+**Release:** `4e18095` on `main` (12 Oct 2026), **PRODUCTION VERIFIED / LOCKED**.
+
+### XML and images
+- URL kanonik publik resmi: `https://srilexbuditra.work/sitemap.xml`, format `<urlset>` namespace `http://www.sitemaps.org/schemas/sitemap/0.9`, dengan namespace image `http://www.google.com/schemas/sitemap-image/1.1`.
+- **60 `<url><loc>`**, **61 `<image:image><image:loc>`**; gambar menggunakan `og:image` halaman yang sudah ada dan valid secara audit lokal. 12 URL gambar memakai CDN subdomain `media-umroh.srilexbuditra.work`, 2 URL gambar pada homepage, dan 7 `lastmod` asli dipertahankan. Tidak ada URL sitemap duplikat pada R47.
+- XML memiliki `xml-stylesheet` ke `/sitemap-v12.xsl`. Stylesheet XSLT menghasilkan halaman galeri visual memakai `/sitemap-v12.css` (CSS eksternal, sesuai CSP); XML tetap sumber data mesin pencari, bukan HTML pengganti.
+- Visual yang LOCKED: palet navy-gold, kategori publik/portfolio/insights/program, foto portrait tanpa crop (`object-fit: contain`), kartu dua kolom pada HP dan tablet (termasuk 320 px), judul satu baris ellipsis, navigasi responsif; desktop tetap grid lebar.
+- `robots.txt` tetap mengiklankan sitemap utama dan sitemap khusus Ketahanan Pangan; isi `robots.txt`, `/program/`, `/portal/` dan backend **tidak dimodifikasi** dalam R47.
+
+### Structured data / Search Console
+- Homepage adalah Microdata `WebSite` yang sudah ada pada elemen root `<html>`; properti `<meta itemprop="name" content="Srilex Buditra">` di `<head>` memberi nama situs, terpisah dari judul SEO `Srilex Buditra | Senior Full Stack Developer Bengkulu`.
+- `WebPage`, `Person`, profile `sameAs` GitHub/LinkedIn/ORCID, canonical, robots, title, dan homepage visual selain name meta tetap dipertahankan. JSON-LD baru dan `Organization` baru **tidak** ditambahkan.
+- GitHub Actions pada `4e18095`: Pages Build/Deployment, Repository Quality, Link/Anchor/Sitemap, Public Repository Audit **4/4 success**. Tampilan publik diuji via screenshot Chrome mobile/tablet/desktop.
+- Search Console: sitemap terdaftar **Success**, last read 2026-10-06 (53 discovered); homepage indexed/canonical valid, last crawl 2026-09-27; Live URL Test PASS dan Request Indexing berhasil diterima 2026-10-12. Tidak menyamakan permintaan indeks dengan recrawl atau pembaruan hasil penelusuran yang sudah terjadi.
+- Validitas XML, pemuatan galeri, dan keberhasilan deploy tidak menjamin Google menampilkan gambar, site name, atau sitelinks dengan bentuk/tanggal tertentu. Diperlukan pemantauan Search Console setelah recrawl.
+<!-- SITEMAP-V12-R48-GSC:END -->
+
 
 
 

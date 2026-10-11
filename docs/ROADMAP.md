@@ -127,6 +127,27 @@ Status            : PRODUCTION VERIFIED / COMPLETED / LOCKED
 - Original Gate 0 scope and decisions remain below as historical project planning.
 <!-- OG40-GATE8-FINAL-R40:END -->
 
+<!-- SITEMAP-V12-R48-GSC:START -->
+## Sitemap V12 and Google Search Identity - Production Closeout (12 October 2026)
+
+**Status:** SITEMAP V12 PRODUCTION VERIFIED / COMPLETED / LOCKED. **Current code baseline:** `4e18095` on `main`.
+**Scope:** sitemap XML dan tampilan visualnya, serta `WebSite.name` homepage; jangan mengulang perubahan OG40 Gate 8 `b8fe124`.
+
+### Final verified results
+- Sitemap publik `/sitemap.xml`: **60 URL**; **61 `image:loc`**; 12 gambar melalui subdomain `media-umroh.srilexbuditra.work`; dua `og:image` homepage tetap dipertahankan; tujuh `lastmod` lama tidak dibuat ulang.
+- Frontend tampilan XML: `/sitemap-v12.xsl` + `/sitemap-v12.css`; navy-gold, kartu foto portrait `object-fit: contain`, **dua kolom HP 320+ dan tablet**, satu baris judul dengan ellipsis, navigasi HP diperbaiki. Disetujui dari screenshot localhost dan produksi pada HP 360/390, tablet 768 dan desktop.
+- Structured data homepage: entitas Microdata `WebSite` lama diperbaiki ke **name = Srilex Buditra**; judul SEO, `WebPage`, `Person`, tautan `sameAs`, canonical, robots, dan desain homepage tidak diubah selain penyesuaian properti itu. Tidak menambah entitas JSON-LD/Organization.
+- R46 preflight PASS; R47 commit/push **`4e18095`** tepat 4 file. Semua empat workflow GitHub Actions untuk commit ini **success**; Git main/origin sinkron, working tree bersih setelah rilis.
+- Google Search Console: properti domain `srilexbuditra.work`; sitemap `/sitemap.xml` berstatus **Sitemap processed successfully**. Terakhir dibaca 6 Okt 2026, discovered pages 53 (belum menjadi pembacaan Sitemap V12 tanggal 12 Okt).
+- URL Inspection `https://srilexbuditra.work/`: **Page is indexed**, canonical deklarasi sama dengan inspected URL dan dipilih Google; last crawl 27 Sep 2026, Googlebot smartphone, fetch successful. Pada 12 Okt 2026 Live URL Test: **URL is available to Google**, Page can be indexed. **Request Indexing accepted** (queued by Google).
+
+### Follow-up without code changes
+- Tunggu Google membaca ulang sitemap dan homepage; pantau **Last read**, **Discovered pages**, **Last crawl**, serta hasil pencarian `Srilex Buditra`. Hindari mengirim permintaan indexing berulang tanpa alasan.
+- Google belum dikonfirmasi telah membaca `WebSite.name` terbaru; nama situs, thumbnails/sitelinks, dan waktu penampilan di Search **bukan jaminan**. Angka 53 discovered pages bukan bukti tujuh URL hilang atau tidak terindeks.
+- Bila ada regresi nyata, audit hanya URL/file terkait. Jangan mengubah visual dua kolom, mapping OG40, `/program/`, `/portal/`, Worker, D1 atau fitur yang sudah locked.
+- Penyimpanan checkpoint dokumentasi pada **lima master Markdown existing** saja; tidak membuat `.md` baru. Catatan ini tidak memerlukan perubahan website maupun redeploy.
+<!-- SITEMAP-V12-R48-GSC:END -->
+
 
 > Master roadmap dan continuity document srilexbuditra.work.
 > Roadmap strategis dipisahkan dari checkpoint historis agar status lama tidak dibaca sebagai kondisi source terkini.

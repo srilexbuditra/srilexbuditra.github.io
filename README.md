@@ -48,6 +48,18 @@ Status            : PRODUCTION VERIFIED / COMPLETED / LOCKED
 - Bagian perencanaan OG internal sebelumnya dipertahankan sebagai riwayat Gate 0; status terkini mengikuti Gate 8.
 <!-- OG40-GATE8-FINAL-R40:END -->
 
+<!-- SITEMAP-V12-R48-GSC:START -->
+## Sitemap V12 dan Google Search Identity - Final Production Checkpoint
+
+- **Status:** PRODUCTION VERIFIED / COMPLETED / LOCKED untuk Sitemap V12 dan publikasi identitas `WebSite.name`; tindak lanjut recrawl Google masih menunggu.
+- **Baseline Git:** `4e18095` (`feat: publish sitemap v12 image gallery and website identity`), branch `main`; keempat GitHub Actions untuk commit ini telah sukses.
+- **Sitemap resmi:** [`/sitemap.xml`](https://srilexbuditra.work/sitemap.xml) mencakup **60 URL dan 61 referensi gambar**, termasuk **12 gambar dari `media-umroh.srilexbuditra.work`**; 7 nilai `lastmod` lama dipertahankan.
+- **Visual sitemap:** `/sitemap-v12.xsl` + `/sitemap-v12.css`, tema navy-gold, gambar tidak dipotong; kartu **dua kolom pada HP dan tablet** dengan judul satu baris.
+- **Identitas Google:** `WebSite.name = Srilex Buditra` memakai Microdata yang sudah ada. Judul SEO homepage tetap `Srilex Buditra | Senior Full Stack Developer Bengkulu`; `Person` tidak diubah.
+- **Google Search Console (12 Okt 2026):** sitemap terdaftar dengan status Success (pembacaan terakhir 6 Okt: 53 discovered pages); homepage sudah indexed, Live URL Test PASS, dan Request Indexing diterima. Belum ada bukti Google telah membaca ulang nama situs terbaru.
+- **Dokumen master:** [`docs/ROADMAP.md`](docs/ROADMAP.md) untuk status/lanjutan dan [`docs/PLATFORM.md`](docs/PLATFORM.md) untuk spesifikasi. OG40 tetap terkunci pada checkpoint `b8fe124` dan tidak diulang.
+<!-- SITEMAP-V12-R48-GSC:END -->
+
 
 <p align="center">
   <a href="https://srilexbuditra.work/">
