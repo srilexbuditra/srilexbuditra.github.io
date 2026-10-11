@@ -17,3 +17,41 @@
 .sb-cta{display:flex;justify-content:space-between;align-items:center;gap:24px;padding:38px;border:1px solid rgba(94,216,255,.22);border-radius:24px;background:linear-gradient(135deg,#102b43,#091725)}.sb-cta h2{font-size:clamp(27px,4vw,42px);margin:7px 0}.sb-cta p{color:var(--sb-muted);max-width:630px}
 @media(max-width:800px){.sb-hero-grid,.sb-grid2,.sb-gallery{grid-template-columns:1fr}.sb-grid3{grid-template-columns:1fr 1fr}.sb-head{display:block}.sb-cta{display:block}.sb-section{padding:44px 0}.sb-hero{padding-top:38px}}
 @media(max-width:540px){.sb-wrap{width:calc(100% - 24px)}.sb-grid3{grid-template-columns:1fr}.sb-actions .sb-btn{width:100%}.sb-shot.featured img{min-height:240px}.sb-card{padding:18px}.sb-cta{padding:27px}}
+
+/* OG40 SCHOOL FULL PORTRAIT R18 BEGIN */
+/* Scope: Website Sekolah / Project Detail poster only */
+
+.sb-detail .sb-hero .sb-hero-grid .og40-school-cover-r1 {
+  grid-template-columns: minmax(0, 240px) minmax(0, 1fr) !important;
+  align-items: start !important;
+  gap: clamp(16px, 2vw, 28px) !important;
+  height: auto !important;
+  max-height: none !important;
+}
+
+.sb-detail .sb-hero .sb-hero-grid .og40-school-cover-r1 > img {
+  display: block !important;
+  width: 100% !important;
+  height: auto !important;
+  max-width: 100% !important;
+  max-height: none !important;
+  aspect-ratio: 2 / 3 !important;
+  object-fit: contain !important;
+  object-position: center center !important;
+}
+
+@media (max-width: 767px) {
+  .sb-detail .sb-hero .sb-hero-grid .og40-school-cover-r1 {
+    grid-template-columns: minmax(0, 1fr) !important;
+    align-items: start !important;
+    gap: 14px !important;
+  }
+
+  .sb-detail .sb-hero .sb-hero-grid .og40-school-cover-r1 > img {
+    width: 100% !important;
+    max-width: 280px !important;
+    margin-inline: auto !important;
+  }
+}
+
+/* OG40 SCHOOL FULL PORTRAIT R18 END */
