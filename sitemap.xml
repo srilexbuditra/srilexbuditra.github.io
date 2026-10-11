@@ -1,299 +1,471 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="/sitemap-v12.xsl"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
     <loc>https://srilexbuditra.work/</loc>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://srilexbuditra.work/images/og/home/homepage-social-portrait-r1.jpg</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://srilexbuditra.work/images/og/home/homepage-social-portrait-r1.avif</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://srilexbuditra.work/profil/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://srilexbuditra.work/images/og/internal/srilex-buditra-profil-rekam-jejak-digital.avif</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://srilexbuditra.work/privacy.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://srilexbuditra.work/images/og/internal/kebijakan-privasi.avif</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://srilexbuditra.work/terms.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://srilexbuditra.work/images/og/internal/ketentuan-layanan.avif</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://srilexbuditra.work/security.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://srilexbuditra.work/images/og/internal/keamanan.avif</image:loc>
+    </image:image>
   </url>
-
   <url>
     <loc>https://srilexbuditra.work/portfolio/aplikasi-pos/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://srilexbuditra.work/images/og/internal/aplikasi-pos-case-study.avif</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://srilexbuditra.work/portfolio/aplikasi-pos/detail.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://srilexbuditra.work/images/og/internal/pos-indonesia-digital-service-case-study.avif</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://srilexbuditra.work/portfolio/sistem-administrasi/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://srilexbuditra.work/images/og/internal/adminfolio-portofolio-sistem-administrasi.avif</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://srilexbuditra.work/portfolio/sistem-administrasi/detail.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://srilexbuditra.work/images/og/internal/sistem-administrasi-case-study.avif</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://srilexbuditra.work/portfolio/website-sekolah/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://srilexbuditra.work/images/og/internal/portofolio-sekolah-smp-negeri-1-kota-bengkulu.avif</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://srilexbuditra.work/portfolio/website-sekolah/detail.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://srilexbuditra.work/images/og/internal/detail-portofolio-smp-negeri-1-kota-bengkulu.avif</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://srilexbuditra.work/portfolio/website-sekolah/project-detail.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://srilexbuditra.work/images/og/internal/website-sekolah-project-detail.avif</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://srilexbuditra.work/portfolio/website-sekolah/tjkt-smkn1kotabengkulu/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://srilexbuditra.work/images/og/internal/kelas-x-tjkt-smk-negeri-1-kota-bengkulu.avif</image:loc>
+    </image:image>
   </url>
-
   <url>
     <loc>https://srilexbuditra.work/program/ketahanan-pangan/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://srilexbuditra.work/program/ketahanan-pangan/assets/brosur-program-ketahanan-pangan.jpg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://srilexbuditra.work/program/ketahanan-pangan/registrasi/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://srilexbuditra.work/program/ketahanan-pangan/assets/brand/icon-192.png</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://srilexbuditra.work/program/ketahanan-pangan/verifikasi/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://srilexbuditra.work/program/ketahanan-pangan/assets/brand/icon-192.png</image:loc>
+    </image:image>
   </url>
-
   <url>
     <loc>https://srilexbuditra.work/verify/verify.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://srilexbuditra.work/images/og/internal/verifikasi-dokumen-srilex-buditra.avif</image:loc>
+    </image:image>
   </url>
-
   <url>
     <loc>https://srilexbuditra.work/portfolio/ketahanan-pangan/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://srilexbuditra.work/images/og/internal/program-ketahanan-pangan-case-study.avif</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://srilexbuditra.work/program/ketahanan-pangan/peserta/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://srilexbuditra.work/program/ketahanan-pangan/assets/brand/icon-192.png</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://srilexbuditra.work/program/ketahanan-pangan/dokumentasi/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://srilexbuditra.work/program/ketahanan-pangan/dokumentasi/assets/og-ketahanan-pangan.avif</image:loc>
+    </image:image>
   </url>
-
   <url>
     <loc>https://srilexbuditra.work/aktivitas/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://srilexbuditra.work/images/og/internal/development-timeline-activity.avif</image:loc>
+    </image:image>
   </url>
-
   <url>
     <loc>https://srilexbuditra.work/insights/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://srilexbuditra.work/images/og/internal/insights-engineering-notes.avif</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://srilexbuditra.work/insights/membangun-alur-digital-peserta/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://srilexbuditra.work/images/og/internal/membangun-alur-digital-peserta-dari-registrasi-sampai-dashboard.avif</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://srilexbuditra.work/insights/qr-verification-sertifikat-digital/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://srilexbuditra.work/images/og/internal/qr-verification-sertifikat-digital-verifikasi-harus-lebih-dari-sekadar-qr.avif</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://srilexbuditra.work/insights/responsive-first-portal-peserta/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://srilexbuditra.work/images/og/internal/responsive-first-untuk-portal-peserta-di-perangkat-mobile.avif</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://srilexbuditra.work/insights/ekosistem-digital-umroh-semi-private-bengkulu/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://srilexbuditra.work/images/og/internal/membangun-ekosistem-digital-umroh-semi-private-bengkulu.avif</image:loc>
+    </image:image>
   </url>
-<url>
-  <loc>https://srilexbuditra.work/insights/client-management-platform/</loc>
-  <changefreq>monthly</changefreq>
-  <priority>0.7</priority>
-</url>
-<url>
-  <loc>https://srilexbuditra.work/insights/cloudflare-infrastructure/</loc>
-  <changefreq>monthly</changefreq>
-  <priority>0.7</priority>
-</url>
-<url>
-  <loc>https://srilexbuditra.work/insights/official-document-verification/</loc>
-  <changefreq>monthly</changefreq>
-  <priority>0.7</priority>
-</url>
-<url>
-  <loc>https://srilexbuditra.work/insights/visitor-analytics-privacy/</loc>
-  <changefreq>monthly</changefreq>
-  <priority>0.7</priority>
-</url>
-<url>
-  <loc>https://srilexbuditra.work/insights/demo-login-automatic-access/</loc>
-  <changefreq>monthly</changefreq>
-  <priority>0.7</priority>
-</url>
-<url>
+  <url>
+    <loc>https://srilexbuditra.work/insights/client-management-platform/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://srilexbuditra.work/images/og/internal/membangun-client-management-platform-untuk-mengelola-lead-klien-dan-project.avif</image:loc>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://srilexbuditra.work/insights/cloudflare-infrastructure/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://srilexbuditra.work/images/og/internal/membangun-infrastruktur-cloudflare-srilexbuditra-work-dengan-workers-d1-kv-dan-batas-implementa.avif</image:loc>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://srilexbuditra.work/insights/official-document-verification/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://srilexbuditra.work/images/og/internal/membangun-official-document-verification-srilexbuditra-work-dengan-document-id-qr-dan-batas-ver.avif</image:loc>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://srilexbuditra.work/insights/visitor-analytics-privacy/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://srilexbuditra.work/images/og/internal/membangun-visitor-analytics-srilexbuditra-work-dengan-privasi-dan-batas-data-yang-eksplisit.avif</image:loc>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://srilexbuditra.work/insights/demo-login-automatic-access/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://srilexbuditra.work/images/og/internal/membangun-demo-login-srilexbuditra-work-dengan-automatic-access-yang-aman-tanpa-menyentuh-data.avif</image:loc>
+    </image:image>
+  </url>
+  <url>
     <loc>https://srilexbuditra.work/insights/alur-pengunjung-menjadi-klien/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://srilexbuditra.work/images/og/internal/merancang-alur-pengunjung-menjadi-klien-di-srilexbuditra-work.avif</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://srilexbuditra.work/insights/membangun-srilexbuditra-work-sebagai-digital-platform/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://srilexbuditra.work/images/og/internal/membangun-srilexbuditra-work-sebagai-digital-platform-bukan-sekadar-website.avif</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://srilexbuditra.work/program/ketahanan-pangan/sumber/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://srilexbuditra.work/assets/og/sumber-resmi-registrasi.avif</image:loc>
+    </image:image>
   </url>
-
-
   <!-- Umroh Semi Private Bengkulu — public pages -->
   <url>
     <loc>https://srilexbuditra.work/program/umroh-semi-private-bengkulu/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://media-umroh.srilexbuditra.work/portal/umroh/banner-9b900109-a166-424a-878c-f8ebe37f0e17.avif</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://srilexbuditra.work/program/umroh-semi-private-bengkulu/manasik/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://srilexbuditra.work/program/umroh-semi-private-bengkulu/branding/logo-umroh-semi-private-bengkulu.avif</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://srilexbuditra.work/program/umroh-semi-private-bengkulu/manasik/persiapan/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://media-umroh.srilexbuditra.work/manasik/persiapan/banner-224a0015-9165-4fce-a681-522c5d5c4853.avif</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://srilexbuditra.work/program/umroh-semi-private-bengkulu/manasik/ihram-miqat/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://media-umroh.srilexbuditra.work/manasik/ihram-miqat/banner-0428763b-ebe2-4e2f-8112-b0210901d967.avif</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://srilexbuditra.work/program/umroh-semi-private-bengkulu/manasik/talbiyah/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://media-umroh.srilexbuditra.work/manasik/talbiyah/banner-0a240dba-93d6-4116-8233-68b9210c2355.avif</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://srilexbuditra.work/program/umroh-semi-private-bengkulu/manasik/tata-cara-umroh/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://media-umroh.srilexbuditra.work/manasik/tata-cara-umroh/banner-845f0743-e1a4-48c4-8a1f-dd9a8b59c75d.avif</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://srilexbuditra.work/program/umroh-semi-private-bengkulu/manasik/thawaf/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://media-umroh.srilexbuditra.work/manasik/thawaf/banner-abb7bdc7-a44b-4499-a7cf-b346ac765082.avif</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://srilexbuditra.work/program/umroh-semi-private-bengkulu/manasik/sai/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://media-umroh.srilexbuditra.work/manasik/sai/banner-68c995e8-5c8b-49e7-8194-18cd474e1704.avif</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://srilexbuditra.work/program/umroh-semi-private-bengkulu/manasik/tahallul/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://media-umroh.srilexbuditra.work/manasik/tahallul/banner-f8bb211c-ac01-40c7-b6eb-15b7d015102b.avif</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://srilexbuditra.work/program/umroh-semi-private-bengkulu/manasik/larangan-ihram/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://media-umroh.srilexbuditra.work/manasik/larangan-ihram/banner-bd37cfbb-3551-4faa-a6ce-f02c309e7ab3.avif</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://srilexbuditra.work/program/umroh-semi-private-bengkulu/manasik/adab-tanah-suci/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://media-umroh.srilexbuditra.work/manasik/adab-tanah-suci/banner-859e1c3b-4524-4b5d-bc27-0b4db7ad93d9.avif</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://srilexbuditra.work/program/umroh-semi-private-bengkulu/manasik/ziarah-madinah/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://media-umroh.srilexbuditra.work/manasik/ziarah-madinah/banner-3968b2cb-8acf-40fc-bce3-d46d24841fa8.avif</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://srilexbuditra.work/program/umroh-semi-private-bengkulu/manasik/tips-perjalanan/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://media-umroh.srilexbuditra.work/manasik/tips-perjalanan/banner-887adc0a-4821-4a75-a322-63e6a668e015.avif</image:loc>
+    </image:image>
   </url>
-
   <url>
     <loc>https://srilexbuditra.work/portfolio/</loc>
+    <image:image>
+      <image:loc>https://srilexbuditra.work/images/og/internal/portfolio-selected-work.avif</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://srilexbuditra.work/portfolio/umroh-semi-private-bengkulu/</loc>
+    <image:image>
+      <image:loc>https://srilexbuditra.work/images/og/internal/umroh-semi-private-bengkulu-case-study.avif</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://srilexbuditra.work/portfolio/client-management-platform/</loc>
+    <image:image>
+      <image:loc>https://srilexbuditra.work/images/og/internal/client-management-platform-case-study.avif</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://srilexbuditra.work/portfolio/document-verification/</loc>
+    <image:image>
+      <image:loc>https://srilexbuditra.work/images/og/internal/official-document-verification-system-case-study.avif</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://srilexbuditra.work/portfolio/digital-membership-qr/</loc>
+    <image:image>
+      <image:loc>https://srilexbuditra.work/images/og/internal/digital-membership-qr-system-case-study.avif</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://srilexbuditra.work/portfolio/visitor-analytics/</loc>
+    <image:image>
+      <image:loc>https://srilexbuditra.work/images/og/internal/visitor-analytics-privacy-system-case-study.avif</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://srilexbuditra.work/engineering/</loc>
     <lastmod>2026-10-06</lastmod>
+    <image:image>
+      <image:loc>https://srilexbuditra.work/images/og/internal/system-engineering.avif</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://srilexbuditra.work/mengapa-memilih-saya/</loc>
     <lastmod>2026-10-06</lastmod>
+    <image:image>
+      <image:loc>https://srilexbuditra.work/images/og/internal/mengapa-memilih-saya.avif</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://srilexbuditra.work/keahlian-teknis/</loc>
     <lastmod>2026-10-07</lastmod>
+    <image:image>
+      <image:loc>https://srilexbuditra.work/images/og/internal/keahlian-teknis.avif</image:loc>
+    </image:image>
   </url>
-
   <url>
     <loc>https://srilexbuditra.work/layanan/</loc>
     <lastmod>2026-10-07</lastmod>
+    <image:image>
+      <image:loc>https://srilexbuditra.work/images/og/internal/layanan-digital.avif</image:loc>
+    </image:image>
   </url>
-
   <url>
     <loc>https://srilexbuditra.work/proses-kerja/</loc>
     <lastmod>2026-10-07</lastmod>
+    <image:image>
+      <image:loc>https://srilexbuditra.work/images/og/internal/proses-kerja.avif</image:loc>
+    </image:image>
   </url>
-
   <url>
     <loc>https://srilexbuditra.work/kepercayaan-transparansi/</loc>
     <lastmod>2026-10-07</lastmod>
+    <image:image>
+      <image:loc>https://srilexbuditra.work/images/og/internal/kepercayaan-transparansi.avif</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://srilexbuditra.work/faq/</loc>
     <lastmod>2026-10-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://srilexbuditra.work/images/og/internal/faq.avif</image:loc>
+    </image:image>
   </url>
 </urlset>
