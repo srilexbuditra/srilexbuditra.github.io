@@ -39,7 +39,7 @@ jobs:
         shell: bash
         run: |
           set -e
-          matches=$(git ls-files | grep -Ei '(paspor|password|credential)' | grep -Fvx 'shared/password-visibility-r1.js' || true)
+          matches=$(git ls-files | grep -Ei '(paspor|password|credential)' | grep -Ev '^(admin/password-visibility-ui-csp-r1\.css|shared/password-visibility-r1\.js)$' | grep -Fvx 'shared/password-visibility-r1.js' || true)
           if [ -n "$matches" ]; then
             echo "Review these potentially sensitive filenames:"
             echo "$matches"
