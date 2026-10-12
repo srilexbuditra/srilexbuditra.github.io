@@ -79,7 +79,7 @@ Status produksi:
 
 - username: `srilexbuditra`
 - role: `super_admin`
-- identitas tampilan frontend: **Srilex Buditra — Full Stack Developer — Super Admin**
+- identitas tampilan frontend: **Srilex Buditra — Senior Full Stack Developer — Super Admin**
 
 ## CSP frontend
 
