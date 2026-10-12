@@ -57,6 +57,18 @@ export default {
         });
       }
 
+      /* SB_ANALYTICS_ADMIN_ROUTE_R1 */
+      if (url.pathname === "/api/analytics/stats") {
+        if (method !== "GET") {
+          return apiResponse(request, env, { error: "Method not allowed." }, 405, { "Allow": "GET" });
+        }
+
+        const auth = await requireRole(request, env, ["system_admin", "staff"]);
+        if (auth.response) return auth.response;
+
+        return proxyAdminAnalyticsStats(request, env);
+      }
+
       if (url.pathname === "/api/auth/change-password" && method === "POST") {
         const auth = await requireAuth(request, env);
         if (auth.response) return auth.response;
@@ -952,6 +964,55 @@ export default {
     }
   }
 };
+
+/* SB_ANALYTICS_ADMIN_PROXY_R1 */
+async function proxyAdminAnalyticsStats(request, env) {
+  const statsKey = String(env.STATS_API_KEY || "").trim();
+  if (!statsKey) {
+    return apiResponse(request, env, { error: "Analytics secret is not configured." }, 503);
+  }
+
+  const incoming = new URL(request.url);
+  const upstream = new URL("https://srilexbuditra-visitors-api.srilexbuditra.workers.dev/stats");
+
+  for (const key of ["t", "start", "end"]) {
+    const value = incoming.searchParams.get(key);
+    if (value) upstream.searchParams.set(key, value);
+  }
+
+  try {
+    const response = await fetch(upstream.toString(), {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${statsKey}`,
+        "Accept": "application/json"
+      },
+      redirect: "manual"
+    });
+
+    if (response.status >= 300 && response.status < 400) {
+      return apiResponse(request, env, { error: "Analytics upstream redirect rejected." }, 502);
+    }
+    if (response.status === 401 || response.status === 403) {
+      return apiResponse(request, env, { error: "Analytics upstream authorization failed." }, 502);
+    }
+    const contentType = (response.headers.get("Content-Type") || "").toLowerCase();
+    if (!contentType.includes("application/json")) {
+      return apiResponse(request, env, { error: "Analytics upstream returned an invalid response." }, 502);
+    }
+
+    const headers = corsHeaders(request, env);
+    headers.set("Content-Type", "application/json; charset=utf-8");
+    for (const [key, value] of Object.entries(securityHeaders())) {
+      headers.set(key, value);
+    }
+
+    return new Response(response.body, { status: response.status, headers });
+  } catch (error) {
+    console.error("Analytics upstream request failed.");
+    return apiResponse(request, env, { error: "Analytics upstream unavailable." }, 502);
+  }
+}
 
 function allowedOrigins(env) {
   return String(env.ALLOWED_ORIGINS || "")
