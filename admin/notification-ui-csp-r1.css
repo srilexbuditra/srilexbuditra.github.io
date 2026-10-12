@@ -1,0 +1,235 @@
+.sb-notification-panel[hidden] {
+        display: none !important;
+      }
+
+      .sb-notification-panel {
+        position: absolute;
+        top: calc(100% + 10px);
+        right: 0;
+        z-index: 82;
+
+        width: min(370px, calc(100vw - 28px));
+        max-height: min(520px, calc(100vh - 90px));
+
+        display: flex;
+        flex-direction: column;
+
+        overflow: hidden;
+
+        border: 1px solid rgba(15,23,42,.10);
+        border-radius: 14px;
+
+        background: #fff;
+        color: #0f172a;
+
+        box-shadow:
+          0 18px 45px rgba(15,23,42,.14);
+      }
+
+      .sb-notification-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 12px;
+
+        padding: 14px;
+
+        border-bottom:
+          1px solid rgba(15,23,42,.08);
+      }
+
+      .sb-notification-head strong {
+        display: block;
+        font-size: 14px;
+      }
+
+      .sb-notification-head span {
+        display: block;
+        margin-top: 3px;
+
+        color: #64748b;
+        font-size: 11px;
+      }
+
+      .sb-notification-refresh {
+        border: 1px solid rgba(15,23,42,.10);
+        border-radius: 9px;
+
+        padding: 7px 9px;
+
+        background: #fff;
+        color: #334155;
+
+        font: inherit;
+        font-size: 11px;
+        font-weight: 750;
+
+        cursor: pointer;
+      }
+
+      .sb-notification-refresh:disabled {
+        opacity: .6;
+        cursor: wait;
+      }
+
+      .sb-notification-list {
+        min-height: 70px;
+        overflow-y: auto;
+      }
+
+      .sb-notification-item {
+        display: grid;
+        grid-template-columns: 9px 1fr;
+        gap: 10px;
+
+        padding: 12px 14px;
+
+        border-bottom:
+          1px solid rgba(15,23,42,.06);
+      }
+
+      .sb-notification-item.is-actionable {
+        cursor: pointer;
+      }
+
+      .sb-notification-item.is-actionable:hover,
+      .sb-notification-item.is-actionable:focus-visible {
+        background: rgba(22,138,99,.06);
+        outline: none;
+      }
+
+      .sb-notification-dot {
+        width: 8px;
+        height: 8px;
+
+        margin-top: 5px;
+
+        border-radius: 50%;
+        background: #168a63;
+      }
+
+      .sb-notification-copy {
+        min-width: 0;
+        grid-column: 2;
+      }
+
+      .sb-notification-title {
+        display: block;
+
+        color: #0f172a;
+
+        font-size: 12px;
+        font-weight: 800;
+        line-height: 1.4;
+      }
+
+      .sb-notification-description {
+        display: block;
+
+        margin-top: 3px;
+
+        color: #475569;
+
+        font-size: 11px;
+        line-height: 1.45;
+      }
+
+      .sb-notification-meta {
+        display: block;
+
+        margin-top: 5px;
+
+        color: #94a3b8;
+
+        font-size: 10px;
+        line-height: 1.4;
+      }
+
+      .sb-notification-state {
+        padding: 22px 16px;
+
+        color: #64748b;
+
+        font-size: 12px;
+        line-height: 1.5;
+        text-align: center;
+      }
+
+      .sb-notification-footer {
+        padding: 10px;
+
+        border-top:
+          1px solid rgba(15,23,42,.08);
+
+        background: #fbfdfc;
+      }
+
+      .sb-notification-open-activity {
+        width: 100%;
+
+        border: 0;
+        border-radius: 9px;
+
+        padding: 10px;
+
+        background: transparent;
+        color: #137153;
+
+        font: inherit;
+        font-size: 12px;
+        font-weight: 800;
+
+        cursor: pointer;
+      }
+
+      .sb-notification-open-activity:hover {
+        background: rgba(22,138,99,.07);
+      }
+
+      .icon-btn[aria-expanded="true"] {
+        border-color: rgba(22,138,99,.35);
+
+        box-shadow:
+          0 0 0 3px rgba(22,138,99,.08);
+      }
+
+      /*
+       * SB_TOPBAR_NOTIFICATION_INDICATOR_R1_1
+       */
+
+      .top-actions .icon-btn[aria-label="Notifikasi"] {
+        position: relative;
+      }
+
+      .icon-btn.sb-notification-has-new::after {
+        content: "";
+
+        position: absolute;
+        top: 6px;
+        right: 6px;
+
+        width: 8px;
+        height: 8px;
+
+        border: 2px solid #fff;
+        border-radius: 50%;
+
+        background: #16a34a;
+
+        box-sizing: content-box;
+
+        box-shadow:
+          0 0 0 1px rgba(22,163,74,.10);
+      }
+
+      @media(max-width:820px) {
+        .sb-notification-panel {
+          right: -2px;
+
+          width:
+            min(
+              340px,
+              calc(100vw - 20px)
+            );
+        }
+      }
