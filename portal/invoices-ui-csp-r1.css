@@ -1,0 +1,133 @@
+
+    .sb-client-invoices[hidden],
+    .sb-client-invoice-modal[hidden] {
+      display:none !important;
+    }
+
+    .sb-client-invoices {
+      display:grid;
+      gap:22px;
+    }
+
+    .sb-client-invoice-head {
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:18px;
+      flex-wrap:wrap;
+    }
+
+    .sb-client-invoice-head h1 { margin:6px 0; }
+
+    .sb-client-invoice-summary {
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:14px;
+    }
+
+    .sb-client-invoice-empty {
+      padding:32px 18px;
+      text-align:center;
+      color:#64748b;
+    }
+
+    .sb-client-invoice-name {
+      display:grid;
+      gap:3px;
+    }
+
+    .sb-client-invoice-name span {
+      color:#64748b;
+      font-size:12px;
+    }
+
+    .sb-client-invoice-modal {
+      position:fixed;
+      inset:0;
+      z-index:100030;
+      display:grid;
+      place-items:center;
+      padding:22px;
+      background:rgba(2,8,6,.72);
+      backdrop-filter:blur(6px);
+    }
+
+    .sb-client-invoice-card {
+      width:min(100%,720px);
+      max-height:calc(100vh - 44px);
+      overflow:auto;
+      background:#fff;
+      color:#0f172a;
+      border-radius:20px;
+      box-shadow:0 24px 80px rgba(0,0,0,.35);
+    }
+
+    .sb-client-invoice-modal-head {
+      display:flex;
+      justify-content:space-between;
+      gap:16px;
+      padding:22px 24px 16px;
+      border-bottom:1px solid #e2e8f0;
+    }
+
+    .sb-client-invoice-close {
+      width:38px;
+      height:38px;
+      border:0;
+      border-radius:10px;
+      background:#f1f5f9;
+      cursor:pointer;
+      font-size:20px;
+    }
+
+    .sb-client-invoice-body {
+      padding:22px 24px 24px;
+    }
+
+    .sb-client-invoice-meta {
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:12px;
+      margin-bottom:18px;
+    }
+
+    .sb-client-invoice-meta > div {
+      padding:12px;
+      border:1px solid #e2e8f0;
+      border-radius:10px;
+    }
+
+    .sb-client-invoice-meta span {
+      display:block;
+      color:#64748b;
+      font-size:11px;
+      margin-bottom:4px;
+    }
+
+    .sb-client-invoice-total {
+      display:grid;
+      gap:8px;
+      margin-top:18px;
+      margin-left:auto;
+      width:min(100%,320px);
+    }
+
+    .sb-client-invoice-total div {
+      display:flex;
+      justify-content:space-between;
+      gap:20px;
+    }
+
+    .sb-client-invoice-total .grand {
+      padding-top:10px;
+      border-top:1px solid #cbd5e1;
+      font-size:17px;
+      font-weight:800;
+    }
+
+    @media(max-width:720px) {
+      .sb-client-invoice-summary,
+      .sb-client-invoice-meta {
+        grid-template-columns:1fr;
+      }
+    }

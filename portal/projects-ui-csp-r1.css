@@ -1,0 +1,61 @@
+
+    .sb-client-projects[hidden] {
+      display:none !important;
+    }
+
+    .sb-client-projects {
+      display:grid;
+      gap:22px;
+    }
+
+    .sb-client-projects-head {
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:16px;
+      flex-wrap:wrap;
+    }
+
+    .sb-client-projects-head h1 {
+      margin:6px 0;
+    }
+
+    .sb-client-projects-summary {
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:14px;
+    }
+
+    .sb-project-name {
+      display:grid;
+      gap:3px;
+    }
+
+    .sb-project-name span {
+      color:#64748b;
+      font-size:12px;
+    }
+
+    .sb-project-progress {
+      min-width:150px;
+    }
+
+    .sb-project-progress-track {
+      height:7px;
+      border-radius:999px;
+      background:#e2e8f0;
+      overflow:hidden;
+      margin-bottom:5px;
+    }
+
+    .sb-project-progress-bar {
+      height:100%;
+      background:#169665;
+      border-radius:999px;
+    }
+
+    @media(max-width:800px) {
+      .sb-client-projects-summary {
+        grid-template-columns:1fr;
+      }
+    }

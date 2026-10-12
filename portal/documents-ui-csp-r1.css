@@ -1,0 +1,44 @@
+
+    .sb-client-documents[hidden] {
+      display:none !important;
+    }
+
+    .sb-client-documents {
+      display:grid;
+      gap:22px;
+    }
+
+    .sb-client-doc-head {
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:18px;
+      flex-wrap:wrap;
+    }
+
+    .sb-client-doc-head h1 {
+      margin:6px 0;
+    }
+
+    .sb-client-doc-empty {
+      padding:34px 18px;
+      text-align:center;
+      color:#64748b;
+    }
+
+    .sb-client-doc-title {
+      display:grid;
+      gap:3px;
+    }
+
+    .sb-client-doc-title span {
+      font-size:12px;
+      color:#64748b;
+    }
+
+    .sb-client-doc-download {
+      display:inline-flex;
+      text-decoration:none;
+      align-items:center;
+      justify-content:center;
+    }

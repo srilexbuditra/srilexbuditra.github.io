@@ -1,0 +1,33 @@
+
+      .sb-password-visibility-toggle {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        justify-self: start;
+
+        margin-top: 7px;
+        padding: 2px 0;
+
+        border: 0;
+        background: transparent;
+        color: inherit;
+
+        font: inherit;
+        font-size: 12px;
+        font-weight: 750;
+
+        cursor: pointer;
+        opacity: .78;
+      }
+
+      .sb-password-visibility-toggle:hover {
+        opacity: 1;
+        text-decoration: underline;
+      }
+
+      .sb-password-visibility-toggle:focus-visible {
+        outline: 2px solid currentColor;
+        outline-offset: 3px;
+        border-radius: 4px;
+        opacity: 1;
+      }

@@ -1,0 +1,244 @@
+
+    .sb-support-view[hidden],
+    .sb-support-modal[hidden] {
+      display:none !important;
+    }
+
+    .sb-support-view {
+      display:grid;
+      gap:22px;
+    }
+
+    .sb-support-head {
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:16px;
+      flex-wrap:wrap;
+    }
+
+    .sb-support-head h1 {
+      margin:6px 0;
+    }
+
+    .sb-support-actions {
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    .sb-support-summary {
+      display:grid;
+      grid-template-columns:repeat(4,minmax(0,1fr));
+      gap:14px;
+    }
+
+    .sb-support-name {
+      display:grid;
+      gap:3px;
+    }
+
+    .sb-support-name span {
+      color:#64748b;
+      font-size:12px;
+    }
+
+    .sb-support-modal {
+      position:fixed;
+      inset:0;
+      z-index:100100;
+      display:grid;
+      place-items:center;
+      padding:20px;
+      background:rgba(2,8,6,.72);
+      backdrop-filter:blur(6px);
+    }
+
+    .sb-support-card {
+      width:min(100%,760px);
+      max-height:calc(100vh - 40px);
+      overflow:auto;
+      background:#fff;
+      color:#0f172a;
+      border-radius:20px;
+      box-shadow:0 24px 80px rgba(0,0,0,.35);
+    }
+
+    .sb-support-modal-head {
+      display:flex;
+      justify-content:space-between;
+      gap:16px;
+      align-items:flex-start;
+      padding:22px 24px 16px;
+      border-bottom:1px solid #e2e8f0;
+    }
+
+    .sb-support-modal-head h2 {
+      margin:0 0 5px;
+    }
+
+    .sb-support-modal-head p {
+      margin:0;
+      color:#64748b;
+      font-size:13px;
+    }
+
+    .sb-support-close {
+      width:38px;
+      height:38px;
+      border:0;
+      border-radius:10px;
+      background:#f1f5f9;
+      cursor:pointer;
+      font-size:20px;
+    }
+
+    .sb-support-form {
+      padding:22px 24px 24px;
+    }
+
+    .sb-support-grid {
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:15px;
+    }
+
+    .sb-support-field {
+      display:grid;
+      gap:7px;
+    }
+
+    .sb-support-field.full {
+      grid-column:1 / -1;
+    }
+
+    .sb-support-field label {
+      font-size:13px;
+      font-weight:800;
+    }
+
+    .sb-support-field input,
+    .sb-support-field select,
+    .sb-support-field textarea {
+      width:100%;
+      box-sizing:border-box;
+      padding:12px 13px;
+      border:1px solid #cbd5e1;
+      border-radius:10px;
+      background:#fff;
+      font:inherit;
+    }
+
+    .sb-support-field textarea {
+      min-height:120px;
+      resize:vertical;
+    }
+
+    .sb-support-error {
+      min-height:20px;
+      margin:12px 0 0;
+      color:#b91c1c;
+      font-weight:700;
+      font-size:13px;
+    }
+
+    .sb-support-form-actions {
+      display:flex;
+      justify-content:flex-end;
+      gap:10px;
+      margin-top:16px;
+    }
+
+    .sb-support-thread {
+      display:grid;
+      gap:12px;
+      padding:20px 24px;
+    }
+
+    .sb-support-message {
+      padding:13px 14px;
+      border:1px solid #e2e8f0;
+      border-radius:12px;
+      background:#f8fafc;
+    }
+
+    .sb-support-message.admin {
+      background:#ecfdf5;
+      border-color:#bbf7d0;
+    }
+
+    .sb-support-message-head {
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:7px;
+      color:#64748b;
+      font-size:12px;
+    }
+
+    .sb-support-message-text {
+      white-space:pre-wrap;
+      line-height:1.55;
+    }
+
+    /*
+     * ==========================================================
+     * SUPPORT RESOLVED / CLOSED CLIENT UX R1
+     * ==========================================================
+     */
+
+    .sb-support-status-note {
+      margin:0 24px 16px;
+      padding:12px 14px;
+
+      border:1px solid #dbe5e1;
+      border-radius:11px;
+
+      font-size:13px;
+      font-weight:600;
+      line-height:1.55;
+    }
+
+    .sb-support-status-note.resolved {
+      color:#166534;
+      background:#f0fdf4;
+      border-color:#bbf7d0;
+    }
+
+    .sb-support-status-note.closed {
+      color:#475569;
+      background:#f8fafc;
+      border-color:#cbd5e1;
+    }
+
+    .sb-support-reply {
+      padding:0 24px 24px;
+    }
+
+    .sb-support-reply textarea {
+      width:100%;
+      min-height:90px;
+      box-sizing:border-box;
+      padding:12px;
+      border:1px solid #cbd5e1;
+      border-radius:10px;
+      resize:vertical;
+      font:inherit;
+    }
+
+    .sb-support-empty {
+      padding:30px 18px;
+      text-align:center;
+      color:#64748b;
+    }
+
+    @media(max-width:800px) {
+      .sb-support-summary,
+      .sb-support-grid {
+        grid-template-columns:1fr;
+      }
+
+      .sb-support-field.full {
+        grid-column:auto;
+      }
+    }
