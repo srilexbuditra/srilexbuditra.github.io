@@ -1,0 +1,17 @@
+
+    .sb-admin-analytics[hidden] {
+      display:none !important;
+    }
+
+    .sb-admin-analytics {
+      display:block;
+      width:100%;
+    }
+
+    .sb-admin-analytics > .container {
+      width:100%;
+      max-width:none;
+      box-sizing:border-box;
+      margin:0;
+      padding:0;
+    }

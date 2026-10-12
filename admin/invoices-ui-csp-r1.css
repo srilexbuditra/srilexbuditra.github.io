@@ -1,0 +1,228 @@
+
+    .sb-invoice-view[hidden],
+    .sb-invoice-modal[hidden] {
+      display:none !important;
+    }
+
+    .sb-invoice-view {
+      display:grid;
+      gap:22px;
+    }
+
+    .sb-invoice-head {
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:18px;
+      flex-wrap:wrap;
+    }
+
+    .sb-invoice-head h1 { margin:6px 0; }
+
+    .sb-invoice-actions {
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    .sb-invoice-summary {
+      display:grid;
+      grid-template-columns:repeat(4,minmax(0,1fr));
+      gap:14px;
+    }
+
+    .sb-invoice-name {
+      display:grid;
+      gap:3px;
+    }
+
+    .sb-invoice-name span {
+      color:#64748b;
+      font-size:12px;
+    }
+
+    .sb-invoice-empty {
+      padding:32px 18px;
+      text-align:center;
+      color:#64748b;
+    }
+
+    .sb-invoice-row-actions {
+      display:flex;
+      gap:7px;
+      flex-wrap:wrap;
+    }
+
+    .sb-invoice-notice {
+      display:none;
+      padding:12px 14px;
+      border-radius:10px;
+      background:#ecfdf5;
+      color:#166534;
+      font-size:13px;
+      font-weight:700;
+    }
+
+    .sb-invoice-notice.show { display:block; }
+
+    .sb-invoice-modal {
+      position:fixed;
+      inset:0;
+      z-index:100020;
+      display:grid;
+      place-items:center;
+      padding:22px;
+      background:rgba(2,8,6,.72);
+      backdrop-filter:blur(6px);
+    }
+
+    .sb-invoice-modal-card {
+      width:min(100%,760px);
+      max-height:calc(100vh - 44px);
+      overflow:auto;
+      background:#fff;
+      color:#0f172a;
+      border-radius:20px;
+      box-shadow:0 24px 80px rgba(0,0,0,.35);
+    }
+
+    .sb-invoice-modal-head {
+      display:flex;
+      justify-content:space-between;
+      gap:16px;
+      padding:22px 24px 16px;
+      border-bottom:1px solid #e2e8f0;
+    }
+
+    .sb-invoice-modal-head h2 { margin:0 0 5px; }
+
+    .sb-invoice-modal-head p {
+      margin:0;
+      color:#64748b;
+      font-size:13px;
+    }
+
+    .sb-invoice-close {
+      width:38px;
+      height:38px;
+      border:0;
+      border-radius:10px;
+      background:#f1f5f9;
+      cursor:pointer;
+      font-size:20px;
+    }
+
+    .sb-invoice-form { padding:22px 24px 24px; }
+
+    .sb-invoice-form-grid {
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:16px;
+    }
+
+    .sb-invoice-field {
+      display:grid;
+      gap:7px;
+    }
+
+    .sb-invoice-field.full { grid-column:1 / -1; }
+
+    .sb-invoice-field label {
+      font-size:13px;
+      font-weight:800;
+    }
+
+    .sb-invoice-field input,
+    .sb-invoice-field select,
+    .sb-invoice-field textarea {
+      width:100%;
+      box-sizing:border-box;
+      padding:12px 13px;
+      border:1px solid #cbd5e1;
+      border-radius:10px;
+      background:#fff;
+      font:inherit;
+    }
+
+    .sb-invoice-field textarea {
+      min-height:75px;
+      resize:vertical;
+    }
+
+    .sb-invoice-items {
+      display:grid;
+      gap:10px;
+      margin-top:18px;
+    }
+
+    .sb-invoice-item {
+      display:grid;
+      grid-template-columns:minmax(0,1fr) 110px 180px 42px;
+      gap:10px;
+      align-items:end;
+      padding:12px;
+      border:1px solid #e2e8f0;
+      border-radius:12px;
+      background:#f8fafc;
+    }
+
+    .sb-invoice-item label {
+      display:grid;
+      gap:6px;
+      font-size:12px;
+      font-weight:700;
+    }
+
+    .sb-invoice-item input {
+      width:100%;
+      box-sizing:border-box;
+      padding:10px;
+      border:1px solid #cbd5e1;
+      border-radius:9px;
+    }
+
+    .sb-invoice-remove {
+      width:42px;
+      height:42px;
+      border:1px solid #fecaca;
+      border-radius:9px;
+      background:#fff;
+      color:#b91c1c;
+      cursor:pointer;
+    }
+
+    .sb-invoice-error {
+      min-height:20px;
+      margin:12px 0;
+      color:#b91c1c;
+      font-size:13px;
+      font-weight:700;
+    }
+
+    .sb-invoice-form-actions {
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:16px;
+    }
+
+    .sb-invoice-form-actions > div {
+      display:flex;
+      gap:10px;
+    }
+
+    @media(max-width:800px) {
+      .sb-invoice-summary,
+      .sb-invoice-form-grid {
+        grid-template-columns:1fr;
+      }
+
+      .sb-invoice-field.full {
+        grid-column:auto;
+      }
+
+      .sb-invoice-item {
+        grid-template-columns:1fr;
+      }
+    }

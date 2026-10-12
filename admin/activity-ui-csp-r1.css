@@ -1,0 +1,113 @@
+
+      .sb-activity-view[hidden] {
+        display: none !important;
+      }
+
+      .sb-activity-view {
+        display: grid;
+        gap: 22px;
+      }
+
+      .sb-activity-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 18px;
+        flex-wrap: wrap;
+      }
+
+      .sb-activity-head h1 {
+        margin: 6px 0;
+      }
+
+      .sb-activity-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .sb-activity-summary {
+        display: grid;
+        grid-template-columns:
+          repeat(3, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .sb-activity-tools {
+        display: grid;
+        grid-template-columns:
+          minmax(220px, 1fr)
+          minmax(180px, 260px);
+        gap: 12px;
+        margin-bottom: 16px;
+      }
+
+      .sb-activity-tools input,
+      .sb-activity-tools select {
+        width: 100%;
+        box-sizing: border-box;
+        min-height: 42px;
+        border: 1px solid #cbd5e1;
+        border-radius: 10px;
+        background: #fff;
+        padding: 9px 12px;
+        font: inherit;
+        color: #0f172a;
+        outline: none;
+      }
+
+      .sb-activity-tools input:focus,
+      .sb-activity-tools select:focus {
+        border-color: #16a34a;
+        box-shadow:
+          0 0 0 3px rgba(22,163,74,.12);
+      }
+
+      .sb-activity-table td,
+      .sb-activity-table th {
+        vertical-align: top;
+      }
+
+      .sb-activity-main {
+        display: grid;
+        gap: 4px;
+        min-width: 210px;
+      }
+
+      .sb-activity-main span,
+      .sb-activity-muted {
+        color: #64748b;
+        font-size: 12px;
+      }
+
+      .sb-activity-code {
+        font-family:
+          ui-monospace,
+          SFMono-Regular,
+          Menlo,
+          Consolas,
+          monospace;
+        font-size: 11px;
+        color: #64748b;
+      }
+
+      .sb-activity-empty {
+        text-align: center;
+        color: #64748b;
+        padding: 32px 18px !important;
+      }
+
+      @media (max-width: 760px) {
+        .sb-activity-summary,
+        .sb-activity-tools {
+          grid-template-columns: 1fr;
+        }
+
+        .sb-activity-actions {
+          width: 100%;
+        }
+
+        .sb-activity-actions button {
+          flex: 1;
+        }
+      }

@@ -1,0 +1,209 @@
+
+    .sb-admin-support[hidden],
+    .sb-admin-support-modal[hidden] {
+      display:none !important;
+    }
+
+    .sb-admin-support {
+      display:grid;
+      gap:22px;
+    }
+
+    .sb-admin-support-head {
+      display:flex;
+      justify-content:space-between;
+      gap:16px;
+      align-items:flex-start;
+      flex-wrap:wrap;
+    }
+
+    .sb-admin-support-head h1 {
+      margin:6px 0;
+    }
+
+    .sb-admin-support-summary {
+      display:grid;
+      grid-template-columns:repeat(4,minmax(0,1fr));
+      gap:14px;
+    }
+
+    .sb-ticket-name {
+      display:grid;
+      gap:3px;
+    }
+
+    .sb-ticket-name span {
+      color:#64748b;
+      font-size:12px;
+    }
+
+    .sb-admin-support-modal {
+      position:fixed;
+      inset:0;
+      z-index:100200;
+      display:grid;
+      place-items:center;
+      padding:20px;
+      background:rgba(2,8,6,.72);
+      backdrop-filter:blur(6px);
+    }
+
+    .sb-admin-support-card {
+      width:min(100%,850px);
+      max-height:calc(100vh - 40px);
+      overflow:auto;
+      background:#fff;
+      color:#0f172a;
+      border-radius:20px;
+      box-shadow:0 24px 80px rgba(0,0,0,.35);
+    }
+
+    .sb-admin-support-modal-head {
+      display:flex;
+      justify-content:space-between;
+      gap:16px;
+      padding:22px 24px 16px;
+      border-bottom:1px solid #e2e8f0;
+    }
+
+    .sb-admin-support-modal-head h2 {
+      margin:0 0 5px;
+    }
+
+    .sb-admin-support-modal-head p {
+      margin:0;
+      color:#64748b;
+      font-size:13px;
+    }
+
+    .sb-admin-support-close {
+      width:38px;
+      height:38px;
+      border:0;
+      border-radius:10px;
+      background:#f1f5f9;
+      cursor:pointer;
+      font-size:20px;
+    }
+
+    .sb-admin-support-controls {
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:14px;
+      padding:18px 24px;
+      border-bottom:1px solid #e2e8f0;
+      background:#f8fafc;
+    }
+
+    .sb-admin-support-field {
+      display:grid;
+      gap:7px;
+    }
+
+    .sb-admin-support-field label {
+      font-size:12px;
+      font-weight:800;
+    }
+
+    .sb-admin-support-field select {
+      width:100%;
+      padding:11px 12px;
+      border:1px solid #cbd5e1;
+      border-radius:10px;
+      background:#fff;
+      font:inherit;
+    }
+
+    .sb-admin-support-assignee-readonly {
+      min-height:43px;
+      box-sizing:border-box;
+      padding:11px 12px;
+      border:1px solid #e2e8f0;
+      border-radius:10px;
+      background:#fff;
+      color:#475569;
+      line-height:1.35;
+    }
+
+    .sb-admin-support-thread {
+      display:grid;
+      gap:12px;
+      padding:20px 24px;
+    }
+
+    .sb-admin-support-message {
+      padding:13px 14px;
+      border:1px solid #e2e8f0;
+      border-radius:12px;
+      background:#f8fafc;
+    }
+
+    .sb-admin-support-message.admin {
+      background:#ecfdf5;
+      border-color:#bbf7d0;
+    }
+
+    .sb-admin-support-message.internal {
+      background:#fff7ed;
+      border-color:#fed7aa;
+    }
+
+    .sb-admin-support-message-head {
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:7px;
+      color:#64748b;
+      font-size:12px;
+    }
+
+    .sb-admin-support-message-text {
+      white-space:pre-wrap;
+      line-height:1.55;
+    }
+
+    .sb-admin-support-reply {
+      padding:0 24px 24px;
+    }
+
+    .sb-admin-support-reply textarea {
+      width:100%;
+      min-height:100px;
+      box-sizing:border-box;
+      padding:12px;
+      border:1px solid #cbd5e1;
+      border-radius:10px;
+      resize:vertical;
+      font:inherit;
+    }
+
+    .sb-admin-support-reply-options {
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+      align-items:center;
+      margin-top:10px;
+    }
+
+    .sb-admin-support-reply-options select {
+      padding:10px 12px;
+      border:1px solid #cbd5e1;
+      border-radius:9px;
+      background:#fff;
+    }
+
+    .sb-admin-support-error {
+      min-height:20px;
+      margin-top:10px;
+      color:#b91c1c;
+      font-size:13px;
+      font-weight:700;
+    }
+
+    @media(max-width:800px) {
+      .sb-admin-support-summary,
+      .sb-admin-support-controls {
+        grid-template-columns:1fr;
+      }
+    }

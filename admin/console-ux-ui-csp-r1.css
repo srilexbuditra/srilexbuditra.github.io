@@ -1,0 +1,104 @@
+
+    .topbar .search {
+      position: relative;
+    }
+
+    .sb-console-search-panel[hidden] {
+      display: none !important;
+    }
+
+    .sb-console-search-panel {
+      position: absolute;
+      top: calc(100% + 9px);
+      left: 0;
+      width: min(620px, calc(100vw - 32px));
+      max-height: min(520px, 70vh);
+      overflow: auto;
+      z-index: 12000;
+
+      background: #ffffff;
+      border: 1px solid rgba(15, 23, 42, .11);
+      border-radius: 14px;
+      box-shadow:
+        0 20px 55px rgba(15, 23, 42, .18);
+
+      padding: 8px;
+    }
+
+    .sb-console-search-state {
+      padding: 18px 16px;
+      color: #64748b;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .sb-console-search-result {
+      width: 100%;
+      display: grid;
+      grid-template-columns:
+        minmax(0, 1fr) auto;
+      gap: 12px;
+      align-items: center;
+
+      text-align: left;
+      border: 0;
+      background: transparent;
+      border-radius: 10px;
+      padding: 11px 12px;
+      cursor: pointer;
+      font: inherit;
+    }
+
+    .sb-console-search-result:hover,
+    .sb-console-search-result:focus-visible {
+      background: #f2f7f5;
+      outline: none;
+    }
+
+    .sb-console-search-copy {
+      min-width: 0;
+      display: grid;
+      gap: 3px;
+    }
+
+    .sb-console-search-copy strong {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: #172b26;
+      font-size: 13px;
+    }
+
+    .sb-console-search-copy span {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: #64748b;
+      font-size: 11px;
+    }
+
+    .sb-console-search-type {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 64px;
+      border-radius: 999px;
+      padding: 5px 8px;
+      background: #edf7f2;
+      color: #176b4b;
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+
+    @media (max-width: 720px) {
+      .sb-console-search-panel {
+        left: 0;
+        right: auto;
+        width: min(
+          92vw,
+          calc(100vw - 24px)
+        );
+      }
+    }

@@ -1,0 +1,178 @@
+
+    .sb-invoice-edit-modal[hidden] {
+      display:none !important;
+    }
+
+    .sb-invoice-edit-modal {
+      position:fixed;
+      inset:0;
+      z-index:100040;
+      display:grid;
+      place-items:center;
+      padding:22px;
+      background:rgba(2,8,6,.72);
+      backdrop-filter:blur(6px);
+    }
+
+    .sb-invoice-edit-card {
+      width:min(100%,760px);
+      max-height:calc(100vh - 44px);
+      overflow:auto;
+      background:#fff;
+      color:#0f172a;
+      border-radius:20px;
+      box-shadow:0 24px 80px rgba(0,0,0,.35);
+    }
+
+    .sb-invoice-edit-head {
+      display:flex;
+      justify-content:space-between;
+      gap:16px;
+      padding:22px 24px 16px;
+      border-bottom:1px solid #e2e8f0;
+    }
+
+    .sb-invoice-edit-head h2 {
+      margin:0 0 5px;
+    }
+
+    .sb-invoice-edit-head p {
+      margin:0;
+      color:#64748b;
+      font-size:13px;
+    }
+
+    .sb-invoice-edit-close {
+      width:38px;
+      height:38px;
+      border:0;
+      border-radius:10px;
+      background:#f1f5f9;
+      cursor:pointer;
+      font-size:20px;
+    }
+
+    .sb-invoice-edit-form {
+      padding:22px 24px 24px;
+    }
+
+    .sb-invoice-edit-info {
+      margin-bottom:16px;
+      padding:12px 14px;
+      background:#f8fafc;
+      border-radius:10px;
+      font-size:13px;
+      line-height:1.5;
+    }
+
+    .sb-invoice-edit-grid {
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:16px;
+    }
+
+    .sb-invoice-edit-field {
+      display:grid;
+      gap:7px;
+    }
+
+    .sb-invoice-edit-field.full {
+      grid-column:1 / -1;
+    }
+
+    .sb-invoice-edit-field label {
+      font-size:13px;
+      font-weight:800;
+    }
+
+    .sb-invoice-edit-field input,
+    .sb-invoice-edit-field select,
+    .sb-invoice-edit-field textarea {
+      width:100%;
+      box-sizing:border-box;
+      padding:12px 13px;
+      border:1px solid #cbd5e1;
+      border-radius:10px;
+      background:#fff;
+      font:inherit;
+    }
+
+    .sb-invoice-edit-field textarea {
+      min-height:75px;
+      resize:vertical;
+    }
+
+    .sb-invoice-edit-items {
+      display:grid;
+      gap:10px;
+      margin-top:18px;
+    }
+
+    .sb-invoice-edit-item {
+      display:grid;
+      grid-template-columns:minmax(0,1fr) 110px 180px 42px;
+      gap:10px;
+      align-items:end;
+      padding:12px;
+      border:1px solid #e2e8f0;
+      border-radius:12px;
+      background:#f8fafc;
+    }
+
+    .sb-invoice-edit-item label {
+      display:grid;
+      gap:6px;
+      font-size:12px;
+      font-weight:700;
+    }
+
+    .sb-invoice-edit-item input {
+      width:100%;
+      box-sizing:border-box;
+      padding:10px;
+      border:1px solid #cbd5e1;
+      border-radius:9px;
+    }
+
+    .sb-invoice-edit-remove {
+      width:42px;
+      height:42px;
+      border:1px solid #fecaca;
+      border-radius:9px;
+      background:#fff;
+      color:#b91c1c;
+      cursor:pointer;
+    }
+
+    .sb-invoice-edit-error {
+      min-height:20px;
+      margin:12px 0;
+      color:#b91c1c;
+      font-size:13px;
+      font-weight:700;
+    }
+
+    .sb-invoice-edit-actions {
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:16px;
+    }
+
+    .sb-invoice-edit-actions > div {
+      display:flex;
+      gap:10px;
+    }
+
+    @media(max-width:800px) {
+      .sb-invoice-edit-grid,
+      .sb-invoice-edit-item {
+        grid-template-columns:1fr;
+      }
+
+      .sb-invoice-edit-field.full {
+        grid-column:auto;
+      }
+    }

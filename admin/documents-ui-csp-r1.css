@@ -1,0 +1,187 @@
+
+    .sb-doc-view[hidden],
+    .sb-doc-modal[hidden] { display:none !important; }
+
+    .sb-doc-view { display:grid; gap:22px; }
+
+    .sb-doc-head {
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:18px;
+      flex-wrap:wrap;
+    }
+
+    .sb-doc-head h1 { margin:6px 0; }
+
+    .sb-doc-actions {
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    .sb-doc-summary {
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:14px;
+    }
+
+    .sb-doc-empty {
+      padding:32px 18px;
+      text-align:center;
+      color:#64748b;
+    }
+
+    .sb-doc-title {
+      display:grid;
+      gap:3px;
+    }
+
+    .sb-doc-title span {
+      color:#64748b;
+      font-size:12px;
+    }
+
+    .sb-doc-download {
+      text-decoration:none;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    .sb-doc-notice {
+      display:none;
+      padding:12px 14px;
+      border-radius:10px;
+      background:#ecfdf5;
+      color:#166534;
+      font-weight:700;
+      font-size:13px;
+    }
+
+    .sb-doc-notice.show { display:block; }
+
+    .sb-doc-modal {
+      position:fixed;
+      inset:0;
+      z-index:100010;
+      display:grid;
+      place-items:center;
+      padding:22px;
+      background:rgba(2,8,6,.72);
+      backdrop-filter:blur(6px);
+    }
+
+    .sb-doc-modal-card {
+      width:min(100%,680px);
+      max-height:calc(100vh - 44px);
+      overflow:auto;
+      border-radius:20px;
+      background:#fff;
+      color:#0f172a;
+      box-shadow:0 24px 80px rgba(0,0,0,.35);
+    }
+
+    .sb-doc-modal-head {
+      display:flex;
+      justify-content:space-between;
+      gap:16px;
+      padding:22px 24px 16px;
+      border-bottom:1px solid #e2e8f0;
+    }
+
+    .sb-doc-modal-head h2 { margin:0 0 5px; }
+
+    .sb-doc-modal-head p {
+      margin:0;
+      color:#64748b;
+      font-size:13px;
+    }
+
+    .sb-doc-close {
+      width:38px;
+      height:38px;
+      border:0;
+      border-radius:10px;
+      background:#f1f5f9;
+      cursor:pointer;
+      font-size:20px;
+    }
+
+    .sb-doc-form { padding:22px 24px 24px; }
+
+    .sb-doc-grid {
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:16px;
+    }
+
+    .sb-doc-field {
+      display:grid;
+      gap:7px;
+    }
+
+    .sb-doc-field.full { grid-column:1 / -1; }
+
+    .sb-doc-field label {
+      font-size:13px;
+      font-weight:800;
+    }
+
+    .sb-doc-field input,
+    .sb-doc-field select,
+    .sb-doc-field textarea {
+      width:100%;
+      box-sizing:border-box;
+      padding:12px 13px;
+      border:1px solid #cbd5e1;
+      border-radius:10px;
+      background:#fff;
+      font:inherit;
+    }
+
+    .sb-doc-field textarea {
+      min-height:85px;
+      resize:vertical;
+    }
+
+    .sb-doc-note {
+      margin:16px 0;
+      padding:12px 14px;
+      border-radius:10px;
+      background:#f8fafc;
+      color:#475569;
+      font-size:12px;
+      line-height:1.55;
+    }
+
+    .sb-doc-error {
+      min-height:20px;
+      margin:10px 0;
+      color:#b91c1c;
+      font-size:13px;
+      font-weight:700;
+    }
+
+    .sb-doc-form-actions {
+      display:flex;
+      justify-content:flex-end;
+      gap:10px;
+    }
+
+    @media(max-width:720px) {
+      .sb-doc-summary,
+      .sb-doc-grid {
+        grid-template-columns:1fr;
+      }
+
+      .sb-doc-field.full { grid-column:auto; }
+
+      .sb-doc-actions {
+        width:100%;
+      }
+
+      .sb-doc-actions button {
+        flex:1;
+      }
+    }
