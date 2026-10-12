@@ -1751,3 +1751,20 @@ Platform Baseline aktif: `2026.10.07.0006`.
 - Catatan rilis proyek pada file `CHANGELOG.md` dan `docs/ROADMAP.md` yang sudah ada menggunakan Bahasa Indonesia; catatan historis sebelum proyek ini tidak ditulis ulang.
 - Gambar AVIF, URL canonical, aturan robots, konten utama halaman, fitur REV21/REV22, dan seluruh `/program/` tidak diubah oleh tahap penyesuaian bahasa ini.
 - Status: hasil akhir diperiksa pada domain produksi per halaman setelah commit dan push berhasil.
+
+
+## Milestone Terkunci â€” Professional Title Consistency (12 Oktober 2026)
+
+<!-- SRILEXBUDITRA-SENIOR-TITLE-2026-10-12-BEGIN -->
+**Status: COMPLETE / PRODUCTION VERIFIED (ruang lingkup terukur)**. Baseline source: `8207ffee435a83e4ff0614f394bd32ec4df75a76`, sebelum penambahan catatan dokumentasi Gate 16.
+
+- [x] HTML: 37 file / 72 label diselaraskan; tidak ada label lama/dobel pada 121 HTML terlacak saat audit.
+- [x] Search index: 3 label diselaraskan, JSON valid, hasil live diperiksa.
+- [x] Markdown: 174 file diperiksa; satu label frontend aktif diperbarui; tiga kemunculan lama pada changelog historis dipertahankan.
+- [x] PDF lokal: 8 diperiksa; dua PDF Ketahanan Pangan diperbarui dan kedua URL publik diverifikasi cocok SHA-256; halaman 2 menampilkan gelar baru.
+- [x] File lain: 732 file diinventarisasi; dua label `opensearch.xml` diperbarui, disusul verifikasi HTTP 200 pada website produksi dan pemeriksaan template URL.
+- [x] Source commit `f20bc82` â†’ `e69c711` â†’ `62323f5` â†’ `8207ffe`, seluruhnya telah berhasil di-push saat gate masing-masing selesai.
+- [ ] **Opsional, bukan penghambat baseline:** audit GitHub Wiki terpisah, 184 aset biner/opaque yang tidak diperiksa isi visualnya, PDF runtime, dan uji manual end-to-end bila ada perubahan sistem di kemudian hari.
+
+**Keputusan:** Jangan mengulang Gate 1â€“15 hanya untuk mencatat progres. Pertahankan hasil visual dan perilaku sistem yang sudah bekerja; semua perubahan berikutnya menggunakan audit serta persetujuan scope baru.
+<!-- SRILEXBUDITRA-SENIOR-TITLE-2026-10-12-END -->

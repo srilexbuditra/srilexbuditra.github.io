@@ -651,3 +651,15 @@ REVISION 16 menutup dokumentasi. Runtime production tetap ditambatkan pada commi
 ### Evidence Boundary
 
 The configuration above is based on GitHub Actions, Cloudflare Pages Deployments and Custom domains, and Cloudflare DNS screenshots reviewed on 2026-10-09. It does not certify complete runtime health, application data integrity, or every Cloudflare routing rule.
+
+## Guardrail Teknis â€” Standardisasi Identitas (12 Oktober 2026)
+
+<!-- SRILEXBUDITRA-SENIOR-TITLE-2026-10-12-BEGIN -->
+**Source baseline verified:** `8207ffee435a83e4ff0614f394bd32ec4df75a76` pada `main` / `origin/main` sebelum pembaruan dokumen master ini.
+
+- **Perubahan disengaja:** 37 HTML (72 referensi), `search-index.json` (3 referensi), satu baris `AUTH-API-V3.1.md`, dua PDF pembagian peran (halaman 2), dan dua field identitas di `opensearch.xml`. Identitas aktif: **Senior Full Stack Developer**.
+- **Area dilindungi:** CSS, JavaScript, backend Worker, D1, API, pengaturan autentikasi, role/RBAC, URL pencarian OpenSearch, dan tampilan/fitur website tidak diubah sebagai bagian dari rangkaian commit standardisasi ini.
+- **Verifikasi:** audit byte/diff pada HTML/JSON/Markdown/XML; XML valid; dua PDF A4 masing-masing 3 halaman dengan SHA-256 produksi cocok (`970cf2d534eb311e3ec2113c973cf1b7ddf97e6882dc619015cc34a6f300643b`); URL OpenSearch HTTP 200 dan query template terjaga. Sampel HTML/indeks produksi lulus, tetapi bukan pengujian interaktif semua halaman.
+- **Pengecualian terukur:** tiga referensi lama di changelog historis tetap dicatat sebagai sejarah. Audit 184 aset biner/opaque, Wiki terpisah, dan dokumen keluaran runtime tidak lengkap, sehingga tidak boleh diklaim sepenuhnya bersih.
+- **Prinsip ke depan:** cek `git status`, periksa diff byte yang diizinkan, backup sebelum edit, jangan ubah kode lain demi perubahan teks, serta verifikasi produksi pasca-deploy. Gunakan commit hash untuk penelusuran, bukan mengasumsikan halaman live otomatis berubah setelah push.
+<!-- SRILEXBUDITRA-SENIOR-TITLE-2026-10-12-END -->
