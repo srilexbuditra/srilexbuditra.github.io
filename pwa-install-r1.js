@@ -44,7 +44,6 @@
   let pushPriority = "pending";
   let pushPromptShownThisVisit = false;
   let pushStartupDeadline = Date.now() + PUSH_STARTUP_GRACE;
-  let manualInstallLink = null;
   const privacyReady = () => window.SBVisitorPromptGate?.isReady() === true;
   const FOLLOW_UP_DELAY = 8500;
 
@@ -500,29 +499,6 @@
     scheduleReveal();
   });
 
-  // The install option remains accessible even if an automatic offer is delayed.
-  const updateManualLink = () => {
-    if (manualInstallLink) manualInstallLink.hidden = isStandalone();
-  };
-  const installFooterLink = () => {
-    const footer = document.querySelector(".sb-footer-legal");
-    if (!footer || manualInstallLink) return;
-    manualInstallLink = createElement("button", "sb-push-manage-link", "Pasang Aplikasi");
-    manualInstallLink.type = "button";
-    manualInstallLink.hidden = true;
-    footer.append(manualInstallLink);
-    manualInstallLink.addEventListener("click", () => {
-      if (!privacyReady() || isStandalone()) return;
-      window.dispatchEvent(new CustomEvent("sb:visitor:pwa-manual-open"));
-      revealInstallCard(true);
-      if (!eligibleForCard()) setStatus("Jika tombol instalasi browser belum tersedia, gunakan menu browser untuk memasang aplikasi.");
-    });
-    updateManualLink();
-  };
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", installFooterLink, { once: true });
-  } else installFooterLink();
-
   document.addEventListener("visibilitychange", () => {
     if (document.visibilityState === "visible") scheduleReveal();
   });
@@ -548,7 +524,6 @@
       event.preventDefault();
 
       deferredPrompt = event;
-      updateManualLink();
       scheduleReveal();
     }
   );
@@ -557,7 +532,6 @@
     "appinstalled",
     () => {
       deferredPrompt = null;
-      updateManualLink();
 
       clearTimestamp(DISMISS_KEY);
       clearTimestamp(CANCEL_KEY);
