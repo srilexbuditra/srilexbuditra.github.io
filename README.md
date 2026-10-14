@@ -561,3 +561,17 @@ Perubahan dilakukan tanpa menyunting CSS, JavaScript, Worker, D1, maupun logika 
 **Titik lanjut:** lihat `docs/ROADMAP.md` untuk Gate 0–6, `docs/PLATFORM.md` untuk batas arsitektur, `CHANGELOG.md` untuk riwayat. Baseline Git yang dibaca pada 14 Oktober 2026: branch `main`, HEAD `e977fc4`, working tree CLEAN. Periksa ulang status Git sebelum perubahan apa pun. Tahap berikut: review serta commit pembaruan dokumentasi existing, kemudian finalisasi desain/arsitektur; bukan langsung deploy.
 
 <!-- DPN-DOC-BASELINE-V1-20261014:README.md:END -->
+
+<!-- DPN-GATE1-NETWORK-PATH-20261015:START -->
+### DPN Gate 1 - Keputusan URL terbaru (15 Oktober 2026)
+
+Keputusan terbaru menggantikan usulan subdomain dalam baseline Gate 0:
+- URL aplikasi yang direncanakan: `https://srilexbuditra.work/network/`.
+- Subdomain `network.srilexbuditra.work` tidak lagi menjadi target implementasi.
+- Network merupakan modul baru dengan Worker, D1, autentikasi, dan pengelolaan data tersendiri.
+- Client Portal `/portal/`, `/program/`, serta REV21/REV22 tetap dilindungi dan tidak diubah.
+- Status: dokumentasi arsitektur; halaman `/network/` belum dibuat, dan tampilan 404 saat ini sesuai kondisi proyek.
+- Semua pengembangan tetap melalui branch `main`, dengan verifikasi sebelum rilis.
+
+Bagian ini merupakan keputusan terbaru yang mengesampingkan alamat usulan pada catatan Gate 0, tanpa menghapus riwayatnya.
+<!-- DPN-GATE1-NETWORK-PATH-20261015:END -->

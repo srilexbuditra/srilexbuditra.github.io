@@ -1832,3 +1832,32 @@ Sebelum commit: pastikan hanya file/fitur yang disetujui berubah; tidak ada `.md
 **NEXT ACTION:** review dan catat baseline pada lima file existing; tampilkan diff; lakukan commit dokumentasi hanya setelah persetujuan pengguna; lanjut Gate 1 tanpa mengulang modul produksi lama.
 
 <!-- DPN-DOC-BASELINE-V1-20261014:docs/ROADMAP.md:END -->
+
+<!-- DPN-GATE1-NETWORK-PATH-20261015:START -->
+### DPN Gate 1 - Rute, peran, dan gerbang implementasi
+
+Keputusan URL terbaru: `https://srilexbuditra.work/network/` menggantikan usulan subdomain Gate 0.
+
+Rute aplikasi yang direncanakan:
+- `/network/` - beranda publik Network.
+- `/network/mitra/` - informasi dan promosi program mitra.
+- `/network/mitra/daftar/` - pendaftaran dan verifikasi mitra.
+- `/network/mitra/{slug}/` - website pribadi publik mitra.
+- `/network/akun-mitra/` - dashboard privat mitra.
+- `/network/pelanggan/` - katalog layanan dan pemesanan publik.
+- `/network/akun-pelanggan/` - dashboard privat pelanggan Network.
+- `/network/admin/` - dashboard privat administrasi Network.
+
+Tiga kelompok pengguna utama: Admin, Mitra, dan Pelanggan. Rincian hak akses dan subperan admin akan dikunci setelah matriks otorisasi ditinjau.
+
+Urutan berikutnya:
+1. Kunci aturan bisnis, paket, pembayaran, komisi, dan hak akses.
+2. Setujui desain responsif dan pemisahan dashboard tiap peran.
+3. Finalisasi kontrak API, D1, autentikasi, routing, dan keamanan same-origin.
+4. Implementasi modular secara terkendali pada `main`, tanpa mengganggu fitur existing.
+5. Pengujian perubahan baru, lalu pemeriksaan dan persetujuan rilis.
+
+Bonus jaringan berjenjang tetap merupakan kebutuhan produk, namun aktivasi transaksi dan payout nyata menunggu validasi model bisnis, kepatuhan, dan audit perhitungan. Tidak ada bonus hanya karena perekrutan.
+
+Status: rencana dan dokumentasi. Belum ada aplikasi `/network/` yang diterbitkan.
+<!-- DPN-GATE1-NETWORK-PATH-20261015:END -->

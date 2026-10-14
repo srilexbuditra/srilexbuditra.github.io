@@ -446,3 +446,15 @@ Dokumentasi historis disimpan apa adanya. Audit ini tidak otomatis mencakup GitH
 **Tahap segera:** review diff dokumentasi Gate 0, persetujuan, commit terkontrol; kemudian selesaikan spesifikasi legalitas, desain visual, dan arsitektur Network sebelum menulis kode aplikasi.
 
 <!-- DPN-DOC-BASELINE-V1-20261014:docs/README.md:END -->
+
+<!-- DPN-GATE1-NETWORK-PATH-20261015:START -->
+### Kelanjutan DPN - Gate 1 (15 Oktober 2026)
+
+- Rujukan URL terbaru: `https://srilexbuditra.work/network/`.
+- Rencana subdomain dalam baseline Gate 0 telah digantikan oleh keputusan ini.
+- Dokumen teknis: `docs/PLATFORM.md`.
+- Tahapan implementasi: `docs/ROADMAP.md`.
+- Riwayat keputusan: `CHANGELOG.md`.
+- Catatan tetap menggunakan lima file Markdown existing, tanpa membuat file `.md` baru.
+- Gate 0 selesai; Gate 1 sedang berjalan; aplikasi Network belum live.
+<!-- DPN-GATE1-NETWORK-PATH-20261015:END -->

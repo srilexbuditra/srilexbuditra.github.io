@@ -750,3 +750,32 @@ The configuration above is based on GitHub Actions, Cloudflare Pages Deployments
 - Catat hasil tiap Gate pada `README.md`, `CHANGELOG.md`, `docs/README.md`, `docs/ROADMAP.md`, `docs/PLATFORM.md` existing, meliputi status, commit, bukti QA, risiko, dan langkah berikutnya. Penyelesaian modul existing tidak boleh dibatalkan statusnya oleh pekerjaan Network.
 
 <!-- DPN-DOC-BASELINE-V1-20261014:docs/PLATFORM.md:END -->
+
+<!-- DPN-GATE1-NETWORK-PATH-20261015:START -->
+### DPN Gate 1 - Arsitektur same-origin /network/ (15 Oktober 2026)
+
+Keputusan URL terbaru: `https://srilexbuditra.work/network/`.
+Keputusan ini menggantikan usulan `network.srilexbuditra.work` pada baseline Gate 0.
+
+Temuan audit read-only pada commit `6c90acb`:
+- `CNAME` berisi `srilexbuditra.work`.
+- Direktori dan tracked file `/network/` belum tersedia.
+- Terdapat root `404.html` serta root `sw.js`.
+- Root `sw.js` tidak memuat handler `fetch`, penggunaan `caches`, ataupun logika navigasi pada audit teks yang dilakukan.
+- Registrasi Service Worker untuk Web Push ditemukan pada `web-push-r1.js`.
+- Tidak ditemukan file routing khusus Network pada pola audit; hasil ini tidak membuktikan ketiadaan aturan eksternal Cloudflare.
+- Seluruh audit berjalan read-only dan tidak mengubah website produksi.
+
+Aturan rancangan:
+- UI, CSS, JavaScript, dan rute Network diberi namespace dan struktur modul tersendiri.
+- Backend Network menggunakan Worker/API dan D1 yang dipisahkan secara logis dari portal dan program existing.
+- Hak akses harus ditegakkan pada server, bukan hanya dengan menyembunyikan tombol UI.
+- Cookie, session, CSRF, CORS, CSP, ownership data, dan pemisahan akun tiap peran wajib diperiksa.
+- Jangan mengubah root Service Worker REV22 atau registrasi Web Push untuk implementasi awal Network.
+- Jangan membuat Service Worker Network baru sebelum cakupan dan interaksinya dengan root SW disetujui.
+- Jaga agar routing, API, serta caching Network tidak mengambil alih `/portal/`, `/program/`, maupun halaman utama.
+- Periksa aturan Cloudflare dan GitHub Pages sebelum implementasi atau deployment yang memengaruhi produksi.
+- Data identitas, rekening, komisi, dan pembayaran harus dilindungi dengan otorisasi, audit log, dan kontrol privasi.
+
+Status: ARSITEKTUR DIRANCANG / BELUM DIIMPLEMENTASIKAN.
+<!-- DPN-GATE1-NETWORK-PATH-20261015:END -->

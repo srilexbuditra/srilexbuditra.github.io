@@ -1124,3 +1124,14 @@ Dokumen ini menggunakan dua riwayat versi agar nomor versi website utama tidak t
 - **Lanjutan:** Gate 0 pemeriksaan hasil dan dokumentasi; selanjutnya Gate 1 blueprint terkunci → Gate 2 desain disetujui → Gate 3 arsitektur → Gate 4 implementasi lokal → Gate 5 QA terarah → Gate 6 rilis terkontrol.
 
 <!-- DPN-DOC-BASELINE-V1-20261014:CHANGELOG.md:END -->
+
+<!-- DPN-GATE1-NETWORK-PATH-20261015:START -->
+### 2026-10-15 - DPN Gate 1: Penetapan jalur /network/
+
+- Penataan Git selesai: hanya branch `main`; Gate 0 pada commit `6c90acb`.
+- Arsip REV22 dipertahankan melalui tag `rev22-r34-source-20261009` dan worktree lokal detached HEAD.
+- Usulan subdomain Gate 0 digantikan dengan rencana `https://srilexbuditra.work/network/`.
+- Audit read-only: folder `/network/` belum ada; root `sw.js` tidak memiliki handler fetch/cache; registrasi Web Push ditemukan pada `web-push-r1.js`.
+- Autentikasi, cookie, CSP, cakupan Service Worker, routing, dan aturan deployment memerlukan validasi sebelum implementasi.
+- Tidak ada perubahan kode produksi, Worker, D1, atau konfigurasi REV21/REV22 dalam tahap dokumentasi ini.
+<!-- DPN-GATE1-NETWORK-PATH-20261015:END -->
