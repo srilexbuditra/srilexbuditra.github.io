@@ -594,3 +594,30 @@ Status: prinsip bisnis dan matriks peran disetujui; nilai transaksi, konfigurasi
 
 Referensi rincian: `docs/ROADMAP.md` dan `docs/PLATFORM.md`.
 <!-- DPN-GATE1D-BUSINESS-RBAC-20261015:END -->
+
+<!-- DPN-GATE2-VISUAL-20261015:START -->
+### DPN Gate 2 - Visual Design Baseline V1
+
+Tanggal: 15 Oktober 2026.
+Status: Gate 2A sampai Gate 2F disetujui sebagai spesifikasi desain. Belum diimplementasikan.
+
+- Lokasi proyek: `https://srilexbuditra.work/network/` dan turunannya.
+- Seluruh fungsi, konfigurasi, serta tampilan visual website existing wajib dipertahankan.
+- Desain baru hanya berlaku untuk halaman Digital Partner Network.
+- Tema visual: Premium Digital Blue; navy `#0B1220`, blue `#1D4ED8`, teal `#0F766E`, light `#F8FAFC`.
+- Dashboard Admin, Mitra, dan Pelanggan mempunyai sidebar interaktif, tombol X, tombol buka kembali, dan indikator menu aktif.
+- Setiap dashboard memiliki footer interaktif dengan lima pintasan utama sesuai peran.
+- Header dashboard menampilkan panel profil, nama, peran, notifikasi, dan foto profil wajib.
+- Foto profil wajib diunggah, dapat diganti melalui Akun Profil, dan tidak boleh dibiarkan kosong.
+- Login semua akun Network menggunakan email dan password sepanjang 6-35 karakter.
+- Semua formulir password menyediakan tombol lihat/sembunyikan; default tersembunyi.
+- Kartu ringkasan dashboard HP dan tablet menggunakan tiga kolom.
+- Katalog paket website menggunakan tepat tiga kolom pada HP, tablet, laptop, dan desktop.
+- Detail katalog, formulir, invoice, dan tabel menggunakan ruang baca yang memadai.
+- Website pribadi Mitra memiliki dua CTA utama sejajar: Konsultasi WhatsApp Mitra dan Lihat Paket & Pesan.
+- Pendaftaran Mitra menggunakan enam tahap dengan foto profil wajib, verifikasi identitas, dan rekening payout.
+- Seluruh persyaratan visual harus diverifikasi pada perangkat dan viewport sebenarnya sebelum implementasi disetujui.
+
+Rincian: `docs/ROADMAP.md` dan `docs/PLATFORM.md`.
+Tidak ada aplikasi Network, akun, transaksi, atau perubahan produksi yang diaktifkan oleh dokumentasi ini.
+<!-- DPN-GATE2-VISUAL-20261015:END -->

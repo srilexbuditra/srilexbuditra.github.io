@@ -839,3 +839,72 @@ Status: ARSITEKTUR DIRANCANG / BELUM DIIMPLEMENTASIKAN.
 - Push `main` dapat memicu deployment; persetujuan publikasi tetap diperlukan.
 - Gate 1D hanya menambah dokumentasi pada lima Markdown existing, bukan aktivasi fitur atau migrasi D1.
 <!-- DPN-GATE1D-BUSINESS-RBAC-20261015:END -->
+
+<!-- DPN-GATE2-VISUAL-20261015:START -->
+### DPN Gate 2 - Kontrak desain UI dan kebutuhan teknis
+
+**Status:** spesifikasi antarmuka, belum ada file aplikasi Network atau API yang diimplementasikan.
+
+#### Isolasi visual dan sistem
+- Semua halaman baru berada dalam cakupan `/network/`; fungsi dan tampilan existing wajib tetap sama.
+- Gunakan namespace CSS/JS khusus Network; hindari selector global yang dapat mengubah halaman lama.
+- Tidak mengubah root Service Worker, konfigurasi REV21/REV22, `/portal/`, atau `/program/` melalui desain ini.
+- Arsitektur same-origin harus diaudit; path `/network/` bukan batas keamanan otomatis.
+- Routing dinamis slug Mitra memerlukan pembuktian dukungan hosting sebelum implementasi.
+
+#### Tema dan grid
+- Navy `#0B1220`; blue `#1D4ED8`; teal `#0F766E`; light `#F8FAFC`.
+- Desain mobile-first, dengan tipografi, jarak, radius, ukuran sentuh, dan gambar adaptif.
+- Ringkasan KPI dashboard HP dan tablet memakai grid tiga kolom.
+- Katalog paket semua viewport memakai grid tiga kolom.
+- Pada lebar HP kecil, teks dan harga tidak boleh terpotong; detail panjang dibuka terpisah.
+- Formulir, tabel, jadwal, dan invoice tidak dipaksa ke kartu tiga kolom.
+- Uji viewport 320/360/390/768/1366/1440/1920 px pada browser nyata.
+
+#### Navigasi dashboard
+- Sidebar aktif dengan tombol X dan tombol buka kembali.
+- HP menggunakan drawer; desktop dapat menggunakan sidebar yang dapat ditutup.
+- Menu sidebar dan footer berbagi status rute aktif.
+- Footer menyediakan lima pintasan sesuai role; akses tersembunyi bukan pengganti pemeriksaan RBAC backend.
+- Footer pada HP memperhitungkan safe-area dan ruang bawah agar konten tidak tertutup.
+- Drawer mendukung penutupan melalui X, area luar, Escape, serta pengelolaan fokus dan aksesibilitas.
+
+#### Panel profil dan foto wajib
+- Header dashboard menampilkan foto profil aktual, nama tampilan, dan peran.
+- Menu Akun Profil memungkinkan perubahan foto dan informasi sesuai wewenang.
+- Foto profil diwajibkan pada aktivasi atau penyelesaian onboarding seluruh akun Network.
+- Akses dashboard penuh dibatasi sampai foto profil yang valid tersedia.
+- Penggantian foto harus berhasil sebelum referensi foto lama dilepas; akun tidak boleh kehilangan foto aktif.
+- Validasi tipe konten, ukuran, dimensi, penyimpanan, dan akses file wajib dibuat pada implementasi.
+- Foto wajah verifikasi identitas disimpan dan dikendalikan terpisah dari foto profil.
+- Publikasi foto profil hanya dilakukan sesuai tujuan halaman dan kebijakan privasi yang disetujui.
+
+#### Autentikasi Network
+- Semua Admin, Mitra, dan Pelanggan login menggunakan email dan password.
+- Keputusan panjang password: minimal 6, maksimal 35 karakter.
+- Input password tersembunyi secara default dengan tombol mata untuk lihat/sembunyikan.
+- Tombol tersebut juga berlaku pada formulir pendaftaran, ubah password, dan konfirmasi password bila relevan.
+- Validasi batas panjang diterapkan di frontend dan ditegakkan kembali di backend.
+- Password tidak disimpan sebagai teks biasa; gunakan password hashing modern yang sesuai.
+- Wajib ada pembatasan percobaan login, proteksi sesi, audit autentikasi, dan mekanisme reset aman.
+- Verifikasi email, pengaturan cookie, CSRF, session expiry, dan pengamanan tindakan sensitif dirinci di Gate 3.
+- Karena minimum enam karakter memiliki risiko keamanan, kontrol tambahan dan opsi MFA Admin perlu dikaji pada Gate 3.
+- Login Network tidak mengubah mekanisme login sistem existing.
+
+#### Website pribadi Mitra
+- Slug Mitra harus unik, tervalidasi, dan tidak bertabrakan dengan rute sistem.
+- Dua CTA utama dibuat satu baris dan lebar seimbang di seluruh viewport.
+- Tombol WhatsApp memakai nomor Mitra terverifikasi yang dikonfigurasi dari dashboard.
+- Tombol Lihat Paket & Pesan membawa atribusi referral yang sah.
+- Katalog menampilkan harga resmi dari konfigurasi Admin.
+- Panel referral privat, komisi, saldo, dan data jaringan tidak disisipkan ke halaman publik.
+- OG/SEO dan QR halaman Mitra menggunakan identitas halaman yang diizinkan untuk publikasi.
+
+#### Data, peran, dan rilis
+- Admin, Mitra, dan Pelanggan hanya melihat/mengubah data menurut RBAC dan ownership di sisi server.
+- Data rekening, identitas, dan dokumen privat tidak boleh disimpan dalam aset publik.
+- Pengelolaan pembayaran, komisi, refund, dan payout mengikuti spesifikasi keamanan Gate 1D.
+- Kontrak API, skema D1, dan route deployment belum boleh diasumsikan selesai pada Gate 2.
+- Desain yang disetujui adalah dasar implementasi, bukan bukti fitur telah bekerja.
+- Seluruh penerapan wajib disertai uji keamanan serta non-regresi sistem existing.
+<!-- DPN-GATE2-VISUAL-20261015:END -->

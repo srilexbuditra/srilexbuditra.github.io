@@ -1928,3 +1928,90 @@ Status: rencana dan dokumentasi. Belum ada aplikasi `/network/` yang diterbitkan
 
 Seluruh fungsi dan tampilan visual existing tetap dilindungi; tidak ada perubahan produk lama dalam Gate 1D.
 <!-- DPN-GATE1D-BUSINESS-RBAC-20261015:END -->
+
+<!-- DPN-GATE2-VISUAL-20261015:START -->
+### DPN Gate 2 - Spesifikasi desain seluruh halaman Network
+
+**Status:** keputusan desain Gate 2A-2F disetujui. Belum ada implementasi atau pengujian aplikasi nyata.
+
+#### 2A - Dashboard Admin
+- Dashboard ringkasan, pesanan, paket/harga, pelanggan, proyek, Mitra, verifikasi, keuangan, komisi, bonus, withdraw, pengaturan, dan audit.
+- Pemisahan tampilan menu menurut peran Super Admin, Admin Operasional, Admin Keuangan, dan Admin Verifikasi.
+- Footer pintasan awal: Dashboard, Pesanan, Paket & Harga, Verifikasi, Keuangan; disaring oleh hak akses.
+- Rekening resmi, refund, pembayaran, dan payout tetap mengikuti aturan maker-checker.
+- Nilai katalog dikonfigurasi Admin dan tidak mengubah harga di halaman existing.
+
+#### 2B - Dashboard Mitra
+- Saldo tersedia, komisi pending, penjualan, jaringan, website pribadi, referral, withdraw, verifikasi, dan bantuan.
+- Panel jaringan, bagan downline, komisi, serta link referral pengelolaan Mitra bersifat privat.
+- Footer pintasan awal: Dashboard, Website Saya, Bagikan Link, Komisi, Withdraw.
+- WhatsApp Mitra dapat diperbarui di pengaturan akun dan wajib diverifikasi.
+- Foto profil Mitra wajib tersedia pada dashboard dan panel akun.
+
+#### 2C - Dashboard Pelanggan
+- Pesanan Saya, progres proyek, antrean, estimasi mulai/selesai, pembayaran, DP, termin, invoice, domain, revisi, dan bantuan.
+- Footer pintasan awal: Beranda, Pesanan, Progres, Invoice, Bantuan.
+- Tanggal perkiraan dibedakan dari jadwal yang telah dikonfirmasi.
+- Status dan riwayat pekerjaan, keterlambatan, serta perubahan jadwal ditampilkan transparan.
+- Foto profil pelanggan wajib tampil di header dan dapat diubah melalui Akun Profil.
+
+#### 2D - Beranda publik dan katalog
+- Beranda `/network/` mengenalkan jasa website UMKM, manfaat, alur pemesanan, dan CTA.
+- Katalog publik `/network/pelanggan/` menampilkan tiga kolom pada SEMUA perangkat.
+- Kartu katalog ringkas: ikon/gambar, nama paket, harga resmi Admin, dan tombol Detail.
+- Rincian panjang tampil di panel atau halaman detail yang cukup lebar.
+- Paket, fitur, harga, DP, domain, hosting, termin, durasi, revisi, dan syarat ditentukan Admin.
+- Pilihan domain: tidak membutuhkan, sudah punya, atau beli baru.
+- Pemeriksaan registrar hanya aktif untuk opsi beli domain baru.
+- Atribusi referral Mitra dipertahankan saat pelanggan menuju pemesanan.
+
+#### 2E - Website pribadi dan pendaftaran Mitra
+- Website pribadi direncanakan pada `/network/mitra/{slug}/`, bergantung validasi routing Gate 3.
+- Konten publik: foto profil Mitra yang sesuai persetujuan, headline, deskripsi, katalog, CTA WhatsApp, QR, dan metadata OG/SEO.
+- Dua CTA wajib SEJAJAR pada satu baris: Konsultasi WhatsApp Mitra | Lihat Paket & Pesan.
+- CTA WhatsApp menuju nomor Mitra terverifikasi; CTA pesan mempertahankan atribusi referral.
+- Katalog di website pribadi Mitra mengikuti aturan tiga kolom.
+- Form pendaftaran Mitra enam tahap:
+  1. Identitas, kontak, serta foto profil wajib.
+  2. Akun email/password dan sponsor.
+  3. Website pribadi, slug, konten, dan WhatsApp.
+  4. Verifikasi identitas dengan KTP/SIM sesuai aturan serta foto wajah dengan persetujuan.
+  5. Verifikasi rekening untuk penerimaan komisi.
+  6. Ringkasan, ketentuan, privasi, dan persetujuan.
+- KK tidak diminta; NPWP hanya jika diwajibkan oleh proses pajak yang relevan.
+- Foto profil biasa tidak boleh menggantikan atau mengekspos foto wajah verifikasi.
+
+#### 2F - Standar seluruh dashboard
+- Tema Premium Digital Blue dan navigasi responsif.
+- Sidebar aktif; tombol X menutup; tombol menu membuka kembali.
+- Saat pengguna memilih footer, indikator menu aktif sidebar ikut diperbarui, dan sebaliknya.
+- Footer berisi lima pintasan utama yang sesuai hak akses dan kebutuhan peran.
+- Panel header memuat foto profil wajib, nama, peran, dan menu akun.
+- Akun Profil dapat mengganti foto, informasi yang diizinkan, kontak, dan password.
+- Password 6-35 karakter dengan tombol lihat/sembunyikan; default tersembunyi.
+- Foto profil wajib sebelum akses fitur dashboard penuh.
+- Kartu ringkasan HP/tablet: tepat tiga kolom; pada desktop menyesuaikan desain yang lapang.
+- Katalog semua perangkat: tepat tiga kolom.
+- Formulir, rincian invoice, tabel, serta informasi panjang harus tetap terbaca.
+- Semua desain baru hanya ditempatkan di `/network/`.
+
+#### Pengujian visual yang wajib dilakukan
+- Viewport minimum: 320, 360, 390, 768, 1366, 1440, dan 1920 px.
+- Katalog tetap tiga kolom tanpa teks, gambar, harga, atau tombol terpotong.
+- Kartu ringkasan tiga kolom tetap dapat dibaca pada HP kecil.
+- Sidebar, overlay, tombol X, dan tombol buka kembali harus bekerja.
+- Footer tidak boleh menutupi formulir, tombol, dan isi halaman.
+- Tombol lihat/sembunyikan password berfungsi sebelum data dikirim.
+- Penggantian foto profil harus aman dan tidak meninggalkan profil kosong.
+- Tombol WhatsApp dan Lihat Paket & Pesan sejajar pada seluruh ukuran.
+- Indikator halaman aktif, keyboard, fokus, serta navigasi sentuh diperiksa.
+- Halaman existing, `/portal/`, `/program/`, REV21/REV22, dan layanan lainnya menjalani uji non-regresi sesuai area risiko.
+
+#### Gate berikutnya
+- Gate 3: audit arsitektur teknis dan validasi routing, autentikasi, sesi, isolasi API dan database.
+- Gate 4: implementasi Network secara modular setelah persetujuan teknis.
+- Gate 5: QA visual, keamanan, transaksi simulasi, hak akses dan regresi.
+- Gate 6: persetujuan rilis dan aktivasi bertahap.
+
+Persetujuan desain tidak berarti persetujuan aktivasi keuangan atau bonus jaringan nyata.
+<!-- DPN-GATE2-VISUAL-20261015:END -->

@@ -476,3 +476,23 @@ Keputusan Gate 1D:
 
 Status kelanjutan: Gate 1D dokumentasi operasional; belum ada aplikasi Network live dan belum ada transaksi nyata.
 <!-- DPN-GATE1D-BUSINESS-RBAC-20261015:END -->
+
+<!-- DPN-GATE2-VISUAL-20261015:START -->
+### DPN Gate 2 - Indeks dokumentasi desain
+
+Urutan checkpoint:
+- Gate 0: Master Blueprint V1 selesai.
+- Gate 1A-1B: Audit awal repository dan batas aplikasi selesai.
+- Gate 1C: Keputusan penggunaan `/network/` selesai.
+- Gate 1D: Prinsip bisnis, RBAC, dan pembayaran terdokumentasi; commit `856b8bc`.
+- Gate 2A-2F: Desain dashboard, halaman publik, website pribadi Mitra, dan standar responsif disetujui.
+
+Dokumen referensi:
+- `README.md`: ringkasan keputusan yang berlaku.
+- `CHANGELOG.md`: kronologi perubahan.
+- `docs/ROADMAP.md`: inventaris halaman, alur dan penerimaan desain.
+- `docs/PLATFORM.md`: standar teknis UI, autentikasi, keamanan, dan isolasi sistem.
+
+Status: DESIGN APPROVED / DOCUMENTATION BASELINE. Implementasi masih belum dimulai.
+Hanya lima file Markdown existing digunakan; tidak membuat file Markdown baru.
+<!-- DPN-GATE2-VISUAL-20261015:END -->
