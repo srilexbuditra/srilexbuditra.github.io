@@ -663,3 +663,90 @@ The configuration above is based on GitHub Actions, Cloudflare Pages Deployments
 - **Pengecualian terukur:** tiga referensi lama di changelog historis tetap dicatat sebagai sejarah. Audit 184 aset biner/opaque, Wiki terpisah, dan dokumen keluaran runtime tidak lengkap, sehingga tidak boleh diklaim sepenuhnya bersih.
 - **Prinsip ke depan:** cek `git status`, periksa diff byte yang diizinkan, backup sebelum edit, jangan ubah kode lain demi perubahan teks, serta verifikasi produksi pasca-deploy. Gunakan commit hash untuk penelusuran, bukan mengasumsikan halaman live otomatis berubah setelah push.
 <!-- SRILEXBUDITRA-SENIOR-TITLE-2026-10-12-END -->
+
+<!-- DPN-DOC-BASELINE-V1-20261014:docs/PLATFORM.md:START -->
+
+## Arsitektur Rencana — SRILEXBUDITRA DIGITAL PARTNER NETWORK V1.0
+
+**Status:** rancangan, BELUM diimplementasikan. Penjelasan berikut bukan bukti domain/subdomain, Worker, D1, endpoint, atau fitur Network telah aktif. Batas mutlak: jangan menyentuh Client Portal `/portal/` dan sistem produksi existing.
+
+### 1. Batas aplikasi, deployment, dan autentikasi
+
+- Usulan host aplikasi: `network.srilexbuditra.work`, mandiri dari `srilexbuditra.work/portal/`; finalisasi DNS/routing setelah audit konfigurasi.
+- Deployment, domain/cookie/sesi, Worker, D1, penyimpanan privat, secrets, serta CSS/JS Network harus terisolasi. Service Worker/PWA dan cache aplikasi lama jangan diambil alih.
+- Lingkungan: server lokal + data simulasi → GitHub branch pengembangan → staging Network terpisah → production setelah approval. Push branch pengembangan bukan otomatis rilis production.
+- Integrasi ke website utama/Client Portal existing hanya melalui antarmuka resmi yang disepakati, berizin, memiliki kontrak API dan diuji; tidak mengakses/migrasi D1 existing langsung.
+- Gunakan izin berbasis peran dan kepemilikan sumber daya pada backend: Administrator Sistem, Admin Kemitraan, Admin Keuangan, Tim Developer, Mitra, Pelanggan. Pemisahan maker/checker untuk operasi keuangan berisiko.
+
+### 2. Routing dan pengalaman pengguna (usulan, bukan URL aktif)
+
+- `/` beranda Network; `/mitra/` informasi dan registrasi; `/mitra/{slug}/` website publik personal; `/akun-mitra/` dashboard privat; `/pelanggan/` katalog/beranda; `/akun-pelanggan/` dashboard privat; `/admin/` admin Network. Rute final memerlukan pemeriksaan konflik dan slug terlarang.
+- Website publik mitra menampilkan profil/identitas kemitraan, paket resmi UMKM, portofolio berizin, formulir pemesanan, konsultasi WhatsApp mitra, informasi layanan dan QR publik.
+- Teks promosi otomatis dan tombol 'Bagikan Link Mitra' (termasuk tautan referral unik, QR unduh, dan statistik jaringan) HANYA untuk mitra yang login di dashboard privat; bukan di website publik yang dilihat calon pelanggan.
+- Pelanggan membagikan halaman bisnis/karya yang sudah dipublikasikan atas persetujuannya melalui alat berbagi terpisah; jangan membuat invoice, data akun, materi proyek, atau token menjadi halaman publik.
+- Metadata SSR/HTML awal per halaman publik: title, description, canonical, `og:type/title/description/url/image`, gambar OG dan dimensi/alt, Twitter card, locale Indonesia, aturan index/noindex. Ilustrasi OG 1200x630 (format kompatibel); visual halaman dapat memakai AVIF. QR berkontras jelas, berisi URL publik nonrahasia, diuji pindai.
+
+### 3. Sistem desain responsif
+
+- Tema Premium Digital Blue: `#0B1220` navy, `#1D4ED8` biru utama, `#0F766E` toska, `#F8FAFC` latar terang; panel privat lebih menekankan kejelasan data daripada ornamen.
+- CSS modular `core/tokens/typography/layout`, `components`, dan `pages` menurut fungsi, bukan satu CSS per perangkat. Namespace komponen Network (misal `.dpn-`) dan hindari selector global yang memengaruhi aplikasi lain.
+- Mobile-first: `clamp()`, Grid/Flex, media/container queries, ukuran font dan spacing horizontal/vertikal terpusat. Uji 320/360/390/430/768/1024/1366/1440/1920 px, orientasi portrait/landscape, zoom dan aksesibilitas.
+- Mockup dashboard Admin, Mitra, Pelanggan telah dibuat di percakapan sebagai referensi desain; belum menjadi hasil QA atau implementasi.
+
+### 4. Katalog layanan, harga, dan penjadwalan
+
+- Admin Network dapat membuat/memperbarui nama paket UMKM, harga, fitur, deskripsi, biaya opsional, domain/hosting, promo, jumlah revisi, status publikasi, estimasi mulai dan durasi. Harga situs utama tetap terpisah.
+- Mitra menampilkan katalog resmi dari pusat dan tidak bebas mengganti harga. Snapshot penawaran, harga, diskon, pajak, tenggat dan syarat dibuat per pesanan agar transaksi lama tidak terpengaruh perubahan katalog.
+- Estimasi publik adalah kisaran bersyarat; jadwal terkonfirmasi setelah pembayaran sesuai ketentuan, materi lengkap, persetujuan dan kapasitas developer tersedia. Catat waktu mulai aktual, milestones, revisi jadwal berikut alasan serta pemberitahuan.
+- Opsi domain: tidak membutuhkan, sudah memiliki (pemeriksaan hak pengelolaan), membeli baru (hanya pada opsi ini lakukan pencarian registrar API); ketersediaan/harga diperiksa ulang sebelum pembelian.
+
+### 5. Alur pesanan, pembayaran, proyek dan sengketa
+
+- Alur: website mitra → prospek/referral tercatat → konsultasi ke WhatsApp mitra atau formulir resmi → Admin membuat penawaran → pelanggan setuju kontrak/policy versi tertentu → DP terverifikasi → materi lengkap → penjadwalan/proyek → tinjau/revisi → pelunasan → serah terima → dukungan/perpanjangan.
+- Pembayaran masuk hanya ke rekening/kanal resmi penyedia jasa. Integrasi payment gateway dengan tanda tangan webhook, verifikasi server-side, idempotensi, dan rekonsiliasi; jangan percaya tombol 'Sudah Bayar' sebagai bukti dana diterima.
+- Dashboard pelanggan: total biaya/DP/sisa, jatuh tempo, invoice, jadwal, prosentase berbasis pekerjaan nyata, perubahan pekerjaan, revisi, persetujuan, domain/hosting, bantuan serta status refund.
+- Kebijakan pembatalan/refund/revisi/sengketa V1.0 telah disusun sebagai DRAF untuk tinjauan hukum sebelum berlaku; persetujuan pelanggan dan versi kontrak disimpan per pesanan. Tidak boleh menetapkan 'DP hangus untuk semua kasus'.
+
+### 5A. Naskah operasional kebijakan pelanggan V1.0 — DRAF BELUM BERLAKU
+
+**Pasal 1 — Ketentuan umum:** hubungan pelanggan dengan pihak penyedia jasa yang diidentifikasi dalam penawaran; mitra hanya berwenang membantu promosi/konsultasi sesuai perjanjian; spesifikasi, jadwal, revisi dan harga mengikuti penawaran yang disetujui; semua keputusan tercatat.
+
+**Pasal 2 — Pemesanan dan pembayaran:** pelanggan memeriksa paket/kontrak sebelum setuju; DP, termin, pajak, biaya tambahan dan tanggal jatuh tempo tampil jelas; pembayaran hanya melalui kanal resmi; proyek dijadwalkan setelah pembayaran/persyaratan awal terverifikasi; biaya baru memerlukan persetujuan.
+
+**Pasal 3 — Pembatalan oleh pelanggan:** sebelum pembayaran/pekerjaan tidak dibebankan biaya pengerjaan. Setelah DP tetapi sebelum pekerjaan, jasa yang belum dikerjakan pada prinsipnya dikembalikan; biaya pihak ketiga yang benar-benar dikeluarkan atas instruksi dan persetujuan pelanggan dapat diperhitungkan secara transparan sejauh dibolehkan hukum. Setelah pekerjaan mulai, perhitungan penyelesaian mempertimbangkan bagian kerja yang terbukti selesai, hasil yang diserahkan serta biaya sah yang telah disepakati. Tidak ada klausula bahwa seluruh DP otomatis hangus.
+
+**Pasal 4 — Pembatalan oleh penyedia:** bila penyedia tidak sanggup memenuhi pekerjaan, pelanggan diberi alasan tertulis dan pilihan solusi wajar: perbaikan jadwal dengan persetujuan, penggantian layanan yang disepakati, atau pengembalian untuk kewajiban yang tidak dipenuhi. Hak ganti rugi/perbaikan pelanggan tetap mengikuti hukum.
+
+**Pasal 5 — Pengembalian dana:** pengajuan melalui tiket bernomor; Admin memeriksa kontrak, pembayaran, progres dan biaya sah; pelanggan menerima rincian hasil dan alasan; refund diutamakan ke metode asal, atau rekening pelanggan yang diverifikasi; tidak ada potongan sepihak; target internal transfer lima hari kerja setelah disetujui dan detail valid sepanjang tidak melanggar tenggat hukum yang lebih ketat; status dan jalur keberatan tersedia.
+
+**Pasal 6 — Domain/hosting/pihak ketiga:** biaya terpisah jika tidak termasuk paket; pembelian hanya dengan persetujuan; cek ketersediaan bukan jaminan domain sukses terdaftar; ketentuan registrar dan biaya riil diperhitungkan sejauh sah; pemilik domain serta tanggung jawab perpanjangan jelas dalam kontrak.
+
+**Pasal 7 — Revisi:** jumlah putaran revisi termasuk paket tertulis sebelum transaksi; revisi dalam lingkup meliputi penyesuaian materi/tampilan yang diperjanjikan; penambahan fitur besar menjadi permintaan perubahan berbayar dengan persetujuan; bug atau ketidaksesuaian spesifikasi yang menjadi tanggung jawab penyedia tidak menghabiskan kuota revisi berbayar.
+
+**Pasal 8 — Perubahan proyek:** permintaan fitur, halaman atau integrasi baru dievaluasi Admin; harus ada harga dan dampak jadwal tertulis yang disetujui sebelum dilaksanakan; riwayat kontrak awal tidak dihapus.
+
+**Pasal 9 — Jadwal dan keterlambatan:** estimasi katalog bersyarat; tanggal pasti sesudah persyaratan terpenuhi; perubahan jadwal mencatat alasan, dampak dan komunikasi; keterlambatan akibat materi pelanggan dicatat; keterlambatan penyedia ditangani menurut kontrak dan hukum; penundaan tidak otomatis menghapus hak pembayaran/refund pelanggan.
+
+**Pasal 10 — Peninjauan/serah-terima:** pelanggan memeriksa hasil, menyampaikan ketidaksesuaian atau setuju serah-terima; pengalihan akses/aset/lisensi/hasil kerja sesuai kontrak; garansi/dukungan didefinisikan; habisnya kuota revisi tidak menghapus kewajiban memperbaiki cacat yang menjadi tanggung jawab penyedia.
+
+**Pasal 11 — Keluhan dan sengketa:** pusat bantuan menerbitkan nomor tiket dan petugas; target tanggapan awal dua hari kerja; musyawarah didahulukan tanpa membatasi hak hukum; jika tidak sepakat, pelanggan dapat memakai jalur sengketa yang berwenang, termasuk BPSK jika berwenang atau pengadilan yang berwenang.
+
+**Pasal 12 — Persetujuan dan revisi kebijakan:** versi lengkap dan ringkasan ditampilkan sebelum persetujuan penawaran/pembayaran; sistem merekam versi/tanggal/identitas akun sesuai kebijakan privasi; perubahan versi tidak mengubah kontrak yang telah berlaku secara sepihak; peraturan yang berlaku mengungguli klausula bertentangan.
+
+**Syarat pemberlakuan:** identitas penyedia dan kanal keluhan resmi, persentase DP/termin, biaya pihak ketiga, revisi, retensi dokumen, serta pemeriksaan hukum dan persetujuan manajemen harus lengkap. Draf ini bukan pengganti nasihat hukum.
+
+### 6. Rekening, identitas, bonus dan komisi
+
+- Admin Keuangan: mengelola rekening resmi penerimaan/payout/refund dengan dua persetujuan pada perubahan sensitif; Mitra: rekening pencairan komisi terverifikasi; Pelanggan: rekening refund hanya jika transfer diperlukan, utamakan metode pembayaran asal.
+- Pendaftaran bertahap: identitas/kontak → akun/sponsor → website personal → identitas berfoto dan pengambilan foto yang sah/proporsional → rekening/keperluan pajak → persetujuan. Semua kolom yang ditampilkan dan relevan wajib valid sebelum pengajuan; boleh simpan draf. Tidak meminta KK. Dokumen tidak boleh berada pada GitHub atau aset publik.
+- Data rekening dan identitas disamarkan, dienkripsi, memiliki pembatasan hak akses, log akses, retensi/penghapusan dan pemeriksaan perubahan. Rekening baru tidak langsung dipakai sebelum verifikasi.
+- Ledger komisi mencatat transaksi dasar, pending/available/held/paid/reversed, koreksi refund, pencairan dan bukti; permohonan payout tahan dana tersedia dan cegah payout berulang; transfer gagal mengembalikan status dana secara aman.
+- Genealogy sponsor Level 1, 2, 3, dst., peringkat dan dashboard jaringan disiapkan. Pengguna menginginkan bonus berjenjang sebagai fitur inti tujuan akhir, tetapi aktivasi bonus nyata harus melewati validasi model bisnis, hukum dan perizinan; simulasi tidak boleh mengalirkan saldo dapat dicairkan. Tidak membayar bonus hanya untuk perekrutan.
+
+### 7. Perlindungan proyek existing dan cara rilis
+
+- Dilarang memodifikasi halaman Client Portal `/portal/`, Worker/D1 lama, OG40/REV21/REV22 locked, deploy lama, dan konfigurasi GitHub main website tanpa Gate/perubahan yang disetujui.
+- Sebelum script PowerShell: pemeriksaan branch, HEAD, worktree clean, daftar file target, backup di luar repo, mode preview lalu mode apply setelah persetujuan; `git diff --check`, audit file dan commit/push spesifik. Tidak boleh membuat `.md` baru.
+- Catat hasil tiap Gate pada `README.md`, `CHANGELOG.md`, `docs/README.md`, `docs/ROADMAP.md`, `docs/PLATFORM.md` existing, meliputi status, commit, bukti QA, risiko, dan langkah berikutnya. Penyelesaian modul existing tidak boleh dibatalkan statusnya oleh pekerjaan Network.
+
+<!-- DPN-DOC-BASELINE-V1-20261014:docs/PLATFORM.md:END -->

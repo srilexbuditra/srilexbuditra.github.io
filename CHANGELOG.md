@@ -1104,3 +1104,23 @@ Dokumen ini menggunakan dua riwayat versi agar nomor versi website utama tidak t
 - **Audit tambahan:** 174 Markdown lokal, 8 PDF, dan 732 file tipe lain diinventarisasi pada gate terkait. Pemeriksaan file lain mencakup 543 berkas teks dan 48 bagian XML dalam 5 dokumen Office. Tidak ditemukan `Senior Senior Full Stack Developer`. Sebanyak 184 aset biner/opaque tidak ditelusuri isi visualnya. GitHub Wiki terpisah dan konten hasil generasi runtime di luar lingkup.
 - **Status verifikasi:** `main` = `origin/main`, working tree CLEAN sesudah Gate 15. Ini adalah baseline source **sebelum** entri dokumentasi Gate 16; jangan menyatakan entri ini telah di-commit sebelum diverifikasi terpisah.
 <!-- SRILEXBUDITRA-SENIOR-TITLE-2026-10-12-END -->
+
+<!-- DPN-DOC-BASELINE-V1-20261014:CHANGELOG.md:START -->
+
+## 2026-10-14 — DPN Master Blueprint V1.0: Baseline Dokumentasi Awal
+
+- **Jenis:** penambahan catatan proyek pada lima dokumen Markdown yang telah ada; bukan perubahan halaman, CSS, Worker, D1, atau deployment.
+- **Baseline sumber:** `main` / `e977fc4` / working tree CLEAN saat audit read-only; 5 file Markdown target ada; pencarian istilah Network/Mitra pada lima file tersebut 0 baris cocok.
+- **Batas:** Client Portal `/portal/`, halaman utama, OG40, REV21/REV22 dan modul existing terverifikasi tetap terkunci; tidak menjalankan ulang pengujian lama tanpa bukti dampak.
+- **Arah:** aplikasi `network.srilexbuditra.work` terpisah (usulan, belum live); tiga pengalaman Admin/Mitra/Pelanggan; desain dan pengembangan lokal lebih dahulu.
+- **Visual:** referensi gambar Dashboard Admin, Mitra, Pelanggan telah dibuat dalam percakapan; Premium Digital Blue; CSS modular mobile-first, font dan spacing fluida; seluruh tulisan antarmuka berbahasa Indonesia.
+- **Bisnis:** paket UMKM tersendiri, harga/fitur/estimasi/termin dikonfigurasi di dashboard Admin dan tidak memodifikasi katalog utama; snapshot penawaran dan harga pada setiap pesanan.
+- **Mitra:** pendaftaran wajib bertahap; KTP/SIM atau identitas resmi berfoto sesuai kebijakan, foto verifikasi dan rekening privat; KK dikecualikan; website personal, WhatsApp mitra, referral dan alat promosi hanya di dashboard privat; genealogy, penghasilan dan pencairan terverifikasi.
+- **Pelanggan:** beranda dan dashboard terpisah; berbagi hanya halaman publik yang diizinkan, metadata Open Graph/QR unik; pilihan domain baru memicu cek ketersediaan, sedangkan domain existing diverifikasi kepemilikannya; DP/pelunasan, jadwal, progres, revisi, serah terima, refund dan tiket.
+- **Keuangan:** rekening Admin resmi penerimaan, rekening Mitra pencairan, rekening Pelanggan refund kondisional; pencatatan ledger, status dan persetujuan, audit, pencegahan transfer ganda; pembayaran pelanggan tidak ke rekening pribadi mitra.
+- **Kebijakan layanan:** draf V1.0 pembatalan, pengembalian dana, revisi, keterlambatan dan sengketa sudah diterima secara konsep; belum berlaku dan masih memerlukan pemeriksaan identitas penyedia serta peninjauan hukum.
+- **Bonus jaringan:** target kebutuhan pengguna mencakup bonus berjenjang; pembayaran nyata tidak aktif sampai lolos kajian hukum/model usaha. Simulasi/pemodelan tidak sama dengan izin produksi.
+- **Status:** DOKUMENTASI PERENCANAAN saja; implementasi, migrasi database, validasi produksi, commit dan push dilakukan pada langkah terpisah setelah persetujuan.
+- **Lanjutan:** Gate 0 pemeriksaan hasil dan dokumentasi; selanjutnya Gate 1 blueprint terkunci → Gate 2 desain disetujui → Gate 3 arsitektur → Gate 4 implementasi lokal → Gate 5 QA terarah → Gate 6 rilis terkontrol.
+
+<!-- DPN-DOC-BASELINE-V1-20261014:CHANGELOG.md:END -->

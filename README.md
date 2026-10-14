@@ -535,3 +535,29 @@ Cakupan perubahan yang sudah dipublikasikan: 37 HTML (72 penggantian); `search-i
 
 Perubahan dilakukan tanpa menyunting CSS, JavaScript, Worker, D1, maupun logika autentikasi pada rangkaian commit ini. Riwayat Markdown lama sengaja dipertahankan; GitHub Wiki terpisah, aset biner yang tidak diaudit isinya, dan keluaran PDF runtime **belum** termasuk jaminan audit menyeluruh. Rincian teknis dan commit terdapat pada [CHANGELOG.md](CHANGELOG.md), [docs/PLATFORM.md](docs/PLATFORM.md), dan [docs/ROADMAP.md](docs/ROADMAP.md).
 <!-- SRILEXBUDITRA-SENIOR-TITLE-2026-10-12-END -->
+
+<!-- DPN-DOC-BASELINE-V1-20261014:README.md:START -->
+
+## SRILEXBUDITRA DIGITAL PARTNER NETWORK — Master Baseline V1.0 (14 Oktober 2026)
+
+**Status:** KONSEP DISETUJUI / DOKUMENTASI AWAL; implementasi belum dimulai; aplikasi `network.srilexbuditra.work` masih usulan. Catatan ini tidak menyatakan fitur Network telah aktif.
+
+**Tujuan:** platform terpisah bagi Admin Network, mitra, dan pelanggan untuk pemasaran jasa website, terutama paket khusus UMKM, dengan website personal mitra, prospek, proyek, pembayaran, dan dukungan.
+
+**Batas keselamatan:** website utama, `/portal/` Client Portal existing, fitur produksi terkunci (termasuk OG40 dan REV21/REV22), Worker/D1, serta konfigurasi deployment existing tidak boleh berubah akibat pencatatan atau implementasi Network. Tidak mengulang pengujian modul existing yang sudah terverifikasi kecuali perubahan baru terbukti berdampak padanya.
+
+**Arsitektur pilihan:** aplikasi Network mandiri (subdomain masih rencana), login, Worker, D1, penyimpanan privat, aset CSS dan rilis terisolasi; pengembangan server lokal, commit/push branch bertahap, staging tersendiri, persetujuan sebelum rilis produksi.
+
+**Aturan permanen:** seluruh teks UI dan dokumentasi berbahasa Indonesia; tema Premium Digital Blue; CSS modular per fungsi/komponen dengan tipografi dan jarak adaptif HP/tablet/laptop/desktop; hanya memperbarui file `.md` existing pada lokasi semula, tanpa membuat atau memindahkan file `.md` baru.
+
+**Keputusan produk ringkas:** website publik personal mitra; dashboard mitra privat (promosi/referral, jaringan, WhatsApp pribadi yang dapat diedit dan diverifikasi, prospek, rekening, komisi dan pencairan); beranda dan dashboard pelanggan tersendiri; dashboard Admin Network; katalog UMKM terpisah dari katalog utama dan dapat diatur Admin (nama, harga, fitur, masa promo, estimasi mulai/durasi, termin uang muka); metadata/OG/QR setiap halaman publik; formulir serta pembayaran bertahap; status proyek, revisi, refund dan sengketa.
+
+**Dokumen identitas:** tidak menggunakan KK. Identitas berfoto resmi yang diterima (contoh KTP/SIM) sesuai kebijakan, rekam foto wajah secara aman bila diperlukan, verifikasi rekening; NPWP digunakan untuk keperluan perpajakan jika relevan. Data sensitif tidak dipublikasikan.
+
+**Bonus jaringan berjenjang:** merupakan kebutuhan produk yang pengguna minta tetap aktif pada tujuan akhir. Struktur Level 1, 2, 3, dan seterusnya serta simulasi mesin bonus dicakup. Pembayaran bonus nyata belum boleh diaktifkan sebelum kelayakan model usaha, ketentuan hukum, dan perizinan ditelaah secara profesional. Tidak ada imbalan hanya karena merekrut anggota.
+
+**Catatan pekerjaan:** desain mockup Dashboard Admin, Mitra, dan Pelanggan telah dibuat sebagai referensi percakapan, belum diterapkan atau diverifikasi lintas perangkat pada aplikasi. Catatan hukum dan kebijakan layanan V1.0 masih draf untuk peninjauan sebelum dipublikasikan.
+
+**Titik lanjut:** lihat `docs/ROADMAP.md` untuk Gate 0–6, `docs/PLATFORM.md` untuk batas arsitektur, `CHANGELOG.md` untuk riwayat. Baseline Git yang dibaca pada 14 Oktober 2026: branch `main`, HEAD `e977fc4`, working tree CLEAN. Periksa ulang status Git sebelum perubahan apa pun. Tahap berikut: review serta commit pembaruan dokumentasi existing, kemudian finalisasi desain/arsitektur; bukan langsung deploy.
+
+<!-- DPN-DOC-BASELINE-V1-20261014:README.md:END -->

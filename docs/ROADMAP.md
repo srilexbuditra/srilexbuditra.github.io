@@ -1768,3 +1768,67 @@ Platform Baseline aktif: `2026.10.07.0006`.
 
 **Keputusan:** Jangan mengulang Gate 1â€“15 hanya untuk mencatat progres. Pertahankan hasil visual dan perilaku sistem yang sudah bekerja; semua perubahan berikutnya menggunakan audit serta persetujuan scope baru.
 <!-- SRILEXBUDITRA-SENIOR-TITLE-2026-10-12-END -->
+
+<!-- DPN-DOC-BASELINE-V1-20261014:docs/ROADMAP.md:START -->
+
+## MASTER ROADMAP — SRILEXBUDITRA DIGITAL PARTNER NETWORK V1.0
+
+**Tanggal baseline:** 14 Oktober 2026. **Status:** BLUEPRINT DISETUJUI SECARA KONSEP; implementasi BELUM DIMULAI. Semua Gate DPN di bawah adalah jalur proyek Network, BUKAN pengulangan Gate milik OG40 atau proyek existing lainnya.
+
+### A. Batas dan keputusan tetap
+
+1. Aplikasi Network diusulkan pada `network.srilexbuditra.work` dengan deployment, Worker, D1, autentikasi, dan penyimpanan terpisah. Belum ada pembuktian subdomain live atau resources tersebut telah dibuat.
+2. Jangan mengubah atau mengulang tes Client Portal `/portal/`, sistem existing, OG40, REV21/REV22 atau modul terverifikasi lainnya. Pengujian regresi dilakukan hanya jika perubahan baru memang berpotensi menyentuhnya.
+3. Pengembangan utama pada server lokal dengan data simulasi; perubahan di branch khusus; commit/push modul bertahap; staging terisolasi; persetujuan sebelum production. Audit pemicu deploy branch `main` dahulu.
+4. Pertahankan semua Markdown existing pada jalur aslinya. Tidak membuat `.md` baru. Semua catatan dan UI bahasa Indonesia, kecuali identifier kode/protokol yang diperlukan.
+5. Tema Premium Digital Blue: navy `#0B1220`, biru `#1D4ED8`, toska `#0F766E`, latar `#F8FAFC`. CSS modular, tokens bersama, mobile-first, fluid typography dan spacing horizontal/vertikal; tidak memecah CSS berdasarkan merek perangkat.
+6. Hak akses Admin/Mitra/Pelanggan benar-benar dipisah di backend, bukan hanya tombol disembunyikan.
+7. Formulir yang berlaku pada suatu tahap wajib diisi lengkap dan tervalidasi; boleh simpan draf. KK DIHAPUS dari formulir; identitas berfoto KTP/SIM atau dokumen sah setara sesuai kebijakan, rekam foto/verifikasi identitas yang proporsional, rekening dan data perpajakan bersyarat.
+8. Website publik personal mitra dan dashboard privat dipisah. Alat 'Bagikan Link Mitra', teks referral, jaringan, rekening dan saldo hanya di dashboard privat. Pelanggan mempunyai sarana berbagi halaman publiknya sendiri dengan pesan, OG dan QR terpisah.
+9. Konsultasi pada website publik mitra diarahkan ke WhatsApp mitra bersangkutan; nomor diedit di dashboard, divalidasi/verifikasi sebelum dipublikasikan. Klik WA bukan bukti transaksi.
+10. Paket UMKM dikelola Admin Network (nama, harga, fitur, biaya domain/hosting, diskon, status, estimasi mulai/durasi, termin DP, revisi). Katalog/harga website utama tidak berubah. Penawaran/pesanan menyimpan snapshot harga dan ketentuan.
+11. Pilihan domain: tanpa domain, domain existing (konfirmasi kepemilikan/otorisasi), domain baru (hanya opsi ini yang mengaktifkan cek ketersediaan berbasis registrar).
+12. Proyek menampilkan estimasi awal bersyarat, jadwal terkonfirmasi, status/progres, kebutuhan materi, peninjauan, revisi, serah terima dan penundaan dengan alasan. Admin mengelola kapasitas dan perubahan jadwal.
+13. Pembayaran pelanggan ke kanal resmi penyedia; DP dan pelunasan berdasarkan penawaran, refund mengikuti kebijakan yang sah; rekening Admin/Mitra/Pelanggan mempunyai tujuan berbeda dan otorisasi perubahan berbeda.
+14. Struktur sponsor dan bonus Level 1, 2, 3, dst. termasuk dalam rancangan tujuan pengguna. Pengoperasian pembayaran bonus jaringan yang terkait jasa harus menunggu review hukum/perizinan; tidak memberikan imbalan semata dari perekrutan. Mesin simulasi non-produksi boleh disiapkan dalam cakupan sah.
+15. Kebijakan pembatalan, refund, revisi, keterlambatan, serah terima dan sengketa telah disusun sebagai DRAF disetujui secara konsep; finalisasi identitas pihak penyedia, hukum dan parameter layanan masih diperlukan.
+
+### B. Inventaris status dan batas pekerjaan
+
+| Lingkup | Status baseline | Tindakan berikutnya |
+| --- | --- | --- |
+| Sistem utama dan `/portal/` existing | PRODUKSI EXISTING / DIKECUALIKAN DARI PERUBAHAN | Tidak uji ulang tanpa bukti perubahan berdampak |
+| Lima file `.md` target | DITEMUKAN / BELUM ADA CATATAN NETWORK saat audit | Tambah baseline melalui perubahan terkontrol |
+| Mockup visual dashboard Admin/Mitra/Pelanggan | REFERENSI GAMBAR SUDAH DIBUAT | Tinjau keterbacaan dan responsivitas sebelum implementasi |
+| Network subdomain, auth, Worker, D1 | USULAN / BELUM DIBANGUN | Spesifikasi setelah desain disetujui |
+| Katalog UMKM, website mitra, CRM, dashboard pelanggan | KONSEP DISETUJUI | Spesifikasi, kemudian implementasi lokal |
+| DP, rekening, komisi, payout, refund, jadwal proyek | KONSEP DISETUJUI | Aturan bisnis, keamanan, QA dan integrasi lokal |
+| Bonus jaringan berjenjang | TARGET PRODUK, BELUM LOLOS KAJIAN LEGAL | Review model dan hukum sebelum pembayaran nyata |
+
+### C. Gate berurutan (tidak mengulang pekerjaan terkunci)
+
+**GATE 0 — Audit dokumentasi dan baseline:** verifikasi lokasi lima `.md`, status Git, checkpoint lama; buat pratinjau diff hanya penambahan bagian DPN; persetujuan, dokumentasi dan commit tersendiri. BUKAN audit ulang fungsional Client Portal atau OG40. **Hasil awal teramati:** `main`, `e977fc4`, CLEAN, lima file ada, 0 kecocokan kata Network/Mitra pada lima file yang diperiksa. **Status:** audit dokumentasi read-only SELESAI; penambahan catatan dan commit MENUNGGU langkah terpisah.
+
+**GATE 1 — Finalisasi bisnis, kebijakan dan matriks peran:** kunci peran dan hak akses; model usaha/jasa, harga/margin UMKM, komisi, peringkat/jaringan; syarat KYC proporsional; persetujuan kontrak/refund/revisi; jadwal, termin DP, biaya pihak ketiga; kajian legalitas model bonus. Output: blueprint fungsional dan keputusan legal yang dapat diaudit.
+
+**GATE 2 — Desain visual responsif:** evaluasi mockup Admin, Mitra, Pelanggan, website publik, checkout, pengaturan paket dan rekening. Kunci design tokens, pola mobile/tablet/laptop/desktop dan orientasi, OG/QR/teks berbagi. Output: persetujuan visual tanpa implementasi fitur.
+
+**GATE 3 — Arsitektur & lingkungan lokal:** tentukan repository/branch/deploy independen; routing subdomain, auth, database/sesi, penyimpanan identitas privat, skema ledger/komisi, pesanan/proyek, status dan API; threat model dan migrasi aman. Output: spesifikasi teknis siap implementasi lokal.
+
+**GATE 4 — Implementasi lokal modular:** bangun fondasi desain → katalog UMKM → registrasi/verifikasi → website publik mitra/WhatsApp/referral → CRM → pelanggan/pemesanan/domain → proyek/termin/kontrak → Admin/rekening/ledger/payout/refund → notifikasi/audit. Setiap modul mempunyai commit, bukti uji dan persetujuan; hindari perubahan lintas modul yang tidak diperlukan.
+
+**GATE 5 — Pengujian perubahan baru:** uji unit/integrasi, isolasi peran, pembayaran palsu/ganda/refund, verifikasi rekening, progres proyek, keamanan data, SEO/OG/QR, kinerja dan responsivitas; regresi existing hanya pada batas yang terbukti terpengaruh. Output: bukti QA dan kesiapan release.
+
+**GATE 6 — Staging, pilot, rilis dan closeout:** pengujian staging independen, pilot mitra/pelanggan simulasi/terkendali, backup dan rollback, pemeriksaan rilis, deploy Network yang disetujui, monitoring awal dan dokumentasi PRODUCTION VERIFIED hanya setelah bukti lengkap.
+
+### D. Standar checkpoint setiap Gate
+
+Catat: tanggal, tujuan, lingkup, hasil verifikasi, keputusan terkunci, status branch/HEAD/origin dan kebersihan worktree, file yang berubah, bukti tes baru, risiko, status legalitas, langkah berikutnya, serta status penerapan lokal/staging/production. Dilarang menyamakan 'disetujui konsep' dengan 'telah terpasang'. Jika berpindah obrolan, baca checkpoint terakhir yang terverifikasi di file existing dan lanjut hanya langkah yang belum selesai.
+
+### E. Syarat commit dan produksi
+
+Sebelum commit: pastikan hanya file/fitur yang disetujui berubah; tidak ada `.md` baru; tidak ada secret/data asli; diff dapat dibaca, `git diff --check` lolos, status Git sesuai. Jangan langsung push `main` tanpa tahu pemicu deploy GitHub. Deploy Network dilakukan terpisah dari situs utama dan `/portal/`.
+
+**NEXT ACTION:** review dan catat baseline pada lima file existing; tampilkan diff; lakukan commit dokumentasi hanya setelah persetujuan pengguna; lanjut Gate 1 tanpa mengulang modul produksi lama.
+
+<!-- DPN-DOC-BASELINE-V1-20261014:docs/ROADMAP.md:END -->

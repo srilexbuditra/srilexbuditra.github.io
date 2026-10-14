@@ -427,3 +427,22 @@ Catatan lengkap perubahan dan hash commit berada di [`../CHANGELOG.md`](../CHANG
 
 Dokumentasi historis disimpan apa adanya. Audit ini tidak otomatis mencakup GitHub Wiki (`.wiki.git`), aset gambar/biner, atau PDF yang dibuat dinamis. **Tidak ada file `.md` baru yang diperlukan.**
 <!-- SRILEXBUDITRA-SENIOR-TITLE-2026-10-12-END -->
+
+<!-- DPN-DOC-BASELINE-V1-20261014:docs/README.md:START -->
+
+## Navigasi Proyek Digital Partner Network — V1.0 (14 Oktober 2026)
+
+**Status:** baseline perencanaan; belum ada aplikasi Network produksi. Seksi ini adalah indeks ke catatan pada file `.md` existing, bukan proyek baru yang berdiri sendiri di dalam dokumentasi lama.
+
+- `../README.md`: ringkasan keputusan, ruang lingkup, perlindungan modul existing, dan checkpoint.
+- `ROADMAP.md`: master tahapan Gate 0–6, daftar keputusan terkunci, definisi selesai, pengujian terbatas, dan langkah lanjut lintas percakapan.
+- `PLATFORM.md`: arsitektur aplikasi Network terpisah; pembagian peran, UI responsif, sistem keuangan, keamanan, deployment dan batas integrasi.
+- `../CHANGELOG.md`: kronologi awal dokumen, baseline Git, dan bukti perkembangan setelah tiap Gate.
+
+**Aturan kontinuitas:** gunakan catatan Network terbaru yang terverifikasi beserta status Git untuk melanjutkan tugas pada obrolan baru. Jangan mengulang audit maupun tes modul lama yang LOCKED kecuali ada perubahan nyata pada cakupannya. Bedakan status DISETUJUI KONSEP, DIBUAT LOKAL, DIUJI, COMMITTED, STAGING VERIFIED, PRODUCTION VERIFIED, dan LOCKED.
+
+**Aturan dokumentasi:** semua teks berbahasa Indonesia; tidak membuat, memindahkan, atau menghapus file `.md`; catatan baru hanya ditambahkan/diperbarui di file yang telah ada pada jalur semula. Jangan mengubah blok arsip atau checkpoint lama yang telah terkunci.
+
+**Tahap segera:** review diff dokumentasi Gate 0, persetujuan, commit terkontrol; kemudian selesaikan spesifikasi legalitas, desain visual, dan arsitektur Network sebelum menulis kode aplikasi.
+
+<!-- DPN-DOC-BASELINE-V1-20261014:docs/README.md:END -->
