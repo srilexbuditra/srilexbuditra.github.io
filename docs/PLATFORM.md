@@ -779,3 +779,63 @@ Aturan rancangan:
 
 Status: ARSITEKTUR DIRANCANG / BELUM DIIMPLEMENTASIKAN.
 <!-- DPN-GATE1-NETWORK-PATH-20261015:END -->
+
+<!-- DPN-GATE1D-BUSINESS-RBAC-20261015:START -->
+### DPN Gate 1D - RBAC, keamanan transaksi, dan batas sistem
+
+**Status:** spesifikasi rancangan, belum ada endpoint, tabel database, atau akun Network yang diimplementasikan.
+
+#### Batas aplikasi
+- Lokasi publik dan dashboard Network: `/network/` beserta rute turunannya.
+- Client Portal `/portal/`, `/program/`, website utama, dan REV21/REV22 tidak boleh berubah fungsi maupun tampilannya.
+- Seluruh UI, CSS, dan JS baru diberi namespace Network agar tidak mengubah komponen existing.
+- Worker/API, skema atau database D1, aset privat, dan autentikasi Network dipisahkan secara logis.
+- Path pada origin yang sama tidak memberikan isolasi keamanan setingkat subdomain; otorisasi harus dipastikan di sisi server.
+- Jangan memodifikasi root `sw.js`, push subscription REV22, atau registrasi `web-push-r1.js`.
+- Sebelum implementasi, audit cookie/session, CSRF, CORS, CSP, cache, API routing, dan konfigurasi Cloudflare.
+
+#### Matriks RBAC
+- Super Admin: kelola konfigurasi dan otorisasi; transaksi sensitif tetap diaudit dan membutuhkan pemeriksaan independen sesuai kebijakan.
+- Admin Operasional: order, pelanggan, progres, proyek, kapasitas, dan revisi; tidak mengesahkan pembayaran atau payout.
+- Admin Keuangan: verifikasi pembayaran, refund, ledger, dan pencairan; tidak boleh menyetujui transaksi yang dibuat atau diajukan sendiri.
+- Admin Verifikasi: validasi identitas dan rekening Mitra; tidak melakukan payout.
+- Mitra: hanya data akun, website, jaringan privat yang berhak dilihat, penjualan teratribusi, saldo, dan rekening miliknya.
+- Pelanggan: hanya profil, pesanan, proyek, invoice, pembayaran, dan revisi miliknya.
+- Setiap API memerlukan autentikasi, pemeriksaan peran, ownership, status objek, dan audit untuk tindakan sensitif.
+- Penolakan akses tidak boleh membocorkan detail akun, identitas, keuangan, atau keberadaan resource privat.
+
+#### Paket dan pesanan
+- Katalog dapat memiliki versi, status draft/published, harga, fitur, termin, domain, SLA, dan revisi yang dikonfigurasi Admin.
+- Saat order dibuat, simpan snapshot versi paket dan ketentuan yang disepakati.
+- Atribusi referral dan sponsor disimpan secara terlacak; perubahan atau sengketa harus dicatat, bukan diam-diam ditimpa.
+- Domain baru menggunakan pemeriksaan registrar ketika opsi beli domain baru dipilih.
+- Domain existing wajib melewati verifikasi penguasaan sebelum digunakan.
+
+#### Transaksi dan pembayaran
+- Uang pelanggan diterima melalui rekening/kanal resmi pengelola; bukan rekening pribadi Mitra.
+- Pengelolaan rekening operasional memakai prinsip maker-checker dan catatan perubahan.
+- Rekening payout Mitra harus diverifikasi serta ditampilkan tersamarkan di UI.
+- Refund menggunakan metode pembayaran asal bila memungkinkan; rekening pengembalian pelanggan hanya diminta bila diperlukan.
+- Ledger mendukung pencatatan append-only, referensi transaksi unik, rekonsiliasi, koreksi terkontrol, dan audit.
+- Pencegahan pembayaran/withdraw ganda menggunakan idempotency dan transaksi atomik.
+- Perubahan status invoice, refund, payout, serta penolakan tercatat dengan aktor dan waktu.
+- Jangan menyimpan kredensial, token, atau data bank rahasia dalam Markdown maupun repository publik.
+
+#### Komisi, jaringan, dan verifikasi
+- Hubungan sponsor dan genealogy bersifat privat, dengan akses terbatas berdasarkan peran dan hak.
+- Komisi sponsor, bonus level/generasi, dan bonus prestasi dikonfigurasi dengan versi aturan yang tercatat.
+- Dasar komisi adalah penjualan jasa terverifikasi, bukan perekrutan semata.
+- Perhitungan memiliki pending/hold/available/paid/reversal dan mekanisme koreksi refund.
+- Aktivasi payout nyata untuk bonus jaringan memerlukan persetujuan legal, pajak, antifraud, dan audit perhitungan.
+- Verifikasi identitas meminta data seperlunya, persetujuan pemrosesan, pembatasan akses, enkripsi, dan kebijakan retensi.
+- KTP/SIM sesuai syarat verifikasi, foto wajah dengan persetujuan; tidak meminta KK.
+- NPWP hanya bila diperlukan untuk kewajiban administrasi perpajakan.
+- Dokumen identitas dan rekening tidak boleh terekspos melalui URL publik atau log aplikasi.
+
+#### Ketentuan visual dan rilis
+- Visual website existing yang telah disetujui harus tetap sama; seluruh redesign hanya pada `/network/`.
+- Tidak menambah CSS global yang dapat memengaruhi halaman lama.
+- Lakukan review dan QA regresi terbatas pada permukaan yang berpotensi terdampak.
+- Push `main` dapat memicu deployment; persetujuan publikasi tetap diperlukan.
+- Gate 1D hanya menambah dokumentasi pada lima Markdown existing, bukan aktivasi fitur atau migrasi D1.
+<!-- DPN-GATE1D-BUSINESS-RBAC-20261015:END -->

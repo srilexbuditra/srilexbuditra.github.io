@@ -575,3 +575,22 @@ Keputusan terbaru menggantikan usulan subdomain dalam baseline Gate 0:
 
 Bagian ini merupakan keputusan terbaru yang mengesampingkan alamat usulan pada catatan Gate 0, tanpa menghapus riwayatnya.
 <!-- DPN-GATE1-NETWORK-PATH-20261015:END -->
+
+<!-- DPN-GATE1D-BUSINESS-RBAC-20261015:START -->
+### DPN Gate 1D - Persetujuan operasional dan perlindungan existing
+
+Tanggal keputusan: 15 Oktober 2026.
+Status: prinsip bisnis dan matriks peran disetujui; nilai transaksi, konfigurasi detail, dan legalitas operasional masih memerlukan finalisasi.
+
+- Aplikasi direncanakan pada `https://srilexbuditra.work/network/`.
+- Semua fungsi dan tampilan visual existing yang telah normal wajib dipertahankan.
+- Desain baru hanya berlaku untuk `/network/` dan turunannya.
+- Kelompok peran: Super Admin, Admin Operasional, Admin Keuangan, Admin Verifikasi, Mitra, dan Pelanggan.
+- Layanan: paket website UMKM, pemesanan, pembayaran resmi, manajemen proyek, website pribadi Mitra, referral, jaringan, komisi, dan pencairan.
+- Bonus jaringan berjenjang merupakan kebutuhan produk, tetapi tidak boleh diberikan hanya untuk perekrutan. Aktivasi pembayaran nyata memerlukan persetujuan legal dan audit.
+- Semua pesanan, pembayaran, komisi, refund, dan pencairan membutuhkan jejak audit dan pembatasan hak akses.
+- Pengembangan dilakukan pada satu branch `main` dengan review dan persetujuan sebelum rilis.
+- Tidak ada implementasi aplikasi Network pada tahap dokumentasi ini.
+
+Referensi rincian: `docs/ROADMAP.md` dan `docs/PLATFORM.md`.
+<!-- DPN-GATE1D-BUSINESS-RBAC-20261015:END -->

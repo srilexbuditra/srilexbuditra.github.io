@@ -1135,3 +1135,17 @@ Dokumen ini menggunakan dua riwayat versi agar nomor versi website utama tidak t
 - Autentikasi, cookie, CSP, cakupan Service Worker, routing, dan aturan deployment memerlukan validasi sebelum implementasi.
 - Tidak ada perubahan kode produksi, Worker, D1, atau konfigurasi REV21/REV22 dalam tahap dokumentasi ini.
 <!-- DPN-GATE1-NETWORK-PATH-20261015:END -->
+
+<!-- DPN-GATE1D-BUSINESS-RBAC-20261015:START -->
+### 2026-10-15 - DPN Gate 1D: Prinsip bisnis dan akses disetujui
+
+- Gate 1C tersimpan dan disinkronkan pada commit `dbb806a`.
+- Pengguna mengonfirmasi fungsi dan visual website existing harus tetap dipertahankan.
+- Seluruh desain visual baru dibatasi pada `/network/`.
+- Matriks peran disetujui: Super Admin, Operasional, Keuangan, Verifikasi, Mitra, Pelanggan.
+- Disetujui rancangan katalog UMKM terpisah, pembayaran terpusat, administrasi rekening, manajemen proyek, komisi, jaringan, dan withdraw.
+- Pengamanan maker-checker, snapshot pesanan, ledger, kontrol refund, dan RBAC server-side masuk persyaratan desain.
+- Nilai harga, DP, tarif bonus, jumlah level, pajak, SLA, dan batas pencairan belum dikunci.
+- Bonus jaringan tidak berasal dari perekrutan saja; payout nyata menunggu kajian kepatuhan dan audit.
+- Tidak membuat atau memodifikasi HTML, CSS, JS, Worker, D1, atau tampilan produksi pada Gate 1D dokumentasi.
+<!-- DPN-GATE1D-BUSINESS-RBAC-20261015:END -->

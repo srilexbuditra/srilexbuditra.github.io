@@ -458,3 +458,21 @@ Dokumentasi historis disimpan apa adanya. Audit ini tidak otomatis mencakup GitH
 - Catatan tetap menggunakan lima file Markdown existing, tanpa membuat file `.md` baru.
 - Gate 0 selesai; Gate 1 sedang berjalan; aplikasi Network belum live.
 <!-- DPN-GATE1-NETWORK-PATH-20261015:END -->
+
+<!-- DPN-GATE1D-BUSINESS-RBAC-20261015:START -->
+### DPN Gate 1D - Indeks kesinambungan proyek
+
+Status sebelumnya:
+- Gate 0: Master Blueprint V1.0 selesai.
+- Gate 1A dan 1B: audit awal routing, PWA, dan repository selesai.
+- Gate 1C: keputusan path `/network/` telah disimpan di `main` (`dbb806a`).
+
+Keputusan Gate 1D:
+- Prinsip bisnis, enam peran pengguna, dan perlindungan fungsi serta visual existing disetujui.
+- Rincian alur dan tahapan terdapat pada `docs/ROADMAP.md`.
+- Rincian kontrol keamanan dan otorisasi terdapat pada `docs/PLATFORM.md`.
+- Riwayat perubahan terdapat pada `CHANGELOG.md`.
+- Dokumentasi tetap menggunakan lima file `.md` existing.
+
+Status kelanjutan: Gate 1D dokumentasi operasional; belum ada aplikasi Network live dan belum ada transaksi nyata.
+<!-- DPN-GATE1D-BUSINESS-RBAC-20261015:END -->

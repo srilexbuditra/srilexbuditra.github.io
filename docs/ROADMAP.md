@@ -1861,3 +1861,70 @@ Bonus jaringan berjenjang tetap merupakan kebutuhan produk, namun aktivasi trans
 
 Status: rencana dan dokumentasi. Belum ada aplikasi `/network/` yang diterbitkan.
 <!-- DPN-GATE1-NETWORK-PATH-20261015:END -->
+
+<!-- DPN-GATE1D-BUSINESS-RBAC-20261015:START -->
+### DPN Gate 1D - Proses bisnis, pengguna, dan tahap pengembangan
+
+**Status:** prinsip operasional disetujui; parameter komersial dan implementasi masih menunggu finalisasi.
+
+#### Enam peran dan cakupan
+1. Super Admin: konfigurasi sistem, paket, harga, peran, kebijakan, dan laporan.
+2. Admin Operasional: pesanan, antrean, proyek, jadwal, revisi, dan pelanggan.
+3. Admin Keuangan: pembayaran, invoice, refund, komisi, dan pencairan.
+4. Admin Verifikasi: verifikasi identitas dan rekening Mitra.
+5. Mitra: website pribadi, promosi, referral, jaringan privat, komisi, dan withdraw milik sendiri.
+6. Pelanggan: katalog, pesanan, pembayaran, invoice, progres, revisi, dan bantuan milik sendiri.
+
+#### Alur pesanan pelanggan
+1. Pelanggan memilih paket website UMKM dan meninjau fitur, harga, termin, dan ketentuan.
+2. Pelanggan memilih tanpa domain, memakai domain milik sendiri, atau membeli domain baru.
+3. Pemeriksaan registrar dilakukan hanya pada opsi membeli domain baru; domain existing memerlukan verifikasi kepemilikan.
+4. Pesanan menyimpan snapshot harga, fitur, DP, termin, waktu, ketentuan, dan atribusi referral.
+5. Pembayaran diterima melalui kanal resmi pengelola, bukan rekening Mitra.
+6. Admin Keuangan memverifikasi pembayaran dan membuat jejak transaksi.
+7. Admin Operasional mengelola antrean, bahan, milestone, revisi, dan perkiraan penyelesaian.
+8. Pelanggan melihat progres, riwayat jadwal, invoice, termin, dan hasil pekerjaan.
+9. Penyelesaian, serah terima, serta kewajiban pembayaran ditangani sesuai ketentuan pesanan.
+10. Transaksi yang sah menjadi dasar komisi dan proses validasi bonus.
+11. Mitra yang telah memenuhi syarat mengajukan pencairan ke rekening terverifikasi.
+
+#### Katalog dan penawaran
+- Admin mengelola nama paket, harga, domain, hosting, fitur, DP, termin, durasi, revisi, diskon, status publikasi, dan ketentuan.
+- Katalog Network terpisah dari daftar harga layanan pada website utama.
+- Perubahan katalog tidak boleh mengubah snapshot pesanan yang sudah disepakati.
+- Harga, paket, dan promosi Mitra mengikuti ketentuan resmi pengelola.
+- Ketentuan pesanan, pembatalan, refund, dan revisi memerlukan peninjauan legal sebelum diberlakukan.
+
+#### Pendaftaran dan website Mitra
+- Tahap: identitas/kontak, akun/sponsor, slug website, verifikasi identitas dan foto wajah, rekening payout, persetujuan.
+- KTP atau SIM dapat menjadi dokumen identitas sesuai kebijakan verifikasi; KK tidak diminta; NPWP bersifat kondisional sesuai kewajiban pajak.
+- WhatsApp pada website pribadi adalah nomor Mitra yang terverifikasi dan dapat dikelola dalam dashboard.
+- Website Mitra mempunyai konten promosi, CTA WhatsApp, QR, SEO/OG, dan identitas referral.
+- Panel pembagian link Mitra dan bagan jaringan adalah privat; tombol berbagi pelanggan bersifat publik dan terpisah.
+- Atribusi penjualan, sponsor, dan sengketa referral harus dapat ditelusuri dan diaudit.
+
+#### Komisi dan pencairan
+- Rancangan meliputi komisi sponsor langsung, level/generasi, dan bonus prestasi.
+- Tidak ada komisi hanya karena pendaftaran atau perekrutan Mitra.
+- Perhitungan berdasarkan transaksi jasa yang sah, ketentuan refund, dan konfigurasi versi aturan bonus.
+- Nilai pending, hold, available, paid, dan reversal ditelusuri dalam ledger.
+- Payout nyata untuk bonus jaringan menunggu verifikasi legal, pajak, antifraud, dan akurasi kalkulasi.
+- Pengajuan dan persetujuan payout dipisah; transaksi ganda dicegah dengan idempotency.
+
+#### Keputusan yang masih terbuka
+- Nominal paket UMKM, DP, diskon, durasi pengerjaan, dan cakupan revisi.
+- Tarif sponsor, jumlah level, besar bonus generasi/prestasi, dan syarat kelayakan.
+- Batas minimal withdraw, jadwal payout, pajak, biaya transaksi, dan SLA.
+- Kebijakan pembatalan, refund, sengketa, perlindungan data, serta identitas badan usaha.
+- Persetujuan akhir desain responsif semua halaman baru `/network/`.
+
+#### Tahap berikutnya
+1. Review ketentuan komersial dan regulasi sebelum transaksi nyata.
+2. Gate 2: persetujuan visual khusus Network (Admin, Mitra, Pelanggan).
+3. Gate 3: kontrak API, skema data, autentikasi, isolasi rute, dan deployment.
+4. Gate 4: implementasi modular dengan perubahan minimal dan pengujian.
+5. Gate 5: QA, otorisasi, keamanan, transaksi simulasi, dan regresi terbatas.
+6. Gate 6: persetujuan rilis dan aktivasi bertahap.
+
+Seluruh fungsi dan tampilan visual existing tetap dilindungi; tidak ada perubahan produk lama dalam Gate 1D.
+<!-- DPN-GATE1D-BUSINESS-RBAC-20261015:END -->
