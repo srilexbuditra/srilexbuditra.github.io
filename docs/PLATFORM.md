@@ -969,3 +969,60 @@ Status: ARSITEKTUR DIRANCANG / BELUM DIIMPLEMENTASIKAN.
 - Dokumentasi ini tidak memberi izin untuk mengubah sistem produksi.
 
 <!-- DPN-GATE3A06-INTEGRATION-20261016:END -->
+
+<!-- DPN-GATE3B01-ARCH-20261016:START -->
+### DPN Gate 3B-01 - Kontrak Arsitektur Backend dan Batas Keamanan
+
+**Status:** ARCHITECTURE BASELINE / DOCUMENTATION ONLY / IMPLEMENTATION NOT STARTED.
+**Git baseline:** `3f3aa285af9899f12098729356d7c0d62cbe332e` (Gate 3A-06 VERIFIED).
+**Backup proteksi:** `srilexbuditra.github.io-backup1` pada `0cfbc84`; tidak diubah oleh Gate ini.
+
+#### 1. Batas alamat dan deployment
+- Frontend publik dan dashboard Network tetap di `https://srilexbuditra.work/network/` (bukan `network.srilexbuditra.work`).
+- Backend Network harus menjadi Cloudflare Worker/API khusus, dengan isolasi binding, secrets, rate limit, logging dan database dari Client Management/Ketahanan Pangan/Umroh/Web Push.
+- Kandidat hostname backend: `https://network-api.srilexbuditra.work` untuk ditinjau pada Gate 3B-02; **belum dibuat atau disetujui untuk deployment**.
+- `srilexbuditra.work/api/*` sudah digunakan Client Management; `/api/push/*` digunakan Web Push. Jangan mengganti, menimpa, mencegat atau merutekan ulang keduanya.
+- Frontend GitHub Pages tidak dapat diasumsikan otomatis menyediakan route slug dinamis `/network/mitra/{slug}/`. Butuh solusi edge render/router terlingkup sempit dengan HTTP 200 untuk profil sah, 404 untuk slug tidak sah, metadata OG/canonical/Microdata per Mitra. Cara pastinya pending audit Cloudflare.
+- Reserved route seperti `/network/mitra/daftar/`, dashboard dan resource statis tidak boleh tertangkap sebagai slug; validasi slug unik, whitelist karakter, reserved names, serta ownership.
+- Tidak membuat perubahan DNS, custom domain, Workers Route, R2, D1, SW atau GitHub Pages dalam Gate 3B-01.
+
+#### 2. Autentikasi, otorisasi dan web security
+- Enam peran hasil Gate 1D tetap: Super Admin, Admin Operasional, Admin Keuangan, Admin Verifikasi, Mitra, Pelanggan.
+- Login Network menggunakan email dan password 6-35 karakter (desain Gate 2). Batas minimum 6 memiliki risiko; wajib review mitigasi, block compromised passwords, rate-limit, cooldown, MFA admin/keuangan sebelum produksi; perubahan batas hanya setelah persetujuan user.
+- Password wajib di-hash dengan algoritma password hashing yang layak pada runtime terverifikasi, salted, tidak dicatat di log atau disimpan plaintext. Implementasi/parameter dibahas pada Gate 3B-03.
+- API mengotorisasi semua operasi berdasarkan session tervalidasi, role, ownership objek, status verifikasi dan status transaksi; penyembunyian tombol UI bukan otorisasi.
+- Session diutamakan memakai cookie Secure, HttpOnly, host-only, Path=/, masa berlaku terbatas, rotasi login dan invalidasi logout. Bentuk `__Host-` dapat dipilih setelah verifikasi hostname/runtime.
+- `srilexbuditra.work` dan subdomain HTTPS API sama-site tetapi berbeda origin; jika fetch cross-origin dipakai, frontend wajib `credentials: include`, server membatasi CORS ke origin persis `https://srilexbuditra.work`, `Access-Control-Allow-Credentials: true` dan `Vary: Origin`; jangan wildcard.
+- Endpoint perubahan state wajib cek Origin, proteksi CSRF yang terikat session dan fail-closed; tentukan token/headers dan kebijakan `SameSite` saat implementasi. Tidak mengandalkan CORS/SameSite saja untuk CSRF.
+- Validasi email, nomor WA, slug, lampiran, ukuran/MIME dan kepemilikan data; cegah IDOR, XSS, SQL injection, privilege escalation dan enumeration. Audit aktivitas admin dan akses sensitif.
+- Syarat dokumen: foto profil wajib dan dapat diubah; selfie verifikasi berbeda dari foto publik; KTP atau SIM kondisional, NPWP jika dibutuhkan aturan hukum/pajak; **KK tidak diminta**; rekening payout diverifikasi dan ditampilkan masked.
+
+#### 3. Penyimpanan data dan privasi
+- D1 Network terpisah secara fisik/logis dari seluruh D1 existing. Calon domain data: users, roles, partner_profiles, sponsors, referrals, customers, packages, orders, projects, payments, invoices, commissions, journal_entries, withdrawals, identity_verifications, sessions, audit_events, disputes.
+- R2 privat (atau storage privat setara setelah verifikasi) untuk dokumen identitas, selfie, rekening dan berkas transaksi; bucket tanpa public access. Semua download lewat backend dengan otorisasi, masa berlaku pendek dan pencatatan audit.
+- Data publik Mitra (nama yang disetujui, foto profil publik, deskripsi, WA terverifikasi) dipisah ketat dari data identitas, rekening dan verifikasi privat.
+- Secret, keys, dokumen, NIK, token, dan data finansial tidak disimpan di repository website publik atau dikirim ke GA4/Web Push payload. Backup D1 dan R2 membutuhkan prosedur terpisah, enkripsi dan restore test pada sistem terisolasi.
+- Penerapan minimal retention, masking, kebijakan privasi, kontrol akses per role/owner, dan prosedur penghapusan/ekspor yang sesuai hukum berlaku.
+
+#### 4. Proses order, pembayaran dan komisi
+- Harga/DP/domain/hosting/revisi/SLA dikonfigurasi Admin; order harus menyimpan snapshot harga dan kebijakan pada saat dibuat.
+- Semua pembayaran pelanggan menuju kanal/rekening resmi perusahaan; tidak diarahkan ke rekening pribadi Mitra.
+- Konfirmasi pembayaran dari gateway/webhook tervalidasi atau verifikasi admin berjejak audit; gunakan key idempotency dan unique transaction references untuk mencegah penggandaan.
+- Komisi sponsor, level dan prestasi dihitung hanya dari pesanan jasa yang eligible dan telah diverifikasi; tidak ada komisi hanya karena mendaftarkan orang.
+- Ledger finansial tidak ditimpa: perubahan/refund/pembatalan memakai entri koreksi/reversal, dengan maker-checker untuk keuangan, payout, dan perubahan konfigurasi penting.
+- Pencairan (withdraw) hanya setelah rekening payout/identitas diverifikasi, saldo eligible tersedia, dan approval keuangan; audit log menyimpan actor/aksi/waktu/result.
+- Aktivasi transaksi dan bonus jaringan berjenjang nyata perlu persetujuan bisnis, legalitas, pajak dan audit antifraud terpisah; semua tetap nonaktif pada Gate ini.
+
+#### 5. Integrasi existing yang dilindungi
+- Pengaturan Privasi existing hanya mengelola persetujuan analitik. Izin notifikasi diatur melalui kontrol situs browser Chrome; tidak menambah tombol Web Push dalam privasi atau footer.
+- PWA, root `sw.js`, `web-push-r1.js`, `visitor-prompt-coordinator-r37.js`, REV22 R3.7 dan konfigurasi Push tetap existing; tidak membuat SW kedua.
+- GA4 hanya setelah consent existing, tanpa loader atau pageview ganda; sanitasi semua URL/slugs dan jangan mengirim PII/telemetri dashboard privat.
+- Schema.org HTML Microdata, OG/canonical serta OpenSearch hanya untuk halaman publik yang tepat; harga dan profil harus bersumber pada data nyata yang disetujui.
+- JS/CSS Network scoped, tanpa selector/global hook yang mengubah homepage, portfolio, footer, `/portal/`, `/admin/`, `/program/`, `/verify/`.
+
+#### 6. Kondisi yang belum dinyatakan FINAL atau LIVE
+- Belum disetujui: konfigurasi hostname API nyata, DNS, Workers Route, renderer slug dinamis, policy CORS/cookie final, skema D1 SQL, bucket R2, providor pembayaran, hashing implementation, autentikasi MFA, integrasi GA4 runtime, dan notifikasi akun.
+- Tidak ada kode Network frontend/backend atau resource Cloudflare yang diubah atau dibuat pada Gate ini.
+- Gate implementasi memerlukan READ-ONLY validation, final API/data security contract, izin eksplisit sebelum deploy, test regresi dan rollback plan.
+- Semua Gate VERIFY/LOCK dari website lama tetap berlaku dan tidak dibuka ulang karena Network.
+<!-- DPN-GATE3B01-ARCH-20261016:END -->

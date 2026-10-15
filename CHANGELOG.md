@@ -1186,3 +1186,16 @@ Dokumen ini menggunakan dua riwayat versi agar nomor versi website utama tidak t
 - Gate ini mencakup dokumentasi saja; implementasi Network belum dimulai.
 
 <!-- DPN-GATE3A06-INTEGRATION-20261016:END -->
+
+<!-- DPN-GATE3B01-ARCH-20261016:START -->
+### 2026-10-16 - DPN Gate 3B-01 Architecture Documentation Baseline
+
+- Gate 3A-06 pada commit `3f3aa28` telah push dan tersinkron, dengan workflow audit/quality/pages PASS (bukan bukti uji runtime Network).
+- Gate 3B-01 mendokumentasikan batas backend, host API kandidat, sesi/cookie, RBAC, CSRF/CORS, D1, storage privat, alur transaksi, routing slug dinamis dan acceptance gate.
+- Frontend Network tetap beralamat di `/network/`; backend kandidat `network-api.srilexbuditra.work` menunggu verifikasi teknis sebelum dibuat.
+- `/api/*` untuk Client Management dan `/api/push/*` untuk Web Push tetap milik sistem existing.
+- Enam peran, aturan bisnis dan visual yang telah LOCKED tidak diubah.
+- Pengaturan Privasi tetap khusus persetujuan analitik; izin notifikasi melalui browser, tidak membuat kontrol notifikasi/footer baru.
+- Pembayaran nyata, payout, dan komisi jaringan berjenjang diblokir hingga audit legal, pajak, keamanan dan simulasi dinyatakan lulus.
+- Perubahan Gate ini hanya dokumentasi lima Markdown existing; tidak membuat/mengubah kode frontend, Worker, D1, R2, DNS, routing, maupun produksi.
+<!-- DPN-GATE3B01-ARCH-20261016:END -->

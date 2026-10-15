@@ -2039,3 +2039,38 @@ Persetujuan desain tidak berarti persetujuan aktivasi keuangan atau bonus jaring
 Semua tahapan implementasi tetap pending sampai arsitektur dan risiko disetujui.
 
 <!-- DPN-GATE3A06-INTEGRATION-20261016:END -->
+
+<!-- DPN-GATE3B01-ARCH-20261016:START -->
+### DPN Gate 3B-01 - Roadmap Implementasi Arsitektur yang Aman
+
+**Status:** batas arsitektur disetujui sebagai dokumentasi; keputusan deployment spesifik tetap pending verifikasi dan persetujuan tersendiri.
+
+#### Prinsip yang dikunci
+1. Halaman baru hanya di `https://srilexbuditra.work/network/`; jangan mengubah navbar, footer, halaman, program, Client Portal, atau REV21/REV22 existing.
+2. Gunakan Worker/API dan database D1 Network terpisah, serta storage privat dengan pemeriksaan owner dan peran pada backend.
+3. Hindari konflik dengan `/api/*`, `/api/push/*`, dan semua Cloudflare Workers Routes existing.
+4. Desain kandidat hostname `network-api.srilexbuditra.work` tidak sama dengan perintah menambahkan DNS/custom domain/route; verifikasi dahulu.
+5. URL publik Mitra `/network/mitra/{slug}/` memerlukan perenderan dinamis nyata yang menjaga HTTP 200/404, canonical, OG, Schema Microdata, dan SEO tanpa mengintersep rute reserved.
+6. Authentication email-only, password 6-35 karakter, foto profil wajib serta enam peran adalah baseline desain terdahulu; kelayakan keamanan password minimum harus direview sebelum produksi, bukan diam-diam diubah.
+7. Session dan permission server-side, CSRF, CORS allowlist exact-origin, audit log dan fail-closed wajib diuji.
+8. Pengaturan Privasi hanya mengelola analytics consent; Web Push permission dikelola browser; tanpa launcher/footer Web Push baru.
+9. Transaksi, komisi, payout, referral, refund serta bonus jaringan mengikuti dokumen Gate 1D dan wajib ledger, snapshot harga, idempotency, maker-checker, dan audit terpisah.
+10. Tidak ada pembayaran atau pencairan riil, ataupun bonus perekrutan; bonus penjualan berjenjang menunggu pemeriksaan legal/pajak/anti-fraud sebelum aktivasi.
+
+#### Tahapan validasi sebelum pembuatan layanan
+- **3B-02 READ-ONLY**: pastikan status tujuh Cloudflare Workers Routes, zona DNS, proxy GitHub Pages, host API yang tersedia, rute dinamis dan CSP/CORS/cookie pada lingkungan sebenarnya. Jangan ubah route mana pun.
+- **3B-03 DOCUMENTATION**: kunci kontrak endpoint API, matriks RBAC dan ownership, model sesi/email login/WA, anti-abuse, pemisahan identitas serta persetujuan.
+- **3B-04 DOCUMENTATION**: kunci D1 Network, R2 privat, retensi, enkripsi/secrets, audit log, event keuangan, backup, dan simulasi pemulihan.
+- **3B-05 DESIGN QA**: uji rancangan slug dinamis & reserved route, biaya/rate limit, alur checkout dan callback pembayaran idempotent, mitigasi CORS/CSRF, validasi input, otorisasi IDOR.
+- **GATE IMPLEMENTASI TERPISAH**: baru setelah approval eksplisit dapat membuat Worker/D1/R2, mengonfigurasi DNS/routing, menambahkan frontend Network, dan mengaktifkan fitur satu per satu.
+- **GATE UJI & RILIS**: test 320/360/390/768/1366/1440/1920 px, navigasi 3-kolom, 2 CTA sejajar, smoke test semua modul existing; audit security dan legal; rollback dan restore plan sebelum production enable.
+
+#### Kriteria penolakan perubahan
+- Menyentuh `sw.js`, JS/CSS root, Pengaturan Privasi, footer, program existing, database lama, atau route milik Client Management/Push tanpa review/approval khusus.
+- Endpoint Network memakai cookies lintas origin tanpa CORS allowlist dan CSRF, atau menyimpan password/token/dokumen identitas di halaman/file publik.
+- Profil Mitra dinamis memakai HTTP 404 untuk halaman sah atau mengeluarkan HTML metadata fiktif.
+- Event GA4 membawa PII atau dikirim tanpa consent; analitik publik merekam dashboard privat.
+- Bonus/komisi dicairkan berdasarkan rekrutmen semata atau data transaksi belum tervalidasi.
+
+**Gate 3B-01 yang dikunci adalah kontrak batas sistem, bukan persetujuan pembuatan resource Cloudflare atau aktivasi uang nyata.**
+<!-- DPN-GATE3B01-ARCH-20261016:END -->

@@ -511,3 +511,18 @@ Gate 3A-05B/05C sudah PASS dan tidak perlu diulang.
 Status Gate 3A-06: dokumentasi; bukan deployment aplikasi.
 
 <!-- DPN-GATE3A06-INTEGRATION-20261016:END -->
+
+<!-- DPN-GATE3B01-ARCH-20261016:START -->
+### DPN Gate 3B-01 - Peta Rujukan Arsitektur
+
+Status: ARCHITECTURE BASELINE / DOCUMENTATION ONLY, bukan bukti deploy.
+
+- `README.md`: ringkasan ruang lingkup dan baseline perlindungan.
+- `CHANGELOG.md`: kronologi, checkpoint dan keputusan.
+- `docs/ROADMAP.md`: acceptance gates, validasi Cloudflare, keamanan dan syarat implementasi.
+- `docs/PLATFORM.md`: kontrak teknis API, data, auth, risiko serta batas integrasi.
+- Keputusan sebelumnya Gate 0, 1, 1D, 2 dan 3A-06 tetap berlaku, tanpa mengulang pekerjaan VERIFIED/LOCKED.
+- Baseline GitHub yang digunakan sebelum dokumentasi Gate 3B-01: `3f3aa285af9899f12098729356d7c0d62cbe332e`.
+- Snapshot asli source: `srilexbuditra.github.io-backup1` pada `0cfbc84`.
+- Tidak ada `/network/` runtime, endpoint API atau database baru yang diaktifkan oleh catatan ini.
+<!-- DPN-GATE3B01-ARCH-20261016:END -->

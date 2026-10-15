@@ -642,3 +642,21 @@ Arsip perlindungan: `srilexbuditra.github.io-backup1`.
 - Ketentuan terbaru ini mengesampingkan rancangan DPN terdahulu yang bertentangan, tanpa mengubah rekam jejak dokumentasi historis.
 
 <!-- DPN-GATE3A06-INTEGRATION-20261016:END -->
+
+<!-- DPN-GATE3B01-ARCH-20261016:START -->
+### DPN Gate 3B-01 - Baseline Arsitektur Backend Terisolasi (16 Oktober 2026)
+
+**Status: ARCHITECTURE BASELINE / DOCUMENTATION ONLY; belum ada implementasi atau aktivasi produksi.**
+
+- Titik lanjut: Gate 3A-06 VERIFIED/LOCKED pada commit `3f3aa285af9899f12098729356d7c0d62cbe332e`.
+- Arsip proteksi sebelum Network: `srilexbuditra.github.io-backup1` tetap pada `0cfbc84cf9a7a7859a6e541eb0c5f7a38279512d`; jangan ditimpa.
+- Frontend publik dan dashboard Network tetap dalam `https://srilexbuditra.work/network/` sesuai Gate 1 dan Gate 2.
+- Backend, autentikasi, D1, penyimpanan dokumen dan transaksi Network dipisahkan dari seluruh sistem existing.
+- Kandidat backend: `network-api.srilexbuditra.work` (desain, **belum dibuat/belum disetujui untuk deploy**); jangan merebut `/api/*` atau `/api/push/*`.
+- Routing website Mitra `/network/mitra/{slug}/` memerlukan solusi dinamis yang valid untuk HTTP status, SEO, OG, Microdata dan canonical; cara routing Cloudflare masih memerlukan validasi.
+- Privasi existing hanya mengelola persetujuan analitik; izin notifikasi merupakan pengaturan browser; footer, Web Push REV22, PWA dan semua UI existing tidak boleh diubah.
+- Enam peran, desain katalog tiga kolom, CTA Mitra sejajar, foto profil wajib serta login email/password 6-35 karakter tetap mengikuti keputusan Gate 1D/Gate 2.
+- Belum ada API, Worker, D1, R2, akun Network, pembayaran, komisi, DNS, maupun halaman Network yang diaktifkan oleh Gate ini.
+
+Kontrak teknis terdapat pada `docs/PLATFORM.md`; tahapan validasi sebelum implementasi pada `docs/ROADMAP.md`.
+<!-- DPN-GATE3B01-ARCH-20261016:END -->
