@@ -98,3 +98,25 @@
   .case-nav .nav-cta { display:inline-flex; }
   .case-footer > div { flex-wrap:wrap; }
 }
+
+/* GATE70: LIVE case dot uses the same blink frames as homepage .pulse. */
+.case-live i {
+  animation: sb-case-live-blink 1.4s ease-in-out infinite;
+}
+@keyframes sb-case-live-blink {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+    box-shadow: 0 0 5px var(--green), 0 0 10px rgba(0, 216, 106, 0.45);
+  }
+  50% {
+    opacity: 0.55;
+    transform: scale(0.82);
+    box-shadow: 0 0 2px var(--green), 0 0 5px rgba(0, 216, 106, 0.25);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .case-live i {
+    animation: none;
+  }
+}

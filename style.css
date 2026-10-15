@@ -9397,3 +9397,15 @@ body {
 }
 
 /* ===== /FAQ TYPOGRAPHY COLOR ALIGNMENT REVISION 10 ===== */
+
+/* GATE70: LIVE indicator dots blink like the existing .pulse. */
+.flagship-live i,
+.featured-live-badge i {
+  animation: satellite-blink 1.4s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .flagship-live i,
+  .featured-live-badge i {
+    animation: none;
+  }
+}
