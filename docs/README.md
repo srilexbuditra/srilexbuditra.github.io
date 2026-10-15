@@ -496,3 +496,18 @@ Dokumen referensi:
 Status: DESIGN APPROVED / DOCUMENTATION BASELINE. Implementasi masih belum dimulai.
 Hanya lima file Markdown existing digunakan; tidak membuat file Markdown baru.
 <!-- DPN-GATE2-VISUAL-20261015:END -->
+
+<!-- DPN-GATE3A06-INTEGRATION-20261016:START -->
+
+### DPN Gate 3A-06 - Referensi Integrasi
+
+- `README.md`: keputusan dan kontrak proyek.
+- `CHANGELOG.md`: kronologi audit serta perubahan dokumentasi.
+- `docs/ROADMAP.md`: tahapan implementasi dan acceptance gates.
+- `docs/PLATFORM.md`: batas teknis serta integrasi sistem existing.
+
+Checkpoint: `0cfbc84`; backup `srilexbuditra.github.io-backup1`.
+Gate 3A-05B/05C sudah PASS dan tidak perlu diulang.
+Status Gate 3A-06: dokumentasi; bukan deployment aplikasi.
+
+<!-- DPN-GATE3A06-INTEGRATION-20261016:END -->

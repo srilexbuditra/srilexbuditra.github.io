@@ -908,3 +908,64 @@ Status: ARSITEKTUR DIRANCANG / BELUM DIIMPLEMENTASIKAN.
 - Desain yang disetujui adalah dasar implementasi, bukan bukti fitur telah bekerja.
 - Seluruh penerapan wajib disertai uji keamanan serta non-regresi sistem existing.
 <!-- DPN-GATE2-VISUAL-20261015:END -->
+
+<!-- DPN-GATE3A06-INTEGRATION-20261016:START -->
+
+### DPN Gate 3A-06 - Kontrak Teknis Non-Regresi
+
+#### Baseline
+- GitHub main: `0cfbc84cf9a7a7859a6e541eb0c5f7a38279512d`.
+- Backup lokal VERIFIED: `srilexbuditra.github.io-backup1`.
+- Semua Gate/keputusan VERIFIED atau LOCKED tetap berlaku.
+- Gate dokumentasi tidak mengubah HTML, CSS, JS, SW, Worker, D1, atau routing.
+
+#### Privacy dan browser permission
+- `assets/js/visitor-analytics.js` adalah acuan komponen privasi existing.
+- `sb-privacy-launcher` dibuat secara dinamis.
+- `sb_privacy_consent_v1` adalah preferensi consent existing.
+- Pengaturan Privasi dikhususkan untuk persetujuan analitik.
+- Jangan menambahkan pengelolaan notifikasi ke Pengaturan Privasi.
+- Izin notifikasi situs dapat dikelola melalui kontrol situs Chrome.
+- Jangan menambah tautan notifikasi atau instalasi ke footer existing.
+- Pertahankan tampilan privasi dan footer yang sudah disetujui.
+- Dashboard Network memerlukan desain akses consent tanpa telemetri privat.
+- Tidak mengubah kode existing untuk menyelesaikan kebutuhan tersebut tanpa review.
+
+#### Google Analytics 4
+- Gunakan loader existing hanya sesuai persetujuan analitik.
+- Jangan membuat Measurement ID, gtag loader, atau pageview kedua.
+- Event Network harus diverifikasi agar tidak dihitung ganda.
+- Jangan mengirim identitas, token, isi formulir, rekening, atau data privat.
+- Normalisasi URL publik Mitra sebelum mencatat telemetry.
+- Dashboard privat tidak boleh mengirim data sensitif ke Analytics.
+- Persetujuan analitik tidak sama dengan permission notifikasi browser.
+
+#### PWA dan Web Push
+- Gunakan manifest root dan Service Worker existing.
+- Pertahankan `pwa-install-r1.js` dan `web-push-r1.js`.
+- Pertahankan `visitor-prompt-coordinator-r37.js` dan aturan prompt.
+- Jangan membuat Service Worker atau panel instalasi kedua.
+- Tidak boleh mengubah perilaku REV22 yang sudah normal.
+- Permission browser dikelola oleh pengguna melalui browser.
+- Mekanisme langganan dan notifikasi existing tetap dipertahankan.
+- Notifikasi khusus akun memerlukan audit autentikasi dan otorisasi tersendiri.
+
+#### Schema Microdata dan OpenSearch
+- HTML publik Network menggunakan Schema.org Microdata yang sesuai.
+- Service/Offer hanya berisi layanan, harga, dan ketentuan yang benar.
+- Identitas penyedia jasa dan identitas Mitra harus dibedakan.
+- Jangan mengekspos identitas privat atau membuat rating palsu.
+- Gunakan `/opensearch.xml` existing.
+- Dashboard, dokumen sensitif, dan transaksi privat tidak diindeks publik.
+
+#### Isolasi dan non-regresi
+- CSS, JS, dan UI baru harus dibatasi pada Network.
+- Route `/api/*` existing digunakan Client Management.
+- Route `/api/push/*` existing digunakan layanan Web Push.
+- Backend Network tidak boleh menimpa kedua route tersebut.
+- Isolasi RBAC, auth, transaksi, komisi, dan database wajib diuji.
+- Semua halaman existing diperlakukan sebagai baseline terlindungi.
+- Jika integrasi memerlukan perubahan file bersama, wajib audit dan approval terpisah.
+- Dokumentasi ini tidak memberi izin untuk mengubah sistem produksi.
+
+<!-- DPN-GATE3A06-INTEGRATION-20261016:END -->

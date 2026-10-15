@@ -621,3 +621,24 @@ Status: Gate 2A sampai Gate 2F disetujui sebagai spesifikasi desain. Belum diimp
 Rincian: `docs/ROADMAP.md` dan `docs/PLATFORM.md`.
 Tidak ada aplikasi Network, akun, transaksi, atau perubahan produksi yang diaktifkan oleh dokumentasi ini.
 <!-- DPN-GATE2-VISUAL-20261015:END -->
+
+<!-- DPN-GATE3A06-INTEGRATION-20261016:START -->
+
+### DPN Gate 3A-06 - Kontrak Integrasi Existing
+
+Status: DOCUMENTATION ONLY / IMPLEMENTATION NOT STARTED.
+Baseline GitHub main: `0cfbc84`.
+Arsip perlindungan: `srilexbuditra.github.io-backup1`.
+
+- Proyek Network berjalan hanya dalam batas sistem yang telah disetujui.
+- Gate dan keputusan VERIFIED / LOCKED sebelumnya tidak dibatalkan atau diulang.
+- Tidak mengubah tampilan maupun fungsi website existing yang telah normal.
+- Pengaturan Privasi khusus persetujuan analitik; tidak untuk mengelola Web Push.
+- Izin notifikasi situs dikelola melalui kontrol situs pada browser.
+- Footer, privasi, Web Push REV22 R3.7, PWA, dan GA4 existing dipertahankan.
+- Network tidak membuat duplikasi sistem privasi, analitik, PWA, atau push.
+- Microdata diterapkan hanya pada konten Network yang sesuai untuk publik.
+- Backend Network harus terisolasi dari API dan data program existing.
+- Ketentuan terbaru ini mengesampingkan rancangan DPN terdahulu yang bertentangan, tanpa mengubah rekam jejak dokumentasi historis.
+
+<!-- DPN-GATE3A06-INTEGRATION-20261016:END -->

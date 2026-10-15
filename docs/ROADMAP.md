@@ -2015,3 +2015,27 @@ Seluruh fungsi dan tampilan visual existing tetap dilindungi; tidak ada perubaha
 
 Persetujuan desain tidak berarti persetujuan aktivasi keuangan atau bonus jaringan nyata.
 <!-- DPN-GATE2-VISUAL-20261015:END -->
+
+<!-- DPN-GATE3A06-INTEGRATION-20261016:START -->
+
+### DPN Gate 3A-06 - Roadmap Non-Regresi
+
+1. Pertahankan seluruh Gate dan keputusan VERIFIED / LOCKED.
+2. Kunci isolasi tampilan `/network/` dari homepage, portfolio, portal, dan program.
+3. Gunakan persetujuan analitik existing tanpa membuat privacy launcher kedua.
+4. Pengaturan Privasi tidak mengatur izin notifikasi browser.
+5. Pertahankan panel, footer, PWA, dan Web Push existing tanpa perubahan visual.
+6. Validasi cara memasang skrip existing pada Network sebelum implementasi.
+7. Cegah GA4 pageview ganda dan pengiriman data pribadi.
+8. Rancang normalisasi URL Mitra serta pengecualian dashboard privat.
+9. Gunakan Schema.org Microdata pada halaman publik sesuai data sebenarnya.
+10. Gunakan `/opensearch.xml` existing; jangan indeks data privat.
+11. Pilih endpoint API Network setelah audit Cloudflare Routes dan `/api/*`.
+12. Isolasi autentikasi, database, pembayaran, komisi, dan audit log Network.
+13. Pertahankan katalog tiga kolom dan dua CTA Mitra berdampingan sesuai Gate 2.
+14. Uji 320/360/390/768/1366/1440/1920 px dan regresi halaman existing.
+15. Simpan perubahan backend dan deployment untuk persetujuan terpisah.
+
+Semua tahapan implementasi tetap pending sampai arsitektur dan risiko disetujui.
+
+<!-- DPN-GATE3A06-INTEGRATION-20261016:END -->

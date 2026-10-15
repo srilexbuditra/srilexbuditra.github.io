@@ -1168,3 +1168,21 @@ Dokumen ini menggunakan dua riwayat versi agar nomor versi website utama tidak t
 - Kode dan visual existing tetap dilindungi; Gate 2 belum mengaktifkan implementasi Network.
 - Harga katalog, nilai komisi, aturan keuangan final, serta penerapan keamanan backend masih menjadi bagian tahap berikutnya.
 <!-- DPN-GATE2-VISUAL-20261015:END -->
+
+<!-- DPN-GATE3A06-INTEGRATION-20261016:START -->
+
+### 2026-10-16 - DPN Gate 3A-06 Integration Contract
+
+- Backup GitHub main `0cfbc84` telah VERIFIED, 889 tracked files.
+- Gate 3A-05B PASS: 121 HTML diperiksa, 0 read errors.
+- Gate 3A-05C PASS: pemetaan entrypoint privasi, analitik, PWA, push, manifest, dan OpenSearch.
+- Visitor Analytics ditemukan pada 101 HTML.
+- PWA Install, Web Push, dan Prompt Coordinator direferensikan langsung oleh homepage.
+- Kontrak final: Pengaturan Privasi hanya mengelola persetujuan analitik.
+- Pengguna mengatur izin notifikasi melalui pengaturan browser.
+- Footer dan fungsi PRIVACY/PWA/PUSH existing tidak boleh diubah.
+- Tidak boleh membuat mekanisme Network yang menggandakan sistem existing.
+- Hasil audit source bukan bukti pengujian runtime untuk halaman Network.
+- Gate ini mencakup dokumentasi saja; implementasi Network belum dimulai.
+
+<!-- DPN-GATE3A06-INTEGRATION-20261016:END -->
