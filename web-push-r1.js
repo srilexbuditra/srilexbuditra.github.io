@@ -24,7 +24,6 @@
   let button;
   let badge;
   let statusText;
-  let manageButton = null;
   let permissionRefreshTimer = null;
   let subscription = null;
   let busy = false;
@@ -285,13 +284,11 @@
     badge.textContent = labels[state] || "Status";
     statusText.textContent = message;
 
-    // R3.4: an active subscriber does not need a permanent floating bell.
-    // A discreet footer control preserves opt-out without adding clutter.
+    // REV22 R3.7: keep active subscribers free from a floating bell.
+    // Opt-out stays available only from the existing Privacy settings panel.
     const isActive = state === "active" &&
       (previewMode || (supported() && Notification.permission === "granted"));
-    const managing = state === "busy" && manageButton && !manageButton.hidden;
-    launcher.hidden = isActive || Boolean(managing);
-    if (manageButton) manageButton.hidden = !(isActive || managing);
+    launcher.hidden = isActive || (state === "busy" && !panel.hidden);
     if (isActive) setOpen(false);
 
     if (state === "active") {
@@ -723,19 +720,16 @@
     panel.append(card);
     document.body.append(panel, launcher);
 
-    // Keep the old "Nonaktifkan Notifikasi" capability available after the
-    // floating control is hidden. This non-floating link lives in the footer.
-    const footerLegal = document.querySelector(".sb-footer-legal");
-    if (footerLegal) {
-      manageButton = document.createElement("button");
-      manageButton.type = "button";
-      manageButton.className = "sb-push-manage-link";
-      manageButton.textContent = "Kelola Notifikasi";
-      manageButton.setAttribute("aria-controls", "sbPushPanel");
-      manageButton.hidden = true;
-      footerLegal.append(manageButton);
-      manageButton.addEventListener("click", () => setOpen(true));
-    }
+    // No persistent footer or secondary launcher. Privacy settings may
+    // open the existing Push panel on a deliberate, same-page user action.
+    window.SBPushManagement = Object.freeze({
+      open() {
+        if (!privacyReady()) return false;
+        stopInviteTimer();
+        setOpen(true);
+        return !panel.hidden;
+      }
+    });
 
     launcher.addEventListener("click", () => {
       stopInviteTimer();
