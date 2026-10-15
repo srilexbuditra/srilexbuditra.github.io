@@ -465,24 +465,7 @@
     accept.addEventListener('click', grantAnalytics);
 
     actions.append(reject, accept);
-    panel.append(header, description, status, privacyLink);
-
-    // Settings-only: manage an existing Web Push subscription without a
-    // permanent footer link or a new floating control.
-    if (settingsMode && current && typeof window.SBPushManagement?.open === 'function') {
-      const managePush = document.createElement('a');
-      managePush.className = 'sb-privacy-consent__link';
-      managePush.href = '#sbPushPanel';
-      managePush.textContent = 'Kelola Notifikasi';
-      managePush.addEventListener('click', (event) => {
-        event.preventDefault();
-        removeConsentPanel();
-        window.SBPushManagement?.open?.();
-      });
-      panel.appendChild(managePush);
-    }
-
-    panel.append(actions);
+    panel.append(header, description, status, privacyLink, actions);
     document.body.appendChild(panel);
     bindConsentToVisualViewport();
   }
