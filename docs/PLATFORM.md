@@ -1026,3 +1026,48 @@ Status: ARSITEKTUR DIRANCANG / BELUM DIIMPLEMENTASIKAN.
 - Gate implementasi memerlukan READ-ONLY validation, final API/data security contract, izin eksplisit sebelum deploy, test regresi dan rollback plan.
 - Semua Gate VERIFY/LOCK dari website lama tetap berlaku dan tidak dibuka ulang karena Network.
 <!-- DPN-GATE3B01-ARCH-20261016:END -->
+
+<!-- DPN-GATE3B02-ROUTING-20261016:START -->
+### DPN Gate 3B-02 - Kontrak Hosting, Dynamic Mitra Routing dan API Boundaries
+
+**Status:** READ-ONLY VALIDATED ARCHITECTURE; not deployed.
+**Source baseline:** `fbc1b961aafcc532a09fb682fd6004936f555fb9`.
+**Immutable pre-Network backup:** `srilexbuditra.github.io-backup1` pada `0cfbc84`.
+
+#### A. Bukti kondisi existing dari dashboard
+- Workers Routes untuk zona `srilexbuditra.work`: 7 baris, termasuk `/api/push/*` dan `/api/*`, route API Ketahanan Pangan, serta branding Umroh. Semua route dilindungi, tidak boleh disunting.
+- DNS zona memiliki 23 record; pencarian `network-api` menampilkan 0 baris saat audit.
+- Inventaris Workers & Pages: 12 aplikasi terlihat; tidak tampak Worker khusus Digital Partner Network.
+- Proyek Cloudflare Pages `srilexbuditra-github-io` menunjuk Custom Domain `staging.srilexbuditra.work` (Active, SSL enabled); `srilexbuditra.work` tidak tertera pada Custom Domains proyek Pages tersebut.
+- Berdasarkan baseline DNS sebelumnya, apex produksi menggunakan Cloudflare Proxy ke GitHub Pages; verifikasi routing HTTP sebelum perubahan implementasi tetap diwajibkan.
+- Daftar Workers Routes tidak mencakup seluruh Worker Custom Domains; hasil pencarian DNS bukan jaminan final bahwa hostname tersedia.
+
+#### B. Pemisahan frontend produksi, staging dan API
+- Frontend Network tetap menggunakan `https://srilexbuditra.work/network/`; desain tidak memigrasikan produksi ataupun menimpa staging.
+- `staging.srilexbuditra.work` dilindungi sebagai lingkungan existing, bukan sandbox yang bebas diubah tanpa persetujuan.
+- Kandidat Worker Custom Domain `https://network-api.srilexbuditra.work` harus dikonfirmasi lagi saat provisioning; belum aktif, tidak boleh ditambahkan oleh Gate ini.
+- Jangan mengalihkan `/api/*` milik Client Management atau `/api/push/*` milik Web Push REV22; jangan menyentuh tujuh route existing lainnya.
+- Worker Network dan pemisahan binding D1/R2/secrets, domain cookie, CORS, rate limit, logging serta kebijakan akses perlu audit terpisah sebelum implementasi.
+
+#### C. Profil dinamis Mitra
+- URL publik tetap `/network/mitra/{slug}/`; GitHub Pages statis tidak otomatis menghasilkan HTML berbeda untuk setiap slug.
+- Kandidat edge renderer/router ditargetkan khusus profil dinamis dan diuji dahulu secara terisolasi, bukan wildcard yang mengubah seluruh `/network/`.
+- Reserved route mencakup `/network/mitra/`, `/network/mitra/daftar/`, dashboard, aset statis dan nama sistem; rute existing wajib diteruskan ke origin yang benar.
+- Validasi slug unik, canonical lowercase jika disepakati, daftar reserved names, id Mitra sah, status publik, dan kontrol perubahan slug.
+- HTTP 200 untuk profil valid, 404 untuk slug tidak ada/tidak publik; jangan gunakan halaman 404 global untuk berpura-pura menjadi profil sah.
+- HTML publik harus memiliki judul, deskripsi, canonical, Open Graph, Schema.org Microdata dan konten yang sesuai data publik yang disetujui.
+- Jangan mengekspose KTP/SIM, NPWP, nomor rekening, dokumen identitas, token, sesi, atau data pelanggan pada HTML maupun metadata.
+- Desain cache harus menghindari kebocoran antar pengguna, stale harga/WA referral, serta injection; fallback dan pembatalan deploy harus diuji.
+
+#### D. Keamanan API dan sesi
+- Frontend apex dan hostname API adalah origin berbeda meskipun sama-site. Browser fetch dengan cookie memerlukan `credentials: include` serta CORS allowlist exact `https://srilexbuditra.work`, `Access-Control-Allow-Credentials: true` dan `Vary: Origin`.
+- Session harus diverifikasi di backend dengan cookie host-only, Secure, HttpOnly, masa berlaku terbatas, rotasi dan logout; CSRF memerlukan proteksi eksplisit bagi aksi perubahan data.
+- Jangan memakai CORS `*` dengan kredensial atau mengandalkan tampilan dashboard/role di sisi klien untuk otorisasi.
+- Sistem RBAC dan ownership, dokumen R2 privat, anti-IDOR, validasi webhook pembayaran dan ledger append-only diselesaikan pada Gate teknis berikutnya.
+- Tidak mengirim PII ke GA4, Microdata, Web Push, halaman publik, atau log; Pengaturan Privasi tetap analytics-only, izin push melalui kontrol browser.
+
+#### E. Perlindungan dan gerbang implementasi
+- Semua Gate VERIFIED/LOCKED sebelum ini tetap menjadi sumber keputusan; footer, desain responsif, GA4, PRIVACY, PWA, Web Push REV22 dan seluruh program existing tidak diubah.
+- Tidak ada pembuatan/penyuntingan DNS, Workers Route, Worker Custom Domain, Cloudflare Pages, D1/R2, Service Worker, HTML/CSS/JS, secret, maupun konfigurasi produksi dalam Gate 3B-02.
+- Sebelum provisioning, wajib ada review DNS/Custom Domain final, spesifikasi router reserved path, keamanan session/RBAC/CORS/CSRF, pengujian non-regresi, serta rollback yang jelas.
+<!-- DPN-GATE3B02-ROUTING-20261016:END -->

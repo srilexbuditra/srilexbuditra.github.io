@@ -660,3 +660,18 @@ Arsip perlindungan: `srilexbuditra.github.io-backup1`.
 
 Kontrak teknis terdapat pada `docs/PLATFORM.md`; tahapan validasi sebelum implementasi pada `docs/ROADMAP.md`.
 <!-- DPN-GATE3B01-ARCH-20261016:END -->
+
+<!-- DPN-GATE3B02-ROUTING-20261016:START -->
+### DPN Gate 3B-02 - Validasi Hosting dan Routing (16 Oktober 2026)
+
+**Status: READ-ONLY VALIDATION DOCUMENTED; belum ada implementasi atau perubahan infrastruktur.**
+
+- GitHub main sebelum Gate ini: `fbc1b961aafcc532a09fb682fd6004936f555fb9`; backup1 tetap di `0cfbc84`.
+- Audit layar Cloudflare: 7 Workers Routes existing, 23 DNS records di zona, dan 12 aplikasi Workers & Pages; seluruhnya tidak diubah.
+- Pencarian DNS `network-api` menghasilkan 0 record pada saat audit; ketersediaan final Worker Custom Domain masih memerlukan pemeriksaan saat provisioning.
+- Proyek Cloudflare Pages `srilexbuditra-github-io` memiliki Custom Domain `staging.srilexbuditra.work` ACTIVE dengan SSL; domain utama `srilexbuditra.work` tidak tercantum pada proyek Pages itu.
+- Domain produksi dipertahankan pada pola Cloudflare Proxy + GitHub Pages existing. Tidak ada migrasi produksi ke Cloudflare Pages staging.
+- Kandidat API tetap `network-api.srilexbuditra.work` dan kandidat edge router khusus `/network/mitra/{slug}/`; kedua komponen BELUM dibuat.
+- Footer, Pengaturan Privasi (khusus consent analitik), Web Push REV22, PWA, homepage, program, dan seluruh Gate VERIFIED/LOCKED tetap terlindungi.
+- Rincian risiko/kontrak ada pada `docs/PLATFORM.md`, urutan validasi pada `docs/ROADMAP.md`.
+<!-- DPN-GATE3B02-ROUTING-20261016:END -->

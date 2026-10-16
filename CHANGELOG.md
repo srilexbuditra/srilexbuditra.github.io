@@ -1199,3 +1199,16 @@ Dokumen ini menggunakan dua riwayat versi agar nomor versi website utama tidak t
 - Pembayaran nyata, payout, dan komisi jaringan berjenjang diblokir hingga audit legal, pajak, keamanan dan simulasi dinyatakan lulus.
 - Perubahan Gate ini hanya dokumentasi lima Markdown existing; tidak membuat/mengubah kode frontend, Worker, D1, R2, DNS, routing, maupun produksi.
 <!-- DPN-GATE3B01-ARCH-20261016:END -->
+
+<!-- DPN-GATE3B02-ROUTING-20261016:START -->
+### 2026-10-16 - DPN Gate 3B-02 Read-Only Infrastructure Validation
+
+- Menggunakan checkpoint Gate 3B-01 `fbc1b96` yang sudah Safe Push dan lokal/remote sinkron.
+- Screenshot Workers Routes mengonfirmasi tujuh pola existing; tidak tampak route Network dalam daftar.
+- Pencarian DNS `network-api` menghasilkan nol record; hal ini bukan jaminan ketersediaan Custom Domain Worker.
+- Daftar Workers & Pages memperlihatkan 12 aplikasi; tidak terlihat aplikasi khusus Network.
+- Custom Domain Cloudflare Pages `srilexbuditra-github-io`: hanya `staging.srilexbuditra.work`, status Active dan SSL enabled.
+- Pilihan desain: biarkan produksi Cloudflare Proxy + GitHub Pages, jangan migrasi ke staging.
+- Kandidat API host dan router profil slug Mitra masih menunggu implementasi serta validasi runtime terpisah.
+- Tidak mengubah DNS, Worker, Cloudflare Pages, GitHub Pages, HTML/CSS/JS, SW, D1/R2 atau aplikasi produksi.
+<!-- DPN-GATE3B02-ROUTING-20261016:END -->

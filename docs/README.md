@@ -526,3 +526,18 @@ Status: ARCHITECTURE BASELINE / DOCUMENTATION ONLY, bukan bukti deploy.
 - Snapshot asli source: `srilexbuditra.github.io-backup1` pada `0cfbc84`.
 - Tidak ada `/network/` runtime, endpoint API atau database baru yang diaktifkan oleh catatan ini.
 <!-- DPN-GATE3B01-ARCH-20261016:END -->
+
+<!-- DPN-GATE3B02-ROUTING-20261016:START -->
+### DPN Gate 3B-02 - Indeks Validasi Hosting dan Routing
+
+**Tipe:** screenshot/read-only infrastructure audit, belum konfigurasi live Network.
+
+- `README.md`: ringkasan keputusan hosting, isolasi, dan checkpoint.
+- `CHANGELOG.md`: bukti status pemeriksaan Workers Routes, DNS, Pages dan aplikasi.
+- `docs/ROADMAP.md`: syarat penuntasan routing dinamis, sesi API dan non-regresi.
+- `docs/PLATFORM.md`: batas teknis production/staging, API, cookies, router Mitra, dan keamanan.
+- Audit menyatakan 7 route existing dan 12 aplikasi terlihat; hostname Network belum ditemukan pada daftar yang diperiksa.
+- Cloudflare Pages memiliki domain staging aktif; jangan menganggap domain produksi berada di Pages itu.
+- Gate 0, 1, 1D, 2, 3A-06, dan 3B-01 yang telah VERIFIED/LOCKED tidak diulang atau diubah.
+- Checkpoint masuk: `fbc1b96`; backup1 tetap `0cfbc84`.
+<!-- DPN-GATE3B02-ROUTING-20261016:END -->

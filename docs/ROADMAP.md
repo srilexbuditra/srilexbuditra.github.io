@@ -2074,3 +2074,33 @@ Semua tahapan implementasi tetap pending sampai arsitektur dan risiko disetujui.
 
 **Gate 3B-01 yang dikunci adalah kontrak batas sistem, bukan persetujuan pembuatan resource Cloudflare atau aktivasi uang nyata.**
 <!-- DPN-GATE3B01-ARCH-20261016:END -->
+
+<!-- DPN-GATE3B02-ROUTING-20261016:START -->
+### DPN Gate 3B-02 - Validasi Routing dan Batas Hosting
+
+**Status:** hasil screenshot Cloudflare telah ditelaah; desain belum memberi izin membuat resource baru.
+
+#### Hasil audit yang telah selesai
+1. Tujuh Workers Routes existing teridentifikasi; `/api/*` dan `/api/push/*` milik sistem lama dan wajib tetap normal.
+2. DNS zona berisi 23 record; filter `network-api` tidak menampilkan record.
+3. Daftar Workers & Pages menunjukkan 12 aplikasi, tanpa aplikasi Network yang tampak pada daftar tersebut.
+4. Cloudflare Pages `srilexbuditra-github-io` memiliki `staging.srilexbuditra.work` aktif dengan SSL; domain apex produksi tidak terdaftar sebagai Custom Domain proyek tersebut.
+5. Backend dan edge router Network tetap belum dibuat; temuan UI dashboard bukan pengujian runtime atau inventaris semua Custom Domain Worker.
+
+#### Rencana keputusan yang aman sebelum provisioning
+1. Pertahankan `srilexbuditra.work` pada hosting existing; jangan memindahkan apex ke Cloudflare Pages staging.
+2. Simpan halaman publik/statis Network dalam `/network/`, dengan CSS/JS bernamespace khusus Network.
+3. Validasi Worker Custom Domain `network-api.srilexbuditra.work` secara final sebelum membuatnya; tidak mengambil alih `/api/*` atau `/api/push/*`.
+4. Evaluasi edge rendering profil Mitra pada rute khusus yang sesempit mungkin; jangan mengubah `404.html` global, `sw.js`, atau route program existing.
+5. Tetapkan reserved paths termasuk `/network/mitra/`, `/network/mitra/daftar/`, rute dashboard, aset statis, dan nama slug terlarang.
+6. Profil slug valid harus menghasilkan HTML publik HTTP 200 dengan canonical, OG, Microdata dan kontrol cache sesuai data publik; slug tidak valid mengembalikan HTTP 404.
+7. Pastikan fallback origin untuk rute statis/reserved tidak rusak; uji trailing slash, case, slug collision, response cache dan akses tanpa login.
+8. Kunci session API host-only, Secure/HttpOnly, CORS exact-origin, credentials dan mitigasi CSRF sebelum login/pembayaran nyata.
+9. Simulasikan semua perubahan routing di lingkungan terisolasi sebelum menyentuh produksi; audit hasil deployment dan rencana rollback.
+10. Pengujian non-regresi mencakup homepage, portfolio, portal, program, footer, consent analitik, PWA, Web Push REV22, serta 320/360/390/768/1366/1440/1920 px.
+
+#### Pengunci pekerjaan berikutnya
+- Gate 3B-03: kontrak endpoint API dan matriks RBAC/sesi, dokumentasi saja.
+- Gate 3B-04: desain skema data D1, penyimpanan privat, audit ledger dan backup.
+- Provisioning, routing DNS/Worker dan deployment memerlukan persetujuan eksplisit tersendiri.
+<!-- DPN-GATE3B02-ROUTING-20261016:END -->
