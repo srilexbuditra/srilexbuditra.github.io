@@ -2104,3 +2104,43 @@ Semua tahapan implementasi tetap pending sampai arsitektur dan risiko disetujui.
 - Gate 3B-04: desain skema data D1, penyimpanan privat, audit ledger dan backup.
 - Provisioning, routing DNS/Worker dan deployment memerlukan persetujuan eksplisit tersendiri.
 <!-- DPN-GATE3B02-ROUTING-20261016:END -->
+
+<!-- DPN-GATE3B03D-SECURITY-20261016:START -->
+### DPN Gate 3B-03D - Acceptance Gates Keamanan Sebelum Implementasi
+
+**Status:** DESIGN CONTRACT DOCUMENTED / IMPLEMENTATION NOT STARTED.
+
+#### 3B-03A - Autentikasi dan RBAC
+1. Petakan enam peran dan izin per endpoint, termasuk deny-by-default serta pengecekan ownership pada setiap record.
+2. Pastikan pembuatan akun Admin hanya melalui kewenangan administratif yang diaudit; pengguna tidak dapat menaikkan perannya sendiri.
+3. Login menggunakan email unik dan password; terapkan hash password adaptif, pembatasan percobaan, proteksi kebocoran, dan audit login.
+4. Pertahankan keputusan UI password 6-35 karakter dan tombol mata; risiko password lemah harus dimitigasi sebelum produksi.
+5. Rancang konfirmasi email, reset sekali pakai, rotasi sesi, logout server-side, dan pencabutan semua sesi saat insiden.
+6. Wajibkan MFA untuk peran Admin sebelum akses produksi; definisi recovery/fallback harus aman.
+7. Uji host-only cookie API, `Secure`, `HttpOnly`, `SameSite` yang tepat, CORS allowlist origin, validasi Origin, serta proteksi CSRF untuk mutasi.
+8. Pastikan dashboard Network tidak memanfaatkan login `/portal/`, `/program/`, atau Client Management.
+
+#### 3B-03B - Data sensitif
+9. Tetapkan schema D1 Network khusus dengan aturan migrasi, indeks, foreign key, dan backup/restore terpisah.
+10. Rancang R2 private bucket; object key acak, tanpa URL publik permanen, akses bertenggat dengan otorisasi server.
+11. Pisahkan foto profil publik-terkendali dari selfie/foto verifikasi privat; unggahan dokumen harus divalidasi tipe, ukuran, dan malware sesuai risiko.
+12. Simpan metadata berkas di D1; log akses/verifikasi oleh petugas yang sah; mask nomor rekening dan minimalisasi PII pada log.
+13. KTP/SIM kondisional, NPWP hanya jika relevan dan sah; tidak meminta KK; selesaikan kebijakan consent dan retensi sesuai kewajiban hukum.
+14. Uji akses lintas Mitra/Pelanggan, direct object reference, kebocoran URL dokumen, dan permintaan data oleh peran tanpa wewenang.
+
+#### 3B-03C - Pesanan, keuangan, dan komisi
+15. Bekukan snapshot paket, harga, domain, DP, SLA, referral, dan versi aturan pada saat order dibuat.
+16. Pembayaran hanya menuju tujuan resmi perusahaan; bukti unggah dan callback gateway bukan otorisasi otomatis tanpa verifikasi server.
+17. Wajibkan idempotency key, deduplikasi callback, transaksi atomik, dan aturan status agar pembayaran/komisi tidak diproses dua kali.
+18. Gunakan ledger append-only; refund/chargeback membentuk entri reversal, bukan menghapus riwayat.
+19. Bonus sponsor, level/generasi, dan prestasi didasarkan atas penjualan jasa yang sah; larangan reward atas rekrutmen semata.
+20. Aktivasi bonus berjenjang di produksi memerlukan pemeriksaan legal, pajak, kepatuhan, dan anti-fraud sebelum enable.
+21. Withdrawal membutuhkan rekening terverifikasi, saldo cukup, antifraud review, maker-checker independen, bukti transfer, dan audit.
+22. Pastikan pembatasan jumlah, rekonsiliasi, otorisasi peran, expiry, dispute handling, serta rollback/incident procedure.
+
+#### Non-regresi dan keputusan lanjut
+23. Uji manual dan otomatis bahwa footer, analytics-only privacy, Web Push REV22, PWA, root SW, GA4, halaman existing, dan 7 Workers Routes tetap normal.
+24. Sebelum provisioning Worker/D1/R2, konfirmasi pemisahan DNS, CORS/cookie, kebijakan hosting GitHub Pages produksi, dan staging Cloudflare Pages.
+25. Semua persetujuan kontrak keamanan harus selesai sebelum coding; keputusan detail yang belum disepakati diberi status PENDING, bukan dipaksakan.
+26. Dokumentasi Gate ini diperbarui hanya pada lima Markdown existing; snapshot, review diff, commit dan push dikerjakan sebagai tahapan terpisah.
+<!-- DPN-GATE3B03D-SECURITY-20261016:END -->

@@ -675,3 +675,20 @@ Kontrak teknis terdapat pada `docs/PLATFORM.md`; tahapan validasi sebelum implem
 - Footer, Pengaturan Privasi (khusus consent analitik), Web Push REV22, PWA, homepage, program, dan seluruh Gate VERIFIED/LOCKED tetap terlindungi.
 - Rincian risiko/kontrak ada pada `docs/PLATFORM.md`, urutan validasi pada `docs/ROADMAP.md`.
 <!-- DPN-GATE3B02-ROUTING-20261016:END -->
+
+<!-- DPN-GATE3B03D-SECURITY-20261016:START -->
+### DPN Gate 3B-03D - Kontrak Keamanan Autentikasi, Data, dan Transaksi (16 Oktober 2026)
+
+**Status: dokumentasi rancangan 3B-03A/03B/03C; implementasi dan aktivasi produksi BELUM dimulai.**
+
+- Baseline: GitHub main `d1c2390`; arsip backup1 tetap pada `0cfbc84`; Gate VERIFIED/LOCKED tidak diulang atau diubah.
+- Enam peran terpisah: Super Admin, Admin Operasional, Admin Keuangan, Admin Verifikasi, Mitra, dan Pelanggan; pemeriksaan RBAC serta kepemilikan data wajib terjadi di backend.
+- Login Network menggunakan email dan password (ketentuan visual/UX Gate 2: panjang 6-35 karakter, tombol tampilkan password); risiko minimum lemah dimitigasi, tidak mengubah keputusan UI secara diam-diam.
+- Sesi, pemulihan akun, verifikasi, MFA admin, rate limit, CORS, CSRF, dan audit ditetapkan sebagai kontrol keamanan sebelum produksi.
+- D1 Network dan penyimpanan R2 privat dirancang terisolasi; dokumen KTP/SIM, foto wajah verifikasi, serta rekening tidak diekspos publik; dokumen KK tidak diminta.
+- Order, pembayaran ke kanal resmi perusahaan, refund, komisi penjualan, ledger append-only, serta pencairan harus dapat ditelusuri dan diverifikasi pada backend.
+- Bonus jaringan berjenjang tetap menjadi kebutuhan bisnis, tetapi aktivasi produksi tunduk pada audit legal, pajak, anti-fraud, serta syarat komisi berasal dari transaksi jasa yang sah, bukan sekadar rekrutmen.
+- Semua API, tabel, bucket, hostname `network-api.srilexbuditra.work`, dan router profil Mitra masih KANDIDAT, BELUM LIVE.
+- Footer, Pengaturan Privasi (hanya consent analitik), browser notification permission, REV22, PWA, website existing, dan tujuh Workers Routes tidak diubah.
+- Kontrak teknis dan acceptance gate: `docs/PLATFORM.md` serta `docs/ROADMAP.md`.
+<!-- DPN-GATE3B03D-SECURITY-20261016:END -->

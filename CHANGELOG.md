@@ -1212,3 +1212,17 @@ Dokumen ini menggunakan dua riwayat versi agar nomor versi website utama tidak t
 - Kandidat API host dan router profil slug Mitra masih menunggu implementasi serta validasi runtime terpisah.
 - Tidak mengubah DNS, Worker, Cloudflare Pages, GitHub Pages, HTML/CSS/JS, SW, D1/R2 atau aplikasi produksi.
 <!-- DPN-GATE3B02-ROUTING-20261016:END -->
+
+<!-- DPN-GATE3B03D-SECURITY-20261016:START -->
+### 2026-10-16 - DPN Gate 3B-03D Security Contract (documentation only)
+
+- Mengacu pada Gate 3B-03D `d1c2390` (GitHub main sinkron, Actions lulus), tanpa mengulang Gate VERIFIED/LOCKED.
+- Merangkum rancangan 3B-03A autentikasi email, password UI 6-35, session, MFA, 6-role RBAC, kepemilikan resource.
+- Merangkum 3B-03B perlindungan D1/R2, segregasi foto profil dan foto wajah verifikasi, KTP/SIM, rekening, serta retensi data.
+- Merangkum 3B-03C order snapshot, pembayaran resmi, idempotensi, ledger, refund reversal, komisi berdasarkan penjualan sah, dan payout maker-checker.
+- Dokumen KK tidak diminta; data sensitif tidak ditambahkan ke analitik atau metadata publik.
+- Matriks wewenang, skema endpoint usulan, status transaksi, dan kriteria pengujian tercatat dalam dokumentasi.
+- Aturan bonus jaringan tetap dalam rancangan dengan pemeriksaan legal dan anti-fraud sebagai gerbang sebelum aktivasi.
+- Tidak ada perubahan kode website, Worker, Cloudflare DNS/Routes, D1, R2, SW, PWA, footer, atau Pengaturan Privasi.
+- Proyek Network belum diimplementasikan; Gate ini hanya mencatat kontrak dan tidak membuktikan perilaku runtime.
+<!-- DPN-GATE3B03D-SECURITY-20261016:END -->

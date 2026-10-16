@@ -1071,3 +1071,67 @@ Status: ARSITEKTUR DIRANCANG / BELUM DIIMPLEMENTASIKAN.
 - Tidak ada pembuatan/penyuntingan DNS, Workers Route, Worker Custom Domain, Cloudflare Pages, D1/R2, Service Worker, HTML/CSS/JS, secret, maupun konfigurasi produksi dalam Gate 3B-02.
 - Sebelum provisioning, wajib ada review DNS/Custom Domain final, spesifikasi router reserved path, keamanan session/RBAC/CORS/CSRF, pengujian non-regresi, serta rollback yang jelas.
 <!-- DPN-GATE3B02-ROUTING-20261016:END -->
+
+<!-- DPN-GATE3B03D-SECURITY-20261016:START -->
+### DPN Gate 3B-03D - Kontrak Teknis Security, Data dan Keuangan
+
+**Status:** desain terintegrasi dari 3B-03A/03B/03C; BELUM ADA endpoint Network, Worker, D1/R2, atau router Mitra yang live.
+**Baseline:** commit `d1c2390`; backup1 `0cfbc84`; seluruh Gate VERIFIED/LOCKED tetap berlaku.
+
+#### A. Boundary layanan dan identitas
+- Frontend: `https://srilexbuditra.work/network/`; API kandidat: `https://network-api.srilexbuditra.work`; keduanya origin berbeda meskipun satu site.
+- Backend Network dan session store terpisah dari `/portal/`, `/program/`, admin Ketahanan Pangan, Client Management, dan layanan lama.
+- Endpoint contoh `POST /v1/auth/login`, `POST /v1/auth/logout`, `GET /v1/auth/session`, forgot/reset password, verify-email, change-password: DESAIN SAJA.
+- Email unik per akun Network; role tidak ditentukan oleh request publik; password selalu melalui hash adaptif + salt, bukan plaintext.
+- UI keputusan Gate 2: password 6-35 karakter dan tombol mata pada setiap field. Risiko minimum pendek perlu mitigasi rate-limit, pemeriksaan password bocor, dan MFA admin sebelum live.
+- Session cookie host-only di API, `Secure`, `HttpOnly`, `Path=/`, pilihan `SameSite` harus diuji. Tidak gunakan `Domain=.srilexbuditra.work`.
+- CORS berizin tepat `https://srilexbuditra.work` dengan `Access-Control-Allow-Credentials` hanya bila dibutuhkan, `Vary: Origin`, bukan wildcard.
+- Permintaan mutasi dari browser wajib lolos validasi Origin/CSRF dan pemeriksaan autentikasi; SameSite dan CORS bukan pengganti CSRF.
+- Session rotation setelah login/perubahan kredensial, masa berlaku terbatas, revoke pada logout/reset/insiden; reset token sekali pakai dan singkat.
+- Login error tidak mengungkap apakah email terdaftar; brute-force limiting, audit, security headers, dan MFA untuk Admin diwajibkan sebelum produksi.
+
+#### B. Matriks minimum RBAC dan ownership
+- **Super Admin:** konfigurasi sistem, pengangkatan peran, oversight/audit; tidak otomatis menjadi persetujuan keuangan kedua untuk tindakan sendiri.
+- **Admin Operasional:** CRM, pesanan, proyek, progres, revisi; tidak dapat menyetujui payout atau membaca KTP secara default.
+- **Admin Keuangan:** pembayaran resmi, invoice, ledger, komisi, refund dan payout sesuai tugas; pembuat dan penyetuju tindakan yang sama harus berbeda.
+- **Admin Verifikasi:** pemeriksaan KTP/SIM, selfie bila relevan dan disetujui, bukti rekening; tidak bisa mengesahkan transfer dana.
+- **Mitra:** profil dan situs pribadi, referral, jaringan yang diizinkan, saldo/komisi sendiri serta request payout; tidak dapat mengakses Mitra lain atau mengedit aturan komisi.
+- **Pelanggan:** profil, pesanan, tagihan, proyek dan revisi milik sendiri; tidak melihat identitas atau transaksi Mitra lain.
+- Semua endpoint memakai deny-by-default, IDOR protection, pemeriksaan role + status akun + ownership server-side, dan audit perubahan hak akses.
+- Account state terpisah dari role: pending/active/suspended/closed; status KYC dan rekening tidak otomatis memberikan hak keuangan.
+
+#### C. Pendaftaran, verifikasi, dan keamanan dokumen
+- Pendaftaran Mitra mengikuti enam tahap yang sudah LOCKED; foto profil wajib dan terpisah dari foto wajah/selfie verifikasi; persetujuan eksplisit untuk proses yang memerlukannya.
+- WhatsApp Mitra harus diverifikasi dan hanya nomor yang telah tervalidasi digunakan untuk CTA publik.
+- KTP/SIM diverifikasi secara kondisional, NPWP bila relevan; dokumen KK tidak diminta.
+- D1 baru menyimpan metadata akun, KYC state, order, rekening termasking, payment/commission ledger, audit, dan referensi objek R2.
+- R2 privat menyimpan dokumen sensitif, foto wajah verifikasi, bukti rekening, dan bukti transaksi, dengan object key acak tak mengandung NIK/nama.
+- Bucket tidak dipublikasikan; akses upload/download melalui API berotorisasi, batas waktu akses singkat, validasi MIME/magic bytes/ukuran dan pencegahan malware.
+- Foto profil publik hanya menampilkan data yang secara sah dipublikasikan; verifikasi selfie tidak menjadi foto profil publik secara otomatis.
+- Data rekening ditampilkan masked; data penuh dienkripsi/dibatasi hanya untuk payout atau verifikasi berwenang.
+- Audit terhadap unduhan petugas, perubahan identitas, dan perubahan rekening; pemberitahuan perubahan sensitif serta hold payout saat diperlukan.
+- Retensi, penghapusan, permintaan subjek data, ekspor, insiden, dan backup dirancang sesuai kewajiban hukum; durasi final menunggu legal review.
+- Foto, identitas, rekening, token, payload sensitif tidak masuk GA4, log publik, OpenSearch, sitemap, Microdata, atau notifikasi push publik.
+
+#### D. Pesanan, pembayaran, referral, komisi dan payout
+- Order snapshot membekukan paket, harga, DP, opsi domain, SLA, versi syarat, kode referral dan versi aturan komisi pada waktu order.
+- Rekening/kanal pembayaran pelanggan adalah kanal resmi perusahaan terverifikasi; akun pribadi Mitra dilarang menjadi tujuan pembayaran jasa.
+- Bukti bayar atau callback hanya diterima sebagai input verifikasi; backend memvalidasi identitas transaksi, signature webhook, nominal dan status.
+- Event pembayaran dan komisi harus idempotent; callback duplikat atau replay tidak menambah kredit ganda.
+- Ledger append-only untuk debit/kredit, hold, release, refund, reversal dan payout; tidak menghapus histori atau mengubah nominal historis.
+- Status komisi yang dirancang: PENDING, ELIGIBLE, AVAILABLE, WITHDRAW_REQUESTED, PAID; HOLD/DISPUTED/REVERSED untuk kasus khusus. Final state machine ditinjau sebelum coding.
+- Atribusi referral dikunci sesuai aturan dan masa berlaku, dengan penanganan sengketa, anti self-referral serta pola multi-akun yang mencurigakan.
+- Komisi sponsor langsung, bonus level/generasi dan prestasi berasal dari penjualan jasa valid. Tidak membayar bonus untuk tindakan merekrut orang semata.
+- Bonus jaringan berjenjang tetap dalam kebutuhan bisnis, tetapi aktivasi produksi menunggu review legal, perpajakan, konsumen, dan anti-fraud; fitur tidak boleh mengaktifkan payout sebelum lolos gate.
+- Saldo tersedia hanya berasal dari ledger yang sah; withdrawal harus menggunakan rekening terverifikasi, verifikasi saldo, batas payout, maker-checker, audit dan rekonsiliasi bank.
+- Super Admin dan Admin Keuangan tidak boleh sendirian mengajukan sekaligus menyetujui payout/refund sendiri; semua keputusan kritis dilog.
+- Pembatalan/refund/chargeback memakai entri pembalik dan memengaruhi kelayakan komisi serta saldo secara deterministik.
+
+#### E. API route, privacy, dan non-regresi
+- API khusus Network tidak mengambil alih `/api/*`, `/api/push/*`, atau tujuh Workers Routes produksi existing.
+- Profil `/network/mitra/{slug}/` membutuhkan router dinamis terisolasi dengan reserved slugs, 200/404 benar, SEO metadata sah dan tanpa paparan data privat.
+- Pengaturan Privasi existing hanya untuk consent analitik, izin notifikasi diatur dari kontrol situs Chrome; jangan menambah tautan Web Push ke footer atau panel privasi.
+- Web Push REV22 R3.7, PWA, root SW, GA4 existing serta seluruh tampilan situs LOCKED tidak diubah; dashboard privat dikecualikan dari telemetry publik.
+- Staging Cloudflare Pages existing dipertahankan, domain produksi GitHub Pages via Cloudflare Proxy tidak dipindah pada tahap ini.
+- Semua point di sini merupakan persyaratan desain/acceptance sebelum implementasi, bukan bukti ketersediaan runtime atau izin untuk membuat konfigurasi produksi.
+<!-- DPN-GATE3B03D-SECURITY-20261016:END -->

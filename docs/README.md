@@ -541,3 +541,17 @@ Status: ARCHITECTURE BASELINE / DOCUMENTATION ONLY, bukan bukti deploy.
 - Gate 0, 1, 1D, 2, 3A-06, dan 3B-01 yang telah VERIFIED/LOCKED tidak diulang atau diubah.
 - Checkpoint masuk: `fbc1b96`; backup1 tetap `0cfbc84`.
 <!-- DPN-GATE3B02-ROUTING-20261016:END -->
+
+<!-- DPN-GATE3B03D-SECURITY-20261016:START -->
+### DPN Gate 3B-03D - Indeks Kontrak Keamanan
+
+**Lingkup:** gabungan persetujuan rancangan 3B-03A, 3B-03B, dan 3B-03C, bukan implementasi.
+
+- `README.md` memuat ringkasan enam peran, pemisahan Network, dan keputusan perlindungan existing.
+- `CHANGELOG.md` menyimpan kronologi rancangan keamanan, tanpa membatalkan Gate lama.
+- `docs/ROADMAP.md` memuat acceptance criteria sebelum pengkodean, provisioning, dan produksi.
+- `docs/PLATFORM.md` memuat matriks RBAC, sesi, CSRF/CORS, D1/R2 privat, order, ledger, komisi, dan payout.
+- Checkpoint dokumen: `d1c2390`; backup1 referensi immutable: `0cfbc84`.
+- Semua layanan Network dan rute API yang dicantumkan masih rancangan dan belum aktif.
+- Footer, privasi analytics-only, Chrome site permission, REV22, PWA, serta fungsi visual yang sudah normal tetap dilindungi.
+<!-- DPN-GATE3B03D-SECURITY-20261016:END -->
