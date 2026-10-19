@@ -6,47 +6,10 @@
   <meta name="color-scheme" content="dark">
   <meta name="theme-color" content="#0B1220">
   <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; img-src 'none'; font-src 'none'; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self'; img-src 'none'; font-src 'none'; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
   <title>Dalam Pengembangan | Digital Partner Network — SRILEX BUDITRA</title>
   <meta name="description" content="SRILEX BUDITRA Digital Partner Network sedang dalam tahap pengembangan. Platform kemitraan digital akan hadir setelah proses pengujian dan persiapan selesai.">
-  <style>
-    :root { color-scheme: dark; --bg:#0b1220; --panel:#111e33; --muted:#b4c2d4; --text:#f8fafc; --line:rgba(207,222,242,.16); --gold:#ffc76a; --blue:#4d82ff; --teal:#53c7b0; }
-    *, *::before, *::after { box-sizing:border-box; }
-    html { min-height:100%; }
-    body { min-height:100vh; min-height:100svh; margin:0; background:radial-gradient(circle at 76% 18%, rgba(29,78,216,.27), transparent 42%),radial-gradient(circle at 13% 82%,rgba(15,118,110,.13),transparent 38%),var(--bg); color:var(--text); font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif; line-height:1.6; }
-    a { color:inherit; }
-    a:focus-visible { outline:3px solid var(--gold); outline-offset:4px; }
-    .skip { position:absolute; top:-5rem; left:1.5rem; z-index:3; background:#fff; color:#0b1220; padding:.7rem 1rem; border-radius:.6rem; }
-    .skip:focus { top:1rem; }
-    .shell { width:min(1100px,calc(100% - 2rem)); min-height:100svh; margin:auto; display:flex; flex-direction:column; }
-    header { display:flex; align-items:center; justify-content:space-between; gap:1rem; padding:clamp(1.25rem,4vw,2.4rem) 0; }
-    .brand { font-size:clamp(1.05rem,2.3vw,1.35rem); font-weight:850; letter-spacing:.055em; white-space:nowrap; line-height:1.2; }
-    .brand span { color:var(--gold); }
-    .brand-note { color:var(--muted); font-size:.82rem; text-align:right; }
-    main { flex:1; display:grid; grid-template-columns:minmax(0,1.4fr) minmax(270px,.85fr); gap:clamp(1.4rem,6vw,5rem); align-items:center; padding:2rem 0 4rem; }
-    .eyebrow { display:inline-flex; align-items:center; gap:.6rem; width:fit-content; max-width:100%; border:1px solid rgba(255,199,106,.37); border-radius:99px; padding:.5rem .85rem; font-size:.78rem; font-weight:750; letter-spacing:.09em; color:var(--gold); background:rgba(255,199,106,.075); }
-    .dot { flex:none; width:.48rem; height:.48rem; border-radius:50%; background:var(--gold); }
-    h1 { font-size:clamp(2.7rem,6vw,5.25rem); line-height:1.08; font-weight:850; letter-spacing:-.055em; margin:1.35rem 0 1.25rem; }
-    h1 span { background:linear-gradient(100deg,#f7d591,#ffc76a); background-clip:text; -webkit-background-clip:text; color:transparent; }
-    .lead { max-width:660px; color:#d1dbea; font-size:clamp(1rem,1.8vw,1.19rem); line-height:1.75; margin:0; }
-    .support { color:var(--muted); margin:1.15rem 0 0; max-width:620px; }
-    .actions { display:flex; align-items:center; flex-wrap:wrap; gap:1rem; margin-top:2rem; }
-    .button { display:inline-flex; align-items:center; justify-content:center; gap:.65rem; padding:.88rem 1.15rem; background:var(--blue); border:1px solid #739bff; border-radius:.8rem; color:#fff; font-weight:750; text-decoration:none; transition:background-color .15s ease, transform .15s ease; }
-    .button:hover { background:#3565d7; transform:translateY(-1px); }
-    .note { color:var(--muted); font-size:.86rem; }
-    .panel { border:1px solid var(--line); border-radius:1.4rem; background:linear-gradient(165deg,rgba(24,42,72,.95),rgba(15,26,45,.93)); padding:clamp(1.3rem,3vw,2.2rem); box-shadow:0 24px 75px rgba(0,0,0,.15); }
-    .icon { width:3rem; height:3rem; display:grid; place-items:center; border:1px solid rgba(255,199,106,.24); border-radius:1rem; color:var(--gold); background:rgba(255,199,106,.08); font-size:1.45rem; font-weight:800; }
-    .panel h2 { font-size:1.35rem; line-height:1.3; letter-spacing:-.025em; margin:1.15rem 0 .55rem; }
-    .panel p { font-size:.94rem; color:var(--muted); margin:.3rem 0 1.15rem; }
-    .points { margin:0; padding:0; list-style:none; }
-    .points li { display:flex; align-items:center; gap:.8rem; padding:.87rem 0; font-size:.95rem; border-top:1px solid var(--line); }
-    .points li::before { content:""; flex:none; width:.55rem; height:.55rem; border:2px solid var(--teal); border-radius:50%; }
-    .safe { display:flex; gap:.65rem; align-items:flex-start; margin-top:1.25rem; padding:1rem; background:rgba(83,199,176,.07); border:1px solid rgba(83,199,176,.19); border-radius:.8rem; font-size:.84rem; color:#cae5dc; }
-    footer { display:flex; justify-content:space-between; gap:1rem; align-items:center; flex-wrap:wrap; padding:1.4rem 0 1.65rem; border-top:1px solid var(--line); color:var(--muted); font-size:.82rem; }
-    @media (max-width:780px) { main { grid-template-columns:1fr; padding:2rem 0 3.5rem; } .panel { max-width:620px; } }
-    @media (max-width:430px) { .shell { width:min(100% - 1.5rem,1100px); } header { align-items:flex-start; } .brand-note { max-width:7.5rem; } .actions { align-items:stretch; flex-direction:column; } .button { width:100%; } .note { text-align:center; } h1 { font-size:clamp(2.5rem,12vw,3.45rem); } }
-    @media (prefers-reduced-motion:reduce) { .button { transition:none; } .button:hover { transform:none; } }
-  </style>
+  <link rel="stylesheet" href="/network/maintenance.css">
 </head>
 <body>
   <a class="skip" href="#konten">Lewati ke konten utama</a>
