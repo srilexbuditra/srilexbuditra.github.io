@@ -1,0 +1,193 @@
+/* DPN GATE 3C-07C — Dashboard Admin V1. Scoped to DEV page only. */
+.dpn-akun-admin{background:#F5F8FC;color:#14223A}
+.dpn-akun-admin *, .dpn-akun-admin *::before, .dpn-akun-admin *::after{box-sizing:border-box}
+.dpn-akun-admin .site-header .brand-srilex{color:#FFFFFF}
+.dpn-akun-admin .brand-mark{object-fit:contain;border-radius:50%}
+.dpn-akun-admin .brand-name strong{white-space:nowrap}
+.dpn-akun-admin .brand-name .brand-buditra,.dpn-akun-admin .network-footer .brand-buditra{color:#FFB71B}
+.dpn-akun-admin .network-footer{background:#F8FAFC}
+.dpn-akun-admin .container{width:min(1210px,calc(100% - 48px))}
+.dpn-akun-admin .admin-hero{position:relative;isolation:isolate;overflow:hidden;color:#fff;background:radial-gradient(circle at 90% 2%,rgba(45,122,237,.24),transparent 34%),radial-gradient(circle at 4% 98%,rgba(45,207,169,.09),transparent 38%),linear-gradient(115deg,#081529,#0D2340 60%,#0B2B44)}
+.dpn-akun-admin .admin-hero::before{content:"";position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(rgba(255,255,255,.026) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.026) 1px,transparent 1px);background-size:54px 54px;mask-image:linear-gradient(90deg,transparent,#000)}
+.dpn-akun-admin .admin-hero-grid{position:relative;z-index:1;display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:55px;align-items:center;padding-block:76px 62px}
+.dpn-akun-admin .admin-intro,.dpn-akun-admin .admin-hero-visual{min-width:0}
+.dpn-akun-admin .admin-kicker{font-size:.67rem;letter-spacing:.14em;font-weight:800;color:#A3E5DB;line-height:1.5;margin:0 0 22px}
+.dpn-akun-admin .admin-kicker span{color:#FFCE66;margin-right:7px}
+.dpn-akun-admin .admin-intro h1{font-size:clamp(2.35rem,4vw,3.8rem);line-height:1.09;letter-spacing:-.032em;color:#fff;margin:0 0 23px;text-wrap:balance}
+.dpn-akun-admin .admin-intro h1 span{display:block;color:#69D8CD}
+.dpn-akun-admin .admin-intro>p:not(.admin-kicker):not(.admin-hero-note){max-width:555px;font-size:.92rem;line-height:1.78;color:#C0D3E6;margin:0}
+.dpn-akun-admin .admin-intro>p strong{color:#fff}
+.dpn-akun-admin .admin-hero-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:28px}
+.dpn-akun-admin .admin-button{min-height:47px;display:inline-flex;align-items:center;justify-content:center;gap:11px;border-radius:11px;padding:12px 18px;font-size:.8rem;font-weight:800;line-height:1.4;text-align:center;text-decoration:none}
+.dpn-akun-admin .admin-button-primary{color:#fff;background:#2563EB;box-shadow:0 12px 26px rgba(10,52,147,.19)}
+.dpn-akun-admin .admin-button-primary:hover{background:#3474f2;color:#fff}
+.dpn-akun-admin .admin-button-outline{color:#E6F1FA;border:1px solid #5C7087;background:rgba(255,255,255,.05)}
+.dpn-akun-admin .admin-button-outline:hover{background:rgba(255,255,255,.1);color:#fff}
+.dpn-akun-admin .admin-hero-note{display:flex;gap:9px;align-items:baseline;color:#90A9C1;font-size:.66rem;line-height:1.65;margin:23px 0 0}
+.dpn-akun-admin .admin-hero-note span{color:#54D1B3}
+.dpn-akun-admin .admin-hero-visual{position:relative;color:#152B48;border:1px solid rgba(232,246,255,.18);border-radius:23px;background:linear-gradient(152deg,#F9FCFF,#F0F6FC);padding:22px;box-shadow:0 32px 70px rgba(0,5,20,.28)}
+.dpn-akun-admin .admin-visual-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding-bottom:18px;border-bottom:1px solid #E1E9F3;font-size:.62rem;font-weight:900;letter-spacing:.07em;color:#546986}
+.dpn-akun-admin .admin-visual-head>span:first-child{display:flex;align-items:center;gap:9px}
+.dpn-akun-admin .admin-visual-head i{display:inline-block;width:8px;height:8px;border-radius:50%;background:#17A98F}
+.dpn-akun-admin .admin-chip{background:#E8F2FF;border:1px solid #D3E4F7;border-radius:7px;color:#1D4ED8;padding:7px 9px;font-size:.54rem}
+.dpn-akun-admin .admin-visual-lead{display:flex;gap:11px;align-items:center;margin:24px 0}
+.dpn-akun-admin .admin-visual-icon{height:48px;width:48px;flex:none;display:grid;place-items:center;border-radius:15px;color:#fff;background:linear-gradient(135deg,#1D4ED8,#0F766E);font-size:1.5rem}
+.dpn-akun-admin .admin-visual-lead>div:last-child{display:grid;gap:2px;min-width:0}
+.dpn-akun-admin .admin-visual-lead strong{font-size:.93rem;color:#132F50}
+.dpn-akun-admin .admin-visual-lead small{font-size:.68rem;color:#788DA6}
+.dpn-akun-admin .admin-visual-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+.dpn-akun-admin .admin-visual-stats>div{min-width:0;display:grid;gap:6px;border:1px solid #E3EBF4;background:#fff;border-radius:12px;padding:14px 11px}
+.dpn-akun-admin .admin-visual-stats small{font-size:.58rem;line-height:1.4;color:#70849E}
+.dpn-akun-admin .admin-visual-stats strong{font-size:1.65rem;line-height:1.1;color:#0E2B4D}
+.dpn-akun-admin .admin-visual-stats span{font-size:.55rem;line-height:1.4;color:#87A0B6}
+.dpn-akun-admin .admin-visual-alert{display:flex;align-items:center;gap:11px;background:#E5F5EF;border:1px solid #CFE9DF;border-radius:12px;padding:14px 12px;margin-top:15px}
+.dpn-akun-admin .admin-visual-alert>span:first-child{font-size:1.4rem;color:#0F766E}
+.dpn-akun-admin .admin-visual-alert>div{display:grid;gap:2px;min-width:0}
+.dpn-akun-admin .admin-visual-alert strong{font-size:.73rem;color:#245C54}
+.dpn-akun-admin .admin-visual-alert small{font-size:.62rem;color:#5D807A}
+.dpn-akun-admin .admin-visual-alert>span:last-child{margin-left:auto;color:#0F766E}
+.dpn-akun-admin .admin-hero-meta{position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between;gap:15px;padding-bottom:23px;color:#7895B1;font-size:.59rem;font-weight:800;letter-spacing:.13em}
+.dpn-akun-admin .admin-workspace{display:grid;grid-template-columns:224px minmax(0,1fr);align-items:start;gap:35px;padding-block:54px 84px}
+.dpn-akun-admin .admin-side,.dpn-akun-admin .admin-content{min-width:0}
+.dpn-akun-admin .admin-side-inner{position:sticky;top:24px}
+.dpn-akun-admin .admin-side-eyebrow{margin:0 0 17px 14px;color:#8393A9;font-size:.63rem;font-weight:900;letter-spacing:.14em}
+.dpn-akun-admin .admin-side-links{display:grid;gap:5px}
+.dpn-akun-admin .admin-side-links a{display:flex;align-items:center;gap:11px;min-height:44px;padding:10px 13px;border-radius:10px;color:#5A6D85;font-size:.78rem;font-weight:750;text-decoration:none}
+.dpn-akun-admin .admin-side-links a:hover{background:#E9F1FC;color:#1D4ED8}
+.dpn-akun-admin .admin-side-links a span{width:20px;text-align:center;font-size:1.05rem}
+.dpn-akun-admin .admin-side-links a.admin-side-active{background:#E4EEFF;color:#1D4ED8;font-weight:900}
+.dpn-akun-admin .admin-side-note{margin-top:28px;border:1px solid #DDE9F3;background:#fff;border-radius:17px;padding:20px;box-shadow:0 10px 28px rgba(10,35,74,.03)}
+.dpn-akun-admin .admin-side-symbol{display:grid;place-items:center;width:35px;height:35px;background:#EAF5F2;color:#0F766E;border-radius:11px;font-size:1.35rem;margin-bottom:13px}
+.dpn-akun-admin .admin-side-note strong{font-size:.83rem;color:#122F52}
+.dpn-akun-admin .admin-side-note p{font-size:.71rem;color:#7B8CA2;line-height:1.65;margin:8px 0 13px}
+.dpn-akun-admin .admin-side-note a{font-size:.73rem;font-weight:900;color:#1D4ED8}
+.dpn-akun-admin .admin-content{display:grid;gap:24px}
+.dpn-akun-admin .admin-section-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;margin-bottom:23px}
+.dpn-akun-admin .admin-section-heading>div{min-width:0}
+.dpn-akun-admin .admin-eyebrow{font-size:.63rem;color:#1D5DB4;font-weight:900;letter-spacing:.13em;line-height:1.5;margin:0 0 10px}
+.dpn-akun-admin .admin-section-heading h2,.dpn-akun-admin .admin-panel h2,.dpn-akun-admin .admin-roles h2{font-size:clamp(1.35rem,2.4vw,2.03rem);line-height:1.18;color:#102846;letter-spacing:-.018em;margin:0 0 10px;text-wrap:balance}
+.dpn-akun-admin .admin-section-heading h2 span,.dpn-akun-admin .admin-panel h2 span,.dpn-akun-admin .admin-roles h2 span{color:#1D4ED8}
+.dpn-akun-admin .admin-section-heading p:not(.admin-eyebrow){font-size:.77rem;line-height:1.7;color:#72839A;max-width:660px;margin:0}
+.dpn-akun-admin .admin-soft-badge{display:inline-flex;align-items:center;gap:6px;flex:none;padding:8px 10px;background:#EAF1FB;color:#537398;border:1px solid #DBE7F5;border-radius:8px;font-size:.54rem;letter-spacing:.05em;font-weight:900;white-space:nowrap}
+.dpn-akun-admin .admin-soft-badge span{font-size:.5rem;color:#0F766E}
+.dpn-akun-admin .admin-stat-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.dpn-akun-admin .admin-stat-card{min-width:0;padding:20px;background:#fff;border:1px solid #E3EBF4;border-radius:16px;box-shadow:0 10px 25px rgba(8,37,74,.027)}
+.dpn-akun-admin .admin-stat-icon,.dpn-akun-admin .admin-panel-icon{display:grid;place-items:center;width:38px;height:38px;border-radius:12px;font-size:1.24rem;font-weight:800}
+.dpn-akun-admin .icon-blue{background:#E8F0FF;color:#1D4ED8}
+.dpn-akun-admin .icon-teal{background:#DEF6EF;color:#0F766E}
+.dpn-akun-admin .icon-gold{background:#FFF2D8;color:#AA751E}
+.dpn-akun-admin .admin-stat-card p{font-size:.74rem;font-weight:700;color:#73859C;margin:15px 0 4px}
+.dpn-akun-admin .admin-stat-card>strong{display:block;font-size:1.9rem;line-height:1.1;color:#132F50;letter-spacing:-.035em}
+.dpn-akun-admin .admin-stat-card small{font-size:.63rem;color:#95A5B7;line-height:1.45}
+.dpn-akun-admin .admin-two-col{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;scroll-margin-top:20px}
+.dpn-akun-admin .admin-panel{min-width:0;border:1px solid #DFE9F3;background:#fff;border-radius:19px;padding:26px;box-shadow:0 10px 25px rgba(8,37,74,.025);scroll-margin-top:20px}
+.dpn-akun-admin .admin-panel-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:22px}
+.dpn-akun-admin .admin-state{background:#F0F5FB;border:1px solid #E0E9F3;color:#63819B;border-radius:7px;padding:7px 8px;font-size:.53rem;font-weight:900;letter-spacing:.04em;white-space:nowrap}
+.dpn-akun-admin .admin-panel>h2{font-size:clamp(1.24rem,2vw,1.67rem)}
+.dpn-akun-admin .admin-panel-description{font-size:.76rem;line-height:1.74;color:#7788A0;margin:10px 0 22px}
+.dpn-akun-admin .admin-disabled-action{display:flex;justify-content:space-between;align-items:center;gap:10px;border-top:1px solid #EBF0F6;margin-top:22px;padding-top:17px;color:#8494AB;font-size:.7rem;font-weight:800;cursor:not-allowed}
+.dpn-akun-admin .admin-disabled-action span{flex:none}
+.dpn-akun-admin .admin-example-list{display:grid;gap:9px}
+.dpn-akun-admin .admin-example-list>div{display:flex;align-items:center;gap:9px;min-width:0;border:1px solid #E3EBF4;background:#F8FAFE;border-radius:10px;padding:11px}
+.dpn-akun-admin .admin-avatar{flex:none;width:30px;height:30px;display:grid;place-items:center;border-radius:10px;background:#E4EEFF;color:#1D4ED8;font-weight:900}
+.dpn-akun-admin .admin-example-list>div>span:nth-child(2){display:grid;gap:3px;min-width:0}
+.dpn-akun-admin .admin-example-list strong{font-size:.71rem;color:#24425F}
+.dpn-akun-admin .admin-example-list small{font-size:.62rem;color:#8296AE}
+.dpn-akun-admin .admin-tag{margin-left:auto;flex:none;background:#EDF3FA;border-radius:6px;padding:5px 7px;font-size:.49rem;font-weight:850;color:#68829E}
+.dpn-akun-admin .admin-steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+.dpn-akun-admin .admin-steps>div{display:grid;align-content:start;gap:6px;min-width:0;padding:11px 8px;border-radius:10px;background:#F5F8FC;border:1px solid #E5EDF5}
+.dpn-akun-admin .admin-steps span,.dpn-akun-admin .admin-flow-grid span{font-size:.58rem;color:#1D4ED8;font-weight:900;letter-spacing:.08em}
+.dpn-akun-admin .admin-steps strong,.dpn-akun-admin .admin-flow-grid strong{font-size:.7rem;color:#203C5E;line-height:1.35}
+.dpn-akun-admin .admin-steps small,.dpn-akun-admin .admin-flow-grid small{font-size:.58rem;color:#8092A9;line-height:1.4}
+.dpn-akun-admin .admin-flow-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.dpn-akun-admin .admin-flow-grid>div{display:grid;gap:8px;align-content:start;min-width:0;padding:16px 13px;border-radius:12px;background:#F5F8FC;border:1px solid #E5EDF5}
+.dpn-akun-admin .admin-footnote{font-size:.71rem;line-height:1.7;color:#8698AD;margin:18px 0 0}
+.dpn-akun-admin .admin-finance{display:flex;flex-direction:column}
+.dpn-akun-admin .admin-finance-line{display:flex;align-items:start;justify-content:space-between;gap:10px;border-top:1px solid #E8EEF5;padding:13px 0;color:#7A8CA3;font-size:.68rem}
+.dpn-akun-admin .admin-finance-line strong{color:#416384;text-align:right}
+.dpn-akun-admin .admin-finance .admin-disabled-action{margin-top:auto}
+.dpn-akun-admin .admin-guard-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.dpn-akun-admin .admin-guard-grid>div{display:grid;gap:8px;min-width:0;padding:16px;background:#F6FAFD;border:1px solid #E1EDF4;border-radius:12px}
+.dpn-akun-admin .admin-guard-grid>div>span{width:28px;height:28px;display:grid;place-items:center;border-radius:9px;background:#DFF6F0;color:#0F766E;font-weight:900}
+.dpn-akun-admin .admin-guard-grid strong{font-size:.75rem;color:#25415F}
+.dpn-akun-admin .admin-guard-grid small{font-size:.65rem;color:#8697AB;line-height:1.5}
+.dpn-akun-admin .admin-roles{scroll-margin-top:20px}
+.dpn-akun-admin .admin-role-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.dpn-akun-admin .admin-role-grid>div{min-width:0;border:1px solid #DDE8F4;border-radius:15px;background:#fff;padding:19px 20px;box-shadow:0 10px 25px rgba(8,37,74,.025)}
+.dpn-akun-admin .admin-role-grid strong{font-size:.83rem;color:#153756}
+.dpn-akun-admin .admin-role-grid p{font-size:.72rem;line-height:1.65;color:#7A8CA3;margin:8px 0 0}
+.dpn-akun-admin .admin-next{padding:0 0 70px}
+.dpn-akun-admin .admin-next-inner{display:flex;align-items:center;justify-content:space-between;gap:28px;border-radius:21px;background:linear-gradient(115deg,#102E55,#09192E);color:#fff;padding:42px 44px}
+.dpn-akun-admin .admin-next-inner>div{min-width:0;max-width:700px}
+.dpn-akun-admin .admin-next .admin-eyebrow{color:#79DACE}
+.dpn-akun-admin .admin-next h2{font-size:clamp(1.6rem,3vw,2.34rem);line-height:1.18;color:#fff;margin:0 0 11px;text-wrap:balance}
+.dpn-akun-admin .admin-next h2 span{color:#66D7CA}
+.dpn-akun-admin .admin-next p:not(.admin-eyebrow){font-size:.78rem;line-height:1.75;color:#C4D3E4;margin:0}
+.dpn-akun-admin .admin-next .admin-button{flex:none}
+@media (max-width:1120px){.dpn-akun-admin .admin-hero-grid{gap:35px}.dpn-akun-admin .admin-workspace{grid-template-columns:190px minmax(0,1fr);gap:24px}.dpn-akun-admin .admin-panel{padding:22px}.dpn-akun-admin .admin-side-links a{font-size:.72rem}}
+@media (max-width:950px){.dpn-akun-admin .admin-hero-grid{grid-template-columns:1fr;gap:30px;padding-block:63px 45px}.dpn-akun-admin .admin-intro{max-width:750px}.dpn-akun-admin .admin-hero-visual{width:100%;max-width:580px;margin:auto}.dpn-akun-admin .admin-workspace{display:block}.dpn-akun-admin .admin-side{display:none}.dpn-akun-admin .admin-two-col{gap:13px}.dpn-akun-admin .admin-hero-meta{font-size:.53rem}}
+@media (max-width:690px){.dpn-akun-admin .container{width:min(100% - 30px,1210px)}.dpn-akun-admin .admin-hero-grid{padding-block:48px 30px;gap:27px}.dpn-akun-admin .admin-intro h1{font-size:clamp(1.7rem,6.5vw,2.5rem)}.dpn-akun-admin .admin-kicker{font-size:.55rem;letter-spacing:.08em}.dpn-akun-admin .admin-intro>p:not(.admin-kicker):not(.admin-hero-note){font-size:.81rem}.dpn-akun-admin .admin-button{padding:11px 13px;min-height:45px;font-size:.71rem}.dpn-akun-admin .admin-hero-actions{gap:8px}.dpn-akun-admin .admin-hero-note{font-size:.61rem}.dpn-akun-admin .admin-hero-visual{padding:13px;border-radius:16px}.dpn-akun-admin .admin-visual-head{font-size:.53rem}.dpn-akun-admin .admin-visual-stats>div{padding:12px 7px}.dpn-akun-admin .admin-visual-stats strong{font-size:1.4rem}.dpn-akun-admin .admin-visual-stats small,.dpn-akun-admin .admin-visual-stats span{font-size:.51rem}.dpn-akun-admin .admin-visual-alert{padding:11px 9px}.dpn-akun-admin .admin-visual-alert strong{font-size:.65rem}.dpn-akun-admin .admin-visual-alert small{font-size:.56rem}.dpn-akun-admin .admin-hero-meta{padding-bottom:17px;gap:8px;font-size:.43rem;letter-spacing:.04em}.dpn-akun-admin .admin-workspace{padding-block:40px 55px}.dpn-akun-admin .admin-content{gap:15px}.dpn-akun-admin .admin-section-heading{display:block;margin-bottom:16px}.dpn-akun-admin .admin-section-heading h2,.dpn-akun-admin .admin-panel h2,.dpn-akun-admin .admin-roles h2{font-size:clamp(1.35rem,5.6vw,1.8rem)}.dpn-akun-admin .admin-section-heading p:not(.admin-eyebrow){font-size:.76rem}.dpn-akun-admin .admin-soft-badge{margin-top:12px;font-size:.52rem}.dpn-akun-admin .admin-stat-grid{gap:7px}.dpn-akun-admin .admin-stat-card{padding:13px 9px;border-radius:12px}.dpn-akun-admin .admin-stat-icon{width:31px;height:31px;font-size:1rem}.dpn-akun-admin .admin-stat-card p{font-size:.62rem;margin-top:10px}.dpn-akun-admin .admin-stat-card>strong{font-size:1.45rem}.dpn-akun-admin .admin-stat-card small{font-size:.51rem}.dpn-akun-admin .admin-two-col{grid-template-columns:1fr}.dpn-akun-admin .admin-panel{padding:21px;border-radius:16px}.dpn-akun-admin .admin-panel-top{margin-bottom:16px}.dpn-akun-admin .admin-flow-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.dpn-akun-admin .admin-guard-grid{grid-template-columns:1fr}.dpn-akun-admin .admin-role-grid{grid-template-columns:1fr}.dpn-akun-admin .admin-next-inner{display:block;padding:28px 21px}.dpn-akun-admin .admin-next .admin-button{margin-top:22px}.dpn-akun-admin .admin-next{padding-bottom:44px}}
+@media (max-width:380px){.dpn-akun-admin .admin-hero-actions{display:grid;grid-template-columns:1fr 1fr}.dpn-akun-admin .admin-button{font-size:.64rem;padding-inline:7px}.dpn-akun-admin .admin-kicker{font-size:.52rem}.dpn-akun-admin .admin-chip{font-size:.49rem}.dpn-akun-admin .admin-visual-lead small{font-size:.59rem}.dpn-akun-admin .admin-steps{grid-template-columns:1fr}.dpn-akun-admin .admin-hero-meta{flex-wrap:wrap;row-gap:3px}}
+@media (prefers-reduced-motion:reduce){.dpn-akun-admin *{scroll-behavior:auto}}
+/* DPN-GATE-3C07G-ADMIN-TYPO-MULTI:START - DEV LOCAL, CSS-ONLY, responsive typography */
+/* HP 320: hero/CTA headings and compact brand typography, without changing page structure */
+@media (min-width:300px) and (max-width:350px) {
+  .dpn-akun-admin .admin-intro h1 { font-size:1.66rem; line-height:1.16; letter-spacing:-.025em; text-wrap:balance; }
+  .dpn-akun-admin .admin-next h2 { font-size:1.44rem; line-height:1.23; letter-spacing:-.018em; text-wrap:balance; }
+  .dpn-akun-admin .admin-section-heading h2,
+  .dpn-akun-admin .admin-panel h2,
+  .dpn-akun-admin .admin-roles h2 { font-size:1.32rem; line-height:1.24; text-wrap:balance; }
+  .dpn-akun-admin .admin-panel-description,
+  .dpn-akun-admin .admin-next p:not(.admin-eyebrow) { font-size:.78rem; line-height:1.75; }
+  .dpn-akun-admin .network-footer .footer-inner > div > strong { display:block; font-size:.70rem; line-height:1.48; letter-spacing:-.015em; text-wrap:balance; }
+}
+/* HP 360: keep readable hierarchy and avoid awkward short final lines */
+@media (min-width:351px) and (max-width:375px) {
+  .dpn-akun-admin .admin-intro h1 { font-size:1.78rem; line-height:1.14; text-wrap:balance; }
+  .dpn-akun-admin .admin-next h2 { font-size:1.51rem; line-height:1.22; text-wrap:balance; }
+  .dpn-akun-admin .admin-section-heading h2,
+  .dpn-akun-admin .admin-panel h2,
+  .dpn-akun-admin .admin-roles h2 { font-size:1.43rem; line-height:1.23; text-wrap:balance; }
+  .dpn-akun-admin .network-footer .footer-inner > div > strong { display:block; font-size:.73rem; line-height:1.48; letter-spacing:-.018em; text-wrap:balance; }
+}
+/* HP 390: light heading polish only; preserve button/card layout */
+@media (min-width:376px) and (max-width:410px) {
+  .dpn-akun-admin .admin-intro h1 { font-size:1.90rem; line-height:1.15; text-wrap:balance; }
+  .dpn-akun-admin .admin-next h2 { font-size:1.62rem; line-height:1.22; text-wrap:balance; }
+  .dpn-akun-admin .admin-section-heading h2,
+  .dpn-akun-admin .admin-panel h2,
+  .dpn-akun-admin .admin-roles h2 { font-size:1.50rem; line-height:1.22; text-wrap:balance; }
+  .dpn-akun-admin .network-footer .footer-inner > div > strong { display:block; font-size:.76rem; line-height:1.5; letter-spacing:-.01em; text-wrap:balance; }
+}
+/* Tablet 768: preserve existing columns, increase hierarchy/readability */
+@media (min-width:740px) and (max-width:820px) {
+  .dpn-akun-admin .admin-intro h1 { font-size:2.48rem; line-height:1.12; text-wrap:balance; }
+  .dpn-akun-admin .admin-section-heading h2,
+  .dpn-akun-admin .admin-roles h2 { font-size:1.58rem; line-height:1.22; text-wrap:balance; }
+  .dpn-akun-admin .admin-panel h2 { font-size:1.45rem; line-height:1.22; text-wrap:balance; }
+  .dpn-akun-admin .admin-section-heading p:not(.admin-eyebrow),
+  .dpn-akun-admin .admin-panel-description,
+  .dpn-akun-admin .admin-role-grid p { font-size:.83rem; line-height:1.72; }
+  .dpn-akun-admin .admin-next h2 { font-size:1.94rem; line-height:1.22; text-wrap:balance; }
+}
+/* Desktop 1366/1440: small editorial refinements, no layout/column change */
+@media (min-width:1366px) and (max-width:1440px) {
+  .dpn-akun-admin .admin-intro h1 { line-height:1.11; text-wrap:balance; }
+  .dpn-akun-admin .admin-intro > p:not(.admin-kicker):not(.admin-hero-note) { font-size:.96rem; line-height:1.76; }
+  .dpn-akun-admin .admin-section-heading h2,
+  .dpn-akun-admin .admin-roles h2 { font-size:1.88rem; line-height:1.2; text-wrap:balance; }
+  .dpn-akun-admin .admin-panel h2 { font-size:1.57rem; line-height:1.22; text-wrap:balance; }
+  .dpn-akun-admin .admin-next h2 { line-height:1.21; text-wrap:balance; }
+}
+/* DPN-GATE-3C07G-ADMIN-TYPO-MULTI:END */
+/* DPN-GATE-3C07G-D-ADMIN-HP320-FOOTER-ONE-LINE:START - DEV LOCAL, CSS ONLY, footer description at HP 320px */
+/* Narrow viewport only. No copy/layout/brand edits. Verify readability and actual overflow in Chrome. */
+@media (min-width:315px) and (max-width:325px) {
+  .dpn-akun-admin .network-footer .footer-inner > div > p {
+    font-size: 9.6px;
+    line-height: 1.45;
+    letter-spacing: -0.02em;
+    white-space: nowrap;
+  }
+}
+/* DPN-GATE-3C07G-D-ADMIN-HP320-FOOTER-ONE-LINE:END */

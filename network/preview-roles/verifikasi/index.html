@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="light">
+  <meta name="theme-color" content="#0B1220">
+  <meta name="robots" content="noindex, nofollow, noarchive">
+  <meta name="referrer" content="no-referrer">
+  <title>Admin Verifikasi V1 | DEV MOCK — Srilex Buditra</title>
+  <meta name="description" content="Pratinjau internal Admin Verifikasi V1 dengan data sintetis. Bukan sistem verifikasi atau transaksi aktif.">
+  <link rel="icon" href="/network/assets/images/logo.avif" type="image/avif">
+  <link rel="stylesheet" href="/network/preview-roles/verifikasi/assets/css/verifikasi.css">
+  <script defer src="/network/preview-roles/verifikasi/assets/js/verifikasi.js"></script>
+</head>
+<body>
+  <a class="ver-skip" href="#ver-main">Langsung ke konten</a>
+  <div class="ver-app" id="ver-app"><div class="ver-mobile-scrim" id="ver-mobile-scrim" hidden></div>
+    <aside class="ver-sidebar" id="ver-sidebar" aria-label="Navigasi Admin Verifikasi">
+      <div class="ver-brand-row"><div class="ver-brand">
+        <img class="ver-brand-logo" src="/network/assets/images/logo.avif" width="44" height="44" alt="Logo Srilex Buditra">
+        <div><strong>SRILEX <em>BUDITRA</em></strong><span>Digital Partner Network</span></div>
+      </div><button id="ver-close-sidebar" class="ver-sidebar-close" type="button" aria-label="Tutup menu">×</button></div><div class="ver-role-card"><span class="ver-role-emblem" aria-hidden="true">✦</span><span class="ver-role-copy"><strong>ADMIN VERIFIKASI</strong><small>Ruang kerja simulasi · V1</small></span><span class="ver-role-dot" aria-hidden="true"></span></div><div class="ver-side-label">RUANG KERJA</div>
+      <nav class="ver-side-nav" aria-label="Tujuh ruang kerja">
+        <button class="ver-nav is-active" type="button" data-target="beranda" aria-current="page"><span class="ver-nav-number">01</span>Beranda Verifikasi</button>
+        <button class="ver-nav" type="button" data-target="identitas"><span class="ver-nav-number">02</span>Verifikasi Identitas</button>
+        <button class="ver-nav" type="button" data-target="foto-wajah"><span class="ver-nav-number">03</span>Pemeriksaan Foto Wajah</button>
+        <button class="ver-nav" type="button" data-target="rekening"><span class="ver-nav-number">04</span>Verifikasi Rekening</button>
+        <button class="ver-nav" type="button" data-target="penugasan"><span class="ver-nav-number">05</span>Penugasan &amp; Antrean</button>
+        <button class="ver-nav" type="button" data-target="keputusan"><span class="ver-nav-number">06</span>Keputusan &amp; Perbaikan</button>
+        <button class="ver-nav" type="button" data-target="aktivitas"><span class="ver-nav-number">07</span>Aktivitas &amp; Audit</button>
+      </nav>
+      <div class="ver-sidebar-foot"><span class="ver-status-dot" aria-hidden="true"></span><div><strong>PRATINJAU DEV · DATA SIMULASI</strong><small>Tanpa API, KYC, database, atau transaksi nyata.</small></div></div>
+    </aside>
+
+    <div class="ver-workspace">
+      <header class="ver-topbar">
+        <div class="ver-topbar-brand"><button id="ver-open-sidebar" class="ver-menu-toggle" type="button" aria-label="Buka menu" aria-controls="ver-sidebar" aria-expanded="false">☰</button><img src="/network/assets/images/logo.avif" width="32" height="32" alt=""><strong>ADMIN VERIFIKASI</strong></div>
+        <span class="ver-demo-tag">DEV MOCK / DATA SINTETIS</span>
+        <div class="ver-actor"><span class="ver-actor-avatar" aria-hidden="true">01</span><span>Petugas DEMO <small>PEMERIKSA-DEMO-01</small></span></div>
+      </header>
+
+      <main class="ver-main" id="ver-main" tabindex="-1">
+        <div class="ver-page-header">
+          <div>
+            <p class="ver-eyebrow">DIGITAL PARTNER NETWORK / ADMIN VERIFIKASI V1</p>
+            <h1 id="ver-current-title">Beranda Verifikasi</h1>
+            <p id="ver-current-description">Ringkasan antrean dan pekerjaan pemeriksaan untuk petugas ilustrasi.</p>
+          </div>
+          <span class="ver-pill ver-pill-navy">SCOPE V01–V07 · HANYA DEMO</span>
+        </div>
+        <div class="ver-disclaimer" role="note"><strong>Data simulasi:</strong> semua identitas, nomor rekening, status, foto, penugasan, dan keputusan adalah ilustrasi. Tidak ada pemeriksaan identitas atau pencairan uang sebenarnya.</div>
+
+        <section class="ver-view" data-view="beranda" aria-label="V01 Beranda Verifikasi">
+          <div class="ver-grid-stats" id="ver-stats" aria-label="Statistik data ilustrasi"></div>
+          <div class="ver-two-col">
+            <article class="ver-panel">
+              <div class="ver-panel-head"><div><h2>Antrean saya</h2><p>Hanya kasus yang ditugaskan kepada pemeriksa DEMO ini.</p></div><button class="ver-text-button" type="button" data-target="penugasan">Lihat semua <span aria-hidden="true">→</span></button></div>
+              <div class="ver-stack" id="ver-home-queue"></div>
+            </article>
+            <article class="ver-panel ver-panel-accent">
+              <p class="ver-panel-kicker">ALUR PEMERIKSAAN</p><h2>Identitas dan rekening tetap dipisah</h2>
+              <p>Pemeriksaan dokumen, foto ilustrasi, serta rekening dilakukan melalui tampilan DEMO. Persetujuan finansial tidak tersedia di peran ini.</p>
+              <div class="ver-steps"><div><span>01</span> Pilih kasus assigned</div><div><span>02</span> Tinjau data ilustrasi</div><div><span>03</span> Catat hasil DEMO</div></div>
+              <button class="ver-primary" type="button" data-target="identitas">Buka antrean identitas</button>
+            </article>
+          </div>
+        </section>
+
+        <section class="ver-view" data-view="identitas" aria-label="V02 Verifikasi Identitas" hidden>
+          <article class="ver-panel">
+            <div class="ver-panel-head"><div><h2>Daftar identitas</h2><p>Data KTP/SIM tidak digunakan. Semua ID berikut hanya label ilustrasi.</p></div><span class="ver-pill">ASSIGNED-ONLY DEMO</span></div>
+            <div class="ver-toolbar"><label class="ver-field">Cari kasus / Mitra<input id="ver-id-search" type="search" placeholder="Contoh: VER-DEMO-001" autocomplete="off"></label><label class="ver-field">Status<select id="ver-id-status"><option value="ALL">Semua status</option><option value="MENUNGGU">Menunggu</option><option value="DITINJAU">Ditinjau</option><option value="PERBAIKAN DEMO">Perlu perbaikan</option><option value="SETUJU DEMO">Setuju DEMO</option><option value="TOLAK DEMO">Tolak DEMO</option></select></label></div>
+            <div class="ver-table-wrap"><table class="ver-table"><caption class="ver-sr-only">Antrean identitas fiktif yang ditugaskan</caption><thead><tr><th scope="col">Kasus</th><th scope="col">Mitra</th><th scope="col">Dokumen</th><th scope="col">Status</th><th scope="col">Tindakan</th></tr></thead><tbody id="ver-id-rows"></tbody></table></div>
+            <p class="ver-empty" id="ver-id-empty" hidden>Tidak ada kasus yang cocok.</p>
+          </article>
+        </section>
+
+        <section class="ver-view" data-view="foto-wajah" aria-label="V03 Pemeriksaan Foto Wajah" hidden>
+          <div class="ver-two-col">
+            <article class="ver-panel">
+              <div class="ver-panel-head"><div><h2>Visual ilustrasi</h2><p>Hanya placeholder grafis, bukan foto seseorang dan bukan verifikasi biometrik.</p></div><span class="ver-pill">TANPA KAMERA</span></div>
+              <div class="ver-face-placeholder" role="img" aria-label="Ikon wajah ilustrasi abstrak; bukan foto biometrik"><span class="ver-face-head" aria-hidden="true"></span><span class="ver-face-body" aria-hidden="true"></span><span class="ver-face-watermark">ILUSTRASI · DEMO</span></div>
+              <p class="ver-muted">Tidak ada unggah foto, deteksi wajah, kamera, pencocokan, ataupun penyimpanan dokumen.</p>
+            </article>
+            <article class="ver-panel">
+              <h2>Daftar cek pemeriksaan manual</h2><p>Contoh checklist tanpa mengukur karakteristik biometrik.</p>
+              <label class="ver-check"><input type="checkbox" class="ver-photo-check"> Label dokumen ilustrasi terlihat</label>
+              <label class="ver-check"><input type="checkbox" class="ver-photo-check"> Kasus ditugaskan ke petugas DEMO</label>
+              <label class="ver-check"><input type="checkbox" class="ver-photo-check"> Status pemeriksaan telah dibaca</label>
+              <div class="ver-inline-actions"><button class="ver-secondary" type="button" id="ver-photo-reset">Reset checklist</button><button class="ver-primary" type="button" data-target="keputusan">Lanjut ke keputusan DEMO</button></div>
+              <p class="ver-small-note">Checklist ini tidak menentukan identitas dan tidak memberikan status KYC.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="ver-view" data-view="rekening" aria-label="V04 Verifikasi Rekening" hidden>
+          <article class="ver-panel">
+            <div class="ver-panel-head"><div><h2>Antrean rekening ilustrasi</h2><p>Nomor rekening hanya contoh termasking, tanpa akses rekening asli.</p></div><span class="ver-pill">NO PAYOUT ACCESS</span></div>
+            <div class="ver-toolbar"><label class="ver-field">Cari kasus / bank<input id="ver-bank-search" type="search" placeholder="Cari label kasus atau bank" autocomplete="off"></label><label class="ver-field">Status<select id="ver-bank-status"><option value="ALL">Semua status</option><option value="MENUNGGU">Menunggu</option><option value="DITINJAU">Ditinjau</option><option value="PERBAIKAN DEMO">Perlu perbaikan</option><option value="SETUJU DEMO">Setuju DEMO</option><option value="TOLAK DEMO">Tolak DEMO</option></select></label></div>
+            <div class="ver-table-wrap"><table class="ver-table"><caption class="ver-sr-only">Antrean rekening termasking fiktif</caption><thead><tr><th scope="col">Kasus</th><th scope="col">Bank</th><th scope="col">Rekening</th><th scope="col">Status</th><th scope="col">Tindakan</th></tr></thead><tbody id="ver-bank-rows"></tbody></table></div>
+            <p class="ver-empty" id="ver-bank-empty" hidden>Tidak ada kasus yang cocok.</p>
+          </article>
+        </section>
+
+        <section class="ver-view" data-view="penugasan" aria-label="V05 Penugasan dan Antrean" hidden>
+          <article class="ver-panel">
+            <div class="ver-panel-head"><div><h2>Kasus yang ditugaskan</h2><p>Daftar assigned-only untuk PEMERIKSA-DEMO-01. SLA seluruhnya ilustrasi.</p></div><span class="ver-pill">SIMULASI PENUGASAN</span></div>
+            <div class="ver-stack" id="ver-assignments"></div>
+            <div class="ver-test-box"><div><strong>Uji pembatasan assignment DEMO</strong><p>Uji membuka kasus milik pemeriksa lain. Sistem simulasi harus menolak.</p></div><button type="button" class="ver-secondary" id="ver-test-unassigned">Uji akses ditolak</button></div>
+          </article>
+        </section>
+
+        <section class="ver-view" data-view="keputusan" aria-label="V06 Keputusan dan Perbaikan" hidden>
+          <div class="ver-two-col">
+            <article class="ver-panel">
+              <h2>Formulir keputusan DEMO</h2><p>Keputusan hanya mengubah tampilan sesi browser; tidak mengubah status akun/KYC sebenarnya.</p>
+              <form id="ver-decision-form" novalidate>
+                <label class="ver-field">Pilih kasus assigned<select id="ver-decision-case" required></select></label>
+                <label class="ver-field">Hasil simulasi<select id="ver-decision-status" required><option value="">Pilih hasil</option><option value="SETUJU DEMO">Setuju DEMO</option><option value="PERBAIKAN DEMO">Perlu perbaikan DEMO</option><option value="TOLAK DEMO">Tolak DEMO</option></select></label>
+                <label class="ver-field">Alasan keputusan<textarea id="ver-decision-notes" rows="4" maxlength="320" placeholder="Tulis alasan ilustratif (minimal 10 karakter)"></textarea></label>
+                <p class="ver-field-error" id="ver-decision-error" role="alert" hidden></p>
+                <button type="submit" class="ver-primary">Tinjau dan konfirmasi DEMO</button>
+              </form>
+            </article>
+            <article class="ver-panel ver-panel-accent"><p class="ver-panel-kicker">PEMISAHAN KEWENANGAN</p><h2>Tidak ada tindakan finansial</h2><p>Peran Admin Verifikasi hanya mensimulasikan proses pemeriksaan identitas dan rekening. Persetujuan refund, saldo, transfer dan payout tidak tersedia.</p><div class="ver-scope-grid"><span>Data sintetis</span><span>Assigned-only</span><span>DOM sementara</span><span>Tanpa API</span></div></article>
+          </div>
+        </section>
+
+        <section class="ver-view" data-view="aktivitas" aria-label="V07 Aktivitas dan Audit" hidden>
+          <article class="ver-panel">
+            <div class="ver-panel-head"><div><h2>Aktivitas sesi DEMO</h2><p>Catatan ini tidak persisten; refresh menghapus aktivitas. Bukan audit sistem sesungguhnya.</p></div><button class="ver-secondary" type="button" id="ver-export-preview">Pratinjau ekspor DEMO</button></div>
+            <label class="ver-field ver-filter-narrow">Filter aktivitas<select id="ver-log-filter"><option value="ALL">Semua aktivitas</option><option value="REVIEW">Pemeriksaan</option><option value="DECISION">Keputusan</option><option value="SECURITY">Pembatasan DEMO</option></select></label>
+            <ol class="ver-activity" id="ver-activity-list"></ol>
+            <p class="ver-empty" id="ver-activity-empty" hidden>Belum ada aktivitas untuk filter ini.</p>
+          </article>
+        </section>
+      </main>
+      <footer class="ver-footer"><span>Srilex Buditra · Admin Verifikasi V1</span><span>DEV MOCK · TIDAK ADA DATA PENGGUNA NYATA</span></footer>
+    </div>
+  </div>
+
+  <nav class="ver-bottom-nav" aria-label="Navigasi utama pada ponsel dan tablet">
+    <button class="ver-bottom-button is-active" type="button" data-target="beranda" aria-current="page"><span aria-hidden="true">⌂</span>Beranda</button>
+    <button class="ver-bottom-button" type="button" data-target="identitas"><span aria-hidden="true">▤</span>Identitas</button>
+    <button class="ver-bottom-button" type="button" data-target="rekening"><span aria-hidden="true">▦</span>Rekening</button>
+    <button class="ver-bottom-button" type="button" data-target="penugasan"><span aria-hidden="true">☷</span>Penugasan</button>
+    <button class="ver-bottom-button" type="button" id="ver-more-button" aria-controls="ver-sidebar" aria-expanded="false"><span aria-hidden="true">⋯</span>Lainnya</button>
+  </nav>
+
+  <dialog class="ver-dialog" id="ver-more-dialog" aria-labelledby="ver-more-title"><div class="ver-dialog-head"><h2 id="ver-more-title">Menu lainnya</h2><button class="ver-dialog-close" type="button" data-close-dialog aria-label="Tutup menu lainnya">×</button></div><div class="ver-dialog-body"><div class="ver-more-links"><button type="button" data-target="foto-wajah">03 · Pemeriksaan Foto Wajah</button><button type="button" data-target="keputusan">06 · Keputusan &amp; Perbaikan</button><button type="button" data-target="aktivitas">07 · Aktivitas &amp; Audit</button></div></div></dialog>
+  <dialog class="ver-dialog" id="ver-case-dialog" aria-labelledby="ver-case-title"><div class="ver-dialog-head"><h2 id="ver-case-title">Detail kasus DEMO</h2><button class="ver-dialog-close" type="button" data-close-dialog aria-label="Tutup detail kasus">×</button></div><div class="ver-dialog-body" id="ver-case-details"></div><div class="ver-dialog-actions"><button class="ver-secondary" type="button" data-close-dialog>Batal</button><button class="ver-primary" type="button" id="ver-case-to-decision">Buka keputusan DEMO</button></div></dialog>
+  <dialog class="ver-dialog" id="ver-confirm-dialog" aria-labelledby="ver-confirm-title"><div class="ver-dialog-head"><h2 id="ver-confirm-title">Konfirmasi keputusan DEMO</h2><button class="ver-dialog-close" type="button" data-close-dialog aria-label="Batal dan tutup konfirmasi">×</button></div><div class="ver-dialog-body" id="ver-confirm-body"></div><div class="ver-dialog-actions"><button class="ver-secondary" type="button" data-close-dialog>Batal</button><button class="ver-primary" type="button" id="ver-confirm-yes">Konfirmasi DEMO</button></div></dialog>
+  <dialog class="ver-dialog" id="ver-export-dialog" aria-labelledby="ver-export-title"><div class="ver-dialog-head"><h2 id="ver-export-title">Pratinjau ekspor DEMO</h2><button class="ver-dialog-close" type="button" data-close-dialog aria-label="Tutup pratinjau ekspor">×</button></div><div class="ver-dialog-body"><p>Fitur ekspor hanya ilustrasi. Tidak ada berkas yang dibuat atau diunduh.</p><p class="ver-muted">Aktivitas hanya tersedia di memori sesi browser.</p></div><div class="ver-dialog-actions"><button type="button" class="ver-primary" data-close-dialog>Menutup pratinjau</button></div></dialog>
+  <div class="ver-toast" id="ver-toast" role="status" aria-live="polite" aria-atomic="true" hidden></div>
+</body>
+</html>
