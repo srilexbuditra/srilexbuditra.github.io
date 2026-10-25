@@ -241,3 +241,48 @@
   .access-help { margin-top: 12px; line-height: 1.5; }
   .form-divider { margin: 17px 0 13px; }
 }
+
+/* DPN SUPER ADMIN LOGIN — VIEWPORT FIT V4
+   At 125% Chrome zoom, a 928px screenshot can contain ~600 CSS px of usable
+   viewport height. Compact only the desktop's short-height layout; never
+   impose a fixed card height or hide form controls. Mobile keeps scrolling. */
+@media (min-width: 781px) and (max-height: 700px) {
+  .page-shell { padding: clamp(7px, 1.15svh, 10px); }
+  .story-panel, .form-panel { padding-block: clamp(9px, 1.45svh, 12px); }
+  .story-content { padding: 5px 0 7px; }
+  .story-content h1 { font-size: clamp(28px, 3vw, 42px); margin: 9px 0 10px; }
+  .story-content > p { font-size: 12px; line-height: 1.5; }
+  .story-highlights { margin-top: 14px; gap: 7px; }
+  .highlight-icon { width: 32px; height: 32px; }
+  .highlight strong { font-size: 11px; }
+  .highlight small { font-size: 10px; }
+  .form-content { padding: 3px 0; }
+  .form-emblem { width: 28px; height: 28px; margin-bottom: 5px; border-radius: 9px; }
+  .form-emblem svg { width: 18px; height: 18px; }
+  .kicker { font-size: 9px; }
+  .form-content h2 { font-size: clamp(24px, 2vw, 28px); line-height: 1.1; margin: 6px 0; }
+  .form-intro { font-size: 11px; line-height: 1.4; margin-bottom: 8px; }
+  .notice { padding: 8px 10px; margin-bottom: 9px; gap: 9px; }
+  .notice strong { font-size: 11px; }
+  .notice p { font-size: 10px; line-height: 1.35; margin-top: 2px; }
+  .field { margin-bottom: 7px; }
+  .field label { font-size: 11px; margin-bottom: 3px; }
+  .field input { height: 41px; }
+  .password-toggle { top: 4px; height: 33px; }
+  .submit-button { min-height: 41px; margin-top: 7px; font-size: 12px; }
+  .access-help { font-size: 10px; line-height: 1.35; margin-top: 6px; }
+  .form-divider { margin: 9px 0 7px; }
+  .home-link { font-size: 11px; }
+  .form-footer { font-size: 9px; }
+}
+@media (min-width: 781px) and (max-height: 640px) {
+  .form-emblem { display: none; }
+  .story-content h1 { font-size: clamp(27px, 2.85vw, 40px); }
+  .story-highlights { margin-top: 10px; }
+  .form-content h2 { margin: 4px 0; }
+  .notice { margin-bottom: 7px; }
+  .form-intro { margin-bottom: 6px; }
+  .field { margin-bottom: 6px; }
+  .submit-button { margin-top: 5px; }
+  .form-divider { margin: 7px 0 6px; }
+}
