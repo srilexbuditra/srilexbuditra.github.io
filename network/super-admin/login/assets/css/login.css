@@ -213,3 +213,31 @@
     margin: 10px 0 8px;
   }
 }
+
+/* DPN SUPER ADMIN LOGIN — VIEWPORT FIT V3
+   Correct the 801–950px-height gap between V2 compact and tall-desktop rules.
+   This modifies layout spacing only; never caps card height or clips content. */
+@media (min-width: 781px) and (min-height: 801px) and (max-height: 950px) {
+  .story-panel, .form-panel { padding-block: clamp(17px, 2.45svh, 24px); }
+  .story-content { padding: 14px 0 18px; }
+  .story-content h1 { font-size: clamp(31px, 3.15vw, 47px); line-height: 1.08; margin: 13px 0; }
+  .story-content > p { font-size: 13px; line-height: 1.58; }
+  .story-highlights { gap: 11px; margin-top: 19px; }
+  .highlight-icon { width: 37px; height: 37px; }
+  .highlight strong { font-size: 12px; }
+  .highlight small { font-size: 11px; }
+  .form-content { padding: 12px 0; }
+  .form-emblem { width: 44px; height: 44px; margin-bottom: 12px; }
+  .form-emblem svg { width: 23px; height: 23px; }
+  .form-content h2 { font-size: clamp(26px, 2.3vw, 33px); margin: 9px 0; }
+  .form-intro { line-height: 1.5; margin-bottom: 14px; }
+  .notice { padding: 11px; margin-bottom: 14px; }
+  .notice p { line-height: 1.45; }
+  .field { margin-bottom: 12px; }
+  .field label { margin-bottom: 6px; }
+  .field input { height: 46px; }
+  .password-toggle { top: 6px; height: 34px; }
+  .submit-button { min-height: 46px; margin-top: 14px; }
+  .access-help { margin-top: 12px; line-height: 1.5; }
+  .form-divider { margin: 17px 0 13px; }
+}
