@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0B1220">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <meta name="referrer" content="no-referrer">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'self'; font-src 'self'; base-uri 'none'; form-action 'self'; object-src 'none'; frame-src 'none'; upgrade-insecure-requests">
+  <meta name="description" content="Pintu masuk khusus Super Admin SRILEX BUDITRA Digital Partner Network. Akses akan tersedia setelah layanan autentikasi independen diaktifkan.">
+  <title>Login Super Admin | SRILEX BUDITRA Digital Partner Network</title>
+  <link rel="icon" type="image/avif" href="/network/assets/images/logo.avif">
+  <link rel="stylesheet" href="/network/super-admin/login/assets/css/login.css">
+  <script src="/network/super-admin/login/assets/js/login.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#form-login">Langsung ke formulir login</a>
+  <main class="page-shell">
+    <div class="layout">
+      <section class="story-panel" aria-labelledby="story-title">
+        <div class="story-decoration story-decoration-a" aria-hidden="true"></div>
+        <div class="story-decoration story-decoration-b" aria-hidden="true"></div>
+        <header class="brand-heading">
+          <a class="brand" href="/network/" aria-label="Kembali ke beranda SRILEX BUDITRA Digital Partner Network">
+            <img src="/network/assets/images/logo.avif" width="54" height="54" alt="" decoding="async">
+            <span class="brand-words"><strong>SRILEX <em>BUDITRA</em></strong><small>DIGITAL PARTNER NETWORK</small></span>
+          </a>
+          <span class="role-tag">AKSES KHUSUS</span>
+        </header>
+        <div class="story-content">
+          <div class="eyebrow"><span class="eyebrow-line" aria-hidden="true"></span> RUANG KENDALI DIGITAL</div>
+          <h1 id="story-title">Satu pintu masuk.<br><span>Kendali lebih terjaga.</span></h1>
+          <p>Area khusus Super Admin untuk mengelola akses, peran, pengawasan, dan pengaturan Digital Partner Network dalam satu ruang kerja.</p>
+          <div class="story-highlights" aria-label="Fitur keamanan yang disiapkan">
+            <div class="highlight"><span class="highlight-icon" aria-hidden="true">01</span><span><strong>Identitas terverifikasi</strong><small>Akses hanya untuk Super Admin aktif</small></span></div>
+            <div class="highlight"><span class="highlight-icon" aria-hidden="true">02</span><span><strong>Keamanan berbasis server</strong><small>Sesi dan otorisasi diperiksa oleh backend</small></span></div>
+            <div class="highlight"><span class="highlight-icon" aria-hidden="true">03</span><span><strong>Dashboard privat</strong><small>Pengunjung tanpa sesi tidak dapat masuk</small></span></div>
+          </div>
+        </div>
+        <footer class="story-footer"><span class="status-dot" aria-hidden="true"></span> PREMIUM DIGITAL BLUE <span class="dot-separator">·</span> SRILEXBUDITRA.WORK</footer>
+      </section>
+
+      <section class="form-panel" aria-labelledby="login-title">
+        <nav class="form-top" aria-label="Navigasi pendukung">
+          <a class="back-link" href="/network/"><span aria-hidden="true">←</span> Beranda Network</a>
+          <span class="secure-label"><span class="lock-mini" aria-hidden="true">◆</span> SUPER ADMIN</span>
+        </nav>
+        <div class="form-content" id="form-login">
+          <div class="form-emblem" aria-hidden="true">
+            <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M16 3 27 8v7c0 7-4.8 11.8-11 14-6.2-2.2-11-7-11-14V8l11-5Z"/><rect x="12" y="14" width="8" height="7" rx="1.2"/><path d="M13.5 14v-2a2.5 2.5 0 0 1 5 0v2"/></svg>
+          </div>
+          <p class="kicker">SRILEX BUDITRA · PRIVATE ACCESS</p>
+          <h2 id="login-title">Masuk sebagai <span>Super Admin</span></h2>
+          <p class="form-intro">Gunakan email dan password Super Admin yang sudah diaktivasi untuk membuka dashboard.</p>
+
+          <div class="notice" id="serviceNotice" role="status" aria-live="polite">
+            <span class="notice-icon" aria-hidden="true">i</span>
+            <div><strong id="serviceTitle">Login belum diaktifkan</strong><p id="serviceDescription">Halaman khusus sudah disiapkan. Formulir menunggu layanan autentikasi independen dan perlindungan dashboard selesai diaktifkan.</p></div>
+          </div>
+
+          <form id="loginForm" method="post" novalidate autocomplete="off">
+            <div class="field"><label for="email">Alamat email</label><input type="email" name="email" id="email" placeholder="email@domain.com" autocomplete="username" maxlength="254" inputmode="email" spellcheck="false" required disabled></div>
+            <div class="field"><div class="field-heading"><label for="password">Password</label><span>6–35 karakter</span></div><div class="password-control"><input type="password" name="password" id="password" minlength="6" maxlength="35" autocomplete="current-password" placeholder="Masukkan password" required disabled><button id="passwordToggle" type="button" class="password-toggle" aria-label="Tampilkan password" aria-pressed="false" disabled>Tampilkan</button></div></div>
+            <p id="formMessage" class="form-message" role="alert" aria-live="assertive" hidden></p>
+            <button id="submitButton" type="submit" class="submit-button" disabled><span>Masuk Dashboard</span><span aria-hidden="true">→</span></button>
+          </form>
+          <p class="access-help">Khusus pemilik akun dengan role <strong>Super Admin</strong> dan status <strong>ACTIVE</strong>. Formulir tidak menerima password sebelum backend siap.</p>
+          <div class="form-divider" aria-hidden="true"></div>
+          <a class="home-link" href="/network/">Kembali ke Digital Partner Network <span aria-hidden="true">↗</span></a>
+        </div>
+        <footer class="form-footer">© SRILEX BUDITRA <span>·</span> Portal Super Admin</footer>
+      </section>
+    </div>
+  </main>
+</body>
+</html>
